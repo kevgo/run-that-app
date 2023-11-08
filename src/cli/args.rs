@@ -98,5 +98,18 @@ mod tests {
             };
             pretty::assert_eq!(have, want);
         }
+
+        #[test]
+        fn limited() {
+            let args = vec!["run-that-app", "--log=scope", "app"]
+                .into_iter()
+                .map(ToString::to_string);
+            let have = parse(args).unwrap();
+            let want = Args {
+                log: Some(S("scope")),
+                command: Command::DisplayHelp,
+            };
+            pretty::assert_eq!(have, want);
+        }
     }
 }
