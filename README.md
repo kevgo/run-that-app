@@ -8,7 +8,7 @@ works inside Docker, and leaves a very small footprint on your computer.
 
 ### show me
 
-```
+```bash
 # download the _run-that-app!_ executable
 curl https://raw.githubusercontent.com/kevgo/run-that-app/main/install.sh | sh
 
@@ -50,13 +50,13 @@ When running a third-party application, _run-that-app!_:
 
 ### usage
 
-```
+```bash
 run-that-app [run-that-app options] <app name> [app options]
 ```
 
 ### examples
 
-```
+```bash
 run-that-app --fallback-to-global --allow-unavailable shellcheck@0.9.0 --color=always myscript.sh
 ```
 
