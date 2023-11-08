@@ -82,16 +82,21 @@ mod tests {
         pretty::assert_eq!(have, want);
     }
 
-    #[test]
-    fn logging() {
-        let args = vec!["run-that-app", "-V"]
-            .into_iter()
-            .map(ToString::to_string);
-        let have = super::parse(args).unwrap();
-        let want = Args {
-            log: None,
-            command: Command::DisplayVersion,
-        };
-        pretty::assert_eq!(have, want);
+    mod logging {
+        use crate::cli::{parse, Args, Command};
+        use big_s::S;
+
+        #[test]
+        fn everything() {
+            let args = vec!["run-that-app", "--log", "app"]
+                .into_iter()
+                .map(ToString::to_string);
+            let have = parse(args).unwrap();
+            let want = Args {
+                log: Some(S("")),
+                command: Command::DisplayHelp,
+            };
+            pretty::assert_eq!(have, want);
+        }
     }
 }
