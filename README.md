@@ -6,7 +6,7 @@ installed. Like Docker, _run-that-app!_ works on Linux, Windows, and macOS.
 Unlike Docker, _run-that-app!_ is extremely lean, fast, has zero dependencies,
 works inside Docker, and leaves a very small footprint on your computer.
 
-### show me
+### quickstart
 
 ```bash
 # download the _run-that-app!_ executable
@@ -69,6 +69,11 @@ run-that-app --fallback-to-global --allow-unavailable shellcheck@0.9.0 --color=a
   a few exotic developer machines.
 
 ### Q&A
+
+#### Wouldn't it be more appropriate to use the package manager of my system to install third-party applications?
+
+Yes if your and everybody else's package manager installs a version that works
+for all your use cases.
 
 #### What if an app does not provide binaries for my platform?
 
