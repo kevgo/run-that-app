@@ -18,7 +18,7 @@ curl https://raw.githubusercontent.com/kevgo/run-that-app/main/install.sh | sh
 
 ### why
 
-Reasons to use `run-that-app` over traditional forms of installation (package
+Reasons to use _run-that-app_ over traditional forms of installation (package
 managers) are:
 
 - You need to run a binary for which no good way to install them exists, for
