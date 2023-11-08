@@ -8,8 +8,8 @@ pub enum UserError {
     CannotDetermineOS,
     CannotDownload { url: String, reason: String },
     DuplicateRunRequest,
-    InstallRequestMissingVersion,
     NotOnline,
+    RunRequestMissingVersion,
     UnknownArchive(String),
     UnknownApp(String),
     UnknownCliOption(String),
@@ -39,11 +39,11 @@ impl UserError {
                 desc("Please try again later.");
             }
             UserError::DuplicateRunRequest => error("I can only run one application at a time"),
-            UserError::InstallRequestMissingVersion => {
+            UserError::NotOnline => error("you seem to be offline"),
+            UserError::RunRequestMissingVersion => {
                 error("missing the version to install");
                 desc("To create a fully reproducible build, please provide the exact version you want to install.");
             }
-            UserError::NotOnline => error("you seem to be offline"),
             UserError::UnknownArchive(filename) => {
                 error(&format!("Unknown archive type: {filename}"));
                 desc("This is a bug in binstall. Please report it at https://github.com/kevgo/binstall/issues.");

@@ -1,10 +1,12 @@
+mod apps;
 mod cli;
 mod cmd;
+mod detect;
 mod error;
-mod platform;
 
 use cli::Command;
 use cli::Output;
+use detect::Platform;
 use error::{Result, UserError};
 use std::process::ExitCode;
 
