@@ -1,4 +1,4 @@
-//! apps that run-this-app knows how to run
+//! apps that run-this-app knows how to execute
 
 use crate::cli::{Output, RunRequest};
 use crate::error::UserError;
