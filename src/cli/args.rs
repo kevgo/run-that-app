@@ -34,16 +34,23 @@ pub fn parse(mut args: impl Iterator<Item = String>) -> Result<Args> {
             return Err(UserError::DuplicateRunRequest);
         }
     }
-    Ok(Args {
-        command: Command::DisplayHelp,
-        log,
-    })
+    if let Some(RunRequest { name, version }) = run_request {
+        Ok(Args {
+            command: Command::RunApp { name, version },
+            log,
+        })
+    } else {
+        Ok(Args {
+            command: Command::DisplayHelp,
+            log,
+        })
+    }
 }
 
 #[derive(Debug, PartialEq)]
 pub struct Args {
-    pub log: Option<String>,
     pub command: Command,
+    pub log: Option<String>,
 }
 
 #[derive(Debug, PartialEq)]
@@ -93,8 +100,11 @@ mod tests {
                 .map(ToString::to_string);
             let have = parse(args).unwrap();
             let want = Args {
+                command: Command::RunApp {
+                    name: S("app"),
+                    version: S(""),
+                },
                 log: Some(S("")),
-                command: Command::DisplayHelp,
             };
             pretty::assert_eq!(have, want);
         }
@@ -106,8 +116,11 @@ mod tests {
                 .map(ToString::to_string);
             let have = parse(args).unwrap();
             let want = Args {
+                command: Command::RunApp {
+                    name: S("app"),
+                    version: S(""),
+                },
                 log: Some(S("scope")),
-                command: Command::DisplayHelp,
             };
             pretty::assert_eq!(have, want);
         }

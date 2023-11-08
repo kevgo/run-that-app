@@ -1,8 +1,8 @@
 /// a request from the user to run a particular app
 #[derive(Debug, PartialEq)]
 pub struct RunRequest {
-    name: String,
-    version: String,
+    pub name: String,
+    pub version: String,
 }
 
 pub fn parse(token: &str) -> RunRequest {
