@@ -1,15 +1,15 @@
 # Run That App!
 
-_Run-that-app!_ installs and executes small third-party tools used by software
+_Run-that-app_ installs and executes small third-party tools used by software
 developers (linters, checkers , verifiers) that often have no good way of being
-installed. Like Docker, _run-that-app!_ works on Linux, Windows, and macOS.
-Unlike Docker, _run-that-app!_ is extremely lean, fast, has zero dependencies,
+installed. Like Docker, _run-that-app_ works on Linux, Windows, and macOS.
+Unlike Docker, _run-that-app_ is extremely lean, fast, has zero dependencies,
 works inside Docker, and leaves a very small footprint on your computer.
 
 ### quickstart
 
 ```bash
-# download the _run-that-app!_ executable
+# download the _run-that-app_ executable
 curl https://raw.githubusercontent.com/kevgo/run-that-app/main/install.sh | sh
 
 # run an app (in this case ShellCheck)
@@ -40,7 +40,7 @@ managers) are:
 
 ### how it works
 
-When running a third-party application, _run-that-app!_:
+When running a third-party application, _run-that-app_:
 
 - determines your platform (operating system, CPU architecture)
 - downloads and unpacks the matching executable for your platform - this
@@ -78,13 +78,13 @@ for all your use cases.
 #### What if an app does not provide binaries for my platform?
 
 If the app is not essential, you can provide the `--allow-unavailable` switch
-and _run-that-app!_ will simply do nothing, including not exiting with an error.
+and _run-that-app_ will simply do nothing, including not exiting with an error.
 
 #### What if I compile an app that doesn't provide binaries for my platform myself?
 
-Add your version to the PATH and call _run-that-app!_ with the
-`--use-global-app` switch to make it run your app. In this case _run-that-app!_
-does not guarantee that the app has the correct version.
+Add your version to the PATH and call _run-that-app_ with the `--use-global-app`
+switch to make it run your app. In this case _run-that-app_ does not guarantee
+that the app has the correct version.
 
 #### What about apps that require a dependency like NodeJS or Python?
 
