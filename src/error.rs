@@ -7,6 +7,7 @@ pub enum UserError {
     CannotDetermineCPU,
     CannotDetermineOS,
     CannotDownload { url: String, reason: String },
+    DuplicateRunRequest,
     InstallRequestMissingVersion,
     NotOnline,
     UnknownArchive(String),
@@ -37,6 +38,7 @@ impl UserError {
                 error(&format!("cannot download URL {url}: {reason}"));
                 desc("Please try again later.");
             }
+            UserError::DuplicateRunRequest => error("I can only run one application at a time"),
             UserError::InstallRequestMissingVersion => {
                 error("missing the version to install");
                 desc("To create a fully reproducible build, please provide the exact version you want to install.");

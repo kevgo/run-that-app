@@ -3,6 +3,7 @@ pub struct Output {
 }
 
 impl Output {
+    /// conditional logging of internal details
     pub fn log(&self, category: &str, text: &str) {
         if self.should_log(category) {
             println!("{category}: {text}");
