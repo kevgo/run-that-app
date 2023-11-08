@@ -34,9 +34,9 @@ pub fn parse(mut args: impl Iterator<Item = String>) -> Result<Args> {
             return Err(UserError::DuplicateRunRequest);
         }
     }
-    if let Some(RunRequest { name, version }) = run_request {
+    if let Some(request) = run_request {
         Ok(Args {
-            command: Command::RunApp { name, version },
+            command: Command::RunApp { request },
             log,
         })
     } else {
@@ -55,7 +55,7 @@ pub struct Args {
 
 #[derive(Debug, PartialEq)]
 pub enum Command {
-    RunApp { name: String, version: String },
+    RunApp { request: RunRequest },
     DisplayHelp,
     DisplayVersion,
 }
@@ -90,7 +90,7 @@ mod tests {
     }
 
     mod logging {
-        use crate::cli::{parse, Args, Command};
+        use crate::cli::{parse, Args, Command, RunRequest};
         use big_s::S;
 
         #[test]
@@ -101,8 +101,10 @@ mod tests {
             let have = parse(args).unwrap();
             let want = Args {
                 command: Command::RunApp {
-                    name: S("app"),
-                    version: S(""),
+                    request: RunRequest {
+                        name: S("app"),
+                        version: S(""),
+                    },
                 },
                 log: Some(S("")),
             };
@@ -117,8 +119,10 @@ mod tests {
             let have = parse(args).unwrap();
             let want = Args {
                 command: Command::RunApp {
-                    name: S("app"),
-                    version: S(""),
+                    request: RunRequest {
+                        name: S("app"),
+                        version: S(""),
+                    },
                 },
                 log: Some(S("scope")),
             };

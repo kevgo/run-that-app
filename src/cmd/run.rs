@@ -1,5 +1,7 @@
-use crate::{Output, Result};
+use crate::cli::RunRequest;
+use crate::{platform, Output, Result};
 
-pub fn run(name: String, version: String, output: &Output) -> Result<()> {
+pub fn run(app: RunRequest, output: &Output) -> Result<()> {
+    let platform = platform::detect(output)?;
     Ok(())
 }
