@@ -70,18 +70,17 @@ run-that-app --fallback-to-global --allow-unavailable shellcheck@0.9.0 --color=a
 
 ### Q&A
 
-Q: What if an app does not provide binaries for my platform?
+#### What if an app does not provide binaries for my platform?
 
-A: If the app is not essential, you can provide the `--allow-unavailable` switch
+If the app is not essential, you can provide the `--allow-unavailable` switch
 and _run-that-app!_ will simply do nothing, including not exiting with an error.
 
-Q: What if I compile an app that doesn't provide binaries for my platform
-myself?
+#### What if I compile an app that doesn't provide binaries for my platform myself?
 
-A: Add your version to the PATH and call _run-that-app!_ with the
+Add your version to the PATH and call _run-that-app!_ with the
 `--use-global-app` switch to make it run your app. In this case _run-that-app!_
 does not guarantee that the app has the correct version.
 
-Q: What about apps that require a dependency like NodeJS or Python?
+#### What about apps that require a dependency like NodeJS or Python?
 
-A: Use the package manager of those platforms to run that app!
+Use the package manager of those platforms to run that app!
