@@ -60,11 +60,13 @@ Example:
 run-that-app --fallback-to-global --allow-unavailable shellcheck@0.9.0 --color=always myscript.sh
 ```
 
-- runs ShellCheck v0.9.0
-- if there is no binary available for your platform, try running a manually
-  installed version that is in the PATH
-- if no such app exists, do nothing and don't return an error (ShellCheck is
-  just a verifier and if it cannot run, that's not an error condition)
+- Runs ShellCheck version 0.9.0 with the arguments `--color=always myscript.sh`.
+- Because the `--fallback-to-global` option is enabled, if there is no binary
+  available for your platform, _run-that-app_ looks for one in the PATH and runs
+  that one.
+- The `--allow-unavailable` switch makes _run-that-app_ do nothing if the app
+  cannot be found. ShellCheck is just a linter and if it cannot run on some
+  exotic developer machines that's okay.
 
 ### Q&A
 
