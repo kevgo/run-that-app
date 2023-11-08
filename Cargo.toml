@@ -6,3 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+colored = "2.0.4"
+
+[dev-dependencies]
+big_s = "1.0.2"
+pretty = { package = "pretty_assertions", version = "1.4.0" }
