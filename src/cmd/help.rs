@@ -1,15 +1,8 @@
-pub fn help(message: Option<String>) {
-    if let Some(message) = message {
-        print_message(&message);
-    }
+pub fn help() {
     print_usage();
     print_options();
     print_examples();
     // print_installable_apps();
-}
-
-fn print_message(message: &str) {
-    println!("{message}\n");
 }
 
 fn print_usage() {

@@ -3,7 +3,7 @@ mod cmd;
 mod error;
 
 use cli::Command;
-use cli::Logger;
+use cli::Output;
 use error::Result;
 use std::process::ExitCode;
 
@@ -19,11 +19,11 @@ fn main() -> ExitCode {
 
 fn inner() -> Result<()> {
     let args = cli::parse(std::env::args())?;
-    let logger = cli::Logger { category: args.log };
+    let output = cli::Output { category: args.log };
     match args.command {
-        Command::RunApp { name, version } => cmd::run(&logger)?,
-        Command::DisplayHelp => {}
-        Command::DisplayVersion => todo!(),
+        Command::RunApp { name, version } => cmd::run(name, version, &output)?,
+        Command::DisplayHelp => cmd::help(),
+        Command::DisplayVersion => cmd::version(&output),
     }
     Ok(())
 }

@@ -1,5 +1,5 @@
 mod args;
-pub mod logging;
+pub mod output;
 
 pub use args::{parse, Command};
-pub use logging::Logger;
+pub use output::Output;

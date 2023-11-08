@@ -1,5 +1,5 @@
-use crate::{Logger, Result};
+use crate::{Output, Result};
 
-pub fn run(logger: &Logger) -> Result<()> {
+pub fn run(name: String, version: String, output: &Output) -> Result<()> {
     Ok(())
 }
