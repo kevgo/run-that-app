@@ -1,16 +1,18 @@
-pub fn help() {
-    print_usage();
-    print_options();
-    print_examples();
+use crate::cli::Output;
+
+pub fn help(output: &Output) {
+    print_usage(output);
+    print_options(output);
+    print_examples(output);
     // print_installable_apps();
 }
 
-fn print_usage() {
-    println!("Usage: binstall install [options] application@version\n");
+fn print_usage(output: &Output) {
+    output.println("Usage: binstall install [options] application@version\n");
 }
 
-pub fn print_options() {
-    println!(
+pub fn print_options(output: &Output) {
+    output.println(
         "
 Options:
 --allow-unavailable              if an app is not available for the current platform, create a stub that does nothing
@@ -22,9 +24,10 @@ Options:
     );
 }
 
-fn print_examples() {
-    println!("Examples:");
-    println!("\"binstall gh@2.34.0\" installs https://github.com/cli/cli at version 2.34.0\n");
+fn print_examples(output: &Output) {
+    output.println("Examples:");
+    output
+        .println("\"binstall gh@2.34.0\" installs https://github.com/cli/cli at version 2.34.0\n");
 }
 
 // pub fn print_installable_apps() {

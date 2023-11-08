@@ -22,7 +22,7 @@ fn inner() -> Result<()> {
     let output = cli::Output { category: args.log };
     match args.command {
         Command::RunApp { name, version } => cmd::run(name, version, &output)?,
-        Command::DisplayHelp => cmd::help(),
+        Command::DisplayHelp => cmd::help(&output),
         Command::DisplayVersion => cmd::version(&output),
     }
     Ok(())
