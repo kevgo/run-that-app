@@ -31,5 +31,27 @@ mod tests {
             };
             pretty::assert_eq!(have, want);
         }
+
+        #[test]
+        fn name_only() {
+            let give = "shellcheck";
+            let have = parse(give);
+            let want = RunRequest {
+                name: S("shellcheck"),
+                version: S(""),
+            };
+            pretty::assert_eq!(have, want);
+        }
+
+        #[test]
+        fn empty_version() {
+            let give = "shellcheck@";
+            let have = parse(give);
+            let want = RunRequest {
+                name: S("shellcheck"),
+                version: S(""),
+            };
+            pretty::assert_eq!(have, want);
+        }
     }
 }
