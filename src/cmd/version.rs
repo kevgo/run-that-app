@@ -1,8 +1,7 @@
 use crate::Output;
-use crate::Result;
 use std::process::ExitCode;
 
-pub fn version(output: &dyn Output) -> Result<ExitCode> {
+pub fn version(output: &dyn Output) -> ExitCode {
     output.print("version");
-    Ok(ExitCode::SUCCESS)
+    ExitCode::SUCCESS
 }

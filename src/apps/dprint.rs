@@ -10,7 +10,7 @@ impl App for Dprint {
         "dprint"
     }
 
-    fn executable(&self, platform: &Platform) -> &'static str {
+    fn executable(&self, platform: Platform) -> &'static str {
         match platform.os {
             Os::Windows => "dprint.exe",
             Os::Linux | Os::MacOS => "dprint",
@@ -21,7 +21,7 @@ impl App for Dprint {
         "https://dprint.dev"
     }
 
-    fn online_location(&self, version: String, platform: &Platform) -> Box<dyn OnlineLocation> {
+    fn online_location(&self, version: String, platform: Platform) -> Box<dyn OnlineLocation> {
         Box::new(GithubReleaseAsset {
             organization: "dprint",
             repo: "dprint",
@@ -30,12 +30,12 @@ impl App for Dprint {
         })
     }
 
-    fn file_to_extract_from_archive(&self, _version: &str, platform: &Platform) -> String {
+    fn file_to_extract_from_archive(&self, _version: &str, platform: Platform) -> String {
         S(self.executable(platform))
     }
 }
 
-fn asset_filename(platform: &Platform) -> String {
+fn asset_filename(platform: Platform) -> String {
     format!(
         "dprint-{cpu}-{os}.zip",
         os = os_text(platform.os),

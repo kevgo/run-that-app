@@ -47,7 +47,7 @@ impl UserError {
                 desc("Please try again later.");
             }
             UserError::CannotMakeFileExecutable { file, reason } => {
-                error(&format!("Cannot make file {} executable: {}", file, reason));
+                error(&format!("Cannot make file {file} executable: {reason}"));
                 desc("Please check access permissions and try again.");
             }
             UserError::DuplicateRunRequest => error("I can only run one application at a time"),
@@ -82,7 +82,7 @@ If you are okay moving forward without this app, you can provide the \"--allow-u
                 desc(&format!(
                     "{} should is not a folder. Please delete it and try again.",
                     root.to_string_lossy()
-                ))
+                ));
             }
         }
     }

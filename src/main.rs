@@ -32,6 +32,6 @@ fn inner() -> Result<ExitCode> {
     match args.command {
         Command::RunApp { app, args } => cmd::run(app, args, &output),
         Command::DisplayHelp => cmd::help(&output),
-        Command::DisplayVersion => cmd::version(&output),
+        Command::DisplayVersion => Ok(cmd::version(&output)),
     }
 }
