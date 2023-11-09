@@ -1,6 +1,8 @@
 mod apps;
+mod archives;
 mod cmd;
 mod detect;
+mod download;
 mod error;
 mod hosting;
 mod subshell;

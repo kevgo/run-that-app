@@ -1,13 +1,15 @@
-//! apps that run-this-app knows how to execute
+//! all applications that run-this-app can run
+
+mod dprint;
 
 use crate::error::UserError;
-use crate::ui::{Output, RequestedApp};
-use crate::Platform;
+use crate::hosting::Hoster;
 use crate::Result;
+use dprint::Dprint;
 
 pub fn lookup(name: &str) -> Result<Box<dyn App>> {
     for app in all_apps() {
-        if app.name() == name {
+        if app.executable() == name {
             return Ok(app);
         }
     }
@@ -15,11 +17,11 @@ pub fn lookup(name: &str) -> Result<Box<dyn App>> {
 }
 
 pub trait App {
-    fn name(&self) -> &'static str;
-    fn repo(&self) -> &'static str;
-    fn install(&self, request: &RequestedApp, platform: Platform, output: &Output) -> Result<()>;
+    fn executable(&self) -> &'static str;
+    fn hoster(&self) -> Box<dyn Hoster>;
+    fn files_to_extract_from_archive(&self, version: &str) -> Vec<String>;
 }
 
 fn all_apps() -> Vec<Box<dyn App>> {
-    vec![]
+    vec![Box::new(Dprint {})]
 }
