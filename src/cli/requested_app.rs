@@ -24,6 +24,7 @@ mod tests {
     mod parse {
         use crate::cli::requested_app;
         use crate::cli::RequestedApp;
+        use crate::error::UserError;
         use big_s::S;
 
         #[test]
@@ -41,10 +42,7 @@ mod tests {
         fn name_only() {
             let give = "shellcheck";
             let have = requested_app::parse(give);
-            let want = Ok(RequestedApp {
-                name: S("shellcheck"),
-                version: S(""),
-            });
+            let want = Err(UserError::RunRequestMissingVersion);
             pretty::assert_eq!(have, want);
         }
 
@@ -52,10 +50,7 @@ mod tests {
         fn empty_version() {
             let give = "shellcheck@";
             let have = requested_app::parse(give);
-            let want = Ok(RequestedApp {
-                name: S("shellcheck"),
-                version: S(""),
-            });
+            let want = Err(UserError::RunRequestMissingVersion);
             pretty::assert_eq!(have, want);
         }
     }

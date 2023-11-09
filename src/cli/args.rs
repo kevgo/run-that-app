@@ -90,7 +90,7 @@ mod tests {
 
             #[test]
             fn everything() {
-                let args = vec!["run-that-app", "--log", "app"]
+                let args = vec!["run-that-app", "--log", "app@2"]
                     .into_iter()
                     .map(ToString::to_string);
                 let have = args::parse(args).unwrap();
@@ -98,7 +98,7 @@ mod tests {
                     command: Command::RunApp {
                         app: RequestedApp {
                             name: S("app"),
-                            version: S(""),
+                            version: S("2"),
                         },
                     },
                     log: Some(S("")),
@@ -108,7 +108,7 @@ mod tests {
 
             #[test]
             fn limited() {
-                let args = vec!["run-that-app", "--log=scope", "app"]
+                let args = vec!["run-that-app", "--log=scope", "app@2"]
                     .into_iter()
                     .map(ToString::to_string);
                 let have = args::parse(args).unwrap();
@@ -116,7 +116,7 @@ mod tests {
                     command: Command::RunApp {
                         app: RequestedApp {
                             name: S("app"),
-                            version: S(""),
+                            version: S("2"),
                         },
                     },
                     log: Some(S("scope")),

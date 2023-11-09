@@ -1,7 +1,5 @@
 use super::RunnableApp;
 use crate::cli::RequestedApp;
-use std::fs;
-use std::io::Write;
 use std::path::PathBuf;
 
 pub struct Yard {
@@ -28,8 +26,11 @@ impl Yard {
         self.root.join("apps").join(&app.name).join(&app.version)
     }
 
-    // for testing
+    #[cfg(test)]
     fn save(&self, app: &RequestedApp, file_name: &str, file_content: &[u8]) {
+        use std::fs;
+        use std::io::Write;
+
         fs::create_dir_all(self.folder_for(app)).unwrap();
         let mut file = fs::File::create(self.file_path(&app, file_name)).unwrap();
         file.write_all(file_content).unwrap();
