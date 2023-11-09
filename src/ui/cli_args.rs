@@ -3,7 +3,7 @@ use crate::Result;
 
 pub fn parse(mut args: impl Iterator<Item = String>) -> Result<Args> {
     let _skipped_binary_name = args.next();
-    let mut run_request: Option<RunRequest> = None;
+    let mut requested_ap: Option<RequestedApp> = None;
     let mut log: Option<String> = None;
     for arg in args {
         if &arg == "--help" || &arg == "-h" {
@@ -26,15 +26,15 @@ pub fn parse(mut args: impl Iterator<Item = String>) -> Result<Args> {
             }
             return Err(UserError::UnknownCliOption(arg));
         }
-        if run_request.is_none() {
-            run_request = Some(parse_runrequest(&arg));
+        if requested_ap.is_none() {
+            requested_ap = Some(parse_runrequest(&arg));
         } else {
             return Err(UserError::DuplicateRunRequest);
         }
     }
-    if let Some(request) = run_request {
+    if let Some(requested_app) = requested_ap {
         Ok(Args {
-            command: Command::RunApp { request },
+            command: Command::RunApp { app: requested_app },
             log,
         })
     } else {
@@ -53,21 +53,21 @@ pub struct Args {
 
 #[derive(Debug, PartialEq)]
 pub enum Command {
-    RunApp { request: RunRequest },
+    RunApp { app: RequestedApp },
     DisplayHelp,
     DisplayVersion,
 }
 
 /// a request from the user to run a particular app
 #[derive(Debug, PartialEq)]
-pub struct RunRequest {
+pub struct RequestedApp {
     pub name: String,
     pub version: String,
 }
 
-pub fn parse_runrequest(token: &str) -> RunRequest {
+pub fn parse_runrequest(token: &str) -> RequestedApp {
     let (app_name, version) = token.split_once('@').unwrap_or((token, ""));
-    RunRequest {
+    RequestedApp {
         name: app_name.to_string(),
         version: version.to_string(),
     }
@@ -77,7 +77,7 @@ pub fn parse_runrequest(token: &str) -> RunRequest {
 mod tests {
 
     mod parse {
-        use crate::cli::{parse, Args, Command};
+        use crate::ui::{parse, Args, Command};
 
         #[test]
         fn no_arguments() {
@@ -104,7 +104,7 @@ mod tests {
         }
 
         mod logging {
-            use crate::cli::{parse, Args, Command, RunRequest};
+            use crate::ui::{parse, Args, Command, RequestedApp};
             use big_s::S;
 
             #[test]
@@ -115,7 +115,7 @@ mod tests {
                 let have = parse(args).unwrap();
                 let want = Args {
                     command: Command::RunApp {
-                        request: RunRequest {
+                        app: RequestedApp {
                             name: S("app"),
                             version: S(""),
                         },
@@ -133,7 +133,7 @@ mod tests {
                 let have = parse(args).unwrap();
                 let want = Args {
                     command: Command::RunApp {
-                        request: RunRequest {
+                        app: RequestedApp {
                             name: S("app"),
                             version: S(""),
                         },
@@ -146,15 +146,15 @@ mod tests {
     }
 
     mod parse_runrequest {
-        use crate::cli::args::parse_runrequest;
-        use crate::cli::RunRequest;
+        use crate::ui::cli_args::parse_runrequest;
+        use crate::ui::RequestedApp;
         use big_s::S;
 
         #[test]
         fn name_and_version() {
             let give = "shellcheck@0.9.0";
             let have = parse_runrequest(give);
-            let want = RunRequest {
+            let want = RequestedApp {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             };
@@ -165,7 +165,7 @@ mod tests {
         fn name_only() {
             let give = "shellcheck";
             let have = parse_runrequest(give);
-            let want = RunRequest {
+            let want = RequestedApp {
                 name: S("shellcheck"),
                 version: S(""),
             };
@@ -176,7 +176,7 @@ mod tests {
         fn empty_version() {
             let give = "shellcheck@";
             let have = parse_runrequest(give);
-            let want = RunRequest {
+            let want = RequestedApp {
                 name: S("shellcheck"),
                 version: S(""),
             };

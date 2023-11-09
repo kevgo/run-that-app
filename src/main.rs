@@ -1,14 +1,17 @@
 mod apps;
-mod cli;
 mod cmd;
 mod detect;
 mod error;
+mod hosting;
+mod subshell;
+mod ui;
+mod yard;
 
-use cli::Command;
-use cli::Output;
 use detect::Platform;
 use error::{Result, UserError};
 use std::process::ExitCode;
+use ui::Command;
+use ui::Output;
 
 fn main() -> ExitCode {
     match inner() {
@@ -21,10 +24,10 @@ fn main() -> ExitCode {
 }
 
 fn inner() -> Result<()> {
-    let args = cli::parse(std::env::args())?;
-    let output = cli::Output { category: args.log };
+    let args = ui::parse(std::env::args())?;
+    let output = ui::Output { category: args.log };
     match args.command {
-        Command::RunApp { request } => cmd::run(request, &output)?,
+        Command::RunApp { app: request } => cmd::run(request, &output)?,
         Command::DisplayHelp => cmd::help(&output),
         Command::DisplayVersion => cmd::version(&output),
     }

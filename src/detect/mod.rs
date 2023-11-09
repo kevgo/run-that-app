@@ -2,7 +2,7 @@ mod cpu;
 mod os;
 mod platform;
 
-use crate::cli::Output;
+use crate::ui::Output;
 use crate::Result;
 pub use cpu::Cpu;
 pub use os::Os;

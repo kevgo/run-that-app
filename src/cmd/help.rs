@@ -1,4 +1,4 @@
-use crate::cli::Output;
+use crate::ui::Output;
 
 pub fn help(output: &Output) {
     print_usage(output);
