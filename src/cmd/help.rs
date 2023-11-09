@@ -1,13 +1,12 @@
 use crate::Output;
-use crate::Result;
 use std::process::ExitCode;
 
-pub fn help(output: &dyn Output) -> Result<ExitCode> {
+pub fn help(output: &dyn Output) -> ExitCode {
     print_usage(output);
     print_options(output);
     print_examples(output);
     // print_installable_apps();
-    Ok(ExitCode::SUCCESS)
+    ExitCode::SUCCESS
 }
 
 fn print_usage(output: &dyn Output) {

@@ -7,7 +7,7 @@ mod zip;
 use crate::download::Artifact;
 use crate::output::Output;
 use crate::yard::RunnableApp;
-use crate::Result;
+use crate::{filesystem, Result};
 use std::path::PathBuf;
 pub use tar_gz::TarGz;
 pub use uncompressed::Uncompressed;
@@ -24,12 +24,12 @@ pub trait Archive {
 
 /// provides an Archive implementation that can extract the given artifact
 pub fn lookup(artifact: Artifact) -> Box<dyn Archive> {
-    if artifact.filename.ends_with(".tar.gz") {
+    if filesystem::has_extension(&artifact.filename, ".tar.gz") {
         return Box::new(TarGz {
             data: artifact.data,
         });
     }
-    if artifact.filename.ends_with(".zip") {
+    if filesystem::has_extension(&artifact.filename, ".zip") {
         return Box::new(Zip {
             data: artifact.data,
         });

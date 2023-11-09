@@ -13,23 +13,23 @@ use crate::Result;
 use std::process::ExitCode;
 
 pub fn run(
-    requested_app: RequestedApp,
+    requested_app: &RequestedApp,
     args: Vec<String>,
     output: &dyn Output,
 ) -> Result<ExitCode> {
     let app = apps::lookup(&requested_app.name)?;
     let platform = detect::detect(output)?;
     let prodyard = yard::load_or_create(&yard::production_location())?;
-    let runnable_app = match prodyard.load(&requested_app, app.executable(platform)) {
+    let runnable_app = match prodyard.load(requested_app, app.executable(platform)) {
         Some(installed_app) => installed_app,
-        None => install_app(&requested_app, &app, platform, &prodyard, output)?,
+        None => install_app(requested_app, app.as_ref(), platform, &prodyard, output)?,
     };
     Ok(subshell::execute(runnable_app, args))
 }
 
 fn install_app(
     requested_app: &RequestedApp,
-    app: &Box<dyn App>,
+    app: &dyn App,
     platform: Platform,
     prodyard: &Yard,
     output: &dyn Output,

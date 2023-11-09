@@ -14,7 +14,7 @@ pub fn lookup(name: &str) -> Result<Box<dyn App>> {
             return Ok(app);
         }
     }
-    return Err(UserError::UnknownApp(name.to_string()));
+    Err(UserError::UnknownApp(name.to_string()))
 }
 
 pub trait App {
