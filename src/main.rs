@@ -9,11 +9,9 @@ mod subshell;
 mod ui;
 mod yard;
 
-use detect::Platform;
 use error::{Result, UserError};
 use std::process::ExitCode;
-use ui::Command;
-use ui::Output;
+use ui::{Command, Output};
 
 fn main() -> ExitCode {
     match inner() {
@@ -26,7 +24,7 @@ fn main() -> ExitCode {
 }
 
 fn inner() -> Result<()> {
-    let args = ui::parse(std::env::args())?;
+    let args = ui::cli_args::parse(std::env::args())?;
     let output = ui::Output { category: args.log };
     match args.command {
         Command::RunApp { app: request } => cmd::run(request, &output)?,

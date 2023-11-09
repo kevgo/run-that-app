@@ -1,4 +1,5 @@
 use super::Archive;
+use crate::ui::Output;
 
 /// a .tar.gz file downloaded from the internet, containing an application
 pub struct TarGz {
@@ -10,7 +11,30 @@ impl Archive for TarGz {
         &self,
         files: Vec<String>,
         target: &std::path::Path,
+        output: &dyn Output,
     ) -> crate::error::Result<crate::yard::RunnableApp> {
-        todo!()
+        print!(
+            "extracting {} from tar.gz archive ... ",
+            path_on_disk.to_string_lossy().cyan()
+        );
+        let _ = io::stdout().flush();
+        let tar = GzDecoder::new(io::Cursor::new(archive));
+        let mut archive = Archive::new(tar);
+        let mut found_file = false;
+        for file in archive.entries().unwrap() {
+            let mut file = file.unwrap();
+            let filepath = file.path().unwrap().to_path_buf();
+            let filepath = filepath.to_string_lossy();
+            logger.log(CATEGORY, &format!("- {filepath}"));
+            if filepath != path_in_archive {
+                continue;
+            }
+            found_file = true;
+            file.unpack(path_on_disk).unwrap();
+        }
+        assert!(found_file, "file {path_in_archive} not found in archive");
+        #[cfg(unix)]
+        std::fs::set_permissions(path_on_disk, std::fs::Permissions::from_mode(0o744)).unwrap();
+        println!("{}", "ok".green());
     }
 }

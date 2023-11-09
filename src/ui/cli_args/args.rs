@@ -1,5 +1,6 @@
+use super::Command;
+use super::{requested_app, RequestedApp};
 use crate::error::UserError;
-use crate::Result;
 
 pub fn parse(mut args: impl Iterator<Item = String>) -> Result<Args> {
     let _skipped_binary_name = args.next();
@@ -27,7 +28,7 @@ pub fn parse(mut args: impl Iterator<Item = String>) -> Result<Args> {
             return Err(UserError::UnknownCliOption(arg));
         }
         if requested_ap.is_none() {
-            requested_ap = Some(parse_runrequest(&arg));
+            requested_ap = Some(requested_app::parse(&arg));
         } else {
             return Err(UserError::DuplicateRunRequest);
         }
@@ -45,44 +46,24 @@ pub fn parse(mut args: impl Iterator<Item = String>) -> Result<Args> {
     }
 }
 
+/// all arguments that can be provided via the CLI
 #[derive(Debug, PartialEq)]
 pub struct Args {
     pub command: Command,
     pub log: Option<String>,
 }
 
-#[derive(Debug, PartialEq)]
-pub enum Command {
-    RunApp { app: RequestedApp },
-    DisplayHelp,
-    DisplayVersion,
-}
-
-/// a request from the user to run a particular app
-#[derive(Debug, PartialEq)]
-pub struct RequestedApp {
-    pub name: String,
-    pub version: String,
-}
-
-pub fn parse_runrequest(token: &str) -> RequestedApp {
-    let (app_name, version) = token.split_once('@').unwrap_or((token, ""));
-    RequestedApp {
-        name: app_name.to_string(),
-        version: version.to_string(),
-    }
-}
-
 #[cfg(test)]
 mod tests {
 
     mod parse {
-        use crate::ui::{parse, Args, Command};
+        use crate::ui::cli_args::args;
+        use crate::ui::{Args, Command};
 
         #[test]
         fn no_arguments() {
             let args = vec!["run-that-app"].into_iter().map(ToString::to_string);
-            let have = parse(args).unwrap();
+            let have = args::parse(args).unwrap();
             let want = Args {
                 log: None,
                 command: Command::DisplayHelp,
@@ -95,7 +76,7 @@ mod tests {
             let args = vec!["run-that-app", "-V"]
                 .into_iter()
                 .map(ToString::to_string);
-            let have = parse(args).unwrap();
+            let have = args::parse(args).unwrap();
             let want = Args {
                 log: None,
                 command: Command::DisplayVersion,
@@ -104,7 +85,8 @@ mod tests {
         }
 
         mod logging {
-            use crate::ui::{parse, Args, Command, RequestedApp};
+            use crate::ui::cli_args::args;
+            use crate::ui::{Args, Command, RequestedApp};
             use big_s::S;
 
             #[test]
@@ -112,7 +94,7 @@ mod tests {
                 let args = vec!["run-that-app", "--log", "app"]
                     .into_iter()
                     .map(ToString::to_string);
-                let have = parse(args).unwrap();
+                let have = args::parse(args).unwrap();
                 let want = Args {
                     command: Command::RunApp {
                         app: RequestedApp {
@@ -130,7 +112,7 @@ mod tests {
                 let args = vec!["run-that-app", "--log=scope", "app"]
                     .into_iter()
                     .map(ToString::to_string);
-                let have = parse(args).unwrap();
+                let have = args::parse(args).unwrap();
                 let want = Args {
                     command: Command::RunApp {
                         app: RequestedApp {
@@ -142,45 +124,6 @@ mod tests {
                 };
                 pretty::assert_eq!(have, want);
             }
-        }
-    }
-
-    mod parse_runrequest {
-        use crate::ui::cli_args::parse_runrequest;
-        use crate::ui::RequestedApp;
-        use big_s::S;
-
-        #[test]
-        fn name_and_version() {
-            let give = "shellcheck@0.9.0";
-            let have = parse_runrequest(give);
-            let want = RequestedApp {
-                name: S("shellcheck"),
-                version: S("0.9.0"),
-            };
-            pretty::assert_eq!(have, want);
-        }
-
-        #[test]
-        fn name_only() {
-            let give = "shellcheck";
-            let have = parse_runrequest(give);
-            let want = RequestedApp {
-                name: S("shellcheck"),
-                version: S(""),
-            };
-            pretty::assert_eq!(have, want);
-        }
-
-        #[test]
-        fn empty_version() {
-            let give = "shellcheck@";
-            let have = parse_runrequest(give);
-            let want = RequestedApp {
-                name: S("shellcheck"),
-                version: S(""),
-            };
-            pretty::assert_eq!(have, want);
         }
     }
 }
