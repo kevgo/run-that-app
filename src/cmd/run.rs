@@ -5,10 +5,11 @@ use crate::subshell;
 use crate::ui::{Output, RequestedApp};
 use crate::yard;
 use crate::yard::RunnableApp;
+use crate::yard::Yard;
 use crate::Result;
 
 pub fn run(requested_app: RequestedApp, output: &dyn Output) -> Result<()> {
-    let prodyard = yard::production()?;
+    let prodyard = yard::load(yard::production_location())?;
     let runnable_app = match prodyard.load(&requested_app) {
         Some(installed_app) => installed_app,
         None => install_app(requested_app, prodyard, output)?,
@@ -18,7 +19,7 @@ pub fn run(requested_app: RequestedApp, output: &dyn Output) -> Result<()> {
 
 fn install_app(
     requested_app: RequestedApp,
-    prodyard: yard::Yard,
+    prodyard: Yard,
     output: &dyn Output,
 ) -> Result<RunnableApp> {
     let app = apps::lookup(&requested_app.name)?;

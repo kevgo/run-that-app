@@ -4,6 +4,7 @@ mod cmd;
 mod detect;
 mod download;
 mod error;
+mod filesystem;
 mod hosting;
 mod subshell;
 mod ui;

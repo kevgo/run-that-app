@@ -1,13 +1,10 @@
 use super::Archive;
 use crate::ui::Output;
 use crate::yard::RunnableApp;
-use crate::Result;
+use crate::{filesystem, Result};
 use colored::Colorize;
 use flate2::read::GzDecoder;
 use std::io;
-
-#[cfg(unix)]
-use std::os::unix::prelude::PermissionsExt;
 use std::path::PathBuf;
 
 /// a .tar.gz file downloaded from the internet, containing an application
@@ -41,8 +38,7 @@ impl Archive for TarGz {
             file.unpack(&path_on_disk).unwrap();
         }
         assert!(found_file, "file {path_in_archive} not found in archive");
-        #[cfg(unix)]
-        std::fs::set_permissions(&path_on_disk, std::fs::Permissions::from_mode(0o744)).unwrap();
+        filesystem::make_file_executable(&path_on_disk)?;
         println!("{}", "ok".green());
         Ok(RunnableApp {
             executable: path_on_disk,

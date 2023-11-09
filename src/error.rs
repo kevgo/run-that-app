@@ -8,6 +8,7 @@ pub enum UserError {
     CannotDetermineCPU,
     CannotDetermineOS,
     CannotDownload { url: String, reason: String },
+    CannotMakeFileExecutable { file: String, reason: String },
     DuplicateRunRequest,
     NotOnline,
     RunRequestMissingVersion,
@@ -41,6 +42,10 @@ impl UserError {
             UserError::CannotDownload { url, reason } => {
                 error(&format!("cannot download URL {url}: {reason}"));
                 desc("Please try again later.");
+            }
+            UserError::CannotMakeFileExecutable { file, reason } => {
+                error(&format!("Cannot make file {} executable: {}", file, reason));
+                desc("Please check access permissions and try again.");
             }
             UserError::DuplicateRunRequest => error("I can only run one application at a time"),
             UserError::NotOnline => error("you seem to be offline"),
