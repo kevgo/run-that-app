@@ -1,6 +1,6 @@
 use super::Archive;
-use crate::ui::Output;
 use crate::yard::RunnableApp;
+use crate::Output;
 use crate::{filesystem, Result};
 use colored::Colorize;
 use flate2::read::GzDecoder;

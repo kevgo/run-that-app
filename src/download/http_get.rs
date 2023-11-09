@@ -1,6 +1,6 @@
 use super::Artifact;
 use crate::error::UserError;
-use crate::ui::Output;
+use crate::Output;
 use crate::Result;
 use colored::Colorize;
 

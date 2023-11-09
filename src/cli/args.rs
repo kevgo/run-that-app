@@ -58,8 +58,7 @@ pub fn parse(mut args: impl Iterator<Item = String>) -> Result<Args> {
 mod tests {
 
     mod parse {
-        use crate::ui::cli_args::args;
-        use crate::ui::{Args, Command};
+        use crate::cli::{args, Args, Command};
 
         #[test]
         fn no_arguments() {
@@ -86,8 +85,7 @@ mod tests {
         }
 
         mod logging {
-            use crate::ui::cli_args::args;
-            use crate::ui::{Args, Command, RequestedApp};
+            use crate::cli::{args, Args, Command, RequestedApp};
             use big_s::S;
 
             #[test]

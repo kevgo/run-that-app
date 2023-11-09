@@ -1,4 +1,4 @@
-use crate::ui::Output;
+use crate::Output;
 use crate::{Result, UserError};
 use std::env;
 use std::fmt::Display;

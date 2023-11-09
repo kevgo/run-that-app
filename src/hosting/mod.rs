@@ -1,7 +1,7 @@
 mod github_releases;
 
 use crate::download::Artifact;
-use crate::ui::Output;
+use crate::Output;
 use crate::Result;
 pub use github_releases::GithubReleaseAsset;
 

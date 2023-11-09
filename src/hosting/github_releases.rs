@@ -1,6 +1,6 @@
 use super::OnlineLocation;
 use crate::download::{http_get, Artifact};
-use crate::ui::Output;
+use crate::Output;
 use crate::Result;
 
 /// a file ("asset" in GitHub lingo) attached to a particular GitHub Release

@@ -1,5 +1,5 @@
 use super::RunnableApp;
-use crate::ui::RequestedApp;
+use crate::cli::RequestedApp;
 use std::fs;
 use std::io::Write;
 use std::path::PathBuf;
@@ -38,7 +38,7 @@ impl Yard {
 
 #[cfg(test)]
 mod tests {
-    use crate::ui::RequestedApp;
+    use crate::cli::RequestedApp;
     use crate::yard::Yard;
     use big_s::S;
     use std::path::PathBuf;
@@ -72,7 +72,7 @@ mod tests {
     }
 
     mod load {
-        use crate::ui::RequestedApp;
+        use crate::cli::RequestedApp;
         use crate::yard::{create, Yard};
         use big_s::S;
         use std::path::PathBuf;

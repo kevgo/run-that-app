@@ -6,7 +6,6 @@ use colored::Colorize;
 #[derive(Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions)]
 pub enum UserError {
-    ArchiveDoesNotContainFile(String),
     CannotDetermineCPU,
     CannotDetermineOS,
     CannotDownload { url: String, reason: String },
@@ -15,7 +14,6 @@ pub enum UserError {
     DuplicateRunRequest,
     NotOnline,
     RunRequestMissingVersion,
-    UnknownArchive(String),
     UnknownApp(String),
     UnknownCliOption(String),
     UnsupportedPlatform,
@@ -29,12 +27,6 @@ pub enum UserError {
 impl UserError {
     pub fn print(self) {
         match self {
-            UserError::ArchiveDoesNotContainFile(filename) => {
-                error(&format!(
-                    "the downloaded archive does not contain file {}",
-                    filename
-                ));
-            }
             UserError::CannotDetermineCPU => {
                 error("cannot determine the CPU");
                 desc("Request support for your platform at https://github.com/kevgo/binstall/issues.");
@@ -63,10 +55,6 @@ impl UserError {
             UserError::RunRequestMissingVersion => {
                 error("missing the version to install");
                 desc("To create a fully reproducible build, please provide the exact version you want to install.");
-            }
-            UserError::UnknownArchive(filename) => {
-                error(&format!("Unknown archive type: {filename}"));
-                desc("This is a bug in binstall. Please report it at https://github.com/kevgo/binstall/issues.");
             }
             UserError::UnknownApp(app_name) => {
                 error(&format!("Unknown app: {app_name}"));

@@ -1,18 +1,20 @@
 mod apps;
 mod archives;
+mod cli;
 mod cmd;
 mod detect;
 mod download;
 mod error;
 mod filesystem;
 mod hosting;
+mod output;
 mod subshell;
-mod ui;
 mod yard;
 
+use cli::Command;
 use error::{Result, UserError};
+use output::Output;
 use std::process::ExitCode;
-use ui::Command;
 
 fn main() -> ExitCode {
     match inner() {
@@ -25,8 +27,8 @@ fn main() -> ExitCode {
 }
 
 fn inner() -> Result<()> {
-    let args = ui::cli_args::parse(std::env::args())?;
-    let output = ui::ConsoleOutput { category: args.log };
+    let args = cli::parse(std::env::args())?;
+    let output = output::ConsoleOutput { category: args.log };
     match args.command {
         Command::RunApp { app: request } => cmd::run(request, &output)?,
         Command::DisplayHelp => cmd::help(&output),

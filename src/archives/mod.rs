@@ -5,7 +5,7 @@ mod uncompressed;
 mod zip;
 
 use crate::download::Artifact;
-use crate::ui::output::Output;
+use crate::output::Output;
 use crate::yard::RunnableApp;
 use crate::Result;
 use std::path::PathBuf;

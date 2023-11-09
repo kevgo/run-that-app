@@ -1,5 +1,5 @@
 use super::Archive;
-use crate::ui::output::Output;
+use crate::output::Output;
 use crate::yard::RunnableApp;
 use crate::{filesystem, Result};
 use colored::Colorize;

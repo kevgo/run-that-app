@@ -1,13 +1,14 @@
 use crate::apps;
 use crate::apps::App;
 use crate::archives;
+use crate::cli::RequestedApp;
 use crate::detect;
 use crate::detect::Platform;
 use crate::subshell;
-use crate::ui::{Output, RequestedApp};
 use crate::yard;
 use crate::yard::RunnableApp;
 use crate::yard::Yard;
+use crate::Output;
 use crate::Result;
 
 pub fn run(requested_app: RequestedApp, output: &dyn Output) -> Result<()> {

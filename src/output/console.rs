@@ -37,7 +37,7 @@ impl ConsoleOutput {
 mod tests {
 
     mod should_log {
-        use crate::ui::output::ConsoleOutput;
+        use crate::output::ConsoleOutput;
         use big_s::S;
 
         #[test]

@@ -16,8 +16,8 @@ pub fn parse(token: &str) -> RequestedApp {
 #[cfg(test)]
 mod tests {
     mod parse {
-        use crate::ui::cli_args::requested_app;
-        use crate::ui::RequestedApp;
+        use crate::cli::requested_app;
+        use crate::cli::RequestedApp;
         use big_s::S;
 
         #[test]
