@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use colored::Colorize;
 
 /// errors that are the user's fault and should be displayed to them
@@ -8,6 +10,7 @@ pub enum UserError {
     CannotDetermineCPU,
     CannotDetermineOS,
     CannotDownload { url: String, reason: String },
+    CannotCreateFolder { folder: PathBuf, reason: String },
     CannotMakeFileExecutable { file: String, reason: String },
     DuplicateRunRequest,
     NotOnline,
@@ -20,6 +23,7 @@ pub enum UserError {
     //     app_name: String,
     //     platform: Platform,
     // },
+    YardRootIsNotFolder { root: PathBuf },
 }
 
 impl UserError {
@@ -38,6 +42,13 @@ impl UserError {
             UserError::CannotDetermineOS => {
                 error("cannot determine the operating system");
                 desc("Request support for your platform at https://github.com/kevgo/binstall/issues.");
+            }
+            UserError::CannotCreateFolder { folder, reason } => {
+                error(&format!(
+                    "cannot create folder {folder}: {reason}",
+                    folder = folder.to_string_lossy()
+                ));
+                desc("Please check access permissions and try again.");
             }
             UserError::CannotDownload { url, reason } => {
                 error(&format!("cannot download URL {url}: {reason}"));
@@ -73,11 +84,18 @@ As a workaround, you could install this app in other ways and then run \"binstal
 If you are okay moving forward without this app, you can provide the \"--allow-unavailable\" switch and binstall will install a non-functional stub for it.",
                               );
             } // UserError::UnsupportedPlatformAndNoGlobalApp { app_name, platform } => {
-              //     error(&format!("This app is not supported on {platform} and I didn't find a globally installed version in your PATH."));
-              //     desc(&format!(
-              //         "Please make sure that running \"{app_name}\" works and try again."
-              //     ));
-              // }
+            //     error(&format!("This app is not supported on {platform} and I didn't find a globally installed version in your PATH."));
+            //     desc(&format!(
+            //         "Please make sure that running \"{app_name}\" works and try again."
+            //     ));
+            // }
+            UserError::YardRootIsNotFolder { root } => {
+                error("The internal storage has the wrong structure.");
+                desc(&format!(
+                    "{} should is not a folder. Please delete it and try again.",
+                    root.to_string_lossy()
+                ))
+            }
         }
     }
 }

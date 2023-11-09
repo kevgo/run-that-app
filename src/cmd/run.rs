@@ -13,7 +13,7 @@ use crate::Result;
 pub fn run(requested_app: RequestedApp, output: &dyn Output) -> Result<()> {
     let app = apps::lookup(&requested_app.name)?;
     let platform = detect::detect(output)?;
-    let prodyard = yard::load(yard::production_location())?;
+    let prodyard = yard::load_or_create(&yard::production_location())?;
     let runnable_app = match prodyard.load(&requested_app, app.executable(&platform)) {
         Some(installed_app) => installed_app,
         None => install_app(&requested_app, app, &platform, prodyard, output)?,

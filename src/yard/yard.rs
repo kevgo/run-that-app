@@ -5,7 +5,7 @@ use std::io::Write;
 use std::path::PathBuf;
 
 pub struct Yard {
-    root: PathBuf,
+    pub root: PathBuf,
 }
 
 impl Yard {
@@ -73,18 +73,14 @@ mod tests {
 
     mod load {
         use crate::ui::RequestedApp;
-        use crate::yard::Yard;
+        use crate::yard::{create, Yard};
         use big_s::S;
-        use std::fs;
-        use std::io::Write;
         use std::path::PathBuf;
 
         #[test]
         fn app_in_installed() {
             let tempdir = tempfile::tempdir().unwrap();
-            let yard = Yard {
-                root: tempdir.path().to_path_buf(),
-            };
+            let yard = create(tempdir.path()).unwrap();
             let requested_app = RequestedApp {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
