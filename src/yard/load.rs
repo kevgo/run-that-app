@@ -4,7 +4,7 @@ use crate::Result;
 use std::path::Path;
 
 pub fn load(containing_folder: &Path) -> Result<Option<Yard>> {
-    let root = root_folder(&containing_folder);
+    let root = root_folder(containing_folder);
     let Ok(metadata) = root.metadata() else {
         return Ok(None);
     };

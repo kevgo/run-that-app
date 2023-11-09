@@ -24,7 +24,7 @@ pub fn run(
         Some(installed_app) => installed_app,
         None => install_app(&requested_app, app, &platform, prodyard, output)?,
     };
-    subshell::execute(runnable_app, args)
+    Ok(subshell::execute(runnable_app, args))
 }
 
 fn install_app(

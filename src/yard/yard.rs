@@ -19,7 +19,7 @@ impl Yard {
     }
 
     pub fn file_path(&self, app: &RequestedApp, file: &str) -> PathBuf {
-        self.folder_for(&app).join(file)
+        self.folder_for(app).join(file)
     }
 
     pub fn folder_for(&self, app: &RequestedApp) -> PathBuf {
@@ -32,7 +32,7 @@ impl Yard {
         use std::io::Write;
 
         fs::create_dir_all(self.folder_for(app)).unwrap();
-        let mut file = fs::File::create(self.file_path(&app, file_name)).unwrap();
+        let mut file = fs::File::create(self.file_path(app, file_name)).unwrap();
         file.write_all(file_content).unwrap();
     }
 }

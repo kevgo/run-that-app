@@ -2,7 +2,7 @@
 
 mod console;
 
-pub use console::ConsoleOutput;
+pub use console::Console;
 
 pub trait Output {
     fn log(&self, category: &str, text: &str);

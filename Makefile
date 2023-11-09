@@ -20,7 +20,7 @@ help:  # shows all available Make commands
 test: unit lint  # runs all tests
 
 lint: build  # runs all linters
-	cargo clippy --all-targets --all-features -- -Dwarnings -W clippy::pedantic
+	cargo clippy --all-targets --all-features -- -Dwarnings -W clippy::pedantic -A clippy::module-inception
 	git diff --check
 	# target/debug/run-that-app/shfmt@${SHFMT_VERSION} -f . | xargs target/debug/run-that-app/shellcheck@${SHELLCHECK_VERSION}
 

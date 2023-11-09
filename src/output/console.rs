@@ -1,11 +1,11 @@
 use super::Output;
 use std::io::{self, Write};
 
-pub struct ConsoleOutput {
+pub struct Console {
     pub category: Option<String>,
 }
 
-impl Output for ConsoleOutput {
+impl Output for Console {
     /// conditional logging of internal details
     fn log(&self, category: &str, text: &str) {
         if self.should_log(category) {
@@ -23,7 +23,7 @@ impl Output for ConsoleOutput {
     }
 }
 
-impl ConsoleOutput {
+impl Console {
     pub fn should_log(&self, mask: &str) -> bool {
         if let Some(category) = &self.category {
             category.is_empty() || mask.starts_with(category)
@@ -37,12 +37,12 @@ impl ConsoleOutput {
 mod tests {
 
     mod should_log {
-        use crate::output::ConsoleOutput;
+        use crate::output::Console;
         use big_s::S;
 
         #[test]
         fn no_category() {
-            let output = ConsoleOutput { category: None };
+            let output = Console { category: None };
             assert!(!output.should_log("foo"));
             assert!(!output.should_log("bar"));
             assert!(!output.should_log(""));
@@ -50,7 +50,7 @@ mod tests {
 
         #[test]
         fn empty_category() {
-            let output = ConsoleOutput {
+            let output = Console {
                 category: Some(S("")),
             };
             assert!(output.should_log("foo"));
@@ -60,7 +60,7 @@ mod tests {
 
         #[test]
         fn top_level_category() {
-            let output = ConsoleOutput {
+            let output = Console {
                 category: Some(S("detect")),
             };
             assert!(output.should_log("detect"));
@@ -72,7 +72,7 @@ mod tests {
 
         #[test]
         fn sub_category() {
-            let output = ConsoleOutput {
+            let output = Console {
                 category: Some(S("detect/os")),
             };
             assert!(!output.should_log("detect"));
