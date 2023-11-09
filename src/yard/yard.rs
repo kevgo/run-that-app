@@ -1,5 +1,7 @@
 use super::RunnableApp;
 use crate::ui::RequestedApp;
+use std::fs;
+use std::io::Write;
 use std::path::PathBuf;
 
 pub struct Yard {
@@ -24,6 +26,13 @@ impl Yard {
 
     pub fn folder_for(&self, app: &RequestedApp) -> PathBuf {
         self.root.join("apps").join(&app.name).join(&app.version)
+    }
+
+    // for testing
+    fn save(&self, app: &RequestedApp, file_name: &str, file_content: &[u8]) {
+        fs::create_dir_all(self.folder_for(app)).unwrap();
+        let mut file = fs::File::create(self.file_path(&app, file_name)).unwrap();
+        file.write_all(file_content).unwrap();
     }
 }
 
@@ -80,13 +89,9 @@ mod tests {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             };
-            fs::create_dir_all(yard.folder_for(&requested_app)).unwrap();
-            let executable_name = "executable";
-            let mut file =
-                fs::File::create(yard.file_path(&requested_app, &executable_name)).unwrap();
-            file.write_all(b"content").unwrap();
-
-            let Some(runnable_app) = yard.load(&requested_app, &executable_name) else {
+            let executable = "executable";
+            yard.save(&requested_app, executable, b"content");
+            let Some(runnable_app) = yard.load(&requested_app, executable) else {
                 panic!();
             };
             assert!(
@@ -114,7 +119,22 @@ mod tests {
 
         #[test]
         fn app_is_installed_but_wrong_version() {
-            // TODO
+            let tempdir = tempfile::tempdir().unwrap();
+            let yard = Yard {
+                root: tempdir.path().to_path_buf(),
+            };
+            let installed_app = RequestedApp {
+                name: S("shellcheck"),
+                version: S("0.1.0"),
+            };
+            let executable = "executable";
+            yard.save(&installed_app, executable, b"content");
+            let requested_app = RequestedApp {
+                name: S("shellcheck"),
+                version: S("0.9.0"),
+            };
+            let loaded = yard.load(&requested_app, "executable");
+            assert!(loaded.is_none());
         }
     }
 }
