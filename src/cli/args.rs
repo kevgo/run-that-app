@@ -12,7 +12,7 @@ pub struct Args {
 
 pub fn parse(mut args: impl Iterator<Item = String>) -> Result<Args> {
     let _skipped_binary_name = args.next();
-    let mut requested_ap: Option<RequestedApp> = None;
+    let mut requested_app: Option<RequestedApp> = None;
     let mut log: Option<String> = None;
     for arg in args {
         if &arg == "--help" || &arg == "-h" {
@@ -35,13 +35,13 @@ pub fn parse(mut args: impl Iterator<Item = String>) -> Result<Args> {
             }
             return Err(UserError::UnknownCliOption(arg));
         }
-        if requested_ap.is_none() {
-            requested_ap = Some(requested_app::parse(&arg));
+        if requested_app.is_none() {
+            requested_app = Some(requested_app::parse(&arg)?);
         } else {
             return Err(UserError::DuplicateRunRequest);
         }
     }
-    if let Some(requested_app) = requested_ap {
+    if let Some(requested_app) = requested_app {
         Ok(Args {
             command: Command::RunApp { app: requested_app },
             log,
