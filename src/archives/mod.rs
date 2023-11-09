@@ -1,12 +1,14 @@
 //! An archive is a compressed file containing an application.
 
 mod tar_gz;
+mod uncompressed;
 mod zip;
 
 use crate::yard::RunnableApp;
 use crate::Result;
 use std::path::Path;
 pub use tar_gz::TarGz;
+pub use uncompressed::Uncompressed;
 pub use zip::Zip;
 
 pub trait Archive {
