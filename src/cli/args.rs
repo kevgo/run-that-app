@@ -43,7 +43,10 @@ pub fn parse(mut args: impl Iterator<Item = String>) -> Result<Args> {
     }
     if let Some(requested_app) = requested_app {
         Ok(Args {
-            command: Command::RunApp { app: requested_app },
+            command: Command::RunApp {
+                app: requested_app,
+                args: vec![],
+            },
             log,
         })
     } else {
@@ -100,6 +103,7 @@ mod tests {
                             name: S("app"),
                             version: S("2"),
                         },
+                        args: vec![],
                     },
                     log: Some(S("")),
                 };
@@ -118,6 +122,7 @@ mod tests {
                             name: S("app"),
                             version: S("2"),
                         },
+                        args: vec![],
                     },
                     log: Some(S("scope")),
                 };

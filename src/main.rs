@@ -18,7 +18,7 @@ use std::process::ExitCode;
 
 fn main() -> ExitCode {
     match inner() {
-        Ok(()) => ExitCode::SUCCESS,
+        Ok(exitcode) => exitcode,
         Err(err) => {
             err.print();
             ExitCode::FAILURE
@@ -26,13 +26,12 @@ fn main() -> ExitCode {
     }
 }
 
-fn inner() -> Result<()> {
+fn inner() -> Result<ExitCode> {
     let args = cli::parse(std::env::args())?;
     let output = output::ConsoleOutput { category: args.log };
     match args.command {
-        Command::RunApp { app: request } => cmd::run(request, &output)?,
+        Command::RunApp { app, args } => cmd::run(app, args, &output),
         Command::DisplayHelp => cmd::help(&output),
         Command::DisplayVersion => cmd::version(&output),
     }
-    Ok(())
 }

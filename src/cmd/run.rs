@@ -10,8 +10,13 @@ use crate::yard::RunnableApp;
 use crate::yard::Yard;
 use crate::Output;
 use crate::Result;
+use std::process::ExitCode;
 
-pub fn run(requested_app: RequestedApp, output: &dyn Output) -> Result<()> {
+pub fn run(
+    requested_app: RequestedApp,
+    args: Vec<String>,
+    output: &dyn Output,
+) -> Result<ExitCode> {
     let app = apps::lookup(&requested_app.name)?;
     let platform = detect::detect(output)?;
     let prodyard = yard::load_or_create(&yard::production_location())?;
@@ -19,7 +24,7 @@ pub fn run(requested_app: RequestedApp, output: &dyn Output) -> Result<()> {
         Some(installed_app) => installed_app,
         None => install_app(&requested_app, app, &platform, prodyard, output)?,
     };
-    subshell::execute(runnable_app)
+    subshell::execute(runnable_app, args)
 }
 
 fn install_app(
