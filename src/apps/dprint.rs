@@ -26,7 +26,7 @@ impl App for Dprint {
             organization: "dprint",
             repo: "dprint",
             version,
-            filename: artifact_filename(platform),
+            filename: asset_filename(platform),
         })
     }
 
@@ -35,7 +35,7 @@ impl App for Dprint {
     }
 }
 
-fn artifact_filename(platform: &Platform) -> String {
+fn asset_filename(platform: &Platform) -> String {
     format!(
         "dprint-{cpu}-{os}.zip",
         os = os_text(platform.os),
