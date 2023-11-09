@@ -1,4 +1,4 @@
-use super::OnlineAsset;
+use super::OnlineLocation;
 use crate::download::{http_get, Artifact};
 use crate::ui::Output;
 use crate::Result;
@@ -11,7 +11,7 @@ pub struct GithubReleaseAsset {
     pub filename: String,
 }
 
-impl OnlineAsset for GithubReleaseAsset {
+impl OnlineLocation for GithubReleaseAsset {
     fn download(&self, output: &dyn Output) -> Result<Artifact> {
         let url = self.download_url();
         http_get(url, output)

@@ -1,6 +1,6 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::hosting::{GithubReleaseAsset, OnlineAsset};
+use crate::hosting::{GithubReleaseAsset, OnlineLocation};
 use big_s::S;
 
 pub struct Dprint {}
@@ -21,7 +21,7 @@ impl App for Dprint {
         "https://dprint.dev"
     }
 
-    fn online_location(&self, version: String, platform: &Platform) -> Box<dyn OnlineAsset> {
+    fn online_location(&self, version: String, platform: &Platform) -> Box<dyn OnlineLocation> {
         Box::new(GithubReleaseAsset {
             organization: "dprint",
             repo: "dprint",

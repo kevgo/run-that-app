@@ -4,7 +4,7 @@ mod dprint;
 
 use crate::detect::Platform;
 use crate::error::UserError;
-use crate::hosting::OnlineAsset;
+use crate::hosting::OnlineLocation;
 use crate::Result;
 use dprint::Dprint;
 
@@ -28,7 +28,7 @@ pub trait App {
     fn homepage(&self) -> &'static str;
 
     /// the location at which the app is hosted online
-    fn online_location(&self, version: String, platform: &Platform) -> Box<dyn OnlineAsset>;
+    fn online_location(&self, version: String, platform: &Platform) -> Box<dyn OnlineLocation>;
 
     /// the name of the executable file in the archive
     fn file_to_extract_from_archive(&self, version: &str, platform: &Platform) -> String;
