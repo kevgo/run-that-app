@@ -26,7 +26,7 @@ fn install_app(
     let artifact = online_asset.download(output)?;
     let archive = artifact.to_archive();
     archive.extract(
-        app.file_to_extract_from_archive(&requested_app.version),
+        app.file_to_extract_from_archive(&requested_app.version, &platform),
         &prodyard.folder_for(&requested_app),
         output,
     )

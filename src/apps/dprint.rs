@@ -23,8 +23,11 @@ impl App for Dprint {
         })
     }
 
-    fn file_to_extract_from_archive(&self, version: &str) -> String {
-        S("dprint")
+    fn file_to_extract_from_archive(&self, _version: &str, platform: &Platform) -> String {
+        S(match platform.os {
+            Os::Windows => "dprint.exe",
+            Os::Linux | Os::MacOS => "dprint",
+        })
     }
 }
 
@@ -34,13 +37,6 @@ fn artifact_filename(platform: &Platform) -> String {
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu),
     )
-}
-
-fn path_in_archive(platform: Platform) -> String {
-    String::from(match platform.os {
-        Os::Windows => "dprint.exe",
-        Os::Linux | Os::MacOS => "dprint",
-    })
 }
 
 fn os_text(os: Os) -> &'static str {

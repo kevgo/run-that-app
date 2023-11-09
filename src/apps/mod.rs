@@ -27,7 +27,7 @@ pub trait App {
     /// downloads the app for the given version and platform into the given yard
     fn online_asset(&self, version: String, platform: &Platform) -> Box<dyn OnlineAsset>;
 
-    fn file_to_extract_from_archive(&self, version: &str) -> String;
+    fn file_to_extract_from_archive(&self, version: &str, platform: &Platform) -> String;
 }
 
 fn all_apps() -> Vec<Box<dyn App>> {
