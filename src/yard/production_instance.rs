@@ -1,6 +1,6 @@
 use super::Yard;
 use crate::Result;
 
-pub fn production_instance() -> Result<Yard> {
+pub fn production() -> Result<Yard> {
     todo!()
 }

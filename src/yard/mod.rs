@@ -5,6 +5,6 @@ mod production_instance;
 mod runnable_app;
 mod yard;
 
-pub use production_instance::production_instance;
+pub use production_instance::production;
 pub use runnable_app::RunnableApp;
 pub use yard::Yard;
