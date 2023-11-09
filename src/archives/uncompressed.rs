@@ -1,3 +1,5 @@
+use crate::ui::output::Output;
+
 use super::Archive;
 
 pub struct Uncompressed {
@@ -9,6 +11,7 @@ impl Archive for Uncompressed {
         &self,
         _files: Vec<String>,
         target: &std::path::Path,
+        output: &dyn Output,
     ) -> crate::error::Result<crate::yard::RunnableApp> {
         todo!()
     }

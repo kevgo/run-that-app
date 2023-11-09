@@ -8,6 +8,8 @@ edition = "2021"
 [dependencies]
 big_s = "1.0.2"
 colored = "2.0.4"
+tar = "0.4.40"
+zip = "0.6.6"
 
 [dev-dependencies]
 pretty = { package = "pretty_assertions", version = "1.4.0" }

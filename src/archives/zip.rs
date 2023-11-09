@@ -1,3 +1,5 @@
+use crate::ui::output::Output;
+
 use super::Archive;
 
 /// a .tar.gz file downloaded from the internet, containing an application
@@ -10,6 +12,7 @@ impl Archive for Zip {
         &self,
         files: Vec<String>,
         target: &std::path::Path,
+        output: &dyn Output,
     ) -> crate::error::Result<crate::yard::RunnableApp> {
         todo!()
     }

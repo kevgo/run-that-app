@@ -28,5 +28,6 @@ fn install_app(
     archive.extract(
         app.files_to_extract_from_archive(&requested_app.version),
         &prodyard.folder_for(&requested_app),
+        output,
     )
 }

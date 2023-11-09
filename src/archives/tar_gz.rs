@@ -1,8 +1,8 @@
-use colored::Colorize;
-
 use super::Archive;
 use crate::ui::Output;
 use crate::Result;
+use colored::Colorize;
+use std::io::{self, Write};
 
 /// a .tar.gz file downloaded from the internet, containing an application
 pub struct TarGz {
