@@ -1,5 +1,8 @@
+use colored::Colorize;
+
 use super::Archive;
 use crate::ui::Output;
+use crate::Result;
 
 /// a .tar.gz file downloaded from the internet, containing an application
 pub struct TarGz {
@@ -12,10 +15,10 @@ impl Archive for TarGz {
         files: Vec<String>,
         target: &std::path::Path,
         output: &dyn Output,
-    ) -> crate::error::Result<crate::yard::RunnableApp> {
+    ) -> Result<crate::yard::RunnableApp> {
         print!(
             "extracting {} from tar.gz archive ... ",
-            path_on_disk.to_string_lossy().cyan()
+            target.to_string_lossy().cyan()
         );
         let _ = io::stdout().flush();
         let tar = GzDecoder::new(io::Cursor::new(archive));

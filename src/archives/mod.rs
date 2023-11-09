@@ -4,6 +4,7 @@ mod tar_gz;
 mod uncompressed;
 mod zip;
 
+use crate::ui::output::{self, Output};
 use crate::yard::RunnableApp;
 use crate::Result;
 use std::path::Path;
@@ -12,5 +13,10 @@ pub use uncompressed::Uncompressed;
 pub use zip::Zip;
 
 pub trait Archive {
-    fn extract(&self, files: Vec<String>, target: &Path) -> Result<RunnableApp>;
+    fn extract(
+        &self,
+        files: Vec<String>,
+        target: &Path,
+        output: &dyn Output,
+    ) -> Result<RunnableApp>;
 }
