@@ -1,15 +1,27 @@
-pub struct Output {
+use super::Output;
+
+pub struct ConsoleOutput {
     pub category: Option<String>,
 }
 
-impl Output {
+impl Output for ConsoleOutput {
     /// conditional logging of internal details
-    pub fn log(&self, category: &str, text: &str) {
+    fn log(&self, category: &str, text: &str) {
         if self.should_log(category) {
             self.println(&format!("{category}: {text}"));
         }
     }
 
+    fn print(&self, text: &str) {
+        print!("{}", text);
+    }
+
+    fn println(&self, text: &str) {
+        println!("{}", text);
+    }
+}
+
+impl ConsoleOutput {
     pub fn should_log(&self, mask: &str) -> bool {
         if let Some(category) = &self.category {
             category.is_empty() || mask.starts_with(category)
@@ -17,26 +29,18 @@ impl Output {
             false
         }
     }
-
-    pub fn print(&self, text: &str) {
-        print!("{}", text);
-    }
-
-    pub fn println(&self, text: &str) {
-        println!("{}", text);
-    }
 }
 
 #[cfg(test)]
 mod tests {
 
     mod should_log {
-        use crate::Output;
+        use crate::ui::output::ConsoleOutput;
         use big_s::S;
 
         #[test]
         fn no_category() {
-            let output = Output { category: None };
+            let output = ConsoleOutput { category: None };
             assert!(!output.should_log("foo"));
             assert!(!output.should_log("bar"));
             assert!(!output.should_log(""));
@@ -44,7 +48,7 @@ mod tests {
 
         #[test]
         fn empty_category() {
-            let output = Output {
+            let output = ConsoleOutput {
                 category: Some(S("")),
             };
             assert!(output.should_log("foo"));
@@ -54,7 +58,7 @@ mod tests {
 
         #[test]
         fn top_level_category() {
-            let output = Output {
+            let output = ConsoleOutput {
                 category: Some(S("detect")),
             };
             assert!(output.should_log("detect"));
@@ -66,7 +70,7 @@ mod tests {
 
         #[test]
         fn sub_category() {
-            let output = Output {
+            let output = ConsoleOutput {
                 category: Some(S("detect/os")),
             };
             assert!(!output.should_log("detect"));

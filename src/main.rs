@@ -11,7 +11,7 @@ mod yard;
 
 use error::{Result, UserError};
 use std::process::ExitCode;
-use ui::{Command, Output};
+use ui::Command;
 
 fn main() -> ExitCode {
     match inner() {
@@ -25,7 +25,7 @@ fn main() -> ExitCode {
 
 fn inner() -> Result<()> {
     let args = ui::cli_args::parse(std::env::args())?;
-    let output = ui::Output { category: args.log };
+    let output = ui::ConsoleOutput { category: args.log };
     match args.command {
         Command::RunApp { app: request } => cmd::run(request, &output)?,
         Command::DisplayHelp => cmd::help(&output),

@@ -1,6 +1,14 @@
 use super::Command;
 use super::{requested_app, RequestedApp};
 use crate::error::UserError;
+use crate::Result;
+
+/// all arguments that can be provided via the CLI
+#[derive(Debug, PartialEq)]
+pub struct Args {
+    pub command: Command,
+    pub log: Option<String>,
+}
 
 pub fn parse(mut args: impl Iterator<Item = String>) -> Result<Args> {
     let _skipped_binary_name = args.next();
@@ -44,13 +52,6 @@ pub fn parse(mut args: impl Iterator<Item = String>) -> Result<Args> {
             log,
         })
     }
-}
-
-/// all arguments that can be provided via the CLI
-#[derive(Debug, PartialEq)]
-pub struct Args {
-    pub command: Command,
-    pub log: Option<String>,
 }
 
 #[cfg(test)]

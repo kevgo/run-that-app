@@ -3,7 +3,7 @@ use crate::{Result, UserError};
 use std::env;
 use std::fmt::Display;
 
-pub fn determine(output: &Output) -> Result<Cpu> {
+pub fn determine(output: &dyn Output) -> Result<Cpu> {
     output.log(CATEGORY, &format!("CPU id: {}", env::consts::ARCH));
     match env::consts::ARCH {
         "x86_64" => Ok(Cpu::Intel64),

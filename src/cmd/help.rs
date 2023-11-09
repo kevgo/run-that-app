@@ -1,17 +1,17 @@
 use crate::ui::Output;
 
-pub fn help(output: &Output) {
+pub fn help(output: &dyn Output) {
     print_usage(output);
     print_options(output);
     print_examples(output);
     // print_installable_apps();
 }
 
-fn print_usage(output: &Output) {
+fn print_usage(output: &dyn Output) {
     output.println("Usage: binstall install [options] application@version\n");
 }
 
-pub fn print_options(output: &Output) {
+pub fn print_options(output: &dyn Output) {
     output.println(
         "
 Options:
@@ -24,7 +24,7 @@ Options:
     );
 }
 
-fn print_examples(output: &Output) {
+fn print_examples(output: &dyn Output) {
     output.println("Examples:");
     output
         .println("\"binstall gh@2.34.0\" installs https://github.com/cli/cli at version 2.34.0\n");

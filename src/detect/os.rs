@@ -3,7 +3,7 @@ use crate::{Result, UserError};
 use std::env;
 use std::fmt::Display;
 
-pub fn detect(output: &Output) -> Result<Os> {
+pub fn detect(output: &dyn Output) -> Result<Os> {
     output.log(CATEGORY, &format!("OS id: {}", env::consts::OS));
     match env::consts::OS {
         "linux" => Ok(Os::Linux),

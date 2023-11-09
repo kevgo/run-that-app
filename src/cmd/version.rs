@@ -1,5 +1,5 @@
-use crate::Output;
+use crate::ui::Output;
 
-pub fn version(output: &Output) {
+pub fn version(output: &dyn Output) {
     output.print("version");
 }

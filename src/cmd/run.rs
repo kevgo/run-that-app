@@ -1,12 +1,12 @@
 use crate::apps;
 use crate::detect;
 use crate::subshell;
-use crate::ui::RequestedApp;
+use crate::ui::{Output, RequestedApp};
 use crate::yard;
 use crate::yard::RunnableApp;
-use crate::{Output, Result};
+use crate::Result;
 
-pub fn run(requested_app: RequestedApp, output: &Output) -> Result<()> {
+pub fn run(requested_app: RequestedApp, output: &dyn Output) -> Result<()> {
     let prodyard = yard::production_instance()?;
     let runnable_app = match prodyard.load(&requested_app) {
         Some(installed_app) => installed_app,
@@ -18,7 +18,7 @@ pub fn run(requested_app: RequestedApp, output: &Output) -> Result<()> {
 fn install_app(
     requested_app: RequestedApp,
     prodyard: yard::Yard,
-    output: &Output,
+    output: &dyn Output,
 ) -> Result<RunnableApp> {
     let app = apps::lookup(&requested_app.name)?;
     let platform = detect::detect(output)?;

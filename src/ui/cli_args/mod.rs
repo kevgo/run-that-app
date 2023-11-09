@@ -1,6 +1,5 @@
 mod args;
 mod command;
-mod parse;
 mod requested_app;
 
 pub use args::{parse, Args};
