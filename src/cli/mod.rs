@@ -1,3 +1,5 @@
+//! CLI arguments
+
 mod args;
 mod command;
 mod requested_app;

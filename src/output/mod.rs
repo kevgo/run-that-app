@@ -1,3 +1,5 @@
+//! Output to the user
+
 mod console;
 
 pub use console::ConsoleOutput;
