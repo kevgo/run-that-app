@@ -6,28 +6,32 @@ use big_s::S;
 pub struct Dprint {}
 
 impl App for Dprint {
-    fn executable(&self) -> &'static str {
+    fn name(&self) -> &'static str {
         "dprint"
+    }
+
+    fn executable(&self, platform: &Platform) -> &'static str {
+        match platform.os {
+            Os::Windows => "dprint.exe",
+            Os::Linux | Os::MacOS => "dprint",
+        }
     }
 
     fn homepage(&self) -> &'static str {
         "https://dprint.dev"
     }
 
-    fn online_asset(&self, version: String, platform: &Platform) -> Box<dyn OnlineAsset> {
+    fn online_location(&self, version: String, platform: &Platform) -> Box<dyn OnlineAsset> {
         Box::new(GithubReleaseAsset {
-            organization: String::from("dprint"),
-            repo: String::from("dprint"),
+            organization: "dprint",
+            repo: "dprint",
             version,
             filename: artifact_filename(platform),
         })
     }
 
     fn file_to_extract_from_archive(&self, _version: &str, platform: &Platform) -> String {
-        S(match platform.os {
-            Os::Windows => "dprint.exe",
-            Os::Linux | Os::MacOS => "dprint",
-        })
+        S(self.executable(platform))
     }
 }
 

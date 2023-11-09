@@ -5,8 +5,8 @@ use crate::Result;
 
 /// a file ("asset" in GitHub lingo) attached to a particular GitHub Release
 pub struct GithubReleaseAsset {
-    pub organization: String,
-    pub repo: String,
+    pub organization: &'static str,
+    pub repo: &'static str,
     pub version: String,
     pub filename: String,
 }

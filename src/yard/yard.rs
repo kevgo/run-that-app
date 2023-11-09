@@ -11,8 +11,12 @@ impl Yard {
         todo!()
     }
 
+    pub fn file_path(&self, app: RequestedApp, file: &str) -> PathBuf {
+        todo!()
+    }
+
     pub fn folder_for(&self, app: &RequestedApp) -> PathBuf {
-        PathBuf::new()
+        todo!()
     }
 }
 

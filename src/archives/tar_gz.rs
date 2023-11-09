@@ -8,6 +8,7 @@ use std::io;
 
 #[cfg(unix)]
 use std::os::unix::prelude::PermissionsExt;
+use std::path::PathBuf;
 
 /// a .tar.gz file downloaded from the internet, containing an application
 pub struct TarGz {
@@ -18,7 +19,7 @@ impl Archive for TarGz {
     fn extract(
         &self,
         path_in_archive: String,
-        path_on_disk: &std::path::Path,
+        path_on_disk: PathBuf,
         output: &dyn Output,
     ) -> Result<RunnableApp> {
         output.print(&format!(
@@ -37,13 +38,15 @@ impl Archive for TarGz {
                 continue;
             }
             found_file = true;
-            file.unpack(path_on_disk).unwrap();
+            file.unpack(&path_on_disk).unwrap();
         }
         assert!(found_file, "file {path_in_archive} not found in archive");
         #[cfg(unix)]
-        std::fs::set_permissions(path_on_disk, std::fs::Permissions::from_mode(0o744)).unwrap();
+        std::fs::set_permissions(&path_on_disk, std::fs::Permissions::from_mode(0o744)).unwrap();
         println!("{}", "ok".green());
-        Ok(RunnableApp {})
+        Ok(RunnableApp {
+            executable: path_on_disk,
+        })
     }
 }
 
