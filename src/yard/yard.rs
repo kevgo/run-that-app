@@ -12,11 +12,11 @@ impl Yard {
     }
 
     pub fn file_path(&self, app: RequestedApp, file: &str) -> PathBuf {
-        todo!()
+        self.folder_for(&app).join(file)
     }
 
     pub fn folder_for(&self, app: &RequestedApp) -> PathBuf {
-        todo!()
+        self.root.join("apps").join(&app.name).join(&app.version)
     }
 }
 
@@ -30,16 +30,16 @@ mod tests {
 
         #[test]
         fn foo() {
-            let temp_dir = tempfile::tempdir().unwrap();
             let yard = Yard {
-                root: temp_dir.path().to_path_buf(),
+                root: PathBuf::from("/root"),
             };
             let app = RequestedApp {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             };
             let have = yard.folder_for(&app);
-            let want = PathBuf::from("");
+            let want = PathBuf::from("/root/apps/shellcheck/0.9.0");
+            assert_eq!(have, want);
         }
     }
 
