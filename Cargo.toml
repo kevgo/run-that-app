@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 big_s = "1.0.2"
 colored = "2.0.4"
+flate2 = "1.0.28"
 tar = "0.4.40"
 zip = "0.6.6"
 

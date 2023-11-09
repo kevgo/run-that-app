@@ -9,7 +9,7 @@ pub struct Uncompressed {
 impl Archive for Uncompressed {
     fn extract(
         &self,
-        _files: Vec<String>,
+        path_in_archive: String,
         target: &std::path::Path,
         output: &dyn Output,
     ) -> crate::error::Result<crate::yard::RunnableApp> {

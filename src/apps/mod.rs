@@ -19,7 +19,7 @@ pub fn lookup(name: &str) -> Result<Box<dyn App>> {
 pub trait App {
     fn executable(&self) -> &'static str;
     fn hoster(&self) -> Box<dyn Hoster>;
-    fn files_to_extract_from_archive(&self, version: &str) -> Vec<String>;
+    fn file_to_extract_from_archive(&self, version: &str) -> String;
 }
 
 fn all_apps() -> Vec<Box<dyn App>> {

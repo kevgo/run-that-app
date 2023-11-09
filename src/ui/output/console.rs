@@ -1,4 +1,5 @@
 use super::Output;
+use std::io::{self, Write};
 
 pub struct ConsoleOutput {
     pub category: Option<String>,
@@ -18,6 +19,10 @@ impl Output for ConsoleOutput {
 
     fn println(&self, text: &str) {
         println!("{}", text);
+    }
+
+    fn flush(&self) {
+        let _ = io::stdout().flush();
     }
 }
 

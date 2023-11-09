@@ -10,7 +10,7 @@ pub struct Zip {
 impl Archive for Zip {
     fn extract(
         &self,
-        files: Vec<String>,
+        path_in_archive: String,
         target: &std::path::Path,
         output: &dyn Output,
     ) -> crate::error::Result<crate::yard::RunnableApp> {

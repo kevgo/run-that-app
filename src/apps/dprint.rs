@@ -16,7 +16,7 @@ impl App for Dprint {
         })
     }
 
-    fn files_to_extract_from_archive(&self, _version: &str) -> Vec<String> {
-        vec![S("dprint")]
+    fn file_to_extract_from_archive(&self, _version: &str) -> String {
+        S("dprint")
     }
 }

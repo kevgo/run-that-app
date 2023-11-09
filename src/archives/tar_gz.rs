@@ -1,8 +1,13 @@
 use super::Archive;
 use crate::ui::Output;
+use crate::yard::RunnableApp;
 use crate::Result;
 use colored::Colorize;
-use std::io::{self, Write};
+use flate2::read::GzDecoder;
+use std::io;
+
+#[cfg(unix)]
+use std::os::unix::prelude::PermissionsExt;
 
 /// a .tar.gz file downloaded from the internet, containing an application
 pub struct TarGz {
@@ -12,23 +17,23 @@ pub struct TarGz {
 impl Archive for TarGz {
     fn extract(
         &self,
-        files: Vec<String>,
-        target: &std::path::Path,
+        path_in_archive: String,
+        path_on_disk: &std::path::Path,
         output: &dyn Output,
-    ) -> Result<crate::yard::RunnableApp> {
-        print!(
+    ) -> Result<RunnableApp> {
+        output.print(&format!(
             "extracting {} from tar.gz archive ... ",
-            target.to_string_lossy().cyan()
-        );
-        let _ = io::stdout().flush();
-        let tar = GzDecoder::new(io::Cursor::new(archive));
-        let mut archive = Archive::new(tar);
+            path_on_disk.to_string_lossy().cyan()
+        ));
+        output.flush();
+        let tar = GzDecoder::new(io::Cursor::new(&self.data));
+        let mut archive = tar::Archive::new(tar);
         let mut found_file = false;
         for file in archive.entries().unwrap() {
             let mut file = file.unwrap();
             let filepath = file.path().unwrap().to_path_buf();
             let filepath = filepath.to_string_lossy();
-            logger.log(CATEGORY, &format!("- {filepath}"));
+            output.log(CATEGORY, &format!("- {filepath}"));
             if filepath != path_in_archive {
                 continue;
             }
@@ -39,5 +44,8 @@ impl Archive for TarGz {
         #[cfg(unix)]
         std::fs::set_permissions(path_on_disk, std::fs::Permissions::from_mode(0o744)).unwrap();
         println!("{}", "ok".green());
+        Ok(RunnableApp {})
     }
 }
+
+const CATEGORY: &str = "extract/tar.gz";

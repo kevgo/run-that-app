@@ -4,6 +4,7 @@ use colored::Colorize;
 #[derive(Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions)]
 pub enum UserError {
+    ArchiveDoesNotContainFile(String),
     CannotDetermineCPU,
     CannotDetermineOS,
     CannotDownload { url: String, reason: String },
@@ -26,6 +27,12 @@ pub enum UserError {
 impl UserError {
     pub fn print(self) {
         match self {
+            UserError::ArchiveDoesNotContainFile(filename) => {
+                error(&format!(
+                    "the downloaded archive does not contain file {}",
+                    filename
+                ));
+            }
             UserError::CannotDetermineCPU => {
                 error("cannot determine the CPU");
                 desc("Request support for your platform at https://github.com/kevgo/binstall/issues.");

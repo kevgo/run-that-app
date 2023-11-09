@@ -397,6 +397,7 @@ version = "0.0.0"
 dependencies = [
  "big_s",
  "colored",
+ "flate2",
  "pretty_assertions",
  "tar",
  "tempfile",
