@@ -116,9 +116,7 @@ mod tests {
         #[test]
         fn app_is_installed_but_wrong_version() {
             let tempdir = tempfile::tempdir().unwrap();
-            let yard = Yard {
-                root: tempdir.path().to_path_buf(),
-            };
+            let yard = create(tempdir.path()).unwrap();
             let installed_app = RequestedApp {
                 name: S("shellcheck"),
                 version: S("0.1.0"),
