@@ -15,14 +15,11 @@ impl Output for ConsoleOutput {
 
     fn print(&self, text: &str) {
         print!("{}", text);
+        let _ = io::stdout().flush();
     }
 
     fn println(&self, text: &str) {
         println!("{}", text);
-    }
-
-    fn flush(&self) {
-        let _ = io::stdout().flush();
     }
 }
 

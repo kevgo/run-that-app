@@ -22,8 +22,8 @@ fn install_app(
 ) -> Result<RunnableApp> {
     let app = apps::lookup(&requested_app.name)?;
     let platform = detect::detect(output)?;
-    let hoster = app.hoster();
-    let artifact = hoster.download(&platform)?;
+    let online_asset = app.online_asset(requested_app.version.clone(), &platform);
+    let artifact = online_asset.download(output)?;
     let archive = artifact.to_archive();
     archive.extract(
         app.file_to_extract_from_archive(&requested_app.version),

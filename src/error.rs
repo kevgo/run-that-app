@@ -14,10 +14,7 @@ pub enum UserError {
     UnknownArchive(String),
     UnknownApp(String),
     UnknownCliOption(String),
-    // UnsupportedPlatform {
-    //     app_name: String,
-    //     platform: Platform,
-    // },
+    UnsupportedPlatform,
     // UnsupportedPlatformAndNoGlobalApp {
     //     app_name: String,
     //     platform: Platform,
@@ -62,23 +59,20 @@ impl UserError {
             UserError::UnknownCliOption(option) => {
                 error(&format!("Unknown option: {option}"));
                 // help::print_options();
-            } //             UserError::UnsupportedPlatform { app_name, platform } => {
-              //                 error(&format!(
-              //                     "{app_name} does not seem to support this platform ({platform}).",
-              //                 ));
-              //                 desc(
-              //                     "It looks like there are no binary versions for this app for your platform.
+            }
+            UserError::UnsupportedPlatform => {
+                error("This application does not seem to support your platform.");
+                desc("It looks like there are no binary versions for this app for your platform.
 
-              // As a workaround, you could install this app in other ways and then run \"binstall --fallback-to-existing\".
-              // If you are okay moving forward without this app, you can provide the \"--allow-unavailable\" switch and binstall will install a non-functional stub for it.",
-              //                 );
-              //             }
-              //             UserError::UnsupportedPlatformAndNoGlobalApp { app_name, platform } => {
-              //                 error(&format!("This app is not supported on {platform} and I didn't find a globally installed version in your PATH."));
-              //                 desc(&format!(
-              //                     "Please make sure that running \"{app_name}\" works and try again."
-              //                 ));
-              //             }
+As a workaround, you could install this app in other ways and then run \"binstall --fallback-to-existing\".
+If you are okay moving forward without this app, you can provide the \"--allow-unavailable\" switch and binstall will install a non-functional stub for it.",
+                              );
+            } // UserError::UnsupportedPlatformAndNoGlobalApp { app_name, platform } => {
+              //     error(&format!("This app is not supported on {platform} and I didn't find a globally installed version in your PATH."));
+              //     desc(&format!(
+              //         "Please make sure that running \"{app_name}\" works and try again."
+              //     ));
+              // }
         }
     }
 }

@@ -25,7 +25,6 @@ impl Archive for TarGz {
             "extracting {} from tar.gz archive ... ",
             path_on_disk.to_string_lossy().cyan()
         ));
-        output.flush();
         let tar = GzDecoder::new(io::Cursor::new(&self.data));
         let mut archive = tar::Archive::new(tar);
         let mut found_file = false;

@@ -2,8 +2,9 @@
 
 mod dprint;
 
+use crate::detect::Platform;
 use crate::error::UserError;
-use crate::hosting::Hoster;
+use crate::hosting::OnlineAsset;
 use crate::Result;
 use dprint::Dprint;
 
@@ -17,8 +18,15 @@ pub fn lookup(name: &str) -> Result<Box<dyn App>> {
 }
 
 pub trait App {
+    /// the name of the executable that starts this app
     fn executable(&self) -> &'static str;
-    fn hoster(&self) -> Box<dyn Hoster>;
+
+    /// link to the homepage of the app
+    fn homepage(&self) -> &'static str;
+
+    /// downloads the app for the given version and platform into the given yard
+    fn online_asset(&self, version: String, platform: &Platform) -> Box<dyn OnlineAsset>;
+
     fn file_to_extract_from_archive(&self, version: &str) -> String;
 }
 

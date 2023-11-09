@@ -1,13 +1,12 @@
-//! the various hosting platforms from which we can download executables
+mod github_releases;
 
-mod github;
-
-use crate::detect::Platform;
 use crate::download::Artifact;
+use crate::ui::Output;
 use crate::Result;
-pub use github::GitHub;
+pub use github_releases::GithubReleaseAsset;
 
-pub trait Hoster {
-    fn download(&self, platform: &Platform) -> Result<Artifact>;
-    fn homepage(&self) -> String;
+/// an online location containing an application
+pub trait OnlineAsset {
+    /// downloads the artifact containing the application from this hoster
+    fn download(&self, output: &dyn Output) -> Result<Artifact>;
 }
