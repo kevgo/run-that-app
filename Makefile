@@ -17,12 +17,12 @@ fix: build  # auto-corrects issues
 help:  # shows all available Make commands
 	cat Makefile | grep '^[^ ]*:' | grep -v '.PHONY' | grep -v '.SILENT:' | grep '#' | grep -v help | sed 's/:.*#/#/' | column -s "#" -t
 
-test: unit lint  # runs all tests
-
 lint: build  # runs all linters
 	cargo clippy --all-targets --all-features -- -Dwarnings -W clippy::pedantic -A clippy::module-inception
 	git diff --check
 	# target/debug/run-that-app/shfmt@${SHFMT_VERSION} -f . | xargs target/debug/run-that-app/shellcheck@${SHELLCHECK_VERSION}
+
+test: unit lint  # runs all tests
 
 unit:  # runs the unit tests
 	cargo test
