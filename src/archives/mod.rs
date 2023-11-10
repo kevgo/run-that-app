@@ -24,7 +24,7 @@ pub trait Archive {
     ) -> Result<RunnableApp>;
 }
 
-/// provides an Archive implementation that can extract the given artifact
+/// extracts the given file in the given artifact to the given location on disk
 pub fn extract(
     artifact: Artifact,
     path_in_archive: String,
