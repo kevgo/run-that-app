@@ -11,7 +11,7 @@ build:  # compiles this app in debug mode
 fix: build  # auto-corrects issues
 	cargo fix
 	cargo fmt
-	# target/debug/run-that-app dprint@${DPRINT_VERSION} fmt
+	target/debug/run-that-app dprint@${DPRINT_VERSION} fmt
 	# target/debug/run-that-app/shfmt@${SHFMT_VERSION} -f . | xargs "target/debug/run-that-app/shfmt@${SHFMT_VERSION}" -w
 
 help:  # shows all available Make commands
