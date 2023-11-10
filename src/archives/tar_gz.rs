@@ -31,7 +31,7 @@ impl Archive for TarGz {
         let mut found_file = false;
         for file in archive.entries().unwrap() {
             let mut file = file.unwrap();
-            let filepath = file.path().unwrap().to_path_buf();
+            let filepath = file.path().unwrap();
             let filepath = filepath.to_string_lossy();
             output.log(CATEGORY, &format!("- {filepath}"));
             if filepath != path_in_archive {
