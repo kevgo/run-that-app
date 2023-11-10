@@ -16,6 +16,10 @@ curl https://raw.githubusercontent.com/kevgo/run-that-app/main/install.sh | sh
 ./run-that-app shellcheck@0.9.0
 ```
 
+Please note that you need to provide the version exactly like it is in the app
+repository. On GitHub Releases, the version tag often begins with the letter
+`v`.
+
 ### why
 
 Reasons to use _run-that-app_ over traditional forms of installation (package
