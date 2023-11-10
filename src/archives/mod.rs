@@ -1,5 +1,3 @@
-//! An archive is a compressed file containing an application.
-
 mod tar_gz;
 mod zip;
 
@@ -11,9 +9,12 @@ use std::path::PathBuf;
 pub use tar_gz::TarGz;
 pub use zip::Zip;
 
+/// An archive is a compressed file containing an application.
 pub trait Archive {
+    /// indicates whether this archive implementation can extract the file with the given name
     fn can_extract(&self, filename: &str) -> bool;
 
+    /// extracts the given file from the given archive file content to the given location on disk
     fn extract(
         &self,
         data: Vec<u8>,
