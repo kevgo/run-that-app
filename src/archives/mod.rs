@@ -36,6 +36,7 @@ pub fn extract(
             return archive.extract(artifact.data, path_in_archive, path_on_disk, output);
         }
     }
+    // here the file doesn't match any of the known archives --> we assume its the binary itself
     filesystem::save_buffer(artifact.data, path_on_disk, output)
 }
 
