@@ -7,6 +7,7 @@ use colored::Colorize;
 #[allow(clippy::module_name_repetitions)]
 pub enum UserError {
     CannotDetermineCPU,
+    CannotDetermineHomeDirectory,
     CannotDetermineOS,
     CannotDownload { url: String, reason: String },
     CannotCreateFolder { folder: PathBuf, reason: String },
@@ -31,6 +32,7 @@ impl UserError {
                 error("cannot determine the CPU");
                 desc("Request support for your platform at https://github.com/kevgo/binstall/issues.");
             }
+            UserError::CannotDetermineHomeDirectory => error("cannot determine home directory"),
             UserError::CannotDetermineOS => {
                 error("cannot determine the operating system");
                 desc("Request support for your platform at https://github.com/kevgo/binstall/issues.");
