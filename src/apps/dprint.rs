@@ -22,25 +22,22 @@ impl App for Dprint {
     }
 
     fn artifact_location(&self, version: String, platform: Platform) -> Box<dyn OnlineLocation> {
+        let filename = format!(
+            "dprint-{cpu}-{os}.zip",
+            os = os_text(platform.os),
+            cpu = cpu_text(platform.cpu),
+        );
         Box::new(GithubReleaseAsset {
             organization: "dprint",
             repo: "dprint",
             version,
-            filename: asset_filename(platform),
+            filename,
         })
     }
 
     fn file_to_extract_from_archive(&self, _version: &str, platform: Platform) -> String {
         S(self.executable(platform))
     }
-}
-
-fn asset_filename(platform: Platform) -> String {
-    format!(
-        "dprint-{cpu}-{os}.zip",
-        os = os_text(platform.os),
-        cpu = cpu_text(platform.cpu),
-    )
 }
 
 fn os_text(os: Os) -> &'static str {

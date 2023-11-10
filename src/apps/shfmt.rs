@@ -21,7 +21,12 @@ impl App for Shfmt {
     }
 
     fn artifact_location(&self, version: String, platform: Platform) -> Box<dyn OnlineLocation> {
-        let filename = asset_filename(&version, platform);
+        let filename = format!(
+            "shfmt_{version}_{os}_{cpu}{ext}",
+            os = os_text(platform.os),
+            cpu = cpu_text(platform.cpu),
+            ext = ext_text(platform.os),
+        );
         Box::new(GithubReleaseAsset {
             organization: "mvdan",
             repo: "sh",
@@ -33,15 +38,6 @@ impl App for Shfmt {
     fn file_to_extract_from_archive(&self, _version: &str, _platform: Platform) -> String {
         String::new()
     }
-}
-
-fn asset_filename(version: &str, platform: Platform) -> String {
-    format!(
-        "shfmt_{version}_{os}_{cpu}{ext}",
-        os = os_text(platform.os),
-        cpu = cpu_text(platform.cpu),
-        ext = ext_text(platform.os),
-    )
 }
 
 fn os_text(os: Os) -> &'static str {
