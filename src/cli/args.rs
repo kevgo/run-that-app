@@ -57,12 +57,17 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
 #[cfg(test)]
 mod tests {
 
+    fn make_args(args: Vec<&'static str>) -> impl Iterator<Item = String> {
+        args.into_iter().map(ToString::to_string)
+    }
+
     mod parse {
+        use super::make_args;
         use crate::cli::{args, Args, Command};
 
         #[test]
         fn no_arguments() {
-            let args = vec!["run-that-app"].into_iter().map(ToString::to_string);
+            let args = make_args(vec!["run-that-app"]);
             let have = args::parse(args).unwrap();
             let want = Args {
                 log: None,
@@ -72,14 +77,13 @@ mod tests {
         }
 
         mod version_parameter {
+            use super::make_args;
             use crate::cli::{args, Command};
             use args::Args;
 
             #[test]
             fn short() {
-                let args = vec!["run-that-app", "-V"]
-                    .into_iter()
-                    .map(ToString::to_string);
+                let args = make_args(vec!["run-that-app", "-V"]);
                 let have = args::parse(args).unwrap();
                 let want = Args {
                     log: None,
@@ -90,9 +94,7 @@ mod tests {
 
             #[test]
             fn long() {
-                let args = vec!["run-that-app", "--version"]
-                    .into_iter()
-                    .map(ToString::to_string);
+                let args = make_args(vec!["run-that-app", "--version"]);
                 let have = args::parse(args).unwrap();
                 let want = Args {
                     log: None,
@@ -103,14 +105,13 @@ mod tests {
         }
 
         mod help_parameter {
+            use super::make_args;
             use crate::cli::{args, Command};
             use args::Args;
 
             #[test]
             fn short() {
-                let args = vec!["run-that-app", "-h"]
-                    .into_iter()
-                    .map(ToString::to_string);
+                let args = make_args(vec!["run-that-app", "-h"]);
                 let have = args::parse(args).unwrap();
                 let want = Args {
                     log: None,
@@ -121,9 +122,7 @@ mod tests {
 
             #[test]
             fn long() {
-                let args = vec!["run-that-app", "-h"]
-                    .into_iter()
-                    .map(ToString::to_string);
+                let args = make_args(vec!["run-that-app", "-h"]);
                 let have = args::parse(args).unwrap();
                 let want = Args {
                     log: None,
@@ -134,14 +133,13 @@ mod tests {
         }
 
         mod log_parameter {
+            use super::make_args;
             use crate::cli::{args, Args, Command, RequestedApp};
             use big_s::S;
 
             #[test]
             fn everything() {
-                let args = vec!["run-that-app", "--log", "app@2"]
-                    .into_iter()
-                    .map(ToString::to_string);
+                let args = make_args(vec!["run-that-app", "--log", "app@2"]);
                 let have = args::parse(args).unwrap();
                 let want = Args {
                     command: Command::RunApp {
@@ -158,9 +156,7 @@ mod tests {
 
             #[test]
             fn limited() {
-                let args = vec!["run-that-app", "--log=scope", "app@2"]
-                    .into_iter()
-                    .map(ToString::to_string);
+                let args = make_args(vec!["run-that-app", "--log=scope", "app@2"]);
                 let have = args::parse(args).unwrap();
                 let want = Args {
                     command: Command::RunApp {
@@ -177,15 +173,14 @@ mod tests {
         }
 
         mod application_arguments {
+            use super::make_args;
             use crate::cli::{args, Command, RequestedApp};
             use args::Args;
             use big_s::S;
 
             #[test]
             fn no_arguments() {
-                let args = vec!["run-that-app", "app@2"]
-                    .into_iter()
-                    .map(ToString::to_string);
+                let args = make_args(vec!["run-that-app", "app@2"]);
                 let have = args::parse(args).unwrap();
                 let want = Args {
                     command: Command::RunApp {
@@ -202,9 +197,7 @@ mod tests {
 
             #[test]
             fn some_arguments() {
-                let args = vec!["run-that-app", "app@2", "--switch-1", "--switch-2"]
-                    .into_iter()
-                    .map(ToString::to_string);
+                let args = make_args(vec!["run-that-app", "app@2", "--switch-1", "--switch-2"]);
                 let have = args::parse(args).unwrap();
                 let want = Args {
                     command: Command::RunApp {
@@ -221,9 +214,7 @@ mod tests {
 
             #[test]
             fn rta_and_app_arguments() {
-                let args = vec!["run-that-app", "--log", "app@2", "--switch-1", "--switch-2"]
-                    .into_iter()
-                    .map(ToString::to_string);
+                let args = make_args(vec!["run-that-app", "--log", "app@2", "--s1", "--s2"]);
                 let have = args::parse(args).unwrap();
                 let want = Args {
                     command: Command::RunApp {
@@ -240,9 +231,7 @@ mod tests {
 
             #[test]
             fn same_arguments_as_run_that_app() {
-                let args = vec!["run-that-app", "app@2", "--log=app", "--version"]
-                    .into_iter()
-                    .map(ToString::to_string);
+                let args = make_args(vec!["run-that-app", "app@2", "--log=app", "--version"]);
                 let have = args::parse(args).unwrap();
                 let want = Args {
                     command: Command::RunApp {
