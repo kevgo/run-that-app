@@ -25,7 +25,7 @@ pub trait App {
     /// the name by which the user can select this application at the run-that-app CLI
     fn name(&self) -> &'static str;
 
-    /// the name of the executable that starts this app
+    /// the filename of the executable that starts this app
     fn executable(&self, platform: Platform) -> &'static str;
 
     /// link to the (human-readable) homepage of the app
