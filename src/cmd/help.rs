@@ -1,11 +1,11 @@
-use crate::Output;
+use crate::{apps, Output};
 use std::process::ExitCode;
 
 pub fn help(output: &dyn Output) -> ExitCode {
     print_usage(output);
     print_options(output);
     print_examples(output);
-    // print_installable_apps();
+    print_installable_apps(output);
     ExitCode::SUCCESS
 }
 
@@ -32,18 +32,12 @@ fn print_examples(output: &dyn Output) {
         .println("\"binstall gh@2.34.0\" installs https://github.com/cli/cli at version 2.34.0\n");
 }
 
-// pub fn print_installable_apps(output: &dyn Output) {
-//     output.println!("\nInstallable applications:");
-//     let app_manager = apps::Manager::new();
-//     let installables = app_manager.installable_apps();
-//     let max_width = longest_name(&installables) + 1;
-//     for app in app_manager.installable_apps() {
-//         output.println!("{:max_width$} {}", app.name, app.repo);
-//     }
-//     output.println!("\nRequest additional apps at https://github.com/kevgo/binstall/issues.");
-// }
-
-// fn longest_name(apps: &[InstallableApp]) -> usize {
-//     apps.iter()
-//         .fold(0, |result, app| result.max(app.name.len()))
-// }
+pub fn print_installable_apps(output: &dyn Output) {
+    output.println("\nInstallable applications:");
+    let apps = apps::all_apps();
+    let max_width = apps.iter().map(|app| app.name().len()).max().unwrap() + 1;
+    for app in apps {
+        output.println(&format!("{:max_width$} {}", app.name(), app.homepage()));
+    }
+    output.println("\nRequest additional apps at https://github.com/kevgo/run-that-app/issues.");
+}

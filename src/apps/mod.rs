@@ -38,10 +38,10 @@ pub trait App {
     fn file_to_extract_from_archive(&self, version: &str, platform: Platform) -> String;
 }
 
-fn all_apps() -> Vec<Box<dyn App>> {
+pub fn all_apps() -> Vec<Box<dyn App>> {
     vec![
         Box::new(Dprint {}),
-        Box::new(Shfmt {}),
         Box::new(ShellCheck {}),
+        Box::new(Shfmt {}),
     ]
 }
