@@ -226,7 +226,23 @@ mod tests {
             }
 
             #[test]
-            fn rta_and_app_arguments() {}
+            fn rta_and_app_arguments() {
+                let args = vec!["run-that-app", "--log", "app@2", "--switch-1", "--switch-2"]
+                    .into_iter()
+                    .map(ToString::to_string);
+                let have = args::parse(args).unwrap();
+                let want = Args {
+                    command: Command::RunApp {
+                        app: RequestedApp {
+                            name: S("app"),
+                            version: S("2"),
+                        },
+                        args: vec![S("--switch-1"), S("--switch-2")],
+                    },
+                    log: Some(S("")),
+                };
+                pretty::assert_eq!(have, want);
+            }
 
             #[test]
             fn same_arguments_as_run_that_app() {}
