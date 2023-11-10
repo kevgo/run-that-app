@@ -190,14 +190,14 @@ mod tests {
 
             #[test]
             fn some_arguments() {
-                let have = parse_args(vec!["run-that-app", "app@2", "--switch-1", "--switch-2"]);
+                let have = parse_args(vec!["run-that-app", "app@2", "--arg1", "--arg2"]);
                 let want = Args {
                     command: Command::RunApp {
                         app: RequestedApp {
                             name: S("app"),
                             version: S("2"),
                         },
-                        args: vec![S("--switch-1"), S("--switch-2")],
+                        args: vec![S("--arg1"), S("--arg2")],
                     },
                     log: None,
                 };
@@ -206,14 +206,14 @@ mod tests {
 
             #[test]
             fn rta_and_app_arguments() {
-                let have = parse_args(vec!["run-that-app", "--log", "app@2", "--s1", "--s2"]);
+                let have = parse_args(vec!["run-that-app", "--log", "app@2", "--arg1", "--arg2"]);
                 let want = Args {
                     command: Command::RunApp {
                         app: RequestedApp {
                             name: S("app"),
                             version: S("2"),
                         },
-                        args: vec![S("--s1"), S("--s2")],
+                        args: vec![S("--arg1"), S("--arg2")],
                     },
                     log: Some(S("")),
                 };
