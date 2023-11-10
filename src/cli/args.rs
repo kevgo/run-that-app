@@ -190,14 +190,14 @@ mod tests {
 
             #[test]
             fn some_arguments() {
-                let have = parse_args(vec!["run-that-app", "app@2", "--arg1", "--arg2"]);
+                let have = parse_args(vec!["run-that-app", "app@2", "--arg1", "arg2"]);
                 let want = Args {
                     command: Command::RunApp {
                         app: RequestedApp {
                             name: S("app"),
                             version: S("2"),
                         },
-                        args: vec![S("--arg1"), S("--arg2")],
+                        args: vec![S("--arg1"), S("arg2")],
                     },
                     log: None,
                 };
