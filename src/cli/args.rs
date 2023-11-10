@@ -245,7 +245,23 @@ mod tests {
             }
 
             #[test]
-            fn same_arguments_as_run_that_app() {}
+            fn same_arguments_as_run_that_app() {
+                let args = vec!["run-that-app", "app@2", "--log=app", "--version"]
+                    .into_iter()
+                    .map(ToString::to_string);
+                let have = args::parse(args).unwrap();
+                let want = Args {
+                    command: Command::RunApp {
+                        app: RequestedApp {
+                            name: S("app"),
+                            version: S("2"),
+                        },
+                        args: vec![S("--log=app"), S("--version")],
+                    },
+                    log: None,
+                };
+                pretty::assert_eq!(have, want);
+            }
         }
     }
 }
