@@ -20,7 +20,7 @@ impl App for Shfmt {
         "https://github.com/mvdan/sh"
     }
 
-    fn artifact_location(&self, version: String, platform: Platform) -> Box<dyn OnlineLocation> {
+    fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation> {
         let filename = format!(
             "shfmt_{version}_{os}_{cpu}{ext}",
             os = os_text(platform.os),
@@ -30,7 +30,7 @@ impl App for Shfmt {
         Box::new(GithubReleaseAsset {
             organization: "mvdan",
             repo: "sh",
-            version,
+            version: version.to_string(),
             filename,
         })
     }

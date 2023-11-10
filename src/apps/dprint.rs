@@ -21,7 +21,7 @@ impl App for Dprint {
         "https://dprint.dev"
     }
 
-    fn artifact_location(&self, version: String, platform: Platform) -> Box<dyn OnlineLocation> {
+    fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation> {
         let filename = format!(
             "dprint-{cpu}-{os}.zip",
             os = os_text(platform.os),
@@ -30,7 +30,7 @@ impl App for Dprint {
         Box::new(GithubReleaseAsset {
             organization: "dprint",
             repo: "dprint",
-            version,
+            version: version.to_string(),
             filename,
         })
     }

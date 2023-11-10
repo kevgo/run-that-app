@@ -21,7 +21,7 @@ impl App for ShellCheck {
         "https://www.shellcheck.net"
     }
 
-    fn artifact_location(&self, version: String, platform: Platform) -> Box<dyn OnlineLocation> {
+    fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation> {
         let filename = format!(
             "shellcheck-{version}.{os}.{cpu}.{ext}",
             os = os_text(platform.os),
@@ -31,7 +31,7 @@ impl App for ShellCheck {
         Box::new(GithubReleaseAsset {
             organization: "koalaman",
             repo: "shellcheck",
-            version,
+            version: version.to_string(),
             filename,
         })
     }

@@ -13,7 +13,7 @@ use shellcheck::ShellCheck;
 use shfmt::Shfmt;
 
 pub fn lookup(name: &str) -> Result<Box<dyn App>> {
-    for app in all_apps() {
+    for app in all() {
         if app.name() == name {
             return Ok(app);
         }
@@ -32,13 +32,13 @@ pub trait App {
     fn homepage(&self) -> &'static str;
 
     /// the location at which the app is hosted online
-    fn artifact_location(&self, version: String, platform: Platform) -> Box<dyn OnlineLocation>;
+    fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation>;
 
     /// the name of the executable file in the archive
     fn file_to_extract_from_archive(&self, version: &str, platform: Platform) -> String;
 }
 
-pub fn all_apps() -> Vec<Box<dyn App>> {
+pub fn all() -> Vec<Box<dyn App>> {
     vec![
         Box::new(Dprint {}),
         Box::new(ShellCheck {}),
