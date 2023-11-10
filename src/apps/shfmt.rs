@@ -20,7 +20,7 @@ impl App for Shfmt {
         "https://github.com/mvdan/sh"
     }
 
-    fn online_location(&self, version: String, platform: Platform) -> Box<dyn OnlineLocation> {
+    fn artifact_location(&self, version: String, platform: Platform) -> Box<dyn OnlineLocation> {
         let filename = asset_filename(&version, platform);
         Box::new(GithubReleaseAsset {
             organization: "mvdan",

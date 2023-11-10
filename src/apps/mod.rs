@@ -32,7 +32,7 @@ pub trait App {
     fn homepage(&self) -> &'static str;
 
     /// the location at which the app is hosted online
-    fn online_location(&self, version: String, platform: Platform) -> Box<dyn OnlineLocation>;
+    fn artifact_location(&self, version: String, platform: Platform) -> Box<dyn OnlineLocation>;
 
     /// the name of the executable file in the archive
     fn file_to_extract_from_archive(&self, version: &str, platform: Platform) -> String;

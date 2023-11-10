@@ -21,7 +21,7 @@ impl App for Dprint {
         "https://dprint.dev"
     }
 
-    fn online_location(&self, version: String, platform: Platform) -> Box<dyn OnlineLocation> {
+    fn artifact_location(&self, version: String, platform: Platform) -> Box<dyn OnlineLocation> {
         Box::new(GithubReleaseAsset {
             organization: "dprint",
             repo: "dprint",

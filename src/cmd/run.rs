@@ -34,7 +34,7 @@ fn install_app(
     prodyard: &Yard,
     output: &dyn Output,
 ) -> Result<RunnableApp> {
-    let online_location = app.online_location(requested_app.version.clone(), platform);
+    let online_location = app.artifact_location(requested_app.version.clone(), platform);
     let artifact = online_location.download(output)?;
     let archive = archives::lookup(artifact);
     prodyard.create_folder_for(requested_app)?;
