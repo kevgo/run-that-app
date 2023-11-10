@@ -1,6 +1,7 @@
 //! all applications that run-this-app can run
 
 mod dprint;
+mod shellcheck;
 mod shfmt;
 
 use crate::detect::Platform;
@@ -8,6 +9,7 @@ use crate::error::UserError;
 use crate::hosting::OnlineLocation;
 use crate::Result;
 use dprint::Dprint;
+use shellcheck::ShellCheck;
 use shfmt::Shfmt;
 
 pub fn lookup(name: &str) -> Result<Box<dyn App>> {
@@ -37,5 +39,9 @@ pub trait App {
 }
 
 fn all_apps() -> Vec<Box<dyn App>> {
-    vec![Box::new(Dprint {}), Box::new(Shfmt {})]
+    vec![
+        Box::new(Dprint {}),
+        Box::new(Shfmt {}),
+        Box::new(ShellCheck {}),
+    ]
 }
