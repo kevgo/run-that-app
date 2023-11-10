@@ -29,18 +29,18 @@ pub fn run(
 
 fn install_app(
     requested_app: &RequestedApp,
-    app: &dyn App,
+    known_app: &dyn App,
     platform: Platform,
     prodyard: &Yard,
     output: &dyn Output,
 ) -> Result<RunnableApp> {
-    let online_location = app.artifact_location(requested_app.version.clone(), platform);
+    let online_location = known_app.artifact_location(requested_app.version.clone(), platform);
     let artifact = online_location.download(output)?;
     prodyard.create_folder_for(requested_app)?;
     archives::extract(
         artifact,
-        app.file_to_extract_from_archive(&requested_app.version, platform),
-        prodyard.file_path(requested_app, app.executable(platform)),
+        known_app.file_to_extract_from_archive(&requested_app.version, platform),
+        prodyard.file_path(requested_app, known_app.executable(platform)),
         output,
     )
 }
