@@ -74,20 +74,69 @@ mod tests {
             pretty::assert_eq!(have, want);
         }
 
-        #[test]
-        fn display_version() {
-            let args = vec!["run-that-app", "-V"]
-                .into_iter()
-                .map(ToString::to_string);
-            let have = args::parse(args).unwrap();
-            let want = Args {
-                log: None,
-                command: Command::DisplayVersion,
-            };
-            pretty::assert_eq!(have, want);
+        mod version_parameter {
+            use crate::cli::{args, Command};
+            use args::Args;
+
+            #[test]
+            fn short() {
+                let args = vec!["run-that-app", "-V"]
+                    .into_iter()
+                    .map(ToString::to_string);
+                let have = args::parse(args).unwrap();
+                let want = Args {
+                    log: None,
+                    command: Command::DisplayVersion,
+                };
+                pretty::assert_eq!(have, want);
+            }
+
+            #[test]
+            fn long() {
+                let args = vec!["run-that-app", "--version"]
+                    .into_iter()
+                    .map(ToString::to_string);
+                let have = args::parse(args).unwrap();
+                let want = Args {
+                    log: None,
+                    command: Command::DisplayVersion,
+                };
+                pretty::assert_eq!(have, want);
+            }
         }
 
-        mod logging {
+        mod help_parameter {
+            use crate::cli::{args, Command};
+            use args::Args;
+
+            #[test]
+            fn short() {
+                let args = vec!["run-that-app", "-h"]
+                    .into_iter()
+                    .map(ToString::to_string);
+                let have = args::parse(args).unwrap();
+                let want = Args {
+                    log: None,
+                    command: Command::DisplayHelp,
+                };
+                pretty::assert_eq!(have, want);
+            }
+
+            #[test]
+            fn long() {
+                let args = vec!["run-that-app", "-h"]
+                    .into_iter()
+                    .map(ToString::to_string);
+                let have = args::parse(args).unwrap();
+                let want = Args {
+                    log: None,
+                    command: Command::DisplayHelp,
+                };
+                pretty::assert_eq!(have, want);
+            }
+        }
+
+        mod log_parameter {
             use crate::cli::{args, Args, Command, RequestedApp};
             use big_s::S;
 
