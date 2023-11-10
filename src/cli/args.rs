@@ -206,16 +206,16 @@ mod tests {
 
             #[test]
             fn rta_and_app_arguments() {
-                let have = parse_args(vec!["run-that-app", "--log=l", "app@2", "--arg1", "--arg2"]);
+                let have = parse_args(vec!["run-that-app", "--log=l1", "app@2", "--arg1", "arg2"]);
                 let want = Args {
                     command: Command::RunApp {
                         app: RequestedApp {
                             name: S("app"),
                             version: S("2"),
                         },
-                        args: vec![S("--arg1"), S("--arg2")],
+                        args: vec![S("--arg1"), S("arg2")],
                     },
-                    log: Some(S("l")),
+                    log: Some(S("l1")),
                 };
                 pretty::assert_eq!(have, want);
             }
