@@ -13,7 +13,7 @@ works inside Docker, and leaves a very small footprint on your computer.
 curl https://raw.githubusercontent.com/kevgo/run-that-app/main/install.sh | sh
 
 # run an app (in this case ShellCheck)
-./run-that-app shellcheck@0.9.0
+./run-that-app dprint@0.42.5
 ```
 
 Please note that you need to provide the version exactly like it is in the app
