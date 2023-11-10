@@ -56,7 +56,6 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
 
 #[cfg(test)]
 mod tests {
-
     fn make_args(args: Vec<&'static str>) -> impl Iterator<Item = String> {
         args.into_iter().map(ToString::to_string)
     }
