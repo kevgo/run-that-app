@@ -22,7 +22,7 @@ impl Archive for Zip {
         path_on_disk: PathBuf,
         output: &dyn Output,
     ) -> Result<RunnableApp> {
-        output.print(&format!("extracting zip archive ... "));
+        output.print("extracting zip archive ... ");
         let mut zip_archive =
             zip::ZipArchive::new(io::Cursor::new(&data)).expect("cannot read zip data");
         if let Some(parent_dir) = path_on_disk.parent() {

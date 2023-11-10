@@ -44,20 +44,14 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             app_args.push(arg);
         }
     }
-    if let Some(requested_app) = requested_app {
-        Ok(Args {
-            command: Command::RunApp {
-                app: requested_app,
-                args: app_args,
-            },
-            log,
-        })
-    } else {
-        Ok(Args {
-            command: Command::DisplayHelp,
-            log,
-        })
-    }
+    let command = match requested_app {
+        Some(requested_app) => Command::RunApp {
+            app: requested_app,
+            args: app_args,
+        },
+        None => Command::DisplayHelp,
+    };
+    Ok(Args { command, log })
 }
 
 #[cfg(test)]
