@@ -1,12 +1,14 @@
 //! all applications that run-this-app can run
 
 mod dprint;
+mod shfmt;
 
 use crate::detect::Platform;
 use crate::error::UserError;
 use crate::hosting::OnlineLocation;
 use crate::Result;
 use dprint::Dprint;
+use shfmt::Shfmt;
 
 pub fn lookup(name: &str) -> Result<Box<dyn App>> {
     for app in all_apps() {
@@ -35,5 +37,5 @@ pub trait App {
 }
 
 fn all_apps() -> Vec<Box<dyn App>> {
-    vec![Box::new(Dprint {})]
+    vec![Box::new(Dprint {}), Box::new(Shfmt {})]
 }

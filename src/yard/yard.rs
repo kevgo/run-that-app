@@ -1,5 +1,8 @@
 use super::RunnableApp;
 use crate::cli::RequestedApp;
+use crate::error::UserError;
+use crate::Result;
+use std::fs;
 use std::path::PathBuf;
 
 pub struct Yard {
@@ -7,6 +10,14 @@ pub struct Yard {
 }
 
 impl Yard {
+    pub fn create_folder_for(&self, app: &RequestedApp) -> Result<()> {
+        let folder = self.folder_for(app);
+        fs::create_dir_all(&folder).map_err(|err| UserError::CannotCreateFolder {
+            folder,
+            reason: err.to_string(),
+        })
+    }
+
     pub fn load(&self, app: &RequestedApp, executable: &str) -> Option<RunnableApp> {
         let file_path = self.file_path(app, executable);
         if file_path.exists() {
@@ -28,7 +39,6 @@ impl Yard {
 
     #[cfg(test)]
     fn save(&self, app: &RequestedApp, file_name: &str, file_content: &[u8]) {
-        use std::fs;
         use std::io::Write;
 
         fs::create_dir_all(self.folder_for(app)).unwrap();
