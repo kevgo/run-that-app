@@ -4,7 +4,6 @@ mod tar_gz;
 mod uncompressed;
 mod zip;
 
-use crate::download::Artifact;
 use crate::output::Output;
 use crate::yard::RunnableApp;
 use crate::{filesystem, Result};
@@ -16,25 +15,20 @@ pub use zip::Zip;
 pub trait Archive {
     fn extract(
         &self,
-        file: String,
+        data: Vec<u8>,
+        path_in_archive: String,
         path_on_disk: PathBuf,
         output: &dyn Output,
     ) -> Result<RunnableApp>;
 }
 
 /// provides an Archive implementation that can extract the given artifact
-pub fn lookup(artifact: Artifact) -> Box<dyn Archive> {
-    if filesystem::has_extension(&artifact.filename, ".tar.gz") {
-        return Box::new(TarGz {
-            data: artifact.data,
-        });
+pub fn lookup(archive_filename: &str) -> Box<dyn Archive> {
+    if filesystem::has_extension(archive_filename, ".tar.gz") {
+        return Box::new(TarGz {});
     }
-    if filesystem::has_extension(&artifact.filename, ".zip") {
-        return Box::new(Zip {
-            data: artifact.data,
-        });
+    if filesystem::has_extension(archive_filename, ".zip") {
+        return Box::new(Zip {});
     }
-    Box::new(Uncompressed {
-        data: artifact.data,
-    })
+    Box::new(Uncompressed {})
 }

@@ -8,13 +8,12 @@ use std::io;
 use std::path::PathBuf;
 
 /// a .tar.gz file downloaded from the internet, containing an application
-pub struct TarGz {
-    pub data: Vec<u8>,
-}
+pub struct TarGz {}
 
 impl Archive for TarGz {
     fn extract(
         &self,
+        data: Vec<u8>,
         path_in_archive: String,
         path_on_disk: PathBuf,
         output: &dyn Output,
@@ -23,7 +22,7 @@ impl Archive for TarGz {
             "extracting {} from tar.gz archive ... ",
             path_on_disk.to_string_lossy().cyan()
         ));
-        let tar = GzDecoder::new(io::Cursor::new(&self.data));
+        let tar = GzDecoder::new(io::Cursor::new(&data));
         let mut archive = tar::Archive::new(tar);
         let mut found_file = false;
         for file in archive.entries().unwrap() {
