@@ -1,6 +1,5 @@
-use std::path::PathBuf;
-
 use colored::Colorize;
+use std::path::PathBuf;
 
 /// errors that are the user's fault and should be displayed to them
 #[derive(Debug, PartialEq)]
