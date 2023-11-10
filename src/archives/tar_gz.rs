@@ -34,11 +34,10 @@ impl Archive for TarGz {
             let filepath = file.path().unwrap();
             let filepath = filepath.to_string_lossy();
             output.log(CATEGORY, &format!("- {filepath}"));
-            if filepath != path_in_archive {
-                continue;
+            if filepath == path_in_archive {
+                found_file = true;
+                file.unpack(&path_on_disk).unwrap();
             }
-            found_file = true;
-            file.unpack(&path_on_disk).unwrap();
         }
         assert!(found_file, "file {path_in_archive} not found in archive");
         filesystem::make_file_executable(&path_on_disk)?;
