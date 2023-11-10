@@ -22,10 +22,7 @@ impl Archive for TarGz {
         path_on_disk: PathBuf,
         output: &dyn Output,
     ) -> Result<RunnableApp> {
-        output.print(&format!(
-            "extracting {} from tar.gz archive ... ",
-            path_on_disk.to_string_lossy().cyan()
-        ));
+        output.print(&format!("extracting tar.gz archive ... "));
         let tar = GzDecoder::new(io::Cursor::new(&data));
         let mut archive = tar::Archive::new(tar);
         let mut found_file = false;

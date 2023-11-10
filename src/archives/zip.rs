@@ -7,12 +7,12 @@ use crate::{filesystem, Result};
 use std::path::PathBuf;
 use std::{fs, io};
 
-/// a .tar.gz file downloaded from the internet, containing an application
+/// a .zip file downloaded from the internet, containing an application
 pub struct Zip {}
 
 impl Archive for Zip {
     fn can_extract(&self, filename: &str) -> bool {
-        filesystem::has_extension(filename, ".tar.gz")
+        filesystem::has_extension(filename, ".zip")
     }
 
     fn extract(
@@ -22,10 +22,7 @@ impl Archive for Zip {
         path_on_disk: PathBuf,
         output: &dyn Output,
     ) -> Result<RunnableApp> {
-        output.print(&format!(
-            "extracting {} from zip archive ... ",
-            path_on_disk.to_string_lossy().cyan()
-        ));
+        output.print(&format!("extracting zip archive ... "));
         let mut zip_archive =
             zip::ZipArchive::new(io::Cursor::new(&data)).expect("cannot read zip data");
         if let Some(parent_dir) = path_on_disk.parent() {
