@@ -12,7 +12,6 @@ pub enum UserError {
     CannotDownload { url: String, reason: String },
     CannotCreateFolder { folder: PathBuf, reason: String },
     CannotMakeFileExecutable { file: String, reason: String },
-    DuplicateRunRequest,
     NotOnline,
     RunRequestMissingVersion,
     UnknownApp(String),
@@ -52,7 +51,6 @@ impl UserError {
                 error(&format!("Cannot make file {file} executable: {reason}"));
                 desc("Please check access permissions and try again.");
             }
-            UserError::DuplicateRunRequest => error("I can only run one application at a time"),
             UserError::NotOnline => error("you seem to be offline"),
             UserError::RunRequestMissingVersion => {
                 error("missing the version to install");
