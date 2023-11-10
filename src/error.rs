@@ -6,7 +6,6 @@ use colored::Colorize;
 #[derive(Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions)]
 pub enum UserError {
-    CannotDetermineCPU,
     CannotDetermineHomeDirectory,
     CannotDetermineOS,
     CannotDownload { url: String, reason: String },
@@ -17,6 +16,7 @@ pub enum UserError {
     UnknownApp(String),
     UnknownCliOption(String),
     UnsupportedPlatform,
+    UnsupportedCPU(String),
     // UnsupportedPlatformAndNoGlobalApp {
     //     app_name: String,
     //     platform: Platform,
@@ -27,8 +27,8 @@ pub enum UserError {
 impl UserError {
     pub fn print(self) {
         match self {
-            UserError::CannotDetermineCPU => {
-                error("cannot determine the CPU");
+            UserError::UnsupportedCPU(name) => {
+                error(&format!("Your CPU ({name}) is currently not supported."));
                 desc("Request support for your platform at https://github.com/kevgo/binstall/issues.");
             }
             UserError::CannotDetermineHomeDirectory => error("cannot determine home directory"),
