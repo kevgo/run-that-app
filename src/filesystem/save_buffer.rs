@@ -18,7 +18,7 @@ pub fn save_buffer(
     ));
     fs::write(&path_on_disk, data).expect("cannot save file");
     super::make_file_executable(&path_on_disk)?;
-    println!("{}", "ok".green());
+    output.println(&format!("{}", "ok".green()));
     Ok(RunnableApp {
         executable: path_on_disk,
     })

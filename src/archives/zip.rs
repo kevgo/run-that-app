@@ -41,7 +41,7 @@ impl Archive for Zip {
         let mut file_on_disk = fs::File::create(&path_on_disk).unwrap();
         io::copy(&mut file_in_zip, &mut file_on_disk).unwrap();
         filesystem::make_file_executable(&path_on_disk)?;
-        println!("{}", "ok".green());
+        output.println(&format!("{}", "ok".green()));
         Ok(RunnableApp {
             executable: path_on_disk,
         })

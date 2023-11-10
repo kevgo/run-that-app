@@ -32,15 +32,15 @@ fn print_examples(output: &dyn Output) {
         .println("\"binstall gh@2.34.0\" installs https://github.com/cli/cli at version 2.34.0\n");
 }
 
-// pub fn print_installable_apps() {
-//     println!("\nInstallable applications:");
+// pub fn print_installable_apps(output: &dyn Output) {
+//     output.println!("\nInstallable applications:");
 //     let app_manager = apps::Manager::new();
 //     let installables = app_manager.installable_apps();
 //     let max_width = longest_name(&installables) + 1;
 //     for app in app_manager.installable_apps() {
-//         println!("{:max_width$} {}", app.name, app.repo);
+//         output.println!("{:max_width$} {}", app.name, app.repo);
 //     }
-//     println!("\nRequest additional apps at https://github.com/kevgo/binstall/issues.");
+//     output.println!("\nRequest additional apps at https://github.com/kevgo/binstall/issues.");
 // }
 
 // fn longest_name(apps: &[InstallableApp]) -> usize {
