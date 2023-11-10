@@ -8,7 +8,7 @@ pub fn determine(output: &dyn Output) -> Result<Cpu> {
     match env::consts::ARCH {
         "x86_64" => Ok(Cpu::Intel64),
         "aarch64" => Ok(Cpu::Arm64),
-        _ => Err(UserError::UnsupportedCPU),
+        other => Err(UserError::UnsupportedCPU(other.to_string())),
     }
 }
 
