@@ -45,8 +45,8 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
         }
     }
     let command = match requested_app {
-        Some(requested_app) => Command::RunApp {
-            app: requested_app,
+        Some(app) => Command::RunApp {
+            app,
             args: app_args,
         },
         None => Command::DisplayHelp,
