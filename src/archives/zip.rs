@@ -11,6 +11,10 @@ use std::{fs, io};
 pub struct Zip {}
 
 impl Archive for Zip {
+    fn can_extract(&self, filename: &str) -> bool {
+        filesystem::has_extension(filename, ".tar.gz")
+    }
+
     fn extract(
         &self,
         data: Vec<u8>,

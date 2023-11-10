@@ -11,6 +11,10 @@ use std::path::PathBuf;
 pub struct TarGz {}
 
 impl Archive for TarGz {
+    fn can_extract(&self, filename: &str) -> bool {
+        filesystem::has_extension(filename, ".tar.gz")
+    }
+
     fn extract(
         &self,
         data: Vec<u8>,
