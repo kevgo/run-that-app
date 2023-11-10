@@ -9,7 +9,7 @@ pub fn detect(output: &dyn Output) -> Result<Os> {
         "linux" => Ok(Os::Linux),
         "macos" => Ok(Os::MacOS),
         "windows" => Ok(Os::Windows),
-        _ => Err(UserError::CannotDetermineOS),
+        other => Err(UserError::UnsupportedOS(other.to_string())),
     }
 }
 

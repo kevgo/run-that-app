@@ -17,6 +17,7 @@ pub enum UserError {
     UnknownCliOption(String),
     UnsupportedPlatform,
     UnsupportedCPU(String),
+    UnsupportedOS(String),
     // UnsupportedPlatformAndNoGlobalApp {
     //     app_name: String,
     //     platform: Platform,
@@ -27,10 +28,6 @@ pub enum UserError {
 impl UserError {
     pub fn print(self) {
         match self {
-            UserError::UnsupportedCPU(name) => {
-                error(&format!("Your CPU ({name}) is currently not supported."));
-                desc("Request support for your platform at https://github.com/kevgo/binstall/issues.");
-            }
             UserError::CannotDetermineHomeDirectory => error("cannot determine home directory"),
             UserError::CannotDetermineOS => {
                 error("cannot determine the operating system");
@@ -64,6 +61,10 @@ impl UserError {
                 error(&format!("Unknown option: {option}"));
                 // help::print_options();
             }
+            UserError::UnsupportedCPU(name) => {
+                error(&format!("Your CPU ({name}) is currently not supported."));
+                desc("Request support for your platform at https://github.com/kevgo/binstall/issues.");
+            }
             UserError::UnsupportedPlatform => {
                 error("This application does not seem to support your platform.");
                 desc("It looks like there are no binary versions for this app for your platform.
@@ -71,6 +72,12 @@ impl UserError {
 As a workaround, you could install this app in other ways and then run \"binstall --fallback-to-existing\".
 If you are okay moving forward without this app, you can provide the \"--allow-unavailable\" switch and binstall will install a non-functional stub for it.",
                               );
+            }
+            UserError::UnsupportedOS(name) => {
+                error(&format!(
+                    "Your operating system ({name}) is currently not supported."
+                ));
+                desc("Request support for your platform at https://github.com/kevgo/binstall/issues.");
             } // UserError::UnsupportedPlatformAndNoGlobalApp { app_name, platform } => {
             //     error(&format!("This app is not supported on {platform} and I didn't find a globally installed version in your PATH."));
             //     desc(&format!(
