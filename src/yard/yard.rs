@@ -10,6 +10,7 @@ pub struct Yard {
 }
 
 impl Yard {
+    /// creates the folder to contain the executable for the given application on disk
     pub fn create_folder_for(&self, app: &RequestedApp) -> Result<()> {
         let folder = self.folder_for(app);
         fs::create_dir_all(&folder).map_err(|err| UserError::CannotCreateFolder {
@@ -18,6 +19,7 @@ impl Yard {
         })
     }
 
+    /// provides the path to the executable of the given application
     pub fn load(&self, app: &RequestedApp, executable: &str) -> Option<Executable> {
         let file_path = self.file_path(app, executable);
         if file_path.exists() {
@@ -27,14 +29,17 @@ impl Yard {
         }
     }
 
+    /// provides the path to the given file that is part of the given application
     pub fn file_path(&self, app: &RequestedApp, file: &str) -> PathBuf {
         self.folder_for(app).join(file)
     }
 
+    /// provides the path to the folder containing the given application
     pub fn folder_for(&self, app: &RequestedApp) -> PathBuf {
         self.root.join("apps").join(&app.name).join(&app.version)
     }
 
+    /// stores the given application consisting of the given executable file
     #[cfg(test)]
     fn save(&self, app: &RequestedApp, file_name: &str, file_content: &[u8]) {
         use std::io::Write;
