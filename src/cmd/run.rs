@@ -6,7 +6,7 @@ use crate::detect;
 use crate::detect::Platform;
 use crate::subshell;
 use crate::yard;
-use crate::yard::RunnableApp;
+use crate::yard::Executable;
 use crate::yard::Yard;
 use crate::Output;
 use crate::Result;
@@ -20,11 +20,11 @@ pub fn run(
     let app = apps::lookup(&requested_app.name)?;
     let platform = detect::detect(output)?;
     let prodyard = yard::load_or_create(&yard::production_location()?)?;
-    let runnable_app = match prodyard.load(requested_app, app.executable(platform)) {
+    let executable = match prodyard.load(requested_app, app.executable(platform)) {
         Some(installed_app) => installed_app,
         None => install_app(requested_app, app.as_ref(), platform, &prodyard, output)?,
     };
-    Ok(subshell::execute(runnable_app, args))
+    Ok(subshell::execute(executable, args))
 }
 
 fn install_app(
@@ -33,7 +33,7 @@ fn install_app(
     platform: Platform,
     prodyard: &Yard,
     output: &dyn Output,
-) -> Result<RunnableApp> {
+) -> Result<Executable> {
     let online_location = known_app.artifact_location(&requested_app.version, platform);
     let artifact = online_location.download(output)?;
     prodyard.create_folder_for(requested_app)?;

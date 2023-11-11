@@ -3,7 +3,7 @@ mod zip;
 
 use crate::download::Artifact;
 use crate::output::Output;
-use crate::yard::RunnableApp;
+use crate::yard::Executable;
 use crate::{filesystem, Result};
 use std::path::PathBuf;
 pub use tar_gz::TarGz;
@@ -21,7 +21,7 @@ pub trait Archive {
         path_in_archive: String,
         path_on_disk: PathBuf,
         output: &dyn Output,
-    ) -> Result<RunnableApp>;
+    ) -> Result<Executable>;
 }
 
 /// extracts the given file in the given artifact to the given location on disk
@@ -30,7 +30,7 @@ pub fn extract(
     path_in_archive: String,
     path_on_disk: PathBuf,
     output: &dyn Output,
-) -> Result<RunnableApp> {
+) -> Result<Executable> {
     for archive in all_archives() {
         if archive.can_extract(&artifact.filename) {
             return archive.extract(artifact.data, path_in_archive, path_on_disk, output);

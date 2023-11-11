@@ -1,8 +1,8 @@
-use crate::yard::RunnableApp;
+use crate::yard::Executable;
 use std::process::{Command, ExitCode};
 
-pub fn execute(app: RunnableApp, args: Vec<String>) -> ExitCode {
-    let mut cmd = Command::new(app.executable);
+pub fn execute(app: Executable, args: Vec<String>) -> ExitCode {
+    let mut cmd = Command::new(app.path);
     cmd.args(args);
     let exit_code = cmd.status().unwrap().code().unwrap_or(255);
     ExitCode::from(reduce_exit_status_to_code(exit_code))
@@ -27,15 +27,15 @@ mod tests {
         fn unix_success() {
             use crate::filesystem::make_file_executable;
             use crate::subshell::execute;
-            use crate::yard::RunnableApp;
+            use crate::yard::Executable;
             use big_s::S;
             use std::fs;
             let tempdir = tempfile::tempdir().unwrap();
             let executable_path = tempdir.path().join("executable");
             fs::write(&executable_path, b"#!/bin/sh\necho hello").unwrap();
             make_file_executable(&executable_path).unwrap();
-            let runnable_app = RunnableApp {
-                executable: executable_path,
+            let runnable_app = Executable {
+                path: executable_path,
             };
             let have = execute(runnable_app, vec![]);
             // HACK: is there a better way to compare ExitCode?
@@ -47,15 +47,15 @@ mod tests {
         fn unix_error() {
             use crate::filesystem::make_file_executable;
             use crate::subshell::execute;
-            use crate::yard::RunnableApp;
+            use crate::yard::Executable;
             use big_s::S;
             use std::fs;
             let tempdir = tempfile::tempdir().unwrap();
             let executable_path = tempdir.path().join("executable");
             fs::write(&executable_path, b"#!/bin/sh\nexit 3").unwrap();
             make_file_executable(&executable_path).unwrap();
-            let runnable_app = RunnableApp {
-                executable: executable_path,
+            let runnable_app = Executable {
+                path: executable_path,
             };
             let have = execute(runnable_app, vec![]);
             // HACK: is there a better way to compare ExitCode?
@@ -66,7 +66,7 @@ mod tests {
         #[cfg(windows)]
         fn windows_success() {
             use crate::subshell::execute;
-            use crate::yard::RunnableApp;
+            use crate::yard::Executable;
             use big_s::S;
             use std::fs;
             let tempdir = tempfile::tempdir().unwrap();
@@ -84,7 +84,7 @@ mod tests {
         #[cfg(windows)]
         fn windows_error() {
             use crate::subshell::execute;
-            use crate::yard::RunnableApp;
+            use crate::yard::Executable;
             use big_s::S;
             use std::fs;
             let tempdir = tempfile::tempdir().unwrap();

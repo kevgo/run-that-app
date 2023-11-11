@@ -1,4 +1,4 @@
-use super::RunnableApp;
+use super::Executable;
 use crate::cli::RequestedApp;
 use crate::error::UserError;
 use crate::Result;
@@ -18,12 +18,10 @@ impl Yard {
         })
     }
 
-    pub fn load(&self, app: &RequestedApp, executable: &str) -> Option<RunnableApp> {
+    pub fn load(&self, app: &RequestedApp, executable: &str) -> Option<Executable> {
         let file_path = self.file_path(app, executable);
         if file_path.exists() {
-            Some(RunnableApp {
-                executable: file_path,
-            })
+            Some(Executable { path: file_path })
         } else {
             None
         }
@@ -104,11 +102,11 @@ mod tests {
             #[cfg(unix)]
             assert!(
                 runnable_app
-                    .executable
+                    .path
                     .to_string_lossy()
                     .ends_with("/apps/shellcheck/0.9.0/executable"),
                 "{}",
-                runnable_app.executable.to_string_lossy()
+                runnable_app.path.to_string_lossy()
             );
             #[cfg(windows)]
             assert!(

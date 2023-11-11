@@ -2,7 +2,7 @@ use colored::Colorize;
 
 use super::Archive;
 use crate::output::Output;
-use crate::yard::RunnableApp;
+use crate::yard::Executable;
 use crate::{filesystem, Result};
 use std::path::PathBuf;
 use std::{fs, io};
@@ -21,7 +21,7 @@ impl Archive for Zip {
         path_in_archive: String,
         path_on_disk: PathBuf,
         output: &dyn Output,
-    ) -> Result<RunnableApp> {
+    ) -> Result<Executable> {
         output.print("extracting zip archive ... ");
         let mut zip_archive =
             zip::ZipArchive::new(io::Cursor::new(&data)).expect("cannot read zip data");
@@ -39,9 +39,7 @@ impl Archive for Zip {
         io::copy(&mut file_in_zip, &mut file_on_disk).unwrap();
         filesystem::make_file_executable(&path_on_disk)?;
         output.println(&format!("{}", "ok".green()));
-        Ok(RunnableApp {
-            executable: path_on_disk,
-        })
+        Ok(Executable { path: path_on_disk })
     }
 }
 

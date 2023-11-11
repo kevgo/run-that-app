@@ -1,5 +1,5 @@
 use super::Archive;
-use crate::yard::RunnableApp;
+use crate::yard::Executable;
 use crate::Output;
 use crate::{filesystem, Result};
 use colored::Colorize;
@@ -21,7 +21,7 @@ impl Archive for TarGz {
         path_in_archive: String,
         path_on_disk: PathBuf,
         output: &dyn Output,
-    ) -> Result<RunnableApp> {
+    ) -> Result<Executable> {
         output.print("extracting tar.gz archive ... ");
         let tar = GzDecoder::new(io::Cursor::new(&data));
         let mut archive = tar::Archive::new(tar);
@@ -39,9 +39,7 @@ impl Archive for TarGz {
         assert!(found_file, "file {path_in_archive} not found in archive");
         filesystem::make_file_executable(&path_on_disk)?;
         output.println(&format!("{}", "ok".green()));
-        Ok(RunnableApp {
-            executable: path_on_disk,
-        })
+        Ok(Executable { path: path_on_disk })
     }
 }
 

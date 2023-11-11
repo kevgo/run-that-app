@@ -1,7 +1,7 @@
 use colored::Colorize;
 
 use crate::output::Output;
-use crate::yard::RunnableApp;
+use crate::yard::Executable;
 use crate::Result;
 use std::fs;
 use std::path::PathBuf;
@@ -11,7 +11,7 @@ pub fn save_buffer(
     data: Vec<u8>,
     path_on_disk: PathBuf,
     output: &dyn Output,
-) -> Result<RunnableApp> {
+) -> Result<Executable> {
     output.print(&format!(
         "saving as {} ... ",
         path_on_disk.to_string_lossy().cyan()
@@ -19,7 +19,5 @@ pub fn save_buffer(
     fs::write(&path_on_disk, data).expect("cannot save file");
     super::make_file_executable(&path_on_disk)?;
     output.println(&format!("{}", "ok".green()));
-    Ok(RunnableApp {
-        executable: path_on_disk,
-    })
+    Ok(Executable { path: path_on_disk })
 }
