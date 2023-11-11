@@ -1,6 +1,6 @@
 # Run That App!
 
-![linux](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml/badge.svg)
+[![linux](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml)
 ![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)
 
 _Run-that-app_ installs and executes small third-party tools used by software
