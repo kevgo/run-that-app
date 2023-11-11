@@ -26,16 +26,34 @@ mod tests {
         #[test]
         #[cfg(unix)]
         fn success() {
-            use big_s::S;
-
             use crate::filesystem::make_file_executable;
             use crate::subshell::execute;
             use crate::yard::RunnableApp;
+            use big_s::S;
             use std::fs;
             let tempdir = tempfile::tempdir().unwrap();
             let executable_path = tempdir.path().join("executable");
             fs::write(&executable_path, b"#!/bin/sh\nexit 3").unwrap();
             make_file_executable(&executable_path).unwrap();
+            let runnable_app = RunnableApp {
+                executable: executable_path,
+            };
+            let have = execute(runnable_app, vec![]);
+            // HACK: is there a better way to compare ExitCode?
+            assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(3))"));
+        }
+
+        #[test]
+        #[cfg(windows)]
+        fn success() {
+            use crate::filesystem::make_file_executable;
+            use crate::subshell::execute;
+            use crate::yard::RunnableApp;
+            use big_s::S;
+            use std::fs;
+            let tempdir = tempfile::tempdir().unwrap();
+            let executable_path = tempdir.path().join("executable.cmd");
+            fs::write(&executable_path, b"EXIT 3").unwrap();
             let runnable_app = RunnableApp {
                 executable: executable_path,
             };
