@@ -1,4 +1,4 @@
-name: CI Linux
+name: CI Windows
 
 on:
   push:
@@ -12,7 +12,7 @@ env:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
