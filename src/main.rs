@@ -28,7 +28,7 @@ fn main() -> ExitCode {
 
 fn inner() -> Result<ExitCode> {
     let args = cli::parse(std::env::args())?;
-    let output = output::Console { category: args.log };
+    let output = output::ErrorConsole { category: args.log };
     match args.command {
         Command::RunApp { app, args } => cmd::run(&app, args, &output),
         Command::DisplayHelp => Ok(cmd::help(&output)),
