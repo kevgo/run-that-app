@@ -20,7 +20,7 @@ pub fn run(
     let app = apps::lookup(&requested_app.name)?;
     let platform = detect::detect(output)?;
     let prodyard = yard::load_or_create(&yard::production_location()?)?;
-    let executable = match prodyard.load(requested_app, app.executable(platform)) {
+    let executable = match prodyard.load_app(requested_app, app.executable(platform)) {
         Some(installed_app) => installed_app,
         None => install_app(requested_app, app.as_ref(), platform, &prodyard, output)?,
     };
@@ -36,11 +36,11 @@ fn install_app(
 ) -> Result<Executable> {
     let online_location = known_app.artifact_location(&requested_app.version, platform);
     let artifact = online_location.download(output)?;
-    prodyard.create_folder_for(requested_app)?;
+    prodyard.create_app_folder(requested_app)?;
     archives::extract(
         artifact,
         known_app.file_to_extract_from_archive(&requested_app.version, platform),
-        prodyard.file_path(requested_app, known_app.executable(platform)),
+        prodyard.app_file_path(requested_app, known_app.executable(platform)),
         output,
     )
 }

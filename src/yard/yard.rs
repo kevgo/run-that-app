@@ -11,8 +11,8 @@ pub struct Yard {
 
 impl Yard {
     /// creates the folder to contain the executable for the given application on disk
-    pub fn create_folder_for(&self, app: &RequestedApp) -> Result<()> {
-        let folder = self.folder_for(app);
+    pub fn create_app_folder(&self, app: &RequestedApp) -> Result<()> {
+        let folder = self.app_folder(app);
         fs::create_dir_all(&folder).map_err(|err| UserError::CannotCreateFolder {
             folder,
             reason: err.to_string(),
@@ -20,8 +20,8 @@ impl Yard {
     }
 
     /// provides the path to the executable of the given application
-    pub fn load(&self, app: &RequestedApp, executable_filename: &str) -> Option<Executable> {
-        let file_path = self.file_path(app, executable_filename);
+    pub fn load_app(&self, app: &RequestedApp, executable_filename: &str) -> Option<Executable> {
+        let file_path = self.app_file_path(app, executable_filename);
         if file_path.exists() {
             Some(Executable(file_path))
         } else {
@@ -30,22 +30,22 @@ impl Yard {
     }
 
     /// provides the path to the given file that is part of the given application
-    pub fn file_path(&self, app: &RequestedApp, file: &str) -> PathBuf {
-        self.folder_for(app).join(file)
+    pub fn app_file_path(&self, app: &RequestedApp, file: &str) -> PathBuf {
+        self.app_folder(app).join(file)
     }
 
     /// provides the path to the folder containing the given application
-    pub fn folder_for(&self, app: &RequestedApp) -> PathBuf {
+    pub fn app_folder(&self, app: &RequestedApp) -> PathBuf {
         self.root.join("apps").join(&app.name).join(&app.version)
     }
 
     /// stores the given application consisting of the given executable file
     #[cfg(test)]
-    fn save(&self, app: &RequestedApp, file_name: &str, file_content: &[u8]) {
+    fn save_app_file(&self, app: &RequestedApp, file_name: &str, file_content: &[u8]) {
         use std::io::Write;
 
-        fs::create_dir_all(self.folder_for(app)).unwrap();
-        let mut file = fs::File::create(self.file_path(app, file_name)).unwrap();
+        fs::create_dir_all(self.app_folder(app)).unwrap();
+        let mut file = fs::File::create(self.app_file_path(app, file_name)).unwrap();
         file.write_all(file_content).unwrap();
     }
 }
@@ -58,7 +58,7 @@ mod tests {
     use std::path::PathBuf;
 
     #[test]
-    fn file_path() {
+    fn app_file_path() {
         let yard = Yard {
             root: PathBuf::from("/root"),
         };
@@ -66,13 +66,13 @@ mod tests {
             name: S("shellcheck"),
             version: S("0.9.0"),
         };
-        let have = yard.file_path(&app, "shellcheck.exe");
+        let have = yard.app_file_path(&app, "shellcheck.exe");
         let want = PathBuf::from("/root/apps/shellcheck/0.9.0/shellcheck.exe");
         assert_eq!(have, want);
     }
 
     #[test]
-    fn folder_for() {
+    fn app_folder() {
         let yard = Yard {
             root: PathBuf::from("/root"),
         };
@@ -80,19 +80,19 @@ mod tests {
             name: S("shellcheck"),
             version: S("0.9.0"),
         };
-        let have = yard.folder_for(&app);
+        let have = yard.app_folder(&app);
         let want = PathBuf::from("/root/apps/shellcheck/0.9.0");
         assert_eq!(have, want);
     }
 
-    mod load {
+    mod load_app {
         use crate::cli::RequestedApp;
         use crate::yard::{create, Executable, Yard};
         use big_s::S;
         use std::path::PathBuf;
 
         #[test]
-        fn app_in_installed() {
+        fn app_is_installed() {
             let tempdir = tempfile::tempdir().unwrap();
             let yard = create(tempdir.path()).unwrap();
             let requested_app = RequestedApp {
@@ -100,8 +100,9 @@ mod tests {
                 version: S("0.9.0"),
             };
             let executable = "executable";
-            yard.save(&requested_app, executable, b"content");
-            let Some(Executable(executable_path)) = yard.load(&requested_app, executable) else {
+            yard.save_app_file(&requested_app, executable, b"content");
+            let Some(Executable(executable_path)) = yard.load_app(&requested_app, executable)
+            else {
                 panic!();
             };
             #[cfg(unix)]
@@ -131,7 +132,7 @@ mod tests {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             };
-            let loaded = yard.load(&requested_app, "executable");
+            let loaded = yard.load_app(&requested_app, "executable");
             assert!(loaded.is_none());
         }
 
@@ -144,12 +145,12 @@ mod tests {
                 version: S("0.1.0"),
             };
             let executable = "executable";
-            yard.save(&installed_app, executable, b"content");
+            yard.save_app_file(&installed_app, executable, b"content");
             let requested_app = RequestedApp {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             };
-            let loaded = yard.load(&requested_app, "executable");
+            let loaded = yard.load_app(&requested_app, "executable");
             assert!(loaded.is_none());
         }
     }
