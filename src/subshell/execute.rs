@@ -34,7 +34,8 @@ mod tests {
             (i32::MAX, 255),
         ];
         for (give, want) in tests {
-            assert_eq!(super::reduce_exit_status_to_code(give), want);
+            let have = super::reduce_exit_status_to_code(give);
+            assert_eq!(have, want);
         }
     }
 }
