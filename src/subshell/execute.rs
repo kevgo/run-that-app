@@ -24,7 +24,27 @@ mod tests {
 
         #[test]
         #[cfg(unix)]
-        fn success() {
+        fn unix_success() {
+            use crate::filesystem::make_file_executable;
+            use crate::subshell::execute;
+            use crate::yard::RunnableApp;
+            use big_s::S;
+            use std::fs;
+            let tempdir = tempfile::tempdir().unwrap();
+            let executable_path = tempdir.path().join("executable");
+            fs::write(&executable_path, b"#!/bin/sh\nexit 0").unwrap();
+            make_file_executable(&executable_path).unwrap();
+            let runnable_app = RunnableApp {
+                executable: executable_path,
+            };
+            let have = execute(runnable_app, vec![]);
+            // HACK: is there a better way to compare ExitCode?
+            assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(0))"));
+        }
+
+        #[test]
+        #[cfg(unix)]
+        fn unix_error() {
             use crate::filesystem::make_file_executable;
             use crate::subshell::execute;
             use crate::yard::RunnableApp;
@@ -44,7 +64,25 @@ mod tests {
 
         #[test]
         #[cfg(windows)]
-        fn success() {
+        fn windows_success() {
+            use crate::subshell::execute;
+            use crate::yard::RunnableApp;
+            use big_s::S;
+            use std::fs;
+            let tempdir = tempfile::tempdir().unwrap();
+            let executable_path = tempdir.path().join("executable.cmd");
+            fs::write(&executable_path, b"EXIT 0").unwrap();
+            let runnable_app = RunnableApp {
+                executable: executable_path,
+            };
+            let have = execute(runnable_app, vec![]);
+            // HACK: is there a better way to compare ExitCode?
+            assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(0))"));
+        }
+
+        #[test]
+        #[cfg(windows)]
+        fn windows_error() {
             use crate::subshell::execute;
             use crate::yard::RunnableApp;
             use big_s::S;
