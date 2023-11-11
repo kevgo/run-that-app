@@ -32,7 +32,7 @@ mod tests {
             use std::fs;
             let tempdir = tempfile::tempdir().unwrap();
             let executable_path = tempdir.path().join("executable");
-            fs::write(&executable_path, b"#!/bin/sh\nexit 0").unwrap();
+            fs::write(&executable_path, b"#!/bin/sh\necho hello").unwrap();
             make_file_executable(&executable_path).unwrap();
             let runnable_app = RunnableApp {
                 executable: executable_path,
@@ -71,7 +71,7 @@ mod tests {
             use std::fs;
             let tempdir = tempfile::tempdir().unwrap();
             let executable_path = tempdir.path().join("executable.cmd");
-            fs::write(&executable_path, b"EXIT 0").unwrap();
+            fs::write(&executable_path, b"echo hello").unwrap();
             let runnable_app = RunnableApp {
                 executable: executable_path,
             };
