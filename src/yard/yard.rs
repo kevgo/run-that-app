@@ -110,11 +110,10 @@ mod tests {
             #[cfg(windows)]
             assert!(
                 runnable_app
-                    .executable
                     .to_string_lossy()
                     .ends_with("\\apps\\shellcheck\\0.9.0\\executable"),
                 "{}",
-                runnable_app.executable.to_string_lossy()
+                runnable_app.to_string_lossy()
             );
         }
 
