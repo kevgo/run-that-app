@@ -18,7 +18,7 @@ pub fn http_get(url: String, output: &dyn Output) -> Result<Artifact> {
         output.println(&format!("{}", "ERROR".red()));
         return Err(UserError::CannotDownload {
             reason: response.reason_phrase,
-            url: url.to_string(),
+            url,
         });
     }
     output.println(&format!("{}", "ok".green()));

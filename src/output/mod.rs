@@ -2,7 +2,7 @@
 
 mod console;
 
-pub use console::ErrorConsole;
+pub use console::StdErr;
 
 pub trait Output {
     /// this output only gets displayed if the respective logging category is enabled

@@ -1,12 +1,11 @@
 use super::Output;
 use std::io::{self, Write};
 
-/// an output implementation that prints everything to STDERR
-pub struct ErrorConsole {
+pub struct StdErr {
     pub category: Option<String>,
 }
 
-impl Output for ErrorConsole {
+impl Output for StdErr {
     /// conditional logging of internal details
     fn log(&self, category: &str, text: &str) {
         if self.should_log(category) {
@@ -15,16 +14,16 @@ impl Output for ErrorConsole {
     }
 
     fn print(&self, text: &str) {
-        print!("{text}");
-        let _ = io::stdout().flush();
+        eprint!("{text}");
+        let _ = io::stderr().flush();
     }
 
     fn println(&self, text: &str) {
-        println!("{text}");
+        eprintln!("{text}");
     }
 }
 
-impl ErrorConsole {
+impl StdErr {
     pub fn should_log(&self, mask: &str) -> bool {
         if let Some(category) = &self.category {
             category.is_empty() || mask.starts_with(category)
@@ -38,12 +37,12 @@ impl ErrorConsole {
 mod tests {
 
     mod should_log {
-        use crate::output::ErrorConsole;
+        use crate::output::StdErr;
         use big_s::S;
 
         #[test]
         fn no_category() {
-            let output = ErrorConsole { category: None };
+            let output = StdErr { category: None };
             assert!(!output.should_log("foo"));
             assert!(!output.should_log("bar"));
             assert!(!output.should_log(""));
@@ -51,7 +50,7 @@ mod tests {
 
         #[test]
         fn empty_category() {
-            let output = ErrorConsole {
+            let output = StdErr {
                 category: Some(S("")),
             };
             assert!(output.should_log("foo"));
@@ -61,7 +60,7 @@ mod tests {
 
         #[test]
         fn top_level_category() {
-            let output = ErrorConsole {
+            let output = StdErr {
                 category: Some(S("detect")),
             };
             assert!(output.should_log("detect"));
@@ -73,7 +72,7 @@ mod tests {
 
         #[test]
         fn sub_category() {
-            let output = ErrorConsole {
+            let output = StdErr {
                 category: Some(S("detect/os")),
             };
             assert!(!output.should_log("detect"));

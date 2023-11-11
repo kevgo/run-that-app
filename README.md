@@ -1,5 +1,8 @@
 # Run That App!
 
+[![linux](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml)
+[![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
+
 _Run-that-app_ installs and executes small third-party tools used by software
 developers (linters, checkers , verifiers) that often have no good way of being
 installed. Like Docker, _run-that-app_ works on Linux, Windows, and macOS.
