@@ -14,12 +14,12 @@ impl Output for Console {
     }
 
     fn print(&self, text: &str) {
-        print!("{text}");
-        let _ = io::stdout().flush();
+        eprint!("{text}");
+        let _ = io::stderr().flush();
     }
 
     fn println(&self, text: &str) {
-        println!("{text}");
+        eprintln!("{text}");
     }
 }
 
