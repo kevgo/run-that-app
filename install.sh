@@ -3,16 +3,16 @@ set -e
 set -o pipefail
 
 print_welcome() {
-	echo "BINSTALL INSTALLATION SCRIPT"
+	echo "RUN-THAT-APP INSTALLATION SCRIPT"
 	echo
 	echo "This installer is under development. Please report issues at"
-	echo "https://github.com/kevgo/binstall/issues"
+	echo "https://github.com/kevgo/run-that-app/issues"
 	echo
 }
 
-VERSION_TO_INSTALL="0.0.2" # the version of binstall to install
+VERSION_TO_INSTALL="0.0.2" # the version of run-that-app to install
 DEFAULT_DEST_DIR=.         # the folder into which to install the executable
-TMP_DIR=./binstall_install
+TMP_DIR=./run_that_app_install
 
 main() {
 	print_welcome
@@ -45,7 +45,7 @@ main() {
 
 	# print summary
 	echo
-	echo "Successfully installed binstall $VERSION_TO_INSTALL for $OS/$CPU."
+	echo "Successfully installed run-that-app $VERSION_TO_INSTALL for $OS/$CPU."
 }
 
 create_folder() {
@@ -92,7 +92,7 @@ download_url() {
 	OS=$1
 	CPU=$2
 	EXT=$(archive_ext "$OS")
-	echo "https://github.com/kevgo/binstall/releases/download/v${VERSION_TO_INSTALL}/binstall_${OS}_${CPU}.${EXT}"
+	echo "https://github.com/kevgo/run-that-app/releases/download/v${VERSION_TO_INSTALL}/run_that_app_${OS}_${CPU}.${EXT}"
 }
 
 archive_ext() {
@@ -111,8 +111,8 @@ download_and_extract() {
 	create_folder "$TMP_DIR"
 	if [ "$OS" = "windows" ]; then
 		need_cmd unzip
-		curl -Lo "$TMP_DIR/binstall.zip" "$URL"
-		(cd $TMP_DIR && unzip binstall.zip "$FILENAME")
+		curl -Lo "$TMP_DIR/run-that-app.zip" "$URL"
+		(cd $TMP_DIR && unzip run-that-app.zip "$FILENAME")
 	else
 		need_cmd tar
 		curl -L "$URL" | tar xz --directory "$TMP_DIR"
@@ -125,9 +125,9 @@ download_and_extract() {
 executable_filename() {
 	OS=$1
 	if [ "$OS" = "windows" ]; then
-		echo "binstall.exe"
+		echo "run-that-app.exe"
 	else
-		echo "binstall"
+		echo "run-that-app"
 	fi
 }
 
@@ -136,7 +136,7 @@ check_already_installed() {
 	if [ -f "$DEST_PATH" ]; then
 		INSTALLED_VERSION=$($DEST_PATH -V)
 		if [ "$INSTALLED_VERSION" = "$VERSION_TO_INSTALL" ]; then
-			echo "You already have binstall $VERSION_TO_INSTALL installed."
+			echo "You already have run-that-app $VERSION_TO_INSTALL installed."
 			exit 0
 		fi
 	fi
