@@ -12,7 +12,7 @@ fix: build  # auto-corrects issues
 	cargo fix
 	cargo fmt
 	target/debug/run-that-app dprint@${DPRINT_VERSION} fmt
-	target/debug/run-that-app shfmt@${SHFMT_VERSION} -f . | xargs target/debug/run-that-app -l shfmt@${SHFMT_VERSION} -w
+	target/debug/run-that-app shfmt@${SHFMT_VERSION} -f . | xargs target/debug/run-that-app shfmt@${SHFMT_VERSION} -w
 
 help:  # shows all available Make commands
 	cat Makefile | grep '^[^ ]*:' | grep -v '.PHONY' | grep -v '.SILENT:' | grep '#' | grep -v help | sed 's/:.*#/#/' | column -s "#" -t
