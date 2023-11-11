@@ -96,24 +96,24 @@ mod tests {
             };
             let executable = "executable";
             yard.save(&requested_app, executable, b"content");
-            let Some(Executable(runnable_app)) = yard.load(&requested_app, executable) else {
+            let Some(Executable(executable_path)) = yard.load(&requested_app, executable) else {
                 panic!();
             };
             #[cfg(unix)]
             assert!(
-                runnable_app
+                executable_path
                     .to_string_lossy()
                     .ends_with("/apps/shellcheck/0.9.0/executable"),
                 "{}",
-                runnable_app.to_string_lossy()
+                executable_path.to_string_lossy()
             );
             #[cfg(windows)]
             assert!(
-                runnable_app
+                executable_path
                     .to_string_lossy()
                     .ends_with("\\apps\\shellcheck\\0.9.0\\executable"),
                 "{}",
-                runnable_app.to_string_lossy()
+                executable_path.to_string_lossy()
             );
         }
 

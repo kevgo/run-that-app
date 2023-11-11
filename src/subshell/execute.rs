@@ -34,8 +34,8 @@ mod tests {
             let executable_path = tempdir.path().join("executable");
             fs::write(&executable_path, b"#!/bin/sh\necho hello").unwrap();
             make_file_executable(&executable_path).unwrap();
-            let runnable_app = Executable(executable_path);
-            let have = execute(runnable_app, vec![]);
+            let executable = Executable(executable_path);
+            let have = execute(executable, vec![]);
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(0))"));
         }
@@ -52,8 +52,8 @@ mod tests {
             let executable_path = tempdir.path().join("executable");
             fs::write(&executable_path, b"#!/bin/sh\nexit 3").unwrap();
             make_file_executable(&executable_path).unwrap();
-            let runnable_app = Executable(executable_path);
-            let have = execute(runnable_app, vec![]);
+            let executable = Executable(executable_path);
+            let have = execute(executable, vec![]);
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(3))"));
         }
@@ -68,8 +68,8 @@ mod tests {
             let tempdir = tempfile::tempdir().unwrap();
             let executable_path = tempdir.path().join("executable.cmd");
             fs::write(&executable_path, b"echo hello").unwrap();
-            let runnable_app = Executable(executable_path);
-            let have = execute(runnable_app, vec![]);
+            let executable = Executable(executable_path);
+            let have = execute(executable, vec![]);
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(0))"));
         }
@@ -84,8 +84,8 @@ mod tests {
             let tempdir = tempfile::tempdir().unwrap();
             let executable_path = tempdir.path().join("executable.cmd");
             fs::write(&executable_path, b"EXIT 3").unwrap();
-            let runnable_app = Executable(executable_path);
-            let have = execute(runnable_app, vec![]);
+            let executable = Executable(executable_path);
+            let have = execute(executable, vec![]);
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(3))"));
         }
