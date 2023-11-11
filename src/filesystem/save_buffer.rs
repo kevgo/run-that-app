@@ -6,7 +6,7 @@ use crate::Result;
 use std::fs;
 use std::path::PathBuf;
 
-/// writes the given uncompressed data under the given filename to disk
+/// saves the given uncompressed data as the given file
 pub fn save_buffer(
     data: Vec<u8>,
     path_on_disk: PathBuf,
