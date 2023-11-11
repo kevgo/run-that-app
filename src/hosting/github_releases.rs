@@ -13,8 +13,7 @@ pub struct GithubReleaseAsset {
 
 impl OnlineLocation for GithubReleaseAsset {
     fn download(&self, output: &dyn Output) -> Result<Artifact> {
-        let url = self.download_url();
-        http_get(url, output)
+        http_get(self.download_url(), output)
     }
 }
 

@@ -6,7 +6,6 @@ use std::path::PathBuf;
 #[allow(clippy::module_name_repetitions)]
 pub enum UserError {
     CannotDetermineHomeDirectory,
-    CannotDetermineOS,
     CannotDownload { url: String, reason: String },
     CannotCreateFolder { folder: PathBuf, reason: String },
     CannotMakeFileExecutable { file: String, reason: String },
@@ -28,10 +27,6 @@ impl UserError {
     pub fn print(self) {
         match self {
             UserError::CannotDetermineHomeDirectory => error("cannot determine home directory"),
-            UserError::CannotDetermineOS => {
-                error("cannot determine the operating system");
-                desc("Request support for your platform at https://github.com/kevgo/binstall/issues.");
-            }
             UserError::CannotCreateFolder { folder, reason } => {
                 error(&format!(
                     "cannot create folder {folder}: {reason}",
