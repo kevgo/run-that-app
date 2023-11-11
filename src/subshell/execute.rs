@@ -20,7 +20,6 @@ fn reduce_exit_status_to_code(code: i32) -> u8 {
 
 #[cfg(test)]
 mod tests {
-
     mod execute {
 
         #[test]
