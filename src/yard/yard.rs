@@ -21,7 +21,7 @@ impl Yard {
     pub fn load(&self, app: &RequestedApp, executable: &str) -> Option<Executable> {
         let file_path = self.file_path(app, executable);
         if file_path.exists() {
-            Some(Executable { path: file_path })
+            Some(Executable(file_path))
         } else {
             None
         }
@@ -82,7 +82,7 @@ mod tests {
 
     mod load {
         use crate::cli::RequestedApp;
-        use crate::yard::{create, Yard};
+        use crate::yard::{create, Executable, Yard};
         use big_s::S;
         use std::path::PathBuf;
 
@@ -96,17 +96,16 @@ mod tests {
             };
             let executable = "executable";
             yard.save(&requested_app, executable, b"content");
-            let Some(runnable_app) = yard.load(&requested_app, executable) else {
+            let Some(Executable(runnable_app)) = yard.load(&requested_app, executable) else {
                 panic!();
             };
             #[cfg(unix)]
             assert!(
                 runnable_app
-                    .path
                     .to_string_lossy()
                     .ends_with("/apps/shellcheck/0.9.0/executable"),
                 "{}",
-                runnable_app.path.to_string_lossy()
+                runnable_app.to_string_lossy()
             );
             #[cfg(windows)]
             assert!(

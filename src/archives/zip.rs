@@ -39,7 +39,7 @@ impl Archive for Zip {
         io::copy(&mut file_in_zip, &mut file_on_disk).unwrap();
         filesystem::make_file_executable(&path_on_disk)?;
         output.println(&format!("{}", "ok".green()));
-        Ok(Executable { path: path_on_disk })
+        Ok(Executable(path_on_disk))
     }
 }
 

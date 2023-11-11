@@ -39,7 +39,7 @@ impl Archive for TarGz {
         assert!(found_file, "file {path_in_archive} not found in archive");
         filesystem::make_file_executable(&path_on_disk)?;
         output.println(&format!("{}", "ok".green()));
-        Ok(Executable { path: path_on_disk })
+        Ok(Executable(path_on_disk))
     }
 }
 
