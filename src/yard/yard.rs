@@ -20,8 +20,8 @@ impl Yard {
     }
 
     /// provides the path to the executable of the given application
-    pub fn load(&self, app: &RequestedApp, executable: &str) -> Option<Executable> {
-        let file_path = self.file_path(app, executable);
+    pub fn load(&self, app: &RequestedApp, executable_filename: &str) -> Option<Executable> {
+        let file_path = self.file_path(app, executable_filename);
         if file_path.exists() {
             Some(Executable(file_path))
         } else {
