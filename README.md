@@ -1,6 +1,7 @@
 # Run That App!
 
-[![Linux](https://github.com/kevgo/binstall/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/binstall/actions/workflows/ci_linux.yml)
+[![linux](https://github.com/kevgo/binstall/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/binstall/actions/workflows/ci_linux.yml)
+[![windows](https://github.com/kevgo/binstall/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/binstall/actions/workflows/ci_windows.yml)
 
 _Run-that-app_ installs and executes small third-party tools used by software
 developers (linters, checkers , verifiers) that often have no good way of being
