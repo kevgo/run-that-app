@@ -1,6 +1,7 @@
 //! all applications that run-this-app can run
 
 mod dprint;
+mod gh;
 mod shellcheck;
 mod shfmt;
 
@@ -9,6 +10,7 @@ use crate::error::UserError;
 use crate::hosting::OnlineLocation;
 use crate::Result;
 use dprint::Dprint;
+use gh::Gh;
 use shellcheck::ShellCheck;
 use shfmt::Shfmt;
 
@@ -41,6 +43,7 @@ pub trait App {
 pub fn all() -> Vec<Box<dyn App>> {
     vec![
         Box::new(Dprint {}),
+        Box::new(Gh {}),
         Box::new(ShellCheck {}),
         Box::new(Shfmt {}),
     ]
