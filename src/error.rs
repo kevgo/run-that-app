@@ -6,9 +6,19 @@ use std::path::PathBuf;
 #[allow(clippy::module_name_repetitions)]
 pub enum UserError {
     CannotDetermineHomeDirectory,
-    CannotDownload { url: String, reason: String },
-    CannotCreateFolder { folder: PathBuf, reason: String },
-    CannotMakeFileExecutable { file: String, reason: String },
+    CannotDownload {
+        url: String,
+        reason: String,
+    },
+    CannotCreateFolder {
+        folder: PathBuf,
+        reason: String,
+    },
+    #[cfg(unix)]
+    CannotMakeFileExecutable {
+        file: String,
+        reason: String,
+    },
     NotOnline,
     RunRequestMissingVersion,
     UnknownApp(String),
@@ -20,7 +30,9 @@ pub enum UserError {
     //     app_name: String,
     //     platform: Platform,
     // },
-    YardRootIsNotFolder { root: PathBuf },
+    YardRootIsNotFolder {
+        root: PathBuf,
+    },
 }
 
 impl UserError {
@@ -38,6 +50,7 @@ impl UserError {
                 error(&format!("cannot download URL {url}: {reason}"));
                 desc("Please try again later.");
             }
+            #[cfg(unix)]
             UserError::CannotMakeFileExecutable { file, reason } => {
                 error(&format!("Cannot make file {file} executable: {reason}"));
                 desc("Please check access permissions and try again.");

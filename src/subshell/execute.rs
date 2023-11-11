@@ -46,7 +46,6 @@ mod tests {
         #[test]
         #[cfg(windows)]
         fn success() {
-            use crate::filesystem::make_file_executable;
             use crate::subshell::execute;
             use crate::yard::RunnableApp;
             use big_s::S;
@@ -59,7 +58,7 @@ mod tests {
             };
             let have = execute(runnable_app, vec![]);
             // HACK: is there a better way to compare ExitCode?
-            assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(3))"));
+            assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(3))"));
         }
     }
 

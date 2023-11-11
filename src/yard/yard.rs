@@ -101,11 +101,21 @@ mod tests {
             let Some(runnable_app) = yard.load(&requested_app, executable) else {
                 panic!();
             };
+            #[cfg(unix)]
             assert!(
                 runnable_app
                     .executable
                     .to_string_lossy()
                     .ends_with("/apps/shellcheck/0.9.0/executable"),
+                "{}",
+                runnable_app.executable.to_string_lossy()
+            );
+            #[cfg(windows)]
+            assert!(
+                runnable_app
+                    .executable
+                    .to_string_lossy()
+                    .ends_with("\\apps\\shellcheck\\0.9.0\\executable"),
                 "{}",
                 runnable_app.executable.to_string_lossy()
             );

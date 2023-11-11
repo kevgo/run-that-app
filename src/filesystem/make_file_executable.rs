@@ -1,10 +1,10 @@
-use crate::error::UserError;
 use crate::Result;
-use std::fs;
 use std::path::Path;
 
 #[cfg(unix)]
 pub fn make_file_executable(file: &Path) -> Result<()> {
+    use crate::error::UserError;
+    use std::fs;
     use std::os::unix::prelude::PermissionsExt;
     fs::set_permissions(file, fs::Permissions::from_mode(0o744)).map_err(|err| {
         UserError::CannotMakeFileExecutable {
@@ -14,7 +14,8 @@ pub fn make_file_executable(file: &Path) -> Result<()> {
     })
 }
 
-#[cfg(not(unix))]
-pub fn make_executable(file: &Path) -> Result<()> {
+#[cfg(windows)]
+#[allow(clippy::unnecessary_wraps)]
+pub fn make_file_executable(_file: &Path) -> Result<()> {
     Ok(())
 }
