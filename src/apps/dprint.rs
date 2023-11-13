@@ -35,8 +35,8 @@ impl App for Dprint {
         })
     }
 
-    fn file_to_extract_from_archive(&self, _version: &str, platform: Platform) -> String {
-        S(self.executable(platform))
+    fn file_to_extract_from_archive(&self, _version: &str, platform: Platform) -> Option<String> {
+        Some(S(self.executable(platform)))
     }
 }
 

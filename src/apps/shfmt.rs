@@ -35,8 +35,8 @@ impl App for Shfmt {
         })
     }
 
-    fn file_to_extract_from_archive(&self, _version: &str, _platform: Platform) -> String {
-        String::new()
+    fn file_to_extract_from_archive(&self, _version: &str, _platform: Platform) -> Option<String> {
+        None
     }
 }
 

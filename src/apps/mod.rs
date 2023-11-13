@@ -2,6 +2,7 @@
 
 mod dprint;
 mod gh;
+mod gofumpt;
 mod shellcheck;
 mod shfmt;
 
@@ -11,6 +12,7 @@ use crate::hosting::OnlineLocation;
 use crate::Result;
 use dprint::Dprint;
 use gh::Gh;
+use gofumpt::Gofumpt;
 use shellcheck::ShellCheck;
 use shfmt::Shfmt;
 
@@ -37,13 +39,14 @@ pub trait App {
     fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation>;
 
     /// the name of the executable file in the archive
-    fn file_to_extract_from_archive(&self, version: &str, platform: Platform) -> String;
+    fn file_to_extract_from_archive(&self, version: &str, platform: Platform) -> Option<String>;
 }
 
 pub fn all() -> Vec<Box<dyn App>> {
     vec![
         Box::new(Dprint {}),
         Box::new(Gh {}),
+        Box::new(Gofumpt {}),
         Box::new(ShellCheck {}),
         Box::new(Shfmt {}),
     ]

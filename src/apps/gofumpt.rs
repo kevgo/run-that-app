@@ -1,7 +1,6 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
 use crate::hosting::{GithubReleaseAsset, OnlineLocation};
-use big_s::S;
 
 pub struct Gofumpt {}
 
@@ -12,31 +11,31 @@ impl App for Gofumpt {
 
     fn executable(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "dprint.exe",
-            Os::Linux | Os::MacOS => "dprint",
+            Os::Windows => "gofumpt.exe",
+            Os::Linux | Os::MacOS => "gofumpt",
         }
     }
 
     fn homepage(&self) -> &'static str {
-        "https://dprint.dev"
+        "https://github.com/mvdan/gofumpt"
     }
 
     fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation> {
         let filename = format!(
-            "dprint-{cpu}-{os}.zip",
+            "gofumpt_v{version}_{os}_{cpu}",
             os = os_text(platform.os),
             cpu = cpu_text(platform.cpu),
         );
         Box::new(GithubReleaseAsset {
-            organization: "dprint",
-            repo: "dprint",
+            organization: "mvdan",
+            repo: "gofumpt",
             version: version.to_string(),
             filename,
         })
     }
 
-    fn file_to_extract_from_archive(&self, _version: &str, platform: Platform) -> String {
-        S(self.executable(platform))
+    fn file_to_extract_from_archive(&self, _version: &str, _platform: Platform) -> Option<String> {
+        None
     }
 }
 

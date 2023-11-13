@@ -27,13 +27,15 @@ pub trait Archive {
 /// extracts the given file in the given artifact to the given location on disk
 pub fn extract(
     artifact: Artifact,
-    path_in_archive: String,
+    path_in_archive: Option<String>,
     path_on_disk: PathBuf,
     output: &dyn Output,
 ) -> Result<Executable> {
-    for archive in all_archives() {
-        if archive.can_extract(&artifact.filename) {
-            return archive.extract(artifact.data, path_in_archive, path_on_disk, output);
+    if let Some(path_in_archive) = path_in_archive {
+        for archive in all_archives() {
+            if archive.can_extract(&artifact.filename) {
+                return archive.extract(artifact.data, path_in_archive, path_on_disk, output);
+            }
         }
     }
     // here the file doesn't match any of the known archives --> we assume its the binary itself
