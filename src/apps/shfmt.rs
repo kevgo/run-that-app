@@ -42,22 +42,22 @@ impl App for Shfmt {
 
 fn os_text(os: Os) -> &'static str {
     match os {
-        Os::Windows => "windows",
         Os::Linux => "linux",
         Os::MacOS => "darwin",
+        Os::Windows => "windows",
     }
 }
 
 fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
-        Cpu::Intel64 => "amd64",
         Cpu::Arm64 => "arm64",
+        Cpu::Intel64 => "amd64",
     }
 }
 
 fn ext_text(os: Os) -> &'static str {
     match os {
-        Os::Windows => ".exe",
         Os::Linux | Os::MacOS => "",
+        Os::Windows => ".exe",
     }
 }

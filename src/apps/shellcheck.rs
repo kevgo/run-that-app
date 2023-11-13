@@ -43,22 +43,22 @@ impl App for ShellCheck {
 
 fn os_text(os: Os) -> &'static str {
     match os {
-        Os::Windows => "windows",
         Os::Linux => "linux",
         Os::MacOS => "darwin",
+        Os::Windows => "windows",
     }
 }
 
 fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
-        Cpu::Intel64 => "x86_64",
         Cpu::Arm64 => "aarch64",
+        Cpu::Intel64 => "x86_64",
     }
 }
 
 fn ext_text(os: Os) -> &'static str {
     match os {
-        Os::Windows => "zip",
         Os::Linux | Os::MacOS => "tar.gz",
+        Os::Windows => "zip",
     }
 }
