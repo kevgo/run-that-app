@@ -1,6 +1,12 @@
 //! all applications that run-this-app can run
 
+mod alphavet;
+mod depth;
 mod dprint;
+mod gh;
+mod gofumpt;
+mod golangci_lint;
+mod scc;
 mod shellcheck;
 mod shfmt;
 
@@ -8,9 +14,6 @@ use crate::detect::Platform;
 use crate::error::UserError;
 use crate::hosting::OnlineLocation;
 use crate::Result;
-use dprint::Dprint;
-use shellcheck::ShellCheck;
-use shfmt::Shfmt;
 
 pub fn lookup(name: &str) -> Result<Box<dyn App>> {
     for app in all() {
@@ -35,13 +38,19 @@ pub trait App {
     fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation>;
 
     /// the name of the executable file in the archive
-    fn file_to_extract_from_archive(&self, version: &str, platform: Platform) -> String;
+    fn file_to_extract_from_archive(&self, version: &str, platform: Platform) -> Option<String>;
 }
 
 pub fn all() -> Vec<Box<dyn App>> {
     vec![
-        Box::new(Dprint {}),
-        Box::new(ShellCheck {}),
-        Box::new(Shfmt {}),
+        Box::new(alphavet::Alphavet {}),
+        Box::new(depth::Depth {}),
+        Box::new(dprint::Dprint {}),
+        Box::new(gh::Gh {}),
+        Box::new(gofumpt::Gofumpt {}),
+        Box::new(golangci_lint::GolangCiLint {}),
+        Box::new(scc::Scc {}),
+        Box::new(shellcheck::ShellCheck {}),
+        Box::new(shfmt::Shfmt {}),
     ]
 }

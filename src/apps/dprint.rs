@@ -35,22 +35,22 @@ impl App for Dprint {
         })
     }
 
-    fn file_to_extract_from_archive(&self, _version: &str, platform: Platform) -> String {
-        S(self.executable(platform))
+    fn file_to_extract_from_archive(&self, _version: &str, platform: Platform) -> Option<String> {
+        Some(S(self.executable(platform)))
     }
 }
 
 fn os_text(os: Os) -> &'static str {
     match os {
-        Os::Windows => "pc-windows-msvc",
         Os::Linux => "unknown-linux-gnu",
         Os::MacOS => "apple-darwin",
+        Os::Windows => "pc-windows-msvc",
     }
 }
 
 fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
-        Cpu::Intel64 => "x86_64",
         Cpu::Arm64 => "aarch64",
+        Cpu::Intel64 => "x86_64",
     }
 }

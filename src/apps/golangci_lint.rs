@@ -2,35 +2,35 @@ use super::App;
 use crate::detect::{Cpu, Os, Platform};
 use crate::hosting::{GithubReleaseAsset, OnlineLocation};
 
-pub struct Shfmt {}
+pub struct GolangCiLint {}
 
-impl App for Shfmt {
+impl App for GolangCiLint {
     fn name(&self) -> &'static str {
-        "shfmt"
+        "golangci-lint"
     }
 
     fn executable(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "shfmt.exe",
-            Os::Linux | Os::MacOS => "shfmt",
+            Os::Windows => "golangci-lint.exe",
+            Os::Linux | Os::MacOS => "golangci-lint",
         }
     }
 
     fn homepage(&self) -> &'static str {
-        "https://github.com/mvdan/sh"
+        "https://github.com/golangci/golangci-lint"
     }
 
     fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation> {
         let filename = format!(
-            "shfmt_{version}_{os}_{cpu}{ext}",
+            "golangci-lint-v{version}-{os}-{cpu}.{ext}",
             os = os_text(platform.os),
             cpu = cpu_text(platform.cpu),
             ext = ext_text(platform.os),
         );
         Box::new(GithubReleaseAsset {
-            organization: "mvdan",
-            repo: "sh",
-            version: version.to_string(),
+            organization: "golangci",
+            repo: "golangci-lint",
+            version: format!("v{version}"),
             filename,
         })
     }
@@ -57,7 +57,7 @@ fn cpu_text(cpu: Cpu) -> &'static str {
 
 fn ext_text(os: Os) -> &'static str {
     match os {
-        Os::Linux | Os::MacOS => "",
-        Os::Windows => ".exe",
+        Os::Linux | Os::MacOS => "tar.gz",
+        Os::Windows => "zip",
     }
 }

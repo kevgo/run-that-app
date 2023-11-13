@@ -36,29 +36,29 @@ impl App for ShellCheck {
         })
     }
 
-    fn file_to_extract_from_archive(&self, _version: &str, platform: Platform) -> String {
-        S(self.executable(platform))
+    fn file_to_extract_from_archive(&self, _version: &str, platform: Platform) -> Option<String> {
+        Some(S(self.executable(platform)))
     }
 }
 
 fn os_text(os: Os) -> &'static str {
     match os {
-        Os::Windows => "windows",
         Os::Linux => "linux",
         Os::MacOS => "darwin",
+        Os::Windows => "windows",
     }
 }
 
 fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
-        Cpu::Intel64 => "x86_64",
         Cpu::Arm64 => "aarch64",
+        Cpu::Intel64 => "x86_64",
     }
 }
 
 fn ext_text(os: Os) -> &'static str {
     match os {
-        Os::Windows => "zip",
         Os::Linux | Os::MacOS => "tar.gz",
+        Os::Windows => "zip",
     }
 }
