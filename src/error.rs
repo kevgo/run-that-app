@@ -26,10 +26,6 @@ pub enum UserError {
     UnsupportedPlatform,
     UnsupportedCPU(String),
     UnsupportedOS(String),
-    // UnsupportedPlatformAndNoGlobalApp {
-    //     app_name: String,
-    //     platform: Platform,
-    // },
     YardRootIsNotFolder {
         root: PathBuf,
     },
@@ -86,11 +82,6 @@ If you are okay moving forward without this app, you can provide the \"--allow-u
                 ));
                 desc("Request support for your platform at https://github.com/kevgo/binstall/issues.");
             } // UserError::UnsupportedPlatformAndNoGlobalApp { app_name, platform } => {
-            //     error(&format!("This app is not supported on {platform} and I didn't find a globally installed version in your PATH."));
-            //     desc(&format!(
-            //         "Please make sure that running \"{app_name}\" works and try again."
-            //     ));
-            // }
             UserError::YardRootIsNotFolder { root } => {
                 error("The internal storage has the wrong structure.");
                 desc(&format!(

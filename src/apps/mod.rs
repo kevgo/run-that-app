@@ -12,7 +12,6 @@ mod shfmt;
 
 use crate::detect::Platform;
 use crate::error::UserError;
-use crate::hosting::OnlineLocation;
 use crate::install::InstallationMethod;
 use crate::yard::Yard;
 use crate::Result;

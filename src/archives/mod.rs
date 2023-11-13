@@ -6,7 +6,7 @@ use crate::download::Artifact;
 use crate::output::Output;
 use crate::yard::Executable;
 use crate::{filesystem, Result};
-use std::path::PathBuf;
+use std::path::Path;
 pub use tar_gz::TarGz;
 
 /// An archive is a compressed file containing an application.
@@ -18,8 +18,8 @@ pub trait Archive {
     fn extract(
         &self,
         data: Vec<u8>,
-        path_in_archive: String,
-        path_on_disk: PathBuf,
+        path_in_archive: &str,
+        path_on_disk: &Path,
         output: &dyn Output,
     ) -> Result<Executable>;
 }
@@ -27,8 +27,8 @@ pub trait Archive {
 /// extracts the given file in the given artifact to the given location on disk
 pub fn extract(
     artifact: Artifact,
-    file_in_archive: Option<String>,
-    file_on_disk: PathBuf,
+    file_in_archive: &Option<String>,
+    file_on_disk: &Path,
     output: &dyn Output,
 ) -> Result<Executable> {
     if let Some(path_in_archive) = file_in_archive {

@@ -1,9 +1,6 @@
-mod github_releases;
-
 use crate::download::Artifact;
 use crate::Output;
 use crate::Result;
-pub use github_releases::GithubReleaseAsset;
 
 /// an online location containing an application
 pub trait OnlineLocation {

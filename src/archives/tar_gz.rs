@@ -5,7 +5,7 @@ use crate::{filesystem, Result};
 use colored::Colorize;
 use flate2::read::GzDecoder;
 use std::io;
-use std::path::PathBuf;
+use std::path::Path;
 
 /// a .tar.gz file downloaded from the internet, containing an application
 pub struct TarGz {}
@@ -18,8 +18,8 @@ impl Archive for TarGz {
     fn extract(
         &self,
         data: Vec<u8>,
-        path_in_archive: String,
-        path_on_disk: PathBuf,
+        path_in_archive: &str,
+        path_on_disk: &Path,
         output: &dyn Output,
     ) -> Result<Executable> {
         output.print("extracting tar.gz archive ... ");
@@ -33,13 +33,13 @@ impl Archive for TarGz {
             output.log(CATEGORY, &format!("- {filepath}"));
             if filepath == path_in_archive {
                 found_file = true;
-                file.unpack(&path_on_disk).unwrap();
+                file.unpack(path_on_disk).unwrap();
             }
         }
         assert!(found_file, "file {path_in_archive} not found in archive");
-        filesystem::make_file_executable(&path_on_disk)?;
+        filesystem::make_file_executable(path_on_disk)?;
         output.println(&format!("{}", "ok".green()));
-        Ok(Executable(path_on_disk))
+        Ok(Executable(path_on_disk.to_path_buf()))
     }
 }
 

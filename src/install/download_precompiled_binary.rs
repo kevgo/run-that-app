@@ -20,11 +20,11 @@ pub struct DownloadPrecompiledBinary {
 
 impl InstallationMethod for DownloadPrecompiledBinary {
     fn install(&self, output: &dyn Output) -> Result<Option<Executable>> {
-        let Some(artifact) = http_get(self.url, output)? else {
+        let Some(artifact) = http_get(self.url.clone(), output)? else {
             return Ok(None);
         };
         let executable =
-            archives::extract(artifact, self.file_in_archive, self.file_on_disk, output)?;
+            archives::extract(artifact, &self.file_in_archive, &self.file_on_disk, output)?;
         Ok(Some(executable))
     }
 }

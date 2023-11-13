@@ -1,9 +1,9 @@
 use crate::apps;
 use crate::apps::App;
-use crate::archives;
 use crate::cli::RequestedApp;
 use crate::detect;
 use crate::detect::Platform;
+use crate::error::UserError;
 use crate::subshell;
 use crate::yard;
 use crate::yard::Executable;
@@ -20,30 +20,24 @@ pub fn run(
     let app = apps::lookup(&requested_app.name)?;
     let platform = detect::detect(output)?;
     let prodyard = yard::load_or_create(&yard::production_location()?)?;
-    let executable = match prodyard.load_app(requested_app, app.executable(platform)) {
-        Some(installed_app) => installed_app,
-        None => install_app(requested_app, app.as_ref(), platform, &prodyard, output)?,
-    };
+    let executable = load_or_install(requested_app, app.as_ref(), platform, &prodyard, output)?;
     Ok(subshell::execute(executable, args))
 }
 
-fn install_app(
+fn load_or_install(
     requested_app: &RequestedApp,
-    known_app: &dyn App,
+    app: &dyn App,
     platform: Platform,
-    prodyard: &Yard,
+    yard: &Yard,
     output: &dyn Output,
 ) -> Result<Executable> {
-    install_binary(requested_app, known_app, platform, prodyard, output)?;
+    if let Some(executable) = yard.load_app(requested_app, app.executable(platform)) {
+        return Ok(executable);
+    };
+    for installation_method in app.installation_methods(&requested_app.version, platform, yard) {
+        if let Some(executable) = installation_method.install(output)? {
+            return Ok(executable);
+        }
+    }
+    Err(UserError::UnsupportedPlatform)
 }
-
-fn install_binary(
-    requested_app: &RequestedApp,
-    known_app: &dyn App,
-    platform: Platform,
-    prodyard: &Yard,
-    output: &dyn Output,
-) -> Result<Executable> {
-}
-
-fn install_from_source() -> Result<Executable> {}
