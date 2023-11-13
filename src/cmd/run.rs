@@ -34,13 +34,16 @@ fn install_app(
     prodyard: &Yard,
     output: &dyn Output,
 ) -> Result<Executable> {
-    let online_location = known_app.artifact_location(&requested_app.version, platform);
-    let artifact = online_location.download(output)?;
-    prodyard.create_app_folder(requested_app)?;
-    archives::extract(
-        artifact,
-        known_app.file_to_extract_from_archive(&requested_app.version, platform),
-        prodyard.app_file_path(requested_app, known_app.executable(platform)),
-        output,
-    )
+    install_binary(requested_app, known_app, platform, prodyard, output)?;
 }
+
+fn install_binary(
+    requested_app: &RequestedApp,
+    known_app: &dyn App,
+    platform: Platform,
+    prodyard: &Yard,
+    output: &dyn Output,
+) -> Result<Executable> {
+}
+
+fn install_from_source() -> Result<Executable> {}

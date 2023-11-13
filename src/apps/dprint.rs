@@ -1,6 +1,6 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::hosting::{GithubReleaseAsset, OnlineLocation};
+use crate::install::{CompileFromGoSource, DownloadPrecompiledBinary};
 use big_s::S;
 
 pub struct Dprint {}
@@ -21,22 +21,20 @@ impl App for Dprint {
         "https://dprint.dev"
     }
 
-    fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation> {
-        let filename = format!(
-            "dprint-{cpu}-{os}.zip",
-            os = os_text(platform.os),
-            cpu = cpu_text(platform.cpu),
-        );
-        Box::new(GithubReleaseAsset {
-            organization: "dprint",
-            repo: "dprint",
-            version: version.to_string(),
-            filename,
-        })
-    }
-
-    fn file_to_extract_from_archive(&self, _version: &str, platform: Platform) -> Option<String> {
-        Some(S(self.executable(platform)))
+    fn installation_methods(
+        &self,
+        version: &str,
+        platform: Platform,
+        yard: &crate::yard::Yard,
+    ) -> Vec<Box<dyn crate::install::InstallationMethod>> {
+        vec![
+            Box::new(DownloadPrecompiledBinary {
+                url: format!("https://github.com/dprint/dprint/releases/download/{version}/dprint-{cpu}-{os}.zip", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
+                file_in_archive: Some(S(self.executable(platform))),
+                file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
+            }),
+            Box::new(CompileFromGoSource {}),
+        ]
     }
 }
 

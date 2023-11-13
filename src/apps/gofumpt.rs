@@ -1,6 +1,6 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::hosting::{GithubReleaseAsset, OnlineLocation};
+use crate::install::{CompileFromGoSource, DownloadPrecompiledBinary};
 
 pub struct Gofumpt {}
 
@@ -20,22 +20,20 @@ impl App for Gofumpt {
         "https://github.com/mvdan/gofumpt"
     }
 
-    fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation> {
-        let filename = format!(
-            "gofumpt_{version}_{os}_{cpu}",
-            os = os_text(platform.os),
-            cpu = cpu_text(platform.cpu),
-        );
-        Box::new(GithubReleaseAsset {
-            organization: "mvdan",
-            repo: "gofumpt",
-            version: version.to_string(),
-            filename,
-        })
-    }
-
-    fn file_to_extract_from_archive(&self, _version: &str, _platform: Platform) -> Option<String> {
-        None
+    fn installation_methods(
+        &self,
+        version: &str,
+        platform: Platform,
+        yard: &crate::yard::Yard,
+    ) -> Vec<Box<dyn crate::install::InstallationMethod>> {
+        vec![
+            Box::new(DownloadPrecompiledBinary {
+                url: format!("https://github.com/mvdan/gofumpt/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
+                file_in_archive: None,
+                file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
+            }),
+            Box::new(CompileFromGoSource {}),
+        ]
     }
 }
 

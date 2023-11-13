@@ -30,13 +30,13 @@ impl Yard {
     }
 
     /// provides the path to the given file that is part of the given application
-    pub fn app_file_path(&self, app: &RequestedApp, file: &str) -> PathBuf {
-        self.app_folder(app).join(file)
+    pub fn app_file_path(&self, app_name: &str, app_version: &str, file: &str) -> PathBuf {
+        self.app_folder(app_name, app_version).join(file)
     }
 
     /// provides the path to the folder containing the given application
-    pub fn app_folder(&self, app: &RequestedApp) -> PathBuf {
-        self.root.join("apps").join(&app.name).join(&app.version)
+    pub fn app_folder(&self, app_name: &str, app_version: &str) -> PathBuf {
+        self.root.join("apps").join(app_name).join(app_version)
     }
 
     /// stores the given application consisting of the given executable file
