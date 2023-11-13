@@ -33,7 +33,11 @@ impl App for Alphavet {
                 file_in_archive: None,
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
             }),
-            Box::new(CompileFromGoSource {}),
+            Box::new(CompileFromGoSource {
+                url: "github.com/skx/alphavet/cmd/alphavet",
+                version: version.to_string(),
+                target_folder: yard.app_folder(self.name(), version),
+            }),
         ]
     }
 }
