@@ -22,7 +22,7 @@ impl App for Gofumpt {
 
     fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation> {
         let filename = format!(
-            "gofumpt_v{version}_{os}_{cpu}",
+            "gofumpt_{version}_{os}_{cpu}",
             os = os_text(platform.os),
             cpu = cpu_text(platform.cpu),
         );
@@ -41,15 +41,15 @@ impl App for Gofumpt {
 
 fn os_text(os: Os) -> &'static str {
     match os {
-        Os::Windows => "pc-windows-msvc",
-        Os::Linux => "unknown-linux-gnu",
-        Os::MacOS => "apple-darwin",
+        Os::Windows => "windows",
+        Os::Linux => "linux",
+        Os::MacOS => "darwin",
     }
 }
 
 fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
-        Cpu::Intel64 => "x86_64",
-        Cpu::Arm64 => "aarch64",
+        Cpu::Intel64 => "amd64",
+        Cpu::Arm64 => "arm64",
     }
 }
