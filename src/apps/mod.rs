@@ -1,5 +1,6 @@
 //! all applications that run-this-app can run
 
+mod alphavet;
 mod dprint;
 mod gh;
 mod gofumpt;
@@ -10,11 +11,6 @@ use crate::detect::Platform;
 use crate::error::UserError;
 use crate::hosting::OnlineLocation;
 use crate::Result;
-use dprint::Dprint;
-use gh::Gh;
-use gofumpt::Gofumpt;
-use shellcheck::ShellCheck;
-use shfmt::Shfmt;
 
 pub fn lookup(name: &str) -> Result<Box<dyn App>> {
     for app in all() {
@@ -44,10 +40,11 @@ pub trait App {
 
 pub fn all() -> Vec<Box<dyn App>> {
     vec![
-        Box::new(Dprint {}),
-        Box::new(Gh {}),
-        Box::new(Gofumpt {}),
-        Box::new(ShellCheck {}),
-        Box::new(Shfmt {}),
+        Box::new(alphavet::Alphavet {}),
+        Box::new(dprint::Dprint {}),
+        Box::new(gh::Gh {}),
+        Box::new(gofumpt::Gofumpt {}),
+        Box::new(shellcheck::ShellCheck {}),
+        Box::new(shfmt::Shfmt {}),
     ]
 }
