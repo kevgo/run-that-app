@@ -1,6 +1,6 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::hosting::{GithubReleaseAsset, OnlineLocation};
+use crate::install::{CompileFromGoSource, DownloadPrecompiledBinary};
 
 pub struct Shfmt {}
 
@@ -20,23 +20,20 @@ impl App for Shfmt {
         "https://github.com/mvdan/sh"
     }
 
-    fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation> {
-        let filename = format!(
-            "shfmt_{version}_{os}_{cpu}{ext}",
-            os = os_text(platform.os),
-            cpu = cpu_text(platform.cpu),
-            ext = ext_text(platform.os),
-        );
-        Box::new(GithubReleaseAsset {
-            organization: "mvdan",
-            repo: "sh",
-            version: version.to_string(),
-            filename,
-        })
-    }
-
-    fn file_to_extract_from_archive(&self, _version: &str, _platform: Platform) -> Option<String> {
-        None
+    fn installation_methods(
+        &self,
+        version: &str,
+        platform: Platform,
+        yard: &crate::yard::Yard,
+    ) -> Vec<Box<dyn crate::install::InstallationMethod>> {
+        vec![
+            Box::new(DownloadPrecompiledBinary {
+                url: format!("https://github.com/koalaman/shellcheck/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}", os = os_text(platform.os), cpu = cpu_text(platform.cpu), ext = ext_text(platform.os)),
+                file_in_archive: None,
+                file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
+            }),
+            Box::new(CompileFromGoSource {}),
+        ]
     }
 }
 

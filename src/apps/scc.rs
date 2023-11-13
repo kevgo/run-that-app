@@ -2,7 +2,7 @@ use big_s::S;
 
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::hosting::{GithubReleaseAsset, OnlineLocation};
+use crate::install::{CompileFromGoSource, DownloadPrecompiledBinary};
 
 pub struct Scc {}
 
@@ -22,23 +22,20 @@ impl App for Scc {
         "https://github.com/boyter/scc"
     }
 
-    fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation> {
-        let filename = format!(
-            "scc_{version}_{os}_{cpu}.{ext}",
-            os = os_text(platform.os),
-            cpu = cpu_text(platform.cpu),
-            ext = ext_text(platform.os)
-        );
-        Box::new(GithubReleaseAsset {
-            organization: "boyter",
-            repo: "scc",
-            version: format!("v{version}"),
-            filename,
-        })
-    }
-
-    fn file_to_extract_from_archive(&self, _version: &str, platform: Platform) -> Option<String> {
-        Some(S(self.executable(platform)))
+    fn installation_methods(
+        &self,
+        version: &str,
+        platform: Platform,
+        yard: &crate::yard::Yard,
+    ) -> Vec<Box<dyn crate::install::InstallationMethod>> {
+        vec![
+            Box::new(DownloadPrecompiledBinary {
+                url: format!("https://github.com/boyter/scc/releases/download/v{version}/scc_{version}_{os}_{cpu}.{ext}", os = os_text(platform.os), cpu = cpu_text(platform.cpu), ext = ext_text(platform.os)),
+                file_in_archive: Some(S(self.executable(platform))),
+                file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
+            }),
+            Box::new(CompileFromGoSource {}),
+        ]
     }
 }
 
