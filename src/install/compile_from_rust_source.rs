@@ -22,7 +22,7 @@ impl InstallationMethod for CompileFromRustSource {
         let mut cmd = Command::new(cargo_path);
         cmd.arg("install");
         cmd.arg("--root");
-        cmd.arg(self.target_folder);
+        cmd.arg(&self.target_folder);
         cmd.arg("--locked");
         cmd.arg(self.crate_name);
         let status = match cmd.status() {

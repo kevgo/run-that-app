@@ -20,7 +20,7 @@ impl InstallationMethod for CompileFromGoSource {
         };
         let mut cmd = Command::new(go_path);
         cmd.arg("install");
-        cmd.arg(self.import_path);
+        cmd.arg(&self.import_path);
         let status = match cmd.status() {
             Ok(status) => status,
             Err(err) => match err.kind() {

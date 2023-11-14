@@ -1,6 +1,6 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::install::{CompileFromGoSource, DownloadPrecompiledBinary};
+use crate::install::DownloadPrecompiledBinary;
 
 pub struct GolangCiLint {}
 
@@ -32,7 +32,7 @@ impl App for GolangCiLint {
                 file_in_archive: None,
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
             }),
-            Box::new(CompileFromGoSource {}),
+            // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
         ]
     }
 }
