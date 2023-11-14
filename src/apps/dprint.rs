@@ -1,6 +1,7 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::install::{CompileFromGoSource, DownloadPrecompiledBinary};
+use crate::install::{CompileFromRustSource, DownloadPrecompiledBinary};
+use crate::yard::Yard;
 use big_s::S;
 
 pub struct Dprint {}
@@ -25,7 +26,7 @@ impl App for Dprint {
         &self,
         version: &str,
         platform: Platform,
-        yard: &crate::yard::Yard,
+        yard: &Yard,
     ) -> Vec<Box<dyn crate::install::InstallationMethod>> {
         vec![
             Box::new(DownloadPrecompiledBinary {
@@ -33,7 +34,11 @@ impl App for Dprint {
                 file_in_archive: Some(S(self.executable(platform))),
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
             }),
-            Box::new(CompileFromGoSource {}),
+            Box::new(CompileFromRustSource {
+                crate_name: "dprint",
+                executable_filename: self.executable(platform),
+                target_folder: yard.app_folder(self.name(), version),
+            }),
         ]
     }
 }

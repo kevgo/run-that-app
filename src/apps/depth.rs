@@ -32,7 +32,11 @@ impl App for Depth {
                 file_in_archive: None,
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
             }),
-            Box::new(CompileFromGoSource {}),
+            Box::new(CompileFromGoSource {
+                import_path: format!("github.com/KyleBanks/depth/cmd/depth@v{version}"),
+                executable_filename: self.executable(platform),
+                target_folder: yard.app_folder(self.name(), version),
+            }),
         ]
     }
 }

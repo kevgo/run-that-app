@@ -19,8 +19,14 @@ pub enum UserError {
         file: String,
         reason: String,
     },
+    GoCompilationFailed,
+    GoNoPermission,
+    GoNotInstalled,
     NotOnline,
     RunRequestMissingVersion,
+    RustCompilationFailed,
+    RustNotInstalled,
+    RustNoPermission,
     UnknownApp(String),
     UnknownCliOption(String),
     UnsupportedPlatform,
@@ -51,10 +57,28 @@ impl UserError {
                 error(&format!("Cannot make file {file} executable: {reason}"));
                 desc("Please check access permissions and try again.");
             }
+            UserError::GoCompilationFailed => {
+                error("Compilation from Go source failed.");
+                desc("Please see the error output above and try again with a different version.");
+            }
+            UserError::GoNoPermission => error("No permission to execute the Go compiler"),
+            UserError::GoNotInstalled => {
+                error("The Go compiler is not installed");
+                desc("Installation instructions: https://go.dev/dl");
+            }
             UserError::NotOnline => error("you seem to be offline"),
             UserError::RunRequestMissingVersion => {
                 error("missing the version to install");
                 desc("To create a fully reproducible build, please provide the exact version you want to install.");
+            }
+            UserError::RustCompilationFailed => {
+                error("Compilation from Rust source failed.");
+                desc("Please see the error output above and try again with a different version.");
+            }
+            UserError::RustNoPermission => error("No permission to execute the Rust toolchain"),
+            UserError::RustNotInstalled => {
+                error("Rust is not installed.");
+                desc("Please install Rust via https://rustup.rs and try again.");
             }
             UserError::UnknownApp(app_name) => {
                 error(&format!("Unknown app: {app_name}"));

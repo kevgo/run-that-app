@@ -1,14 +1,14 @@
 //! the different ways to install an application
 
-mod compile_from_source_go;
-mod compile_from_source_rust;
+mod compile_from_go_source;
+mod compile_from_rust_source;
 mod download_precompiled_binary;
 
 use crate::output::Output;
 use crate::yard::Executable;
 use crate::Result;
-pub use compile_from_source_go::CompileFromGoSource;
-pub use compile_from_source_rust::CompileFromRustSource;
+pub use compile_from_go_source::CompileFromGoSource;
+pub use compile_from_rust_source::CompileFromRustSource;
 pub use download_precompiled_binary::DownloadPrecompiledBinary;
 
 pub trait InstallationMethod {
