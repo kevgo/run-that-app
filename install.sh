@@ -50,17 +50,14 @@ create_folder() {
 # provides the name of the operating system in the format used in the release archive filenames
 os_name() {
 	OS=$(uname -s)
-	if [[ $OS == MINGW64_NT* ]]; then
-		echo "windows"
-	else
-		case "$OS" in
+	case "$OS" in
 		Darwin*) echo "macos" ;;
 		Linux*) echo "linux" ;;
+		MINGW64_NT*) echo "windows" ;;
 		MSYS*) echo "windows" ;;
 		cygwin*) echo "windows" ;;
 		*) echo "other" ;;
-		esac
-	fi
+	esac
 }
 
 # provides the CPU architecture name in the format used in the release archive filenames
