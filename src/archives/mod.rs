@@ -18,8 +18,8 @@ pub trait Archive {
     fn extract(
         &self,
         data: Vec<u8>,
-        path_in_archive: &str,
-        path_on_disk: &Path,
+        file_in_archive: &str,
+        file_on_disk: &Path,
         output: &dyn Output,
     ) -> Result<Executable>;
 }
@@ -31,10 +31,10 @@ pub fn extract(
     file_on_disk: &Path,
     output: &dyn Output,
 ) -> Result<Executable> {
-    if let Some(path_in_archive) = file_in_archive {
+    if let Some(file_in_archive) = file_in_archive {
         for archive in all_archives() {
             if archive.can_extract(&artifact.filename) {
-                return archive.extract(artifact.data, path_in_archive, file_on_disk, output);
+                return archive.extract(artifact.data, file_in_archive, file_on_disk, output);
             }
         }
     }
