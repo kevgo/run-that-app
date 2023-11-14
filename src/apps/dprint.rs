@@ -1,6 +1,8 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::install::{CompileFromRustSource, DownloadPrecompiledBinary, InstallationMethod};
+use crate::install::{
+    ArtifactType, CompileFromRustSource, DownloadPrecompiledBinary, InstallationMethod,
+};
 use crate::yard::Yard;
 use big_s::S;
 
@@ -31,7 +33,7 @@ impl App for Dprint {
         vec![
             Box::new(DownloadPrecompiledBinary {
                 url: format!("https://github.com/dprint/dprint/releases/download/{version}/dprint-{cpu}-{os}.zip", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
-                file_in_archive: Some(S(self.executable(platform))),
+                artifact_type: ArtifactType::Archive { file_to_extract: S(self.executable(platform))},
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
             }),
             Box::new(CompileFromRustSource {

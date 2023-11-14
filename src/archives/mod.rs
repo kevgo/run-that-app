@@ -3,6 +3,8 @@ mod zip;
 
 pub use self::zip::Zip;
 use crate::download::Artifact;
+use crate::error::UserError;
+use crate::install::ArtifactType;
 use crate::output::Output;
 use crate::yard::Executable;
 use crate::{filesystem, Result};
@@ -27,24 +29,28 @@ pub trait Archive {
 /// extracts the given file in the given artifact to the given location on disk
 pub fn extract(
     artifact: Artifact,
-    filepath_in_archive: &Option<String>,
+    artifact_type: &ArtifactType,
     filepath_on_disk: &Path,
     output: &dyn Output,
 ) -> Result<Executable> {
-    if let Some(filepath_in_archive) = filepath_in_archive {
-        for archive in all_archives() {
-            if archive.can_extract(&artifact.filename) {
-                return archive.extract(
-                    artifact.data,
-                    filepath_in_archive,
-                    filepath_on_disk,
-                    output,
-                );
+    match artifact_type {
+        ArtifactType::Archive { file_to_extract } => {
+            for archive in all_archives() {
+                if archive.can_extract(&artifact.filename) {
+                    return archive.extract(
+                        artifact.data,
+                        file_to_extract,
+                        filepath_on_disk,
+                        output,
+                    );
+                }
             }
+            Err(UserError::UnknownArchive(artifact.filename))
+        }
+        ArtifactType::Executable => {
+            filesystem::save_buffer(artifact.data, filepath_on_disk, output)
         }
     }
-    // here the file doesn't match any of the known archives --> we assume its the binary itself
-    filesystem::save_buffer(artifact.data, filepath_on_disk, output)
 }
 
 fn all_archives() -> Vec<Box<dyn Archive>> {

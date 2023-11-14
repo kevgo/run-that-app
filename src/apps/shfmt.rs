@@ -1,6 +1,8 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::install::{CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod};
+use crate::install::{
+    ArtifactType, CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod,
+};
 use crate::yard::Yard;
 
 pub struct Shfmt {}
@@ -30,7 +32,7 @@ impl App for Shfmt {
         vec![
             Box::new(DownloadPrecompiledBinary {
                 url: format!("https://github.com/mvdan/sh/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
-                file_in_archive: None,
+                artifact_type: ArtifactType::Executable,
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
             }),
             Box::new(CompileFromGoSource {

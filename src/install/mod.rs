@@ -9,7 +9,7 @@ use crate::yard::Executable;
 use crate::Result;
 pub use compile_from_go_source::CompileFromGoSource;
 pub use compile_from_rust_source::CompileFromRustSource;
-pub use download_precompiled_binary::DownloadPrecompiledBinary;
+pub use download_precompiled_binary::{ArtifactType, DownloadPrecompiledBinary};
 
 pub trait InstallationMethod {
     /// A particular way of installing an application.

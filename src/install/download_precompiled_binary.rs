@@ -14,10 +14,17 @@ pub struct DownloadPrecompiledBinary {
     pub url: String,
 
     /// Some = name of the file to extract from the archive, None = the artifact is the file
-    pub file_in_archive: Option<String>,
+    pub artifact_type: ArtifactType,
 
     /// path of the executable to create on disk
     pub file_on_disk: PathBuf,
+}
+
+pub enum ArtifactType {
+    /// the downloaded artifact is the executable file we need
+    Executable,
+    /// the downloaded artifact is an archive file containing the executable file we need
+    Archive { file_to_extract: String },
 }
 
 impl InstallationMethod for DownloadPrecompiledBinary {
@@ -33,7 +40,7 @@ impl InstallationMethod for DownloadPrecompiledBinary {
             })?;
         }
         let executable =
-            archives::extract(artifact, &self.file_in_archive, &self.file_on_disk, output)?;
+            archives::extract(artifact, &self.artifact_type, &self.file_on_disk, output)?;
         Ok(Some(executable))
     }
 }

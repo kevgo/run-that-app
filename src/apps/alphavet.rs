@@ -1,6 +1,8 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::install::{CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod};
+use crate::install::{
+    ArtifactType, CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod,
+};
 use crate::yard::Yard;
 
 pub struct Alphavet {}
@@ -30,7 +32,7 @@ impl App for Alphavet {
         vec![
             Box::new(DownloadPrecompiledBinary {
                 url: format!("https://github.com/skx/alphavet/releases/download/v{version}/alphavet-{os}-{cpu}", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
-                file_in_archive: None,
+                artifact_type: ArtifactType::Executable,
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
             }),
             Box::new(CompileFromGoSource {

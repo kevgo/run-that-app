@@ -28,6 +28,7 @@ pub enum UserError {
     RustNotInstalled,
     RustNoPermission,
     UnknownApp(String),
+    UnknownArchive(String),
     UnknownCliOption(String),
     UnsupportedPlatform,
     UnsupportedCPU(String),
@@ -83,6 +84,9 @@ impl UserError {
             UserError::UnknownApp(app_name) => {
                 error(&format!("Unknown app: {app_name}"));
                 // help::print_installable_apps();
+            }
+            UserError::UnknownArchive(filename) => {
+                error(&format!("unknown archive type: {filename}"));
             }
             UserError::UnknownCliOption(option) => {
                 error(&format!("Unknown option: {option}"));
