@@ -1,6 +1,7 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
 use crate::install::{DownloadPrecompiledBinary, InstallationMethod};
+use crate::yard::Yard;
 
 pub struct GolangCiLint {}
 
@@ -24,7 +25,7 @@ impl App for GolangCiLint {
         &self,
         version: &str,
         platform: Platform,
-        yard: &crate::yard::Yard,
+        yard: &Yard,
     ) -> Vec<Box<dyn InstallationMethod>> {
         vec![
             Box::new(DownloadPrecompiledBinary {

@@ -1,6 +1,7 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
 use crate::install::{CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod};
+use crate::yard::Yard;
 
 pub struct Gofumpt {}
 
@@ -24,7 +25,7 @@ impl App for Gofumpt {
         &self,
         version: &str,
         platform: Platform,
-        yard: &crate::yard::Yard,
+        yard: &Yard,
     ) -> Vec<Box<dyn InstallationMethod>> {
         vec![
             Box::new(DownloadPrecompiledBinary {
