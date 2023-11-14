@@ -1,3 +1,5 @@
+use colored::Colorize;
+
 use super::InstallationMethod;
 use crate::archives;
 use crate::download::http_get;
@@ -10,6 +12,9 @@ use std::path::PathBuf;
 
 /// downloads a pre-compiled binary from the internet
 pub struct DownloadPrecompiledBinary {
+    /// name of the app
+    pub name: &'static str,
+
     /// URL of the artifact to download
     pub url: String,
 
@@ -29,6 +34,7 @@ pub enum ArtifactType {
 
 impl InstallationMethod for DownloadPrecompiledBinary {
     fn install(&self, output: &dyn Output) -> Result<Option<Executable>> {
+        output.print(&format!("installing {} ... ", self.name));
         let Some(artifact) = http_get(self.url.clone(), output)? else {
             return Ok(None);
         };
@@ -41,6 +47,7 @@ impl InstallationMethod for DownloadPrecompiledBinary {
         }
         let executable =
             archives::extract(artifact, &self.artifact_type, &self.file_on_disk, output)?;
+        output.println(&format!("{}", "ok".green()));
         Ok(Some(executable))
     }
 }

@@ -32,6 +32,7 @@ impl App for Dprint {
     ) -> Vec<Box<dyn InstallationMethod>> {
         vec![
             Box::new(DownloadPrecompiledBinary {
+                name: self.name(),
                 url: format!("https://github.com/dprint/dprint/releases/download/{version}/dprint-{cpu}-{os}.zip", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
                 artifact_type: ArtifactType::Archive { file_to_extract: S(self.executable(platform))},
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),

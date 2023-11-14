@@ -31,6 +31,7 @@ impl App for Shfmt {
     ) -> Vec<Box<dyn InstallationMethod>> {
         vec![
             Box::new(DownloadPrecompiledBinary {
+                name: self.name(),
                 url: format!("https://github.com/mvdan/sh/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
                 artifact_type: ArtifactType::Executable,
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),

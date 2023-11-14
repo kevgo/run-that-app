@@ -1,5 +1,3 @@
-use colored::Colorize;
-
 use super::Archive;
 use crate::output::Output;
 use crate::yard::Executable;
@@ -22,7 +20,8 @@ impl Archive for Zip {
         filepath_on_disk: &Path,
         output: &dyn Output,
     ) -> Result<Executable> {
-        output.print("extracting zip archive ... ");
+        output.print("extracting ... ");
+        output.log(CATEGORY, "archive type: zip");
         let mut zip_archive =
             zip::ZipArchive::new(io::Cursor::new(&data)).expect("cannot read zip data");
         if let Some(parent_dir) = filepath_on_disk.parent() {
@@ -38,7 +37,6 @@ impl Archive for Zip {
         let mut file_on_disk = fs::File::create(filepath_on_disk).unwrap();
         io::copy(&mut file_in_zip, &mut file_on_disk).unwrap();
         filesystem::make_file_executable(filepath_on_disk)?;
-        output.println(&format!("{}", "ok".green()));
         Ok(Executable(filepath_on_disk.to_path_buf()))
     }
 }

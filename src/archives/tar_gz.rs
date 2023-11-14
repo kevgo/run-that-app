@@ -2,7 +2,6 @@ use super::Archive;
 use crate::yard::Executable;
 use crate::Output;
 use crate::{filesystem, Result};
-use colored::Colorize;
 use flate2::read::GzDecoder;
 use std::io;
 use std::path::Path;
@@ -22,7 +21,8 @@ impl Archive for TarGz {
         filepath_on_disk: &Path,
         output: &dyn Output,
     ) -> Result<Executable> {
-        output.print("extracting tar.gz archive ... ");
+        output.print("extracting ... ");
+        output.log(CATEGORY, "archive type: tar.gz");
         let tar = GzDecoder::new(io::Cursor::new(&data));
         let mut archive = tar::Archive::new(tar);
         let mut found_file = false;
@@ -41,7 +41,6 @@ impl Archive for TarGz {
             "file {filepath_in_archive} not found in archive"
         );
         filesystem::make_file_executable(filepath_on_disk)?;
-        output.println(&format!("{}", "ok".green()));
         Ok(Executable(filepath_on_disk.to_path_buf()))
     }
 }

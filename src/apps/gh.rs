@@ -29,6 +29,7 @@ impl App for Gh {
     ) -> Vec<Box<dyn InstallationMethod>> {
         vec![
             Box::new(DownloadPrecompiledBinary {
+                name: self.name(),
                 url: format!("https://github.com/cli/cli/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}", os = os_text(platform.os), cpu = cpu_text(platform.cpu), ext =ext_text(platform.os)),
                 artifact_type: ArtifactType::Archive { file_to_extract: format!("gh_{version}_{os}_{cpu}/bin/gh", os=os_text(platform.os), cpu = cpu_text(platform.cpu))},
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),

@@ -5,7 +5,8 @@ use crate::Result;
 use colored::Colorize;
 
 pub fn http_get(url: String, output: &dyn Output) -> Result<Option<Artifact>> {
-    output.print(&format!("downloading {} ... ", url.cyan()));
+    output.print("downloading ... ");
+    output.log(CATEGORY, &format!("downloading {} ... ", url.cyan()));
     let Ok(response) = minreq::get(&url).send() else {
         output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
@@ -21,9 +22,10 @@ pub fn http_get(url: String, output: &dyn Output) -> Result<Option<Artifact>> {
             url,
         });
     }
-    output.println(&format!("{}", "ok".green()));
     Ok(Some(Artifact {
         filename: url,
         data: response.into_bytes(),
     }))
 }
+
+const CATEGORY: &str = "download/http";
