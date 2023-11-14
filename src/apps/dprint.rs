@@ -1,6 +1,9 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::hosting::{GithubReleaseAsset, OnlineLocation};
+use crate::install::{
+    ArtifactType, CompileFromRustSource, DownloadPrecompiledBinary, InstallationMethod,
+};
+use crate::yard::Yard;
 use big_s::S;
 
 pub struct Dprint {}
@@ -21,22 +24,25 @@ impl App for Dprint {
         "https://dprint.dev"
     }
 
-    fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation> {
-        let filename = format!(
-            "dprint-{cpu}-{os}.zip",
-            os = os_text(platform.os),
-            cpu = cpu_text(platform.cpu),
-        );
-        Box::new(GithubReleaseAsset {
-            organization: "dprint",
-            repo: "dprint",
-            version: version.to_string(),
-            filename,
-        })
-    }
-
-    fn file_to_extract_from_archive(&self, _version: &str, platform: Platform) -> Option<String> {
-        Some(S(self.executable(platform)))
+    fn installation_methods(
+        &self,
+        version: &str,
+        platform: Platform,
+        yard: &Yard,
+    ) -> Vec<Box<dyn InstallationMethod>> {
+        vec![
+            Box::new(DownloadPrecompiledBinary {
+                name: self.name(),
+                url: format!("https://github.com/dprint/dprint/releases/download/{version}/dprint-{cpu}-{os}.zip", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
+                artifact_type: ArtifactType::Archive { file_to_extract: S(self.executable(platform))},
+                file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
+            }),
+            Box::new(CompileFromRustSource {
+                crate_name: "dprint",
+                target_folder: yard.app_folder(self.name(), version),
+                executable_filename: self.executable(platform),
+            }),
+        ]
     }
 }
 

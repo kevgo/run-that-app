@@ -1,6 +1,7 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::hosting::{GithubReleaseAsset, OnlineLocation};
+use crate::install::{ArtifactType, DownloadPrecompiledBinary, InstallationMethod};
+use crate::yard::Yard;
 
 pub struct Gh {}
 
@@ -20,27 +21,21 @@ impl App for Gh {
         "https://cli.github.com"
     }
 
-    fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation> {
-        let filename = format!(
-            "gh_{version}_{os}_{cpu}.{ext}",
-            os = os_text(platform.os),
-            cpu = cpu_text(platform.cpu),
-            ext = ext_text(platform.os)
-        );
-        Box::new(GithubReleaseAsset {
-            organization: "cli",
-            repo: "cli",
-            version: format!("v{version}"),
-            filename,
-        })
-    }
-
-    fn file_to_extract_from_archive(
+    fn installation_methods(
         &self,
         version: &str,
-        Platform { os, cpu }: Platform,
-    ) -> Option<String> {
-        Some(format!("gh_{version}_{os}_{cpu}/bin/gh",))
+        platform: Platform,
+        yard: &Yard,
+    ) -> Vec<Box<dyn InstallationMethod>> {
+        vec![
+            Box::new(DownloadPrecompiledBinary {
+                name: self.name(),
+                url: format!("https://github.com/cli/cli/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}", os = os_text(platform.os), cpu = cpu_text(platform.cpu), ext =ext_text(platform.os)),
+                artifact_type: ArtifactType::Archive { file_to_extract: format!("gh_{version}_{os}_{cpu}/bin/gh", os=os_text(platform.os), cpu = cpu_text(platform.cpu))},
+                file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
+            }),
+            // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
+        ]
     }
 }
 

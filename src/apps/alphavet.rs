@@ -1,6 +1,9 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::hosting::{GithubReleaseAsset, OnlineLocation};
+use crate::install::{
+    ArtifactType, CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod,
+};
+use crate::yard::Yard;
 
 pub struct Alphavet {}
 
@@ -20,22 +23,25 @@ impl App for Alphavet {
         "https://github.com/skx/alphavet"
     }
 
-    fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation> {
-        let filename = format!(
-            "alphavet-{os}-{cpu}",
-            os = os_text(platform.os),
-            cpu = cpu_text(platform.cpu),
-        );
-        Box::new(GithubReleaseAsset {
-            organization: "skx",
-            repo: "alphavet",
-            version: format!("v{version}"),
-            filename,
-        })
-    }
-
-    fn file_to_extract_from_archive(&self, _version: &str, _platform: Platform) -> Option<String> {
-        None
+    fn installation_methods(
+        &self,
+        version: &str,
+        platform: Platform,
+        yard: &Yard,
+    ) -> Vec<Box<dyn InstallationMethod>> {
+        vec![
+            Box::new(DownloadPrecompiledBinary {
+                name: self.name(),
+                url: format!("https://github.com/skx/alphavet/releases/download/v{version}/alphavet-{os}-{cpu}", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
+                artifact_type: ArtifactType::Executable,
+                file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
+            }),
+            Box::new(CompileFromGoSource {
+                import_path: format!("github.com/skx/alphavet/cmd/alphavet@{version}"),
+                target_folder: yard.app_folder(self.name(), version),
+                executable_filename: self.executable(platform),
+            }),
+        ]
     }
 }
 

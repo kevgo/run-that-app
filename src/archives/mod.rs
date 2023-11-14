@@ -3,10 +3,12 @@ mod zip;
 
 pub use self::zip::Zip;
 use crate::download::Artifact;
+use crate::error::UserError;
+use crate::install::ArtifactType;
 use crate::output::Output;
 use crate::yard::Executable;
 use crate::{filesystem, Result};
-use std::path::PathBuf;
+use std::path::Path;
 pub use tar_gz::TarGz;
 
 /// An archive is a compressed file containing an application.
@@ -18,8 +20,8 @@ pub trait Archive {
     fn extract(
         &self,
         data: Vec<u8>,
-        path_in_archive: String,
-        path_on_disk: PathBuf,
+        filepath_in_archive: &str,
+        filepath_on_disk: &Path,
         output: &dyn Output,
     ) -> Result<Executable>;
 }
@@ -27,19 +29,28 @@ pub trait Archive {
 /// extracts the given file in the given artifact to the given location on disk
 pub fn extract(
     artifact: Artifact,
-    path_in_archive: Option<String>,
-    path_on_disk: PathBuf,
+    artifact_type: &ArtifactType,
+    filepath_on_disk: &Path,
     output: &dyn Output,
 ) -> Result<Executable> {
-    if let Some(path_in_archive) = path_in_archive {
-        for archive in all_archives() {
-            if archive.can_extract(&artifact.filename) {
-                return archive.extract(artifact.data, path_in_archive, path_on_disk, output);
+    match artifact_type {
+        ArtifactType::Archive { file_to_extract } => {
+            for archive in all_archives() {
+                if archive.can_extract(&artifact.filename) {
+                    return archive.extract(
+                        artifact.data,
+                        file_to_extract,
+                        filepath_on_disk,
+                        output,
+                    );
+                }
             }
+            Err(UserError::UnknownArchive(artifact.filename))
+        }
+        ArtifactType::Executable => {
+            filesystem::save_buffer(artifact.data, filepath_on_disk, output)
         }
     }
-    // here the file doesn't match any of the known archives --> we assume its the binary itself
-    filesystem::save_buffer(artifact.data, path_on_disk, output)
 }
 
 fn all_archives() -> Vec<Box<dyn Archive>> {

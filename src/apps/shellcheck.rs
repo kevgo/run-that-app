@@ -1,6 +1,7 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::hosting::{GithubReleaseAsset, OnlineLocation};
+use crate::install::{ArtifactType, DownloadPrecompiledBinary, InstallationMethod};
+use crate::yard::Yard;
 use big_s::S;
 
 pub struct ShellCheck {}
@@ -21,23 +22,20 @@ impl App for ShellCheck {
         "https://www.shellcheck.net"
     }
 
-    fn artifact_location(&self, version: &str, platform: Platform) -> Box<dyn OnlineLocation> {
-        let filename = format!(
-            "shellcheck-{version}.{os}.{cpu}.{ext}",
-            os = os_text(platform.os),
-            cpu = cpu_text(platform.cpu),
-            ext = ext_text(platform.os),
-        );
-        Box::new(GithubReleaseAsset {
-            organization: "koalaman",
-            repo: "shellcheck",
-            version: version.to_string(),
-            filename,
-        })
-    }
-
-    fn file_to_extract_from_archive(&self, _version: &str, platform: Platform) -> Option<String> {
-        Some(S(self.executable(platform)))
+    fn installation_methods(
+        &self,
+        version: &str,
+        platform: Platform,
+        yard: &Yard,
+    ) -> Vec<Box<dyn InstallationMethod>> {
+        vec![
+            Box::new(DownloadPrecompiledBinary {
+                name: self.name(),
+                url: format!("https://github.com/koalaman/shellcheck/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}", os = os_text(platform.os), cpu = cpu_text(platform.cpu), ext = ext_text(platform.os)),
+                artifact_type: ArtifactType::Archive { file_to_extract: S(self.executable(platform))},
+                file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
+            }),
+        ]
     }
 }
 

@@ -19,17 +19,20 @@ pub enum UserError {
         file: String,
         reason: String,
     },
+    GoCompilationFailed,
+    GoNoPermission,
+    GoNotInstalled,
     NotOnline,
     RunRequestMissingVersion,
+    RustCompilationFailed,
+    RustNotInstalled,
+    RustNoPermission,
     UnknownApp(String),
+    UnknownArchive(String),
     UnknownCliOption(String),
     UnsupportedPlatform,
     UnsupportedCPU(String),
     UnsupportedOS(String),
-    // UnsupportedPlatformAndNoGlobalApp {
-    //     app_name: String,
-    //     platform: Platform,
-    // },
     YardRootIsNotFolder {
         root: PathBuf,
     },
@@ -55,14 +58,35 @@ impl UserError {
                 error(&format!("Cannot make file {file} executable: {reason}"));
                 desc("Please check access permissions and try again.");
             }
+            UserError::GoCompilationFailed => {
+                error("Compilation from Go source failed.");
+                desc("Please see the error output above and try again with a different version.");
+            }
+            UserError::GoNoPermission => error("No permission to execute the Go compiler"),
+            UserError::GoNotInstalled => {
+                error("The Go compiler is not installed");
+                desc("Installation instructions: https://go.dev/dl");
+            }
             UserError::NotOnline => error("you seem to be offline"),
             UserError::RunRequestMissingVersion => {
                 error("missing the version to install");
                 desc("To create a fully reproducible build, please provide the exact version you want to install.");
             }
+            UserError::RustCompilationFailed => {
+                error("Compilation from Rust source failed.");
+                desc("Please see the error output above and try again with a different version.");
+            }
+            UserError::RustNoPermission => error("No permission to execute the Rust toolchain"),
+            UserError::RustNotInstalled => {
+                error("Rust is not installed.");
+                desc("Please install Rust via https://rustup.rs and try again.");
+            }
             UserError::UnknownApp(app_name) => {
                 error(&format!("Unknown app: {app_name}"));
                 // help::print_installable_apps();
+            }
+            UserError::UnknownArchive(filename) => {
+                error(&format!("unknown archive type: {filename}"));
             }
             UserError::UnknownCliOption(option) => {
                 error(&format!("Unknown option: {option}"));
@@ -86,11 +110,6 @@ If you are okay moving forward without this app, you can provide the \"--allow-u
                 ));
                 desc("Request support for your platform at https://github.com/kevgo/binstall/issues.");
             } // UserError::UnsupportedPlatformAndNoGlobalApp { app_name, platform } => {
-            //     error(&format!("This app is not supported on {platform} and I didn't find a globally installed version in your PATH."));
-            //     desc(&format!(
-            //         "Please make sure that running \"{app_name}\" works and try again."
-            //     ));
-            // }
             UserError::YardRootIsNotFolder { root } => {
                 error("The internal storage has the wrong structure.");
                 desc(&format!(

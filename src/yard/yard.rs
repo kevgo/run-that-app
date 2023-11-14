@@ -1,8 +1,5 @@
 use super::Executable;
 use crate::cli::RequestedApp;
-use crate::error::UserError;
-use crate::Result;
-use std::fs;
 use std::path::PathBuf;
 
 pub struct Yard {
@@ -10,18 +7,9 @@ pub struct Yard {
 }
 
 impl Yard {
-    /// creates the folder to contain the executable for the given application on disk
-    pub fn create_app_folder(&self, app: &RequestedApp) -> Result<()> {
-        let folder = self.app_folder(app);
-        fs::create_dir_all(&folder).map_err(|err| UserError::CannotCreateFolder {
-            folder,
-            reason: err.to_string(),
-        })
-    }
-
     /// provides the path to the executable of the given application
     pub fn load_app(&self, app: &RequestedApp, executable_filename: &str) -> Option<Executable> {
-        let file_path = self.app_file_path(app, executable_filename);
+        let file_path = self.app_file_path(&app.name, &app.version, executable_filename);
         if file_path.exists() {
             Some(Executable(file_path))
         } else {
@@ -30,31 +18,30 @@ impl Yard {
     }
 
     /// provides the path to the given file that is part of the given application
-    pub fn app_file_path(&self, app: &RequestedApp, file: &str) -> PathBuf {
-        self.app_folder(app).join(file)
+    pub fn app_file_path(&self, app_name: &str, app_version: &str, file: &str) -> PathBuf {
+        self.app_folder(app_name, app_version).join(file)
     }
 
     /// provides the path to the folder containing the given application
-    pub fn app_folder(&self, app: &RequestedApp) -> PathBuf {
-        self.root.join("apps").join(&app.name).join(&app.version)
+    pub fn app_folder(&self, app_name: &str, app_version: &str) -> PathBuf {
+        self.root.join("apps").join(app_name).join(app_version)
     }
 
     /// stores the given application consisting of the given executable file
     #[cfg(test)]
     fn save_app_file(&self, app: &RequestedApp, file_name: &str, file_content: &[u8]) {
+        use std::fs;
         use std::io::Write;
-
-        fs::create_dir_all(self.app_folder(app)).unwrap();
-        let mut file = fs::File::create(self.app_file_path(app, file_name)).unwrap();
+        fs::create_dir_all(self.app_folder(&app.name, &app.version)).unwrap();
+        let mut file =
+            fs::File::create(self.app_file_path(&app.name, &app.version, file_name)).unwrap();
         file.write_all(file_content).unwrap();
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::cli::RequestedApp;
     use crate::yard::Yard;
-    use big_s::S;
     use std::path::PathBuf;
 
     #[test]
@@ -62,11 +49,7 @@ mod tests {
         let yard = Yard {
             root: PathBuf::from("/root"),
         };
-        let app = RequestedApp {
-            name: S("shellcheck"),
-            version: S("0.9.0"),
-        };
-        let have = yard.app_file_path(&app, "shellcheck.exe");
+        let have = yard.app_file_path("shellcheck", "0.9.0", "shellcheck.exe");
         let want = PathBuf::from("/root/apps/shellcheck/0.9.0/shellcheck.exe");
         assert_eq!(have, want);
     }
@@ -76,11 +59,7 @@ mod tests {
         let yard = Yard {
             root: PathBuf::from("/root"),
         };
-        let app = RequestedApp {
-            name: S("shellcheck"),
-            version: S("0.9.0"),
-        };
-        let have = yard.app_folder(&app);
+        let have = yard.app_folder("shellcheck", "0.9.0");
         let want = PathBuf::from("/root/apps/shellcheck/0.9.0");
         assert_eq!(have, want);
     }
