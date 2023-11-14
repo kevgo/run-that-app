@@ -2,7 +2,7 @@ use big_s::S;
 
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::install::{CompileFromGoSource, DownloadPrecompiledBinary};
+use crate::install::{CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod};
 
 pub struct Scc {}
 
@@ -27,7 +27,7 @@ impl App for Scc {
         version: &str,
         platform: Platform,
         yard: &crate::yard::Yard,
-    ) -> Vec<Box<dyn crate::install::InstallationMethod>> {
+    ) -> Vec<Box<dyn InstallationMethod>> {
         vec![
             Box::new(DownloadPrecompiledBinary {
                 url: format!("https://github.com/boyter/scc/releases/download/v{version}/scc_{version}_{os}_{cpu}.{ext}", os = os_text(platform.os), cpu = cpu_text(platform.cpu), ext = ext_text(platform.os)),

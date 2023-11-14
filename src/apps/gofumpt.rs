@@ -1,6 +1,6 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::install::{CompileFromGoSource, DownloadPrecompiledBinary};
+use crate::install::{CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod};
 
 pub struct Gofumpt {}
 
@@ -25,7 +25,7 @@ impl App for Gofumpt {
         version: &str,
         platform: Platform,
         yard: &crate::yard::Yard,
-    ) -> Vec<Box<dyn crate::install::InstallationMethod>> {
+    ) -> Vec<Box<dyn InstallationMethod>> {
         vec![
             Box::new(DownloadPrecompiledBinary {
                 url: format!("https://github.com/mvdan/gofumpt/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),

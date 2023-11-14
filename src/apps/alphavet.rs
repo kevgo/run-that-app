@@ -1,6 +1,6 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::install::{CompileFromGoSource, DownloadPrecompiledBinary};
+use crate::install::{CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod};
 use crate::yard::Yard;
 
 pub struct Alphavet {}
@@ -26,7 +26,7 @@ impl App for Alphavet {
         version: &str,
         platform: Platform,
         yard: &Yard,
-    ) -> Vec<Box<dyn crate::install::InstallationMethod>> {
+    ) -> Vec<Box<dyn InstallationMethod>> {
         vec![
             Box::new(DownloadPrecompiledBinary {
                 url: format!("https://github.com/skx/alphavet/releases/download/v{version}/alphavet-{os}-{cpu}", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
