@@ -1,5 +1,3 @@
-use colored::Colorize;
-
 use super::InstallationMethod;
 use crate::archives;
 use crate::download::http_get;
@@ -7,6 +5,7 @@ use crate::error::UserError;
 use crate::output::Output;
 use crate::yard::Executable;
 use crate::Result;
+use colored::Colorize;
 use std::fs;
 use std::path::PathBuf;
 
