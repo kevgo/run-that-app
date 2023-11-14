@@ -6,6 +6,7 @@ use crate::Result;
 use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
+use which::which;
 
 pub struct CompileFromGoSource {
     /// the fully qualified Go import path for the package to install
@@ -16,7 +17,7 @@ pub struct CompileFromGoSource {
 
 impl InstallationMethod for CompileFromGoSource {
     fn install(&self, _output: &dyn Output) -> Result<Option<Executable>> {
-        let Ok(go_path) = which::which("go") else {
+        let Ok(go_path) = which("go") else {
             return Err(UserError::GoNotInstalled);
         };
         fs::create_dir_all(&self.target_folder).map_err(|err| UserError::CannotCreateFolder {
