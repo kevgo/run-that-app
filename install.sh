@@ -43,50 +43,6 @@ main() {
 	echo "Successfully installed run-that-app $VERSION_TO_INSTALL for $OS/$CPU."
 }
 
-create_folder() {
-	[ ! -d "$1" ] && mkdir "$1"
-}
-
-# provides the name of the operating system in the format used in the release archive filenames
-os_name() {
-	OS=$(uname -s)
-	case "$OS" in
-		Darwin*) echo "macos" ;;
-		Linux*) echo "linux" ;;
-		MINGW64_NT*) echo "windows" ;;
-		MSYS*) echo "windows" ;;
-		cygwin*) echo "windows" ;;
-		*) echo "other" ;;
-	esac
-}
-
-# provides the CPU architecture name in the format used in the release archive filenames
-cpu_name() {
-	cpu_name=$(uname -m)
-	case $cpu_name in
-	x86_64 | x86-64 | x64 | amd64) echo "intel_64" ;;
-	aarch64 | arm64) echo "arm_64" ;;
-	*) echo "other" ;;
-	esac
-}
-
-# provides the URL from which to download the installation archive for the given OS and cpu type
-download_url() {
-	OS=$1
-	CPU=$2
-	EXT=$(archive_ext "$OS")
-	echo "https://github.com/kevgo/run-that-app/releases/download/v${VERSION_TO_INSTALL}/run_that_app_${OS}_${CPU}.${EXT}"
-}
-
-archive_ext() {
-	OS=$1
-	if [ "$OS" = windows ]; then
-		echo "zip"
-	else
-		echo "tar.gz"
-	fi
-}
-
 download_and_extract() {
 	URL=$1
 	OS=$2
@@ -100,9 +56,50 @@ download_and_extract() {
 		need_cmd tar
 		curl -L "$URL" | tar xz --directory "$TMP_DIR"
 	fi
-	create_folder "$DEST_FOLDER"
-	mv "$TMP_DIR/$FILENAME" "$DEST_FOLDER"
+	mv "$TMP_DIR/$FILENAME" .
 	rm -rf $TMP_DIR
+}
+
+# provides the URL from which to download the installation archive for the given OS and cpu type
+download_url() {
+	OS=$1
+	CPU=$2
+	EXT=$(archive_ext "$OS")
+	echo "https://github.com/kevgo/run-that-app/releases/download/v${VERSION_TO_INSTALL}/run_that_app_${OS}_${CPU}.${EXT}"
+}
+
+# provides the name of the operating system in the format used in the release archive filenames
+os_name() {
+	case $(uname -s) in
+		Darwin*) echo "macos" ;;
+		Linux*) echo "linux" ;;
+		MINGW64_NT*) echo "windows" ;;
+		MSYS*) echo "windows" ;;
+		cygwin*) echo "windows" ;;
+		*) echo "other" ;;
+	esac
+}
+
+# provides the CPU architecture name in the format used in the release archive filenames
+cpu_name() {
+	case $(uname -m) in
+	x86_64 | x86-64 | x64 | amd64) echo "intel_64" ;;
+	aarch64 | arm64) echo "arm_64" ;;
+	*) echo "other" ;;
+	esac
+}
+
+archive_ext() {
+	OS=$1
+	if [ "$OS" = windows ]; then
+		echo "zip"
+	else
+		echo "tar.gz"
+	fi
+}
+
+create_folder() {
+	[ ! -d "$1" ] && mkdir "$1"
 }
 
 executable_filename() {
