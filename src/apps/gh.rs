@@ -1,6 +1,6 @@
 use super::App;
 use crate::detect::{Cpu, Os, Platform};
-use crate::install::{CompileFromGoSource, DownloadPrecompiledBinary};
+use crate::install::DownloadPrecompiledBinary;
 
 pub struct Gh {}
 
@@ -32,7 +32,6 @@ impl App for Gh {
                 file_in_archive: Some(format!("gh_{version}_{os}_{cpu}/bin/gh", os=os_text(platform.os), cpu = cpu_text(platform.cpu))),
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
             }),
-            Box::new(CompileFromGoSource {}),
         ]
     }
 }
