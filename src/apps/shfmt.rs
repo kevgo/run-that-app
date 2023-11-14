@@ -62,7 +62,7 @@ fn cpu_text(cpu: Cpu) -> &'static str {
 
 fn ext_text(os: Os) -> &'static str {
     match os {
-        Os::Windows => ".exe",
         Os::Linux | Os::MacOS => "",
+        Os::Windows => ".exe",
     }
 }
