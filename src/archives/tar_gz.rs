@@ -18,8 +18,8 @@ impl Archive for TarGz {
     fn extract(
         &self,
         data: Vec<u8>,
-        path_in_archive: &str,
-        path_on_disk: &Path,
+        filepath_in_archive: &str,
+        filepath_on_disk: &Path,
         output: &dyn Output,
     ) -> Result<Executable> {
         output.print("extracting tar.gz archive ... ");
@@ -31,15 +31,18 @@ impl Archive for TarGz {
             let filepath = file.path().unwrap();
             let filepath = filepath.to_string_lossy();
             output.log(CATEGORY, &format!("- {filepath}"));
-            if filepath == path_in_archive {
+            if filepath == filepath_in_archive {
                 found_file = true;
-                file.unpack(path_on_disk).unwrap();
+                file.unpack(filepath_on_disk).unwrap();
             }
         }
-        assert!(found_file, "file {path_in_archive} not found in archive");
-        filesystem::make_file_executable(path_on_disk)?;
+        assert!(
+            found_file,
+            "file {filepath_in_archive} not found in archive"
+        );
+        filesystem::make_file_executable(filepath_on_disk)?;
         output.println(&format!("{}", "ok".green()));
-        Ok(Executable(path_on_disk.to_path_buf()))
+        Ok(Executable(filepath_on_disk.to_path_buf()))
     }
 }
 
