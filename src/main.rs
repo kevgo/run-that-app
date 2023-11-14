@@ -6,7 +6,6 @@ mod detect;
 mod download;
 mod error;
 mod filesystem;
-mod hosting;
 mod install;
 mod output;
 mod subshell;

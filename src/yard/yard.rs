@@ -1,8 +1,5 @@
 use super::Executable;
 use crate::cli::RequestedApp;
-use crate::error::UserError;
-use crate::Result;
-use std::fs;
 use std::path::PathBuf;
 
 pub struct Yard {
@@ -10,15 +7,6 @@ pub struct Yard {
 }
 
 impl Yard {
-    /// creates the folder to contain the executable for the given application on disk
-    pub fn create_app_folder(&self, app: &RequestedApp) -> Result<()> {
-        let folder = self.app_folder(&app.name, &app.version);
-        fs::create_dir_all(&folder).map_err(|err| UserError::CannotCreateFolder {
-            folder,
-            reason: err.to_string(),
-        })
-    }
-
     /// provides the path to the executable of the given application
     pub fn load_app(&self, app: &RequestedApp, executable_filename: &str) -> Option<Executable> {
         let file_path = self.app_file_path(&app.name, &app.version, executable_filename);
@@ -42,8 +30,8 @@ impl Yard {
     /// stores the given application consisting of the given executable file
     #[cfg(test)]
     fn save_app_file(&self, app: &RequestedApp, file_name: &str, file_content: &[u8]) {
+        use std::fs;
         use std::io::Write;
-
         fs::create_dir_all(self.app_folder(&app.name, &app.version)).unwrap();
         let mut file =
             fs::File::create(self.app_file_path(&app.name, &app.version, file_name)).unwrap();

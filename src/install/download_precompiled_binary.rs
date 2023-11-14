@@ -1,9 +1,11 @@
 use super::InstallationMethod;
 use crate::archives;
 use crate::download::http_get;
+use crate::error::UserError;
 use crate::output::Output;
 use crate::yard::Executable;
 use crate::Result;
+use std::fs;
 use std::path::PathBuf;
 
 /// downloads a pre-compiled binary from the internet
@@ -23,6 +25,13 @@ impl InstallationMethod for DownloadPrecompiledBinary {
         let Some(artifact) = http_get(self.url.clone(), output)? else {
             return Ok(None);
         };
+        // create the folder here?
+        if let Some(parent) = self.file_on_disk.parent() {
+            fs::create_dir_all(parent).map_err(|err| UserError::CannotCreateFolder {
+                folder: parent.to_path_buf(),
+                reason: err.to_string(),
+            })?;
+        }
         let executable =
             archives::extract(artifact, &self.file_in_archive, &self.file_on_disk, output)?;
         Ok(Some(executable))
