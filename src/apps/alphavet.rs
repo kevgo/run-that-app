@@ -35,8 +35,8 @@ impl App for Alphavet {
             }),
             Box::new(CompileFromGoSource {
                 import_path: format!("github.com/skx/alphavet/cmd/alphavet@{version}"),
-                executable_filename: self.executable(platform),
                 target_folder: yard.app_folder(self.name(), version),
+                executable_filename: self.executable(platform),
             }),
         ]
     }

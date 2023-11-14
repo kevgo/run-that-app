@@ -36,8 +36,8 @@ impl App for Dprint {
             }),
             Box::new(CompileFromRustSource {
                 crate_name: "dprint",
-                executable_filename: self.executable(platform),
                 target_folder: yard.app_folder(self.name(), version),
+                executable_filename: self.executable(platform),
             }),
         ]
     }

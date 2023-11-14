@@ -36,8 +36,8 @@ impl App for Scc {
             }),
             Box::new(CompileFromGoSource {
                 import_path: format!("github.com/boyter/scc/v3@{version}"),
-                executable_filename: self.executable(platform),
                 target_folder: yard.app_folder(self.name(), version),
+                executable_filename: self.executable(platform),
              }),
         ]
     }

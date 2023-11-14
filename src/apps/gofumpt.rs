@@ -34,8 +34,8 @@ impl App for Gofumpt {
             }),
             Box::new(CompileFromGoSource {
                 import_path: format!("mvdan.cc/gofumpt@{version}"),
-                executable_filename: self.executable(platform),
                 target_folder: yard.app_folder(self.name(), version),
+                executable_filename: self.executable(platform),
              }),
         ]
     }

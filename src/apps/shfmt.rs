@@ -34,8 +34,8 @@ impl App for Shfmt {
             }),
             Box::new(CompileFromGoSource {
                 import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@{version}"),
-                executable_filename: self.executable(platform),
                 target_folder: yard.app_folder(self.name(), version),
+                executable_filename: self.executable(platform),
              }),
         ]
     }

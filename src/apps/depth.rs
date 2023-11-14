@@ -34,8 +34,8 @@ impl App for Depth {
             }),
             Box::new(CompileFromGoSource {
                 import_path: format!("github.com/KyleBanks/depth/cmd/depth@v{version}"),
-                executable_filename: self.executable(platform),
                 target_folder: yard.app_folder(self.name(), version),
+                executable_filename: self.executable(platform),
             }),
         ]
     }
