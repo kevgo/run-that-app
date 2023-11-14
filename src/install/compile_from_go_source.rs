@@ -3,6 +3,7 @@ use crate::error::UserError;
 use crate::output::Output;
 use crate::yard::Executable;
 use crate::Result;
+use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
 
@@ -18,6 +19,10 @@ impl InstallationMethod for CompileFromGoSource {
         let Ok(go_path) = which::which("go") else {
             return Err(UserError::GoNotInstalled);
         };
+        fs::create_dir_all(&self.target_folder).map_err(|err| UserError::CannotCreateFolder {
+            folder: self.target_folder.to_path_buf(),
+            reason: err.to_string(),
+        })?;
         let mut cmd = Command::new(go_path);
         cmd.arg("install");
         cmd.arg(&self.import_path);
