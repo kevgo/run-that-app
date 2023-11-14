@@ -32,12 +32,12 @@ impl App for Shfmt {
         vec![
             Box::new(DownloadPrecompiledBinary {
                 name: self.name(),
-                url: format!("https://github.com/mvdan/sh/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
+                url: format!("https://github.com/mvdan/sh/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}", os = os_text(platform.os), cpu = cpu_text(platform.cpu), ext = ext_text(platform.os)),
                 artifact_type: ArtifactType::Executable,
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
             }),
             Box::new(CompileFromGoSource {
-                import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@{version}"),
+                import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}"),
                 target_folder: yard.app_folder(self.name(), version),
                 executable_filename: self.executable(platform),
              }),
@@ -57,5 +57,12 @@ fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
         Cpu::Arm64 => "arm64",
         Cpu::Intel64 => "amd64",
+    }
+}
+
+fn ext_text(os: Os) -> &'static str {
+    match os {
+        Os::Windows => ".exe",
+        Os::Linux | Os::MacOS => "",
     }
 }
