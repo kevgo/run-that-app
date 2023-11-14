@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-set -e
-set -o pipefail
+set -Eeuo pipefail
 
 print_welcome() {
 	echo "RUN-THAT-APP INSTALLATION SCRIPT"
@@ -10,8 +9,7 @@ print_welcome() {
 	echo
 }
 
-VERSION_TO_INSTALL="0.0.2" # the version of run-that-app to install
-DEFAULT_DEST_DIR=.         # the folder into which to install the executable
+VERSION_TO_INSTALL="0.0.0" # the version of run-that-app to install
 TMP_DIR=./run_that_app_install
 
 main() {
@@ -31,17 +29,14 @@ main() {
 	need_cmd command
 
 	# determine the configuration
-	DEST_FOLDER=$(determine_dest_folder "$TARGET" "$DEFAULT_DEST_DIR")
-	echo "installing into $DEST_FOLDER"
-	DEST_FILENAME=$(executable_filename "$OS")
-	DEST_PATH=$DEST_FOLDER/$DEST_FILENAME
+	DEST_FILE=$(executable_filename "$OS")
 
 	# verify and set up the target location
-	check_already_installed "$DEST_PATH"
+	check_already_installed "$DEST_FILE"
 
 	# download and install the executable
 	DOWNLOAD_URL="$(download_url "$OS" "$CPU")"
-	download_and_extract "$DOWNLOAD_URL" "$OS" "$DEST_FILENAME"
+	download_and_extract "$DOWNLOAD_URL" "$OS" "$DEST_FILE"
 
 	# print summary
 	echo
@@ -50,15 +45,6 @@ main() {
 
 create_folder() {
 	[ ! -d "$1" ] && mkdir "$1"
-}
-
-determine_dest_folder() {
-	DEST_OVERRIDE=$1
-	if [ -n "$DEST_OVERRIDE" ]; then
-		echo "$DEST_OVERRIDE"
-	else
-		echo "$DEFAULT_DEST_DIR"
-	fi
 }
 
 # provides the name of the operating system in the format used in the release archive filenames
