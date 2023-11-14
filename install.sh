@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
-set -Eeuo pipefail
+#!/bin/sh
+set -e
 
 print_welcome() {
 	echo "RUN-THAT-APP INSTALLATION SCRIPT"
