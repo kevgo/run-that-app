@@ -20,7 +20,7 @@ impl InstallationMethod for CompileFromGoSource {
             return Err(UserError::GoNotInstalled);
         };
         fs::create_dir_all(&self.target_folder).map_err(|err| UserError::CannotCreateFolder {
-            folder: self.target_folder.to_path_buf(),
+            folder: self.target_folder.clone(),
             reason: err.to_string(),
         })?;
         let mut cmd = Command::new(go_path);

@@ -18,8 +18,8 @@ pub trait Archive {
     fn extract(
         &self,
         data: Vec<u8>,
-        file_in_archive: &str,
-        file_on_disk: &Path,
+        filepath_in_archive: &str,
+        filepath_on_disk: &Path,
         output: &dyn Output,
     ) -> Result<Executable>;
 }
@@ -27,19 +27,24 @@ pub trait Archive {
 /// extracts the given file in the given artifact to the given location on disk
 pub fn extract(
     artifact: Artifact,
-    file_in_archive: &Option<String>,
-    file_on_disk: &Path,
+    filepath_in_archive: &Option<String>,
+    filepath_on_disk: &Path,
     output: &dyn Output,
 ) -> Result<Executable> {
-    if let Some(file_in_archive) = file_in_archive {
+    if let Some(filepath_in_archive) = filepath_in_archive {
         for archive in all_archives() {
             if archive.can_extract(&artifact.filename) {
-                return archive.extract(artifact.data, file_in_archive, file_on_disk, output);
+                return archive.extract(
+                    artifact.data,
+                    filepath_in_archive,
+                    filepath_on_disk,
+                    output,
+                );
             }
         }
     }
     // here the file doesn't match any of the known archives --> we assume its the binary itself
-    filesystem::save_buffer(artifact.data, file_on_disk, output)
+    filesystem::save_buffer(artifact.data, filepath_on_disk, output)
 }
 
 fn all_archives() -> Vec<Box<dyn Archive>> {
