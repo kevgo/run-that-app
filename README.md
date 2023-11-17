@@ -7,10 +7,9 @@ _Run-that-app_ executes small third-party tools used by software developers
 (linters, checkers , verifiers) that often have no good way of being installed,
 for example because they are hosted on GitHub Releases.
 
-Like Docker, _run-that-app_ runs on all major computer platforms including
-Linux, Windows, and macOS. Unlike Docker, _run-that-app_ is extremely fast
-(installs happen in seconds) and lean (stores nothing but the executables on
-your hard drive). Run-that-app has zero dependencies and doesn't have the
+_Run-that-app_ runs on all major computer platforms including Linux, Windows,
+and macOS. Installs happen in seconds and store nothing but the executables on
+your hard drive. Run-that-app has zero dependencies and doesn't have the
 Docker-in-Docker problem.
 
 ### quickstart
