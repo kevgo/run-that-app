@@ -4,8 +4,8 @@
 [![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
 
 _Run-that-app_ executes small third-party tools used by software developers
-(linters, checkers , verifiers) that often have no good way of being installed,
-for example because they are distributed through GitHub Releases.
+(linters, checkers, verifiers) without the need to install them first. This
+reduces boilerplate code in developer tooling and on CI servers.
 
 _Run-that-app_ runs on all major computer platforms including Linux, Windows,
 and macOS. Installs happen in seconds, don't require _sudo_, and store nothing
