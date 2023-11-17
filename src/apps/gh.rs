@@ -56,7 +56,7 @@ fn cpu_text(cpu: Cpu) -> &'static str {
 
 fn ext_text(os: Os) -> &'static str {
     match os {
-        Os::Linux => "tgz",
+        Os::Linux => "tar.gz",
         Os::Windows | Os::MacOS => "zip",
     }
 }
