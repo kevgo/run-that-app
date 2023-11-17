@@ -4,12 +4,13 @@
 [![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
 
 _Run-that-app_ executes small third-party tools used by software developers
-(linters, checkers , verifiers) that often have no good way of being installed, for example because they are hosted on GitHub Releases.
+(linters, checkers , verifiers) that often have no good way of being installed,
+for example because they are hosted on GitHub Releases.
 
-Like Docker, _run-that-app_ works on Linux, Windows, and macOS. Unlike Docker,
-_run-that-app_ is extremely lean, fast, has zero dependencies, doesn't create
-the Docker in Docker problem, and leaves a very small footprint on your
-computer.
+Like Docker, _run-that-app_ runs on all major computer platforms including
+Linux, Windows, and macOS. Unlike Docker, _run-that-app_ is extremely fast
+(installs happen in seconds), lean (leaves a very small footprint on your
+computer), has zero dependencies, and doesn't have the Docker-in-Docker problem.
 
 ### quickstart
 
