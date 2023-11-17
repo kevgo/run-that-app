@@ -15,7 +15,7 @@ avoids the Docker-in-Docker problem.
 ### quickstart
 
 ```bash
-# download the _run-that-app_ executable
+# download the run-that-app executable
 curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh
 
 # run an app (in this case the GitHub CLI)
