@@ -4,7 +4,8 @@
 [![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
 
 _Run-that-app_ executes small third-party tools used by software developers
-(linters, checkers , verifiers) that often have no good way of being installed.
+(linters, checkers , verifiers) that often have no good way of being installed, for example because they are hosted on GitHub Releases.
+
 Like Docker, _run-that-app_ works on Linux, Windows, and macOS. Unlike Docker,
 _run-that-app_ is extremely lean, fast, has zero dependencies, doesn't create
 the Docker in Docker problem, and leaves a very small footprint on your
@@ -14,15 +15,11 @@ computer.
 
 ```bash
 # download the _run-that-app_ executable
-curl https://raw.githubusercontent.com/kevgo/run-that-app/main/install.sh | sh
+curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh
 
 # run an app (in this case ShellCheck)
 ./run-that-app dprint@0.42.5
 ```
-
-Please note that you need to provide the version exactly like it is in the app
-repository. On GitHub Releases, the version tag often begins with the letter
-`v`.
 
 ### why
 
