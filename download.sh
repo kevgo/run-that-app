@@ -2,20 +2,22 @@
 set -e
 
 print_welcome() {
-	echo "RUN-THAT-APP INSTALLATION SCRIPT"
+	echo "RUN-THAT-APP DOWNLOAD SCRIPT"
 	echo
-	echo "This installer is under development. Please report issues at"
+	echo "This script is under development. Please report issues at"
 	echo "https://github.com/kevgo/run-that-app/issues"
 	echo
 }
 
-VERSION_TO_INSTALL="0.0.0" # the version of run-that-app to install
+VERSION="0.0.0" # the version of run-that-app to download
 TMP_DIR=./run_that_app_install
 
 main() {
 	print_welcome
 
-	# verify the environment
+	need_cmd uname
+	need_cmd curl
+
 	OS="$(os_name)"
 	if [ "$OS" = "other" ]; then
 		err "Unsupported operating system, please install from source"
@@ -24,23 +26,14 @@ main() {
 	if [ "$CPU" = "other" ]; then
 		err "Unsupported CPU architecture, please install from source."
 	fi
-	need_cmd uname
-	need_cmd curl
-	need_cmd command
-
-	# determine the configuration
+	DOWNLOAD_URL="$(download_url "$OS" "$CPU")"
 	DEST_FILE=$(executable_filename "$OS")
 
-	# verify and set up the target location
 	check_already_installed "$DEST_FILE"
-
-	# download and install the executable
-	DOWNLOAD_URL="$(download_url "$OS" "$CPU")"
 	download_and_extract "$DOWNLOAD_URL" "$OS" "$DEST_FILE"
 
-	# print summary
 	echo
-	echo "Successfully installed run-that-app $VERSION_TO_INSTALL for $OS/$CPU."
+	echo "Successfully installed run-that-app $VERSION for $OS/$CPU."
 }
 
 download_and_extract() {
@@ -65,7 +58,7 @@ download_url() {
 	OS=$1
 	CPU=$2
 	EXT=$(archive_ext "$OS")
-	echo "https://github.com/kevgo/run-that-app/releases/download/v${VERSION_TO_INSTALL}/run_that_app_${OS}_${CPU}.${EXT}"
+	echo "https://github.com/kevgo/run-that-app/releases/download/v${VERSION}/run_that_app_${OS}_${CPU}.${EXT}"
 }
 
 # provides the name of the operating system in the format used in the release archive filenames
@@ -115,8 +108,8 @@ check_already_installed() {
 	DEST_PATH=$1
 	if [ -f "$DEST_PATH" ]; then
 		INSTALLED_VERSION=$($DEST_PATH -V)
-		if [ "$INSTALLED_VERSION" = "$VERSION_TO_INSTALL" ]; then
-			echo "You already have run-that-app $VERSION_TO_INSTALL installed."
+		if [ "$INSTALLED_VERSION" = "$VERSION" ]; then
+			echo "You already have run-that-app $VERSION installed."
 			exit 0
 		fi
 	fi
