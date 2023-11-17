@@ -32,19 +32,18 @@ Reasons to use _run-that-app_ over traditional forms of installation (package
 managers) are:
 
 - You need to run a binary for which no good way to install them exists, for
-  example binaries distributed via GitHub Releases.
-- You use or support a wide variety of operating systems and want to avoid
-  having to deal with an endless variety of package managers like Homebrew, Nix,
-  Scoop, Chocolatey, winget, DNF, pacman, apt, pkg, snap, zypper, xbps, portage,
-  etc.
+  example binaries distributed through GitHub Releases.
+- You use or support a variety of operating systems and want to avoid having to
+  deal with an endless variety of package managers like Homebrew, Nix, Scoop,
+  Chocolatey, winget, DNF, pacman, apt, pkg, snap, zypper, xbps, portage, etc.
 - You don't want to write and maintain Bash scripts to install your dependencies
   and deal with various versions and flavors of `curl`, `gzip`, and `tar`
 - You work in an environment in which no package manager is available.
 - You need a different version of an application than the one installed by your
   package manager.
-- You work on multiple projects that require different versions development
+- You work on multiple projects that require different versions of development
   tools.
-- You want to avoid the overhead of working inside Docker.
+- You want to avoid the overhead of Docker.
 - You want to install third-party tools as fast as possible for the best
   developer experience.
 
@@ -52,9 +51,8 @@ managers) are:
 
 When running a third-party application, _run-that-app_:
 
-- determines your platform (operating system, CPU architecture)
 - downloads and unpacks the matching executable for your platform - this
-  typically takes just a second or two for most applications
+  typically takes just a second or two
 - stores the downloaded executable under `~/.run-that-app` on your hard drive
 - executes this binary
 
@@ -64,19 +62,26 @@ When running a third-party application, _run-that-app_:
 run-that-app [run-that-app options] <app name> [app options]
 ```
 
+run-that-app options:
+
+- `--ignore-unavailable`: if there is no pre-compiled binary for your platform,
+  do nothing. This is useful for non-essential tools where it's okay if the tool
+  doesn't run.
+- `--include-global`: if there is no pre-compiled binary for your platform, but
+  a similarly named binary in your PATH, run the latter.
+- `--log`: enable all logging
+- `--log=domain`: enable logging for the given domain
+  - see the available domains by running with all logging enabled
+
 ### examples
 
-```bash
-run-that-app --fallback-to-global --allow-unavailable shellcheck@0.9.0 --color=always myscript.sh
-```
+Runs ShellCheck version 0.9.0 with the arguments `--color=always myscript.sh`.
+If ShellCheck is not available but installed otherwise, call that version. If no
+such version exists, do nothing.
 
-- Runs ShellCheck version 0.9.0 with the arguments `--color=always myscript.sh`.
-- Because the `--fallback-to-global` option is enabled, if there is no binary
-  available for your platform, _run-that-app_ looks for one in the PATH and runs
-  that one.
-- The `--allow-unavailable` switch makes _run-that-app_ do nothing if the app
-  cannot be found. ShellCheck is just a linter and it's okay if it cannot run on
-  a few exotic developer machines.
+```bash
+run-that-app --include-global --ignore-unavailable shellcheck@0.9.0 --color=always myscript.sh
+```
 
 ### Q&A
 
