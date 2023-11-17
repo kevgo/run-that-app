@@ -14,13 +14,17 @@ avoids the Docker-in-Docker problem.
 
 ### quickstart
 
-```bash
-# download the run-that-app executable
-curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh
+1. Download the run-that-app executable:
 
-# run an app (in this case the GitHub CLI)
-./run-that-app gh@2.39.1
-```
+   ```bash
+   curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh
+   ```
+
+2. Run an app (in this case the GitHub CLI)
+
+   ```bash
+   ./run-that-app gh@2.39.1
+   ```
 
 ### why
 
