@@ -10,7 +10,7 @@ for example because they are hosted on GitHub Releases.
 _Run-that-app_ runs on all major computer platforms including Linux, Windows,
 and macOS. Installs happen in seconds, don't require _sudo_, and store nothing
 but the executables on your hard drive. Run-that-app has zero dependencies and
-doesn't have the Docker-in-Docker problem.
+avoids the Docker-in-Docker problem.
 
 ### quickstart
 
