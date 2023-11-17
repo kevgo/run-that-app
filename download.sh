@@ -64,12 +64,12 @@ download_url() {
 # provides the name of the operating system in the format used in the release archive filenames
 os_name() {
 	case $(uname -s) in
-		Darwin*) echo "macos" ;;
-		Linux*) echo "linux" ;;
-		MINGW64_NT*) echo "windows" ;;
-		MSYS*) echo "windows" ;;
-		cygwin*) echo "windows" ;;
-		*) echo "other" ;;
+	Darwin*) echo "macos" ;;
+	Linux*) echo "linux" ;;
+	MINGW64_NT*) echo "windows" ;;
+	MSYS*) echo "windows" ;;
+	cygwin*) echo "windows" ;;
+	*) echo "other" ;;
 	esac
 }
 
