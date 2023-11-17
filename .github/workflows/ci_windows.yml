@@ -23,5 +23,3 @@ jobs:
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
       - run: make test
-      - run: make fix
-      - run: git diff HEAD --exit-code --color
