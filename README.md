@@ -85,22 +85,22 @@ run-that-app --include-global --ignore-unavailable shellcheck@0.9.0 --color=alwa
 
 ### Q&A
 
-#### Wouldn't it be more appropriate to use the package manager of my system to install third-party applications?
+#### Why not use the package manager of my system to install third-party applications?
 
-Yes if your and everybody else's package manager installs a version that works
-for all your use cases.
+Do it if your and everybody else's package manager installs all needed tools at
+versions that work for your use cases.
 
 #### What if an app does not provide binaries for my platform?
 
-If the app is not essential, you can provide the `--allow-unavailable` switch
+If the app is not essential, you can provide the `--ignore-unavailable` switch
 and _run-that-app_ will simply do nothing, including not exiting with an error.
 
 #### What if I compile an app that doesn't provide binaries for my platform myself?
 
-Add your version to the PATH and call _run-that-app_ with the `--use-global-app`
+Add your version to the PATH and call _run-that-app_ with the `--include-global`
 switch to make it run your app. In this case _run-that-app_ does not guarantee
 that the app has the correct version.
 
 #### What about apps that require a dependency like NodeJS or Python?
 
-Use the package manager of those platforms to run that app!
+Use the package manager of those frameworks to run that app!
