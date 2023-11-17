@@ -10,7 +10,7 @@ pub fn help(output: &dyn Output) -> ExitCode {
 }
 
 fn print_usage(output: &dyn Output) {
-    output.println("Usage: binstall install [options] application@version\n");
+    output.println("Usage: run-that-app install [options] application@version\n");
 }
 
 pub fn print_options(output: &dyn Output) {
@@ -28,8 +28,9 @@ Options:
 
 fn print_examples(output: &dyn Output) {
     output.println("Examples:");
-    output
-        .println("\"binstall gh@2.34.0\" installs https://github.com/cli/cli at version 2.34.0\n");
+    output.println(
+        "\"run-that-app gh@2.34.0\" installs https://github.com/cli/cli at version 2.34.0\n",
+    );
 }
 
 pub fn print_installable_apps(output: &dyn Output) {

@@ -18,8 +18,8 @@ avoids the Docker-in-Docker problem.
 # download the _run-that-app_ executable
 curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh
 
-# run an app (in this case ShellCheck)
-./run-that-app dprint@0.42.5
+# run an app (in this case the GitHub CLI)
+./run-that-app gh@2.39.1
 ```
 
 ### why
