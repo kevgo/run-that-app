@@ -10,5 +10,5 @@
 
 ### 0.0.2 (2023-11-17)
 
-- `.tar.xz` support
+- compression: add `.tar.xz` support
 - apps: fixes for golangci-lint and shellcheck
