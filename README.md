@@ -9,7 +9,8 @@ reduces boilerplate code in developer tooling and on CI servers.
 
 _Run-that-app_ runs on all major computer platforms including Linux, Windows,
 and macOS. Installs happen in seconds, don't require _sudo_, and store nothing
-but the executables on your hard drive. Run-that-app has zero dependencies and
+but the executables on your hard drive. Run-that-app has zero dependencies (it
+can download and extract `.zip`, `.tar.gz`, and `.tar.xz` files on its own) and
 avoids the Docker-in-Docker problem.
 
 ### quickstart

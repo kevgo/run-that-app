@@ -2,16 +2,16 @@ use super::Archive;
 use crate::yard::Executable;
 use crate::Output;
 use crate::{filesystem, Result};
-use flate2::read::GzDecoder;
-use std::io;
+use std::io::Cursor;
 use std::path::Path;
+use xz2::read::XzDecoder;
 
 /// a .tar.gz file downloaded from the internet, containing an application
-pub struct TarGz {}
+pub struct TarXz {}
 
-impl Archive for TarGz {
+impl Archive for TarXz {
     fn can_extract(&self, filename: &str) -> bool {
-        filesystem::has_extension(filename, ".tar.gz")
+        filesystem::has_extension(filename, ".tar.xz")
     }
 
     fn extract(
@@ -22,9 +22,9 @@ impl Archive for TarGz {
         output: &dyn Output,
     ) -> Result<Executable> {
         output.print("extracting ... ");
-        output.log(CATEGORY, "archive type: tar.gz");
-        let gz_decoder = GzDecoder::new(io::Cursor::new(&data));
-        let mut archive = tar::Archive::new(gz_decoder);
+        output.log(CATEGORY, "archive type: tar.xz");
+        let decompressor = XzDecoder::new(Cursor::new(data));
+        let mut archive = tar::Archive::new(decompressor);
         let mut found_file = false;
         for file in archive.entries().unwrap() {
             let mut file = file.unwrap();
@@ -45,4 +45,4 @@ impl Archive for TarGz {
     }
 }
 
-const CATEGORY: &str = "extract/tar.gz";
+const CATEGORY: &str = "extract/tar.xz";
