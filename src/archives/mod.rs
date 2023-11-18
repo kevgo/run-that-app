@@ -1,7 +1,7 @@
 mod tar_gz;
+mod tar_xz;
 mod zip;
 
-pub use self::zip::Zip;
 use crate::download::Artifact;
 use crate::error::UserError;
 use crate::install::ArtifactType;
@@ -9,7 +9,6 @@ use crate::output::Output;
 use crate::yard::Executable;
 use crate::{filesystem, Result};
 use std::path::Path;
-pub use tar_gz::TarGz;
 
 /// An archive is a compressed file containing an application.
 pub trait Archive {
@@ -54,5 +53,9 @@ pub fn extract(
 }
 
 fn all_archives() -> Vec<Box<dyn Archive>> {
-    vec![Box::new(TarGz {}), Box::new(Zip {})]
+    vec![
+        Box::new(tar_gz::TarGz {}),
+        Box::new(tar_xz::TarXz {}),
+        Box::new(zip::Zip {}),
+    ]
 }
