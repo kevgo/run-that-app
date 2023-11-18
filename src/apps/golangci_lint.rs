@@ -27,11 +27,14 @@ impl App for GolangCiLint {
         platform: Platform,
         yard: &Yard,
     ) -> Vec<Box<dyn InstallationMethod>> {
+        let os = os_text(platform.os);
+        let cpu = cpu_text(platform.cpu);
+        let ext = ext_text(platform.os);
         vec![
             Box::new(DownloadPrecompiledBinary {
                 name: self.name(),
-                url: format!("https://github.com/golangci/golangci-lint/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}", os = os_text(platform.os), cpu = cpu_text(platform.cpu), ext = ext_text(platform.os)),
-                artifact_type: ArtifactType::Executable,
+                url: format!("https://github.com/golangci/golangci-lint/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}" ),
+                artifact_type: ArtifactType::Archive { file_to_extract: format!("golangci-lint-{version}-{os}-{cpu}/golangci-lint") },
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
             }),
             // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
