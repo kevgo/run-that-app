@@ -6,7 +6,7 @@ use std::io::Cursor;
 use std::path::Path;
 use xz2::read::XzDecoder;
 
-/// a .tar.gz file downloaded from the internet, containing an application
+/// a .tar.xz file downloaded from the internet, containing an application
 pub struct TarXz {}
 
 impl Archive for TarXz {
