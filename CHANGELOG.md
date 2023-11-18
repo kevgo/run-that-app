@@ -7,3 +7,8 @@
   shfmt
 - logging with namespaces for downloading and extracting
 - shell output
+
+### 0.0.2 (2023-11-17)
+
+- `.tar.xz` support
+- make shellcheck work
