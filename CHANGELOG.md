@@ -11,4 +11,4 @@
 ### 0.0.2 (2023-11-17)
 
 - `.tar.xz` support
-- make shellcheck work
+- apps: fixes for golangci-lint and shellcheck
