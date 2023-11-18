@@ -7,3 +7,8 @@
   shfmt
 - logging with namespaces for downloading and extracting
 - shell output
+
+### 0.0.2 (2023-11-17)
+
+- compression: add `.tar.xz` support
+- apps: fixes for golangci-lint and shellcheck
