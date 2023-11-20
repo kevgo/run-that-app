@@ -518,7 +518,7 @@ dependencies = [
 
 [[package]]
 name = "run-that-app"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "big_s",
  "colored",

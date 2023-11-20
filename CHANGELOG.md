@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.0.3 (2023-11-20)
+
+- apps: add goreleaser
+
 ### 0.0.2 (2023-11-17)
 
 - compression: add `.tar.xz` support
