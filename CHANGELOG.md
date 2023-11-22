@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.0.4 (2023-11-22)
+
+- release: distribute the app as an uncompressed binary
+
 ### 0.0.3 (2023-11-20)
 
 - apps: add goreleaser
