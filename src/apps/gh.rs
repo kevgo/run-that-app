@@ -31,11 +31,22 @@ impl App for Gh {
             Box::new(DownloadPrecompiledBinary {
                 name: self.name(),
                 url: format!("https://github.com/cli/cli/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}", os = os_text(platform.os), cpu = cpu_text(platform.cpu), ext =ext_text(platform.os)),
-                artifact_type: ArtifactType::Archive { file_to_extract: format!("gh_{version}_{os}_{cpu}/bin/gh", os=os_text(platform.os), cpu = cpu_text(platform.cpu))},
+                artifact_type: ArtifactType::Archive { file_to_extract: executable_path(version, platform) },
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
             }),
             // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
         ]
+    }
+}
+
+fn executable_path(version: &str, platform: Platform) -> String {
+    match platform.os {
+        Os::Windows => "bin/gh.exe".to_string(),
+        Os::Linux | Os::MacOS => format!(
+            "gh_{version}_{os}_{cpu}/bin/gh",
+            os = os_text(platform.os),
+            cpu = cpu_text(platform.cpu)
+        ),
     }
 }
 

@@ -29,13 +29,6 @@ pub enum ArtifactType {
     Executable,
     /// the downloaded artifact is an archive file containing the executable file we need
     Archive { file_to_extract: String },
-
-    /// the downloaded artifact is an archive file containing the executable file we need
-    ArchiveWithDifferentPaths {
-        windows: String,
-        linux: String,
-        macOS: String,
-    },
 }
 
 impl InstallationMethod for DownloadPrecompiledBinary {
