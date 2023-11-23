@@ -25,7 +25,7 @@ avoids the Docker-in-Docker problem.
    curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh
    ```
 
-2. Run an app (in this case the GitHub CLI)
+2. Run an app (in this case the GitHub CLI at version 2.39.1)
 
    ```bash
    ./run-that-app gh@2.39.1
@@ -39,11 +39,17 @@ avoids the Docker-in-Docker problem.
    Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kevgo/run-that-app/main/download.ps1" -UseBasicParsing).Content
    ```
 
-2. Run an app (in this case the GitHub CLI)
+2. Run an app (in this case the GitHub CLI at version 2.39.1)
 
-   ```bash
+   ```batchfile
    .\run-that-app gh@2.39.1
    ```
+
+#### installing into a specific directory
+
+The installer script places the run-that-app executable into the current
+directory. To install into a specific directory, change into that directory and
+then execute the installer from there.
 
 ### why
 
@@ -111,7 +117,7 @@ run-that-app --ignore-unavailable shellcheck@0.9.0 --color=always myscript.sh
 
 #### Why not use the package manager of my system to install third-party applications?
 
-If it works, then do it. If not, use run-that-app.
+If it works then do it. If not, use run-that-app.
 
 #### What if an app does not provide binaries for my platform?
 
@@ -131,5 +137,5 @@ Use the tooling of those frameworks to run that app!
 
 #### What if my app has dependencies?
 
-Use Docker or WASM. Run-that-app is for simple tools that are distributed as
+Use Docker or WASI. Run-that-app is for simple tools that are distributed as
 standalone executables without dependencies.
