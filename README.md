@@ -15,6 +15,8 @@ avoids the Docker-in-Docker problem.
 
 ### quickstart
 
+#### On Linux or macOS
+
 1. Download the run-that-app executable:
 
    ```bash
@@ -25,6 +27,20 @@ avoids the Docker-in-Docker problem.
 
    ```bash
    ./run-that-app gh@2.39.1
+   ```
+
+#### On Windows Powershell
+
+1. Download the run-that-app executable:
+
+   ```powershell
+   Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kevgo/run-that-app/main/download.ps1" -UseBasicParsing).Content
+   ```
+
+2. Run an app (in this case the GitHub CLI)
+
+   ```bash
+   .\\run-that-app gh@2.39.1
    ```
 
 ### why
