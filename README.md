@@ -98,7 +98,7 @@ Options:
 Runs ShellCheck version 0.9.0 with the arguments `--color=always myscript.sh`.
 
 ```bash
-run-that-app --include-global --ignore-unavailable shellcheck@0.9.0 --color=always myscript.sh
+run-that-app shellcheck@0.9.0 --color=always myscript.sh
 ```
 
 Same call but if ShellCheck is not available, do nothing.
