@@ -40,7 +40,7 @@ avoids the Docker-in-Docker problem.
 2. Run an app (in this case the GitHub CLI)
 
    ```bash
-   .\\run-that-app gh@2.39.1
+   .\run-that-app gh@2.39.1
    ```
 
 ### why
