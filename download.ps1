@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-Set-Variable -Name "Version" -Value "0.0.3" -Option Constant
+Set-Variable -Name "version" -Value "0.0.3" -Option Constant
 
 function Welcome() {
   Write-Output "RUN-THAT-APP DOWNLOAD SCRIPT"
@@ -13,7 +13,7 @@ function Welcome() {
 function Main() {
   Welcome
   $cpuArchitecture = Get-CPUArchitecture
-  $zipPath = Receive-Archive -version $Version -CpuArchitecture $cpuArchitecture
+  $zipPath = Receive-Archive -version $version -cpuArchitecture $cpuArchitecture
   Expand-Archive $zipPath
   Remove-Item -Path $zipPath
 }
@@ -31,9 +31,9 @@ function Receive-Archive {
     [string]$version,
 
     [Parameter(Mandatory = $true)]
-    [string]$CpuArchitecture
+    [string]$cpuArchitecture
   )
-  $url = "https://github.com/kevgo/run-that-app/releases/download/v${version}/run_that_app_windows_${CpuArchitecture}.zip"
+  $url = "https://github.com/kevgo/run-that-app/releases/download/v${version}/run_that_app_windows_${cpuArchitecture}.zip"
   $archiveName = [System.IO.Path]::GetFileName($url)
   $tempDir = [System.IO.Path]::GetTempPath()
   $zipPath = Join-Path $tempDir $archiveName
