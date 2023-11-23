@@ -51,7 +51,12 @@ impl App for GolangCiLint {
 }
 
 fn download_url(version: &str, platform: Platform) -> String {
-    format!("https://github.com/golangci/golangci-lint/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}",os = os_text(platform.os), cpu =cpu_text(platform.cpu), ext = ext_text(platform.os))
+    format!(
+        "https://github.com/golangci/golangci-lint/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}",
+        os = os_text(platform.os),
+        cpu = cpu_text(platform.cpu),
+        ext = ext_text(platform.os)
+    )
 }
 
 fn os_text(os: Os) -> &'static str {

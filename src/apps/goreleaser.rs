@@ -56,7 +56,8 @@ fn download_url(version: &str, platform: Platform) -> String {
         "https://github.com/goreleaser/goreleaser/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}",
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu),
-        ext = ext_text(platform.os))
+        ext = ext_text(platform.os)
+    )
 }
 
 fn os_text(os: Os) -> &'static str {

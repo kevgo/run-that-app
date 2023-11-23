@@ -50,7 +50,11 @@ impl App for Gofumpt {
 }
 
 fn download_url(version: &str, platform: Platform) -> String {
-    format!("https://github.com/mvdan/gofumpt/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}", os = os_text(platform.os), cpu = cpu_text(platform.cpu))
+    format!(
+        "https://github.com/mvdan/gofumpt/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}",
+        os = os_text(platform.os),
+        cpu = cpu_text(platform.cpu)
+    )
 }
 
 fn os_text(os: Os) -> &'static str {
