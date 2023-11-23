@@ -33,9 +33,15 @@ impl App for Dprint {
         vec![
             Box::new(DownloadPrecompiledBinary {
                 name: self.name(),
-                url: format!("https://github.com/dprint/dprint/releases/download/{version}/dprint-{cpu}-{os}.zip", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
-                artifact_type: ArtifactType::Archive { file_to_extract: S(self.executable_filename(platform))},
-                file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+                url: download_url(version, platform),
+                artifact_type: ArtifactType::Archive {
+                    file_to_extract: S(self.executable_filename(platform)),
+                },
+                file_on_disk: yard.app_file_path(
+                    self.name(),
+                    version,
+                    self.executable_filename(platform),
+                ),
             }),
             Box::new(CompileFromRustSource {
                 crate_name: "dprint",
@@ -44,6 +50,14 @@ impl App for Dprint {
             }),
         ]
     }
+}
+
+fn download_url(version: &str, platform: Platform) -> String {
+    format!(
+        "https://github.com/dprint/dprint/releases/download/{version}/dprint-{cpu}-{os}.zip",
+        os = os_text(platform.os),
+        cpu = cpu_text(platform.cpu)
+    )
 }
 
 fn os_text(os: Os) -> &'static str {
@@ -58,5 +72,21 @@ fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
         Cpu::Arm64 => "aarch64",
         Cpu::Intel64 => "x86_64",
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::detect::{Cpu, Os, Platform};
+
+    #[test]
+    fn download_url() {
+        let platform = Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Arm64,
+        };
+        let have = super::download_url("0.43.0", platform);
+        let want = "https://github.com/dprint/dprint/releases/download/0.43.0/dprint-aarch64-apple-darwin.zip";
+        assert_eq!(have, want);
     }
 }

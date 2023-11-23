@@ -34,17 +34,32 @@ impl App for Scc {
         vec![
             Box::new(DownloadPrecompiledBinary {
                 name: self.name(),
-                url: format!("https://github.com/boyter/scc/releases/download/v{version}/scc_{version}_{os}_{cpu}.{ext}", os = os_text(platform.os), cpu = cpu_text(platform.cpu), ext = ext_text(platform.os)),
-                artifact_type: ArtifactType::Archive { file_to_extract: S(self.executable_filename(platform))},
-                file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+                url: download_url(version, platform),
+                artifact_type: ArtifactType::Archive {
+                    file_to_extract: S(self.executable_filename(platform)),
+                },
+                file_on_disk: yard.app_file_path(
+                    self.name(),
+                    version,
+                    self.executable_filename(platform),
+                ),
             }),
             Box::new(CompileFromGoSource {
                 import_path: format!("github.com/boyter/scc/v3@{version}"),
                 target_folder: yard.app_folder(self.name(), version),
                 executable_filename: self.executable_filename(platform),
-             }),
+            }),
         ]
     }
+}
+
+fn download_url(version: &str, platform: Platform) -> String {
+    format!(
+        "https://github.com/boyter/scc/releases/download/v{version}/scc_{version}_{os}_{cpu}.{ext}",
+        os = os_text(platform.os),
+        cpu = cpu_text(platform.cpu),
+        ext = ext_text(platform.os)
+    )
 }
 
 fn os_text(os: Os) -> &'static str {
@@ -64,4 +79,21 @@ fn cpu_text(cpu: Cpu) -> &'static str {
 
 fn ext_text(_os: Os) -> &'static str {
     "tar.gz"
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::detect::{Cpu, Os, Platform};
+
+    #[test]
+    fn download_url() {
+        let platform = Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Arm64,
+        };
+        let have = super::download_url("3.1.0", platform);
+        let want =
+            "https://github.com/boyter/scc/releases/download/v3.1.0/scc_3.1.0_Darwin_arm64.tar.gz";
+        assert_eq!(have, want);
+    }
 }

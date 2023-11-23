@@ -32,9 +32,13 @@ impl App for Depth {
         vec![
             Box::new(DownloadPrecompiledBinary {
                 name: self.name(),
-                url: format!("https://github.com/KyleBanks/depth/releases/download/v{version}/depth_{version}_{os}_{cpu}", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
+                url: download_url(version, platform),
                 artifact_type: ArtifactType::Executable,
-                file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+                file_on_disk: yard.app_file_path(
+                    self.name(),
+                    version,
+                    self.executable_filename(platform),
+                ),
             }),
             Box::new(CompileFromGoSource {
                 import_path: format!("github.com/KyleBanks/depth/cmd/depth@v{version}"),
@@ -43,6 +47,14 @@ impl App for Depth {
             }),
         ]
     }
+}
+
+fn download_url(version: &str, platform: Platform) -> String {
+    format!(
+        "https://github.com/KyleBanks/depth/releases/download/v{version}/depth_{version}_{os}_{cpu}",
+        os = os_text(platform.os),
+        cpu = cpu_text(platform.cpu)
+    )
 }
 
 fn os_text(os: Os) -> &'static str {
@@ -57,5 +69,22 @@ fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
         Cpu::Arm64 => "arm",
         Cpu::Intel64 => "amd64",
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::detect::{Cpu, Os, Platform};
+
+    #[test]
+    fn download_url() {
+        let platform = Platform {
+            os: Os::Linux,
+            cpu: Cpu::Intel64,
+        };
+        let have = super::download_url("1.2.1", platform);
+        let want =
+            "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_linux_amd64";
+        assert_eq!(have, want);
     }
 }
