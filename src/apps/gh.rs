@@ -10,7 +10,7 @@ impl App for Gh {
         "gh"
     }
 
-    fn executable(&self, platform: Platform) -> &'static str {
+    fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
             Os::Windows => "dprint.exe",
             Os::Linux | Os::MacOS => "dprint",
@@ -32,7 +32,7 @@ impl App for Gh {
                 name: self.name(),
                 url: format!("https://github.com/cli/cli/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}", os = os_text(platform.os), cpu = cpu_text(platform.cpu), ext =ext_text(platform.os)),
                 artifact_type: ArtifactType::Archive { file_to_extract: executable_path(version, platform) },
-                file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
+                file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             }),
             // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
         ]

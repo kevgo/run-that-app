@@ -12,7 +12,7 @@ impl App for Shfmt {
         "shfmt"
     }
 
-    fn executable(&self, platform: Platform) -> &'static str {
+    fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
             Os::Windows => "shfmt.exe",
             Os::Linux | Os::MacOS => "shfmt",
@@ -34,12 +34,12 @@ impl App for Shfmt {
                 name: self.name(),
                 url: format!("https://github.com/mvdan/sh/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}", os = os_text(platform.os), cpu = cpu_text(platform.cpu), ext = ext_text(platform.os)),
                 artifact_type: ArtifactType::Executable,
-                file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
+                file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             }),
             Box::new(CompileFromGoSource {
                 import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}"),
                 target_folder: yard.app_folder(self.name(), version),
-                executable_filename: self.executable(platform),
+                executable_filename: self.executable_filename(platform),
              }),
         ]
     }

@@ -13,7 +13,7 @@ impl App for Dprint {
         "dprint"
     }
 
-    fn executable(&self, platform: Platform) -> &'static str {
+    fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
             Os::Windows => "dprint.exe",
             Os::Linux | Os::MacOS => "dprint",
@@ -34,13 +34,13 @@ impl App for Dprint {
             Box::new(DownloadPrecompiledBinary {
                 name: self.name(),
                 url: format!("https://github.com/dprint/dprint/releases/download/{version}/dprint-{cpu}-{os}.zip", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
-                artifact_type: ArtifactType::Archive { file_to_extract: S(self.executable(platform))},
-                file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
+                artifact_type: ArtifactType::Archive { file_to_extract: S(self.executable_filename(platform))},
+                file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             }),
             Box::new(CompileFromRustSource {
                 crate_name: "dprint",
                 target_folder: yard.app_folder(self.name(), version),
-                executable_filename: self.executable(platform),
+                executable_filename: self.executable_filename(platform),
             }),
         ]
     }

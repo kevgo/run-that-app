@@ -31,7 +31,7 @@ fn load_or_install(
     yard: &Yard,
     output: &dyn Output,
 ) -> Result<Executable> {
-    if let Some(executable) = yard.load_app(requested_app, app.executable(platform)) {
+    if let Some(executable) = yard.load_app(requested_app, app.executable_filename(platform)) {
         return Ok(executable);
     };
     for installation_method in app.installation_methods(&requested_app.version, platform, yard) {

@@ -12,7 +12,7 @@ impl App for Goreleaser {
         "goreleaser"
     }
 
-    fn executable(&self, platform: Platform) -> &'static str {
+    fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
             Os::Windows => "goreleaser.exe",
             Os::Linux | Os::MacOS => "goreleaser",
@@ -36,13 +36,13 @@ impl App for Goreleaser {
             Box::new(DownloadPrecompiledBinary {
                 name: self.name(),
                 url: format!("https://github.com/goreleaser/goreleaser/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}" ),
-                artifact_type: ArtifactType::Archive { file_to_extract: self.executable(platform).to_string() },
-                file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
+                artifact_type: ArtifactType::Archive { file_to_extract: self.executable_filename(platform).to_string() },
+                file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             }),
             Box::new(CompileFromGoSource {
                 import_path: format!("github.com/goreleaser/goreleaser@{version}"),
                 target_folder: yard.app_folder(self.name(), version),
-                executable_filename: self.executable(platform),
+                executable_filename: self.executable_filename(platform),
              }),
         ]
     }

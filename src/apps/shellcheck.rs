@@ -10,7 +10,7 @@ impl App for ShellCheck {
         "shellcheck"
     }
 
-    fn executable(&self, platform: Platform) -> &'static str {
+    fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
             Os::Windows => "shellcheck.exe",
             Os::Linux | Os::MacOS => "shellcheck",
@@ -31,8 +31,8 @@ impl App for ShellCheck {
             Box::new(DownloadPrecompiledBinary {
                 name: self.name(),
                 url: format!("https://github.com/koalaman/shellcheck/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}", os = os_text(platform.os), cpu = cpu_text(platform.cpu), ext = ext_text(platform.os)),
-                artifact_type: ArtifactType::Archive { file_to_extract: format!("shellcheck-v{version}/{executable}", executable = self.executable(platform))},
-                file_on_disk: yard.app_file_path(self.name(), version, self.executable(platform)),
+                artifact_type: ArtifactType::Archive { file_to_extract: format!("shellcheck-v{version}/{executable}", executable = self.executable_filename(platform))},
+                file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             }),
         ]
     }

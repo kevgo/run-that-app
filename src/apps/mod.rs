@@ -31,7 +31,7 @@ pub trait App {
     fn name(&self) -> &'static str;
 
     /// the filename of the executable that starts this app
-    fn executable(&self, platform: Platform) -> &'static str;
+    fn executable_filename(&self, platform: Platform) -> &'static str;
 
     /// link to the (human-readable) homepage of the app
     fn homepage(&self) -> &'static str;
