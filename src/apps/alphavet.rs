@@ -75,7 +75,6 @@ fn cpu_text(cpu: Cpu) -> &'static str {
 #[cfg(test)]
 mod tests {
     use crate::detect::{Cpu, Os, Platform};
-    use big_s::S;
 
     #[test]
     fn download_url() {
@@ -84,8 +83,7 @@ mod tests {
             cpu: Cpu::Intel64,
         };
         let have = super::download_url("0.1.0", platform);
-        let want =
-            S("https://github.com/skx/alphavet/releases/download/v0.1.0/alphavet-linux-amd64");
+        let want = "https://github.com/skx/alphavet/releases/download/v0.1.0/alphavet-linux-amd64";
         assert_eq!(have, want);
     }
 }

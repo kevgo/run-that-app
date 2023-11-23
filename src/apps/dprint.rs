@@ -74,3 +74,19 @@ fn cpu_text(cpu: Cpu) -> &'static str {
         Cpu::Intel64 => "x86_64",
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::detect::{Cpu, Os, Platform};
+
+    #[test]
+    fn download_url() {
+        let platform = Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Arm64,
+        };
+        let have = super::download_url("0.43.0", platform);
+        let want = "https://github.com/dprint/dprint/releases/download/0.43.0/dprint-aarch64-apple-darwin.zip";
+        assert_eq!(have, want);
+    }
+}
