@@ -33,9 +33,15 @@ impl App for Dprint {
         vec![
             Box::new(DownloadPrecompiledBinary {
                 name: self.name(),
-                url: format!("https://github.com/dprint/dprint/releases/download/{version}/dprint-{cpu}-{os}.zip", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
-                artifact_type: ArtifactType::Archive { file_to_extract: S(self.executable_filename(platform))},
-                file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+                url: download_url(version, platform),
+                artifact_type: ArtifactType::Archive {
+                    file_to_extract: S(self.executable_filename(platform)),
+                },
+                file_on_disk: yard.app_file_path(
+                    self.name(),
+                    version,
+                    self.executable_filename(platform),
+                ),
             }),
             Box::new(CompileFromRustSource {
                 crate_name: "dprint",
@@ -44,6 +50,14 @@ impl App for Dprint {
             }),
         ]
     }
+}
+
+fn download_url(version: &str, platform: Platform) -> String {
+    format!(
+        "https://github.com/dprint/dprint/releases/download/{version}/dprint-{cpu}-{os}.zip",
+        os = os_text(platform.os),
+        cpu = cpu_text(platform.cpu)
+    )
 }
 
 fn os_text(os: Os) -> &'static str {
