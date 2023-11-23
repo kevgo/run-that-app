@@ -51,9 +51,10 @@ impl App for Gofumpt {
 
 fn download_url(version: &str, platform: Platform) -> String {
     format!(
-        "https://github.com/mvdan/gofumpt/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}",
+        "https://github.com/mvdan/gofumpt/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}{ext}",
         os = os_text(platform.os),
-        cpu = cpu_text(platform.cpu)
+        cpu = cpu_text(platform.cpu),
+        ext = ext_text(platform.os)
     )
 }
 
@@ -72,19 +73,40 @@ fn cpu_text(cpu: Cpu) -> &'static str {
     }
 }
 
+fn ext_text(os: Os) -> &'static str {
+    match os {
+        Os::Windows => ".exe",
+        Os::Linux | Os::MacOS => "",
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::detect::{Cpu, Os, Platform};
+    mod download_url {
+        use crate::detect::{Cpu, Os, Platform};
 
-    #[test]
-    fn download_url() {
-        let platform = Platform {
-            os: Os::MacOS,
-            cpu: Cpu::Arm64,
-        };
-        let have = super::download_url("0.5.0", platform);
-        let want =
+        #[test]
+        fn macos_arm64() {
+            let platform = Platform {
+                os: Os::MacOS,
+                cpu: Cpu::Arm64,
+            };
+            let have = super::super::download_url("0.5.0", platform);
+            let want =
             "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_darwin_arm64";
-        assert_eq!(have, want);
+            assert_eq!(have, want);
+        }
+
+        #[test]
+        fn windows_intel64() {
+            let platform = Platform {
+                os: Os::Windows,
+                cpu: Cpu::Intel64,
+            };
+            let have = super::super::download_url("0.5.0", platform);
+            let want =
+            "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_windows_amd64.exe";
+            assert_eq!(have, want);
+        }
     }
 }
