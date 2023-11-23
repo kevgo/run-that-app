@@ -1,10 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-# the version to release
 Set-Variable -Name "Version" -Value "0.0.3" -Option Constant
-
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-
 
 function Welcome() {
   Write-Output "RUN-THAT-APP DOWNLOAD SCRIPT"
@@ -14,14 +10,10 @@ function Welcome() {
   Write-Output ""
 }
 
-
-
 function Main() {
   Welcome
   $cpuArchitecture = Get-CPUArchitecture
-  Write-Output "I'm running on an $cpuArchitecture CPU."
   $zipPath = Receive-Archive -version $Version -CpuArchitecture $cpuArchitecture
-  Write-Output "zip path: $zipPath"
   Expand-Archive $zipPath
   Remove-Item -Path $zipPath
 }
@@ -54,10 +46,12 @@ function Expand-Archive {
     [Parameter(Mandatory = $true)]
     [string]$archivePath
   )
+  Add-Type -AssemblyName System.IO.Compression.FileSystem
   $zip = [System.IO.Compression.ZipFile]::OpenRead($archivePath)
   $zipEntry = $zip.Entries | Where-Object { $_.Name -eq "run-that-app.exe" }
-  Write-Output "Zip entry: $zipEntry"
-  [System.IO.Compression.ZipFileExtensions]::ExtractToFile($zipEntry, "run-that-app.exe")
+  $currentDirectory = Get-Location
+  $targetPath = Join-Path $currentDirectory "run-that-app.exe"
+  [System.IO.Compression.ZipFileExtensions]::ExtractToFile($zipEntry, $targetPath, $true)
   $zip.Dispose()
 }
 
