@@ -3,6 +3,8 @@
 [![linux](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml)
 [![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
 
+_You don't want to install apps, you want to run them!_
+
 _Run-that-app_ executes small third-party tools used by software developers
 (linters, checkers, verifiers) without the need to install them first. This
 reduces boilerplate code in developer tooling and on CI servers.
@@ -53,14 +55,15 @@ managers) are:
 - You use or support a variety of operating systems and want to avoid having to
   deal with an endless variety of package managers like Homebrew, Nix, Scoop,
   Chocolatey, winget, DNF, pacman, apt, pkg, snap, zypper, xbps, portage, etc.
-- You don't want to write and maintain Bash scripts to install your dependencies
-  and deal with various versions and flavors of `curl`, `gzip`, and `tar`
 - You work in an environment in which no package manager is available.
 - You need a different version of an application than the one installed by your
   package manager.
 - You work on multiple projects that require different versions of development
   tools.
-- You want to avoid the overhead of Docker.
+- You don't want to write and maintain Bash and PowerShell scripts to install
+  your dependencies and deal with various versions and flavors of `curl`,
+  `gzip`, and `tar`
+- You want to avoid the overhead of Docker and web assembly.
 - You want to install third-party tools as fast as possible for the best
   developer experience.
 
@@ -108,20 +111,25 @@ run-that-app --ignore-unavailable shellcheck@0.9.0 --color=always myscript.sh
 
 #### Why not use the package manager of my system to install third-party applications?
 
-Do it if your and everybody else's package manager installs all needed tools at
-versions that work for your use cases.
+If it works, then do it. If not, use run-that-app.
 
 #### What if an app does not provide binaries for my platform?
 
-If the app is not essential, you can provide the `--ignore-unavailable` switch
-and _run-that-app_ will simply do nothing, including not exiting with an error.
+If the app is not essential, for example because it's just a linter, you can
+provide the `--ignore-unavailable` switch and _run-that-app_ will simply do
+nothing.
 
-#### What if I compile an app that doesn't provide binaries for my platform myself?
+#### What if I compile an app myself?
 
 Add your version to the PATH and call _run-that-app_ with the `--include-global`
 switch to make it run your app. In this case _run-that-app_ does not guarantee
 that the app has the correct version.
 
-#### What about apps that require a dependency like NodeJS or Python?
+#### What about apps is written in NodeJS or Python?
 
-Use the package manager of those frameworks to run that app!
+Use the tooling of those frameworks to run that app!
+
+#### What if my app has dependencies?
+
+Use Docker or WASM. Run-that-app is for simple tools that are distributed as
+standalone executables without dependencies.
