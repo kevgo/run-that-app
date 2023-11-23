@@ -15,7 +15,7 @@ avoids the Docker-in-Docker problem.
 
 ### quickstart
 
-#### On Linux or macOS
+#### on Linux or macOS
 
 1. Download the run-that-app executable:
 
@@ -29,7 +29,7 @@ avoids the Docker-in-Docker problem.
    ./run-that-app gh@2.39.1
    ```
 
-#### On Windows Powershell
+#### on Windows Powershell
 
 1. Download the run-that-app executable:
 
