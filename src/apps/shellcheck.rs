@@ -27,15 +27,31 @@ impl App for ShellCheck {
         platform: Platform,
         yard: &Yard,
     ) -> Vec<Box<dyn InstallationMethod>> {
-        vec![
-            Box::new(DownloadPrecompiledBinary {
-                name: self.name(),
-                url: format!("https://github.com/koalaman/shellcheck/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}", os = os_text(platform.os), cpu = cpu_text(platform.cpu), ext = ext_text(platform.os)),
-                artifact_type: ArtifactType::Archive { file_to_extract: format!("shellcheck-v{version}/{executable}", executable = self.executable_filename(platform))},
-                file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
-            }),
-        ]
+        vec![Box::new(DownloadPrecompiledBinary {
+            name: self.name(),
+            url: download_url(version, platform),
+            artifact_type: ArtifactType::Archive {
+                file_to_extract: format!(
+                    "shellcheck-v{version}/{executable}",
+                    executable = self.executable_filename(platform)
+                ),
+            },
+            file_on_disk: yard.app_file_path(
+                self.name(),
+                version,
+                self.executable_filename(platform),
+            ),
+        })]
     }
+}
+
+fn download_url(version: &str, platform: Platform) -> String {
+    format!(
+        "https://github.com/koalaman/shellcheck/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}",
+        os = os_text(platform.os),
+        cpu = cpu_text(platform.cpu),
+        ext = ext_text(platform.os)
+    )
 }
 
 fn os_text(os: Os) -> &'static str {
@@ -57,5 +73,21 @@ fn ext_text(os: Os) -> &'static str {
     match os {
         Os::Linux | Os::MacOS => "tar.xz",
         Os::Windows => "zip",
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::detect::{Cpu, Os, Platform};
+
+    #[test]
+    fn download_url() {
+        let platform = Platform {
+            os: Os::Linux,
+            cpu: Cpu::Intel64,
+        };
+        let have = super::download_url("0.9.0", platform);
+        let want = "https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.linux.x86_64.tar.xz";
+        assert_eq!(have, want);
     }
 }
