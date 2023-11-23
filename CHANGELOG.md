@@ -1,5 +1,10 @@
 # run-that-app changelog
 
+### 0.0.4 (2023-11-23)
+
+- installation of run-that-app on PowerShell
+- bugfix: gh on Windows
+
 ### 0.0.3 (2023-11-20)
 
 - apps: add goreleaser
