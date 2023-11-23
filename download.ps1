@@ -23,6 +23,7 @@ function Main() {
   $zipPath = Receive-Archive -version $Version -CpuArchitecture $cpuArchitecture
   Write-Output "zip path: $zipPath"
   Expand-Archive $zipPath
+  Remove-Item -Path $zipPath
 }
 
 function Get-CPUArchitecture {
