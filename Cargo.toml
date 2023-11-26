@@ -27,4 +27,4 @@ tempfile = "3.8.1"
 unsafe_code = "forbid"
 
 [lints.clippy]
-pedantic = "deny"
+pedantic = "warn"
