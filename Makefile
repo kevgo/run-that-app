@@ -18,7 +18,7 @@ help:  # shows all available Make commands
 	cat Makefile | grep '^[^ ]*:' | grep -v '.PHONY' | grep -v '.SILENT:' | grep '#' | grep -v help | sed 's/:.*#/#/' | column -s "#" -t
 
 lint: build  # runs all linters
-	cargo clippy --all-targets --all-features -- -Dwarnings
+	cargo clippy --all-targets --all-features -- --deny=warnings
 	git diff --check
 	# target/debug/run-that-app/shfmt@${SHFMT_VERSION} -f . | xargs target/debug/run-that-app/shellcheck@${SHELLCHECK_VERSION}
 
