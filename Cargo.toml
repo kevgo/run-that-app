@@ -2,8 +2,7 @@
 name = "run-that-app"
 version = "0.0.4"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+rust-version = "1.74"
 
 [dependencies]
 big_s = "1.0.2"
