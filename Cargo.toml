@@ -22,7 +22,9 @@ tempfile = "3.8.1"
 
 [lints.rust]
 unsafe_code = "forbid"
+# we keep the deny for warnings in the Makefile because
+# it's nice if warnings like unused variables don't block development (like in Go).
+# When running "make lint" and on CI, all warnings are still errors.
 
 [lints.clippy]
 pedantic = "deny"
-module_inception = "allow"
