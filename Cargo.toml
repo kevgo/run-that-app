@@ -19,3 +19,10 @@ zip = "0.6.6"
 [dev-dependencies]
 pretty = { package = "pretty_assertions", version = "1.4.0" }
 tempfile = "3.8.1"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+pedantic = "deny"
+module_inception = "allow"
