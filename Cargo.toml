@@ -19,3 +19,12 @@ zip = "0.6.6"
 [dev-dependencies]
 pretty = { package = "pretty_assertions", version = "1.4.0" }
 tempfile = "3.8.1"
+
+[lints.rust]
+unsafe_code = "forbid"
+# We keep the deny for warnings in the Makefile.
+# It's nice if warnings like unused variables remain warnings during development.
+# Manually running "make lint" and CI still deny all warnings.
+
+[lints.clippy]
+pedantic = "deny"
