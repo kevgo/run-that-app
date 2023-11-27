@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.0.5 (2023-11-27)
+
+- fixed help screen displayed by the app
+
 ### 0.0.4 (2023-11-23)
 
 - installation of run-that-app on PowerShell
