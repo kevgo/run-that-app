@@ -17,8 +17,8 @@ pub fn print_options(output: &dyn Output) {
     output.println(
         "
 Options:
---allow-unavailable              if an app is not available for the current platform, create a stub that does nothing
---fallback-to-existing           if an app is not available for the current platform, use the globally installed app if one exists
+--ignore-unavailable             if an app is not available for the current platform, create a stub that does nothing
+--include-global                 if an app is not available for the current platform, use the globally installed app if one exists
 --log, -l                        enable logging of all categories
 --log=<category>, -l=<category>  enable logging for the given category
 --help, -h                       display this help screen
