@@ -1,5 +1,6 @@
 //! all applications that run-this-app can run
 
+mod actionlint;
 mod alphavet;
 mod depth;
 mod dprint;
@@ -46,6 +47,7 @@ pub trait App {
 
 pub fn all() -> Vec<Box<dyn App>> {
     vec![
+        Box::new(actionlint::ActionLint {}),
         Box::new(alphavet::Alphavet {}),
         Box::new(depth::Depth {}),
         Box::new(dprint::Dprint {}),
