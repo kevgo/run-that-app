@@ -21,7 +21,14 @@ pub fn run(
     let app = apps::lookup(&requested_app.name)?;
     let platform = detect::detect(output)?;
     let prodyard = yard::load_or_create(&yard::production_location()?)?;
-    let executable = load_or_install(requested_app, app.as_ref(), platform, &prodyard, output)?;
+    let executable = load_or_install(
+        requested_app,
+        app.as_ref(),
+        platform,
+        include_global,
+        &prodyard,
+        output,
+    )?;
     Ok(subshell::execute(executable, args))
 }
 
@@ -29,6 +36,7 @@ fn load_or_install(
     requested_app: &RequestedApp,
     app: &dyn App,
     platform: Platform,
+    include_global: bool,
     yard: &Yard,
     output: &dyn Output,
 ) -> Result<Executable> {
@@ -37,6 +45,11 @@ fn load_or_install(
     };
     for installation_method in app.installation_methods(&requested_app.version, platform, yard) {
         if let Some(executable) = installation_method.install(output)? {
+            return Ok(executable);
+        }
+    }
+    if include_global {
+        if let Some(executable) = find_global_install(app.executable_filename(platform)) {
             return Ok(executable);
         }
     }
