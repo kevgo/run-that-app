@@ -50,10 +50,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: 1.74.0
-          profile: minimal
+      - run: rustup update stable
       - uses: taiki-e/upload-rust-binary-action@v1
         with:
           archive: ${{ matrix.filename }}
