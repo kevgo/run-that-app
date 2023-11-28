@@ -2,6 +2,7 @@ use crate::apps;
 use crate::apps::App;
 use crate::cli::RequestedApp;
 use crate::error::UserError;
+use crate::filesystem::find_global_install;
 use crate::platform;
 use crate::platform::Platform;
 use crate::subshell;
@@ -49,8 +50,8 @@ fn load_or_install(
         }
     }
     if include_global {
-        if let Some(executable) = find_global_install(app.executable_filename(platform)) {
-            return Ok(executable);
+        if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
+            return Ok(Executable(executable));
         }
     }
     Err(UserError::UnsupportedPlatform)
