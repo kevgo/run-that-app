@@ -23,6 +23,7 @@ lint: build  # runs all linters
 	cargo clippy --all-targets --all-features -- --deny=warnings
 	git diff --check
 	target/debug/run-that-app actionlint@${ACTIONLINT_VERSION}
+	# target/debug/run-that-app dprint@${DPRINT_VERSION} check  # this breaks the Windows CI
 	# target/debug/run-that-app/shfmt@${SHFMT_VERSION} -f . | xargs target/debug/run-that-app/shellcheck@${SHELLCHECK_VERSION}
 
 test: unit lint  # runs all tests
