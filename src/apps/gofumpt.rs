@@ -1,8 +1,8 @@
 use super::App;
-use crate::detect::{Cpu, Os, Platform};
 use crate::install::{
     ArtifactType, CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod,
 };
+use crate::platform::{Cpu, Os, Platform};
 use crate::yard::Yard;
 
 pub struct Gofumpt {}
@@ -83,7 +83,7 @@ fn ext_text(os: Os) -> &'static str {
 #[cfg(test)]
 mod tests {
     mod download_url {
-        use crate::detect::{Cpu, Os, Platform};
+        use crate::platform::{Cpu, Os, Platform};
 
         #[test]
         fn macos_arm64() {

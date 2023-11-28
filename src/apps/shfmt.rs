@@ -1,8 +1,8 @@
 use super::App;
-use crate::detect::{Cpu, Os, Platform};
 use crate::install::{
     ArtifactType, CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod,
 };
+use crate::platform::{Cpu, Os, Platform};
 use crate::yard::Yard;
 
 pub struct Shfmt {}
@@ -82,7 +82,7 @@ fn ext_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
-    use crate::detect::{Cpu, Os, Platform};
+    use crate::platform::{Cpu, Os, Platform};
 
     #[test]
     fn download_url() {
