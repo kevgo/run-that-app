@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.0.5 (2023-11-28)
+
+- apps: actionlint
+
 ### 0.0.4 (2023-11-23)
 
 - installation of run-that-app on PowerShell
