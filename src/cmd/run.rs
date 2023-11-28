@@ -1,9 +1,9 @@
 use crate::apps;
 use crate::apps::App;
 use crate::cli::RequestedApp;
-use crate::detect;
-use crate::detect::Platform;
 use crate::error::UserError;
+use crate::platform;
+use crate::platform::Platform;
 use crate::subshell;
 use crate::yard;
 use crate::yard::Executable;
@@ -19,7 +19,7 @@ pub fn run(
     output: &dyn Output,
 ) -> Result<ExitCode> {
     let app = apps::lookup(&requested_app.name)?;
-    let platform = detect::platform(output)?;
+    let platform = platform::detect(output)?;
     let prodyard = yard::load_or_create(&yard::production_location()?)?;
     let executable = load_or_install(
         requested_app,

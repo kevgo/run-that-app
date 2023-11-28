@@ -2,12 +2,12 @@ mod apps;
 mod archives;
 mod cli;
 mod cmd;
-mod detect;
 mod download;
 mod error;
 mod filesystem;
 mod install;
 mod output;
+mod platform;
 mod subshell;
 mod yard;
 

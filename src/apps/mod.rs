@@ -11,9 +11,9 @@ mod scc;
 mod shellcheck;
 mod shfmt;
 
-use crate::detect::Platform;
 use crate::error::UserError;
 use crate::install::InstallationMethod;
+use crate::platform::Platform;
 use crate::yard::Yard;
 use crate::Result;
 
