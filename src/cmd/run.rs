@@ -19,7 +19,7 @@ pub fn run(
     output: &dyn Output,
 ) -> Result<ExitCode> {
     let app = apps::lookup(&requested_app.name)?;
-    let platform = detect::detect(output)?;
+    let platform = detect::platform(output)?;
     let prodyard = yard::load_or_create(&yard::production_location()?)?;
     let executable = load_or_install(
         requested_app,
