@@ -1,8 +1,8 @@
 use super::App;
-use crate::detect::{Cpu, Os, Platform};
 use crate::install::{
     ArtifactType, CompileFromRustSource, DownloadPrecompiledBinary, InstallationMethod,
 };
+use crate::platform::{Cpu, Os, Platform};
 use crate::yard::Yard;
 use big_s::S;
 
@@ -77,7 +77,7 @@ fn cpu_text(cpu: Cpu) -> &'static str {
 
 #[cfg(test)]
 mod tests {
-    use crate::detect::{Cpu, Os, Platform};
+    use crate::platform::{Cpu, Os, Platform};
 
     #[test]
     fn download_url() {

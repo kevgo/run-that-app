@@ -1,6 +1,6 @@
 use super::App;
-use crate::detect::{Cpu, Os, Platform};
 use crate::install::{ArtifactType, DownloadPrecompiledBinary, InstallationMethod};
+use crate::platform::{Cpu, Os, Platform};
 use crate::yard::Yard;
 
 pub struct GolangCiLint {}
@@ -83,7 +83,7 @@ fn ext_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
-    use crate::detect::{Cpu, Os, Platform};
+    use crate::platform::{Cpu, Os, Platform};
 
     #[test]
     fn download_url() {
