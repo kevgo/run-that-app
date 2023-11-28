@@ -15,6 +15,7 @@ use std::process::ExitCode;
 pub fn run(
     requested_app: &RequestedApp,
     args: Vec<String>,
+    include_global: bool,
     output: &dyn Output,
 ) -> Result<ExitCode> {
     let app = apps::lookup(&requested_app.name)?;
