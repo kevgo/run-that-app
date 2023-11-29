@@ -2,11 +2,10 @@ use super::parse_line;
 use super::Config;
 use crate::Result;
 use crate::UserError;
-use std::path::PathBuf;
 use std::{fs, io};
 
 pub fn load() -> Result<Config> {
-    let text = match fs::read_to_string(PathBuf::from(FILE_NAME)) {
+    let text = match fs::read_to_string(FILE_NAME) {
         Ok(text) => text,
         Err(err) => match err.kind() {
             io::ErrorKind::NotFound => return Ok(Config::default()),
