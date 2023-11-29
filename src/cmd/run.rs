@@ -14,19 +14,22 @@ use crate::Result;
 use std::process::ExitCode;
 
 pub fn run(
-    requested_app: &RequestedApp,
+    mut requested_app: RequestedApp,
     args: Vec<String>,
     output: &dyn Output,
 ) -> Result<ExitCode> {
     if requested_app.version.is_empty() {
-        let config = config::load();
-        let config_app = config.lookup(&requested_app.name);
-        requested_app.version = config_app.version;
+        let config = config::load()?;
+        if let Some(config_app) = config.lookup(&requested_app.name) {
+            requested_app.version = config_app.version;
+        } else {
+            return Err(UserError::RunRequestMissingVersion);
+        }
     }
     let app = apps::lookup(&requested_app.name)?;
     let platform = platform::detect(output)?;
     let prodyard = yard::load_or_create(&yard::production_location()?)?;
-    let executable = load_or_install(requested_app, app.as_ref(), platform, &prodyard, output)?;
+    let executable = load_or_install(&requested_app, app.as_ref(), platform, &prodyard, output)?;
     Ok(subshell::execute(executable, args))
 }
 

@@ -33,7 +33,7 @@ fn inner() -> Result<ExitCode> {
         category: cli_args.log,
     };
     match cli_args.command {
-        Command::RunApp { app, args } => cmd::run(&app, args, &output),
+        Command::RunApp { app, args } => cmd::run(app, args, &output),
         Command::DisplayHelp => Ok(cmd::help(&output)),
         Command::DisplayVersion => Ok(cmd::version(&output)),
     }
