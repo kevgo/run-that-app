@@ -1,21 +1,23 @@
-use std::str::SplitAsciiWhitespace;
-
 use crate::cli::RequestedApp;
 use crate::{Result, UserError};
+use std::str::SplitAsciiWhitespace;
 
 pub fn parse_line(line_text: &str, line_no: usize, acc: &mut Vec<RequestedApp>) -> Result<()> {
     let line_text = line_text.trim();
     let mut parts = LinePartsIterator::from(line_text);
     let Some(name) = parts.next() else {
+        // empty or commented out line --> ignore
         return Ok(());
     };
     let Some(version) = parts.next() else {
+        // line has only one element --> invalid
         return Err(UserError::InvalidConfigFileFormat {
             line_no,
             text: line_text.to_string(),
         });
     };
     if parts.next().is_some() {
+        // line has more than 2 elements --> invalid
         return Err(UserError::InvalidConfigFileFormat {
             line_no,
             text: line_text.to_string(),
@@ -28,7 +30,7 @@ pub fn parse_line(line_text: &str, line_no: usize, acc: &mut Vec<RequestedApp>) 
     Ok(())
 }
 
-/// provides non-whitespace and non-comment elements of the given line
+/// provides non-whitespace and not commented out parts of the given line
 struct LinePartsIterator<'a> {
     parts: SplitAsciiWhitespace<'a>,
 }
