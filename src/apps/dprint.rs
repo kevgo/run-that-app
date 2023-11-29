@@ -80,13 +80,24 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
-    fn download_url() {
+    fn mac_arm() {
         let platform = Platform {
             os: Os::MacOS,
             cpu: Cpu::Arm64,
         };
         let have = super::download_url("0.43.0", platform);
         let want = "https://github.com/dprint/dprint/releases/download/0.43.0/dprint-aarch64-apple-darwin.zip";
+        assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_arm() {
+        let platform = Platform {
+            os: Os::Linux,
+            cpu: Cpu::Arm64,
+        };
+        let have = super::download_url("0.43.1", platform);
+        let want = "https://github.com/dprint/dprint/releases/download/0.43.1/dprint-aarch64-unknown-linux-gnu.zip";
         assert_eq!(have, want);
     }
 }
