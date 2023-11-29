@@ -1,6 +1,7 @@
 use crate::apps;
 use crate::apps::App;
 use crate::cli::RequestedApp;
+use crate::config;
 use crate::error::UserError;
 use crate::platform;
 use crate::platform::Platform;
@@ -17,6 +18,11 @@ pub fn run(
     args: Vec<String>,
     output: &dyn Output,
 ) -> Result<ExitCode> {
+    if requested_app.version.is_empty() {
+        let config = config::load();
+        let config_app = config.lookup(&requested_app.name);
+        requested_app.version = config_app.version;
+    }
     let app = apps::lookup(&requested_app.name)?;
     let platform = platform::detect(output)?;
     let prodyard = yard::load_or_create(&yard::production_location()?)?;

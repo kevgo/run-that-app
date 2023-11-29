@@ -39,7 +39,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             }
         }
         if requested_app.is_none() {
-            requested_app = Some(requested_app::parse(&arg)?);
+            requested_app = Some(requested_app::parse(&arg));
         } else {
             app_args.push(arg);
         }

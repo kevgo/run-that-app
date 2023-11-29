@@ -1,3 +1,4 @@
+use crate::config;
 use colored::Colorize;
 use std::path::PathBuf;
 
@@ -5,6 +6,7 @@ use std::path::PathBuf;
 #[derive(Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions)]
 pub enum UserError {
+    CannotAccessConfigFile(String),
     CannotDetermineHomeDirectory,
     CannotDownload {
         url: String,
@@ -18,6 +20,10 @@ pub enum UserError {
     CannotMakeFileExecutable {
         file: String,
         reason: String,
+    },
+    InvalidConfigFileFormat {
+        line_no: usize,
+        text: String,
     },
     GoCompilationFailed,
     GoNoPermission,
@@ -41,6 +47,13 @@ pub enum UserError {
 impl UserError {
     pub fn print(self) {
         match self {
+            UserError::CannotAccessConfigFile(reason) => {
+                error(&format!("cannot read the config file: {}", reason));
+                desc(&format!(
+                    "please make sure {} is a file and accessible to you",
+                    config::FILE_NAME,
+                ));
+            }
             UserError::CannotDetermineHomeDirectory => error("cannot determine home directory"),
             UserError::CannotCreateFolder { folder, reason } => {
                 error(&format!(
@@ -57,6 +70,10 @@ impl UserError {
             UserError::CannotMakeFileExecutable { file, reason } => {
                 error(&format!("Cannot make file {file} executable: {reason}"));
                 desc("Please check access permissions and try again.");
+            }
+            UserError::InvalidConfigFileFormat { line_no, text } => {
+                error("Invalid config file format");
+                desc(&format!("{}:{line_no}: {text}", config::FILE_NAME));
             }
             UserError::GoCompilationFailed => {
                 error("Compilation from Go source failed.");
