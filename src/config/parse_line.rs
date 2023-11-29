@@ -53,7 +53,7 @@ impl<'a> Iterator for LinePartsIterator<'a> {
         if part.starts_with('#') {
             return None;
         }
-        return Some(part);
+        Some(part)
     }
 }
 

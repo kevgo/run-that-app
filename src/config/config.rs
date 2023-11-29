@@ -5,11 +5,6 @@ pub struct Config(pub Vec<RequestedApp>);
 
 impl Config {
     pub fn lookup(self, app_name: &str) -> Option<RequestedApp> {
-        for requested_app in self.0 {
-            if &requested_app.name == app_name {
-                return Some(requested_app);
-            }
-        }
-        None
+        self.0.into_iter().find(|app| app.name == app_name)
     }
 }
