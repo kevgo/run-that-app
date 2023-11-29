@@ -20,11 +20,10 @@ pub fn run(
 ) -> Result<ExitCode> {
     if requested_app.version.is_empty() {
         let config = config::load()?;
-        if let Some(config_app) = config.lookup(&requested_app.name) {
-            requested_app.version = config_app.version;
-        } else {
+        let Some(configured_app) = config.lookup(&requested_app.name) else {
             return Err(UserError::RunRequestMissingVersion);
-        }
+        };
+        requested_app.version = configured_app.version;
     }
     let app = apps::lookup(&requested_app.name)?;
     let platform = platform::detect(output)?;
