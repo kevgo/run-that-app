@@ -7,17 +7,17 @@ use std::{fs, io};
 
 pub fn load() -> Result<Config> {
     let path = PathBuf::from(FILE_NAME);
-    let text = match fs::read_to_string(&path) {
+    let text = match fs::read_to_string(path) {
         Ok(text) => text,
         Err(err) => match err.kind() {
             io::ErrorKind::NotFound => return Ok(Config::default()),
             _ => return Err(UserError::CannotAccessConfigFile(err.to_string())),
         },
     };
-    parse(text)
+    parse(&text)
 }
 
-fn parse(text: String) -> Result<Config> {
+fn parse(text: &str) -> Result<Config> {
     let mut result = vec![];
     for (i, line) in text.lines().enumerate() {
         parse_line(line, i, &mut result)?;

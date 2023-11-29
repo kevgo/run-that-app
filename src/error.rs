@@ -48,7 +48,7 @@ impl UserError {
     pub fn print(self) {
         match self {
             UserError::CannotAccessConfigFile(reason) => {
-                error(&format!("cannot read the config file: {}", reason));
+                error(&format!("cannot read the config file: {reason}"));
                 desc(&format!(
                     "please make sure {} is a file and accessible to you",
                     config::FILE_NAME,

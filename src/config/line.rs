@@ -47,13 +47,13 @@ impl<'a> Iterator for LinePartsIterator<'a> {
     type Item = &'a str;
 
     fn next(&mut self) -> Option<Self::Item> {
-        while let Some(part) = self.parts.next() {
-            if part.starts_with('#') {
-                return None;
-            }
-            return Some(part);
+        let Some(part) = self.parts.next() else {
+            return None;
+        };
+        if part.starts_with('#') {
+            return None;
         }
-        None
+        return Some(part);
     }
 }
 
