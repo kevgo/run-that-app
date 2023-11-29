@@ -14,7 +14,7 @@ pub use executable::Executable;
 pub use load::load;
 pub use load_or_create::load_or_create;
 use std::path::{Path, PathBuf};
-pub use yard::Yard;
+pub use yard::{LoadAppOutcome, Yard};
 
 use crate::error::UserError;
 

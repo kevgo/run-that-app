@@ -8,12 +8,12 @@ pub struct Yard {
 
 impl Yard {
     /// provides the path to the executable of the given application
-    pub fn load_app(&self, app: &RequestedApp, executable_filename: &str) -> Option<Executable> {
+    pub fn load_app(&self, app: &RequestedApp, executable_filename: &str) -> LoadAppOutcome {
         let file_path = self.app_file_path(&app.name, &app.version, executable_filename);
         if file_path.exists() {
-            Some(Executable(file_path))
+            LoadAppOutcome::Loaded(Executable(file_path))
         } else {
-            None
+            LoadAppOutcome::NotFound
         }
     }
 
@@ -37,6 +37,13 @@ impl Yard {
             fs::File::create(self.app_file_path(&app.name, &app.version, file_name)).unwrap();
         file.write_all(file_content).unwrap();
     }
+}
+
+pub enum LoadAppOutcome {
+    /// the requested app was loaded from the yard, here is the executable to call
+    Loaded(Executable),
+    /// the yard doesn't contain this app
+    NotFound,
 }
 
 #[cfg(test)]
