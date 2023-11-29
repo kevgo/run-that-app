@@ -6,8 +6,7 @@ use std::path::PathBuf;
 use std::{fs, io};
 
 pub fn load() -> Result<Config> {
-    let path = PathBuf::from(FILE_NAME);
-    let text = match fs::read_to_string(path) {
+    let text = match fs::read_to_string(PathBuf::from(FILE_NAME)) {
         Ok(text) => text,
         Err(err) => match err.kind() {
             io::ErrorKind::NotFound => return Ok(Config::default()),
