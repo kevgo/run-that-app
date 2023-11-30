@@ -100,11 +100,10 @@ mod tests {
         }
 
         mod show_path {
-            use big_s::S;
-
             use super::parse_args;
             use crate::cli::{Args, Command, RequestedApp};
             use crate::error::UserError;
+            use big_s::S;
 
             #[test]
             fn with_app() {
