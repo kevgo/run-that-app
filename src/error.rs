@@ -42,6 +42,10 @@ pub enum UserError {
     YardRootIsNotFolder {
         root: PathBuf,
     },
+    YardAccessDenied {
+        msg: String,
+        path: PathBuf,
+    },
 }
 
 impl UserError {
@@ -120,6 +124,10 @@ If you are okay moving forward without this app, you can provide the \"--ignore-
                 error(&format!("Your operating system ({name}) is currently not supported."));
                 desc("Request support for your platform at https://github.com/kevgo/run-that-app/issues.");
             } // UserError::UnsupportedPlatformAndNoGlobalApp { app_name, platform } => {
+            UserError::YardAccessDenied { msg, path } => {
+                error(&format!("Access to the Yard denied: {msg}"));
+                desc(&format!("Make sure the folder {} is accessible to you", path.to_string_lossy()));
+            }
             UserError::YardRootIsNotFolder { root } => {
                 error("The internal storage has the wrong structure.");
                 desc(&format!("{} should is not a folder. Please delete it and try again.", root.to_string_lossy()));

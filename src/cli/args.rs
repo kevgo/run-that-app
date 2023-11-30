@@ -15,6 +15,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut requested_app: Option<RequestedApp> = None;
     let mut log: Option<String> = None;
     let mut app_args: Vec<String> = vec![];
+    let mut include_global = false;
     for arg in cli_args {
         if requested_app.is_none() {
             if &arg == "--help" || &arg == "-h" {
@@ -28,6 +29,10 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                     command: Command::DisplayVersion,
                     log: None,
                 });
+            }
+            if &arg == "--include-global" {
+                include_global = true;
+                continue;
             }
             if arg.starts_with('-') {
                 let (key, value) = arg.split_once('=').unwrap_or((&arg, ""));
@@ -45,7 +50,11 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
         }
     }
     let command = match requested_app {
-        Some(app) => Command::RunApp { app, args: app_args },
+        Some(app) => Command::RunApp {
+            app,
+            args: app_args,
+            include_global,
+        },
         None => Command::DisplayHelp,
     };
     Ok(Args { command, log })
@@ -61,7 +70,8 @@ mod tests {
 
     mod parse {
         use super::parse_args;
-        use crate::cli::{Args, Command};
+        use crate::cli::{Args, Command, RequestedApp};
+        use big_s::S;
 
         #[test]
         fn no_arguments() {
@@ -125,6 +135,23 @@ mod tests {
             }
         }
 
+        #[test]
+        fn include_global() {
+            let have = parse_args(vec!["run-that-app", "--include-global", "app@2", "arg1"]);
+            let want = Args {
+                command: Command::RunApp {
+                    app: RequestedApp {
+                        name: S("app"),
+                        version: S("2"),
+                    },
+                    args: vec![S("arg1")],
+                    include_global: true,
+                },
+                log: None,
+            };
+            pretty::assert_eq!(have, want);
+        }
+
         mod log_parameter {
             use super::parse_args;
             use crate::cli::{Args, Command, RequestedApp};
@@ -140,6 +167,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![],
+                        include_global: false,
                     },
                     log: Some(S("")),
                 };
@@ -156,6 +184,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![],
+                        include_global: false,
                     },
                     log: Some(S("scope")),
                 };
@@ -179,6 +208,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![],
+                        include_global: false,
                     },
                     log: None,
                 };
@@ -195,6 +225,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![S("--arg1"), S("arg2")],
+                        include_global: false,
                     },
                     log: None,
                 };
@@ -211,6 +242,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![S("--arg1"), S("arg2")],
+                        include_global: false,
                     },
                     log: Some(S("l1")),
                 };
@@ -227,6 +259,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![S("--log=app"), S("--version")],
+                        include_global: false,
                     },
                     log: None,
                 };
