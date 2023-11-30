@@ -50,8 +50,8 @@ fn load_or_install(
     output: &dyn Output,
 ) -> Result<LoadAppOutcome> {
     match yard.load_app(requested_app, app.executable_filename(platform)) {
-        LoadAppOutcome::Loaded(executable) => Ok(executable),
-        LoadAppOutcome::NotInstalled => todo!(),
+        LoadAppOutcome::Loaded(executable) => return Ok(LoadAppOutcome::Loaded(executable)),
+        LoadAppOutcome::NotInstalled if gl => {}
         LoadAppOutcome::NotInstallable => todo!(),
     };
     for installation_method in app.installation_methods(&requested_app.version, platform, yard) {
