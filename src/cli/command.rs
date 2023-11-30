@@ -7,6 +7,7 @@ pub enum Command {
         app: RequestedApp,
         args: Vec<String>,
         include_global: bool,
+        optional: bool,
     },
     DisplayHelp,
     DisplayVersion,
