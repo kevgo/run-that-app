@@ -49,20 +49,31 @@ fn load_or_install(
     yard: &Yard,
     output: &dyn Output,
 ) -> Result<LoadAppOutcome> {
-    match yard.load_app(requested_app, app.executable_filename(platform)) {
-        LoadAppOutcome::Loaded(executable) => return Ok(LoadAppOutcome::Loaded(executable)),
-        LoadAppOutcome::NotInstalled if gl => {}
-        LoadAppOutcome::NotInstallable => todo!(),
+    if let Some(executable) = yard.load_app(requested_app, app.executable_filename(platform)) {
+        return Ok(LoadAppOutcome::Loaded(executable));
     };
+    if yard.is_not_installable(requested_app) {
+        if include_global {
+            if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
+                return Ok(LoadAppOutcome::Loaded(executable));
+            }
+        }
+        return Ok(LoadAppOutcome::NotInstalled);
+    }
     for installation_method in app.installation_methods(&requested_app.version, platform, yard) {
         if let Some(executable) = installation_method.install(output)? {
-            return Ok(executable);
-        }
-    }
-    if include_global {
-        if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
-            return Ok(Executable(executable));
+            return Ok(LoadAppOutcome::Loaded(executable));
         }
     }
     Err(UserError::UnsupportedPlatform)
+}
+
+#[derive(Debug, PartialEq)]
+pub enum LoadAppOutcome {
+    /// the requested app was loaded from the yard, here is the executable to call
+    Loaded(Executable),
+    /// the yard doesn't contain this app
+    NotInstalled,
+    /// a previous run of run-that-app determined that the app cannot be downloaded nor installed for the current platform
+    NotInstallable,
 }

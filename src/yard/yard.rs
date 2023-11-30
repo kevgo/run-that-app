@@ -11,18 +11,6 @@ pub struct Yard {
 
 /// stores data and executables of applications
 impl Yard {
-    /// provides the path to the executable of the given application
-    pub fn load_app(&self, app: &RequestedApp, executable_filename: &str) -> LoadAppOutcome {
-        let file_path = self.app_file_path(&app.name, &app.version, executable_filename);
-        if file_path.exists() {
-            return LoadAppOutcome::Loaded(Executable(file_path));
-        }
-        if self.is_not_installable(app) {
-            return LoadAppOutcome::NotInstallable;
-        }
-        LoadAppOutcome::NotInstalled
-    }
-
     /// provides the path to the given file that is part of the given application
     pub fn app_file_path(&self, app_name: &str, app_version: &str, file: &str) -> PathBuf {
         self.app_folder(app_name, app_version).join(file)
@@ -33,8 +21,17 @@ impl Yard {
         self.root.join("apps").join(app_name).join(app_version)
     }
 
-    fn is_not_installable(&self, app: &RequestedApp) -> bool {
+    pub fn is_not_installable(&self, app: &RequestedApp) -> bool {
         self.not_installable_path(&app.name, &app.version).exists()
+    }
+
+    /// provides the path to the executable of the given application
+    pub fn load_app(&self, app: &RequestedApp, executable_filename: &str) -> Option<Executable> {
+        let file_path = self.app_file_path(&app.name, &app.version, executable_filename);
+        if file_path.exists() {
+            return Some(Executable(file_path));
+        }
+        None
     }
 
     fn mark_not_installable(&self, app: &RequestedApp) -> Result<()> {
@@ -59,16 +56,6 @@ impl Yard {
         let mut file = fs::File::create(self.app_file_path(&app.name, &app.version, file_name)).unwrap();
         file.write_all(file_content).unwrap();
     }
-}
-
-#[derive(Debug, PartialEq)]
-pub enum LoadAppOutcome {
-    /// the requested app was loaded from the yard, here is the executable to call
-    Loaded(Executable),
-    /// the yard doesn't contain this app
-    NotInstalled,
-    /// a previous run of run-that-app determined that the app cannot be downloaded nor installed for the current platform
-    NotInstallable,
 }
 
 #[cfg(test)]
