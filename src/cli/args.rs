@@ -143,22 +143,28 @@ mod tests {
             }
         }
 
-        #[test]
-        fn include_global() {
-            let have = parse_args(vec!["run-that-app", "--include-global", "app@2", "arg1"]);
-            let want = Ok(Args {
-                command: Command::RunApp {
-                    app: RequestedApp {
-                        name: S("app"),
-                        version: S("2"),
+        mod include_global {
+            use super::parse_args;
+            use crate::cli::{Args, Command, RequestedApp};
+            use big_s::S;
+
+            #[test]
+            fn with_app() {
+                let have = parse_args(vec!["run-that-app", "--include-global", "app@2", "arg1"]);
+                let want = Ok(Args {
+                    command: Command::RunApp {
+                        app: RequestedApp {
+                            name: S("app"),
+                            version: S("2"),
+                        },
+                        args: vec![S("arg1")],
+                        include_global: true,
+                        optional: false,
                     },
-                    args: vec![S("arg1")],
-                    include_global: true,
-                    optional: false,
-                },
-                log: None,
-            });
-            pretty::assert_eq!(have, want);
+                    log: None,
+                });
+                pretty::assert_eq!(have, want);
+            }
         }
 
         mod log_parameter {
