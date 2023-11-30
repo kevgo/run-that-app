@@ -202,6 +202,24 @@ mod tests {
             }
         }
 
+        #[test]
+        fn optional() {
+            let have = parse_args(vec!["run-that-app", "--optional", "app@2", "arg1"]);
+            let want = Args {
+                command: Command::RunApp {
+                    app: RequestedApp {
+                        name: S("app"),
+                        version: S("2"),
+                    },
+                    args: vec![S("arg1")],
+                    include_global: false,
+                    optional: true,
+                },
+                log: None,
+            };
+            pretty::assert_eq!(have, want);
+        }
+
         mod application_arguments {
             use super::parse_args;
             use crate::cli::{args, Command, RequestedApp};
