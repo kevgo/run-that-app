@@ -123,6 +123,22 @@ mod tests {
             }
 
             #[test]
+            fn with_all_options() {
+                let have = parse_args(vec!["run-that-app", "--show-path", "--include-global", "--log=detect", "shellcheck"]);
+                let want = Ok(Args {
+                    command: Command::DisplayPath {
+                        app: RequestedApp {
+                            name: S("shellcheck"),
+                            version: S(""),
+                        },
+                        include_global: true,
+                        log: Some(S("detect")),
+                    },
+                });
+                pretty::assert_eq!(have, want);
+            }
+
+            #[test]
             fn without_app() {
                 let have = parse_args(vec!["run-that-app", "--show-path"]);
                 let want = Err(UserError::MissingApplication);
