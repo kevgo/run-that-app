@@ -25,9 +25,7 @@ pub fn run(mut requested_app: RequestedApp, args: Vec<String>, include_global: b
     let app = apps::lookup(&requested_app.name)?;
     let platform = platform::detect(output)?;
     let prodyard = yard::load_or_create(&yard::production_location()?)?;
-    let Some(executable) = load_or_install(&requested_app, app.as_ref(), platform, include_global, &prodyard, output)? else {
-        return Err(UserError::UnsupportedPlatform);
-    };
+    let executable = load_or_install(&requested_app, app.as_ref(), platform, include_global, &prodyard, output)?;
     Ok(subshell::execute(executable, args))
 }
 
@@ -38,27 +36,27 @@ fn load_or_install(
     include_global: bool,
     yard: &Yard,
     output: &dyn Output,
-) -> Result<Option<Executable>> {
+) -> Result<Executable> {
     if let Some(executable) = yard.load_app(requested_app, app.executable_filename(platform)) {
-        return Ok(Some(executable));
+        return Ok(executable);
     };
     if yard.is_not_installable(requested_app) {
         if include_global {
             if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
-                return Ok(Some(executable));
+                return Ok(executable);
             }
         }
-        return Ok(None);
+        return Err(UserError::UnsupportedPlatform);
     }
     for installation_method in app.installation_methods(&requested_app.version, platform, yard) {
         if let Some(executable) = installation_method.install(output)? {
-            return Ok(Some(executable));
+            return Ok(executable);
         }
     }
     yard.mark_not_installable(requested_app)?;
     if include_global {
         if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
-            return Ok(Some(executable));
+            return Ok(executable);
         }
     }
     Err(UserError::UnsupportedPlatform)
