@@ -1,5 +1,16 @@
 # run-that-app changelog
 
+### 0.1.0 (2023-11-30)
+
+- `--available` command indicates via the exit code whether an application is
+  available
+- `--show-path` command displays the path of the executable instead of running
+  it
+- `--optional` parameter makes the app do nothing if the app isn't available
+- `--include-global` parameter runs a globally installed app if the app cannot
+  be installed
+- config file (.tool-versions) for defining the versions of tools to run
+
 ### 0.0.5 (2023-11-28)
 
 - apps: actionlint
