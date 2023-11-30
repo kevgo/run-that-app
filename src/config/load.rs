@@ -25,7 +25,7 @@ fn parse(text: &str) -> Result<Config> {
     Ok(Config(result))
 }
 
-pub const FILE_NAME: &str = ".tools-versions";
+pub const FILE_NAME: &str = ".tool-versions";
 
 #[cfg(test)]
 mod tests {

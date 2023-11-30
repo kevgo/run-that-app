@@ -54,7 +54,7 @@ then execute the installer from there.
 ### configuration
 
 You can configure the versions of applications that run-that-app should use in a
-[.tools-versions](https://asdf-vm.com/manage/configuration.html) file that looks
+[.tool-versions](https://asdf-vm.com/manage/configuration.html) file that looks
 like this:
 
 ```

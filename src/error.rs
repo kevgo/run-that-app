@@ -94,8 +94,12 @@ impl UserError {
             }
             UserError::NotOnline => error("you seem to be offline"),
             UserError::RunRequestMissingVersion => {
-                error("missing the version to install");
-                desc("To create a fully reproducible build, please provide the exact version you want to install.");
+                error("missing application version");
+                desc("Please provide the exact version of the app you want to execute in this format: app@1.2.3");
+                desc(&format!(
+                    "You can also create a file {} that defines them using this format: https://asdf-vm.com/manage/configuration.html",
+                    config::FILE_NAME,
+                ));
             }
             UserError::RustCompilationFailed => {
                 error("Compilation from Rust source failed.");
