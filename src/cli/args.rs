@@ -57,7 +57,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     if let Some(app) = requested_app {
         if show_path {
             Ok(Args {
-                command: Command::DisplayPath { app, include_global, log },
+                command: Command::ShowPath { app, include_global, log },
             })
         } else {
             Ok(Args {
@@ -110,7 +110,7 @@ mod tests {
             fn with_app() {
                 let have = parse_args(vec!["run-that-app", "--show-path", "shellcheck"]);
                 let want = Ok(Args {
-                    command: Command::DisplayPath {
+                    command: Command::ShowPath {
                         app: RequestedApp {
                             name: S("shellcheck"),
                             version: S(""),
@@ -126,7 +126,7 @@ mod tests {
             fn with_all_options() {
                 let have = parse_args(vec!["run-that-app", "--show-path", "--include-global", "--log=detect", "shellcheck"]);
                 let want = Ok(Args {
-                    command: Command::DisplayPath {
+                    command: Command::ShowPath {
                         app: RequestedApp {
                             name: S("shellcheck"),
                             version: S(""),
