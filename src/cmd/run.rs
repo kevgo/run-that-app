@@ -31,11 +31,11 @@ pub fn load_or_install(mut requested_app: RequestedApp, include_global: bool, ou
     }
     let app = apps::lookup(&requested_app.name)?;
     let platform = platform::detect(output)?;
-    let prodyard = yard::load_or_create(&yard::production_location()?)?;
-    if let Some(executable) = prodyard.load_app(&requested_app, app.executable_filename(platform)) {
+    let yard = yard::load_or_create(&yard::production_location()?)?;
+    if let Some(executable) = yard.load_app(&requested_app, app.executable_filename(platform)) {
         return Ok(Some(executable));
     };
-    if prodyard.is_not_installable(&requested_app) {
+    if yard.is_not_installable(&requested_app) {
         if include_global {
             if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
                 return Ok(Some(executable));
@@ -43,12 +43,12 @@ pub fn load_or_install(mut requested_app: RequestedApp, include_global: bool, ou
         }
         return Ok(None);
     }
-    for installation_method in app.installation_methods(&requested_app.version, platform, &prodyard) {
+    for installation_method in app.installation_methods(&requested_app.version, platform, &yard) {
         if let Some(executable) = installation_method.install(output)? {
             return Ok(Some(executable));
         }
     }
-    prodyard.mark_not_installable(&requested_app)?;
+    yard.mark_not_installable(&requested_app)?;
     if include_global {
         if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
             return Ok(Some(executable));
