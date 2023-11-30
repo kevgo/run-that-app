@@ -33,10 +33,10 @@ pub fn run(mut requested_app: RequestedApp, args: Vec<String>, include_global: b
       if let Some(global_app) = find_global_install(app.executable_filename(platform), output) {
         Ok(subshell::execute(global_app, args))
       } else {
-        return Err(UserError::UnsupportedPlatform);
+        Err(UserError::UnsupportedPlatform)
       }
     }
-    LoadAppOutcome::NotInstalled if !include_global => Err(UserError::UnsupportedPlatform),
+    LoadAppOutcome::NotInstalled => Err(UserError::UnsupportedPlatform),
     LoadAppOutcome::NotInstallable => Err(UserError::UnsupportedPlatform),
   }
 }
