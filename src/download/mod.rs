@@ -8,6 +8,6 @@ pub use http_get::http_get;
 /// An artifact could be an archive containing the application binary (and other files),
 /// or the uncompressed application binary itself.
 pub struct Artifact {
-  pub filename: String,
-  pub data: Vec<u8>,
+    pub filename: String,
+    pub data: Vec<u8>,
 }
