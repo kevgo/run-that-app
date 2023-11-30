@@ -8,6 +8,7 @@ pub enum Command {
         args: Vec<String>,
         include_global: bool,
         optional: bool,
+        log: Option<String>,
     },
     DisplayHelp,
     DisplayVersion,

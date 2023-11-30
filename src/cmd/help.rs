@@ -1,20 +1,20 @@
-use crate::{apps, Output};
+use crate::apps;
 use std::process::ExitCode;
 
-pub fn help(output: &dyn Output) -> ExitCode {
-    print_usage(output);
-    print_options(output);
-    print_examples(output);
-    print_installable_apps(output);
+pub fn help() -> ExitCode {
+    print_usage();
+    print_options();
+    print_examples();
+    print_installable_apps();
     ExitCode::SUCCESS
 }
 
-fn print_usage(output: &dyn Output) {
-    output.println("Usage: run-that-app install [options] application@version\n");
+fn print_usage() {
+    println!("Usage: run-that-app install [options] application@version\n");
 }
 
-pub fn print_options(output: &dyn Output) {
-    output.println(
+pub fn print_options() {
+    println!(
         "
 Options:
 --ignore-unavailable             if an app is not available for the current platform, create a stub that does nothing
@@ -26,17 +26,17 @@ Options:
     );
 }
 
-fn print_examples(output: &dyn Output) {
-    output.println("Examples:");
-    output.println("\"run-that-app gh@2.34.0\" installs https://github.com/cli/cli at version 2.34.0\n");
+fn print_examples() {
+    println!("Examples:");
+    println!("\"run-that-app gh@2.34.0\" installs https://github.com/cli/cli at version 2.34.0\n");
 }
 
-pub fn print_installable_apps(output: &dyn Output) {
-    output.println("\nInstallable applications:");
+pub fn print_installable_apps() {
+    println!("\nInstallable applications:");
     let apps = apps::all();
     let max_width = apps.iter().map(|app| app.name().len()).max().unwrap() + 1;
     for app in apps {
-        output.println(&format!("{:max_width$} {}", app.name(), app.homepage()));
+        println!("{:max_width$} {}", app.name(), app.homepage());
     }
-    output.println("\nRequest additional apps at https://github.com/kevgo/run-that-app/issues.");
+    println!("\nRequest additional apps at https://github.com/kevgo/run-that-app/issues.");
 }

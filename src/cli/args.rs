@@ -7,7 +7,6 @@ use crate::Result;
 #[derive(Debug, PartialEq)]
 pub struct Args {
     pub command: Command,
-    pub log: Option<String>,
 }
 
 pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
@@ -20,15 +19,11 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     for arg in cli_args {
         if requested_app.is_none() {
             if &arg == "--help" || &arg == "-h" {
-                return Ok(Args {
-                    command: Command::DisplayHelp,
-                    log: None,
-                });
+                return Ok(Args { command: Command::DisplayHelp });
             }
             if &arg == "--version" || &arg == "-V" {
                 return Ok(Args {
                     command: Command::DisplayVersion,
-                    log: None,
                 });
             }
             if &arg == "--include-global" {
@@ -61,16 +56,13 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 args: app_args,
                 include_global,
                 optional,
+                log,
             },
-            log,
         })
     } else if include_global || optional || log.is_some() {
         Err(UserError::MissingApplication)
     } else {
-        Ok(Args {
-            command: Command::DisplayHelp,
-            log,
-        })
+        Ok(Args { command: Command::DisplayHelp })
     }
 }
 
@@ -92,10 +84,7 @@ mod tests {
         #[test]
         fn no_arguments() {
             let have = parse_args(vec!["run-that-app"]);
-            let want = Ok(Args {
-                log: None,
-                command: Command::DisplayHelp,
-            });
+            let want = Ok(Args { command: Command::DisplayHelp });
             pretty::assert_eq!(have, want);
         }
 
@@ -108,7 +97,6 @@ mod tests {
             fn short() {
                 let have = parse_args(vec!["run-that-app", "-V"]);
                 let want = Ok(Args {
-                    log: None,
                     command: Command::DisplayVersion,
                 });
                 pretty::assert_eq!(have, want);
@@ -118,7 +106,6 @@ mod tests {
             fn long() {
                 let have = parse_args(vec!["run-that-app", "--version"]);
                 let want = Ok(Args {
-                    log: None,
                     command: Command::DisplayVersion,
                 });
                 pretty::assert_eq!(have, want);
@@ -133,20 +120,14 @@ mod tests {
             #[test]
             fn short() {
                 let have = parse_args(vec!["run-that-app", "-h"]);
-                let want = Ok(Args {
-                    log: None,
-                    command: Command::DisplayHelp,
-                });
+                let want = Ok(Args { command: Command::DisplayHelp });
                 pretty::assert_eq!(have, want);
             }
 
             #[test]
             fn long() {
                 let have = parse_args(vec!["run-that-app", "-h"]);
-                let want = Ok(Args {
-                    log: None,
-                    command: Command::DisplayHelp,
-                });
+                let want = Ok(Args { command: Command::DisplayHelp });
                 pretty::assert_eq!(have, want);
             }
         }
@@ -169,8 +150,8 @@ mod tests {
                         args: vec![S("arg1")],
                         include_global: true,
                         optional: false,
+                        log: None,
                     },
-                    log: None,
                 });
                 pretty::assert_eq!(have, want);
             }
@@ -201,8 +182,8 @@ mod tests {
                         args: vec![],
                         include_global: false,
                         optional: false,
+                        log: Some(S("")),
                     },
-                    log: Some(S("")),
                 });
                 pretty::assert_eq!(have, want);
             }
@@ -219,8 +200,8 @@ mod tests {
                         args: vec![],
                         include_global: false,
                         optional: false,
+                        log: Some(S("scope")),
                     },
-                    log: Some(S("scope")),
                 });
                 pretty::assert_eq!(have, want);
             }
@@ -245,8 +226,8 @@ mod tests {
                     args: vec![S("arg1")],
                     include_global: false,
                     optional: true,
+                    log: None,
                 },
-                log: None,
             });
             pretty::assert_eq!(have, want);
         }
@@ -269,8 +250,8 @@ mod tests {
                         args: vec![],
                         include_global: false,
                         optional: false,
+                        log: None,
                     },
-                    log: None,
                 });
                 pretty::assert_eq!(have, want);
             }
@@ -287,8 +268,8 @@ mod tests {
                         args: vec![S("--arg1"), S("arg2")],
                         include_global: false,
                         optional: false,
+                        log: None,
                     },
-                    log: None,
                 });
                 pretty::assert_eq!(have, want);
             }
@@ -305,8 +286,8 @@ mod tests {
                         args: vec![S("--arg1"), S("arg2")],
                         include_global: false,
                         optional: false,
+                        log: Some(S("l1")),
                     },
-                    log: Some(S("l1")),
                 });
                 pretty::assert_eq!(have, want);
             }
@@ -323,8 +304,8 @@ mod tests {
                         args: vec![S("--log=app"), S("--version")],
                         include_global: false,
                         optional: false,
+                        log: None,
                     },
-                    log: None,
                 });
                 pretty::assert_eq!(have, want);
             }
