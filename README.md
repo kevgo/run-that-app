@@ -51,6 +51,17 @@ The installer script places the run-that-app executable into the current
 directory. To install into a specific directory, change into that directory and
 then execute the installer from there.
 
+### configuration
+
+You can configure the versions of applications that run-that-app should use in a
+[.tools-versions](https://asdf-vm.com/manage/configuration.html) file that looks
+like this:
+
+```
+actionlint 1.6.26
+shellcheck 0.9.0
+```
+
 ### why
 
 Reasons to use _run-that-app_ over traditional forms of installation (package
