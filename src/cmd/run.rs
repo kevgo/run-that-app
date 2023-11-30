@@ -25,13 +25,15 @@ pub fn run(mut requested_app: RequestedApp, args: Vec<String>, include_global: b
     let app = apps::lookup(&requested_app.name)?;
     let platform = platform::detect(output)?;
     let prodyard = yard::load_or_create(&yard::production_location()?)?;
-    let Some(executable) = load_or_install(&requested_app, app.as_ref(), platform, include_global, &prodyard, output)? else {
+    if let Some(executable) = load_or_install(&requested_app, app.as_ref(), platform, include_global, &prodyard, output)? {
+        Ok(subshell::execute(executable, args))
+    } else {
         if optional {
-            return Ok(ExitCode::SUCCESS);
+            Ok(ExitCode::SUCCESS)
+        } else {
+            Err(UserError::UnsupportedPlatform)
         }
-        return Err(UserError::UnsupportedPlatform);
-    };
-    Ok(subshell::execute(executable, args))
+    }
 }
 
 fn load_or_install(
