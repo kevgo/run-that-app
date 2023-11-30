@@ -55,5 +55,6 @@ fn load_or_install(
             return Ok(Some(executable));
         }
     }
+    yard.mark_not_installable(requested_app)?;
     Err(UserError::UnsupportedPlatform)
 }

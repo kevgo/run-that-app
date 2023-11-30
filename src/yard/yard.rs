@@ -2,7 +2,7 @@ use super::Executable;
 use crate::cli::RequestedApp;
 use crate::error::UserError;
 use crate::Result;
-use std::fs::File;
+use std::fs::{self, File};
 use std::path::PathBuf;
 
 pub struct Yard {
@@ -34,8 +34,12 @@ impl Yard {
         None
     }
 
-    #[cfg(test)]
-    fn mark_not_installable(&self, app: &RequestedApp) -> Result<()> {
+    pub fn mark_not_installable(&self, app: &RequestedApp) -> Result<()> {
+        let app_folder = self.app_folder(&app.name, &app.version);
+        fs::create_dir_all(&app_folder).map_err(|err| UserError::YardAccessDenied {
+            msg: err.to_string(),
+            path: app_folder,
+        })?;
         let path = self.not_installable_path(&app.name, &app.version);
         match File::create(&path) {
             Ok(_) => Ok(()),
@@ -51,7 +55,6 @@ impl Yard {
     /// stores the given application consisting of the given executable file
     #[cfg(test)]
     fn save_app_file(&self, app: &RequestedApp, file_name: &str, file_content: &[u8]) {
-        use std::fs;
         use std::io::Write;
         fs::create_dir_all(self.app_folder(&app.name, &app.version)).unwrap();
         let mut file = fs::File::create(self.app_file_path(&app.name, &app.version, file_name)).unwrap();
@@ -81,20 +84,21 @@ mod tests {
     }
 
     mod is_not_installable {
-        use std::path::PathBuf;
-
         use crate::cli::RequestedApp;
+        use crate::yard::create;
         use crate::yard::Yard;
         use big_s::S;
+        use std::path::PathBuf;
 
         #[test]
         fn is_marked() {
-            let yard = Yard { root: PathBuf::from("/root") };
+            let tempdir = tempfile::tempdir().unwrap();
+            let yard = create(tempdir.path()).unwrap();
             let requested_app = RequestedApp {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             };
-            yard.mark_not_installable(&requested_app);
+            yard.mark_not_installable(&requested_app).unwrap();
             let have = yard.is_not_installable(&requested_app);
             assert!(have);
         }
