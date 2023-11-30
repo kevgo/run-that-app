@@ -1,27 +1,26 @@
 use super::App;
 use crate::install::{
-    ArtifactType, CompileFromRustSource, DownloadPrecompiledBinary, InstallationMethod,
+    ArtifactType, CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod,
 };
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::Yard;
-use big_s::S;
 
-pub struct Dprint {}
+pub struct ActionLint {}
 
-impl App for Dprint {
+impl App for ActionLint {
     fn name(&self) -> &'static str {
-        "dprint"
+        "actionlint"
     }
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "dprint.exe",
-            Os::Linux | Os::MacOS => "dprint",
+            Os::Windows => "actionlint.exe",
+            Os::Linux | Os::MacOS => "actionlint",
         }
     }
 
     fn homepage(&self) -> &'static str {
-        "https://dprint.dev"
+        "https://rhysd.github.io/actionlint"
     }
 
     fn installation_methods(
@@ -35,7 +34,7 @@ impl App for Dprint {
                 name: self.name(),
                 url: download_url(version, platform),
                 artifact_type: ArtifactType::Archive {
-                    file_to_extract: S(self.executable_filename(platform)),
+                    file_to_extract: self.executable_filename(platform).to_string(),
                 },
                 file_on_disk: yard.app_file_path(
                     self.name(),
@@ -43,8 +42,8 @@ impl App for Dprint {
                     self.executable_filename(platform),
                 ),
             }),
-            Box::new(CompileFromRustSource {
-                crate_name: "dprint",
+            Box::new(CompileFromGoSource {
+                import_path: format!("github.com/rhysd/actionlint/cmd/actionlint@{version}"),
                 target_folder: yard.app_folder(self.name(), version),
                 executable_filename: self.executable_filename(platform),
             }),
@@ -54,24 +53,32 @@ impl App for Dprint {
 
 fn download_url(version: &str, platform: Platform) -> String {
     format!(
-        "https://github.com/dprint/dprint/releases/download/{version}/dprint-{cpu}-{os}.zip",
+        "https://github.com/rhysd/actionlint/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}",
         os = os_text(platform.os),
-        cpu = cpu_text(platform.cpu)
+        cpu = cpu_text(platform.cpu),
+        ext = ext_text(platform.os)
     )
 }
 
 fn os_text(os: Os) -> &'static str {
     match os {
-        Os::Linux => "unknown-linux-gnu",
-        Os::MacOS => "apple-darwin",
-        Os::Windows => "pc-windows-msvc",
+        Os::Linux => "linux",
+        Os::MacOS => "darwin",
+        Os::Windows => "windows",
     }
 }
 
 fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
-        Cpu::Arm64 => "aarch64",
-        Cpu::Intel64 => "x86_64",
+        Cpu::Arm64 => "arm64",
+        Cpu::Intel64 => "amd64",
+    }
+}
+
+fn ext_text(os: Os) -> &'static str {
+    match os {
+        Os::Linux | Os::MacOS => "tar.gz",
+        Os::Windows => "zip",
     }
 }
 
@@ -80,24 +87,13 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
-    fn mac_arm() {
-        let platform = Platform {
-            os: Os::MacOS,
-            cpu: Cpu::Arm64,
-        };
-        let have = super::download_url("0.43.0", platform);
-        let want = "https://github.com/dprint/dprint/releases/download/0.43.0/dprint-aarch64-apple-darwin.zip";
-        assert_eq!(have, want);
-    }
-
-    #[test]
-    fn linux_arm() {
+    fn download_url() {
         let platform = Platform {
             os: Os::Linux,
             cpu: Cpu::Arm64,
         };
-        let have = super::download_url("0.43.1", platform);
-        let want = "https://github.com/dprint/dprint/releases/download/0.43.1/dprint-aarch64-unknown-linux-gnu.zip";
+        let have = super::download_url("1.6.26", platform);
+        let want = "https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_linux_arm64.tar.gz";
         assert_eq!(have, want);
     }
 }

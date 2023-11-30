@@ -1,4 +1,5 @@
-DPRINT_VERSION = 0.42.5
+ACTIONLINT_VERSION = 1.6.26
+DPRINT_VERSION = 0.43.1
 SHELLCHECK_VERSION = 0.9.0
 SHFMT_VERSION = 3.7.0
 
@@ -21,6 +22,8 @@ help:  # shows all available Make commands
 lint: build  # runs all linters
 	cargo clippy --all-targets --all-features -- --deny=warnings
 	git diff --check
+	target/debug/run-that-app actionlint@${ACTIONLINT_VERSION}
+	# target/debug/run-that-app dprint@${DPRINT_VERSION} check  # this breaks the Windows CI
 	# target/debug/run-that-app/shfmt@${SHFMT_VERSION} -f . | xargs target/debug/run-that-app/shellcheck@${SHELLCHECK_VERSION}
 
 test: unit lint  # runs all tests
