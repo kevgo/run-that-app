@@ -99,7 +99,7 @@ mod tests {
             pretty::assert_eq!(have, want);
         }
 
-        mod display_path {
+        mod show_path {
             use big_s::S;
 
             use super::parse_args;
