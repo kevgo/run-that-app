@@ -18,21 +18,21 @@ use output::Output;
 use std::process::ExitCode;
 
 fn main() -> ExitCode {
-  match inner() {
-    Ok(exitcode) => exitcode,
-    Err(err) => {
-      err.print();
-      ExitCode::FAILURE
+    match inner() {
+        Ok(exitcode) => exitcode,
+        Err(err) => {
+            err.print();
+            ExitCode::FAILURE
+        }
     }
-  }
 }
 
 fn inner() -> Result<ExitCode> {
-  let cli_args = cli::parse(std::env::args())?;
-  let output = output::StdErr { category: cli_args.log };
-  match cli_args.command {
-    Command::RunApp { app, args, include_global } => cmd::run(app, args, include_global, &output),
-    Command::DisplayHelp => Ok(cmd::help(&output)),
-    Command::DisplayVersion => Ok(cmd::version(&output)),
-  }
+    let cli_args = cli::parse(std::env::args())?;
+    let output = output::StdErr { category: cli_args.log };
+    match cli_args.command {
+        Command::RunApp { app, args, include_global } => cmd::run(app, args, include_global, &output),
+        Command::DisplayHelp => Ok(cmd::help(&output)),
+        Command::DisplayVersion => Ok(cmd::version(&output)),
+    }
 }
