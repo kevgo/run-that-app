@@ -29,7 +29,7 @@ pub fn parse_line(line_text: &str, line_no: usize) -> Result<Option<RequestedApp
     }))
 }
 
-/// provides non-whitespace and not commented out parts of the given line
+/// provides active (non-comment) words in the given line
 struct LinePartsIterator<'a> {
     parts: SplitAsciiWhitespace<'a>,
 }
