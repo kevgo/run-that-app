@@ -9,7 +9,7 @@ pub struct Yard {
     pub root: PathBuf,
 }
 
-/// stores data and executables of applications
+/// stores executables of and metadata about applications
 impl Yard {
     /// provides the path to the given file that is part of the given application
     pub fn app_file_path(&self, app_name: &str, app_version: &str, file: &str) -> PathBuf {
