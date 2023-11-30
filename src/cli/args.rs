@@ -7,7 +7,6 @@ use crate::Result;
 #[derive(Debug, PartialEq)]
 pub struct Args {
     pub command: Command,
-    pub log: Option<String>,
 }
 
 pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
@@ -21,15 +20,11 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     for arg in cli_args {
         if requested_app.is_none() {
             if &arg == "--help" || &arg == "-h" {
-                return Ok(Args {
-                    command: Command::DisplayHelp,
-                    log: None,
-                });
+                return Ok(Args { command: Command::DisplayHelp });
             }
             if &arg == "--version" || &arg == "-V" {
                 return Ok(Args {
                     command: Command::DisplayVersion,
-                    log: None,
                 });
             }
             if &arg == "--include-global" {
@@ -59,26 +54,31 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             app_args.push(arg);
         }
     }
-    let command = match requested_app {
-        Some(app) if display_path => Command::DisplayPath { app },
-        Some(app) => Command::RunApp {
-            app,
-            args: app_args,
-            include_global,
-            optional,
-        },
-        None => Command::DisplayHelp,
-    };
-    Ok(Args { command, log })
+    if let Some(app) = requested_app {
+        Ok(Args {
+            command: Command::RunApp {
+                app,
+                args: app_args,
+                include_global,
+                optional,
+                log,
+            },
+        })
+    } else if include_global || optional || log.is_some() {
+        Err(UserError::MissingApplication)
+    } else {
+        Ok(Args { command: Command::DisplayHelp })
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::Args;
+    use crate::Result;
 
     // helper function for tests
-    fn parse_args(args: Vec<&'static str>) -> Args {
-        super::parse(args.into_iter().map(ToString::to_string)).unwrap()
+    fn parse_args(args: Vec<&'static str>) -> Result<Args> {
+        super::parse(args.into_iter().map(ToString::to_string))
     }
 
     mod parse {
@@ -89,10 +89,7 @@ mod tests {
         #[test]
         fn no_arguments() {
             let have = parse_args(vec!["run-that-app"]);
-            let want = Args {
-                log: None,
-                command: Command::DisplayHelp,
-            };
+            let want = Ok(Args { command: Command::DisplayHelp });
             pretty::assert_eq!(have, want);
         }
 
@@ -141,20 +138,18 @@ mod tests {
             #[test]
             fn short() {
                 let have = parse_args(vec!["run-that-app", "-V"]);
-                let want = Args {
-                    log: None,
+                let want = Ok(Args {
                     command: Command::DisplayVersion,
-                };
+                });
                 pretty::assert_eq!(have, want);
             }
 
             #[test]
             fn long() {
                 let have = parse_args(vec!["run-that-app", "--version"]);
-                let want = Args {
-                    log: None,
+                let want = Ok(Args {
                     command: Command::DisplayVersion,
-                };
+                });
                 pretty::assert_eq!(have, want);
             }
         }
@@ -167,51 +162,60 @@ mod tests {
             #[test]
             fn short() {
                 let have = parse_args(vec!["run-that-app", "-h"]);
-                let want = Args {
-                    log: None,
-                    command: Command::DisplayHelp,
-                };
+                let want = Ok(Args { command: Command::DisplayHelp });
                 pretty::assert_eq!(have, want);
             }
 
             #[test]
             fn long() {
                 let have = parse_args(vec!["run-that-app", "-h"]);
-                let want = Args {
-                    log: None,
-                    command: Command::DisplayHelp,
-                };
+                let want = Ok(Args { command: Command::DisplayHelp });
                 pretty::assert_eq!(have, want);
             }
         }
 
-        #[test]
-        fn include_global() {
-            let have = parse_args(vec!["run-that-app", "--include-global", "app@2", "arg1"]);
-            let want = Args {
-                command: Command::RunApp {
-                    app: RequestedApp {
-                        name: S("app"),
-                        version: S("2"),
+        mod include_global {
+            use super::parse_args;
+            use crate::cli::{Args, Command, RequestedApp};
+            use crate::error::UserError;
+            use big_s::S;
+
+            #[test]
+            fn with_app() {
+                let have = parse_args(vec!["run-that-app", "--include-global", "app@2", "arg1"]);
+                let want = Ok(Args {
+                    command: Command::RunApp {
+                        app: RequestedApp {
+                            name: S("app"),
+                            version: S("2"),
+                        },
+                        args: vec![S("arg1")],
+                        include_global: true,
+                        optional: false,
+                        log: None,
                     },
-                    args: vec![S("arg1")],
-                    include_global: true,
-                    optional: false,
-                },
-                log: None,
-            };
-            pretty::assert_eq!(have, want);
+                });
+                pretty::assert_eq!(have, want);
+            }
+
+            #[test]
+            fn without_app() {
+                let have = parse_args(vec!["run-that-app", "--include-global"]);
+                let want = Err(UserError::MissingApplication);
+                pretty::assert_eq!(have, want);
+            }
         }
 
         mod log_parameter {
             use super::parse_args;
             use crate::cli::{Args, Command, RequestedApp};
+            use crate::error::UserError;
             use big_s::S;
 
             #[test]
             fn everything() {
                 let have = parse_args(vec!["run-that-app", "--log", "app@2"]);
-                let want = Args {
+                let want = Ok(Args {
                     command: Command::RunApp {
                         app: RequestedApp {
                             name: S("app"),
@@ -220,16 +224,16 @@ mod tests {
                         args: vec![],
                         include_global: false,
                         optional: false,
+                        log: Some(S("")),
                     },
-                    log: Some(S("")),
-                };
+                });
                 pretty::assert_eq!(have, want);
             }
 
             #[test]
             fn limited() {
                 let have = parse_args(vec!["run-that-app", "--log=scope", "app@2"]);
-                let want = Args {
+                let want = Ok(Args {
                     command: Command::RunApp {
                         app: RequestedApp {
                             name: S("app"),
@@ -238,9 +242,16 @@ mod tests {
                         args: vec![],
                         include_global: false,
                         optional: false,
+                        log: Some(S("scope")),
                     },
-                    log: Some(S("scope")),
-                };
+                });
+                pretty::assert_eq!(have, want);
+            }
+
+            #[test]
+            fn missing_app() {
+                let have = parse_args(vec!["run-that-app", "--log"]);
+                let want = Err(UserError::MissingApplication);
                 pretty::assert_eq!(have, want);
             }
         }
@@ -248,7 +259,7 @@ mod tests {
         #[test]
         fn optional() {
             let have = parse_args(vec!["run-that-app", "--optional", "app@2", "arg1"]);
-            let want = Args {
+            let want = Ok(Args {
                 command: Command::RunApp {
                     app: RequestedApp {
                         name: S("app"),
@@ -257,9 +268,9 @@ mod tests {
                     args: vec![S("arg1")],
                     include_global: false,
                     optional: true,
+                    log: None,
                 },
-                log: None,
-            };
+            });
             pretty::assert_eq!(have, want);
         }
 
@@ -272,7 +283,7 @@ mod tests {
             #[test]
             fn no_arguments() {
                 let have = parse_args(vec!["run-that-app", "app@2"]);
-                let want = Args {
+                let want = Ok(Args {
                     command: Command::RunApp {
                         app: RequestedApp {
                             name: S("app"),
@@ -281,16 +292,16 @@ mod tests {
                         args: vec![],
                         include_global: false,
                         optional: false,
+                        log: None,
                     },
-                    log: None,
-                };
+                });
                 pretty::assert_eq!(have, want);
             }
 
             #[test]
             fn some_arguments() {
                 let have = parse_args(vec!["run-that-app", "app@2", "--arg1", "arg2"]);
-                let want = Args {
+                let want = Ok(Args {
                     command: Command::RunApp {
                         app: RequestedApp {
                             name: S("app"),
@@ -299,16 +310,16 @@ mod tests {
                         args: vec![S("--arg1"), S("arg2")],
                         include_global: false,
                         optional: false,
+                        log: None,
                     },
-                    log: None,
-                };
+                });
                 pretty::assert_eq!(have, want);
             }
 
             #[test]
             fn rta_and_app_arguments() {
                 let have = parse_args(vec!["run-that-app", "--log=l1", "app@2", "--arg1", "arg2"]);
-                let want = Args {
+                let want = Ok(Args {
                     command: Command::RunApp {
                         app: RequestedApp {
                             name: S("app"),
@@ -317,16 +328,16 @@ mod tests {
                         args: vec![S("--arg1"), S("arg2")],
                         include_global: false,
                         optional: false,
+                        log: Some(S("l1")),
                     },
-                    log: Some(S("l1")),
-                };
+                });
                 pretty::assert_eq!(have, want);
             }
 
             #[test]
             fn same_arguments_as_run_that_app() {
                 let have = parse_args(vec!["run-that-app", "app@2", "--log=app", "--version"]);
-                let want = Args {
+                let want = Ok(Args {
                     command: Command::RunApp {
                         app: RequestedApp {
                             name: S("app"),
@@ -335,9 +346,9 @@ mod tests {
                         args: vec![S("--log=app"), S("--version")],
                         include_global: false,
                         optional: false,
+                        log: None,
                     },
-                    log: None,
-                };
+                });
                 pretty::assert_eq!(have, want);
             }
         }
