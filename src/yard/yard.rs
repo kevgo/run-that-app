@@ -11,16 +11,6 @@ pub struct Yard {
 
 /// stores executables of and metadata about applications
 impl Yard {
-    /// provides the path to the executable of the given application
-    pub fn load_app(&self, app: &RequestedApp, executable_filename: &str) -> Option<Executable> {
-        let file_path = self.app_file_path(&app.name, &app.version, executable_filename);
-        if file_path.exists() {
-            Some(Executable(file_path))
-        } else {
-            None
-        }
-    }
-
     /// provides the path to the given file that is part of the given application
     pub fn app_file_path(&self, app_name: &str, app_version: &str, file: &str) -> PathBuf {
         self.app_folder(app_name, app_version).join(file)
@@ -33,6 +23,16 @@ impl Yard {
 
     pub fn is_not_installable(&self, app: &RequestedApp) -> bool {
         self.not_installable_path(&app.name, &app.version).exists()
+    }
+
+    /// provides the path to the executable of the given application
+    pub fn load_app(&self, app: &RequestedApp, executable_filename: &str) -> Option<Executable> {
+        let file_path = self.app_file_path(&app.name, &app.version, executable_filename);
+        if file_path.exists() {
+            Some(Executable(file_path))
+        } else {
+            None
+        }
     }
 
     pub fn mark_not_installable(&self, app: &RequestedApp) -> Result<()> {
