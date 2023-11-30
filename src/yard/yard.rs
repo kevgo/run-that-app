@@ -60,9 +60,7 @@ impl Yard {
 
 #[cfg(test)]
 mod tests {
-    use crate::cli::RequestedApp;
-    use crate::yard::{LoadAppOutcome, Yard};
-    use big_s::S;
+    use crate::yard::Yard;
     use std::path::PathBuf;
 
     #[test]
@@ -81,16 +79,54 @@ mod tests {
         assert_eq!(have, want);
     }
 
-    #[test]
-    fn app_is_marked_not_installable() {
-        let yard = Yard { root: PathBuf::from("/root") };
-        let requested_app = RequestedApp {
-            name: S("shellcheck"),
-            version: S("0.9.0"),
-        };
-        yard.mark_not_installable(&requested_app);
-        let loaded = yard.load_app(&requested_app, "executable");
-        assert_eq!(loaded, LoadAppOutcome::NotInstallable);
+    mod is_not_installable {
+        use std::path::PathBuf;
+
+        use crate::cli::RequestedApp;
+        use crate::yard::Yard;
+        use big_s::S;
+
+        #[test]
+        fn is_marked() {
+            let yard = Yard { root: PathBuf::from("/root") };
+            let requested_app = RequestedApp {
+                name: S("shellcheck"),
+                version: S("0.9.0"),
+            };
+            yard.mark_not_installable(&requested_app);
+            let have = yard.is_not_installable(&requested_app);
+            assert!(have);
+        }
+
+        #[test]
+        fn is_not_marked() {
+            let yard = Yard { root: PathBuf::from("/root") };
+            let requested_app = RequestedApp {
+                name: S("shellcheck"),
+                version: S("0.9.0"),
+            };
+            let have = yard.is_not_installable(&requested_app);
+            assert!(!have);
+        }
+    }
+
+    mod load_app {
+        use crate::cli::RequestedApp;
+        use crate::yard::Yard;
+        use big_s::S;
+        use std::path::PathBuf;
+
+        #[test]
+        fn app_exists() {
+            let yard = Yard { root: PathBuf::from("/root") };
+            let requested_app = RequestedApp {
+                name: S("shellcheck"),
+                version: S("0.9.0"),
+            };
+            yard.save_app_file(&requested_app, "shellcheck", file_content);
+            let have = yard.is_not_installable(&requested_app);
+            assert!(!have);
+        }
     }
 
     #[test]
