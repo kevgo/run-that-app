@@ -15,7 +15,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut log: Option<String> = None;
     let mut app_args: Vec<String> = vec![];
     let mut include_global = false;
-    let mut display_path = false;
+    let mut show_path = false;
     let mut optional = false;
     for arg in cli_args {
         if requested_app.is_none() {
@@ -36,7 +36,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 continue;
             }
             if &arg == "--show-path" {
-                display_path = true;
+                show_path = true;
                 continue;
             }
             if arg.starts_with('-') {
@@ -55,7 +55,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
         }
     }
     if let Some(app) = requested_app {
-        if display_path {
+        if show_path {
             Ok(Args {
                 command: Command::DisplayPath { app, include_global, log },
             })
@@ -70,7 +70,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 },
             })
         }
-    } else if include_global || optional || log.is_some() || display_path {
+    } else if include_global || optional || log.is_some() || show_path {
         Err(UserError::MissingApplication)
     } else {
         Ok(Args { command: Command::DisplayHelp })

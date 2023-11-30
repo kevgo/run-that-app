@@ -1,9 +1,9 @@
-mod display_path;
 mod help;
 mod run;
+mod show_path;
 mod version;
 
-pub use display_path::display_path;
 pub use help::help;
 pub use run::run;
+pub use show_path::show_path;
 pub use version::version;

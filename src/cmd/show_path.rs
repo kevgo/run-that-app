@@ -13,7 +13,7 @@ use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
 
-pub fn display_path(mut requested_app: RequestedApp, include_global: bool, output: &dyn Output) -> Result<ExitCode> {
+pub fn show_path(mut requested_app: RequestedApp, include_global: bool, output: &dyn Output) -> Result<ExitCode> {
     if requested_app.version.is_empty() {
         let config = config::load()?;
         let Some(configured_app) = config.lookup(&requested_app.name) else {
