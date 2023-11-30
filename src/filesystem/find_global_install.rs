@@ -13,10 +13,7 @@ pub fn find_global_install(binary_name: &str, output: &dyn Output) -> Option<Exe
 }
 
 fn log(output: &dyn Output, path: &Path) {
-    output.log(
-        CATEGORY,
-        &format!("using globally installed {}", path.to_string_lossy()),
-    );
+    output.log(CATEGORY, &format!("using globally installed {}", path.to_string_lossy()));
 }
 
 const CATEGORY: &str = "detect/executable";
