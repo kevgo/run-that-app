@@ -64,7 +64,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             },
             log,
         })
-    } else if include_global || optional {
+    } else if include_global || optional || log.is_some() {
         Err(UserError::MissingApplication)
     } else {
         Ok(Args {
@@ -186,6 +186,7 @@ mod tests {
         mod log_parameter {
             use super::parse_args;
             use crate::cli::{Args, Command, RequestedApp};
+            use crate::error::UserError;
             use big_s::S;
 
             #[test]
@@ -221,6 +222,13 @@ mod tests {
                     },
                     log: Some(S("scope")),
                 });
+                pretty::assert_eq!(have, want);
+            }
+
+            #[test]
+            fn missing_app() {
+                let have = parse_args(vec!["run-that-app", "--log"]);
+                let want = Err(UserError::MissingApplication);
                 pretty::assert_eq!(have, want);
             }
         }
