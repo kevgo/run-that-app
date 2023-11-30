@@ -1,17 +1,14 @@
 use crate::apps;
-use crate::apps::App;
 use crate::cli::RequestedApp;
 use crate::config;
 use crate::error::UserError;
-use crate::filesystem::find_global_install;
 use crate::platform;
-use crate::platform::Platform;
 use crate::yard;
-use crate::yard::Executable;
-use crate::yard::Yard;
 use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
+
+use super::run::load_or_install;
 
 pub fn show_path(mut requested_app: RequestedApp, include_global: bool, output: &dyn Output) -> Result<ExitCode> {
     if requested_app.version.is_empty() {
@@ -28,37 +25,4 @@ pub fn show_path(mut requested_app: RequestedApp, include_global: bool, output: 
         println!("{}", executable.0.to_string_lossy());
     }
     Ok(ExitCode::SUCCESS)
-}
-
-fn load_or_install(
-    requested_app: &RequestedApp,
-    app: &dyn App,
-    platform: Platform,
-    include_global: bool,
-    yard: &Yard,
-    output: &dyn Output,
-) -> Result<Option<Executable>> {
-    if let Some(executable) = yard.load_app(requested_app, app.executable_filename(platform)) {
-        return Ok(Some(executable));
-    };
-    if yard.is_not_installable(requested_app) {
-        if include_global {
-            if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
-                return Ok(Some(executable));
-            }
-        }
-        return Ok(None);
-    }
-    for installation_method in app.installation_methods(&requested_app.version, platform, yard) {
-        if let Some(executable) = installation_method.install(output)? {
-            return Ok(Some(executable));
-        }
-    }
-    yard.mark_not_installable(requested_app)?;
-    if include_global {
-        if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
-            return Ok(Some(executable));
-        }
-    }
-    Ok(None)
 }

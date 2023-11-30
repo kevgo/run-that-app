@@ -34,7 +34,7 @@ pub fn run(mut requested_app: RequestedApp, args: Vec<String>, include_global: b
     }
 }
 
-fn load_or_install(
+pub fn load_or_install(
     requested_app: &RequestedApp,
     app: &dyn App,
     platform: Platform,
