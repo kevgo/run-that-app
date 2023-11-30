@@ -54,16 +54,24 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             app_args.push(arg);
         }
     }
-    let command = match requested_app {
-        Some(app) => Command::RunApp {
-            app,
-            args: app_args,
-            include_global,
-            optional,
-        },
-        None => Command::DisplayHelp,
-    };
-    Ok(Args { command, log })
+    if let Some(app) = requested_app {
+        Ok(Args {
+            command: Command::RunApp {
+                app,
+                args: app_args,
+                include_global,
+                optional,
+            },
+            log,
+        })
+    } else if include_global || optional {
+        Err(UserError::MissingApplication)
+    } else {
+        Ok(Args {
+            command: Command::DisplayHelp,
+            log,
+        })
+    }
 }
 
 #[cfg(test)]
@@ -146,6 +154,7 @@ mod tests {
         mod include_global {
             use super::parse_args;
             use crate::cli::{Args, Command, RequestedApp};
+            use crate::error::UserError;
             use big_s::S;
 
             #[test]
@@ -163,6 +172,13 @@ mod tests {
                     },
                     log: None,
                 });
+                pretty::assert_eq!(have, want);
+            }
+
+            #[test]
+            fn without_app() {
+                let have = parse_args(vec!["run-that-app", "--include-global"]);
+                let want = Err(UserError::MissingApplication);
                 pretty::assert_eq!(have, want);
             }
         }

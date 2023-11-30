@@ -28,6 +28,7 @@ pub enum UserError {
     GoCompilationFailed,
     GoNoPermission,
     GoNotInstalled,
+    MissingApplication,
     NotOnline,
     RunRequestMissingVersion,
     RustCompilationFailed,
@@ -81,6 +82,10 @@ impl UserError {
             UserError::GoNotInstalled => {
                 error("The Go compiler is not installed");
                 desc("Installation instructions: https://go.dev/dl");
+            }
+            UserError::MissingApplication => {
+                error("missing application");
+                desc("Please provide the application to execute");
             }
             UserError::NotOnline => error("you seem to be offline"),
             UserError::RunRequestMissingVersion => {
