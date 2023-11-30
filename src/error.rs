@@ -1,4 +1,4 @@
-use crate::{config, yard};
+use crate::config;
 use colored::Colorize;
 use std::path::PathBuf;
 
@@ -8,10 +8,23 @@ use std::path::PathBuf;
 pub enum UserError {
     CannotAccessConfigFile(String),
     CannotDetermineHomeDirectory,
-    CannotDownload { url: String, reason: String },
-    CannotCreateFolder { folder: PathBuf, reason: String },
-    CannotMakeFileExecutable { file: String, reason: String },
-    InvalidConfigFileFormat { line_no: usize, text: String },
+    CannotDownload {
+        url: String,
+        reason: String,
+    },
+    CannotCreateFolder {
+        folder: PathBuf,
+        reason: String,
+    },
+    #[cfg(unix)]
+    CannotMakeFileExecutable {
+        file: String,
+        reason: String,
+    },
+    InvalidConfigFileFormat {
+        line_no: usize,
+        text: String,
+    },
     GoCompilationFailed,
     GoNoPermission,
     GoNotInstalled,
@@ -26,8 +39,13 @@ pub enum UserError {
     UnsupportedPlatform,
     UnsupportedCPU(String),
     UnsupportedOS(String),
-    YardRootIsNotFolder { root: PathBuf },
-    YardAccessDenied { msg: String, path: PathBuf },
+    YardRootIsNotFolder {
+        root: PathBuf,
+    },
+    YardAccessDenied {
+        msg: String,
+        path: PathBuf,
+    },
 }
 
 impl UserError {
