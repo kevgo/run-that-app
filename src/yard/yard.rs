@@ -123,6 +123,18 @@ mod tests {
       let loaded = yard.load_app(&requested_app, "executable");
       assert!(loaded.is_none());
     }
+
+    #[test]
+    fn app_is_marked_not_installable() {
+      let yard = Yard { root: PathBuf::from("/root") };
+      let requested_app = RequestedApp {
+        name: S("shellcheck"),
+        version: S("0.9.0"),
+      };
+      yard.mark_not_installable(requested_app);
+      let loaded = yard.load_app(&requested_app, "executable");
+      assert!(loaded.is_none());
+    }
   }
 
   #[test]
