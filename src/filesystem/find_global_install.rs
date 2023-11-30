@@ -1,11 +1,12 @@
 use crate::output::Output;
-use std::path::{Path, PathBuf};
+use crate::yard::Executable;
+use std::path::Path;
 use which::which_global;
 
-pub fn find_global_install(binary_name: &str, output: &dyn Output) -> Option<PathBuf> {
+pub fn find_global_install(binary_name: &str, output: &dyn Output) -> Option<Executable> {
     if let Ok(path) = which_global(binary_name) {
         log(output, &path);
-        Some(path)
+        Some(Executable(path))
     } else {
         None
     }
