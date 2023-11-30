@@ -39,7 +39,7 @@ mod tests {
         #[test]
         fn normal() {
             let give = "alpha 1.2.3\n\
-                        beta  2.3.4\n\
+                        beta  2.3.4 # comment\n\
                         gamma 3.4.5";
             let have = parse(give).unwrap();
             let want = Config(vec![
