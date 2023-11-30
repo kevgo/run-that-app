@@ -27,12 +27,10 @@ pub fn run(mut requested_app: RequestedApp, args: Vec<String>, include_global: b
     let prodyard = yard::load_or_create(&yard::production_location()?)?;
     if let Some(executable) = load_or_install(&requested_app, app.as_ref(), platform, include_global, &prodyard, output)? {
         Ok(subshell::execute(executable, args))
+    } else if optional {
+        Ok(ExitCode::SUCCESS)
     } else {
-        if optional {
-            Ok(ExitCode::SUCCESS)
-        } else {
-            Err(UserError::UnsupportedPlatform)
-        }
+        Err(UserError::UnsupportedPlatform)
     }
 }
 
