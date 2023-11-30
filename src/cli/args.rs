@@ -36,7 +36,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 continue;
             }
             if &arg == "--optional" {
-                include_global = true;
+                optional = true;
                 continue;
             }
             if arg.starts_with('-') {

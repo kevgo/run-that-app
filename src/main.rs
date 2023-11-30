@@ -31,7 +31,12 @@ fn inner() -> Result<ExitCode> {
     let cli_args = cli::parse(std::env::args())?;
     let output = output::StdErr { category: cli_args.log };
     match cli_args.command {
-        Command::RunApp { app, args, include_global } => cmd::run(app, args, include_global, &output),
+        Command::RunApp {
+            app,
+            args,
+            include_global,
+            optional,
+        } => cmd::run(app, args, include_global, optional, &output),
         Command::DisplayHelp => Ok(cmd::help(&output)),
         Command::DisplayVersion => Ok(cmd::version(&output)),
     }
