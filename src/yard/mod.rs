@@ -20,12 +20,12 @@ use crate::error::UserError;
 
 /// provides the location of the production yard
 pub fn production_location() -> Result<PathBuf> {
-  let Some(home_dir) = dirs::home_dir() else {
-    return Err(UserError::CannotDetermineHomeDirectory);
-  };
-  Ok(home_dir)
+    let Some(home_dir) = dirs::home_dir() else {
+        return Err(UserError::CannotDetermineHomeDirectory);
+    };
+    Ok(home_dir)
 }
 
 pub fn root_folder(containing_folder: &Path) -> PathBuf {
-  containing_folder.join(".run-that-app")
+    containing_folder.join(".run-that-app")
 }
