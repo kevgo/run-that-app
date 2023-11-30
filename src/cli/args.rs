@@ -16,6 +16,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut log: Option<String> = None;
     let mut app_args: Vec<String> = vec![];
     let mut include_global = false;
+    let mut display_path = false;
     let mut optional = false;
     for arg in cli_args {
         if requested_app.is_none() {
@@ -39,6 +40,10 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 optional = true;
                 continue;
             }
+            if &arg == "--show-path" {
+                display_path = true;
+                continue;
+            }
             if arg.starts_with('-') {
                 let (key, value) = arg.split_once('=').unwrap_or((&arg, ""));
                 if key == "--log" || key == "-l" {
@@ -55,6 +60,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
         }
     }
     let command = match requested_app {
+        Some(app) if display_path => Command::DisplayPath { app },
         Some(app) => Command::RunApp {
             app,
             args: app_args,
@@ -88,6 +94,43 @@ mod tests {
                 command: Command::DisplayHelp,
             };
             pretty::assert_eq!(have, want);
+        }
+
+        mod display_path {
+            use big_s::S;
+
+            use super::parse_args;
+            use crate::cli::{Args, Command, RequestedApp};
+
+            #[test]
+            fn with_app() {
+                let have = parse_args(vec!["run-that-app", "--show-path", "shellcheck"]);
+                let want = Args {
+                    command: Command::DisplayPath {
+                        app: RequestedApp {
+                            name: S("shellcheck"),
+                            version: S(""),
+                        },
+                    },
+                    log: None,
+                };
+                pretty::assert_eq!(have, want);
+            }
+
+            #[test]
+            fn without_app() {
+                let have = parse_args(vec!["run-that-app", "--show-path"]);
+                let want = Args {
+                    command: Command::DisplayPath {
+                        app: RequestedApp {
+                            name: S("shellcheck"),
+                            version: S(""),
+                        },
+                    },
+                    log: None,
+                };
+                pretty::assert_eq!(have, want);
+            }
         }
 
         mod version_parameter {

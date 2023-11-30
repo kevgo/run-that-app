@@ -106,6 +106,7 @@ Options:
   doesn't run.
 - `--include-global`: if there is no pre-compiled binary for your platform, but
   a similarly named binary in your PATH, run the latter.
+- `--show-path`: only display the path to the downloaded binary, if there is one
 - `--log`: enable all logging
 - `--log=domain`: enable logging for the given domain
   - see the available domains by running with all logging enabled

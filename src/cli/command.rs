@@ -10,5 +10,8 @@ pub enum Command {
         optional: bool,
     },
     DisplayHelp,
+    DisplayPath {
+        app: RequestedApp,
+    },
     DisplayVersion,
 }
