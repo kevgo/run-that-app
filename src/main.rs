@@ -2,6 +2,7 @@ mod apps;
 mod archives;
 mod cli;
 mod cmd;
+mod config;
 mod download;
 mod error;
 mod filesystem;
@@ -27,14 +28,16 @@ fn main() -> ExitCode {
 }
 
 fn inner() -> Result<ExitCode> {
-    let args = cli::parse(std::env::args())?;
-    let output = output::StdErr { category: args.log };
-    match args.command {
+    let cli_args = cli::parse(std::env::args())?;
+    let output = output::StdErr {
+        category: cli_args.log,
+    };
+    match cli_args.command {
         Command::RunApp {
             app,
             args,
             include_global,
-        } => cmd::run(&app, args, include_global, &output),
+        } => cmd::run(app, args, include_global, &output),
         Command::DisplayHelp => Ok(cmd::help(&output)),
         Command::DisplayVersion => Ok(cmd::version(&output)),
     }

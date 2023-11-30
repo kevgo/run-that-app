@@ -28,3 +28,4 @@ unsafe_code = "forbid"
 
 [lints.clippy]
 pedantic = "warn"
+module_inception = "allow"
