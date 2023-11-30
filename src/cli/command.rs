@@ -13,6 +13,8 @@ pub enum Command {
     DisplayHelp,
     DisplayPath {
         app: RequestedApp,
+        include_global: bool,
+        log: Option<String>,
     },
     DisplayVersion,
 }

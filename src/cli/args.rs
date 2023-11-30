@@ -55,16 +55,22 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
         }
     }
     if let Some(app) = requested_app {
-        Ok(Args {
-            command: Command::RunApp {
-                app,
-                args: app_args,
-                include_global,
-                optional,
-                log,
-            },
-        })
-    } else if include_global || optional || log.is_some() {
+        if display_path {
+            Ok(Args {
+                command: Command::DisplayPath { app, include_global, log },
+            })
+        } else {
+            Ok(Args {
+                command: Command::RunApp {
+                    app,
+                    args: app_args,
+                    include_global,
+                    optional,
+                    log,
+                },
+            })
+        }
+    } else if include_global || optional || log.is_some() || display_path {
         Err(UserError::MissingApplication)
     } else {
         Ok(Args { command: Command::DisplayHelp })
@@ -98,34 +104,28 @@ mod tests {
 
             use super::parse_args;
             use crate::cli::{Args, Command, RequestedApp};
+            use crate::error::UserError;
 
             #[test]
             fn with_app() {
                 let have = parse_args(vec!["run-that-app", "--show-path", "shellcheck"]);
-                let want = Args {
+                let want = Ok(Args {
                     command: Command::DisplayPath {
                         app: RequestedApp {
                             name: S("shellcheck"),
                             version: S(""),
                         },
+                        include_global: false,
+                        log: None,
                     },
-                    log: None,
-                };
+                });
                 pretty::assert_eq!(have, want);
             }
 
             #[test]
             fn without_app() {
                 let have = parse_args(vec!["run-that-app", "--show-path"]);
-                let want = Args {
-                    command: Command::DisplayPath {
-                        app: RequestedApp {
-                            name: S("shellcheck"),
-                            version: S(""),
-                        },
-                    },
-                    log: None,
-                };
+                let want = Err(UserError::MissingApplication);
                 pretty::assert_eq!(have, want);
             }
         }
