@@ -9,6 +9,7 @@ use crate::platform::Platform;
 use crate::subshell;
 use crate::yard;
 use crate::yard::Executable;
+use crate::yard::LoadAppOutcome;
 use crate::yard::Yard;
 use crate::Output;
 use crate::Result;
@@ -31,7 +32,7 @@ pub fn run(
     let platform = platform::detect(output)?;
     let prodyard = yard::load_or_create(&yard::production_location()?)?;
     let executable = load_or_install(
-        requested_app,
+        &requested_app,
         app.as_ref(),
         platform,
         include_global,
@@ -49,8 +50,10 @@ fn load_or_install(
     yard: &Yard,
     output: &dyn Output,
 ) -> Result<Executable> {
-    if let Some(executable) = yard.load_app(requested_app, app.executable_filename(platform)) {
-        return Ok(executable);
+    match yard.load_app(requested_app, app.executable_filename(platform)) {
+        LoadAppOutcome::Loaded(executable) => Ok(executable),
+        LoadAppOutcome::NotInstalled => todo!(),
+        LoadAppOutcome::NotInstalled => todo!(),
     };
     for installation_method in app.installation_methods(&requested_app.version, platform, yard) {
         if let Some(executable) = installation_method.install(output)? {

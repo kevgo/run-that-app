@@ -11,10 +11,12 @@ impl Yard {
     pub fn load_app(&self, app: &RequestedApp, executable_filename: &str) -> LoadAppOutcome {
         let file_path = self.app_file_path(&app.name, &app.version, executable_filename);
         if file_path.exists() {
-            LoadAppOutcome::Loaded(Executable(file_path))
-        } else {
-            LoadAppOutcome::NotFound
+            return LoadAppOutcome::Loaded(Executable(file_path));
         }
+        if self.is_not_installable(app) {
+            return LoadAppOutcome::NotInstallable;
+        }
+        LoadAppOutcome::NotInstalled
     }
 
     /// provides the path to the given file that is part of the given application
@@ -25,6 +27,16 @@ impl Yard {
     /// provides the path to the folder containing the given application
     pub fn app_folder(&self, app_name: &str, app_version: &str) -> PathBuf {
         self.root.join("apps").join(app_name).join(app_version)
+    }
+
+    fn is_not_installable(&self, app: &RequestedApp) -> bool {
+        self.not_installable_path(&app.name, &app.version).exists()
+    }
+
+    /// provides the path to the given file that is part of the given application
+    pub fn not_installable_path(&self, app_name: &str, app_version: &str) -> PathBuf {
+        self.app_folder(app_name, app_version)
+            .join("not_installable")
     }
 
     /// stores the given application consisting of the given executable file
@@ -39,11 +51,14 @@ impl Yard {
     }
 }
 
+#[derive(Debug, PartialEq)]
 pub enum LoadAppOutcome {
     /// the requested app was loaded from the yard, here is the executable to call
     Loaded(Executable),
     /// the yard doesn't contain this app
-    NotFound,
+    NotInstalled,
+    /// a previous run of run-that-app determined that the app cannot be downloaded nor installed for the current platform
+    NotInstallable,
 }
 
 #[cfg(test)]
@@ -73,7 +88,7 @@ mod tests {
 
     mod load_app {
         use crate::cli::RequestedApp;
-        use crate::yard::{create, Executable, Yard};
+        use crate::yard::{create, Executable, LoadAppOutcome, Yard};
         use big_s::S;
         use std::path::PathBuf;
 
@@ -87,7 +102,8 @@ mod tests {
             };
             let executable = "executable";
             yard.save_app_file(&requested_app, executable, b"content");
-            let Some(Executable(executable_path)) = yard.load_app(&requested_app, executable)
+            let LoadAppOutcome::Loaded(Executable(executable_path)) =
+                yard.load_app(&requested_app, executable)
             else {
                 panic!();
             };
@@ -119,7 +135,7 @@ mod tests {
                 version: S("0.9.0"),
             };
             let loaded = yard.load_app(&requested_app, "executable");
-            assert!(loaded.is_none());
+            assert_eq!(loaded, LoadAppOutcome::NotInstalled);
         }
 
         #[test]
@@ -137,7 +153,17 @@ mod tests {
                 version: S("0.9.0"),
             };
             let loaded = yard.load_app(&requested_app, "executable");
-            assert!(loaded.is_none());
+            assert_eq!(loaded, LoadAppOutcome::NotInstalled);
         }
+    }
+
+    #[test]
+    fn not_installable_path() {
+        let yard = Yard {
+            root: PathBuf::from("/root"),
+        };
+        let have = yard.not_installable_path("shellcheck", "0.9.0");
+        let want = PathBuf::from("/root/apps/shellcheck/0.9.0/not_installable");
+        assert_eq!(have, want);
     }
 }
