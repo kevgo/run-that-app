@@ -30,6 +30,10 @@ fn main() -> ExitCode {
 fn inner() -> Result<ExitCode> {
     let cli_args = cli::parse(std::env::args())?;
     match cli_args.command {
+        Command::Available { app, include_global, log } => {
+            let output = output::StdErr { category: log };
+            Ok(cmd::available(app, include_global, &output)?)
+        }
         Command::RunApp {
             app,
             args,

@@ -106,6 +106,8 @@ Options:
   doesn't run.
 - `--include-global`: if there is no pre-compiled binary for your platform, but
   a similarly named binary in your PATH, run the latter.
+- `--available`: signal via exit code whether an app is available on the local
+  platform
 - `--show-path`: don't run the app but display the path to its executable
 - `--log`: enable all logging
 - `--log=domain`: enable logging for the given domain

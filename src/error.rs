@@ -29,6 +29,7 @@ pub enum UserError {
     GoNoPermission,
     GoNotInstalled,
     MissingApplication,
+    MultipleCommandsGiven,
     NotOnline,
     RunRequestMissingVersion,
     RustCompilationFailed,
@@ -86,6 +87,10 @@ impl UserError {
             UserError::MissingApplication => {
                 error("missing application");
                 desc("Please provide the application to execute");
+            }
+            UserError::MultipleCommandsGiven => {
+                error("multiple commands given");
+                desc("Please provide either --show-path or --available or nothing to run the app, but not both");
             }
             UserError::NotOnline => error("you seem to be offline"),
             UserError::RunRequestMissingVersion => {
