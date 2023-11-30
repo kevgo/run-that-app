@@ -45,7 +45,6 @@ impl UserError {
                 error(&format!("cannot download URL {url}: {reason}"));
                 desc("Please try again later.");
             }
-            #[cfg(unix)]
             UserError::CannotMakeFileExecutable { file, reason } => {
                 error(&format!("Cannot make file {file} executable: {reason}"));
                 desc("Please check access permissions and try again.");
