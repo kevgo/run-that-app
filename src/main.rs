@@ -41,6 +41,10 @@ fn inner() -> Result<ExitCode> {
             cmd::run(app, args, include_global, optional, &output)
         }
         Command::DisplayHelp => Ok(cmd::help()),
+        Command::ShowPath { app, include_global, log } => {
+            let output = output::StdErr { category: log };
+            Ok(cmd::show_path(app, include_global, &output)?)
+        }
         Command::DisplayVersion => Ok(cmd::version()),
     }
 }

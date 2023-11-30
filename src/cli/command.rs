@@ -11,5 +11,10 @@ pub enum Command {
         log: Option<String>,
     },
     DisplayHelp,
+    ShowPath {
+        app: RequestedApp,
+        include_global: bool,
+        log: Option<String>,
+    },
     DisplayVersion,
 }
