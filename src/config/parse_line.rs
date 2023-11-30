@@ -2,12 +2,12 @@ use crate::cli::RequestedApp;
 use crate::{Result, UserError};
 use std::str::SplitAsciiWhitespace;
 
-pub fn parse_line(line_text: &str, line_no: usize, acc: &mut Vec<RequestedApp>) -> Result<()> {
+pub fn parse_line(line_text: &str, line_no: usize) -> Result<Option<RequestedApp>> {
     let line_text = line_text.trim();
     let mut parts = LinePartsIterator::from(line_text);
     let Some(name) = parts.next() else {
         // empty or commented out line --> ignore
-        return Ok(());
+        return Ok(None);
     };
     let Some(version) = parts.next() else {
         // line has only one element --> invalid
@@ -23,11 +23,10 @@ pub fn parse_line(line_text: &str, line_no: usize, acc: &mut Vec<RequestedApp>) 
             text: line_text.to_string(),
         });
     }
-    acc.push(RequestedApp {
+    Ok(Some(RequestedApp {
         name: name.to_string(),
         version: version.to_string(),
-    });
-    Ok(())
+    }))
 }
 
 /// provides non-whitespace and not commented out parts of the given line
@@ -68,74 +67,77 @@ mod tests {
         #[test]
         fn normal() {
             let give = "shellcheck 0.9.0";
-            let mut have = vec![];
-            parse_line(give, 1, &mut have).unwrap();
-            let want = vec![RequestedApp {
+            let have = parse_line(give, 1).unwrap();
+            let want = Some(RequestedApp {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
-            }];
+            });
             pretty::assert_eq!(have, want);
         }
 
         #[test]
         fn normal_with_multiple_spaces() {
             let give = "     shellcheck            0.9.0      ";
-            let mut have = vec![];
-            parse_line(give, 1, &mut have).unwrap();
-            let want = vec![RequestedApp {
+            let have = parse_line(give, 1).unwrap();
+            let want = Some(RequestedApp {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
-            }];
+            });
             pretty::assert_eq!(have, want);
         }
 
         #[test]
-        fn normal_with_tabs_spaces() {
+        fn normal_with_tabs() {
             let give = "shellcheck\t0.9.0";
-            let mut have = vec![];
-            parse_line(give, 1, &mut have).unwrap();
-            let want = vec![RequestedApp {
+            let have = parse_line(give, 1).unwrap();
+            let want = Some(RequestedApp {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
-            }];
+            });
             pretty::assert_eq!(have, want);
         }
 
         #[test]
         fn missing_version() {
             let give = "shellcheck ";
-            let mut acc = vec![];
-            let result = parse_line(give, 1, &mut acc);
+            let have = parse_line(give, 1);
             let want = Err(UserError::InvalidConfigFileFormat {
                 line_no: 1,
                 text: S("shellcheck"),
             });
-            pretty::assert_eq!(result, want);
-            assert_eq!(acc, vec![]);
+            pretty::assert_eq!(have, want);
         }
 
         #[test]
         fn empty_line() {
             let give = "";
-            let mut acc = vec![];
-            parse_line(give, 1, &mut acc).unwrap();
-            assert_eq!(acc, vec![]);
+            let have = parse_line(give, 1).unwrap();
+            assert_eq!(have, None);
         }
 
         #[test]
         fn spaces_only() {
             let give = "              ";
-            let mut acc = vec![];
-            parse_line(give, 1, &mut acc).unwrap();
-            assert_eq!(acc, vec![]);
+            let have = parse_line(give, 1).unwrap();
+            assert_eq!(have, None);
         }
 
         #[test]
-        fn commented_out() {
+        fn completely_commented_out() {
             let give = "# shellcheck 0.9.0";
-            let mut acc = vec![];
-            parse_line(give, 1, &mut acc).unwrap();
-            assert_eq!(acc, vec![]);
+            let have = parse_line(give, 1).unwrap();
+            assert_eq!(have, None);
+        }
+
+        #[test]
+        fn valid_with_comment_at_end() {
+            let give = "shellcheck 0.9.0  # comment";
+            let have = parse_line(give, 1).unwrap();
+            let want = Some(RequestedApp {
+                name: S("shellcheck"),
+                version: S("0.9.0"),
+            });
+            pretty::assert_eq!(have, want);
         }
     }
 }

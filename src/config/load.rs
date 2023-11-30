@@ -18,7 +18,9 @@ pub fn load() -> Result<Config> {
 fn parse(text: &str) -> Result<Config> {
     let mut result = vec![];
     for (i, line) in text.lines().enumerate() {
-        parse_line(line, i, &mut result)?;
+        if let Some(requested_app) = parse_line(line, i)? {
+            result.push(requested_app);
+        }
     }
     Ok(Config(result))
 }
