@@ -56,5 +56,10 @@ fn load_or_install(
         }
     }
     yard.mark_not_installable(requested_app)?;
+    if include_global {
+        if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
+            return Ok(Some(executable));
+        }
+    }
     Err(UserError::UnsupportedPlatform)
 }
