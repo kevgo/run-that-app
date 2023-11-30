@@ -3,6 +3,11 @@ use super::RequestedApp;
 /// the main commands that run-this-app can execute
 #[derive(Debug, PartialEq)]
 pub enum Command {
+    Available {
+        app: RequestedApp,
+        include_global: bool,
+        log: Option<String>,
+    },
     RunApp {
         app: RequestedApp,
         args: Vec<String>,

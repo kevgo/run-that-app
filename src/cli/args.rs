@@ -16,6 +16,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut app_args: Vec<String> = vec![];
     let mut include_global = false;
     let mut show_path = false;
+    let mut indicate_available = false;
     let mut optional = false;
     for arg in cli_args {
         if requested_app.is_none() {
@@ -26,6 +27,10 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 return Ok(Args {
                     command: Command::DisplayVersion,
                 });
+            }
+            if &arg == "--available" {
+                indicate_available = true;
+                continue;
             }
             if &arg == "--include-global" {
                 include_global = true;
@@ -55,7 +60,13 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
         }
     }
     if let Some(app) = requested_app {
-        if show_path {
+        if show_path && indicate_available {
+            Err(UserError::MultipleCommandsGiven)
+        } else if indicate_available {
+            Ok(Args {
+                command: Command::Available { app, include_global, log },
+            })
+        } else if show_path {
             Ok(Args {
                 command: Command::ShowPath { app, include_global, log },
             })
@@ -70,7 +81,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 },
             })
         }
-    } else if include_global || optional || log.is_some() || show_path {
+    } else if include_global || optional || log.is_some() || show_path || indicate_available {
         Err(UserError::MissingApplication)
     } else {
         Ok(Args { command: Command::DisplayHelp })
@@ -90,6 +101,7 @@ mod tests {
     mod parse {
         use super::parse_args;
         use crate::cli::{Args, Command, RequestedApp};
+        use crate::error::UserError;
         use big_s::S;
 
         #[test]
@@ -97,6 +109,53 @@ mod tests {
             let have = parse_args(vec!["run-that-app"]);
             let want = Ok(Args { command: Command::DisplayHelp });
             pretty::assert_eq!(have, want);
+        }
+
+        mod available {
+            use big_s::S;
+
+            use super::parse_args;
+            use crate::cli::{Args, Command, RequestedApp};
+            use crate::error::UserError;
+
+            #[test]
+            fn with_app() {
+                let have = parse_args(vec!["run-that-app", "--available", "shellcheck"]);
+                let want = Ok(Args {
+                    command: Command::Available {
+                        app: RequestedApp {
+                            name: S("shellcheck"),
+                            version: S(""),
+                        },
+                        include_global: false,
+                        log: None,
+                    },
+                });
+                pretty::assert_eq!(have, want);
+            }
+
+            #[test]
+            fn with_all_options() {
+                let have = parse_args(vec!["run-that-app", "--available", "--include-global", "--log=detect", "shellcheck"]);
+                let want = Ok(Args {
+                    command: Command::Available {
+                        app: RequestedApp {
+                            name: S("shellcheck"),
+                            version: S(""),
+                        },
+                        include_global: true,
+                        log: Some(S("detect")),
+                    },
+                });
+                pretty::assert_eq!(have, want);
+            }
+
+            #[test]
+            fn without_app() {
+                let have = parse_args(vec!["run-that-app", "--available"]);
+                let want = Err(UserError::MissingApplication);
+                pretty::assert_eq!(have, want);
+            }
         }
 
         mod show_path {
@@ -143,6 +202,13 @@ mod tests {
                 let want = Err(UserError::MissingApplication);
                 pretty::assert_eq!(have, want);
             }
+        }
+
+        #[test]
+        fn multiple_commands() {
+            let have = parse_args(vec!["run-that-app", "--show-path", "--available", "shellcheck"]);
+            let want = Err(UserError::MultipleCommandsGiven);
+            pretty::assert_eq!(have, want);
         }
 
         mod version_parameter {
