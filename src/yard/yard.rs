@@ -34,9 +34,10 @@ impl Yard {
         None
     }
 
+    #[cfg(test)]
     fn mark_not_installable(&self, app: &RequestedApp) -> Result<()> {
         let path = self.not_installable_path(&app.name, &app.version);
-        match File::create(path) {
+        match File::create(&path) {
             Ok(_) => Ok(()),
             Err(err) => Err(UserError::YardAccessDenied { msg: err.to_string(), path }),
         }
@@ -112,20 +113,64 @@ mod tests {
 
     mod load_app {
         use crate::cli::RequestedApp;
-        use crate::yard::Yard;
+        use crate::yard::{create, Executable, Yard};
         use big_s::S;
         use std::path::PathBuf;
 
         #[test]
-        fn app_exists() {
+        fn app_is_installed() {
+            let tempdir = tempfile::tempdir().unwrap();
+            let yard = create(tempdir.path()).unwrap();
+            let requested_app = RequestedApp {
+                name: S("shellcheck"),
+                version: S("0.9.0"),
+            };
+            let executable = "executable";
+            yard.save_app_file(&requested_app, executable, b"content");
+            let Some(Executable(executable_path)) = yard.load_app(&requested_app, executable) else {
+                panic!();
+            };
+            #[cfg(unix)]
+            assert!(
+                executable_path.to_string_lossy().ends_with("/apps/shellcheck/0.9.0/executable"),
+                "{}",
+                executable_path.to_string_lossy()
+            );
+            #[cfg(windows)]
+            assert!(
+                executable_path.to_string_lossy().ends_with("\\apps\\shellcheck\\0.9.0\\executable"),
+                "{}",
+                executable_path.to_string_lossy()
+            );
+        }
+
+        #[test]
+        fn app_is_not_installed() {
             let yard = Yard { root: PathBuf::from("/root") };
             let requested_app = RequestedApp {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             };
-            yard.save_app_file(&requested_app, "shellcheck", file_content);
-            let have = yard.is_not_installable(&requested_app);
-            assert!(!have);
+            let loaded = yard.load_app(&requested_app, "executable");
+            assert!(loaded.is_none());
+        }
+
+        #[test]
+        fn app_is_installed_but_wrong_version() {
+            let tempdir = tempfile::tempdir().unwrap();
+            let yard = create(tempdir.path()).unwrap();
+            let installed_app = RequestedApp {
+                name: S("shellcheck"),
+                version: S("0.1.0"),
+            };
+            let executable = "executable";
+            yard.save_app_file(&installed_app, executable, b"content");
+            let requested_app = RequestedApp {
+                name: S("shellcheck"),
+                version: S("0.9.0"),
+            };
+            let loaded = yard.load_app(&requested_app, "executable");
+            assert!(loaded.is_none());
         }
     }
 
