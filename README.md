@@ -101,8 +101,8 @@ run-that-app [run-that-app options] <app name> [app options]
 
 Options:
 
-- `--ignore-unavailable`: if there is no pre-compiled binary for your platform,
-  do nothing. This is useful for non-essential tools where it's okay if the tool
+- `--optional`: if there is no pre-compiled binary for your platform, do
+  nothing. This is useful for non-essential tools where it's okay if the tool
   doesn't run.
 - `--include-global`: if there is no pre-compiled binary for your platform, but
   a similarly named binary in your PATH, run the latter.

@@ -16,6 +16,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut log: Option<String> = None;
     let mut app_args: Vec<String> = vec![];
     let mut include_global = false;
+    let mut optional = false;
     for arg in cli_args {
         if requested_app.is_none() {
             if &arg == "--help" || &arg == "-h" {
@@ -32,6 +33,10 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             }
             if &arg == "--include-global" {
                 include_global = true;
+                continue;
+            }
+            if &arg == "--optional" {
+                optional = true;
                 continue;
             }
             if arg.starts_with('-') {
@@ -54,6 +59,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             app,
             args: app_args,
             include_global,
+            optional,
         },
         None => Command::DisplayHelp,
     };
@@ -64,6 +70,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
 mod tests {
     use super::Args;
 
+    // helper function for tests
     fn parse_args(args: Vec<&'static str>) -> Args {
         super::parse(args.into_iter().map(ToString::to_string)).unwrap()
     }
@@ -146,6 +153,7 @@ mod tests {
                     },
                     args: vec![S("arg1")],
                     include_global: true,
+                    optional: false,
                 },
                 log: None,
             };
@@ -168,6 +176,7 @@ mod tests {
                         },
                         args: vec![],
                         include_global: false,
+                        optional: false,
                     },
                     log: Some(S("")),
                 };
@@ -185,11 +194,30 @@ mod tests {
                         },
                         args: vec![],
                         include_global: false,
+                        optional: false,
                     },
                     log: Some(S("scope")),
                 };
                 pretty::assert_eq!(have, want);
             }
+        }
+
+        #[test]
+        fn optional() {
+            let have = parse_args(vec!["run-that-app", "--optional", "app@2", "arg1"]);
+            let want = Args {
+                command: Command::RunApp {
+                    app: RequestedApp {
+                        name: S("app"),
+                        version: S("2"),
+                    },
+                    args: vec![S("arg1")],
+                    include_global: false,
+                    optional: true,
+                },
+                log: None,
+            };
+            pretty::assert_eq!(have, want);
         }
 
         mod application_arguments {
@@ -209,6 +237,7 @@ mod tests {
                         },
                         args: vec![],
                         include_global: false,
+                        optional: false,
                     },
                     log: None,
                 };
@@ -226,6 +255,7 @@ mod tests {
                         },
                         args: vec![S("--arg1"), S("arg2")],
                         include_global: false,
+                        optional: false,
                     },
                     log: None,
                 };
@@ -243,6 +273,7 @@ mod tests {
                         },
                         args: vec![S("--arg1"), S("arg2")],
                         include_global: false,
+                        optional: false,
                     },
                     log: Some(S("l1")),
                 };
@@ -260,6 +291,7 @@ mod tests {
                         },
                         args: vec![S("--log=app"), S("--version")],
                         include_global: false,
+                        optional: false,
                     },
                     log: None,
                 };
