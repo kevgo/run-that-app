@@ -1,97 +1,86 @@
 use super::App;
-use crate::install::{
-    ArtifactType, CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod,
-};
+use crate::install::{ArtifactType, CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::Yard;
 
 pub struct Shfmt {}
 
 impl App for Shfmt {
-    fn name(&self) -> &'static str {
-        "shfmt"
-    }
+  fn name(&self) -> &'static str {
+    "shfmt"
+  }
 
-    fn executable_filename(&self, platform: Platform) -> &'static str {
-        match platform.os {
-            Os::Windows => "shfmt.exe",
-            Os::Linux | Os::MacOS => "shfmt",
-        }
+  fn executable_filename(&self, platform: Platform) -> &'static str {
+    match platform.os {
+      Os::Windows => "shfmt.exe",
+      Os::Linux | Os::MacOS => "shfmt",
     }
+  }
 
-    fn homepage(&self) -> &'static str {
-        "https://github.com/mvdan/sh"
-    }
+  fn homepage(&self) -> &'static str {
+    "https://github.com/mvdan/sh"
+  }
 
-    fn installation_methods(
-        &self,
-        version: &str,
-        platform: Platform,
-        yard: &Yard,
-    ) -> Vec<Box<dyn InstallationMethod>> {
-        vec![
-            Box::new(DownloadPrecompiledBinary {
-                name: self.name(),
-                url: download_url(version, platform),
-                artifact_type: ArtifactType::Executable,
-                file_on_disk: yard.app_file_path(
-                    self.name(),
-                    version,
-                    self.executable_filename(platform),
-                ),
-            }),
-            Box::new(CompileFromGoSource {
-                import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}"),
-                target_folder: yard.app_folder(self.name(), version),
-                executable_filename: self.executable_filename(platform),
-            }),
-        ]
-    }
+  fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>> {
+    vec![
+      Box::new(DownloadPrecompiledBinary {
+        name: self.name(),
+        url: download_url(version, platform),
+        artifact_type: ArtifactType::Executable,
+        file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+      }),
+      Box::new(CompileFromGoSource {
+        import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}"),
+        target_folder: yard.app_folder(self.name(), version),
+        executable_filename: self.executable_filename(platform),
+      }),
+    ]
+  }
 }
 
 fn download_url(version: &str, platform: Platform) -> String {
-    format!(
-        "https://github.com/mvdan/sh/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}",
-        os = os_text(platform.os),
-        cpu = cpu_text(platform.cpu),
-        ext = ext_text(platform.os)
-    )
+  format!(
+    "https://github.com/mvdan/sh/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}",
+    os = os_text(platform.os),
+    cpu = cpu_text(platform.cpu),
+    ext = ext_text(platform.os)
+  )
 }
 
 fn os_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux => "linux",
-        Os::MacOS => "darwin",
-        Os::Windows => "windows",
-    }
+  match os {
+    Os::Linux => "linux",
+    Os::MacOS => "darwin",
+    Os::Windows => "windows",
+  }
 }
 
 fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "arm64",
-        Cpu::Intel64 => "amd64",
-    }
+  match cpu {
+    Cpu::Arm64 => "arm64",
+    Cpu::Intel64 => "amd64",
+  }
 }
 
 fn ext_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux | Os::MacOS => "",
-        Os::Windows => ".exe",
-    }
+  match os {
+    Os::Linux | Os::MacOS => "",
+    Os::Windows => ".exe",
+  }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::platform::{Cpu, Os, Platform};
+  use crate::platform::{Cpu, Os, Platform};
 
-    #[test]
-    fn download_url() {
-        let platform = Platform {
-            os: Os::MacOS,
-            cpu: Cpu::Arm64,
-        };
-        let have = super::download_url("3.7.0", platform);
-        let want = "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_arm64";
-        assert_eq!(have, want);
-    }
+  #[test]
+  fn download_url() {
+    let platform = Platform {
+      os: Os::MacOS,
+      cpu: Cpu::Arm64,
+    };
+    let have = super::download_url("3.7.0", platform);
+    let want = "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_arm64";
+    assert_eq!(have, want);
+  }
 }
