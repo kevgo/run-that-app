@@ -16,7 +16,7 @@ pub struct CompileFromGoSource {
 }
 
 impl InstallationMethod for CompileFromGoSource {
-    fn install(&self, _output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, output: &dyn Output) -> Result<Option<Executable>> {
         let Ok(go_path) = which("go") else {
             return Err(UserError::GoNotInstalled);
         };
@@ -24,9 +24,11 @@ impl InstallationMethod for CompileFromGoSource {
             folder: self.target_folder.clone(),
             reason: err.to_string(),
         })?;
+        output.println(&format!("go install {}", &self.import_path));
         let mut cmd = Command::new(go_path);
         cmd.arg("install");
         cmd.arg(&self.import_path);
+        cmd.env("GOBIN", &self.target_folder);
         let status = match cmd.status() {
             Ok(status) => status,
             Err(err) => match err.kind() {

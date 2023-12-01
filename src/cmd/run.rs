@@ -13,7 +13,7 @@ use std::process::ExitCode;
 
 pub fn run(requested_app: RequestedApp, args: Vec<String>, include_global: bool, optional: bool, output: &dyn Output) -> Result<ExitCode> {
     if let Some(executable) = load_or_install(requested_app, include_global, output)? {
-        Ok(subshell::execute(executable, args))
+        Ok(subshell::execute(executable, args)?)
     } else if optional {
         Ok(ExitCode::SUCCESS)
     } else {
