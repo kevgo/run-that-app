@@ -2,6 +2,8 @@
 
 ### 0.1.0 (2023-11-30)
 
+#### New Features
+
 - `--available` command indicates via the exit code whether an application is
   available
 - `--show-path` command displays the path of the executable instead of running
@@ -10,7 +12,11 @@
 - `--include-global` parameter runs a globally installed app if the app cannot
   be installed
 - config file (.tool-versions) for defining the versions of tools to run
+
+#### Bug Fixes
+
 - bugfix: install from Go source
+- bugfix: install alphavet from source
 
 ### 0.0.5 (2023-11-28)
 
