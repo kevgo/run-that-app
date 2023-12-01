@@ -1,11 +1,24 @@
+use crate::error::UserError;
 use crate::yard::Executable;
+use crate::Result;
 use std::process::{Command, ExitCode};
 
-pub fn execute(Executable(app): Executable, args: Vec<String>) -> ExitCode {
-    let mut cmd = Command::new(app);
+pub fn execute(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode> {
+    let mut cmd = Command::new(&app);
     cmd.args(args);
-    let exit_code = cmd.status().unwrap().code().unwrap_or(255);
-    ExitCode::from(reduce_exit_status_to_code(exit_code))
+    let exit_status = match cmd.status() {
+        Ok(status) => status,
+        Err(err) => {
+            return Err(UserError::CannotDetermineExitStatus {
+                executable: app,
+                reason: err.to_string(),
+            });
+        }
+    };
+    let Some(exit_code) = exit_status.code() else {
+        panic!("cannot determine exit code for {exit_status}");
+    };
+    Ok(ExitCode::from(reduce_exit_status_to_code(exit_code)))
 }
 
 fn reduce_exit_status_to_code(code: i32) -> u8 {
@@ -34,7 +47,7 @@ mod tests {
             let executable_path = tempdir.path().join("executable");
             fs::write(&executable_path, b"#!/bin/sh\necho hello").unwrap();
             make_file_executable(&executable_path).unwrap();
-            let have = execute(Executable(executable_path), vec![]);
+            let have = execute(Executable(executable_path), vec![]).unwrap();
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(0))"));
         }
@@ -52,7 +65,7 @@ mod tests {
             fs::write(&executable_path, b"#!/bin/sh\nexit 3").unwrap();
             make_file_executable(&executable_path).unwrap();
             let executable = Executable(executable_path);
-            let have = execute(executable, vec![]);
+            let have = execute(executable, vec![]).unwrap();
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(3))"));
         }
@@ -68,7 +81,7 @@ mod tests {
             let executable_path = tempdir.path().join("executable.cmd");
             fs::write(&executable_path, b"echo hello").unwrap();
             let executable = Executable(executable_path);
-            let have = execute(executable, vec![]);
+            let have = execute(executable, vec![]).unwrap();
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(0))"));
         }
@@ -84,7 +97,7 @@ mod tests {
             let executable_path = tempdir.path().join("executable.cmd");
             fs::write(&executable_path, b"EXIT 3").unwrap();
             let executable = Executable(executable_path);
-            let have = execute(executable, vec![]);
+            let have = execute(executable, vec![]).unwrap();
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(3))"));
         }
