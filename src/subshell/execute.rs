@@ -9,7 +9,7 @@ pub fn execute(Executable(app): Executable, args: Vec<String>) -> Result<ExitCod
     let exit_status = match cmd.status() {
         Ok(status) => status,
         Err(err) => {
-            return Err(UserError::CannotDetermineExitStatus {
+            return Err(UserError::CannotExecuteBinary {
                 executable: app,
                 reason: err.to_string(),
             });

@@ -16,7 +16,7 @@ pub enum UserError {
         folder: PathBuf,
         reason: String,
     },
-    CannotDetermineExitStatus {
+    CannotExecuteBinary {
         executable: PathBuf,
         reason: String,
     },
@@ -61,11 +61,8 @@ impl UserError {
                 error(&format!("cannot read the config file: {reason}"));
                 desc(&format!("please make sure {} is a file and accessible to you", config::FILE_NAME,));
             }
-            UserError::CannotDetermineExitStatus { executable, reason } => {
-                error(&format!(
-                    "cannot determine the exit status for command '{}': {reason}",
-                    executable.to_string_lossy()
-                ));
+            UserError::CannotExecuteBinary { executable, reason } => {
+                error(&format!("cannot execute the binary {}:\n{reason}", executable.to_string_lossy()));
             }
             UserError::CannotDetermineHomeDirectory => error("cannot determine home directory"),
             UserError::CannotCreateFolder { folder, reason } => {
