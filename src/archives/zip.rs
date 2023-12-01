@@ -5,6 +5,9 @@ use crate::{filesystem, Result};
 use std::path::Path;
 use std::{fs, io};
 
+#[cfg(unix)]
+use std::os::unix::fs::PermissionsExt;
+
 /// a .zip file downloaded from the internet, containing an application
 pub struct Zip {}
 
@@ -26,10 +29,11 @@ impl Archive for Zip {
             let file_in_zip = zip_archive.by_index(i).unwrap();
             output.log(CATEGORY, &format!("- {}", file_in_zip.name()));
         }
-        let mut file_in_zip = zip_archive.by_name(filepath_in_archive).unwrap();
+        let mut file_in_zip = zip_archive.by_name(filepath_in_archive).expect("file not found in archive");
         let mut file_on_disk = fs::File::create(filepath_on_disk).unwrap();
         io::copy(&mut file_in_zip, &mut file_on_disk).unwrap();
-        filesystem::make_file_executable(filepath_on_disk)?;
+        #[cfg(unix)]
+        file_on_disk.set_permissions(fs::Permissions::from_mode(0o744)).unwrap();
         Ok(Executable(filepath_on_disk.to_path_buf()))
     }
 }
