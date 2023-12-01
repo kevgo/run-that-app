@@ -19,20 +19,18 @@ impl Archive for TarGz {
         output.log(CATEGORY, "archive type: tar.gz");
         let gz_decoder = GzDecoder::new(io::Cursor::new(&data));
         let mut archive = tar::Archive::new(gz_decoder);
-        let mut found_file = false;
         for file in archive.entries().unwrap() {
             let mut file = file.unwrap();
             let filepath = file.path().unwrap();
             let filepath = filepath.to_string_lossy();
             output.log(CATEGORY, &format!("- {filepath}"));
             if filepath == filepath_in_archive {
-                found_file = true;
                 file.unpack(filepath_on_disk).unwrap();
+                filesystem::make_file_executable(filepath_on_disk)?;
+                return Ok(Executable(filepath_on_disk.to_path_buf()));
             }
         }
-        assert!(found_file, "file {filepath_in_archive} not found in archive");
-        filesystem::make_file_executable(filepath_on_disk)?;
-        Ok(Executable(filepath_on_disk.to_path_buf()))
+        panic!("file {filepath_in_archive} not found in archive");
     }
 }
 
