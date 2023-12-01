@@ -30,7 +30,7 @@ impl App for Alphavet {
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             }),
             Box::new(CompileFromGoSource {
-                import_path: format!("github.com/skx/alphavet/cmd/alphavet@{version}"),
+                import_path: format!("github.com/skx/alphavet/cmd/alphavet@v{version}"),
                 target_folder: yard.app_folder(self.name(), version),
                 executable_filename: self.executable_filename(platform),
             }),
