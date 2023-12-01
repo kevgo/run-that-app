@@ -34,7 +34,6 @@ fn reduce_exit_status_to_code(code: i32) -> u8 {
 #[cfg(test)]
 mod tests {
     mod execute {
-        use std::io::Write;
 
         #[test]
         #[cfg(unix)]
@@ -43,6 +42,7 @@ mod tests {
             use crate::yard::Executable;
             use big_s::S;
             use std::fs;
+            use std::io::Write;
             use std::os::unix::fs::PermissionsExt;
             let tempdir = tempfile::tempdir().unwrap();
             let executable_path = tempdir.path().join("executable");
