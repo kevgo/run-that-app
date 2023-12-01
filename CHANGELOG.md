@@ -10,6 +10,7 @@
 - `--include-global` parameter runs a globally installed app if the app cannot
   be installed
 - config file (.tool-versions) for defining the versions of tools to run
+- bugfix: install from Go source
 
 ### 0.0.5 (2023-11-28)
 
