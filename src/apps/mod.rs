@@ -5,6 +5,7 @@ mod alphavet;
 mod depth;
 mod dprint;
 mod gh;
+mod ghokin;
 mod gofumpt;
 mod golangci_lint;
 mod goreleaser;
