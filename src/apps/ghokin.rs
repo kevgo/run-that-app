@@ -27,7 +27,12 @@ impl App for Ghokin {
                 name: self.name(),
                 url: download_url(version, platform),
                 artifact_type: ArtifactType::Archive {
-                    file_to_extract: self.executable_filename(platform).to_string(),
+                    file_to_extract: format!(
+                        "ghokin_{version}-{os}-{cpu}/{executable}",
+                        os = os_text(platform.os),
+                        cpu = cpu_text(platform.cpu),
+                        executable = self.executable_filename(platform)
+                    ),
                 },
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             }),
