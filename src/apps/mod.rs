@@ -48,6 +48,7 @@ pub fn all() -> Vec<Box<dyn App>> {
         Box::new(depth::Depth {}),
         Box::new(dprint::Dprint {}),
         Box::new(gh::Gh {}),
+        Box::new(ghokin::Ghokin {}),
         Box::new(gofumpt::Gofumpt {}),
         Box::new(golangci_lint::GolangCiLint {}),
         Box::new(goreleaser::Goreleaser {}),

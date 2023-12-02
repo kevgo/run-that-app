@@ -37,7 +37,7 @@ impl App for Ghokin {
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             }),
             Box::new(CompileFromGoSource {
-                import_path: format!("mvdan.cc/gofumpt@{version}"),
+                import_path: format!("github.com/antham/ghokin/v3@{version}"),
                 target_folder: yard.app_folder(self.name(), version),
                 executable_filename: self.executable_filename(platform),
             }),
