@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.1.1 (2023-12-02)
+
+- apps: ghokin
+
 ### 0.1.0 (2023-11-30)
 
 #### New Features
