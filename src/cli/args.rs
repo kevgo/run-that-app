@@ -17,6 +17,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut include_global = false;
     let mut show_path = false;
     let mut indicate_available = false;
+    let mut update = false;
     let mut optional = false;
     for arg in cli_args {
         if requested_app.is_none() {
@@ -42,6 +43,10 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             }
             if &arg == "--show-path" {
                 show_path = true;
+                continue;
+            }
+            if &arg == "--update" {
+                update = true;
                 continue;
             }
             if arg.starts_with('-') {
