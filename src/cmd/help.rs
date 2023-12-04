@@ -17,6 +17,7 @@ pub fn print_options() {
     println!(
         "
 Options:
+--available                      indicates via the exit code whether the given application is available on this platform
 --ignore-unavailable             if an app is not available for the current platform, create a stub that does nothing
 --include-global                 if an app is not available for the current platform, use the globally installed app if one exists
 --log, -l                        enable logging of all categories
