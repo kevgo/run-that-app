@@ -18,15 +18,7 @@ use crate::install::InstallationMethod;
 use crate::platform::Platform;
 use crate::yard::Yard;
 use crate::Result;
-
-pub fn lookup(name: &str) -> Result<Box<dyn App>> {
-    for app in all() {
-        if app.name() == name {
-            return Ok(app);
-        }
-    }
-    Err(UserError::UnknownApp(name.to_string()))
-}
+use std::slice;
 
 pub trait App {
     /// the name by which the user can select this application at the run-that-app CLI
@@ -41,19 +33,44 @@ pub trait App {
     fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>>;
 }
 
-pub fn all() -> Vec<Box<dyn App>> {
-    vec![
-        Box::new(actionlint::ActionLint {}),
-        Box::new(alphavet::Alphavet {}),
-        Box::new(depth::Depth {}),
-        Box::new(dprint::Dprint {}),
-        Box::new(gh::Gh {}),
-        Box::new(ghokin::Ghokin {}),
-        Box::new(gofumpt::Gofumpt {}),
-        Box::new(golangci_lint::GolangCiLint {}),
-        Box::new(goreleaser::Goreleaser {}),
-        Box::new(scc::Scc {}),
-        Box::new(shellcheck::ShellCheck {}),
-        Box::new(shfmt::Shfmt {}),
-    ]
+pub fn all() -> Apps {
+    Apps {
+        list: vec![
+            Box::new(actionlint::ActionLint {}),
+            Box::new(alphavet::Alphavet {}),
+            Box::new(depth::Depth {}),
+            Box::new(dprint::Dprint {}),
+            Box::new(gh::Gh {}),
+            Box::new(ghokin::Ghokin {}),
+            Box::new(gofumpt::Gofumpt {}),
+            Box::new(golangci_lint::GolangCiLint {}),
+            Box::new(goreleaser::Goreleaser {}),
+            Box::new(scc::Scc {}),
+            Box::new(shellcheck::ShellCheck {}),
+            Box::new(shfmt::Shfmt {}),
+        ],
+    }
+}
+
+pub struct Apps {
+    pub list: Vec<Box<dyn App>>,
+}
+
+impl Apps {
+    pub fn iter(&self) -> slice::Iter<'_, Box<dyn App>> {
+        self.list.iter()
+    }
+
+    pub fn lookup(&self, name: &str) -> Result<&Box<dyn App>> {
+        for app in &self.list {
+            if app.name() == name {
+                return Ok(app);
+            }
+        }
+        Err(UserError::UnknownApp(name.to_string()))
+    }
+
+    pub fn longest_name(&self) -> usize {
+        self.iter().map(|app| app.name().len()).max().unwrap() + 1
+    }
 }
