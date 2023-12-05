@@ -7,7 +7,8 @@ use colored::Colorize;
 /// indicates 404 with None
 pub fn http_get(url: &str, output: &dyn Output) -> Result<Option<Vec<u8>>> {
     output.log(CATEGORY, &format!("downloading {} ... ", url.cyan()));
-    let Ok(response) = minreq::get(url).send() else {
+    let get = minreq::get(url);
+    let Ok(response) = get.send() else {
         output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
     };
