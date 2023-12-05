@@ -15,7 +15,7 @@ impl Config {
 impl Display for Config {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for app in &self.apps {
-            f.write_fmt(format_args!("{} {}\n", app.name, app.version))?;
+            f.write_fmt(format_args!("{name} {version}\n", name = app.name, version = app.version))?;
         }
         Ok(())
     }
