@@ -9,7 +9,11 @@ use std::path::PathBuf;
 
 /// installs the given application by downloading its pre-compiled binary
 pub fn download_executable(args: &DownloadArgs) -> Result<Option<Executable>> {
-    args.output.log("download", &format!("downloading {} ... ", args.url.cyan()));
+    if args.output.is_active("download") {
+        args.output.log("download", &format!("downloading {} ... ", args.url.cyan()));
+    } else {
+        args.output.print("downloading ... ")
+    }
     let Ok(response) = minreq::get(&args.url).send() else {
         args.output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
