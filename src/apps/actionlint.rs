@@ -5,6 +5,7 @@ use crate::install::{download_executable, ArtifactType, DownloadArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
+use const_format::formatcp;
 
 pub struct ActionLint {}
 
@@ -24,7 +25,7 @@ impl App for ActionLint {
     }
 
     fn homepage(&self) -> &'static str {
-        "https://rhysd.github.io/actionlint"
+        formatcp!("https://{ORG}.github.io/{REPO}")
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
@@ -54,7 +55,7 @@ impl App for ActionLint {
 
 fn download_url(version: &str, platform: Platform) -> String {
     format!(
-        "https://github.com/rhysd/actionlint/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}",
+        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}",
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)

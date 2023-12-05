@@ -6,6 +6,7 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
 use big_s::S;
+use const_format::formatcp;
 
 pub struct Scc {}
 
@@ -25,7 +26,7 @@ impl App for Scc {
     }
 
     fn homepage(&self) -> &'static str {
-        "https://github.com/boyter/scc"
+        formatcp!("https://github.com/{ORG}/{REPO}")
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
