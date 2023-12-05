@@ -12,7 +12,7 @@ pub fn download_executable(args: &DownloadArgs) -> Result<Option<Executable>> {
     if args.output.is_active("download") {
         args.output.log("download", &format!("downloading {} ... ", args.artifact_url.cyan()));
     } else {
-        args.output.print("downloading ... ")
+        args.output.print("downloading ... ");
     }
     let Ok(response) = minreq::get(&args.artifact_url).send() else {
         args.output.println(&format!("{}", "not online".red()));
