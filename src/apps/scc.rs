@@ -1,10 +1,10 @@
-use big_s::S;
-
 use super::App;
 use crate::install::{compile_go, download_executable, ArtifactType, CompileArgs, DownloadArgs};
 use crate::output::Output;
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
+use crate::Result;
+use big_s::S;
 
 pub struct Scc {}
 

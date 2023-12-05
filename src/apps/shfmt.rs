@@ -2,6 +2,7 @@ use super::App;
 use crate::install::{ArtifactType, CompileArgs, DownloadArgs, InstallationMethod};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::Yard;
+use crate::Result;
 
 pub struct Shfmt {}
 
@@ -22,7 +23,15 @@ impl App for Shfmt {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        todo!()
+        if let Some(executable) = download_executable(DownloadArgs {
+            name: todo!(),
+            url: todo!(),
+            artifact_type: todo!(),
+            file_on_disk: todo!(),
+            output,
+        })? {
+            return Ok(Some(executable));
+        }
     }
     fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>> {
         vec![

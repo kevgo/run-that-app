@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use std::process::Command;
 use which::which;
 
-pub fn compile_from_rust_source(args: CompileArgs, output: &dyn Output) -> Result<Option<Executable>> {
+pub fn compile_rust(args: CompileArgs) -> Result<Option<Executable>> {
     let Ok(cargo_path) = which("cargo") else {
         return Err(UserError::RustNotInstalled);
     };
@@ -30,8 +30,9 @@ pub fn compile_from_rust_source(args: CompileArgs, output: &dyn Output) -> Resul
     Ok(Some(Executable(args.target_folder.join(args.executable_filename))))
 }
 
-pub struct CompileArgs {
+pub struct CompileArgs<'a> {
     pub crate_name: &'static str,
     pub target_folder: PathBuf,
     pub executable_filename: &'static str,
+    pub output: &'a dyn Output,
 }

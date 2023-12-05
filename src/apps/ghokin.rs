@@ -1,7 +1,10 @@
 use super::App;
-use crate::install::{ArtifactType, CompileArgs, DownloadArgs, InstallationMethod};
+use crate::install::compile_go::{compile_go, CompileArgs};
+use crate::install::{download_executable, ArtifactType, DownloadArgs};
+use crate::output::Output;
 use crate::platform::{Cpu, Os, Platform};
-use crate::yard::Yard;
+use crate::yard::{Executable, Yard};
+use crate::Result;
 
 pub struct Ghokin {}
 
@@ -22,24 +25,23 @@ impl App for Ghokin {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        todo!()
-    }
-    fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>> {
-        vec![
-            Box::new(DownloadArgs {
-                name: self.name(),
-                url: download_url(version, platform),
-                artifact_type: ArtifactType::Archive {
-                    file_to_extract: self.executable_filename(platform).to_string(),
-                },
-                file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
-            }),
-            Box::new(CompileArgs {
-                import_path: format!("github.com/antham/ghokin/v3@v{version}"),
-                target_folder: yard.app_folder(self.name(), version),
-                executable_filename: self.executable_filename(platform),
-            }),
-        ]
+        if let Some(executable) = download_executable(DownloadArgs {
+            name: self.name(),
+            url: download_url(version, platform),
+            artifact_type: ArtifactType::Archive {
+                file_to_extract: self.executable_filename(platform).to_string(),
+            },
+            file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            output,
+        })? {
+            return Ok(Some(executable));
+        }
+        compile_go(CompileArgs {
+            import_path: format!("github.com/antham/ghokin/v3@v{version}"),
+            target_folder: yard.app_folder(self.name(), version),
+            executable_filename: self.executable_filename(platform),
+            output,
+        })
     }
 }
 
