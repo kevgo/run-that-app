@@ -7,6 +7,7 @@ use std::path::PathBuf;
 use std::process::Command;
 use which::which;
 
+/// installs the given Go-based application by compiling it from source
 pub fn compile_go(args: &CompileArgs) -> Result<Option<Executable>> {
     let Ok(go_path) = which("go") else {
         return Err(UserError::GoNotInstalled);
@@ -15,10 +16,10 @@ pub fn compile_go(args: &CompileArgs) -> Result<Option<Executable>> {
         folder: args.target_folder.clone(),
         reason: err.to_string(),
     })?;
-    args.output.println(&format!("go install {}", &args.import_path));
+    let go_args = vec!["install", &args.import_path];
+    args.output.println(&format!("go {}", go_args.join(" ")));
     let mut cmd = Command::new(go_path);
-    cmd.arg("install");
-    cmd.arg(&args.import_path);
+    cmd.args(go_args);
     cmd.env("GOBIN", &args.target_folder);
     let status = match cmd.status() {
         Ok(status) => status,

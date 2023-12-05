@@ -1,11 +1,9 @@
 use super::App;
-use crate::hosting::github;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::{download_executable, ArtifactType, DownloadArgs};
-use crate::output::Output;
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
-use crate::Result;
+use crate::{Output, Result};
 use big_s::S;
 
 pub struct Scc {}
@@ -28,8 +26,8 @@ impl App for Scc {
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         if let Some(executable) = download_executable(&DownloadArgs {
-            name: self.name(),
-            url: download_url(version, platform),
+            app_name: self.name(),
+            artifact_url: download_url(version, platform),
             artifact_type: ArtifactType::Archive {
                 file_to_extract: S(self.executable_filename(platform)),
             },
