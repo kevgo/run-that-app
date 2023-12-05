@@ -24,8 +24,8 @@ impl App for GolangCiLint {
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         download_executable(&DownloadArgs {
-            name: self.name(),
-            url: download_url(version, platform),
+            app_name: self.name(),
+            artifact_url: download_url(version, platform),
             artifact_type: ArtifactType::Archive {
                 file_to_extract: format!(
                     "golangci-lint-{version}-{os}-{cpu}/{executable}",
