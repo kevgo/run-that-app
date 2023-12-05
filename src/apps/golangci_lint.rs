@@ -43,8 +43,8 @@ impl App for GolangCiLint {
         ]
     }
 
-    fn versions(&self, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("golangci", "golangci_lint", output)
+    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
+        github::versions("golangci", "golangci_lint", amount, output)
     }
 }
 

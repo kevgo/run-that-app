@@ -40,8 +40,8 @@ impl App for Shfmt {
         ]
     }
 
-    fn versions(&self, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("mvdan", "sh", output)
+    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
+        github::versions("mvdan", "sh", amount, output)
     }
 }
 

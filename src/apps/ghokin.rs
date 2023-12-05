@@ -42,8 +42,8 @@ impl App for Ghokin {
         ]
     }
 
-    fn versions(&self, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("antham", "ghokin", output)
+    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
+        github::versions("antham", "ghokin", amount, output)
     }
 }
 

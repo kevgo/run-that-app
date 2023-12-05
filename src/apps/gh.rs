@@ -38,8 +38,8 @@ impl App for Gh {
         ]
     }
 
-    fn versions(&self, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("cli", "cli", output)
+    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
+        github::versions("cli", "cli", amount, output)
     }
 }
 

@@ -40,8 +40,8 @@ impl App for Gofumpt {
         ]
     }
 
-    fn versions(&self, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("mvdan", "gofumpt", output)
+    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
+        github::versions("mvdan", "gofumpt", amount, output)
     }
 }
 

@@ -43,8 +43,8 @@ impl App for Dprint {
         ]
     }
 
-    fn versions(&self, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("dprint", "dprint", output)
+    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
+        github::versions("dprint", "dprint", amount, output)
     }
 }
 

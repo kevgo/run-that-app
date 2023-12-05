@@ -42,8 +42,8 @@ impl App for ActionLint {
         ]
     }
 
-    fn versions(&self, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("rhysd", "actionlint", output)
+    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
+        github::versions("rhysd", "actionlint", amount, output)
     }
 }
 

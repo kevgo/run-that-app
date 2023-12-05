@@ -42,8 +42,8 @@ impl App for Goreleaser {
         ]
     }
 
-    fn versions(&self, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("goreleaser", "goreleaser", output)
+    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
+        github::versions("goreleaser", "goreleaser", amount, output)
     }
 }
 

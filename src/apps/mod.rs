@@ -42,7 +42,7 @@ pub trait App {
     fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>>;
 
     /// provides the available versions of this application
-    fn versions(&self, output: &dyn Output) -> Result<Vec<String>>;
+    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>>;
 }
 
 pub fn all() -> Vec<Box<dyn App>> {
