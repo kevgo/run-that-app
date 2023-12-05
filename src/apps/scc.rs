@@ -1,5 +1,6 @@
 use super::App;
-use crate::install::{compile_go, download_executable, ArtifactType, CompileArgs, DownloadArgs};
+use crate::install::compile_go::{compile_go, CompileArgs};
+use crate::install::{download_executable, ArtifactType, DownloadArgs};
 use crate::output::Output;
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
@@ -25,23 +26,23 @@ impl App for Scc {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        let download = DownloadArgs {
+        if let Some(executable) = download_executable(DownloadArgs {
             name: self.name(),
             url: download_url(version, platform),
             artifact_type: ArtifactType::Archive {
                 file_to_extract: S(self.executable_filename(platform)),
             },
             file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
-        };
-        if let Some(executable) = download_executable(download, output)? {
-            return Ok(Some(Executable));
+            output: (),
+        })? {
+            return Ok(Some(executable));
         }
-        let compile = CompileArgs {
+        compile_go(CompileArgs {
             import_path: format!("github.com/boyter/scc/v3@{version}"),
             target_folder: yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),
-        };
-        compile_go(compile, output)
+            output,
+        })
     }
 }
 
