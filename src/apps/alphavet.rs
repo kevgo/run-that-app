@@ -1,10 +1,9 @@
 use super::App;
 use crate::hosting::github;
 use crate::install::compile_go::{compile_go, CompileArgs};
-use crate::output::Output;
 use crate::platform::{Os, Platform};
 use crate::yard::{Executable, Yard};
-use crate::Result;
+use crate::{Output, Result};
 
 pub struct Alphavet {}
 

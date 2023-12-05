@@ -2,10 +2,9 @@ use super::App;
 use crate::hosting::github;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::{download_executable, ArtifactType, DownloadArgs};
-use crate::output::Output;
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
-use crate::Result;
+use crate::{Output, Result};
 
 pub struct Depth {}
 
