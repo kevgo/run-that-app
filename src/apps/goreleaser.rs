@@ -36,7 +36,7 @@ impl App for Goreleaser {
         })? {
             return Ok(Some(executable));
         }
-        compile_go(CompileArgs {
+        compile_go(&CompileArgs {
             import_path: format!("github.com/goreleaser/goreleaser@{version}"),
             target_folder: yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),

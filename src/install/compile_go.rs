@@ -7,7 +7,7 @@ use std::path::PathBuf;
 use std::process::Command;
 use which::which;
 
-pub fn compile_go(args: CompileArgs) -> Result<Option<Executable>> {
+pub fn compile_go(args: &CompileArgs) -> Result<Option<Executable>> {
     let Ok(go_path) = which("go") else {
         return Err(UserError::GoNotInstalled);
     };

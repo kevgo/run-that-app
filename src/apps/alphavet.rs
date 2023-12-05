@@ -25,7 +25,7 @@ impl App for Alphavet {
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         // the precompiled binaries are crashing on Linux
-        compile_go(CompileArgs {
+        compile_go(&CompileArgs {
             import_path: format!("github.com/skx/alphavet/cmd/alphavet@v{version}"),
             target_folder: yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),

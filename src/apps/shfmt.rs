@@ -34,7 +34,7 @@ impl App for Shfmt {
         })? {
             return Ok(Some(executable));
         }
-        compile_go(CompileArgs {
+        compile_go(&CompileArgs {
             import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}"),
             target_folder: yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),
