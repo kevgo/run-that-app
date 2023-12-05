@@ -32,7 +32,7 @@ fn inner() -> Result<ExitCode> {
     match cli_args.command {
         Command::Available { app, include_global, log } => {
             let output = output::StdErr { category: log };
-            Ok(cmd::available(app, include_global, &output)?)
+            cmd::available(app, include_global, &output)
         }
         Command::RunApp {
             app,
@@ -47,7 +47,7 @@ fn inner() -> Result<ExitCode> {
         Command::DisplayHelp => Ok(cmd::help()),
         Command::ShowPath { app, include_global, log } => {
             let output = output::StdErr { category: log };
-            Ok(cmd::show_path(app, include_global, &output)?)
+            cmd::show_path(app, include_global, &output)
         }
         Command::DisplayVersion => Ok(cmd::version()),
     }
