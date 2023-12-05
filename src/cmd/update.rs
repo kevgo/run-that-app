@@ -17,7 +17,7 @@ pub fn update(output: &dyn Output) -> Result<ExitCode> {
         if new_version == old_app.version {
             output.println("same");
         } else {
-            output.println(&format!("{} -> {new_version}", old_app.version));
+            output.println(&format!("{} => {new_version}", old_app.version));
         }
         new_config.apps.push(RequestedApp {
             name: old_app.name.to_string(),
