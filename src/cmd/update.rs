@@ -13,9 +13,10 @@ pub fn update(output: &dyn Output) -> Result<ExitCode> {
         let app = all_apps.lookup(&old_app.name)?;
         output.println(&format!("updating {} ...", app.name()));
         let versions = app.versions(1, output)?;
+        let new_version = versions.into_iter().nth(0).unwrap_or_else(|| old_app.version.clone());
         new_config.push(RequestedApp {
             name: app.name().to_string(),
-            version: versions.into_iter().nth(0).unwrap_or(old_app.version.to_string()),
+            version: new_version,
         })
     }
     // write new_config to disk
