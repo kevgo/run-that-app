@@ -6,7 +6,6 @@ use crate::{apps, config};
 use std::process::ExitCode;
 
 pub fn update(output: &dyn Output) -> Result<ExitCode> {
-    output.println("updating");
     let config = config::load()?;
     let mut new_config = Config::default();
     let all_apps = apps::all();
