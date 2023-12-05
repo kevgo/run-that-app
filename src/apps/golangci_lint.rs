@@ -1,7 +1,8 @@
 use super::App;
-use crate::install::{ArtifactType, DownloadArgs, InstallationMethod};
+use crate::install::{download_executable, ArtifactType, DownloadArgs};
+use crate::output::Output;
 use crate::platform::{Cpu, Os, Platform};
-use crate::yard::Yard;
+use crate::yard::{Executable, Yard};
 use crate::Result;
 
 pub struct GolangCiLint {}
@@ -23,33 +24,21 @@ impl App for GolangCiLint {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        if let Some(executable) = download_executable(DownloadArgs {
-            name: todo!(),
-            url: todo!(),
-            artifact_type: todo!(),
-            file_on_disk: todo!(),
+        download_executable(DownloadArgs {
+            name: self.name(),
+            url: download_url(version, platform),
+            artifact_type: ArtifactType::Archive {
+                file_to_extract: format!(
+                    "golangci-lint-{version}-{os}-{cpu}/{executable}",
+                    os = os_text(platform.os),
+                    cpu = cpu_text(platform.cpu),
+                    executable = self.executable_filename(platform)
+                ),
+            },
+            file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             output,
-        })? {
-            return Ok(Some(executable));
-        }
-    }
-    fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>> {
-        vec![
-            Box::new(DownloadArgs {
-                name: self.name(),
-                url: download_url(version, platform),
-                artifact_type: ArtifactType::Archive {
-                    file_to_extract: format!(
-                        "golangci-lint-{version}-{os}-{cpu}/{executable}",
-                        os = os_text(platform.os),
-                        cpu = cpu_text(platform.cpu),
-                        executable = self.executable_filename(platform)
-                    ),
-                },
-                file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
-            }),
-            // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
-        ]
+        })
+        // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
     }
 }
 
