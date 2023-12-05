@@ -18,7 +18,13 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
     };
     // parse the response
     let response_text = response.as_str().unwrap();
-    let releases: Vec<Release> = json::from_str(response_text).unwrap();
+    let releases: Vec<Release> = match json::from_str(response_text) {
+        Ok(releases) => releases,
+        Err(err) => {
+            println!("Cannot de-serialize this payload:\n{}", response_text);
+            panic!("{}", err.to_string());
+        }
+    };
     let versions = releases.into_iter().map(|release| release.version().to_string()).collect();
     Ok(versions)
 }
