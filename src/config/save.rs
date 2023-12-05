@@ -4,7 +4,7 @@ use crate::Result;
 use std::fs::OpenOptions;
 use std::io::Write;
 
-pub fn save(config: Config) -> Result<()> {
+pub fn save(config: &Config) -> Result<()> {
     let mut file = OpenOptions::new()
         .write(true)
         .truncate(true)
