@@ -18,7 +18,7 @@ use crate::output::Output;
 use crate::platform::Platform;
 use crate::yard::Yard;
 use crate::Result;
-use std::slice;
+use std::slice::Iter;
 
 pub trait App {
     /// the name by which the user can select this application at the run-that-app CLI
@@ -37,35 +37,92 @@ pub trait App {
 }
 
 pub fn all() -> Apps {
-    Apps(vec![
-        Box::new(actionlint::ActionLint {}),
-        Box::new(alphavet::Alphavet {}),
-        Box::new(depth::Depth {}),
-        Box::new(dprint::Dprint {}),
-        Box::new(gh::Gh {}),
-        Box::new(ghokin::Ghokin {}),
-        Box::new(gofumpt::Gofumpt {}),
-        Box::new(golangci_lint::GolangCiLint {}),
-        Box::new(goreleaser::Goreleaser {}),
-        Box::new(scc::Scc {}),
-        Box::new(shellcheck::ShellCheck {}),
-        Box::new(shfmt::Shfmt {}),
-    ])
+    Apps {
+        list: vec![
+            Box::new(actionlint::ActionLint {}),
+            Box::new(alphavet::Alphavet {}),
+            Box::new(depth::Depth {}),
+            Box::new(dprint::Dprint {}),
+            Box::new(gh::Gh {}),
+            Box::new(ghokin::Ghokin {}),
+            Box::new(gofumpt::Gofumpt {}),
+            Box::new(golangci_lint::GolangCiLint {}),
+            Box::new(goreleaser::Goreleaser {}),
+            Box::new(scc::Scc {}),
+            Box::new(shellcheck::ShellCheck {}),
+            Box::new(shfmt::Shfmt {}),
+        ],
+    }
 }
 
-/// a list of applications
-pub struct Apps(pub Vec<Box<dyn App>>);
+pub struct Apps {
+    pub list: Vec<Box<dyn App>>,
+}
 
 impl Apps {
-    pub fn iter(&self) -> slice::Iter<'_, Box<dyn App>> {
-        self.0.iter()
+    /// provides an `Iterator` over the applications
+    pub fn iter(&self) -> Iter<'_, Box<dyn App>> {
+        self.list.iter()
     }
 
-    pub fn lookup(&self, name: &str) -> Option<&Box<dyn App>> {
-        self.0.iter().find(|app| app.name() == name)
+    /// provides the app with the given name
+    pub fn lookup(self, name: &str) -> Result<Box<dyn App>> {
+        for app in self.list {
+            if app.name() == name {
+                return Ok(app);
+            }
+        }
+        Err(UserError::UnknownApp(name.to_string()))
     }
 
-    pub fn longest_name(&self) -> usize {
-        self.0.iter().map(|app| app.name().len()).max().unwrap() + 1
+    /// provides the length of the name of the app with the longest name
+    pub fn longest_name_length(&self) -> usize {
+        self.iter().map(|app| app.name().len()).max().unwrap()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    mod apps {
+        use crate::apps::{actionlint, dprint, shellcheck, Apps};
+
+        #[test]
+        fn longest_name_length() {
+            let apps = Apps {
+                list: vec![
+                    Box::new(dprint::Dprint {}),
+                    Box::new(actionlint::ActionLint {}),
+                    Box::new(shellcheck::ShellCheck {}),
+                ],
+            };
+            let have = apps.longest_name_length();
+            assert_eq!(have, 10);
+        }
+
+        mod lookup {
+            use crate::apps::{dprint, shellcheck, Apps};
+            use crate::UserError;
+            use big_s::S;
+
+            #[test]
+            fn known_app() {
+                let apps = Apps {
+                    list: vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})],
+                };
+                let have = apps.lookup("shellcheck").unwrap();
+                assert_eq!(have.name(), "shellcheck");
+            }
+
+            #[test]
+            fn unknown_app() {
+                let apps = Apps {
+                    list: vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})],
+                };
+                let Err(err) = apps.lookup("zonk") else {
+                    panic!("expected an error here");
+                };
+                assert_eq!(err, UserError::UnknownApp(S("zonk")));
+            }
+        }
     }
 }
