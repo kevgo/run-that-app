@@ -11,7 +11,7 @@ pub fn update(output: &dyn Output) -> Result<ExitCode> {
     let all_apps = apps::all();
     for old_app in &old_config.apps {
         let app = all_apps.lookup(&old_app.name)?;
-        output.print(&format!("updating {} ...", old_app.name));
+        output.print(&format!("updating {} ... ", old_app.name));
         let versions = app.versions(1, output)?;
         let new_version = versions.into_iter().next().unwrap_or_else(|| old_app.version.clone());
         if new_version == old_app.version {
