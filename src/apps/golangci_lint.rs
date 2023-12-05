@@ -24,7 +24,7 @@ impl App for GolangCiLint {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        download_executable(DownloadArgs {
+        download_executable(&DownloadArgs {
             name: self.name(),
             url: download_url(version, platform),
             artifact_type: ArtifactType::Archive {

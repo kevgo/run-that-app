@@ -8,7 +8,7 @@ use std::fs;
 use std::path::PathBuf;
 
 /// downloads a pre-compiled binary from the internet
-pub fn download_executable(args: DownloadArgs) -> Result<Option<Executable>> {
+pub fn download_executable(args: &DownloadArgs) -> Result<Option<Executable>> {
     args.output.log("download/http", &format!("downloading {} ... ", args.url.cyan()));
     let Ok(response) = minreq::get(&args.url).send() else {
         args.output.println(&format!("{}", "not online".red()));
