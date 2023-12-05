@@ -9,6 +9,9 @@ use crate::Result;
 
 pub struct Goreleaser {}
 
+const ORG: &str = "goreleaser";
+const REPO: &str = "goreleaser";
+
 impl App for Goreleaser {
     fn name(&self) -> &'static str {
         "goreleaser"
@@ -38,7 +41,7 @@ impl App for Goreleaser {
             return Ok(Some(executable));
         }
         compile_go(&CompileArgs {
-            import_path: format!("github.com/goreleaser/goreleaser@{version}"),
+            import_path: format!("github.com/{ORG}/{REPO}@{version}"),
             target_folder: yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),
             output,
@@ -46,13 +49,13 @@ impl App for Goreleaser {
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("goreleaser", "goreleaser", amount, output)
+        github::versions(ORG, REPO, amount, output)
     }
 }
 
 fn download_url(version: &str, platform: Platform) -> String {
     format!(
-        "https://github.com/goreleaser/goreleaser/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}",
+        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}",
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)

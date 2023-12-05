@@ -10,6 +10,9 @@ use big_s::S;
 
 pub struct Dprint {}
 
+const ORG: &str = "dprint";
+const REPO: &str = "dprint";
+
 impl App for Dprint {
     fn name(&self) -> &'static str {
         "dprint"
@@ -47,13 +50,13 @@ impl App for Dprint {
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("dprint", "dprint", amount, output)
+        github::versions(ORG, REPO, amount, output)
     }
 }
 
 fn download_url(version: &str, platform: Platform) -> String {
     format!(
-        "https://github.com/dprint/dprint/releases/download/{version}/dprint-{cpu}-{os}.zip",
+        "https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip",
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu)
     )

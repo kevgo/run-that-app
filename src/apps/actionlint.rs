@@ -9,6 +9,9 @@ use crate::Result;
 
 pub struct ActionLint {}
 
+const ORG: &str = "rhysd";
+const REPO: &str = "actionlint";
+
 impl App for ActionLint {
     fn name(&self) -> &'static str {
         "actionlint"
@@ -38,7 +41,7 @@ impl App for ActionLint {
             return Ok(Some(executable));
         }
         compile_go(&CompileArgs {
-            import_path: format!("github.com/rhysd/actionlint/cmd/actionlint@{version}"),
+            import_path: format!("github.com/{ORG}/{REPO}/cmd/actionlint@{version}"),
             target_folder: yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),
             output,
@@ -46,7 +49,7 @@ impl App for ActionLint {
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("rhysd", "actionlint", amount, output)
+        github::versions(ORG, REPO, amount, output)
     }
 }
 

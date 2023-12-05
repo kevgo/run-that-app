@@ -8,6 +8,9 @@ use crate::Result;
 
 pub struct Alphavet {}
 
+const ORG: &str = "skx";
+const REPO: &str = "alphavet";
+
 impl App for Alphavet {
     fn name(&self) -> &'static str {
         "alphavet"
@@ -27,7 +30,7 @@ impl App for Alphavet {
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         // the precompiled binaries are crashing on Linux
         compile_go(&CompileArgs {
-            import_path: format!("github.com/skx/alphavet/cmd/alphavet@v{version}"),
+            import_path: format!("github.com/{ORG}/{REPO}/cmd/alphavet@v{version}"),
             target_folder: yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),
             output,
@@ -35,6 +38,6 @@ impl App for Alphavet {
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("skx", "alphavet", amount, output)
+        github::versions(ORG, REPO, amount, output)
     }
 }

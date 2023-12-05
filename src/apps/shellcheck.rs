@@ -8,6 +8,9 @@ use crate::Result;
 
 pub struct ShellCheck {}
 
+const ORG: &str = "koalaman";
+const REPO: &str = "shellcheck";
+
 impl App for ShellCheck {
     fn name(&self) -> &'static str {
         "shellcheck"
@@ -37,13 +40,13 @@ impl App for ShellCheck {
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("koalaman", "shellcheck", amount, output)
+        github::versions(ORG, REPO, amount, output)
     }
 }
 
 fn download_url(version: &str, platform: Platform) -> String {
     format!(
-        "https://github.com/koalaman/shellcheck/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}",
+        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}",
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)

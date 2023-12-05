@@ -9,6 +9,9 @@ use crate::Result;
 
 pub struct Gofumpt {}
 
+const ORG: &str = "mvdan";
+const REPO: &str = "gofumpt";
+
 impl App for Gofumpt {
     fn name(&self) -> &'static str {
         "gofumpt"
@@ -44,13 +47,13 @@ impl App for Gofumpt {
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("mvdan", "gofumpt", amount, output)
+        github::versions(ORG, REPO, amount, output)
     }
 }
 
 fn download_url(version: &str, platform: Platform) -> String {
     format!(
-        "https://github.com/mvdan/gofumpt/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}{ext}",
+        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}{ext}",
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
