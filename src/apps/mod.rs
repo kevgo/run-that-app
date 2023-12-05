@@ -74,3 +74,32 @@ impl Apps {
         self.iter().map(|app| app.name().len()).max().unwrap() + 1
     }
 }
+
+#[cfg(test)]
+mod tests {
+    mod apps {
+
+        mod longest_name {
+            use super::super::super::Apps;
+            use crate::apps::{actionlint, dprint, shellcheck};
+
+            #[test]
+            fn normal() {
+                let apps = Apps {
+                    list: vec![
+                        Box::new(dprint::Dprint {}),
+                        Box::new(actionlint::ActionLint {}),
+                        Box::new(shellcheck::ShellCheck {}),
+                    ],
+                };
+                let have = apps.longest_name();
+                assert_eq!(have, 11);
+            }
+
+            #[test]
+            fn empty() {
+                //
+            }
+        }
+    }
+}
