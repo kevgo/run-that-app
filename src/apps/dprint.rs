@@ -1,4 +1,5 @@
 use super::App;
+use crate::hosting::github;
 use crate::install::compile_rust::{compile_rust, CompileArgs};
 use crate::install::{download_executable, ArtifactType, DownloadArgs};
 use crate::output::Output;
