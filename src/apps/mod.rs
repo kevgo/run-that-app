@@ -18,7 +18,7 @@ use crate::install::InstallationMethod;
 use crate::platform::Platform;
 use crate::yard::Yard;
 use crate::Result;
-use std::slice;
+use std::slice::Iter;
 
 pub trait App {
     /// the name by which the user can select this application at the run-that-app CLI
@@ -58,7 +58,7 @@ pub struct Apps {
 
 impl Apps {
     /// provides an `Iterator` over the applications
-    pub fn iter(&self) -> slice::Iter<'_, Box<dyn App>> {
+    pub fn iter(&self) -> Iter<'_, Box<dyn App>> {
         self.list.iter()
     }
 
