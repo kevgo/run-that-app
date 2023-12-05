@@ -70,7 +70,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
         });
     }
     if let Some(app) = requested_app {
-        if multiple_true(&vec![show_path, indicate_available, update]) {
+        if multiple_true(&[show_path, indicate_available, update]) {
             Err(UserError::MultipleCommandsGiven)
         } else if indicate_available {
             Ok(Args {
