@@ -43,7 +43,7 @@ impl App for Depth {
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("KileBanks", "depth", amount, output)
+        github::versions("KyleBanks", "depth", amount, output)
     }
 }
 
