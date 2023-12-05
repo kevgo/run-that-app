@@ -52,7 +52,7 @@ fn inner() -> Result<ExitCode> {
         }
         Command::Update { log } => {
             let output = output::StdErr { category: log };
-            Ok(cmd::update(&output))
+            cmd::update(&output)
         }
         Command::DisplayVersion => Ok(cmd::version()),
     }

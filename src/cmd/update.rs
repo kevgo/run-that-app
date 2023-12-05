@@ -1,8 +1,10 @@
+use crate::config;
+use crate::output::Output;
+use crate::Result;
 use std::process::ExitCode;
 
-use crate::output::Output;
-
-pub fn update(output: &dyn Output) -> ExitCode {
+pub fn update(output: &dyn Output) -> Result<ExitCode> {
+    let config = config::load()?;
     output.println("updating");
-    ExitCode::SUCCESS
+    Ok(ExitCode::SUCCESS)
 }
