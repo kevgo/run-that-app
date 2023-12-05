@@ -5,6 +5,7 @@ mod cmd;
 mod config;
 mod error;
 mod filesystem;
+mod hosting;
 mod install;
 mod output;
 mod platform;
@@ -47,6 +48,10 @@ fn inner() -> Result<ExitCode> {
         Command::ShowPath { app, include_global, log } => {
             let output = output::StdErr { category: log };
             cmd::show_path(app, include_global, &output)
+        }
+        Command::Update { log } => {
+            let output = output::StdErr { category: log };
+            cmd::update(&output)
         }
         Command::DisplayVersion => Ok(cmd::version()),
     }

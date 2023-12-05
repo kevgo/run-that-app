@@ -1,4 +1,5 @@
 use super::App;
+use crate::hosting::github;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::platform::{Os, Platform};
 use crate::yard::{Executable, Yard};
@@ -30,5 +31,9 @@ impl App for Alphavet {
             executable_filename: self.executable_filename(platform),
             output,
         })
+    }
+
+    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
+        github::versions("skx", "alphavet", amount, output)
     }
 }

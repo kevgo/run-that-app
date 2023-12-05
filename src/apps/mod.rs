@@ -30,6 +30,9 @@ pub trait App {
     fn homepage(&self) -> &'static str;
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>>;
+
+    /// provides the available versions of this application
+    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>>;
 }
 
 pub fn all() -> Apps {

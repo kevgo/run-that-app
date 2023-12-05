@@ -17,6 +17,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut include_global = false;
     let mut show_path = false;
     let mut indicate_available = false;
+    let mut update = false;
     let mut optional = false;
     for arg in cli_args {
         if requested_app.is_none() {
@@ -44,6 +45,10 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 show_path = true;
                 continue;
             }
+            if &arg == "--update" {
+                update = true;
+                continue;
+            }
             if arg.starts_with('-') {
                 let (key, value) = arg.split_once('=').unwrap_or((&arg, ""));
                 if key == "--log" || key == "-l" {
@@ -59,10 +64,15 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             app_args.push(arg);
         }
     }
+    if multiple_true(&[show_path, indicate_available, update]) {
+        return Err(UserError::MultipleCommandsGiven);
+    } else if update {
+        return Ok(Args {
+            command: Command::Update { log },
+        });
+    }
     if let Some(app) = requested_app {
-        if show_path && indicate_available {
-            Err(UserError::MultipleCommandsGiven)
-        } else if indicate_available {
+        if indicate_available {
             Ok(Args {
                 command: Command::Available { app, include_global, log },
             })
@@ -86,6 +96,11 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     } else {
         Ok(Args { command: Command::DisplayHelp })
     }
+}
+
+/// indicates whether the given values contain two or more true values
+fn multiple_true(values: &[bool]) -> bool {
+    values.iter().filter(|&&value| value).count() >= 2
 }
 
 #[cfg(test)]
@@ -431,6 +446,30 @@ mod tests {
                 });
                 pretty::assert_eq!(have, want);
             }
+        }
+    }
+
+    mod multiple_true {
+        use super::super::multiple_true;
+
+        #[test]
+        fn none_true() {
+            assert!(!multiple_true(&[false, false, false]));
+        }
+
+        #[test]
+        fn one_true() {
+            assert!(!multiple_true(&[false, true, false]));
+        }
+
+        #[test]
+        fn two_true() {
+            assert!(multiple_true(&[true, true, false]));
+        }
+
+        #[test]
+        fn all_true() {
+            assert!(multiple_true(&[true, true, true]));
         }
     }
 }

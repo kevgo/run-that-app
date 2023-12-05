@@ -1,4 +1,5 @@
 use super::App;
+use crate::hosting::github;
 use crate::install::{download_executable, ArtifactType, DownloadArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
@@ -33,6 +34,10 @@ impl App for Gh {
             output,
         })
         // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
+    }
+
+    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
+        github::versions("cli", "cli", amount, output)
     }
 }
 

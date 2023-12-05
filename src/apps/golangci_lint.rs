@@ -1,4 +1,5 @@
 use super::App;
+use crate::hosting::github;
 use crate::install::{download_executable, ArtifactType, DownloadArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
@@ -38,6 +39,10 @@ impl App for GolangCiLint {
             output,
         })
         // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
+    }
+
+    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
+        github::versions("golangci", "golangci_lint", amount, output)
     }
 }
 

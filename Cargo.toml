@@ -9,6 +9,7 @@ big_s = "1.0.2"
 colored = "2.0.4"
 dirs = "5.0.1"
 flate2 = "1.0.28"
+miniserde = "0.1.34"
 minreq = { version = "2.11.0", features = ["https"] }
 tar = "0.4.40"
 which = "5.0.0"

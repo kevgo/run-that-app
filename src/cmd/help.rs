@@ -19,6 +19,7 @@ pub fn print_options() {
 Options:
 --ignore-unavailable             if an app is not available for the current platform, create a stub that does nothing
 --include-global                 if an app is not available for the current platform, use the globally installed app if one exists
+--update                         updates the versions in .tool-versions to the latest available
 --available                      indicates via the exit code whether the given application is available on this platform
 --show-path                      displays the path to the installed executable of the given application
 --log, -l                        enable logging of all categories

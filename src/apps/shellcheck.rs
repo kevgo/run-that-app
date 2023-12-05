@@ -1,4 +1,5 @@
 use super::App;
+use crate::hosting::github;
 use crate::install::{download_executable, ArtifactType, DownloadArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
@@ -32,6 +33,10 @@ impl App for ShellCheck {
             file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             output,
         })
+    }
+
+    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
+        github::versions("koalaman", "shellcheck", amount, output)
     }
 }
 
