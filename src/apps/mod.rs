@@ -65,10 +65,10 @@ impl Apps {
     }
 
     /// provides the app with the given name
-    pub fn lookup(self, name: &str) -> Result<Box<dyn App>> {
-        for app in self.list {
+    pub fn lookup(&self, name: &str) -> Result<&dyn App> {
+        for app in &self.list {
             if app.name() == name {
-                return Ok(app);
+                return Ok(app.as_ref());
             }
         }
         Err(UserError::UnknownApp(name.to_string()))
