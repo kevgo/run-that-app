@@ -454,22 +454,22 @@ mod tests {
 
         #[test]
         fn none_true() {
-            assert!(!multiple_true(&vec![false, false, false]));
+            assert!(!multiple_true(&[false, false, false]));
         }
 
         #[test]
         fn one_true() {
-            assert!(!multiple_true(&vec![false, true, false]));
+            assert!(!multiple_true(&[false, true, false]));
         }
 
         #[test]
         fn two_true() {
-            assert!(multiple_true(&vec![true, true, false]));
+            assert!(multiple_true(&[true, true, false]));
         }
 
         #[test]
         fn all_true() {
-            assert!(multiple_true(&vec![true, true, true]));
+            assert!(multiple_true(&[true, true, true]));
         }
     }
 }
