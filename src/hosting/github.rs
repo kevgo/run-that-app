@@ -37,6 +37,7 @@ mod tests {
     use miniserde::json;
 
     #[test]
+    #[allow(clippy::too_many_lines)]
     fn parse() {
         let response = r#"
 [
