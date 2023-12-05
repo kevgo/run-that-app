@@ -18,6 +18,7 @@ use crate::output::Output;
 use crate::platform::Platform;
 use crate::yard::Yard;
 use crate::Result;
+use crate::UserError;
 use std::slice::Iter;
 
 pub trait App {
