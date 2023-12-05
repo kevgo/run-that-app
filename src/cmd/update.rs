@@ -6,12 +6,12 @@ use crate::{apps, config};
 use std::process::ExitCode;
 
 pub fn update(output: &dyn Output) -> Result<ExitCode> {
-    let config = config::load()?;
+    let old_config = config::load()?;
     let mut new_config = Config::default();
     let all_apps = apps::all();
-    for old_app in &config.apps {
+    for old_app in &old_config.apps {
         let app = all_apps.lookup(&old_app.name)?;
-        output.println(&format!("updating {} ...", app.name()));
+        output.println(&format!("updating {} ...", old_app.name));
         let versions = app.versions(1, output)?;
         let new_version = versions.into_iter().next().unwrap_or_else(|| old_app.version.clone());
         new_config.apps.push(RequestedApp {
