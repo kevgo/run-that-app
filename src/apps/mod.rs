@@ -61,8 +61,8 @@ impl Apps {
         self.list.iter()
     }
 
-    pub fn lookup(&self, name: &str) -> Result<&Box<dyn App>> {
-        for app in &self.list {
+    pub fn lookup(self, name: &str) -> Result<Box<dyn App>> {
+        for app in self.list {
             if app.name() == name {
                 return Ok(app);
             }
