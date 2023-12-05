@@ -25,6 +25,5 @@ pub fn update(output: &dyn Output) -> Result<ExitCode> {
         });
     }
     config::save(&new_config)?;
-    // write new_config to disk
     Ok(ExitCode::SUCCESS)
 }
