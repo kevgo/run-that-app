@@ -13,21 +13,12 @@ mod scc;
 mod shellcheck;
 mod shfmt;
 
-use crate::error::UserError;
 use crate::install::InstallationMethod;
 use crate::output::Output;
 use crate::platform::Platform;
 use crate::yard::Yard;
 use crate::Result;
-
-pub fn lookup(name: &str) -> Result<Box<dyn App>> {
-    for app in all() {
-        if app.name() == name {
-            return Ok(app);
-        }
-    }
-    Err(UserError::UnknownApp(name.to_string()))
-}
+use std::slice;
 
 pub trait App {
     /// the name by which the user can select this application at the run-that-app CLI
@@ -45,8 +36,8 @@ pub trait App {
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>>;
 }
 
-pub fn all() -> Vec<Box<dyn App>> {
-    vec![
+pub fn all() -> Apps {
+    Apps(vec![
         Box::new(actionlint::ActionLint {}),
         Box::new(alphavet::Alphavet {}),
         Box::new(depth::Depth {}),
@@ -59,5 +50,22 @@ pub fn all() -> Vec<Box<dyn App>> {
         Box::new(scc::Scc {}),
         Box::new(shellcheck::ShellCheck {}),
         Box::new(shfmt::Shfmt {}),
-    ]
+    ])
+}
+
+/// a list of applications
+pub struct Apps(pub Vec<Box<dyn App>>);
+
+impl Apps {
+    pub fn iter(&self) -> slice::Iter<'_, Box<dyn App>> {
+        self.0.iter()
+    }
+
+    pub fn lookup(&self, name: &str) -> Option<&Box<dyn App>> {
+        self.0.iter().find(|app| app.name() == name)
+    }
+
+    pub fn longest_name(&self) -> usize {
+        self.0.iter().map(|app| app.name().len()).max().unwrap() + 1
+    }
 }

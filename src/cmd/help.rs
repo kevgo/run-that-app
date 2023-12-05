@@ -37,8 +37,8 @@ fn print_examples() {
 pub fn print_installable_apps() {
     println!("\nInstallable applications:");
     let apps = apps::all();
-    let max_width = apps.iter().map(|app| app.name().len()).max().unwrap() + 1;
-    for app in apps {
+    let max_width = apps.longest_name();
+    for app in apps.iter() {
         println!("{:max_width$} {}", app.name(), app.homepage());
     }
     println!("\nRequest additional apps at https://github.com/kevgo/run-that-app/issues.");
