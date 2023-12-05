@@ -9,6 +9,9 @@ use big_s::S;
 
 pub struct Scc {}
 
+const ORG: &str = "boyter";
+const REPO: &str = "scc";
+
 impl App for Scc {
     fn name(&self) -> &'static str {
         "scc"
@@ -38,7 +41,7 @@ impl App for Scc {
             return Ok(Some(executable));
         }
         compile_go(&CompileArgs {
-            import_path: format!("github.com/boyter/scc/v3@{version}"),
+            import_path: format!("github.com/{ORG}/{REPO}/v3@{version}"),
             target_folder: yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),
             output,
@@ -46,13 +49,13 @@ impl App for Scc {
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("boyter", "scc", amount, output)
+        github::versions(ORG, REPO, amount, output)
     }
 }
 
 fn download_url(version: &str, platform: Platform) -> String {
     format!(
-        "https://github.com/boyter/scc/releases/download/v{version}/scc_{version}_{os}_{cpu}.{ext}",
+        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/scc_{version}_{os}_{cpu}.{ext}",
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)

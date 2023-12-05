@@ -7,6 +7,9 @@ use crate::{Output, Result};
 
 pub struct Gh {}
 
+const ORG: &str = "cli";
+const REPO: &str = "cli";
+
 impl App for Gh {
     fn name(&self) -> &'static str {
         "gh"
@@ -37,13 +40,13 @@ impl App for Gh {
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("cli", "cli", amount, output)
+        github::versions(ORG, REPO, amount, output)
     }
 }
 
 fn download_url(version: &str, platform: Platform) -> String {
     format!(
-        "https://github.com/cli/cli/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}",
+        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}",
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)

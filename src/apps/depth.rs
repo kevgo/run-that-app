@@ -8,6 +8,9 @@ use crate::{Output, Result};
 
 pub struct Depth {}
 
+const ORG: &str = "KyleBanks";
+const REPO: &str = "depth";
+
 impl App for Depth {
     fn name(&self) -> &'static str {
         "depth"
@@ -35,7 +38,7 @@ impl App for Depth {
             return Ok(Some(executable));
         }
         compile_go(&CompileArgs {
-            import_path: format!("github.com/KyleBanks/depth/cmd/depth@v{version}"),
+            import_path: format!("github.com/{ORG}/{REPO}/cmd/depth@v{version}"),
             target_folder: yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),
             output,
@@ -43,13 +46,13 @@ impl App for Depth {
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("KyleBanks", "depth", amount, output)
+        github::versions(ORG, REPO, amount, output)
     }
 }
 
 fn download_url(version: &str, platform: Platform) -> String {
     format!(
-        "https://github.com/KyleBanks/depth/releases/download/v{version}/depth_{version}_{os}_{cpu}",
+        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}",
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu)
     )

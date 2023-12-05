@@ -7,6 +7,9 @@ use crate::{Output, Result};
 
 pub struct GolangCiLint {}
 
+const ORG: &str = "golangci";
+const REPO: &str = "golangci-lint";
+
 impl App for GolangCiLint {
     fn name(&self) -> &'static str {
         "golangci-lint"
@@ -42,13 +45,13 @@ impl App for GolangCiLint {
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("golangci", "golangci_lint", amount, output)
+        github::versions(ORG, REPO, amount, output)
     }
 }
 
 fn download_url(version: &str, platform: Platform) -> String {
     format!(
-        "https://github.com/golangci/golangci-lint/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}",
+        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}",
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)

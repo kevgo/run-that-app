@@ -8,6 +8,9 @@ use crate::{Output, Result};
 
 pub struct Ghokin {}
 
+const ORG: &str = "antham";
+const REPO: &str = "ghokin";
+
 impl App for Ghokin {
     fn name(&self) -> &'static str {
         "ghokin"
@@ -37,7 +40,7 @@ impl App for Ghokin {
             return Ok(Some(executable));
         }
         compile_go(&CompileArgs {
-            import_path: format!("github.com/antham/ghokin/v3@v{version}"),
+            import_path: format!("github.com/{ORG}/{REPO}/v3@v{version}"),
             target_folder: yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),
             output,
@@ -51,7 +54,7 @@ impl App for Ghokin {
 
 fn download_url(version: &str, platform: Platform) -> String {
     format!(
-        "https://github.com/antham/ghokin/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz",
+        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz",
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu),
     )

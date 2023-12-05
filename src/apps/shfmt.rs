@@ -8,6 +8,9 @@ use crate::{Output, Result};
 
 pub struct Shfmt {}
 
+const ORG: &str = "mvdan";
+const REPO: &str = "sh";
+
 impl App for Shfmt {
     fn name(&self) -> &'static str {
         "shfmt"
@@ -43,13 +46,13 @@ impl App for Shfmt {
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("mvdan", "sh", amount, output)
+        github::versions(ORG, REPO, amount, output)
     }
 }
 
 fn download_url(version: &str, platform: Platform) -> String {
     format!(
-        "https://github.com/mvdan/sh/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}",
+        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}",
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
