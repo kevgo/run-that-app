@@ -70,7 +70,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
         });
     }
     if let Some(app) = requested_app {
-        if multiple_true(vec![show_path, indicate_available, update]) {
+        if multiple_true(&vec![show_path, indicate_available, update]) {
             Err(UserError::MultipleCommandsGiven)
         } else if indicate_available {
             Ok(Args {
@@ -99,7 +99,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
 }
 
 /// indicates whether the given values contain two or more true values
-fn multiple_true(values: Vec<bool>) -> bool {
+fn multiple_true(values: &[bool]) -> bool {
     values.iter().filter(|&&value| value).count() >= 2
 }
 
@@ -454,22 +454,22 @@ mod tests {
 
         #[test]
         fn none_true() {
-            assert!(!multiple_true(vec![false, false, false]));
+            assert!(!multiple_true(&vec![false, false, false]));
         }
 
         #[test]
         fn one_true() {
-            assert!(!multiple_true(vec![false, true, false]));
+            assert!(!multiple_true(&vec![false, true, false]));
         }
 
         #[test]
         fn two_true() {
-            assert!(multiple_true(vec![true, true, false]));
+            assert!(multiple_true(&vec![true, true, false]));
         }
 
         #[test]
         fn all_true() {
-            assert!(multiple_true(vec![true, true, true]));
+            assert!(multiple_true(&vec![true, true, true]));
         }
     }
 }
