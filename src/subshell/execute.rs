@@ -47,8 +47,8 @@ mod tests {
             let tempdir = tempfile::tempdir().unwrap();
             let executable_path = tempdir.path().join("executable");
             let mut file = fs::File::create(&executable_path).unwrap();
-            file.write_all(b"#!/bin/sh\necho hello").unwrap();
             file.set_permissions(fs::Permissions::from_mode(0o744)).unwrap();
+            file.write_all(b"#!/bin/sh\necho hello").unwrap();
             drop(file);
             let have = execute(Executable(executable_path), vec![]).unwrap();
             // HACK: is there a better way to compare ExitCode?
