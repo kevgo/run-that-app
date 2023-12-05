@@ -29,8 +29,7 @@ pub fn load_or_install(mut requested_app: RequestedApp, include_global: bool, ou
         };
         requested_app.version = configured_app.version;
     }
-    let apps = apps::all();
-    let app = apps.lookup(&requested_app.name)?;
+    let app = apps::all().lookup(&requested_app.name)?;
     let platform = platform::detect(output)?;
     let yard = yard::load_or_create(&yard::production_location()?)?;
     if let Some(executable) = yard.load_app(&requested_app, app.executable_filename(platform)) {
