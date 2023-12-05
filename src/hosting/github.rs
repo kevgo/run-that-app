@@ -20,7 +20,7 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
     let releases: Vec<Release> = match json::from_str(response_text) {
         Ok(releases) => releases,
         Err(err) => {
-            println!("Cannot de-serialize this payload:\n{}", response_text);
+            println!("Cannot de-serialize this payload:\n{response_text}");
             panic!("{}", err.to_string());
         }
     };
