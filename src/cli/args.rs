@@ -64,15 +64,15 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             app_args.push(arg);
         }
     }
-    if update {
+    if multiple_true(&[show_path, indicate_available, update]) {
+        return Err(UserError::MultipleCommandsGiven);
+    } else if update {
         return Ok(Args {
             command: Command::Update { log },
         });
     }
     if let Some(app) = requested_app {
-        if multiple_true(&[show_path, indicate_available, update]) {
-            Err(UserError::MultipleCommandsGiven)
-        } else if indicate_available {
+        if indicate_available {
             Ok(Args {
                 command: Command::Available { app, include_global, log },
             })
