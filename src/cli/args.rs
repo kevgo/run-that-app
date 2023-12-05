@@ -64,6 +64,11 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             app_args.push(arg);
         }
     }
+    if update {
+        return Ok(Args {
+            command: Command::Update { log },
+        });
+    }
     if let Some(app) = requested_app {
         if multiple_true(vec![show_path, indicate_available, update]) {
             Err(UserError::MultipleCommandsGiven)
@@ -74,10 +79,6 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
         } else if show_path {
             Ok(Args {
                 command: Command::ShowPath { app, include_global, log },
-            })
-        } else if update {
-            Ok(Args {
-                command: Command::Update { log },
             })
         } else {
             Ok(Args {
