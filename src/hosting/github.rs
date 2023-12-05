@@ -6,6 +6,7 @@ use miniserde::{json, Deserialize};
 
 pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases?per_page={amount}");
+    output.log("HTTP", &format!("downloading {url}"));
     let get = minreq::get(url)
         .with_param("per_page", amount.to_string())
         .with_header("Accept", "application/vnd.github+json")
@@ -15,9 +16,14 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
         output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
     };
-    // parse the response
     let response_text = response.as_str().unwrap();
-    let releases: Vec<Release> = json::from_str(response_text).unwrap();
+    let releases: Vec<Release> = match json::from_str(response_text) {
+        Ok(releases) => releases,
+        Err(err) => {
+            println!("Cannot de-serialize this payload:\n{response_text}");
+            panic!("{}", err.to_string());
+        }
+    };
     let versions = releases.into_iter().map(|release| release.version().to_string()).collect();
     Ok(versions)
 }
