@@ -57,10 +57,12 @@ pub struct Apps {
 }
 
 impl Apps {
+    /// provides an `Iterator` over the applications
     pub fn iter(&self) -> slice::Iter<'_, Box<dyn App>> {
         self.list.iter()
     }
 
+    /// provides the app with the given name
     pub fn lookup(self, name: &str) -> Result<Box<dyn App>> {
         for app in self.list {
             if app.name() == name {
