@@ -16,13 +16,13 @@ pub fn load() -> Result<Config> {
 }
 
 fn parse(text: &str) -> Result<Config> {
-    let mut result = vec![];
+    let mut apps = vec![];
     for (i, line) in text.lines().enumerate() {
         if let Some(requested_app) = parse_line(line, i)? {
-            result.push(requested_app);
+            apps.push(requested_app);
         }
     }
-    Ok(Config(result))
+    Ok(Config { apps })
 }
 
 pub const FILE_NAME: &str = ".tool-versions";
@@ -42,20 +42,22 @@ mod tests {
                         beta  2.3.4 # comment\n\
                         gamma 3.4.5";
             let have = parse(give).unwrap();
-            let want = Config(vec![
-                RequestedApp {
-                    name: S("alpha"),
-                    version: S("1.2.3"),
-                },
-                RequestedApp {
-                    name: S("beta"),
-                    version: S("2.3.4"),
-                },
-                RequestedApp {
-                    name: S("gamma"),
-                    version: S("3.4.5"),
-                },
-            ]);
+            let want = Config {
+                apps: vec![
+                    RequestedApp {
+                        name: S("alpha"),
+                        version: S("1.2.3"),
+                    },
+                    RequestedApp {
+                        name: S("beta"),
+                        version: S("2.3.4"),
+                    },
+                    RequestedApp {
+                        name: S("gamma"),
+                        version: S("3.4.5"),
+                    },
+                ],
+            };
             pretty::assert_eq!(have, want);
         }
     }
