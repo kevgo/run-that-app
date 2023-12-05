@@ -7,6 +7,7 @@ rust-version = "1.74"
 [dependencies]
 big_s = "1.0.2"
 colored = "2.0.4"
+const_format = "0.2.32"
 dirs = "5.0.1"
 flate2 = "1.0.28"
 miniserde = "0.1.34"

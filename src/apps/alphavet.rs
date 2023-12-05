@@ -4,6 +4,7 @@ use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::platform::{Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
+use const_format::formatcp;
 
 pub struct Alphavet {}
 
@@ -23,7 +24,7 @@ impl App for Alphavet {
     }
 
     fn homepage(&self) -> &'static str {
-        "https://github.com/skx/alphavet"
+        formatcp!("https://github.com/{ORG}/{REPO}")
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
