@@ -50,6 +50,10 @@ fn inner() -> Result<ExitCode> {
             let output = output::StdErr { category: log };
             Ok(cmd::show_path(app, include_global, &output)?)
         }
+        Command::Update { log } => {
+            let output = output::StdErr { category: log };
+            Ok(cmd::update(&output))
+        }
         Command::DisplayVersion => Ok(cmd::version()),
     }
 }

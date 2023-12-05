@@ -21,5 +21,8 @@ pub enum Command {
         include_global: bool,
         log: Option<String>,
     },
+    Update {
+        log: Option<String>,
+    },
     DisplayVersion,
 }
