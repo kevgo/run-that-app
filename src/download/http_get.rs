@@ -1,12 +1,11 @@
-use super::Artifact;
 use crate::error::UserError;
 use crate::Output;
 use crate::Result;
 use colored::Colorize;
 
-pub fn http_get(url: String, output: &dyn Output) -> Result<Option<Artifact>> {
+pub fn http_get(url: &str, output: &dyn Output) -> Result<Option<Vec<u8>>> {
     output.log(CATEGORY, &format!("downloading {} ... ", url.cyan()));
-    let Ok(response) = minreq::get(&url).send() else {
+    let Ok(response) = minreq::get(url).send() else {
         output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
     };
@@ -18,13 +17,10 @@ pub fn http_get(url: String, output: &dyn Output) -> Result<Option<Artifact>> {
         output.println(&format!("{}", response.status_code.to_string().red()));
         return Err(UserError::CannotDownload {
             reason: response.reason_phrase,
-            url,
+            url: url.to_string(),
         });
     }
-    Ok(Some(Artifact {
-        filename: url,
-        data: response.into_bytes(),
-    }))
+    Ok(Some(response.into_bytes()))
 }
 
 const CATEGORY: &str = "download/http";
