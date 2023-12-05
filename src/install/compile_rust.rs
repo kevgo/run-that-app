@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use std::process::Command;
 use which::which;
 
-pub fn compile_rust(args: CompileArgs) -> Result<Option<Executable>> {
+pub fn compile_rust(args: &CompileArgs) -> Result<Option<Executable>> {
     let Ok(cargo_path) = which("cargo") else {
         return Err(UserError::RustNotInstalled);
     };
