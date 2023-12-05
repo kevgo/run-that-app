@@ -78,8 +78,7 @@ impl Apps {
 #[cfg(test)]
 mod tests {
     mod apps {
-        use super::super::Apps;
-        use crate::apps::{actionlint, dprint, shellcheck};
+        use crate::apps::{actionlint, dprint, shellcheck, Apps};
 
         #[test]
         fn longest_name() {
@@ -94,6 +93,30 @@ mod tests {
             assert_eq!(have, 10);
         }
 
-        mod lookup {}
+        mod lookup {
+            use crate::apps::{dprint, shellcheck, Apps};
+            use crate::UserError;
+            use big_s::S;
+
+            #[test]
+            fn known_app() {
+                let apps = Apps {
+                    list: vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})],
+                };
+                let have = apps.lookup("shellcheck").unwrap();
+                assert_eq!(have.name(), "shellcheck");
+            }
+
+            #[test]
+            fn unknown_app() {
+                let apps = Apps {
+                    list: vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})],
+                };
+                let Err(err) = apps.lookup("zonk") else {
+                    panic!("expected an error here");
+                };
+                assert_eq!(err, UserError::UnknownApp(S("zonk")));
+            }
+        }
     }
 }
