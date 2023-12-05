@@ -1,7 +1,9 @@
 use super::App;
-use crate::install::{ArtifactType, CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod};
+use crate::install::compile_go::{compile_go, CompileArgs};
+use crate::install::{download_executable, ArtifactType, DownloadArgs};
 use crate::platform::{Cpu, Os, Platform};
-use crate::yard::Yard;
+use crate::yard::{Executable, Yard};
+use crate::{Output, Result};
 
 pub struct Ghokin {}
 
@@ -21,22 +23,24 @@ impl App for Ghokin {
         "https://github.com/antham/ghokin"
     }
 
-    fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>> {
-        vec![
-            Box::new(DownloadPrecompiledBinary {
-                name: self.name(),
-                url: download_url(version, platform),
-                artifact_type: ArtifactType::Archive {
-                    file_to_extract: self.executable_filename(platform).to_string(),
-                },
-                file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
-            }),
-            Box::new(CompileFromGoSource {
-                import_path: format!("github.com/antham/ghokin/v3@v{version}"),
-                target_folder: yard.app_folder(self.name(), version),
-                executable_filename: self.executable_filename(platform),
-            }),
-        ]
+    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+        if let Some(executable) = download_executable(&DownloadArgs {
+            app_name: self.name(),
+            artifact_url: download_url(version, platform),
+            artifact_type: ArtifactType::Archive {
+                file_to_extract: self.executable_filename(platform).to_string(),
+            },
+            file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            output,
+        })? {
+            return Ok(Some(executable));
+        }
+        compile_go(&CompileArgs {
+            import_path: format!("github.com/antham/ghokin/v3@v{version}"),
+            target_folder: yard.app_folder(self.name(), version),
+            executable_filename: self.executable_filename(platform),
+            output,
+        })
     }
 }
 

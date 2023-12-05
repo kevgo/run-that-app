@@ -1,7 +1,8 @@
 use super::App;
-use crate::install::{CompileFromGoSource, InstallationMethod};
+use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::platform::{Os, Platform};
-use crate::yard::Yard;
+use crate::yard::{Executable, Yard};
+use crate::{Output, Result};
 
 pub struct Alphavet {}
 
@@ -21,14 +22,13 @@ impl App for Alphavet {
         "https://github.com/skx/alphavet"
     }
 
-    fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>> {
-        vec![
-            // the precompiled binaries are crashing on Linux
-            Box::new(CompileFromGoSource {
-                import_path: format!("github.com/skx/alphavet/cmd/alphavet@v{version}"),
-                target_folder: yard.app_folder(self.name(), version),
-                executable_filename: self.executable_filename(platform),
-            }),
-        ]
+    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+        // the precompiled binaries are crashing on Linux
+        compile_go(&CompileArgs {
+            import_path: format!("github.com/skx/alphavet/cmd/alphavet@v{version}"),
+            target_folder: yard.app_folder(self.name(), version),
+            executable_filename: self.executable_filename(platform),
+            output,
+        })
     }
 }
