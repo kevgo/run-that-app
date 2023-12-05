@@ -1,9 +1,10 @@
 use big_s::S;
 
 use super::App;
-use crate::install::{ArtifactType, CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod};
+use crate::install::{compile_from_go_source, download_precompiled_binary, ArtifactType, CompileFromGoSource, DownloadPrecompiledBinary};
+use crate::output::Output;
 use crate::platform::{Cpu, Os, Platform};
-use crate::yard::Yard;
+use crate::yard::{Executable, Yard};
 
 pub struct Scc {}
 
@@ -23,22 +24,24 @@ impl App for Scc {
         "https://github.com/boyter/scc"
     }
 
-    fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>> {
-        vec![
-            Box::new(DownloadPrecompiledBinary {
-                name: self.name(),
-                url: download_url(version, platform),
-                artifact_type: ArtifactType::Archive {
-                    file_to_extract: S(self.executable_filename(platform)),
-                },
-                file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
-            }),
-            Box::new(CompileFromGoSource {
-                import_path: format!("github.com/boyter/scc/v3@{version}"),
-                target_folder: yard.app_folder(self.name(), version),
-                executable_filename: self.executable_filename(platform),
-            }),
-        ]
+    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+        let download = DownloadPrecompiledBinary {
+            name: self.name(),
+            url: download_url(version, platform),
+            artifact_type: ArtifactType::Archive {
+                file_to_extract: S(self.executable_filename(platform)),
+            },
+            file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+        };
+        if let Some(executable) = download_precompiled_binary(download, output)? {
+            return Ok(Some(Executable));
+        }
+        let compile = CompileFromGoSource {
+            import_path: format!("github.com/boyter/scc/v3@{version}"),
+            target_folder: yard.app_folder(self.name(), version),
+            executable_filename: self.executable_filename(platform),
+        };
+        compile_from_go_source(compile, output)
     }
 }
 

@@ -21,6 +21,9 @@ impl App for Gh {
         "https://cli.github.com"
     }
 
+    fn install(&self, version: &str, platform: Platform, yard: &Yard) -> Result<Option<Executable>> {
+        todo!()
+    }
     fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>> {
         vec![
             Box::new(DownloadPrecompiledBinary {

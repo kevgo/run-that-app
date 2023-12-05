@@ -21,6 +21,9 @@ impl App for Alphavet {
         "https://github.com/skx/alphavet"
     }
 
+    fn install(&self, version: &str, platform: Platform, yard: &Yard) -> Result<Option<Executable>> {
+        todo!()
+    }
     fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>> {
         vec![
             // the precompiled binaries are crashing on Linux

@@ -1,5 +1,5 @@
 use super::App;
-use crate::install::{ArtifactType, CompileFromRustSource, DownloadPrecompiledBinary, InstallationMethod};
+use crate::install::{download_precompiled_binary, ArtifactType, CompileFromRustSource, InstallationMethod};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::Yard;
 use big_s::S;
@@ -22,6 +22,9 @@ impl App for Dprint {
         "https://dprint.dev"
     }
 
+    fn install(&self, version: &str, platform: Platform, yard: &Yard) -> Result<Option<Executable>> {
+        todo!()
+    }
     fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>> {
         vec![
             Box::new(DownloadPrecompiledBinary {
