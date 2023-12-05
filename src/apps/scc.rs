@@ -33,7 +33,7 @@ impl App for Scc {
                 file_to_extract: S(self.executable_filename(platform)),
             },
             file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
-            output: (),
+            output,
         })? {
             return Ok(Some(executable));
         }
