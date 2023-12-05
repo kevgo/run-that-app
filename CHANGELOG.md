@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+### 0.2 (2023-12-05)
+
+#### New Features
+
+- `run-that-app --update` updates the versions in `.tool-versions`
+
 ### 0.1.1 (2023-12-02)
 
 - apps: ghokin
