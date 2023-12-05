@@ -3,6 +3,8 @@ use crate::Output;
 use crate::Result;
 use colored::Colorize;
 
+/// downloads data at the given URL,
+/// indicates 404 with None
 pub fn http_get(url: &str, output: &dyn Output) -> Result<Option<Vec<u8>>> {
     output.log(CATEGORY, &format!("downloading {} ... ", url.cyan()));
     let Ok(response) = minreq::get(url).send() else {

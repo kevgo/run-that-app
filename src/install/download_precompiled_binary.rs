@@ -33,7 +33,6 @@ pub enum ArtifactType {
 
 impl InstallationMethod for DownloadPrecompiledBinary {
     fn install(&self, output: &dyn Output) -> Result<Option<Executable>> {
-        output.print("downloading ... ");
         let Some(data) = http_get(&self.url, output)? else {
             return Ok(None);
         };
