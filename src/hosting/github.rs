@@ -17,6 +17,7 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
     };
     // parse the response
     let response_text = response.as_str().unwrap();
+    println!("RESPONSE:\n{}", response_text);
     let release: Release = json::from_str(response_text).unwrap();
     println!("{}: {}", release.tag_name, release.url);
     Ok(vec![])
