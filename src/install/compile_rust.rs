@@ -5,6 +5,7 @@ use std::path::PathBuf;
 use std::process::Command;
 use which::which;
 
+/// installs the given Rust-based application by compiling it from source
 pub fn compile_rust(args: &CompileArgs) -> Result<Option<Executable>> {
     let Ok(cargo_path) = which("cargo") else {
         return Err(UserError::RustNotInstalled);
