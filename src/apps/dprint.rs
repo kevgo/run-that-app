@@ -1,7 +1,10 @@
 use super::App;
+use crate::hosting::github;
 use crate::install::{ArtifactType, CompileFromRustSource, DownloadPrecompiledBinary, InstallationMethod};
+use crate::output::Output;
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::Yard;
+use crate::Result;
 use big_s::S;
 
 pub struct Dprint {}
@@ -38,6 +41,10 @@ impl App for Dprint {
                 executable_filename: self.executable_filename(platform),
             }),
         ]
+    }
+
+    fn versions(&self, output: &dyn Output) -> Result<Vec<String>> {
+        github::versions("dprint", "dprint", output)
     }
 }
 

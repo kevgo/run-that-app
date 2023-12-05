@@ -1,9 +1,11 @@
-use big_s::S;
-
 use super::App;
+use crate::hosting::github;
 use crate::install::{ArtifactType, CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod};
+use crate::output::Output;
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::Yard;
+use crate::Result;
+use big_s::S;
 
 pub struct Scc {}
 
@@ -39,6 +41,10 @@ impl App for Scc {
                 executable_filename: self.executable_filename(platform),
             }),
         ]
+    }
+
+    fn versions(&self, output: &dyn Output) -> Result<Vec<String>> {
+        github::versions("boyter", "scc", output)
     }
 }
 

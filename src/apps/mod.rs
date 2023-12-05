@@ -15,6 +15,7 @@ mod shfmt;
 
 use crate::error::UserError;
 use crate::install::InstallationMethod;
+use crate::output::Output;
 use crate::platform::Platform;
 use crate::yard::Yard;
 use crate::Result;
@@ -39,6 +40,9 @@ pub trait App {
     fn homepage(&self) -> &'static str;
 
     fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>>;
+
+    /// provides the available versions of this application
+    fn versions(&self, output: &dyn Output) -> Result<Vec<String>>;
 }
 
 pub fn all() -> Vec<Box<dyn App>> {

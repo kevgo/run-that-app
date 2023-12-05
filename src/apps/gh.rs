@@ -1,7 +1,10 @@
 use super::App;
+use crate::hosting::github;
 use crate::install::{ArtifactType, DownloadPrecompiledBinary, InstallationMethod};
+use crate::output::Output;
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::Yard;
+use crate::Result;
 
 pub struct Gh {}
 
@@ -33,6 +36,10 @@ impl App for Gh {
             }),
             // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
         ]
+    }
+
+    fn versions(&self, output: &dyn Output) -> Result<Vec<String>> {
+        github::versions("cli", "cli", output)
     }
 }
 

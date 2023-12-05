@@ -1,7 +1,10 @@
 use super::App;
+use crate::hosting::github;
 use crate::install::{ArtifactType, CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod};
+use crate::output::Output;
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::Yard;
+use crate::Result;
 
 pub struct Goreleaser {}
 
@@ -37,6 +40,10 @@ impl App for Goreleaser {
                 executable_filename: self.executable_filename(platform),
             }),
         ]
+    }
+
+    fn versions(&self, output: &dyn Output) -> Result<Vec<String>> {
+        github::versions("goreleaser", "goreleaser", output)
     }
 }
 

@@ -1,7 +1,7 @@
 use crate::cli::RequestedApp;
+use crate::config;
 use crate::output::Output;
 use crate::Result;
-use crate::{config, hosting};
 use std::process::ExitCode;
 
 pub fn update(output: &dyn Output) -> Result<ExitCode> {
