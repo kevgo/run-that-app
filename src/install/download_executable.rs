@@ -7,7 +7,7 @@ use colored::Colorize;
 use std::fs;
 use std::path::PathBuf;
 
-/// downloads a pre-compiled binary from the internet
+/// installs the given application by downloading its pre-compiled binary
 pub fn download_executable(args: &DownloadArgs) -> Result<Option<Executable>> {
     args.output.log("download/http", &format!("downloading {} ... ", args.url.cyan()));
     let Ok(response) = minreq::get(&args.url).send() else {
