@@ -7,7 +7,7 @@ use std::path::PathBuf;
 use std::process::Command;
 use which::which;
 
-pub fn compile_from_go_source(args: CompileFromGoSource, output: &dyn Output) -> Result<Option<Executable>> {
+pub fn compile_go(args: CompileArgs) -> Result<Option<Executable>> {
     let Ok(go_path) = which("go") else {
         return Err(UserError::GoNotInstalled);
     };
@@ -15,7 +15,7 @@ pub fn compile_from_go_source(args: CompileFromGoSource, output: &dyn Output) ->
         folder: args.target_folder.clone(),
         reason: err.to_string(),
     })?;
-    output.println(&format!("go install {}", &args.import_path));
+    args.output.println(&format!("go install {}", &args.import_path));
     let mut cmd = Command::new(go_path);
     cmd.arg("install");
     cmd.arg(&args.import_path);
@@ -35,9 +35,10 @@ pub fn compile_from_go_source(args: CompileFromGoSource, output: &dyn Output) ->
     Ok(Some(Executable(args.target_folder.join(args.executable_filename))))
 }
 
-pub struct CompileFromGoSource {
+pub struct CompileArgs<'a> {
     /// the fully qualified Go import path for the package to install
     pub import_path: String,
     pub target_folder: PathBuf,
     pub executable_filename: &'static str,
+    pub output: &'a dyn Output,
 }

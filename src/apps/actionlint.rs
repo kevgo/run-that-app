@@ -1,5 +1,6 @@
 use super::App;
-use crate::install::{compile_from_go_source, download_precompiled_binary, ArtifactType, CompileFromGoSource, DownloadPrecompiledBinary};
+use crate::install::compile_go::{compile_go, CompileArgs};
+use crate::install::{download_executable, ArtifactType, DownloadArgs};
 use crate::output::Output;
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
@@ -24,23 +25,23 @@ impl App for ActionLint {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        let download = DownloadPrecompiledBinary {
+        if let Some(executable) = download_executable(DownloadArgs {
             name: self.name(),
             url: download_url(version, platform),
             artifact_type: ArtifactType::Archive {
                 file_to_extract: self.executable_filename(platform).to_string(),
             },
             file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
-        };
-        if let Some(executable) = download_precompiled_binary(download, output)? {
+            output,
+        })? {
             return Ok(Some(executable));
         }
-        let compile = CompileFromGoSource {
+        compile_go(CompileArgs {
             import_path: format!("github.com/rhysd/actionlint/cmd/actionlint@{version}"),
             target_folder: yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),
-        };
-        compile_from_go_source(compile, output)
+            output,
+        })
     }
 }
 

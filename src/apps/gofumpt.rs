@@ -1,5 +1,5 @@
 use super::App;
-use crate::install::{ArtifactType, CompileFromGoSource, DownloadPrecompiledBinary, InstallationMethod};
+use crate::install::{ArtifactType, CompileArgs, DownloadArgs, InstallationMethod};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::Yard;
 
@@ -21,18 +21,18 @@ impl App for Gofumpt {
         "https://github.com/mvdan/gofumpt"
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard) -> Result<Option<Executable>> {
+    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         todo!()
     }
     fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>> {
         vec![
-            Box::new(DownloadPrecompiledBinary {
+            Box::new(DownloadArgs {
                 name: self.name(),
                 url: download_url(version, platform),
                 artifact_type: ArtifactType::Executable,
                 file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             }),
-            Box::new(CompileFromGoSource {
+            Box::new(CompileArgs {
                 import_path: format!("mvdan.cc/gofumpt@{version}"),
                 target_folder: yard.app_folder(self.name(), version),
                 executable_filename: self.executable_filename(platform),

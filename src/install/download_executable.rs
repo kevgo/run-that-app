@@ -8,18 +8,18 @@ use std::fs;
 use std::path::PathBuf;
 
 /// downloads a pre-compiled binary from the internet
-pub fn download_precompiled_binary(args: DownloadPrecompiledBinary, output: &dyn Output) -> Result<Option<Executable>> {
-    output.log("download/http", &format!("downloading {} ... ", args.url.cyan()));
+pub fn download_executable(args: DownloadArgs) -> Result<Option<Executable>> {
+    args.output.log("download/http", &format!("downloading {} ... ", args.url.cyan()));
     let Ok(response) = minreq::get(&args.url).send() else {
-        output.println(&format!("{}", "not online".red()));
+        args.output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
     };
     if response.status_code == 404 {
-        output.println(&format!("{}", "not found".red()));
+        args.output.println(&format!("{}", "not found".red()));
         return Ok(None);
     }
     if response.status_code != 200 {
-        output.println(&format!("{}", response.status_code.to_string().red()));
+        args.output.println(&format!("{}", response.status_code.to_string().red()));
         return Err(UserError::CannotDownload {
             reason: response.reason_phrase,
             url: args.url.to_string(),
@@ -37,12 +37,12 @@ pub fn download_precompiled_binary(args: DownloadPrecompiledBinary, output: &dyn
         filename: args.url.clone(),
         data,
     };
-    let executable = archives::extract(artifact, &args.artifact_type, &args.file_on_disk, output)?;
-    output.println(&format!("{}", "ok".green()));
+    let executable = archives::extract(artifact, &args.artifact_type, &args.file_on_disk, args.output)?;
+    args.output.println(&format!("{}", "ok".green()));
     Ok(Some(executable))
 }
 
-pub struct DownloadPrecompiledBinary {
+pub struct DownloadArgs<'a> {
     /// name of the app
     pub name: &'static str,
 
@@ -54,6 +54,8 @@ pub struct DownloadPrecompiledBinary {
 
     /// path of the executable to create on disk
     pub file_on_disk: PathBuf,
+
+    pub output: &'a dyn Output,
 }
 
 pub enum ArtifactType {

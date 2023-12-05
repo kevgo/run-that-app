@@ -1,5 +1,5 @@
 use super::App;
-use crate::install::{ArtifactType, DownloadPrecompiledBinary, InstallationMethod};
+use crate::install::{ArtifactType, DownloadArgs, InstallationMethod};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::Yard;
 
@@ -21,12 +21,12 @@ impl App for Gh {
         "https://cli.github.com"
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard) -> Result<Option<Executable>> {
+    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         todo!()
     }
     fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>> {
         vec![
-            Box::new(DownloadPrecompiledBinary {
+            Box::new(DownloadArgs {
                 name: self.name(),
                 url: download_url(version, platform),
                 artifact_type: ArtifactType::Archive {
