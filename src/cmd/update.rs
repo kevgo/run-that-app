@@ -1,3 +1,5 @@
+use colored::Colorize;
+
 use crate::cli::RequestedApp;
 use crate::config::Config;
 use crate::output::Output;
@@ -15,9 +17,9 @@ pub fn update(output: &dyn Output) -> Result<ExitCode> {
         let versions = app.versions(1, output)?;
         let new_version = versions.into_iter().next().unwrap_or_else(|| old_app.version.clone());
         if new_version == old_app.version {
-            output.println("same");
+            output.println(&format!("{}", "same".green()));
         } else {
-            output.println(&format!("{} -> {new_version}", old_app.version));
+            output.println(&format!("{} -> {}", old_app.version.cyan(), new_version.cyan()));
         }
         new_config.apps.push(RequestedApp {
             name: old_app.name.to_string(),
