@@ -16,7 +16,6 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
         output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
     };
-    // parse the response
     let response_text = response.as_str().unwrap();
     let releases: Vec<Release> = match json::from_str(response_text) {
         Ok(releases) => releases,
