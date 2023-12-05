@@ -43,10 +43,8 @@ pub fn load_or_install(mut requested_app: RequestedApp, include_global: bool, ou
         }
         return Ok(None);
     }
-    for installation_method in app.installation_methods(&requested_app.version, platform, &yard) {
-        if let Some(executable) = installation_method.install(output)? {
-            return Ok(Some(executable));
-        }
+    if let Some(executable) = app.install(&requested_app.version, platform, &yard, output)? {
+        return Ok(Some(executable));
     }
     yard.mark_not_installable(&requested_app)?;
     if include_global {

@@ -1,9 +1,8 @@
 use super::App;
-use crate::hosting::github;
-use crate::install::{ArtifactType, DownloadPrecompiledBinary, InstallationMethod};
+use crate::install::{download_executable, ArtifactType, DownloadArgs};
 use crate::output::Output;
 use crate::platform::{Cpu, Os, Platform};
-use crate::yard::Yard;
+use crate::yard::{Executable, Yard};
 use crate::Result;
 
 pub struct ShellCheck {}
@@ -24,15 +23,16 @@ impl App for ShellCheck {
         "https://www.shellcheck.net"
     }
 
-    fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>> {
-        vec![Box::new(DownloadPrecompiledBinary {
+    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+        download_executable(&DownloadArgs {
             name: self.name(),
             url: download_url(version, platform),
             artifact_type: ArtifactType::Archive {
                 file_to_extract: format!("shellcheck-v{version}/{executable}", executable = self.executable_filename(platform)),
             },
             file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
-        })]
+            output,
+        })
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {

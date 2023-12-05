@@ -1,9 +1,8 @@
 use super::App;
-use crate::hosting::github;
-use crate::install::{ArtifactType, DownloadPrecompiledBinary, InstallationMethod};
+use crate::install::{download_executable, ArtifactType, DownloadArgs};
 use crate::output::Output;
 use crate::platform::{Cpu, Os, Platform};
-use crate::yard::Yard;
+use crate::yard::{Executable, Yard};
 use crate::Result;
 
 pub struct GolangCiLint {}
@@ -24,23 +23,22 @@ impl App for GolangCiLint {
         "https://github.com/golangci/golangci-lint"
     }
 
-    fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>> {
-        vec![
-            Box::new(DownloadPrecompiledBinary {
-                name: self.name(),
-                url: download_url(version, platform),
-                artifact_type: ArtifactType::Archive {
-                    file_to_extract: format!(
-                        "golangci-lint-{version}-{os}-{cpu}/{executable}",
-                        os = os_text(platform.os),
-                        cpu = cpu_text(platform.cpu),
-                        executable = self.executable_filename(platform)
-                    ),
-                },
-                file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
-            }),
-            // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
-        ]
+    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+        download_executable(&DownloadArgs {
+            name: self.name(),
+            url: download_url(version, platform),
+            artifact_type: ArtifactType::Archive {
+                file_to_extract: format!(
+                    "golangci-lint-{version}-{os}-{cpu}/{executable}",
+                    os = os_text(platform.os),
+                    cpu = cpu_text(platform.cpu),
+                    executable = self.executable_filename(platform)
+                ),
+            },
+            file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            output,
+        })
+        // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {

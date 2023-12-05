@@ -1,9 +1,8 @@
 use super::App;
-use crate::hosting::github;
-use crate::install::{ArtifactType, DownloadPrecompiledBinary, InstallationMethod};
+use crate::install::{download_executable, ArtifactType, DownloadArgs};
 use crate::output::Output;
 use crate::platform::{Cpu, Os, Platform};
-use crate::yard::Yard;
+use crate::yard::{Executable, Yard};
 use crate::Result;
 
 pub struct Gh {}
@@ -24,18 +23,17 @@ impl App for Gh {
         "https://cli.github.com"
     }
 
-    fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>> {
-        vec![
-            Box::new(DownloadPrecompiledBinary {
-                name: self.name(),
-                url: download_url(version, platform),
-                artifact_type: ArtifactType::Archive {
-                    file_to_extract: executable_path(version, platform),
-                },
-                file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
-            }),
-            // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
-        ]
+    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+        download_executable(&DownloadArgs {
+            name: self.name(),
+            url: download_url(version, platform),
+            artifact_type: ArtifactType::Archive {
+                file_to_extract: executable_path(version, platform),
+            },
+            file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            output,
+        })
+        // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {

@@ -13,12 +13,10 @@ mod scc;
 mod shellcheck;
 mod shfmt;
 
-use crate::install::InstallationMethod;
-use crate::output::Output;
+use crate::error::UserError;
 use crate::platform::Platform;
-use crate::yard::Yard;
-use crate::Result;
-use crate::UserError;
+use crate::yard::{Executable, Yard};
+use crate::{Output, Result};
 use std::slice::Iter;
 
 pub trait App {
@@ -31,7 +29,7 @@ pub trait App {
     /// link to the (human-readable) homepage of the app
     fn homepage(&self) -> &'static str;
 
-    fn installation_methods(&self, version: &str, platform: Platform, yard: &Yard) -> Vec<Box<dyn InstallationMethod>>;
+    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>>;
 
     /// provides the available versions of this application
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>>;
