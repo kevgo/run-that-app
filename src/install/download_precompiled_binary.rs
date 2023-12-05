@@ -1,6 +1,5 @@
 use super::InstallationMethod;
-use crate::archives;
-use crate::download::{http_get, Artifact};
+use crate::archives::{self, Artifact};
 use crate::error::UserError;
 use crate::output::Output;
 use crate::yard::Executable;
@@ -33,13 +32,23 @@ pub enum ArtifactType {
 
 impl InstallationMethod for DownloadPrecompiledBinary {
     fn install(&self, output: &dyn Output) -> Result<Option<Executable>> {
-        let Some(data) = http_get(&self.url, output)? else {
+        output.log("download/http", &format!("downloading {} ... ", self.url.cyan()));
+        let Ok(response) = minreq::get(&self.url).send() else {
+            output.println(&format!("{}", "not online".red()));
+            return Err(UserError::NotOnline);
+        };
+        if response.status_code == 404 {
+            output.println(&format!("{}", "not found".red()));
             return Ok(None);
-        };
-        let artifact = Artifact {
-            filename: self.url.clone(),
-            data,
-        };
+        }
+        if response.status_code != 200 {
+            output.println(&format!("{}", response.status_code.to_string().red()));
+            return Err(UserError::CannotDownload {
+                reason: response.reason_phrase,
+                url: self.url.to_string(),
+            });
+        }
+        let data = response.into_bytes();
         // create the folder here?
         if let Some(parent) = self.file_on_disk.parent() {
             fs::create_dir_all(parent).map_err(|err| UserError::CannotCreateFolder {
@@ -47,6 +56,10 @@ impl InstallationMethod for DownloadPrecompiledBinary {
                 reason: err.to_string(),
             })?;
         }
+        let artifact = Artifact {
+            filename: self.url.clone(),
+            data,
+        };
         let executable = archives::extract(artifact, &self.artifact_type, &self.file_on_disk, output)?;
         output.println(&format!("{}", "ok".green()));
         Ok(Some(executable))
