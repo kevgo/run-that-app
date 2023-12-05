@@ -18,14 +18,24 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
     // parse the response
     let response_text = response.as_str().unwrap();
     let releases: Vec<Release> = json::from_str(response_text).unwrap();
-    let versions = releases.into_iter().map(|release| release.tag_name).collect();
+    let versions = releases.into_iter().map(|release| release.version().to_string()).collect();
     Ok(versions)
 }
 
 #[derive(Deserialize, Debug, PartialEq)]
 struct Release {
-    url: String,
     tag_name: String,
+}
+
+impl Release {
+    /// provides the version of this release without "v" in it
+    fn version(&self) -> &str {
+        if self.tag_name.starts_with('v') {
+            &self.tag_name[1..]
+        } else {
+            &self.tag_name
+        }
+    }
 }
 
 #[cfg(test)]
@@ -502,10 +512,28 @@ mod tests {
   }
 ]"#;
         let have: Vec<Release> = json::from_str(response).unwrap();
-        let want = vec![Release {
-            url: S("https://api.github.com/repos/rhysd/actionlint/releases/121542388"),
-            tag_name: S("v1.6.26"),
-        }];
+        let want = vec![Release { tag_name: S("v1.6.26") }];
         assert_eq!(have, want);
+    }
+
+    mod version {
+        use crate::hosting::github::Release;
+        use big_s::S;
+
+        #[test]
+        fn leading_v() {
+            let release = Release { tag_name: S("v1.2.3") };
+            let have = release.version();
+            let want = "1.2.3";
+            assert_eq!(have, want);
+        }
+
+        #[test]
+        fn version_only() {
+            let release = Release { tag_name: S("1.2.3") };
+            let have = release.version();
+            let want = "1.2.3";
+            assert_eq!(have, want);
+        }
     }
 }
