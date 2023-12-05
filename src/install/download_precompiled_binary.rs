@@ -1,6 +1,6 @@
 use super::InstallationMethod;
 use crate::archives;
-use crate::download::http_get;
+use crate::download::{http_get, Artifact};
 use crate::error::UserError;
 use crate::output::Output;
 use crate::yard::Executable;
@@ -33,8 +33,12 @@ pub enum ArtifactType {
 
 impl InstallationMethod for DownloadPrecompiledBinary {
     fn install(&self, output: &dyn Output) -> Result<Option<Executable>> {
-        let Some(artifact) = http_get(self.url.clone(), output)? else {
+        let Some(data) = http_get(&self.url, output)? else {
             return Ok(None);
+        };
+        let artifact = Artifact {
+            filename: self.url.clone(),
+            data,
         };
         // create the folder here?
         if let Some(parent) = self.file_on_disk.parent() {
