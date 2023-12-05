@@ -71,35 +71,29 @@ impl Apps {
     }
 
     pub fn longest_name(&self) -> usize {
-        self.iter().map(|app| app.name().len()).max().unwrap() + 1
+        self.iter().map(|app| app.name().len()).max().unwrap()
     }
 }
 
 #[cfg(test)]
 mod tests {
     mod apps {
+        use super::super::Apps;
+        use crate::apps::{actionlint, dprint, shellcheck};
 
-        mod longest_name {
-            use super::super::super::Apps;
-            use crate::apps::{actionlint, dprint, shellcheck};
-
-            #[test]
-            fn normal() {
-                let apps = Apps {
-                    list: vec![
-                        Box::new(dprint::Dprint {}),
-                        Box::new(actionlint::ActionLint {}),
-                        Box::new(shellcheck::ShellCheck {}),
-                    ],
-                };
-                let have = apps.longest_name();
-                assert_eq!(have, 11);
-            }
-
-            #[test]
-            fn empty() {
-                //
-            }
+        #[test]
+        fn longest_name() {
+            let apps = Apps {
+                list: vec![
+                    Box::new(dprint::Dprint {}),
+                    Box::new(actionlint::ActionLint {}),
+                    Box::new(shellcheck::ShellCheck {}),
+                ],
+            };
+            let have = apps.longest_name();
+            assert_eq!(have, 10);
         }
+
+        mod lookup {}
     }
 }
