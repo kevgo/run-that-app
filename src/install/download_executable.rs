@@ -30,7 +30,6 @@ pub fn download_executable(args: &DownloadArgs) -> Result<Option<Executable>> {
         });
     }
     let data = response.into_bytes();
-    // create the folder here?
     if let Some(parent) = args.file_on_disk.parent() {
         fs::create_dir_all(parent).map_err(|err| UserError::CannotCreateFolder {
             folder: parent.to_path_buf(),
