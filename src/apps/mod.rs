@@ -70,7 +70,8 @@ impl Apps {
         Err(UserError::UnknownApp(name.to_string()))
     }
 
-    pub fn longest_name(&self) -> usize {
+    /// provides the length of the name of the app with the longest name
+    pub fn longest_name_length(&self) -> usize {
         self.iter().map(|app| app.name().len()).max().unwrap()
     }
 }
@@ -81,7 +82,7 @@ mod tests {
         use crate::apps::{actionlint, dprint, shellcheck, Apps};
 
         #[test]
-        fn longest_name() {
+        fn longest_name_length() {
             let apps = Apps {
                 list: vec![
                     Box::new(dprint::Dprint {}),
@@ -89,7 +90,7 @@ mod tests {
                     Box::new(shellcheck::ShellCheck {}),
                 ],
             };
-            let have = apps.longest_name();
+            let have = apps.longest_name_length();
             assert_eq!(have, 10);
         }
 
