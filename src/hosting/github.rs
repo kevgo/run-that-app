@@ -6,6 +6,7 @@ use miniserde::{json, Deserialize};
 
 pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases?per_page={amount}");
+    output.log("HTTP", &format!("downloading {url}"));
     let get = minreq::get(url)
         .with_param("per_page", amount.to_string())
         .with_header("Accept", "application/vnd.github+json")
