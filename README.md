@@ -62,6 +62,8 @@ actionlint 1.6.26
 shellcheck 0.9.0
 ```
 
+You can execute `run-that-app --setup` to create this file.
+
 ### why
 
 Reasons to use _run-that-app_ over traditional forms of installation (package
