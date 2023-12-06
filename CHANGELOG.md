@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+### 0.2.1 (2023-12-05)
+
+#### Bug Fixes
+
+- updates to the release marked as latest on GitHub
+
 ### 0.2.0 (2023-12-05)
 
 #### New Features
