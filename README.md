@@ -68,6 +68,8 @@ numbers:
 ./run-that-app gh
 ```
 
+You can execute `run-that-app --setup` to create this file.
+
 ### usage
 
 ```bash

@@ -1,4 +1,4 @@
-use crate::config;
+use crate::config::{self, FILE_NAME};
 use colored::Colorize;
 use std::path::PathBuf;
 
@@ -25,6 +25,7 @@ pub enum UserError {
         file: String,
         reason: String,
     },
+    ConfigFileAlreadyExists,
     InvalidConfigFileFormat {
         line_no: usize,
         text: String,
@@ -77,6 +78,10 @@ impl UserError {
             UserError::CannotMakeFileExecutable { file, reason } => {
                 error(&format!("Cannot make file {file} executable: {reason}"));
                 desc("Please check access permissions and try again.");
+            }
+            UserError::ConfigFileAlreadyExists => {
+                error("config file already exists");
+                desc(&format!("The file {FILE_NAME} already exists, no changes have been made to it."));
             }
             UserError::InvalidConfigFileFormat { line_no, text } => {
                 error("Invalid config file format");
