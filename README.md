@@ -83,8 +83,8 @@ Options:
 
 - `--available`: signal via exit code whether an app is available on the local
   platform
-- `--include-global`: if there is no pre-compiled binary for your platform, but
-  a similarly named binary in your PATH, run the latter.
+- `--include-path`: if there is no pre-compiled binary for your platform, but a
+  similarly named binary in your PATH, run the latter.
 - `--log`: enable all logging
 - `--log=domain`: enable logging for the given domain
   - see the available domains by running with all logging enabled
@@ -181,7 +181,7 @@ switch.
 
 Run-that-app can build apps from source for you. If you want to do it yourself,
 add the app that you compiled to the PATH and call _run-that-app_ with the
-`--include-global` switch to make it run your app. In this case _run-that-app_
+`--include-path` switch to make it run your app. In this case _run-that-app_
 does not guarantee that the app has the correct version.
 
 #### What about apps is written in NodeJS, Python, or Ruby?

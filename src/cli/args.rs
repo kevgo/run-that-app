@@ -14,7 +14,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut requested_app: Option<RequestedApp> = None;
     let mut log: Option<String> = None;
     let mut app_args: Vec<String> = vec![];
-    let mut include_global = false;
+    let mut include_path = false;
     let mut show_path = false;
     let mut setup = false;
     let mut indicate_available = false;
@@ -34,8 +34,8 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 indicate_available = true;
                 continue;
             }
-            if &arg == "--include-global" {
-                include_global = true;
+            if &arg == "--include-path" {
+                include_path = true;
                 continue;
             }
             if &arg == "--optional" {
@@ -81,24 +81,24 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     if let Some(app) = requested_app {
         if indicate_available {
             Ok(Args {
-                command: Command::Available { app, include_global, log },
+                command: Command::Available { app, include_path, log },
             })
         } else if show_path {
             Ok(Args {
-                command: Command::ShowPath { app, include_global, log },
+                command: Command::ShowPath { app, include_path, log },
             })
         } else {
             Ok(Args {
                 command: Command::RunApp {
                     app,
                     args: app_args,
-                    include_global,
+                    include_path,
                     optional,
                     log,
                 },
             })
         }
-    } else if include_global || optional || log.is_some() || show_path || indicate_available {
+    } else if include_path || optional || log.is_some() || show_path || indicate_available {
         Err(UserError::MissingApplication)
     } else {
         Ok(Args { command: Command::DisplayHelp })
@@ -148,7 +148,7 @@ mod tests {
                             name: S("shellcheck"),
                             version: S(""),
                         },
-                        include_global: false,
+                        include_path: false,
                         log: None,
                     },
                 });
@@ -157,14 +157,14 @@ mod tests {
 
             #[test]
             fn with_all_options() {
-                let have = parse_args(vec!["run-that-app", "--available", "--include-global", "--log=detect", "shellcheck"]);
+                let have = parse_args(vec!["run-that-app", "--available", "--include-path", "--log=detect", "shellcheck"]);
                 let want = Ok(Args {
                     command: Command::Available {
                         app: RequestedApp {
                             name: S("shellcheck"),
                             version: S(""),
                         },
-                        include_global: true,
+                        include_path: true,
                         log: Some(S("detect")),
                     },
                 });
@@ -194,7 +194,7 @@ mod tests {
                             name: S("shellcheck"),
                             version: S(""),
                         },
-                        include_global: false,
+                        include_path: false,
                         log: None,
                     },
                 });
@@ -203,14 +203,14 @@ mod tests {
 
             #[test]
             fn with_all_options() {
-                let have = parse_args(vec!["run-that-app", "--show-path", "--include-global", "--log=detect", "shellcheck"]);
+                let have = parse_args(vec!["run-that-app", "--show-path", "--include-path", "--log=detect", "shellcheck"]);
                 let want = Ok(Args {
                     command: Command::ShowPath {
                         app: RequestedApp {
                             name: S("shellcheck"),
                             version: S(""),
                         },
-                        include_global: true,
+                        include_path: true,
                         log: Some(S("detect")),
                     },
                 });
@@ -276,7 +276,7 @@ mod tests {
             }
         }
 
-        mod include_global {
+        mod include_path {
             use super::parse_args;
             use crate::cli::{Args, Command, RequestedApp};
             use crate::error::UserError;
@@ -284,7 +284,7 @@ mod tests {
 
             #[test]
             fn with_app() {
-                let have = parse_args(vec!["run-that-app", "--include-global", "app@2", "arg1"]);
+                let have = parse_args(vec!["run-that-app", "--include-path", "app@2", "arg1"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
                         app: RequestedApp {
@@ -292,7 +292,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![S("arg1")],
-                        include_global: true,
+                        include_path: true,
                         optional: false,
                         log: None,
                     },
@@ -302,7 +302,7 @@ mod tests {
 
             #[test]
             fn without_app() {
-                let have = parse_args(vec!["run-that-app", "--include-global"]);
+                let have = parse_args(vec!["run-that-app", "--include-path"]);
                 let want = Err(UserError::MissingApplication);
                 pretty::assert_eq!(have, want);
             }
@@ -324,7 +324,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![],
-                        include_global: false,
+                        include_path: false,
                         optional: false,
                         log: Some(S("")),
                     },
@@ -342,7 +342,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![],
-                        include_global: false,
+                        include_path: false,
                         optional: false,
                         log: Some(S("scope")),
                     },
@@ -368,7 +368,7 @@ mod tests {
                         version: S("2"),
                     },
                     args: vec![S("arg1")],
-                    include_global: false,
+                    include_path: false,
                     optional: true,
                     log: None,
                 },
@@ -392,7 +392,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![],
-                        include_global: false,
+                        include_path: false,
                         optional: false,
                         log: None,
                     },
@@ -410,7 +410,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![S("--arg1"), S("arg2")],
-                        include_global: false,
+                        include_path: false,
                         optional: false,
                         log: None,
                     },
@@ -428,7 +428,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![S("--arg1"), S("arg2")],
-                        include_global: false,
+                        include_path: false,
                         optional: false,
                         log: Some(S("l1")),
                     },
@@ -446,7 +446,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![S("--log=app"), S("--version")],
-                        include_global: false,
+                        include_path: false,
                         optional: false,
                         log: None,
                     },

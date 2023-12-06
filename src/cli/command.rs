@@ -5,13 +5,13 @@ use super::RequestedApp;
 pub enum Command {
     Available {
         app: RequestedApp,
-        include_global: bool,
+        include_path: bool,
         log: Option<String>,
     },
     RunApp {
         app: RequestedApp,
         args: Vec<String>,
-        include_global: bool,
+        include_path: bool,
         optional: bool,
         log: Option<String>,
     },
@@ -19,7 +19,7 @@ pub enum Command {
     Setup,
     ShowPath {
         app: RequestedApp,
-        include_global: bool,
+        include_path: bool,
         log: Option<String>,
     },
     Update {
