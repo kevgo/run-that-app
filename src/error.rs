@@ -81,7 +81,7 @@ impl UserError {
             }
             UserError::ConfigFileAlreadyExists => {
                 error("config file already exists");
-                desc(&format!("The file ({FILE_NAME}) already exists."));
+                desc(&format!("The file {FILE_NAME} already exists, no changes have been made to it."));
             }
             UserError::InvalidConfigFileFormat { line_no, text } => {
                 error("Invalid config file format");
