@@ -179,12 +179,10 @@ switch.
 
 #### What if I compile an app myself?
 
-# <<<<<<< HEAD Add your version to the PATH and call _run-that-app_ with the `--include-path` switch to make it run your app. In this case _run-that-app_ does not guarantee that the app has the correct version.
-
 Run-that-app can build apps from source for you. If you want to do it yourself,
 add the app that you compiled to the PATH and call _run-that-app_ with the
-`--include-global` switch to make it run your app. In this case _run-that-app_
-does not guarantee that the app has the correct version. >>>>>>> main
+`--include-path` switch to make it run your app. In this case _run-that-app_
+does not guarantee that the app has the correct version.
 
 #### What about apps is written in NodeJS, Python, or Ruby?
 
