@@ -8,6 +8,9 @@ fix: build  # auto-corrects issues
 	target/debug/run-that-app dprint fmt
 	target/debug/run-that-app shfmt -f . | xargs target/debug/run-that-app shfmt -w
 
+install:  # installs this tool locally for testing
+	cargo install --path .
+
 help:  # shows all available Make commands
 	cat Makefile | grep '^[^ ]*:' | grep -v '.PHONY' | grep -v '.SILENT:' | grep '#' | grep -v help | sed 's/:.*#/#/' | column -s "#" -t
 
