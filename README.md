@@ -161,7 +161,7 @@ If it works then do it. But keep in mind:
   scripts to install your dependencies and deal with various versions and
   flavors of `curl`, `gzip`, and `tar`
 
-### Why not use Docker?
+#### Why not use Docker?
 
 Docker is overkill for running simple applications that don't need a custom
 Linux environment. Docker isn't available natively on macOS and Windows. Docker
