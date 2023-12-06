@@ -7,7 +7,7 @@ use miniserde::{json, Deserialize};
 pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases/latest");
     output.log("HTTP", &format!("downloading {url}"));
-    let get = minreq::get(url)
+    let get = minreq::get(&url)
         .with_header("Accept", "application/vnd.github+json")
         .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
         .with_header("X-GitHub-Api-Version", "2022-11-28");
@@ -19,8 +19,9 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
     let release: Release = match json::from_str(response_text) {
         Ok(release) => release,
         Err(err) => {
-            println!("Cannot de-serialize this payload:\n{response_text}");
-            panic!("{}", err.to_string());
+            println!("{}", "Error:".red());
+            println!("\n{response_text}");
+            return Err(UserError::CannotDownload { url, reason: err.to_string() });
         }
     };
     Ok(release.version().to_string())
