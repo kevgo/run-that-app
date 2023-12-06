@@ -11,8 +11,8 @@ use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
 
-pub fn run(requested_app: RequestedApp, args: Vec<String>, include_global: bool, optional: bool, output: &dyn Output) -> Result<ExitCode> {
-    if let Some(executable) = load_or_install(requested_app, include_global, output)? {
+pub fn run(requested_app: RequestedApp, args: Vec<String>, include_path: bool, optional: bool, output: &dyn Output) -> Result<ExitCode> {
+    if let Some(executable) = load_or_install(requested_app, include_path, output)? {
         Ok(subshell::execute(executable, args)?)
     } else if optional {
         Ok(ExitCode::SUCCESS)
@@ -21,7 +21,7 @@ pub fn run(requested_app: RequestedApp, args: Vec<String>, include_global: bool,
     }
 }
 
-pub fn load_or_install(mut requested_app: RequestedApp, include_global: bool, output: &dyn Output) -> Result<Option<Executable>> {
+pub fn load_or_install(mut requested_app: RequestedApp, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
     if requested_app.version.is_empty() {
         let config = config::load()?;
         let Some(configured_app) = config.lookup(&requested_app.name) else {
@@ -37,7 +37,7 @@ pub fn load_or_install(mut requested_app: RequestedApp, include_global: bool, ou
         return Ok(Some(executable));
     };
     if yard.is_not_installable(&requested_app) {
-        if include_global {
+        if include_path {
             if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
                 return Ok(Some(executable));
             }
@@ -48,7 +48,7 @@ pub fn load_or_install(mut requested_app: RequestedApp, include_global: bool, ou
         return Ok(Some(executable));
     }
     yard.mark_not_installable(&requested_app)?;
-    if include_global {
+    if include_path {
         if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
             return Ok(Some(executable));
         }

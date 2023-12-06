@@ -81,26 +81,18 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     if let Some(app) = requested_app {
         if indicate_available {
             Ok(Args {
-                command: Command::Available {
-                    app,
-                    include_global: include_path,
-                    log,
-                },
+                command: Command::Available { app, include_path, log },
             })
         } else if show_path {
             Ok(Args {
-                command: Command::ShowPath {
-                    app,
-                    include_global: include_path,
-                    log,
-                },
+                command: Command::ShowPath { app, include_path, log },
             })
         } else {
             Ok(Args {
                 command: Command::RunApp {
                     app,
                     args: app_args,
-                    include_global: include_path,
+                    include_path,
                     optional,
                     log,
                 },
@@ -156,7 +148,7 @@ mod tests {
                             name: S("shellcheck"),
                             version: S(""),
                         },
-                        include_global: false,
+                        include_path: false,
                         log: None,
                     },
                 });
@@ -172,7 +164,7 @@ mod tests {
                             name: S("shellcheck"),
                             version: S(""),
                         },
-                        include_global: true,
+                        include_path: true,
                         log: Some(S("detect")),
                     },
                 });
@@ -202,7 +194,7 @@ mod tests {
                             name: S("shellcheck"),
                             version: S(""),
                         },
-                        include_global: false,
+                        include_path: false,
                         log: None,
                     },
                 });
@@ -218,7 +210,7 @@ mod tests {
                             name: S("shellcheck"),
                             version: S(""),
                         },
-                        include_global: true,
+                        include_path: true,
                         log: Some(S("detect")),
                     },
                 });
@@ -284,7 +276,7 @@ mod tests {
             }
         }
 
-        mod include_global {
+        mod include_path {
             use super::parse_args;
             use crate::cli::{Args, Command, RequestedApp};
             use crate::error::UserError;
@@ -300,7 +292,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![S("arg1")],
-                        include_global: true,
+                        include_path: true,
                         optional: false,
                         log: None,
                     },
@@ -332,7 +324,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![],
-                        include_global: false,
+                        include_path: false,
                         optional: false,
                         log: Some(S("")),
                     },
@@ -350,7 +342,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![],
-                        include_global: false,
+                        include_path: false,
                         optional: false,
                         log: Some(S("scope")),
                     },
@@ -376,7 +368,7 @@ mod tests {
                         version: S("2"),
                     },
                     args: vec![S("arg1")],
-                    include_global: false,
+                    include_path: false,
                     optional: true,
                     log: None,
                 },
@@ -400,7 +392,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![],
-                        include_global: false,
+                        include_path: false,
                         optional: false,
                         log: None,
                     },
@@ -418,7 +410,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![S("--arg1"), S("arg2")],
-                        include_global: false,
+                        include_path: false,
                         optional: false,
                         log: None,
                     },
@@ -436,7 +428,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![S("--arg1"), S("arg2")],
-                        include_global: false,
+                        include_path: false,
                         optional: false,
                         log: Some(S("l1")),
                     },
@@ -454,7 +446,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![S("--log=app"), S("--version")],
-                        include_global: false,
+                        include_path: false,
                         optional: false,
                         log: None,
                     },
