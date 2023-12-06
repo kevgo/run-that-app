@@ -45,6 +45,7 @@ fn inner() -> Result<ExitCode> {
             cmd::run(app, args, include_global, optional, &output)
         }
         Command::DisplayHelp => Ok(cmd::help()),
+        Command::Setup => cmd::setup(),
         Command::ShowPath { app, include_global, log } => {
             let output = output::StdErr { category: log };
             cmd::show_path(app, include_global, &output)
