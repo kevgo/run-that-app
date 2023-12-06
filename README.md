@@ -104,8 +104,8 @@ Options:
 - `--optional`: if there is no pre-compiled binary for your platform, do
   nothing. This is useful for non-essential tools where it's okay if the tool
   doesn't run.
-- `--include-global`: if there is no pre-compiled binary for your platform, but
-  a similarly named binary in your PATH, run the latter.
+- `--include-path`: if there is no pre-compiled binary for your platform, but a
+  similarly named binary in your PATH, run the latter.
 - `--available`: signal via exit code whether an app is available on the local
   platform
 - `--show-path`: don't run the app but display the path to its executable
@@ -141,7 +141,7 @@ nothing.
 
 #### What if I compile an app myself?
 
-Add your version to the PATH and call _run-that-app_ with the `--include-global`
+Add your version to the PATH and call _run-that-app_ with the `--include-path`
 switch to make it run your app. In this case _run-that-app_ does not guarantee
 that the app has the correct version.
 
