@@ -16,6 +16,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut app_args: Vec<String> = vec![];
     let mut include_global = false;
     let mut show_path = false;
+    let mut setup = false;
     let mut indicate_available = false;
     let mut update = false;
     let mut optional = false;
@@ -41,6 +42,10 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 optional = true;
                 continue;
             }
+            if &arg == "--setup" {
+                setup = true;
+                continue;
+            }
             if &arg == "--show-path" {
                 show_path = true;
                 continue;
@@ -64,8 +69,10 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             app_args.push(arg);
         }
     }
-    if multiple_true(&[show_path, indicate_available, update]) {
+    if multiple_true(&[show_path, indicate_available, setup, update]) {
         return Err(UserError::MultipleCommandsGiven);
+    } else if setup {
+        return Ok(Args { command: Command::Setup });
     } else if update {
         return Ok(Args {
             command: Command::Update { log },

@@ -1,4 +1,5 @@
 use super::Config;
+use super::FILE_NAME;
 use crate::cli::RequestedApp;
 use crate::Result;
 use crate::UserError;
@@ -79,8 +80,6 @@ impl<'a> Iterator for LinePartsIterator<'a> {
         Some(part)
     }
 }
-
-pub const FILE_NAME: &str = ".tool-versions";
 
 #[cfg(test)]
 mod tests {
