@@ -15,7 +15,7 @@ pub fn update(output: &dyn Output) -> Result<ExitCode> {
         output.print(&format!("updating {} ... ", old_app.name));
         let latest = app.latest_version(output)?;
         if latest == old_app.version {
-            output.println(&format!("{}", "same".green()));
+            output.println(&format!("{}", "current".green()));
         } else {
             output.println(&format!("{} -> {}", old_app.version.cyan(), latest.cyan()));
         }
