@@ -33,6 +33,8 @@ pub trait App {
 
     /// provides the available versions of this application
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>>;
+
+    fn latest_version(&self, output: &dyn Output) -> Result<String>;
 }
 
 pub fn all() -> Apps {
