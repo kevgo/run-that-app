@@ -17,7 +17,7 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
     };
     let response_text = response.as_str().unwrap();
     let release: Release = match json::from_str(response_text) {
-        Ok(releases) => releases,
+        Ok(release) => release,
         Err(err) => {
             println!("Cannot de-serialize this payload:\n{response_text}");
             panic!("{}", err.to_string());
