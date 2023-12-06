@@ -49,6 +49,10 @@ impl App for Scc {
         })
     }
 
+    fn latest_version(&self, output: &dyn Output) -> Result<String> {
+        github::latest(ORG, REPO, output)
+    }
+
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
         github::versions(ORG, REPO, amount, output)
     }

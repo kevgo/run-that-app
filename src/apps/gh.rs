@@ -39,6 +39,10 @@ impl App for Gh {
         // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
     }
 
+    fn latest_version(&self, output: &dyn Output) -> Result<String> {
+        github::latest(ORG, REPO, output)
+    }
+
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
         github::versions(ORG, REPO, amount, output)
     }

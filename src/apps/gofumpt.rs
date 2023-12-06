@@ -28,6 +28,10 @@ impl App for Gofumpt {
         formatcp!("https://github.com/{ORG}/{REPO}")
     }
 
+    fn latest_version(&self, output: &dyn Output) -> Result<String> {
+        github::latest(ORG, REPO, output)
+    }
+
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         if let Some(executable) = download_executable(&DownloadArgs {
             app_name: self.name(),

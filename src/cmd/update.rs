@@ -13,16 +13,15 @@ pub fn update(output: &dyn Output) -> Result<ExitCode> {
     for old_app in &old_config.apps {
         let app = all_apps.lookup(&old_app.name)?;
         output.print(&format!("updating {} ... ", old_app.name));
-        let versions = app.versions(1, output)?;
-        let new_version = versions.into_iter().next().unwrap_or_else(|| old_app.version.clone());
-        if new_version == old_app.version {
-            output.println(&format!("{}", "same".green()));
+        let latest = app.latest_version(output)?;
+        if latest == old_app.version {
+            output.println(&format!("{}", "current".green()));
         } else {
-            output.println(&format!("{} -> {}", old_app.version.cyan(), new_version.cyan()));
+            output.println(&format!("{} -> {}", old_app.version.cyan(), latest.cyan()));
         }
         new_config.apps.push(RequestedApp {
             name: old_app.name.to_string(),
-            version: new_version,
+            version: latest,
         });
     }
     config::save(&new_config)?;

@@ -4,10 +4,33 @@ use crate::UserError;
 use colored::Colorize;
 use miniserde::{json, Deserialize};
 
+pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
+    let url = format!("https://api.github.com/repos/{org}/{repo}/releases/latest");
+    output.log("HTTP", &format!("downloading {url}"));
+    let get = minreq::get(&url)
+        .with_header("Accept", "application/vnd.github+json")
+        .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
+        .with_header("X-GitHub-Api-Version", "2022-11-28");
+    let Ok(response) = get.send() else {
+        output.println(&format!("{}", "not online".red()));
+        return Err(UserError::NotOnline);
+    };
+    let response_text = response.as_str().unwrap();
+    let release: Release = match json::from_str(response_text) {
+        Ok(release) => release,
+        Err(err) => {
+            println!("{}", "Error:".red());
+            println!("\n{response_text}");
+            return Err(UserError::CannotDownload { url, reason: err.to_string() });
+        }
+    };
+    Ok(release.version().to_string())
+}
+
 pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases?per_page={amount}");
     output.log("HTTP", &format!("downloading {url}"));
-    let get = minreq::get(url)
+    let get = minreq::get(&url)
         .with_param("per_page", amount.to_string())
         .with_header("Accept", "application/vnd.github+json")
         .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
@@ -20,8 +43,9 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
     let releases: Vec<Release> = match json::from_str(response_text) {
         Ok(releases) => releases,
         Err(err) => {
-            println!("Cannot de-serialize this payload:\n{response_text}");
-            panic!("{}", err.to_string());
+            println!("{}", "Error:".red());
+            println!("\n{response_text}");
+            return Err(UserError::CannotDownload { url, reason: err.to_string() });
         }
     };
     let versions = releases.into_iter().map(|release| release.version().to_string()).collect();
