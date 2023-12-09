@@ -8,7 +8,7 @@ use std::fs;
 use std::path::PathBuf;
 
 /// installs the given application by downloading its pre-compiled binary
-pub fn download_packaged_executable(args: &DownloadArgs) -> Result<Option<Executable>> {
+pub fn install(args: Args) -> Result<Option<Executable>> {
     if args.output.is_active("download") {
         args.output.print(&format!("downloading {} ... ", args.artifact_url.cyan()));
     } else {
@@ -45,7 +45,7 @@ pub fn download_packaged_executable(args: &DownloadArgs) -> Result<Option<Execut
     Ok(Some(executable))
 }
 
-pub struct DownloadArgs<'a> {
+pub struct Args<'a> {
     pub artifact_url: String,
     pub path_in_archive: String,
     pub filepath_on_disk: PathBuf,
