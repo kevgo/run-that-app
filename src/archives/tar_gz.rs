@@ -22,11 +22,16 @@ impl Archive for TarGz {
         }
         let gz_decoder = GzDecoder::new(io::Cursor::new(&data));
         let mut archive = tar::Archive::new(gz_decoder);
+        if output.is_active(CATEGORY) {
+            output.println("\nFiles in archive:")
+        }
         for file in archive.entries().unwrap() {
             let mut file = file.unwrap();
             let filepath = file.path().unwrap();
             let filepath = filepath.to_string_lossy();
-            output.log(CATEGORY, &format!("- {filepath}"));
+            if output.is_active(CATEGORY) {
+                output.println(&format!("- {filepath}"));
+            }
             if filepath == filepath_in_archive {
                 file.unpack(filepath_on_disk).unwrap();
                 filesystem::make_file_executable(filepath_on_disk)?;
