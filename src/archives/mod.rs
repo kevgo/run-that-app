@@ -7,7 +7,7 @@ use crate::install::ArtifactType;
 use crate::output::Output;
 use crate::yard::Executable;
 use crate::{filesystem, Result};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 /// An archive is a compressed file containing an application.
 pub trait Archive {
@@ -15,21 +15,27 @@ pub trait Archive {
     fn can_extract(&self, filename: &str) -> bool;
 
     /// extracts the given file from the given archive file content to the given location on disk
-    fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable>;
+    fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable>;
 }
 
 /// extracts the given file in the given artifact to the given location on disk
-pub fn extract(artifact: Artifact, artifact_type: &ArtifactType, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
+pub fn extract(artifact: Artifact, artifact_type: &ArtifactType, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
     match artifact_type {
         ArtifactType::PackagedExecutable { file_to_extract } => {
             for archive in all_archives() {
                 if archive.can_extract(&artifact.filename) {
-                    return archive.extract_file(artifact.data, file_to_extract, filepath_on_disk, output);
+                    let filepath = PathBuf::from(file_to_extract);
+                    let filename = filepath.file_name().unwrap();
+                    let file_path_on_disk = folder_on_disk.join(filename);
+                    return archive.extract_file(artifact.data, file_to_extract, &file_path_on_disk, output);
                 }
             }
             Err(UserError::UnknownArchive(artifact.filename))
         }
-        ArtifactType::Executable => filesystem::save_buffer(artifact.data, filepath_on_disk, output),
+        ArtifactType::Executable { filename } => {
+            let file_path_on_disk = folder_on_disk.join(filename);
+            filesystem::save_buffer(artifact.data, &file_path_on_disk, output)
+        }
     }
 }
 

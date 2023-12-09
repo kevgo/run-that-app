@@ -36,7 +36,7 @@ impl App for Scc {
             artifact_type: ArtifactType::PackagedExecutable {
                 file_to_extract: S(self.executable_filename(platform)),
             },
-            file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            folder_on_disk: yard.app_folder(self.name(), version),
             output,
         })? {
             return Ok(Some(executable));

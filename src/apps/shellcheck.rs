@@ -33,7 +33,7 @@ impl App for ShellCheck {
             artifact_type: ArtifactType::PackagedExecutable {
                 file_to_extract: format!("shellcheck-v{version}/{executable}", executable = self.executable_filename(platform)),
             },
-            file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            folder_on_disk: yard.app_folder(self.name(), version),
             output,
         })
     }

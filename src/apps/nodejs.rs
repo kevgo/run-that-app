@@ -38,7 +38,7 @@ impl App for NodeJS {
                     os = os_text(platform.os)
                 ),
             },
-            file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            folder_on_disk: yard.app_folder(self.name(), version),
             output,
         })
     }
