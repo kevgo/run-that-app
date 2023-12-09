@@ -216,6 +216,10 @@ case.
 
 #### pkgx
 
-Pkgx is a full-fledged alternative to run-that-app with more bells and whistles
-and a much more polished design. It comes with its own
-[app store](https://tea.xyz). Compared to pkgx, run-that-app
+Pkgx is a full-fledged alternative to run-that-app with more bells and whistles,
+a better user experience and more polished design. It comes with its own
+[app store](https://tea.xyz) that apps need to be listed at to be installable.
+These is (or at least used to be) a blockchain component to this.
+
+Compared to pkgx, run-that-app is much leaner while offering a few features like
+the ability to compile from source or that pkgx
