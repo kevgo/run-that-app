@@ -57,6 +57,9 @@ pub enum ArtifactType {
     Executable { filename: &'static str },
     /// the downloaded artifact is a zip or tar.gz file containing the executable
     PackagedExecutable { file_to_extract: String },
-    /// the downloaded artifact is a zip or tar.gz file containing many files that make up the application
-    FullArchive,
+    /// the downloaded artifact is a zip or tar.gz file containing many files that make up the application,
+    FullArchive {
+        /// filepath of the executable
+        executable_filename: String,
+    },
 }

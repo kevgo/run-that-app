@@ -39,7 +39,9 @@ pub fn extract(artifact: Artifact, artifact_type: &ArtifactType, folder_on_disk:
             let file_path_on_disk = folder_on_disk.join(filename);
             filesystem::save_buffer(artifact.data, &file_path_on_disk, output)
         }
-        ArtifactType::FullArchive => {
+        ArtifactType::FullArchive {
+            executable_filename: main_executable_filename,
+        } => {
             for archive in all_archives() {
                 if archive.can_extract(&artifact.filename) {
                     return archive.extract_all(artifact.data, folder_on_disk, output);
