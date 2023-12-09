@@ -32,7 +32,10 @@ pub fn extract(artifact: Artifact, artifact_type: &ArtifactType, folder_on_disk:
             }
             Err(UserError::UnknownArchive(artifact.filename))
         }
-        ArtifactType::Executable => filesystem::save_buffer(artifact.data, folder_on_disk, output),
+        ArtifactType::Executable { filename } => {
+            let file_path_on_disk = folder_on_disk.join(filename);
+            filesystem::save_buffer(artifact.data, &file_path_on_disk, output)
+        }
     }
 }
 

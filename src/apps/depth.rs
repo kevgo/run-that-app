@@ -32,7 +32,9 @@ impl App for Depth {
         if let Some(executable) = download_executable(&DownloadArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
-            artifact_type: ArtifactType::Executable,
+            artifact_type: ArtifactType::Executable {
+                filename: self.executable_filename(platform),
+            },
             folder_on_disk: yard.app_folder(self.name(), version),
             output,
         })? {
