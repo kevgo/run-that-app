@@ -1,4 +1,4 @@
-use crate::archives::{Artifact};
+use crate::archives::Artifact;
 use crate::error::UserError;
 use crate::output::Output;
 use crate::yard::Executable;
