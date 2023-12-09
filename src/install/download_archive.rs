@@ -30,17 +30,15 @@ pub fn download_archive(args: &DownloadArgs) -> Result<Option<Executable>> {
         });
     }
     let data = response.into_bytes();
-    if let Some(parent) = args.file_on_disk.parent() {
-        fs::create_dir_all(parent).map_err(|err| UserError::CannotCreateFolder {
-            folder: parent.to_path_buf(),
-            reason: err.to_string(),
-        })?;
-    }
+    fs::create_dir_all(args.path_on_disk).map_err(|err| UserError::CannotCreateFolder {
+        folder: args.path_on_disk,
+        reason: err.to_string(),
+    })?;
     let artifact = Artifact {
         filename: args.artifact_url.clone(),
         data,
     };
-    let executable = archives::extract(artifact, &args.artifact_type, &args.file_on_disk, args.output)?;
+    let executable = archives::extract(artifact, , &args.file_on_disk, args.output)?;
     args.output.println(&format!("{}", "ok".green()));
     Ok(Some(executable))
 }
