@@ -15,21 +15,21 @@ pub trait Archive {
     fn can_extract(&self, filename: &str) -> bool;
 
     /// extracts the given file from the given archive file content to the given location on disk
-    fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, disk_folder: &Path, output: &dyn Output) -> Result<Executable>;
+    fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable>;
 }
 
 /// extracts the given file in the given artifact to the given location on disk
-pub fn extract(artifact: Artifact, artifact_type: &ArtifactType, disk_folder: &Path, output: &dyn Output) -> Result<Executable> {
+pub fn extract(artifact: Artifact, artifact_type: &ArtifactType, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
     match artifact_type {
         ArtifactType::PackagedExecutable { file_to_extract } => {
             for archive in all_archives() {
                 if archive.can_extract(&artifact.filename) {
-                    return archive.extract_file(artifact.data, file_to_extract, disk_folder, output);
+                    return archive.extract_file(artifact.data, file_to_extract, folder_on_disk, output);
                 }
             }
             Err(UserError::UnknownArchive(artifact.filename))
         }
-        ArtifactType::Executable => filesystem::save_buffer(artifact.data, disk_folder, output),
+        ArtifactType::Executable => filesystem::save_buffer(artifact.data, folder_on_disk, output),
     }
 }
 
