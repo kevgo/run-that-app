@@ -29,7 +29,7 @@ impl App for Gh {
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         packaged_executable::install(Args {
             artifact_url: download_url(version, platform),
-            path_in_archive: todo!(),
+            path_in_archive: executable_path(version, platform),
             filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             output,
         })
