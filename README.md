@@ -210,7 +210,7 @@ Use the tooling of those frameworks to run that app!
 
 Use Docker or WASI.
 
-### Related Projects
+### Related solutions
 
 These other cross-platform package managers might be a better fit for your use
 case.
