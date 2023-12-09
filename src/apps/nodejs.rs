@@ -12,7 +12,7 @@ const REPO: &str = "node";
 
 impl App for NodeJS {
     fn name(&self) -> &'static str {
-        "node.js"
+        "node"
     }
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
@@ -31,7 +31,12 @@ impl App for NodeJS {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
             artifact_type: ArtifactType::Archive {
-                file_to_extract: format!("bin/{}", self.executable_filename(platform)),
+                file_to_extract: format!(
+                    "node-v{version}-{os}-{cpu}/bin/{executable}",
+                    cpu = cpu_text(platform.cpu),
+                    executable = self.executable_filename(platform),
+                    os = os_text(platform.os)
+                ),
             },
             file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             output,
