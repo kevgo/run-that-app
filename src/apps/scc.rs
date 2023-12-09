@@ -33,7 +33,7 @@ impl App for Scc {
         if let Some(executable) = download_executable(&DownloadArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
-            artifact_type: ArtifactType::Archive {
+            artifact_type: ArtifactType::PackagedExecutable {
                 file_to_extract: S(self.executable_filename(platform)),
             },
             file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),

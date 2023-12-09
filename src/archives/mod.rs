@@ -21,7 +21,7 @@ pub trait Archive {
 /// extracts the given file in the given artifact to the given location on disk
 pub fn extract(artifact: Artifact, artifact_type: &ArtifactType, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
     match artifact_type {
-        ArtifactType::Archive { file_to_extract } => {
+        ArtifactType::PackagedExecutable { file_to_extract } => {
             for archive in all_archives() {
                 if archive.can_extract(&artifact.filename) {
                     return archive.extract(artifact.data, file_to_extract, filepath_on_disk, output);
