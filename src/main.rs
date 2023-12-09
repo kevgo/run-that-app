@@ -46,9 +46,9 @@ fn inner() -> Result<ExitCode> {
         }
         Command::DisplayHelp => Ok(cmd::help()),
         Command::Setup => cmd::setup(),
-        Command::ShowPath { app, include_path, log } => {
+        Command::Which { app, include_path, log } => {
             let output = output::StdErr { category: log };
-            cmd::show_path(app, include_path, &output)
+            cmd::which(app, include_path, &output)
         }
         Command::Update { log } => {
             let output = output::StdErr { category: log };

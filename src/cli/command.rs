@@ -17,7 +17,7 @@ pub enum Command {
     },
     DisplayHelp,
     Setup,
-    ShowPath {
+    Which {
         app: RequestedApp,
         include_path: bool,
         log: Option<String>,

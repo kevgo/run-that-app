@@ -102,7 +102,7 @@ impl UserError {
             }
             UserError::MultipleCommandsGiven => {
                 error("multiple commands given");
-                desc("Please provide either --show-path or --available or nothing to run the app, but not both");
+                desc("Please provide either --which or --available or nothing to run the app, but not both");
             }
             UserError::NotOnline => error("you seem to be offline"),
             UserError::RunRequestMissingVersion => {
