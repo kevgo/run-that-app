@@ -9,6 +9,7 @@ mod ghokin;
 mod gofumpt;
 mod golangci_lint;
 mod goreleaser;
+mod nodejs;
 mod scc;
 mod shellcheck;
 mod shfmt;

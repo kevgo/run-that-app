@@ -1,6 +1,5 @@
 use super::App;
 use crate::hosting::github;
-use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::{download_executable, ArtifactType, DownloadArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
@@ -28,21 +27,13 @@ impl App for NodeJS {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        if let Some(executable) = download_executable(&DownloadArgs {
+        download_executable(&DownloadArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
             artifact_type: ArtifactType::Archive {
-                file_to_extract: self.executable_filename(platform).to_string(),
+                file_to_extract: format!("bin/{}", self.executable_filename(platform)),
             },
             file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
-            output,
-        })? {
-            return Ok(Some(executable));
-        }
-        compile_go(&CompileArgs {
-            import_path: format!("github.com/{ORG}/{REPO}@{version}"),
-            target_folder: yard.app_folder(self.name(), version),
-            executable_filename: self.executable_filename(platform),
             output,
         })
     }
@@ -58,7 +49,7 @@ impl App for NodeJS {
 
 fn download_url(version: &str, platform: Platform) -> String {
     format!(
-        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}",
+        "https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
@@ -67,22 +58,23 @@ fn download_url(version: &str, platform: Platform) -> String {
 
 fn os_text(os: Os) -> &'static str {
     match os {
-        Os::Linux => "Linux",
-        Os::MacOS => "Darwin",
-        Os::Windows => "Windows",
+        Os::Linux => "linux",
+        Os::MacOS => "darwin",
+        Os::Windows => "win",
     }
 }
 
 fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
         Cpu::Arm64 => "arm64",
-        Cpu::Intel64 => "x86_64",
+        Cpu::Intel64 => "x64",
     }
 }
 
 fn ext_text(os: Os) -> &'static str {
     match os {
-        Os::Linux | Os::MacOS => "tar.gz",
+        Os::Linux => "tar.xz",
+        Os::MacOS => "tar.gz",
         Os::Windows => "zip",
     }
 }
@@ -97,8 +89,8 @@ mod tests {
             os: Os::MacOS,
             cpu: Cpu::Arm64,
         };
-        let have = super::download_url("1.22.1", platform);
-        let want = "https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz";
+        let have = super::download_url("20.10.0", platform);
+        let want = "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz";
         assert_eq!(have, want);
     }
 }
