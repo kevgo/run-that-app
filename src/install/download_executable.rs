@@ -10,7 +10,7 @@ use std::path::PathBuf;
 /// installs the given application by downloading its pre-compiled binary
 pub fn download_executable(args: &DownloadArgs) -> Result<Option<Executable>> {
     if args.output.is_active("download") {
-        args.output.log("download", &format!("downloading {} ... ", args.artifact_url.cyan()));
+        args.output.print(&format!("downloading {} ... ", args.artifact_url.cyan()));
     } else {
         args.output.print("downloading ... ");
     }
