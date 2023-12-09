@@ -35,7 +35,7 @@ impl App for Ghokin {
             artifact_type: ArtifactType::PackagedExecutable {
                 file_to_extract: self.executable_filename(platform).to_string(),
             },
-            file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            disk_folder: yard.app_folder(self.name(), version),
             output,
         })? {
             return Ok(Some(executable));

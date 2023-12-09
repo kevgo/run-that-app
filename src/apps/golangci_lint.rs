@@ -39,7 +39,7 @@ impl App for GolangCiLint {
                     executable = self.executable_filename(platform)
                 ),
             },
-            file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            disk_folder: yard.app_folder(self.name(), version),
             output,
         })
         // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source

@@ -33,7 +33,7 @@ impl App for Gh {
             artifact_type: ArtifactType::PackagedExecutable {
                 file_to_extract: executable_path(version, platform),
             },
-            file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            disk_folder: yard.app_folder(self.name(), version),
             output,
         })
         // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
