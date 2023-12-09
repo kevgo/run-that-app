@@ -9,10 +9,11 @@ _Run-that-app_ executes CLI applications on Linux, Windows, macOS, and BSD
 without the need to install them first.
 
 Run-that-app does this in the most minimalistic, non-invasive way possible. No
-magic, no environment changes, no environment variables to set, no application
-shims or stubs, no shell integrations or other shell trickery, no dependencies,
-no application repository. Applications download in 1-2 seconds, without _sudo_,
-and store very little (just the executables) on your hard drive.
+magic, no environment or configuration changes, no environment variables to set,
+no application shims or stubs, no shell integrations or other shell trickery, no
+dependencies, no application repository. All you do is call a single stand-alone
+binary. Applications download in 1-2 seconds, without _sudo_, and store very
+little (just the executables) on your hard drive.
 
 ### quickstart
 
