@@ -22,15 +22,13 @@ pub trait Archive {
 pub fn extract(artifact: Artifact, artifact_type: &ArtifactType, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
     match artifact_type {
         ArtifactType::PackagedExecutable { file_to_extract } => {
-            for archive in all_archives() {
-                if archive.can_extract(&artifact.filename) {
-                    let filepath = PathBuf::from(file_to_extract);
-                    let filename = filepath.file_name().unwrap();
-                    let file_path_on_disk = folder_on_disk.join(filename);
-                    return archive.extract_file(artifact.data, file_to_extract, &file_path_on_disk, output);
-                }
-            }
-            Err(UserError::UnknownArchive(artifact.filename))
+            let Some(archive) = lookup(&artifact.filename) else {
+                return Err(UserError::UnknownArchive(artifact.filename));
+            };
+            let filepath = PathBuf::from(file_to_extract);
+            let filename = filepath.file_name().unwrap();
+            let file_path_on_disk = folder_on_disk.join(filename);
+            archive.extract_file(artifact.data, file_to_extract, &file_path_on_disk, output)
         }
         ArtifactType::Executable { filename } => {
             let file_path_on_disk = folder_on_disk.join(filename);
@@ -41,6 +39,10 @@ pub fn extract(artifact: Artifact, artifact_type: &ArtifactType, folder_on_disk:
 
 fn all_archives() -> Vec<Box<dyn Archive>> {
     vec![Box::new(tar_gz::TarGz {}), Box::new(tar_xz::TarXz {}), Box::new(zip::Zip {})]
+}
+
+fn lookup(extension: &str) -> Option<Box<dyn Archive>> {
+    all_archives().into_iter().find(|archive| archive.can_extract(extension))
 }
 
 /// An artifacts is a file containing an application, downloaded from the internet.
