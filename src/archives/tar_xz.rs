@@ -14,7 +14,7 @@ impl Archive for TarXz {
         filesystem::has_extension(filename, ".tar.xz")
     }
 
-    fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
+    fn extract(&self, data: Vec<u8>, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
         output.print("extracting ... ");
         output.log(CATEGORY, "archive type: tar.xz");
         let decompressor = XzDecoder::new(Cursor::new(data));

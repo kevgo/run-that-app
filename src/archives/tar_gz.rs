@@ -40,6 +40,30 @@ impl Archive for TarGz {
         }
         panic!("file {filepath_in_archive} not found in archive");
     }
+
+    fn extract_all(&self, data: Vec<u8>, file_path_on_disk: &Path, output: &dyn Output) -> Result<()> {
+        if output.is_active(CATEGORY) {
+            output.print("extracting tar.gz ...");
+        } else {
+            output.print("extracting ... ");
+        }
+        let gz_decoder = GzDecoder::new(io::Cursor::new(&data));
+        let mut archive = tar::Archive::new(gz_decoder);
+        if output.is_active(CATEGORY) {
+            output.println("\nFiles in archive:");
+        }
+        for file in archive.entries().unwrap() {
+            let mut file = file.unwrap();
+            let filepath = file.path().unwrap();
+            let filepath = filepath.to_string_lossy();
+            if output.is_active(CATEGORY) {
+                output.println(&format!("- {filepath}"));
+            }
+            file.unpack(file_path_on_disk).unwrap();
+            // filesystem::make_file_executable(file_path_on_disk)?;
+        }
+        Ok(())
+    }
 }
 
 const CATEGORY: &str = "extract/tar.gz";

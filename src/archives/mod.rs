@@ -14,15 +14,15 @@ pub trait Archive {
     /// indicates whether this archive implementation can extract the file with the given name
     fn can_extract(&self, filename: &str) -> bool;
 
-    /// extracts the given file from the given archive file content to the given location on disk
+    /// extracts the given file from the given archive to the given location on disk
     fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable>;
 
-    /// extracts all files in the given archive file content to the given location on disk
-    fn extract_all(&self, data: Vec<u8>, path_on_disk: &Path, output: &dyn Output) -> Result<Executable>;
+    /// extracts all files from the given archive to the given location on disk
+    fn extract_all(&self, data: Vec<u8>, folder_on_disk: &Path, output: &dyn Output) -> Result<()>;
 }
 
 /// extracts the given file in the given artifact to the given location on disk
-pub fn extract_file(artifact: Artifact, artifact_type: &ArtifactType, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
+pub fn extract(artifact: Artifact, artifact_type: &ArtifactType, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
     match artifact_type {
         ArtifactType::PackagedExecutable { file_to_extract } => {
             for archive in all_archives() {
@@ -42,7 +42,7 @@ pub fn extract_file(artifact: Artifact, artifact_type: &ArtifactType, filepath_o
         ArtifactType::FullArchive => {
             for archive in all_archives() {
                 if archive.can_extract(&artifact.filename) {
-                    return archive.extract_all(artifact.data, filepath_on_disk, output);
+                    return archive.extract_all(artifact.data, folder_on_disk, output);
                 }
             }
             Err(UserError::UnknownArchive(artifact.filename))

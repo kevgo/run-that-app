@@ -38,7 +38,7 @@ pub fn download_archive(args: &DownloadArgs) -> Result<Option<Executable>> {
         filename: args.artifact_url.clone(),
         data,
     };
-    let executable = archives::extract_file(artifact, &args.file_on_disk, args.output)?;
+    let executable = archives::extract(artifact, &args.file_on_disk, args.output)?;
     args.output.println(&format!("{}", "ok".green()));
     Ok(Some(executable))
 }
