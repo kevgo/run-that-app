@@ -5,14 +5,15 @@
 
 > You don't want to install apps, you want to run them!
 
-_Run-that-app_ executes CLI applications without the need to install them first.
-This reduces boilerplate code during software development, DevOps, and on CI
-servers.
+_Run-that-app_ executes CLI applications on Linux, Windows, macOS, and BSD
+without the need to install them first.
 
-_Run-that-app_ runs on all major computer platforms including Linux, Windows,
-macOS, and BSD. Application downloads happen in 1-2 seconds, don't require
-_sudo_, and store nothing but the executables on your hard drive. Run-that-app
-can download and extract `.zip`, `.tar.gz`, and `.tar.xz` files on its own.
+Run-that-app does this in the most minimalistic, non-invasive way possible. No
+magic, no environment or configuration changes, no environment variables to set,
+no application shims or stubs, no shell integrations or other shell trickery, no
+dependencies, no application repository. All you do is call a single stand-alone
+binary. Applications download in 1-2 seconds, without _sudo_, and store very
+little (just the executables) on your hard drive.
 
 ### quickstart
 
@@ -208,3 +209,42 @@ Use the tooling of those frameworks to run that app!
 #### What if my app has dependencies that run-that-app doesn't support?
 
 Use Docker or WASI.
+
+### Related solutions
+
+These other cross-platform package managers might be a better fit for your use
+case.
+
+#### asdf
+
+[Asdf](https://asdf-vm.com) is the classic cross-platform application runner. It
+is a mature and stable platform that installs a large variety of applications.
+You load asdf plugins that tell asdf how to install applications. It can create
+global or local shims for installed applications. Downsides of asdf are that it
+is written in Bash, which makes it
+[slow](https://github.com/asdf-vm/asdf/issues/290) and non-portable to Windows.
+
+Compared to asdf, run-that-app is faster, supports more platforms (including
+Windows), and offers additional features like optional applications and
+conditional execution.
+
+#### RTX
+
+[Rtx](https://github.com/jdx/rtx) is a rewrite of asdf in Rust. It allows
+installing applications, sets up shims and shell integration.
+
+Compared to rtx, run-that-app supports more platforms (including Windows), and
+offers additional features like conditional execution.
+
+#### pkgx
+
+[Pkgx](https://pkgx.sh) is a more full-fledged alternative to run-that-app with
+more bells and whistles, a better user experience, better shell integration, and
+more polished design. It comes with its own [app store](https://tea.xyz) that
+apps need to be listed in to be installable. These is (or at least used to be) a
+blockchain component to this.
+
+Compared to pkgx, run-that-app is leaner, supports more platforms (Windows), and
+offers additional features like the ability to compile from source, optional
+applications, and checking whether an application is available for your
+platform.
