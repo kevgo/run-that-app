@@ -23,7 +23,7 @@ impl Archive for TarGz {
         let gz_decoder = GzDecoder::new(io::Cursor::new(&data));
         let mut archive = tar::Archive::new(gz_decoder);
         if output.is_active(CATEGORY) {
-            output.println("\nFiles in archive:")
+            output.println("\nFiles in archive:");
         }
         for file in archive.entries().unwrap() {
             let mut file = file.unwrap();
