@@ -187,7 +187,7 @@ You also need to write a Powershell script since Bash isn't available
 out-of-the-box on Windows. Even if Bash is installed on Windows, it executes in
 an emulated environment that behaves different than a real Linux or Unix system.
 
-Run-that-app saves you from all this.
+Run-that-app saves you from these headaches.
 
 #### What if an app does not distribute binaries for my platform?
 
