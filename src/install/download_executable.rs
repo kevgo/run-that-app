@@ -8,7 +8,7 @@ use std::fs;
 use std::path::PathBuf;
 
 /// downloads the uncompressed precompiled binary
-pub fn download_executable(args: Args) -> Result<Option<Executable>> {
+pub fn download_executable(args: DownloadArgs) -> Result<Option<Executable>> {
     if args.output.is_active("download") {
         args.output.print(&format!("downloading {} ... ", args.artifact_url.cyan()));
     } else {
@@ -45,7 +45,7 @@ pub fn download_executable(args: Args) -> Result<Option<Executable>> {
     Ok(Some(executable))
 }
 
-pub struct Args<'a> {
+pub struct DownloadArgs<'a> {
     pub artifact_url: String,
     pub filepath_on_disk: PathBuf,
     pub output: &'a dyn Output,

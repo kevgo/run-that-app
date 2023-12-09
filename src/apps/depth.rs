@@ -1,7 +1,7 @@
 use super::App;
 use crate::hosting::github;
 use crate::install::compile_go::{compile_go, CompileArgs};
-use crate::install::{download_executable, DownloadArgs};
+use crate::install::download_executable;
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};

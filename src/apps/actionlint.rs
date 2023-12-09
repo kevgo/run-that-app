@@ -1,8 +1,8 @@
 use super::App;
 use crate::hosting::github;
 use crate::install::compile_go::{compile_go, CompileArgs};
-use crate::install::download_executable;
 use crate::install::download_packaged_executable::DownloadArgs;
+use crate::install::{download_executable, download_packaged_executable};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
@@ -30,7 +30,7 @@ impl App for ActionLint {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        if let Some(executable) = download_executable(download_executable::Args {
+        if let Some(executable) = download_packaged_executable(&DownloadArgs {
             artifact_url: download_url(version, platform),
             path_in_archive: self.executable_filename(platform).to_string(),
             filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
