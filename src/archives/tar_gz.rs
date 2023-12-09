@@ -15,8 +15,11 @@ impl Archive for TarGz {
     }
 
     fn extract(&self, data: Vec<u8>, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
-        output.print("extracting ... ");
-        output.log(CATEGORY, "archive type: tar.gz");
+        if output.is_active(CATEGORY) {
+            output.print("extracting tar.gz ...");
+        } else {
+            output.print("extracting ... ");
+        }
         let gz_decoder = GzDecoder::new(io::Cursor::new(&data));
         let mut archive = tar::Archive::new(gz_decoder);
         for file in archive.entries().unwrap() {
