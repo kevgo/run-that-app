@@ -52,3 +52,23 @@ pub struct Artifact {
     pub filename: String,
     pub data: Vec<u8>,
 }
+
+#[cfg(test)]
+mod tests {
+
+    mod lookup {
+        use crate::archives::lookup;
+
+        #[test]
+        fn known_archive_type() {
+            let have = lookup(".zip").unwrap();
+            assert!(have.can_extract(".zip"));
+        }
+
+        #[test]
+        fn unknown_archive_type() {
+            let have = lookup(".zonk");
+            assert!(have.is_none());
+        }
+    }
+}
