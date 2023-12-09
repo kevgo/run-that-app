@@ -54,6 +54,8 @@ pub struct DownloadArgs<'a> {
 }
 
 pub enum ArtifactType {
+    /// the executable can be downloaded directly
     Executable,
+    /// the executable is packaged inside a zip or tar.gz file
     PackagedExecutable { file_to_extract: String },
 }
