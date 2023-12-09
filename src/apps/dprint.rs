@@ -1,6 +1,7 @@
 use super::App;
 use crate::hosting::github;
 use crate::install::compile_rust::{compile_rust, CompileArgs};
+use crate::install::packaged_executable::{self, Args};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
@@ -27,8 +28,9 @@ impl App for Dprint {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        if let Some(executable) = download_executable(&DownloadArgs {
+        if let Some(executable) = packaged_executable::install(Args {
             artifact_url: download_url(version, platform),
+            path_in_archive: todo!(),
             filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             output,
         })? {
