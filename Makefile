@@ -5,8 +5,8 @@ fix: build  # auto-corrects issues
 	cargo fix
 	cargo clippy --fix
 	cargo fmt
-	target/debug/run-that-app dprint fmt
-	target/debug/run-that-app shfmt -f . | xargs target/debug/run-that-app shfmt -w
+	target/debug/rta dprint fmt
+	target/debug/rta shfmt -f . | xargs target/debug/rta shfmt -w
 
 install:  # installs this tool locally for testing
 	cargo install --path .
@@ -17,9 +17,9 @@ help:  # shows all available Make commands
 lint: build  # runs all linters
 	cargo clippy --all-targets --all-features -- --deny=warnings
 	git diff --check
-	target/debug/run-that-app actionlint
-	# target/debug/run-that-app dprint check  # this breaks the Windows CI
-	# target/debug/run-that-app/shfmt -f . | xargs target/debug/run-that-app/shellcheck
+	target/debug/rta actionlint
+	# target/debug/rta dprint check  # this breaks the Windows CI
+	# target/debug/rta -f . | xargs target/rta/shellcheck
 
 test: unit lint  # runs all tests
 
