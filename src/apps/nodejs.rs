@@ -30,7 +30,7 @@ impl App for NodeJS {
         download_executable(&DownloadArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
-            artifact_type: ArtifactType::Archive {
+            artifact_type: ArtifactType::PackagedExecutable {
                 file_to_extract: format!(
                     "node-v{version}-{os}-{cpu}/bin/{executable}",
                     cpu = cpu_text(platform.cpu),
