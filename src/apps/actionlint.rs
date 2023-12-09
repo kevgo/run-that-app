@@ -35,7 +35,7 @@ impl App for ActionLint {
             artifact_type: ArtifactType::PackagedExecutable {
                 file_to_extract: self.executable_filename(platform).to_string(),
             },
-            disk_folder: yard.app_folder(self.name(), version),
+            folder_on_disk: yard.app_folder(self.name(), version),
             output,
         })? {
             return Ok(Some(executable));

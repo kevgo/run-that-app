@@ -30,15 +30,15 @@ pub fn download_executable(args: &DownloadArgs) -> Result<Option<Executable>> {
         });
     }
     let data = response.into_bytes();
-    fs::create_dir_all(&args.disk_folder).map_err(|err| UserError::CannotCreateFolder {
-        folder: args.disk_folder.clone(),
+    fs::create_dir_all(&args.folder_on_disk).map_err(|err| UserError::CannotCreateFolder {
+        folder: args.folder_on_disk.clone(),
         reason: err.to_string(),
     })?;
     let artifact = Artifact {
         filename: args.artifact_url.clone(),
         data,
     };
-    let executable = archives::extract(artifact, &args.artifact_type, &args.disk_folder, args.output)?;
+    let executable = archives::extract(artifact, &args.artifact_type, &args.folder_on_disk, args.output)?;
     args.output.println(&format!("{}", "ok".green()));
     Ok(Some(executable))
 }
@@ -47,7 +47,7 @@ pub struct DownloadArgs<'a> {
     pub app_name: &'static str,
     pub artifact_url: String,
     pub artifact_type: ArtifactType,
-    pub disk_folder: PathBuf,
+    pub folder_on_disk: PathBuf,
     pub output: &'a dyn Output,
 }
 

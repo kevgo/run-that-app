@@ -37,7 +37,7 @@ impl App for Gofumpt {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
             artifact_type: ArtifactType::Executable,
-            disk_folder: yard.app_folder(self.name(), version),
+            folder_on_disk: yard.app_folder(self.name(), version),
             output,
         })? {
             return Ok(Some(executable));
