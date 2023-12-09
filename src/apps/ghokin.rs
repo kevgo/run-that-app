@@ -32,7 +32,7 @@ impl App for Ghokin {
         if let Some(executable) = download_executable(&DownloadArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
-            artifact_type: ArtifactType::Archive {
+            artifact_type: ArtifactType::PackagedExecutable {
                 file_to_extract: self.executable_filename(platform).to_string(),
             },
             file_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
