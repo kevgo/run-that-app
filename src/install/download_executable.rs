@@ -36,7 +36,11 @@ pub fn download_executable(args: &DownloadArgs) -> Result<Option<Executable>> {
             reason: err.to_string(),
         })?;
     }
-    let executable = archives::extract(artifact, &args.artifact_type, &args.folder_on_disk, args.output)?;
+    let artifact = Artifact {
+        filename: args.artifact_url,
+        data,
+    };
+    let executable = archives::store_executable(artifact, &args.filepath_on_disk, args.output)?;
     args.output.println(&format!("{}", "ok".green()));
     Ok(Some(executable))
 }
@@ -45,11 +49,4 @@ pub struct DownloadArgs<'a> {
     pub artifact_url: String,
     pub filepath_on_disk: PathBuf,
     pub output: &'a dyn Output,
-}
-
-pub enum ArtifactType {
-    /// the executable can be downloaded directly
-    Executable { filename: &'static str },
-    /// the executable is packaged inside a zip or tar.gz file
-    PackagedExecutable { file_to_extract: String },
 }

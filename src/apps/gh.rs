@@ -27,8 +27,7 @@ impl App for Gh {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        download_executable(&DownloadArgs {
-            app_name: self.name(),
+        download_packaged_executable(&DownloadArgs {
             artifact_url: download_url(version, platform),
             artifact_type: ArtifactType::PackagedExecutable {
                 file_to_extract: executable_path(version, platform),
