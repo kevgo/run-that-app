@@ -16,7 +16,7 @@ impl Archive for Zip {
         filesystem::has_extension(filename, ".zip")
     }
 
-    fn extract(&self, data: Vec<u8>, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
+    fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
         output.print("extracting ... ");
         output.log(CATEGORY, "archive type: zip");
         let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&data)).expect("cannot read zip data");
