@@ -27,10 +27,10 @@ can download and extract `.zip`, `.tar.gz`, and `.tar.xz` files on its own.
 2. Run an app (in this case the GitHub CLI at version 2.39.1)
 
    ```bash
-   ./run-that-app gh@2.39.1
+   ./run-that-app actionlint@1.6.26
    ```
 
-#### on Windows Powershell
+#### on Windows (Powershell)
 
 1. Download the run-that-app executable:
 
@@ -44,7 +44,7 @@ can download and extract `.zip`, `.tar.gz`, and `.tar.xz` files on its own.
    .\run-that-app actionlint@1.6.26
    ```
 
-#### installing into a specific directory
+#### installing the run-that-app executable into a specific directory
 
 The installer script places the run-that-app executable into the current
 directory. To install into a specific directory, change into that directory and
@@ -65,21 +65,22 @@ Now you can run these applications without having to provide their version
 numbers:
 
 ```bash
-./run-that-app gh
+./run-that-app actionlint
 ```
 
-You can execute `run-that-app --setup` to create this file.
+Executing `run-that-app --setup` creates this file.
 
 ### usage
 
 ```bash
-run-that-app [run-that-app options] <app name>[@<app version override>] [app options]
+run-that-app [run-that-app arguments] <app name>[@<app version override>] [app arguments]
 ```
 
-Options for run-that-app come before the name of the application to run. All CLI
-arguments after the application name are passed to the application.
+Arguments for run-that-app come before the name of the application to run. The
+application name is the first CLI argument that doesn't start with a dash. All
+CLI arguments after the application name are passed to the application.
 
-Options:
+Arguments:
 
 - `--available`: signal via exit code whether an app is available on the local
   platform
@@ -89,9 +90,12 @@ Options:
 - `--log=domain`: enable logging for the given domain
   - see the available domains by running with all logging enabled
 - `--optional`: if there is no pre-compiled binary for your platform, do
-  nothing. This is useful for non-essential tools where it's okay if the tool
-  doesn't run.
+  nothing. This is useful for non-essential applications that shouldn't break
+  automation if they are not available.
 - `--show-path`: don't run the app but display the path to its executable
+
+The app version override should consist of just the version number, i.e.
+`1.6.26` and not `v1.6.26`.
 
 ### examples
 
@@ -108,7 +112,7 @@ ShellCheck is just a linter. If it isn't available on a particular platform, the
 tooling shouldn't abort with an error but simply skip ShellCheck.
 
 ```bash
-run-that-app --ignore-unavailable shellcheck@0.9.0 --color=always myscript.sh
+run-that-app --optional shellcheck@0.9.0 --color=always myscript.sh
 ```
 
 #### Using run-that-app as an installer
@@ -122,46 +126,46 @@ run-that-app --available alphavet && go vet "-vettool=$(run-that-app --show-path
 
 #### Usage in a Makefile
 
-If you use `Make` to build your application and execute dev tools, here is a
-template for installing and using run-that-app:
+Here is a template for installing and using run-that-app in a `Makefile`:
 
 ```make
 RUN_THAT_APP_VERSION = 0.2.1
 
-# an example Make target that calls run-that-app
+# an example Make target that uses run-that-app
 test: tools/run-that-app@${RUN_THAT_APP_VERSION}
 	tools/rta actionlint
 
 # this Make target installs run-that-app if it isn't installed or has the wrong version
 tools/run-that-app@${RUN_THAT_APP_VERSION}:
 	@rm -f tools/run-that-app* tools/rta
+  @mkdir -p tools
 	@(cd tools && curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh)
 	@mv tools/run-that-app tools/run-that-app@${RUN_THAT_APP_VERSION}
 	@ln -s run-that-app@${RUN_THAT_APP_VERSION} tools/rta
 ```
 
+You would have to `.gitignore` the files `tools/run-that-app*` and `tools/rta`.
+
 ### Q&A
 
 #### Why not use the package manager of my system to install third-party applications?
 
-If it works then do it. But keep in mind:
+If it works then do it. We have found many challenges with using executables
+installed by package managers:
 
 - Other people might use other operating systems that have other package
-  managers like Homebrew, Nix, Scoop, Chocolatey, winget, DNF, pacman, apt, pkg,
-  snap, zypper, xbps, portage, etc.
+  managers. You would have to support Homebrew, Nix, Scoop, Chocolatey, winget,
+  DNF, pacman, apt, pkg, snap, zypper, xbps, portage, etc.
 - Some environments like Windows or bare-bones Docker images might not have a
   package manager available.
 - Some of the tools you use might not be available via every package manager. An
   example are tools distributed via GitHub Releases.
-- You might need tooling a different version of an application than the one
-  provided by your or other people's package manager. A best practice for
-  reproducible builds is using tooling at an exactly specified version instead
-  of whatever version your package manager gives you.
+- You might need a different version of an application than the one provided by
+  your or other people's package manager. A best practice for reproducible
+  builds is using tooling at an exactly specified version instead of whatever
+  version your package manager gives you on a particular day.
 - You might work on several projects, each project requiring different versions
   of tools.
-- Run-that-app saves you from having to write and maintain Bash and PowerShell
-  scripts to install your dependencies and deal with various versions and
-  flavors of `curl`, `gzip`, and `tar`
 
 #### Why not use Docker?
 
@@ -171,6 +175,20 @@ often uses Gigabytes of hard drive space. Docker doesn't help with different CPU
 architectures (Intel, ARM, Risc-V). Using Docker on CI can cause the
 Docker-in-Docker problem.
 
+#### Why not quickly write a small Bash script that downloads the executable?
+
+These Bash scripts tend to become complex if you want them to work well on a
+variety of operating systems. They require additional applications like `curl`,
+`gzip`, and `tar`, which must exist on all machines that your Bash script runs
+on. Bash itself as well as these external dependencies come in a variety of
+versions and flavors that sometimes aren't compatible with each other.
+
+You also need to write a Powershell script since Bash isn't available
+out-of-the-box on Windows. Even if Bash is installed on Windows, it executes in
+an emulated environment that behaves different than a real Linux or Unix system.
+
+Run-that-app saves you from these headaches.
+
 #### What if an app does not distribute binaries for my platform?
 
 Run-that-app can compile applications from source. If that doesn't work, it can
@@ -179,10 +197,9 @@ switch.
 
 #### What if I compile an app myself?
 
-Run-that-app can build apps from source for you. If you want to do it yourself,
-add the app that you compiled to the PATH and call _run-that-app_ with the
-`--include-path` switch to make it run your app. In this case _run-that-app_
-does not guarantee that the app has the correct version.
+Add the app that you compiled to the PATH and call _run-that-app_ with the
+`--include-path` option. In this case _run-that-app_ does not guarantee that the
+app has the correct version.
 
 #### What about apps is written in NodeJS, Python, or Ruby?
 
