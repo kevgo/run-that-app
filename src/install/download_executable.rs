@@ -55,5 +55,5 @@ pub struct DownloadArgs<'a> {
 
 pub enum ArtifactType {
     Executable,
-    Archive { file_to_extract: String },
+    PackagedExecutable { file_to_extract: String },
 }
