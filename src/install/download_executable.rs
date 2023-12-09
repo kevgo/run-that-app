@@ -30,17 +30,15 @@ pub fn download_executable(args: &DownloadArgs) -> Result<Option<Executable>> {
         });
     }
     let data = response.into_bytes();
-    if let Some(parent) = args.file_on_disk.parent() {
-        fs::create_dir_all(parent).map_err(|err| UserError::CannotCreateFolder {
-            folder: parent.to_path_buf(),
-            reason: err.to_string(),
-        })?;
-    }
+    fs::create_dir_all(&args.folder_on_disk).map_err(|err| UserError::CannotCreateFolder {
+        folder: args.folder_on_disk.clone(),
+        reason: err.to_string(),
+    })?;
     let artifact = Artifact {
         filename: args.artifact_url.clone(),
         data,
     };
-    let executable = archives::extract_file(artifact, &args.artifact_type, &args.file_on_disk, args.output)?;
+    let executable = archives::extract_file(artifact, &args.artifact_type, &args.folder_on_disk, args.output)?;
     args.output.println(&format!("{}", "ok".green()));
     Ok(Some(executable))
 }
@@ -49,14 +47,14 @@ pub struct DownloadArgs<'a> {
     pub app_name: &'static str,
     pub artifact_url: String,
     pub artifact_type: ArtifactType,
-    pub file_on_disk: PathBuf,
+    pub folder_on_disk: PathBuf,
     pub output: &'a dyn Output,
 }
 
 /// describes what the downloaded artifact is
 pub enum ArtifactType {
     /// the downloaded artifact is the executable file
-    Executable,
+    Executable { filename: &'static str },
     /// the downloaded artifact is a zip or tar.gz file containing the executable
     PackagedExecutable { file_to_extract: String },
     /// the downloaded artifact is a zip or tar.gz file containing many files that make up the application
