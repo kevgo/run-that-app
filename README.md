@@ -215,12 +215,36 @@ Use Docker or WASI.
 These other cross-platform package managers might be a better fit for your use
 case.
 
+#### asdf
+
+[Asdf](https://asdf-vm.com) is the classic cross-platform application runner. It
+is a mature and stable platform that installs a large variety of applications.
+You load asdf plugins that tell asdf how to install applications. It can create
+global or local shims for installed applications. Downsides of asdf are that it
+is written in Bash, which makes it
+[slow](https://github.com/asdf-vm/asdf/issues/290) and non-portable to Windows.
+
+Compared to asdf, run-that-app is faster, supports more platforms (including
+Windows), and offers additional features like optional applications and
+conditional execution.
+
+#### RTX
+
+[Rtx](https://github.com/jdx/rtx) is a rewrite of asdf in Rust. It allows
+installing applications, sets up shims and shell integration.
+
+Compared to rtx, run-that-app supports more platforms (including Windows), and
+offers additional features like conditional execution.
+
 #### pkgx
 
-Pkgx is a full-fledged alternative to run-that-app with more bells and whistles,
-a better user experience and more polished design. It comes with its own
-[app store](https://tea.xyz) that apps need to be listed at to be installable.
-These is (or at least used to be) a blockchain component to this.
+[Pkgx](https://pkgx.sh) is a more full-fledged alternative to run-that-app with
+more bells and whistles, a better user experience, better shell integration, and
+more polished design. It comes with its own [app store](https://tea.xyz) that
+apps need to be listed in to be installable. These is (or at least used to be) a
+blockchain component to this.
 
-Compared to pkgx, run-that-app is much leaner while offering a few features like
-the ability to compile from source or that pkgx
+Compared to pkgx, run-that-app is leaner, supports more platforms (Windows), and
+offers additional features like the ability to compile from source, optional
+applications, and checking whether an application is available for your
+platform.
