@@ -53,9 +53,12 @@ pub struct DownloadArgs<'a> {
     pub output: &'a dyn Output,
 }
 
+/// describes what the downloaded artifact is
 pub enum ArtifactType {
-    /// the executable can be downloaded directly
+    /// the downloaded artifact is the executable file
     Executable,
-    /// the executable is packaged inside a zip or tar.gz file
+    /// the downloaded artifact is a zip or tar.gz file containing the executable
     PackagedExecutable { file_to_extract: String },
+    /// the downloaded artifact is a zip or tar.gz file containing many files that make up the application
+    FullArchive,
 }

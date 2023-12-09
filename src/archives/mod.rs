@@ -30,6 +30,14 @@ pub fn extract(artifact: Artifact, artifact_type: &ArtifactType, filepath_on_dis
             Err(UserError::UnknownArchive(artifact.filename))
         }
         ArtifactType::Executable => filesystem::save_buffer(artifact.data, filepath_on_disk, output),
+        ArtifactType::FullArchive => {
+            for archive in all_archives() {
+                if archive.can_extract(&artifact.filename) {
+                    return archive.extract(artifact.data, file_to_extract, filepath_on_disk, output);
+                }
+            }
+            Err(UserError::UnknownArchive(artifact.filename))
+        }
     }
 }
 
