@@ -18,6 +18,10 @@ pub trait Archive {
     fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable>;
 }
 
+pub fn extract_file(data: Vec<u8>, path_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
+    let extractor = archive
+}
+
 /// extracts the given file in the given artifact to the given location on disk
 pub fn extract(artifact: Artifact, artifact_type: &ArtifactType, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
     match artifact_type {

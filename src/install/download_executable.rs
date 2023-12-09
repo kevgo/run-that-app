@@ -7,7 +7,7 @@ use colored::Colorize;
 use std::fs;
 use std::path::PathBuf;
 
-/// installs the given application by downloading its pre-compiled binary
+/// downloads the uncompressed precompiled binary
 pub fn download_executable(args: &DownloadArgs) -> Result<Option<Executable>> {
     if args.output.is_active("download") {
         args.output.print(&format!("downloading {} ... ", args.artifact_url.cyan()));
@@ -30,24 +30,20 @@ pub fn download_executable(args: &DownloadArgs) -> Result<Option<Executable>> {
         });
     }
     let data = response.into_bytes();
-    fs::create_dir_all(&args.folder_on_disk).map_err(|err| UserError::CannotCreateFolder {
-        folder: args.folder_on_disk.clone(),
-        reason: err.to_string(),
-    })?;
-    let artifact = Artifact {
-        filename: args.artifact_url.clone(),
-        data,
-    };
+    if let Some(parent) = args.filepath_on_disk.parent() {
+        fs::create_dir_all(parent).map_err(|err| UserError::CannotCreateFolder {
+            folder: parent.to_path_buf(),
+            reason: err.to_string(),
+        })?;
+    }
     let executable = archives::extract(artifact, &args.artifact_type, &args.folder_on_disk, args.output)?;
     args.output.println(&format!("{}", "ok".green()));
     Ok(Some(executable))
 }
 
 pub struct DownloadArgs<'a> {
-    pub app_name: &'static str,
     pub artifact_url: String,
-    pub artifact_type: ArtifactType,
-    pub folder_on_disk: PathBuf,
+    pub filepath_on_disk: PathBuf,
     pub output: &'a dyn Output,
 }
 
