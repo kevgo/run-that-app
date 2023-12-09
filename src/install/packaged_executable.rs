@@ -47,7 +47,7 @@ pub fn install(args: Args) -> Result<Option<Executable>> {
 
 pub struct Args<'a> {
     pub artifact_url: String,
-    pub path_in_archive: String,
+    pub path_in_archive: String, // TODO: make this a &str
     pub filepath_on_disk: PathBuf,
     pub output: &'a dyn Output,
 }

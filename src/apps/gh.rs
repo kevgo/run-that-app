@@ -1,6 +1,6 @@
 use super::App;
 use crate::hosting::github;
-use crate::install::download_packaged_executable;
+use crate::install::packaged_executable::{self, Args};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
@@ -27,11 +27,12 @@ impl App for Gh {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        download_packaged_executable(
-            download_url(version, platform),
-            yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+        packaged_executable::install(Args {
+            artifact_url: download_url(version, platform),
+            path_in_archive: todo!(),
+            filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             output,
-        )
+        })
         // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
     }
 
