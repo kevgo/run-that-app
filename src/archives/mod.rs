@@ -22,7 +22,7 @@ pub trait Archive {
 }
 
 /// extracts the given file in the given artifact to the given location on disk
-pub fn extract(artifact: Artifact, artifact_type: &ArtifactType, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
+pub fn extract_file(artifact: Artifact, artifact_type: &ArtifactType, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
     match artifact_type {
         ArtifactType::PackagedExecutable { file_to_extract } => {
             for archive in all_archives() {
