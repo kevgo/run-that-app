@@ -5,14 +5,14 @@
 
 > You don't want to install apps, you want to run them!
 
-_Run-that-app_ executes CLI applications without the need to install them first.
-This reduces boilerplate code during software development, DevOps, and on CI
-servers.
+_Run-that-app_ executes CLI applications on Linux, Windows, macOS, and BSD
+without the need to install them first.
 
-_Run-that-app_ runs on all major computer platforms including Linux, Windows,
-macOS, and BSD. Application downloads happen in 1-2 seconds, don't require
-_sudo_, and store nothing but the executables on your hard drive. Run-that-app
-can download and extract `.zip`, `.tar.gz`, and `.tar.xz` files on its own.
+Run-that-app does this in the most minimalistic, non-invasive way possible. No
+magic, no environment changes, no environment variables to set, no application
+shims or stubs, no shell integrations or other shell trickery, no dependencies,
+no application repository. Applications download in 1-2 seconds, without _sudo_,
+and store very little (just the executables) on your hard drive.
 
 ### quickstart
 
@@ -208,3 +208,14 @@ Use the tooling of those frameworks to run that app!
 #### What if my app has dependencies that run-that-app doesn't support?
 
 Use Docker or WASI.
+
+### Related Projects
+
+These other cross-platform package managers might be a better fit for your use
+case.
+
+#### pkgx
+
+Pkgx is a full-fledged alternative to run-that-app with more bells and whistles
+and a much more polished design. It comes with its own
+[app store](https://tea.xyz). Compared to pkgx, run-that-app
