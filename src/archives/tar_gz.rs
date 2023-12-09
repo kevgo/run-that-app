@@ -4,7 +4,7 @@ use crate::Output;
 use crate::{filesystem, Result};
 use flate2::read::GzDecoder;
 use std::io;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 /// a .tar.gz file downloaded from the internet, containing an application
 pub struct TarGz {}
@@ -14,7 +14,7 @@ impl Archive for TarGz {
         filesystem::has_extension(filename, ".tar.gz")
     }
 
-    fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, disk_folder: &Path, output: &dyn Output) -> Result<Executable> {
+    fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, file_path_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
         if output.is_active(CATEGORY) {
             output.print("extracting tar.gz ...");
         } else {
@@ -33,12 +33,9 @@ impl Archive for TarGz {
                 output.println(&format!("- {filepath}"));
             }
             if filepath == filepath_in_archive {
-                let filepath = PathBuf::from(filepath_in_archive);
-                let filename = filepath.file_name().unwrap();
-                let file_path_on_disk = disk_folder.join(filename);
-                file.unpack(&file_path_on_disk).unwrap();
-                filesystem::make_file_executable(&file_path_on_disk)?;
-                return Ok(Executable(file_path_on_disk.clone()));
+                file.unpack(file_path_on_disk).unwrap();
+                filesystem::make_file_executable(file_path_on_disk)?;
+                return Ok(Executable(file_path_on_disk.to_path_buf()));
             }
         }
         panic!("file {filepath_in_archive} not found in archive");
