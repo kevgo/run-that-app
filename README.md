@@ -92,7 +92,7 @@ Arguments:
 - `--optional`: if there is no pre-compiled binary for your platform, do
   nothing. This is useful for non-essential applications that shouldn't break
   automation if they are not available.
-- `--show-path`: don't run the app but display the path to its executable
+- `--which`: don't run the app but display the path to its executable
 
 The app version override should consist of just the version number, i.e.
 `1.6.26` and not `v1.6.26`.
@@ -121,7 +121,7 @@ This example calls `go vet` with `alphavet` as a custom vet tool. But only if
 `alphavet` is available for the current platform.
 
 ```bash
-run-that-app --available alphavet && go vet "-vettool=$(run-that-app --show-path alphavet)" ./...
+run-that-app --available alphavet && go vet "-vettool=$(run-that-app --which alphavet)" ./...
 ```
 
 #### Usage in a Makefile

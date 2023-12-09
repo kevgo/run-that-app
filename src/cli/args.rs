@@ -46,7 +46,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 setup = true;
                 continue;
             }
-            if &arg == "--show-path" {
+            if &arg == "--which" {
                 show_path = true;
                 continue;
             }
@@ -187,7 +187,7 @@ mod tests {
 
             #[test]
             fn with_app() {
-                let have = parse_args(vec!["run-that-app", "--show-path", "shellcheck"]);
+                let have = parse_args(vec!["run-that-app", "--which", "shellcheck"]);
                 let want = Ok(Args {
                     command: Command::ShowPath {
                         app: RequestedApp {
@@ -203,7 +203,7 @@ mod tests {
 
             #[test]
             fn with_all_options() {
-                let have = parse_args(vec!["run-that-app", "--show-path", "--include-path", "--log=detect", "shellcheck"]);
+                let have = parse_args(vec!["run-that-app", "--which", "--include-path", "--log=detect", "shellcheck"]);
                 let want = Ok(Args {
                     command: Command::ShowPath {
                         app: RequestedApp {
@@ -219,7 +219,7 @@ mod tests {
 
             #[test]
             fn without_app() {
-                let have = parse_args(vec!["run-that-app", "--show-path"]);
+                let have = parse_args(vec!["run-that-app", "--which"]);
                 let want = Err(UserError::MissingApplication);
                 pretty::assert_eq!(have, want);
             }
@@ -227,7 +227,7 @@ mod tests {
 
         #[test]
         fn multiple_commands() {
-            let have = parse_args(vec!["run-that-app", "--show-path", "--available", "shellcheck"]);
+            let have = parse_args(vec!["run-that-app", "--which", "--available", "shellcheck"]);
             let want = Err(UserError::MultipleCommandsGiven);
             pretty::assert_eq!(have, want);
         }
