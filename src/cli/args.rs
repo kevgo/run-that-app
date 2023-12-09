@@ -15,7 +15,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut log: Option<String> = None;
     let mut app_args: Vec<String> = vec![];
     let mut include_path = false;
-    let mut show_path = false;
+    let mut which = false;
     let mut setup = false;
     let mut indicate_available = false;
     let mut update = false;
@@ -47,7 +47,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 continue;
             }
             if &arg == "--which" {
-                show_path = true;
+                which = true;
                 continue;
             }
             if &arg == "--update" {
@@ -69,7 +69,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             app_args.push(arg);
         }
     }
-    if multiple_true(&[show_path, indicate_available, setup, update]) {
+    if multiple_true(&[which, indicate_available, setup, update]) {
         return Err(UserError::MultipleCommandsGiven);
     } else if setup {
         return Ok(Args { command: Command::Setup });
@@ -83,9 +83,9 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             Ok(Args {
                 command: Command::Available { app, include_path, log },
             })
-        } else if show_path {
+        } else if which {
             Ok(Args {
-                command: Command::ShowPath { app, include_path, log },
+                command: Command::Which { app, include_path, log },
             })
         } else {
             Ok(Args {
@@ -98,7 +98,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 },
             })
         }
-    } else if include_path || optional || log.is_some() || show_path || indicate_available {
+    } else if include_path || optional || log.is_some() || which || indicate_available {
         Err(UserError::MissingApplication)
     } else {
         Ok(Args { command: Command::DisplayHelp })
@@ -189,7 +189,7 @@ mod tests {
             fn with_app() {
                 let have = parse_args(vec!["run-that-app", "--which", "shellcheck"]);
                 let want = Ok(Args {
-                    command: Command::ShowPath {
+                    command: Command::Which {
                         app: RequestedApp {
                             name: S("shellcheck"),
                             version: S(""),
@@ -205,7 +205,7 @@ mod tests {
             fn with_all_options() {
                 let have = parse_args(vec!["run-that-app", "--which", "--include-path", "--log=detect", "shellcheck"]);
                 let want = Ok(Args {
-                    command: Command::ShowPath {
+                    command: Command::Which {
                         app: RequestedApp {
                             name: S("shellcheck"),
                             version: S(""),
