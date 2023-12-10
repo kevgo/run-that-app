@@ -11,7 +11,7 @@ without the need to install them first.
 Run-that-app does this in the most minimalistic, non-invasive way possible. No
 magic, no environment or configuration changes, no environment variables to set,
 no application shims or stubs, no shell integrations or other shell trickery, no
-dependencies, no application repository. All you do is call a single stand-alone
+dependencies, no plugins, no application repository. All you do is call a single stand-alone
 binary. Applications download in 1-2 seconds, without _sudo_, and store very
 little (just the executables) on your hard drive.
 
@@ -224,9 +224,7 @@ global or local shims for installed applications. Downsides of asdf are that it
 is written in Bash, which makes it
 [slow](https://github.com/asdf-vm/asdf/issues/290) and non-portable to Windows.
 
-Compared to asdf, run-that-app is faster, supports more platforms (including
-Windows), and offers additional features like optional applications and
-conditional execution.
+Compared to asdf, run-that-app  supports more platforms (including Windows), offers additional features like conditional execution, and is faster.
 
 #### RTX
 
