@@ -88,21 +88,10 @@ mod tests {
         fn macos_intel64() {
             let platform = Platform {
                 os: Os::MacOS,
-                cpu: Cpu::Intel64,
+                cpu: Cpu::Arm64,
             };
-            let have = super::super::download_url("3.4.1", platform);
-            let want = "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_amd64.tar.gz";
-            assert_eq!(have, want);
-        }
-
-        #[test]
-        fn windows_intel64() {
-            let platform = Platform {
-                os: Os::Windows,
-                cpu: Cpu::Intel64,
-            };
-            let have = super::super::download_url("3.4.1", platform);
-            let want = "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_windows_amd64.tar.gz";
+            let have = super::super::download_url("1.21.5", platform);
+            let want = "https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz";
             assert_eq!(have, want);
         }
     }
