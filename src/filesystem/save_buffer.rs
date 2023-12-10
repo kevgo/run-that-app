@@ -4,8 +4,8 @@ use crate::Result;
 use std::fs;
 use std::path::Path;
 
-/// saves the given uncompressed data as the given file
-pub fn save_buffer(data: Vec<u8>, path_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
+/// saves the given file data as an executable file
+pub fn save_executable(data: Vec<u8>, path_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
     output.print("saving ... ");
     fs::write(path_on_disk, data).expect("cannot save file");
     super::make_file_executable(path_on_disk)?;

@@ -10,7 +10,7 @@ pub fn install(args: Args) -> Result<Option<Executable>> {
         return Ok(None);
     };
     filesystem::create_parent(&args.filepath_on_disk)?;
-    let executable = filesystem::save_buffer(artifact.data, &args.filepath_on_disk, args.output)?;
+    let executable = filesystem::save_executable(artifact.data, &args.filepath_on_disk, args.output)?;
     args.output.println(&format!("{}", "ok".green()));
     Ok(Some(executable))
 }
