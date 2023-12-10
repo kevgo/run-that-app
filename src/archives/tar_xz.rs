@@ -42,8 +42,8 @@ impl Archive for TarXz {
             let mut file = file.unwrap();
             let filepath = file.path().unwrap();
             output.log(CATEGORY, &format!("- {}", filepath.to_string_lossy()));
-            file.unpack(filepath).unwrap();
             let filepath_on_disk = folder_on_disk.join(filepath);
+            file.unpack(&filepath_on_disk).unwrap();
             filesystem::make_file_executable(&filepath_on_disk)?;
             return Ok(());
         }
