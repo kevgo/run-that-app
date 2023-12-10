@@ -3,6 +3,7 @@ mod archives;
 mod cli;
 mod cmd;
 mod config;
+mod download;
 mod error;
 mod filesystem;
 mod hosting;
