@@ -15,7 +15,7 @@ const REPO: &str = "go";
 
 impl App for Go {
     fn name(&self) -> &'static str {
-        "Go"
+        "go"
     }
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
@@ -30,13 +30,15 @@ impl App for Go {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+        let app_folder = yard.app_folder(self.name(), version);
+        let executable = Executable(app_folder.join(format!("go/bin/{}", self.executable_filename(platform))));
         archive::install(Args {
             artifact_url: download_url(version, platform),
-            folder_on_disk: yard.app_folder(self.name(), version),
+            folder_on_disk: app_folder,
             trim: "",
             output,
         })?;
-        Ok(Some(Executable(PathBuf::from(format!("bin/{}", self.executable_filename(platform))))))
+        Ok(Some(executable))
     }
 
     fn latest_version(&self, output: &dyn Output) -> Result<String> {
