@@ -3,11 +3,10 @@ mod tar_xz;
 mod zip;
 
 use crate::error::UserError;
-use crate::install::ArtifactType;
 use crate::output::Output;
 use crate::yard::Executable;
-use crate::{filesystem, Result};
-use std::path::{Path, PathBuf};
+use crate::Result;
+use std::path::Path;
 
 /// An archive is a compressed file containing an application.
 pub trait Archive {
@@ -19,30 +18,20 @@ pub trait Archive {
 }
 
 /// extracts the given file in the given artifact to the given location on disk
-pub fn extract(artifact: Artifact, artifact_type: &ArtifactType, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
-    match artifact_type {
-        ArtifactType::PackagedExecutable { file_to_extract } => {
-            let Some(archive) = lookup(&artifact.filename) else {
-                return Err(UserError::UnknownArchive(artifact.filename));
-            };
-            let filepath = PathBuf::from(file_to_extract);
-            let filename = filepath.file_name().unwrap();
-            let file_path_on_disk = folder_on_disk.join(filename);
-            archive.extract_file(artifact.data, file_to_extract, &file_path_on_disk, output)
-        }
-        ArtifactType::Executable { filename } => {
-            let file_path_on_disk = folder_on_disk.join(filename);
-            filesystem::save_buffer(artifact.data, &file_path_on_disk, output)
-        }
-    }
+pub fn extract_file(artifact: Artifact, path_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
+    let Some(archive) = lookup(&artifact.filename) else {
+        return Err(UserError::UnknownArchive(artifact.filename));
+    };
+    archive.extract_file(artifact.data, path_in_archive, filepath_on_disk, output)
 }
 
 fn all_archives() -> Vec<Box<dyn Archive>> {
     vec![Box::new(tar_gz::TarGz {}), Box::new(tar_xz::TarXz {}), Box::new(zip::Zip {})]
 }
 
-fn lookup(extension: &str) -> Option<Box<dyn Archive>> {
-    all_archives().into_iter().find(|archive| archive.can_extract(extension))
+/// provides the archive that can extract the given file path
+fn lookup(filepath: &str) -> Option<Box<dyn Archive>> {
+    all_archives().into_iter().find(|archive| archive.can_extract(filepath))
 }
 
 /// An artifacts is a file containing an application, downloaded from the internet.
