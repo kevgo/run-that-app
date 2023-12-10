@@ -30,7 +30,7 @@ impl App for Dprint {
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         if let Some(executable) = packaged_executable::install(&Args {
             artifact_url: download_url(version, platform),
-            path_in_archive: self.executable_filename(platform).to_string(),
+            file_to_extract: self.executable_filename(platform).to_string(),
             filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             output,
         })? {

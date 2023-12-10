@@ -32,7 +32,7 @@ impl App for Scc {
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         if let Some(executable) = packaged_executable::install(&Args {
             artifact_url: download_url(version, platform),
-            path_in_archive: S(self.executable_filename(platform)),
+            file_to_extract: S(self.executable_filename(platform)),
             filepath_on_disk: yard.app_folder(self.name(), version),
             output,
         })? {

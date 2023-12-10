@@ -40,14 +40,14 @@ pub fn install(args: &Args) -> Result<Option<Executable>> {
         filename: args.artifact_url.clone(),
         data,
     };
-    let executable = archives::extract_file(artifact, &args.path_in_archive, &args.filepath_on_disk, args.output)?;
+    let executable = archives::extract_file(artifact, &args.file_to_extract, &args.filepath_on_disk, args.output)?;
     args.output.println(&format!("{}", "ok".green()));
     Ok(Some(executable))
 }
 
 pub struct Args<'a> {
     pub artifact_url: String,
-    pub path_in_archive: String, // TODO: make this a &str
+    pub file_to_extract: String, // TODO: make this a &str
     pub filepath_on_disk: PathBuf,
     pub output: &'a dyn Output,
 }
