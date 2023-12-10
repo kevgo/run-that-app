@@ -1,6 +1,6 @@
 use super::App;
 use crate::hosting::github;
-use crate::install::packaged_executable::{self, Args};
+use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
@@ -28,7 +28,7 @@ impl App for GolangCiLint {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        packaged_executable::install(Args {
+        packaged_executable::install(InstallArgs {
             artifact_url: download_url(version, platform),
             file_to_extract: &executable_path(version, platform, self.executable_filename(platform)),
             filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),

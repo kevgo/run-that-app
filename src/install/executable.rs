@@ -5,7 +5,7 @@ use colored::Colorize;
 use std::path::PathBuf;
 
 /// downloads an uncompressed precompiled binary
-pub fn install(args: Args) -> Result<Option<Executable>> {
+pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
     let Some(artifact) = download::artifact(args.artifact_url, args.output)? else {
         return Ok(None);
     };
@@ -15,7 +15,7 @@ pub fn install(args: Args) -> Result<Option<Executable>> {
     Ok(Some(executable))
 }
 
-pub struct Args<'a> {
+pub struct InstallArgs<'a> {
     pub artifact_url: String,
     pub filepath_on_disk: PathBuf,
     pub output: &'a dyn Output,
