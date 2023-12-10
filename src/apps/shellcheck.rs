@@ -29,7 +29,7 @@ impl App for ShellCheck {
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         packaged_executable::install(&Args {
             artifact_url: download_url(version, platform),
-            file_to_extract: format!("shellcheck-v{version}/{executable}", executable = self.executable_filename(platform)),
+            file_to_extract: &format!("shellcheck-v{version}/{executable}", executable = self.executable_filename(platform)),
             filepath_on_disk: yard.app_folder(self.name(), version),
             output,
         })

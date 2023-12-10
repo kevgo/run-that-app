@@ -5,7 +5,6 @@ use crate::install::packaged_executable::{self, Args};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
-use big_s::S;
 use const_format::formatcp;
 
 pub struct Scc {}
@@ -32,7 +31,7 @@ impl App for Scc {
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         if let Some(executable) = packaged_executable::install(&Args {
             artifact_url: download_url(version, platform),
-            file_to_extract: S(self.executable_filename(platform)),
+            file_to_extract: self.executable_filename(platform),
             filepath_on_disk: yard.app_folder(self.name(), version),
             output,
         })? {
