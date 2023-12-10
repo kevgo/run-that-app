@@ -27,7 +27,7 @@ impl App for NodeJS {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        packaged_executable::install(Args {
+        packaged_executable::install(&Args {
             artifact_url: download_url(version, platform),
             path_in_archive: executable_path(version, platform, self.executable_filename(platform)),
             filepath_on_disk: yard.app_folder(self.name(), version),
