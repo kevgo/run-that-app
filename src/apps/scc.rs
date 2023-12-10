@@ -1,7 +1,7 @@
 use super::App;
 use crate::hosting::github;
 use crate::install::compile_go::{compile_go, CompileArgs};
-use crate::install::{download_executable, ArtifactType, DownloadArgs};
+use crate::install::packaged_executable::{self, Args};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
@@ -30,13 +30,10 @@ impl App for Scc {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        if let Some(executable) = download_executable(&DownloadArgs {
-            app_name: self.name(),
+        if let Some(executable) = packaged_executable::install(Args {
             artifact_url: download_url(version, platform),
-            artifact_type: ArtifactType::PackagedExecutable {
-                file_to_extract: S(self.executable_filename(platform)),
-            },
-            folder_on_disk: yard.app_folder(self.name(), version),
+            path_in_archive: S(self.executable_filename(platform)),
+            filepath_on_disk: yard.app_folder(self.name(), version),
             output,
         })? {
             return Ok(Some(executable));
