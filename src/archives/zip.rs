@@ -16,7 +16,7 @@ impl Archive for Zip {
         filesystem::has_extension(filename, ".zip")
     }
 
-    fn extract(&self, data: Vec<u8>, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
+    fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
         output.print("extracting ... ");
         output.log(CATEGORY, "archive type: zip");
         let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&data)).expect("cannot read zip data");
@@ -35,6 +35,22 @@ impl Archive for Zip {
         #[cfg(unix)]
         file_on_disk.set_permissions(fs::Permissions::from_mode(0o744)).unwrap();
         Ok(Executable(filepath_on_disk.to_path_buf()))
+    }
+
+    fn extract_all(&self, data: Vec<u8>, folder_on_disk: &Path, trim: &str, output: &dyn Output) -> Result<()> {
+        output.print("extracting ... ");
+        output.log(CATEGORY, "archive type: zip");
+        let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&data)).expect("cannot read zip data");
+        for i in 0..zip_archive.len() {
+            let mut file_in_zip = zip_archive.by_index(i).unwrap();
+            output.log(CATEGORY, &format!("- {}", file_in_zip.name()));
+            let filepath_on_disk = folder_on_disk.join(file_in_zip.name());
+            let mut file_on_disk = fs::File::create(filepath_on_disk).unwrap();
+            io::copy(&mut file_in_zip, &mut file_on_disk).unwrap();
+            #[cfg(unix)]
+            file_on_disk.set_permissions(fs::Permissions::from_mode(0o744)).unwrap();
+        }
+        Ok(())
     }
 }
 

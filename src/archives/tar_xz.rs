@@ -33,7 +33,7 @@ impl Archive for TarXz {
         panic!("file {filepath_in_archive} not found in archive");
     }
 
-    fn extract_all(&self, data: Vec<u8>, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
+    fn extract_all(&self, data: Vec<u8>, folder_on_disk: &Path, trim: &str, output: &dyn Output) -> Result<()> {
         output.print("extracting ... ");
         output.log(CATEGORY, "archive type: tar.xz");
         let decompressor = XzDecoder::new(Cursor::new(data));
@@ -41,15 +41,13 @@ impl Archive for TarXz {
         for file in archive.entries().unwrap() {
             let mut file = file.unwrap();
             let filepath = file.path().unwrap();
-            let filepath = filepath.to_string_lossy();
-            output.log(CATEGORY, &format!("- {filepath}"));
-            if filepath == filepath_in_archive {
-                file.unpack(filepath_on_disk).unwrap();
-                filesystem::make_file_executable(filepath_on_disk)?;
-                return Ok(Executable(filepath_on_disk.to_path_buf()));
-            }
+            output.log(CATEGORY, &format!("- {}", filepath.to_string_lossy()));
+            file.unpack(filepath).unwrap();
+            let filepath_on_disk = folder_on_disk.join(filepath);
+            filesystem::make_file_executable(&filepath_on_disk)?;
+            return Ok(());
         }
-        panic!("file {filepath_in_archive} not found in archive");
+        Ok(())
     }
 }
 
