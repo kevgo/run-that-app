@@ -30,7 +30,7 @@ impl App for ShellCheck {
         packaged_executable::install(&Args {
             artifact_url: download_url(version, platform),
             file_to_extract: &format!("shellcheck-v{version}/{executable}", executable = self.executable_filename(platform)),
-            filepath_on_disk: yard.app_folder(self.name(), version),
+            filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             output,
         })
     }

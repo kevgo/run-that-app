@@ -30,7 +30,7 @@ impl App for NodeJS {
         packaged_executable::install(&Args {
             artifact_url: download_url(version, platform),
             file_to_extract: &executable_path(version, platform, self.executable_filename(platform)),
-            filepath_on_disk: yard.app_folder(self.name(), version),
+            filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             output,
         })
     }
