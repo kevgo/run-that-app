@@ -1,7 +1,7 @@
 use super::App;
 use crate::hosting::github;
 use crate::install::compile_go::{compile_go, CompileArgs};
-use crate::install::{download_executable, ArtifactType, DownloadArgs};
+use crate::install::executable::{self, Args};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
@@ -33,13 +33,9 @@ impl App for Gofumpt {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        if let Some(executable) = download_executable(&DownloadArgs {
-            app_name: self.name(),
+        if let Some(executable) = executable::install(Args {
             artifact_url: download_url(version, platform),
-            artifact_type: ArtifactType::Executable {
-                filename: self.executable_filename(platform),
-            },
-            folder_on_disk: yard.app_folder(self.name(), version),
+            filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             output,
         })? {
             return Ok(Some(executable));
