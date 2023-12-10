@@ -28,7 +28,7 @@ impl App for Dprint {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        if let Some(executable) = packaged_executable::install(&Args {
+        if let Some(executable) = packaged_executable::install(Args {
             artifact_url: download_url(version, platform),
             file_to_extract: self.executable_filename(platform),
             filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
@@ -36,7 +36,7 @@ impl App for Dprint {
         })? {
             return Ok(Some(executable));
         }
-        compile_rust(&CompileArgs {
+        compile_rust(CompileArgs {
             crate_name: "dprint",
             target_folder: yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),
