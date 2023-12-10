@@ -4,7 +4,7 @@ use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::packaged_executable::{self, Args};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
-use crate::{install, Output, Result};
+use crate::{Output, Result};
 use const_format::formatcp;
 
 pub struct ActionLint {}

@@ -51,10 +51,3 @@ pub struct Args<'a> {
     pub filepath_on_disk: PathBuf,
     pub output: &'a dyn Output,
 }
-
-pub enum ArtifactType {
-    /// the executable can be downloaded directly
-    Executable { filename: &'static str },
-    /// the executable is packaged inside a zip or tar.gz file
-    PackagedExecutable { file_to_extract: String },
-}
