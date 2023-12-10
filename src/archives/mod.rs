@@ -17,7 +17,7 @@ pub trait Archive {
     fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable>;
 
     /// extracts all files from the given archive to the given location on disk
-    fn extract_all(&self, data: Vec<u8>, folder_on_disk: &Path, output: &dyn Output) -> Result<()>;
+    fn extract_all(&self, data: Vec<u8>, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable>;
 }
 
 /// extracts the given file in the given artifact to the given location on disk
