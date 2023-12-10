@@ -3,6 +3,7 @@ use crate::output::Output;
 use crate::{Result, UserError};
 use colored::Colorize;
 
+/// downloads the artifact at the given URL
 pub fn artifact(url: String, output: &dyn Output) -> Result<Option<Artifact>> {
     if output.is_active("download") {
         output.print(&format!("downloading {} ... ", url.cyan()));
