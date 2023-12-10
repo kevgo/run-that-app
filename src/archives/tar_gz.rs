@@ -41,7 +41,7 @@ impl Archive for TarGz {
         panic!("file {filepath_in_archive} not found in archive");
     }
 
-    fn extract_all(&self, data: Vec<u8>, file_path_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
+    fn extract_all(&self, data: Vec<u8>, folder_on_disk: &Path, output: &dyn Output) -> Result<()> {
         if output.is_active(CATEGORY) {
             output.print("extracting tar.gz ...");
         } else {
@@ -59,7 +59,7 @@ impl Archive for TarGz {
             if output.is_active(CATEGORY) {
                 output.println(&format!("- {filepath}"));
             }
-            file.unpack(file_path_on_disk).unwrap();
+            file.unpack(folder_on_disk).unwrap();
             // filesystem::make_file_executable(file_path_on_disk)?;
         }
         Ok(())
