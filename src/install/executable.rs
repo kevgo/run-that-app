@@ -2,7 +2,7 @@ use crate::archives::{self, Artifact};
 use crate::error::UserError;
 use crate::output::Output;
 use crate::yard::Executable;
-use crate::Result;
+use crate::{filesystem, Result};
 use colored::Colorize;
 use std::fs;
 use std::path::PathBuf;
@@ -40,7 +40,7 @@ pub fn install(args: Args) -> Result<Option<Executable>> {
         filename: args.artifact_url,
         data,
     };
-    let executable = archives::store_executable(artifact, &args.filepath_on_disk, args.output)?;
+    let executable = filesystem::save_buffer(artifact.data, &args.filepath_on_disk, args.output)?;
     args.output.println(&format!("{}", "ok".green()));
     Ok(Some(executable))
 }

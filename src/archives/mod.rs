@@ -5,7 +5,7 @@ mod zip;
 use crate::error::UserError;
 use crate::output::Output;
 use crate::yard::Executable;
-use crate::{filesystem, Result};
+use crate::Result;
 use std::path::Path;
 
 /// An archive is a compressed file containing an application.
@@ -23,11 +23,6 @@ pub fn extract_file(artifact: Artifact, path_in_archive: &str, filepath_on_disk:
         return Err(UserError::UnknownArchive(artifact.filename));
     };
     archive.extract_file(artifact.data, path_in_archive, filepath_on_disk, output)
-}
-
-/// stores the given artifact as an executable on disk
-pub fn store_executable(artifact: Artifact, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
-    filesystem::save_buffer(artifact.data, filepath_on_disk, output)
 }
 
 fn all_archives() -> Vec<Box<dyn Archive>> {
