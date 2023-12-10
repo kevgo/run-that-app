@@ -6,7 +6,7 @@ use colored::Colorize;
 use std::path::PathBuf;
 
 /// downloads and installs a pre-compiled binary packaged in an archive file
-pub fn install(args: &Args) -> Result<Option<Executable>> {
+pub fn install(args: Args) -> Result<Option<Executable>> {
     let Some(artifact) = download::artifact(args.artifact_url.to_string(), args.output)? else {
         return Ok(None);
     };
