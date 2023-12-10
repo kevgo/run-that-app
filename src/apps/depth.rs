@@ -1,7 +1,7 @@
 use super::App;
 use crate::hosting::github;
 use crate::install::compile_go::{compile_go, CompileArgs};
-use crate::install::executable::{self, Args};
+use crate::install::executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
@@ -29,7 +29,7 @@ impl App for Depth {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        if let Some(executable) = executable::install(Args {
+        if let Some(executable) = executable::install(InstallArgs {
             artifact_url: download_url(version, platform),
             filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             output,

@@ -6,7 +6,7 @@ use colored::Colorize;
 use std::path::PathBuf;
 
 /// downloads and installs a pre-compiled binary packaged in an archive file
-pub fn install(args: Args) -> Result<Option<Executable>> {
+pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
     let Some(artifact) = download::artifact(args.artifact_url, args.output)? else {
         return Ok(None);
     };
@@ -16,7 +16,7 @@ pub fn install(args: Args) -> Result<Option<Executable>> {
     Ok(Some(executable))
 }
 
-pub struct Args<'a> {
+pub struct InstallArgs<'a> {
     pub artifact_url: String,
     pub file_to_extract: &'a str, // TODO: make this a &str
     pub filepath_on_disk: PathBuf,
