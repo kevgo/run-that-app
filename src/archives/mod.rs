@@ -2,6 +2,7 @@ mod tar_gz;
 mod tar_xz;
 mod zip;
 
+use crate::download::Artifact;
 use crate::output::Output;
 use crate::yard::Executable;
 use crate::Result;
