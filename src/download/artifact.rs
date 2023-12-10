@@ -1,4 +1,3 @@
-use crate::archives::Artifact;
 use crate::output::Output;
 use crate::{Result, UserError};
 use colored::Colorize;
@@ -29,4 +28,12 @@ pub fn artifact(url: String, output: &dyn Output) -> Result<Option<Artifact>> {
         filename: url,
         data: response.into_bytes(),
     }))
+}
+
+/// An artifacts is a file containing an application, downloaded from the internet.
+/// An artifact could be an archive containing the application binary (and other files),
+/// or the uncompressed application binary itself.
+pub struct Artifact {
+    pub filename: String,
+    pub data: Vec<u8>,
 }
