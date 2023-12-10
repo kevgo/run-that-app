@@ -2,6 +2,7 @@ mod tar_gz;
 mod tar_xz;
 mod zip;
 
+use crate::download::Artifact;
 use crate::error::UserError;
 use crate::output::Output;
 use crate::yard::Executable;
@@ -32,14 +33,6 @@ fn all_archives() -> Vec<Box<dyn Archive>> {
 /// provides the archive that can extract the given file path
 fn lookup(filepath: &str) -> Option<Box<dyn Archive>> {
     all_archives().into_iter().find(|archive| archive.can_extract(filepath))
-}
-
-/// An artifacts is a file containing an application, downloaded from the internet.
-/// An artifact could be an archive containing the application binary (and other files),
-/// or the uncompressed application binary itself.
-pub struct Artifact {
-    pub filename: String,
-    pub data: Vec<u8>,
 }
 
 #[cfg(test)]
