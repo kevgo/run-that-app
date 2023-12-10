@@ -8,7 +8,7 @@ use std::process::Command;
 use which::which;
 
 /// installs the given Go-based application by compiling it from source
-pub fn compile_go(args: &CompileArgs) -> Result<Option<Executable>> {
+pub fn compile_go(args: CompileArgs) -> Result<Option<Executable>> {
     let Ok(go_path) = which("go") else {
         return Err(UserError::GoNotInstalled);
     };
