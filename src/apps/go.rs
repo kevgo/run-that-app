@@ -30,7 +30,7 @@ impl App for Go {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        archive::install(&Args {
+        archive::install(Args {
             artifact_url: download_url(version, platform),
             folder_on_disk: yard.app_folder(self.name(), version),
             trim: "",
