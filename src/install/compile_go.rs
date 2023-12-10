@@ -33,7 +33,9 @@ pub fn compile_go(args: CompileArgs) -> Result<Option<Executable>> {
     if !status.success() {
         return Err(UserError::GoCompilationFailed);
     }
-    Ok(Some(Executable(args.target_folder.join(args.executable_filename))))
+    let executable = Executable(args.target_folder.join(args.executable_filename));
+    drop(args);
+    Ok(Some(executable))
 }
 
 pub struct CompileArgs<'a> {
