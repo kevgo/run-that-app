@@ -1,6 +1,6 @@
 use super::App;
 use crate::hosting::github;
-use crate::install::{download_executable, ArtifactType, DownloadArgs};
+use crate::install::packaged_executable::{self, Args};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
@@ -28,18 +28,10 @@ impl App for GolangCiLint {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        download_executable(&DownloadArgs {
-            app_name: self.name(),
+        packaged_executable::install(Args {
             artifact_url: download_url(version, platform),
-            artifact_type: ArtifactType::PackagedExecutable {
-                file_to_extract: format!(
-                    "golangci-lint-{version}-{os}-{cpu}/{executable}",
-                    os = os_text(platform.os),
-                    cpu = cpu_text(platform.cpu),
-                    executable = self.executable_filename(platform)
-                ),
-            },
-            folder_on_disk: yard.app_folder(self.name(), version),
+            path_in_archive: executable_path(version, platform, self.executable_filename(platform)),
+            filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
             output,
         })
         // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
@@ -60,6 +52,14 @@ fn download_url(version: &str, platform: Platform) -> String {
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
+    )
+}
+
+fn executable_path(version: &str, platform: Platform, filename: &str) -> String {
+    format!(
+        "golangci-lint-{version}-{os}-{cpu}/{filename}",
+        os = os_text(platform.os),
+        cpu = cpu_text(platform.cpu),
     )
 }
 
