@@ -224,14 +224,18 @@ global or local shims for installed applications. Downsides of asdf are that it
 is written in Bash, which makes it
 [slow](https://github.com/asdf-vm/asdf/issues/290) and non-portable to Windows.
 
-Compared to asdf, run-that-app also supports Windows, offers conditional execution, allows writing application installation logic in a robust programming language that eliminates most runtime errors, and is faster.
+Compared to asdf, run-that-app also supports Windows, offers conditional
+execution, allows writing application installation logic in a robust programming
+language that eliminates most runtime errors, and is faster.
 
 #### RTX
 
 [Rtx](https://github.com/jdx/rtx) is a rewrite of asdf in Rust. It allows
 installing applications, sets up shims and shell integration.
 
-Compared to rtx, run-that-app also supports Windows, offers conditional execution, and allows writing application installation logic in a robust programming language that eliminates most runtime errors.
+Compared to rtx, run-that-app also supports Windows, offers conditional
+execution, and allows writing application installation logic in a robust
+programming language that eliminates most runtime errors.
 
 #### pkgx
 
@@ -243,5 +247,4 @@ blockchain component to this.
 
 Compared to pkgx, run-that-app is leaner, supports more platforms (Windows), and
 offers additional features like the ability to compile from source, optional
-execution, and checking whether an application is available for your
-platform.
+execution, and checking whether an application is available for your platform.
