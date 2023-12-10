@@ -16,7 +16,7 @@ pub fn download_archive(args: &DownloadArgs) -> Result<Option<Executable>> {
         folder: args.folder_on_disk,
         reason: err.to_string(),
     })?;
-    let executable = archives::extract(artifact, &args.folder_on_disk, args.output)?;
+    archives::extract(artifact, &args.folder_on_disk, args.output)?;
     args.output.println(&format!("{}", "ok".green()));
     Ok(Some(executable))
 }
