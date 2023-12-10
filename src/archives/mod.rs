@@ -25,6 +25,7 @@ pub fn extract_file(artifact: Artifact, path_in_archive: &str, filepath_on_disk:
     archive.extract_file(artifact.data, path_in_archive, filepath_on_disk, output)
 }
 
+/// stores the given artifact as an executable on disk
 pub fn store_executable(artifact: Artifact, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
     filesystem::save_buffer(artifact.data, filepath_on_disk, output)
 }
@@ -33,8 +34,9 @@ fn all_archives() -> Vec<Box<dyn Archive>> {
     vec![Box::new(tar_gz::TarGz {}), Box::new(tar_xz::TarXz {}), Box::new(zip::Zip {})]
 }
 
-fn lookup(extension: &str) -> Option<Box<dyn Archive>> {
-    all_archives().into_iter().find(|archive| archive.can_extract(extension))
+/// provides the archive that can extract the given file path
+fn lookup(filepath: &str) -> Option<Box<dyn Archive>> {
+    all_archives().into_iter().find(|archive| archive.can_extract(filepath))
 }
 
 /// An artifacts is a file containing an application, downloaded from the internet.
