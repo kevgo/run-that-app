@@ -1,7 +1,8 @@
+use std::path::PathBuf;
+
 use super::App;
 use crate::hosting::github;
-use crate::install::compile_go::{compile_go, CompileArgs};
-use crate::install::packaged_executable;
+use crate::install::archive::{self, Args};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
@@ -29,13 +30,13 @@ impl App for Go {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        packaged_executable(&DownloadArgs {
-            app_name: self.name(),
+        archive::install(&Args {
             artifact_url: download_url(version, platform),
-            artifact_type: ArtifactType::FullArchive {},
             folder_on_disk: yard.app_folder(self.name(), version),
+            trim: "",
             output,
-        })
+        })?;
+        Ok(Some(Executable(PathBuf::from(format!("bin/{}", self.executable_filename(platform))))))
     }
 
     fn latest_version(&self, output: &dyn Output) -> Result<String> {

@@ -1,6 +1,5 @@
 use crate::error::UserError;
 use crate::output::Output;
-use crate::yard::Executable;
 use crate::Result;
 use crate::{archives, download};
 use colored::Colorize;
@@ -8,7 +7,7 @@ use std::fs;
 use std::path::PathBuf;
 
 /// downloads and extracts the given application by archive
-pub fn download_archive(args: &DownloadArgs) -> Result<Option<Executable>> {
+pub fn install(args: &Args) -> Result<Option<()>> {
     let Some(artifact) = download::artifact(args.artifact_url, args.output)? else {
         return Ok(None);
     };
@@ -16,14 +15,14 @@ pub fn download_archive(args: &DownloadArgs) -> Result<Option<Executable>> {
         folder: args.folder_on_disk,
         reason: err.to_string(),
     })?;
-    archives::extract(artifact, &args.folder_on_disk, args.output)?;
+    archives::extract_all(artifact, &args.folder_on_disk, args.trim, args.output)?;
     args.output.println(&format!("{}", "ok".green()));
-    Ok(Some(executable))
+    Ok(Some(()))
 }
 
-pub struct DownloadArgs<'a> {
-    pub app_name: &'static str,
+pub struct Args<'a> {
     pub artifact_url: String,
     pub folder_on_disk: PathBuf,
+    pub trim: &'a str,
     pub output: &'a dyn Output,
 }
