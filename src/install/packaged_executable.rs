@@ -7,7 +7,7 @@ use colored::Colorize;
 use std::fs;
 use std::path::PathBuf;
 
-/// installs the given application by downloading its pre-compiled binary
+/// downloads and installs a pre-compiled binary packaged in an archive file
 pub fn install(args: &Args) -> Result<Option<Executable>> {
     if args.output.is_active("download") {
         args.output.print(&format!("downloading {} ... ", args.artifact_url.cyan()));
