@@ -1,7 +1,7 @@
 use super::App;
 use crate::hosting::github;
 use crate::install::compile_go::{compile_go, CompileArgs};
-use crate::install::{download_executable, ArtifactType, DownloadArgs};
+use crate::install::packaged_executable;
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
@@ -29,7 +29,7 @@ impl App for Go {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        download_executable(&DownloadArgs {
+        packaged_executable(&DownloadArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
             artifact_type: ArtifactType::FullArchive {},
