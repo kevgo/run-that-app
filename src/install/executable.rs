@@ -1,4 +1,4 @@
-use crate::archives::{self, Artifact};
+use crate::archives::Artifact;
 use crate::error::UserError;
 use crate::output::Output;
 use crate::yard::Executable;
@@ -7,7 +7,7 @@ use colored::Colorize;
 use std::fs;
 use std::path::PathBuf;
 
-/// downloads the uncompressed precompiled binary
+/// downloads an uncompressed precompiled binary
 pub fn install(args: Args) -> Result<Option<Executable>> {
     if args.output.is_active("download") {
         args.output.print(&format!("downloading {} ... ", args.artifact_url.cyan()));
