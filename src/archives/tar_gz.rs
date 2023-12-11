@@ -55,12 +55,13 @@ impl Archive for TarGz {
         for file in archive.entries().unwrap() {
             let mut file = file.unwrap();
             let filepath = file.path().unwrap();
+            let filepath = filepath.to_string_lossy();
             if output.is_active(CATEGORY) {
-                output.println(&format!("- {}", filepath.to_string_lossy()));
+                output.println(&format!("- {}", filepath));
             }
-            let filepath_on_disk = folder_on_disk.join(filepath);
+            let trimmed = &filepath[trim.len()..];
+            let filepath_on_disk = folder_on_disk.join(trimmed);
             file.unpack(filepath_on_disk).unwrap();
-            // filesystem::make_file_executable(file_path_on_disk)?;
         }
         Ok(())
     }

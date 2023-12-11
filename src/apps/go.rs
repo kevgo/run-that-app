@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use super::App;
 use crate::hosting::github;
 use crate::install::archive::{self, Args};
@@ -35,7 +33,7 @@ impl App for Go {
         archive::install(Args {
             artifact_url: download_url(version, platform),
             folder_on_disk: app_folder,
-            trim: "",
+            trim: "go/",
             output,
         })?;
         Ok(Some(executable))
