@@ -1,4 +1,5 @@
 use super::Archive;
+use crate::filesystem::strip_filepath;
 use crate::yard::Executable;
 use crate::Output;
 use crate::{filesystem, Result};
@@ -44,18 +45,22 @@ impl Archive for TarXz {
         }
         let decompressor = XzDecoder::new(Cursor::new(data));
         let mut archive = tar::Archive::new(decompressor);
+        let mut result: Option<Executable> = None;
         for file in archive.entries().unwrap() {
             let mut file = file.unwrap();
             let filepath = file.path().unwrap();
-            let filepath = filepath.to_string_lossy();
-            output.log(CATEGORY, &format!("- {filepath}"));
-            if filepath == filepath_in_archive {
-                file.unpack(filepath_on_disk).unwrap();
-                filesystem::make_file_executable(filepath_on_disk)?;
-                return Ok(Executable(filepath_on_disk.to_path_buf()));
+            if output.is_active(CATEGORY) {
+                output.println(&format!("- {}", filepath.to_string_lossy()));
+            }
+            let filepath_stripped = strip_filepath(&filepath, strip_prefix);
+            let filepath_on_disk = target_dir.join(filepath_stripped);
+            file.unpack(filepath_on_disk).unwrap();
+            filesystem::make_file_executable(&filepath_on_disk)?;
+            if filepath_stripped.to_string_lossy() == executable_path_in_archive {
+                result = Some(Executable(filepath_on_disk));
             }
         }
-        panic!("file {filepath_in_archive} not found in archive");
+        result.ok_or_else(|| panic!("file {executable_path_in_archive} not found in archive"))
     }
 }
 
