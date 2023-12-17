@@ -14,8 +14,32 @@ pub trait Archive {
     /// indicates whether this archive implementation can extract the file with the given name
     fn can_extract(&self, filename: &str) -> bool;
 
-    /// extracts the given file from the given archive file content to the given location on disk
+    /// extracts all files from the given archive data to the given location on disk
+    fn extract_all(
+        &self,
+        data: Vec<u8>,
+        folder_on_disk: &Path,
+        strip_prefix: &str,
+        executable_path_in_archive: &str,
+        output: &dyn Output,
+    ) -> Result<Executable>;
+
+    /// extracts the given file from the given data content to the given location on disk
     fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable>;
+}
+
+/// extracts the given file in the given artifact to the given location on disk
+pub fn extract_all(
+    artifact: Artifact,
+    filepath_on_disk: &Path,
+    strip_prefix: &str,
+    executable_path_in_archive: &str,
+    output: &dyn Output,
+) -> Result<Executable> {
+    let Some(archive) = lookup(&artifact.filename) else {
+        return Err(UserError::UnknownArchive(artifact.filename));
+    };
+    archive.extract_all(artifact.data, filepath_on_disk, strip_prefix, executable_path_in_archive, output)
 }
 
 /// extracts the given file in the given artifact to the given location on disk
