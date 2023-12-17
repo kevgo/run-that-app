@@ -22,17 +22,25 @@ pub trait Archive {
 }
 
 /// extracts the given file in the given artifact to the given location on disk
-pub fn extract_all(
-    artifact: Artifact,
-    filepath_on_disk: &Path,
-    strip_prefix: &str,
-    executable_path_in_archive: &str,
-    output: &dyn Output,
-) -> Result<Executable> {
-    let Some(archive) = lookup(&artifact.filename) else {
-        return Err(UserError::UnknownArchive(artifact.filename));
+pub fn extract_all(args: ExtractAllArgs) -> Result<Executable> {
+    let Some(archive) = lookup(&args.artifact.filename) else {
+        return Err(UserError::UnknownArchive(args.artifact.filename));
     };
-    archive.extract_all(artifact.data, filepath_on_disk, strip_prefix, executable_path_in_archive, output)
+    archive.extract_all(
+        args.artifact.data,
+        args.target_dir,
+        args.strip_prefix,
+        args.executable_path_in_archive,
+        args.output,
+    )
+}
+
+pub struct ExtractAllArgs<'a> {
+    pub artifact: Artifact,
+    pub target_dir: &'a Path,
+    pub strip_prefix: &'a str,
+    pub executable_path_in_archive: &'a str,
+    pub output: &'a dyn Output,
 }
 
 /// extracts the given file in the given artifact to the given location on disk

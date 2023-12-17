@@ -57,7 +57,7 @@ impl Archive for TarXz {
             let filepath_on_disk = target_dir.join(filepath_stripped);
             let is_executable = filepath_stripped == executable_path_in_archive;
             file.unpack(&filepath_on_disk).unwrap();
-            filesystem::make_file_executable(&filepath_on_disk)?;
+            let _ = filesystem::make_file_executable(&filepath_on_disk);
             if is_executable {
                 executable = Some(Executable(filepath_on_disk));
             }

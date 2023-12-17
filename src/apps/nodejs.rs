@@ -29,7 +29,8 @@ impl App for NodeJS {
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         archive::install(InstallArgs {
             artifact_url: download_url(version, platform),
-            filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            target_dir: yard.app_folder(self.name(), version),
+            strip_prefix: "node-v20.10.0-linux-x64/",
             executable_path_in_archive: &format!("bin/{}", self.executable_filename(platform)),
             output,
         })
