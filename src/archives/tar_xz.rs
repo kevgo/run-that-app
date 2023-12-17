@@ -45,22 +45,24 @@ impl Archive for TarXz {
         }
         let decompressor = XzDecoder::new(Cursor::new(data));
         let mut archive = tar::Archive::new(decompressor);
-        let mut result: Option<Executable> = None;
+        let mut executable: Option<Executable> = None;
         for file in archive.entries().unwrap() {
             let mut file = file.unwrap();
             let filepath = file.path().unwrap();
+            let filepath_str = filepath.to_string_lossy();
             if output.is_active(CATEGORY) {
-                output.println(&format!("- {}", filepath.to_string_lossy()));
+                output.println(&format!("- {}", filepath_str));
             }
-            let filepath_stripped = strip_filepath(&filepath, strip_prefix);
+            let filepath_stripped = strip_filepath(&filepath_str, strip_prefix);
             let filepath_on_disk = target_dir.join(filepath_stripped);
-            file.unpack(filepath_on_disk).unwrap();
+            let is_executable = filepath_stripped == executable_path_in_archive;
+            file.unpack(&filepath_on_disk).unwrap();
             filesystem::make_file_executable(&filepath_on_disk)?;
-            if filepath_stripped.to_string_lossy() == executable_path_in_archive {
-                result = Some(Executable(filepath_on_disk));
+            if is_executable {
+                executable = Some(Executable(filepath_on_disk));
             }
         }
-        result.ok_or_else(|| panic!("file {executable_path_in_archive} not found in archive"))
+        executable.ok_or_else(|| panic!("file {executable_path_in_archive} not found in archive"))
     }
 }
 
