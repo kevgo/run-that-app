@@ -60,11 +60,12 @@ impl Archive for Zip {
             }
             let filepath_stripped = strip_filepath(filepath_in_zip, strip_prefix);
             let filepath_on_disk = target_dir.join(filepath_stripped);
+            let is_executable = filepath_stripped == executable_path_in_archive;
             let mut file_on_disk = fs::File::create(&filepath_on_disk).unwrap();
             io::copy(&mut file_in_zip, &mut file_on_disk).unwrap();
             #[cfg(unix)]
             file_on_disk.set_permissions(fs::Permissions::from_mode(0o744)).unwrap();
-            if filepath_stripped == executable_path_in_archive {
+            if is_executable {
                 executable = Some(Executable(filepath_on_disk));
             }
         }
