@@ -32,6 +32,25 @@ impl Archive for TarXz {
         }
         panic!("file {filepath_in_archive} not found in archive");
     }
+
+    fn extract_all(&self, data: Vec<u8>, target_dir: &Path, strip_prefix: &str, executable_path_in_archive: &str, output: &dyn Output) -> Result<Executable> {
+        output.print("extracting ... ");
+        output.log(CATEGORY, "archive type: tar.xz");
+        let decompressor = XzDecoder::new(Cursor::new(data));
+        let mut archive = tar::Archive::new(decompressor);
+        for file in archive.entries().unwrap() {
+            let mut file = file.unwrap();
+            let filepath = file.path().unwrap();
+            let filepath = filepath.to_string_lossy();
+            output.log(CATEGORY, &format!("- {filepath}"));
+            if filepath == filepath_in_archive {
+                file.unpack(filepath_on_disk).unwrap();
+                filesystem::make_file_executable(filepath_on_disk)?;
+                return Ok(Executable(filepath_on_disk.to_path_buf()));
+            }
+        }
+        panic!("file {filepath_in_archive} not found in archive");
+    }
 }
 
 const CATEGORY: &str = "extract/tar.xz";
