@@ -1,6 +1,6 @@
 use super::App;
 use crate::hosting::github;
-use crate::install::packaged_executable::{self, InstallArgs};
+use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
@@ -27,10 +27,10 @@ impl App for NodeJS {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        packaged_executable::install(InstallArgs {
+        archive::install(InstallArgs {
             artifact_url: download_url(version, platform),
-            file_to_extract: &executable_path(version, platform, self.executable_filename(platform)),
             filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            executable_path_in_archive: &format!("bin/{}", self.executable_filename(platform)),
             output,
         })
     }
@@ -50,14 +50,6 @@ fn download_url(version: &str, platform: Platform) -> String {
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
-    )
-}
-
-fn executable_path(version: &str, platform: Platform, filename: &str) -> String {
-    format!(
-        "node-v{version}-{os}-{cpu}/bin/{filename}",
-        cpu = cpu_text(platform.cpu),
-        os = os_text(platform.os)
     )
 }
 

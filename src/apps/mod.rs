@@ -11,6 +11,7 @@ mod gofumpt;
 mod golangci_lint;
 mod goreleaser;
 mod nodejs;
+mod npm;
 mod scc;
 mod shellcheck;
 mod shfmt;
@@ -54,6 +55,7 @@ pub fn all() -> Apps {
             Box::new(golangci_lint::GolangCiLint {}),
             Box::new(goreleaser::Goreleaser {}),
             Box::new(nodejs::NodeJS {}),
+            Box::new(npm::Npm {}),
             Box::new(scc::Scc {}),
             Box::new(shellcheck::ShellCheck {}),
             Box::new(shfmt::Shfmt {}),

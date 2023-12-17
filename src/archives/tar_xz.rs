@@ -51,7 +51,7 @@ impl Archive for TarXz {
             let filepath = file.path().unwrap();
             let filepath_str = filepath.to_string_lossy();
             if output.is_active(CATEGORY) {
-                output.println(&format!("- {}", filepath_str));
+                output.println(&format!("- {filepath_str}"));
             }
             let filepath_stripped = strip_filepath(&filepath_str, strip_prefix);
             let filepath_on_disk = target_dir.join(filepath_stripped);

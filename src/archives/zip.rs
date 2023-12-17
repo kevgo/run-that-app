@@ -56,7 +56,7 @@ impl Archive for Zip {
             let mut file_in_zip = zip_archive.by_index(i).unwrap();
             let filepath_in_zip = file_in_zip.name();
             if output.is_active(CATEGORY) {
-                output.println(&format!("- {}", filepath_in_zip));
+                output.println(&format!("- {filepath_in_zip}"));
             }
             let filepath_stripped = strip_filepath(filepath_in_zip, strip_prefix);
             let filepath_on_disk = target_dir.join(filepath_stripped);

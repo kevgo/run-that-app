@@ -11,7 +11,7 @@ pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
         return Ok(None);
     };
     filesystem::create_parent(&args.filepath_on_disk)?;
-    let executable = archives::extract_file(artifact, args.file_to_extract, &args.filepath_on_disk, args.output)?;
+    let executable = archives::extract_all(artifact, &args.filepath_on_disk, "", args.executable_path_in_archive, args.output)?;
     args.output.println(&format!("{}", "ok".green()));
     Ok(Some(executable))
 }
@@ -19,5 +19,6 @@ pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
 pub struct InstallArgs<'a> {
     pub artifact_url: String,
     pub filepath_on_disk: PathBuf,
+    pub executable_path_in_archive: &'a str,
     pub output: &'a dyn Output,
 }
