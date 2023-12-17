@@ -26,8 +26,8 @@ impl Yard {
     }
 
     /// provides the path to the executable of the given application
-    pub fn load_app(&self, app: &RequestedApp, executable_filename: &str) -> Option<Executable> {
-        let file_path = self.app_file_path(&app.name, &app.version, executable_filename);
+    pub fn load_app(&self, name: &str, version: &str, executable_filename: &str) -> Option<Executable> {
+        let file_path = self.app_file_path(name, version, executable_filename);
         if file_path.exists() {
             Some(Executable(file_path))
         } else {
@@ -55,10 +55,10 @@ impl Yard {
 
     /// stores the given application consisting of the given executable file
     #[cfg(test)]
-    fn save_app_file(&self, app: &RequestedApp, file_name: &str, file_content: &[u8]) {
+    fn save_app_file(&self, name: &str, version: &str, file_name: &str, file_content: &[u8]) {
         use std::io::Write;
-        fs::create_dir_all(self.app_folder(&app.name, &app.version)).unwrap();
-        let mut file = fs::File::create(self.app_file_path(&app.name, &app.version, file_name)).unwrap();
+        fs::create_dir_all(self.app_folder(name, version)).unwrap();
+        let mut file = fs::File::create(self.app_file_path(name, version, file_name)).unwrap();
         file.write_all(file_content).unwrap();
     }
 }
@@ -126,13 +126,9 @@ mod tests {
         fn app_is_installed() {
             let tempdir = tempfile::tempdir().unwrap();
             let yard = create(tempdir.path()).unwrap();
-            let requested_app = RequestedApp {
-                name: S("shellcheck"),
-                version: S("0.9.0"),
-            };
             let executable = "executable";
-            yard.save_app_file(&requested_app, executable, b"content");
-            let Some(Executable(executable_path)) = yard.load_app(&requested_app, executable) else {
+            yard.save_app_file("shellcheck", "0.9.0", executable, b"content");
+            let Some(Executable(executable_path)) = yard.load_app("shellcheck", "0.9.0", executable) else {
                 panic!();
             };
             #[cfg(unix)]
@@ -156,7 +152,7 @@ mod tests {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             };
-            let loaded = yard.load_app(&requested_app, "executable");
+            let loaded = yard.load_app(&requested_app.name, &requested_app.version, "executable");
             assert!(loaded.is_none());
         }
 
@@ -164,17 +160,9 @@ mod tests {
         fn app_is_installed_but_wrong_version() {
             let tempdir = tempfile::tempdir().unwrap();
             let yard = create(tempdir.path()).unwrap();
-            let installed_app = RequestedApp {
-                name: S("shellcheck"),
-                version: S("0.1.0"),
-            };
             let executable = "executable";
-            yard.save_app_file(&installed_app, executable, b"content");
-            let requested_app = RequestedApp {
-                name: S("shellcheck"),
-                version: S("0.9.0"),
-            };
-            let loaded = yard.load_app(&requested_app, "executable");
+            yard.save_app_file("shellcheck", "0.1.0", executable, b"content");
+            let loaded = yard.load_app("shellcheck", "0.9.0", "executable");
             assert!(loaded.is_none());
         }
     }
