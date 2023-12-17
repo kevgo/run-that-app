@@ -17,8 +17,11 @@ impl Archive for Zip {
     }
 
     fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
-        output.print("extracting ... ");
-        output.log(CATEGORY, "archive type: zip");
+        if output.is_active(CATEGORY) {
+            output.print("extracting zip ...");
+        } else {
+            output.print("extracting ... ");
+        }
         let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&data)).expect("cannot read zip data");
         if let Some(parent_dir) = filepath_on_disk.parent() {
             if !parent_dir.exists() {
