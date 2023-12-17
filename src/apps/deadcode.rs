@@ -1,10 +1,9 @@
 use super::App;
-use crate::hosting::github;
 use crate::install::compile_go::{compile_go, CompileArgs};
-use crate::install::executable::{self, InstallArgs};
-use crate::platform::{Cpu, Os, Platform};
+use crate::platform::{Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
+use big_s::S;
 use const_format::formatcp;
 
 pub struct Deadcode {}
@@ -34,11 +33,11 @@ impl App for Deadcode {
         })
     }
 
-    fn latest_version(&self, output: &dyn Output) -> Result<String> {
+    fn latest_version(&self, _output: &dyn Output) -> Result<String> {
         Ok(S("0.16.1"))
     }
 
-    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        Ok(vec!["0.16.1"])
+    fn versions(&self, _amount: u8, _output: &dyn Output) -> Result<Vec<String>> {
+        Ok(vec![S("0.16.1")])
     }
 }
