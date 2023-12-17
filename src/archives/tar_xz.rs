@@ -15,8 +15,11 @@ impl Archive for TarXz {
     }
 
     fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
-        output.print("extracting ... ");
-        output.log(CATEGORY, "archive type: tar.xz");
+        if output.is_active(CATEGORY) {
+            output.print("extracting tar.xz ...");
+        } else {
+            output.print("extracting ... ");
+        }
         let decompressor = XzDecoder::new(Cursor::new(data));
         let mut archive = tar::Archive::new(decompressor);
         for file in archive.entries().unwrap() {
