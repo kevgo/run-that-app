@@ -2,6 +2,7 @@
 
 mod actionlint;
 mod alphavet;
+mod deadcode;
 mod depth;
 mod dprint;
 mod gh;
@@ -44,6 +45,7 @@ pub fn all() -> Apps {
         list: vec![
             Box::new(actionlint::ActionLint {}),
             Box::new(alphavet::Alphavet {}),
+            Box::new(deadcode::Deadcode {}),
             Box::new(depth::Depth {}),
             Box::new(dprint::Dprint {}),
             Box::new(gh::Gh {}),
