@@ -17,8 +17,8 @@ impl App for NodeJS {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "node.exe",
-            Os::Linux | Os::MacOS => "node",
+            Os::Windows => "bin\node.exe",
+            Os::Linux | Os::MacOS => "bin/node",
         }
     }
 
@@ -31,7 +31,7 @@ impl App for NodeJS {
             artifact_url: download_url(version, platform),
             target_dir: yard.app_folder(self.name(), version),
             strip_prefix: "node-v20.10.0-linux-x64/",
-            executable_path_in_archive: &format!("bin/{}", self.executable_filename(platform)),
+            executable_path_in_archive: self.executable_filename(platform),
             output,
         })
     }
