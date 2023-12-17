@@ -26,8 +26,8 @@ impl Yard {
     }
 
     /// provides the path to the executable of the given application
-    pub fn load_app(&self, app: &RequestedApp, executable_filename: &str) -> Option<Executable> {
-        let file_path = self.app_file_path(&app.name, &app.version, executable_filename);
+    pub fn load_app(&self, name: &str, version: &str, executable_filename: &str) -> Option<Executable> {
+        let file_path = self.app_file_path(&name, &version, executable_filename);
         if file_path.exists() {
             Some(Executable(file_path))
         } else {
@@ -132,7 +132,7 @@ mod tests {
             };
             let executable = "executable";
             yard.save_app_file(&requested_app, executable, b"content");
-            let Some(Executable(executable_path)) = yard.load_app(&requested_app, executable) else {
+            let Some(Executable(executable_path)) = yard.load_app(&requested_app.name, &requested_app.version, executable) else {
                 panic!();
             };
             #[cfg(unix)]
@@ -156,7 +156,7 @@ mod tests {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             };
-            let loaded = yard.load_app(&requested_app, "executable");
+            let loaded = yard.load_app(&requested_app.name, &requested_app.version, "executable");
             assert!(loaded.is_none());
         }
 
@@ -170,11 +170,7 @@ mod tests {
             };
             let executable = "executable";
             yard.save_app_file(&installed_app, executable, b"content");
-            let requested_app = RequestedApp {
-                name: S("shellcheck"),
-                version: S("0.9.0"),
-            };
-            let loaded = yard.load_app(&requested_app, "executable");
+            let loaded = yard.load_app("shellcheck", "0.9.0", "executable");
             assert!(loaded.is_none());
         }
     }
