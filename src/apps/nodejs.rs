@@ -1,4 +1,5 @@
 use super::App;
+use crate::cli::RequestedApp;
 use crate::hosting::github;
 use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
@@ -17,7 +18,7 @@ impl App for NodeJS {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "bin\node.exe",
+            Os::Windows => "bin\\node.exe",
             Os::Linux | Os::MacOS => "bin/node",
         }
     }
@@ -38,6 +39,16 @@ impl App for NodeJS {
 
     fn latest_version(&self, output: &dyn Output) -> Result<String> {
         github::latest(ORG, REPO, output)
+    }
+
+    fn load(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Option<Executable> {
+        yard.load_app(
+            &RequestedApp {
+                name: S("node"),
+                version: todo!(),
+            },
+            executable_filename,
+        )
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
