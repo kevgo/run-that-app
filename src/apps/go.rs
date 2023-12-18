@@ -1,5 +1,5 @@
 use super::App;
-use crate::install::archive::{self, InstallDirArgs};
+use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
@@ -24,10 +24,9 @@ impl App for Go {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        archive::install_subdir(InstallDirArgs {
+        archive::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
-            dir_in_archive: "bin/",
             dir_on_disk: yard.app_folder(self.name(), version),
             strip_prefix: "go/",
             executable_in_archive: &self.executable_path(platform),

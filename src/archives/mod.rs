@@ -37,41 +37,11 @@ pub fn extract_all(args: ExtractAllArgs) -> Result<Executable> {
     let Some(archive) = lookup(&args.artifact.filename) else {
         return Err(UserError::UnknownArchive(args.artifact.filename));
     };
-    archive.extract_all(
-        args.artifact.data,
-        args.target_dir,
-        args.strip_prefix,
-        args.executable_path_in_archive,
-        args.output,
-    )
+    archive.extract_all(args.artifact.data, args.dir_on_disk, args.strip_prefix, args.executable_in_archive, args.output)
 }
 
 pub struct ExtractAllArgs<'a> {
     pub artifact: Artifact,
-    pub target_dir: &'a Path,
-    pub strip_prefix: &'a str,
-    pub executable_path_in_archive: &'a str,
-    pub output: &'a dyn Output,
-}
-
-/// extracts the given file in the given artifact to the given location on disk
-pub fn extract_dir(args: ExtractDirArgs) -> Result<Executable> {
-    let Some(archive) = lookup(&args.artifact.filename) else {
-        return Err(UserError::UnknownArchive(args.artifact.filename));
-    };
-    archive.extract_dir(
-        args.artifact.data,
-        args.dir_in_archive,
-        args.dir_on_disk,
-        args.strip_prefix,
-        args.executable_in_archive,
-        args.output,
-    )
-}
-
-pub struct ExtractDirArgs<'a> {
-    pub artifact: Artifact,
-    pub dir_in_archive: &'a str,
     pub dir_on_disk: &'a Path,
     pub strip_prefix: &'a str,
     pub executable_in_archive: &'a str,
