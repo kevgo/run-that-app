@@ -19,7 +19,7 @@ lint: build  # runs all linters
 	git diff --check
 	target/debug/rta actionlint
 	# target/debug/rta dprint check  # this breaks the Windows CI due to linebreak errors
-	target/debug/rta --ignore-unavailable shellcheck download.sh
+	target/debug/rta --optional shellcheck download.sh
 
 test: unit lint  # runs all tests
 
