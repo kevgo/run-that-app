@@ -7,6 +7,7 @@ mod depth;
 mod dprint;
 mod gh;
 mod ghokin;
+mod go;
 mod gofumpt;
 mod golangci_lint;
 mod goreleaser;
@@ -54,6 +55,7 @@ pub fn all() -> Apps {
             Box::new(dprint::Dprint {}),
             Box::new(gh::Gh {}),
             Box::new(ghokin::Ghokin {}),
+            Box::new(go::Go {}),
             Box::new(gofumpt::Gofumpt {}),
             Box::new(golangci_lint::GolangCiLint {}),
             Box::new(goreleaser::Goreleaser {}),
