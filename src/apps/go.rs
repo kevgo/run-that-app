@@ -27,7 +27,7 @@ impl App for Go {
         archive::install_subdir(InstallArgs {
             artifact_url: download_url(version, platform),
             target_dir: yard.app_folder(self.name(), version),
-            strip_prefix: "",
+            strip_prefix: "go/",
             executable_path_in_archive: executable_path(platform),
             output,
         })
