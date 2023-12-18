@@ -16,11 +16,7 @@ impl Archive for TarGz {
     }
 
     fn extract_all(&self, data: Vec<u8>, target_dir: &Path, strip_prefix: &str, executable_path_in_archive: &str, output: &dyn Output) -> Result<Executable> {
-        if output.is_active(CATEGORY) {
-            output.print("extracting tar.gz ...");
-        } else {
-            output.print("extracting ... ");
-        }
+        print_header(output);
         let gz_decoder = GzDecoder::new(io::Cursor::new(&data));
         let mut archive = tar::Archive::new(gz_decoder);
         if output.is_active(CATEGORY) {
@@ -47,11 +43,7 @@ impl Archive for TarGz {
     }
 
     fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, file_path_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
-        if output.is_active(CATEGORY) {
-            output.print("extracting tar.gz ...");
-        } else {
-            output.print("extracting ... ");
-        }
+        print_header(output);
         let gz_decoder = GzDecoder::new(io::Cursor::new(&data));
         let mut archive = tar::Archive::new(gz_decoder);
         if output.is_active(CATEGORY) {
@@ -71,6 +63,14 @@ impl Archive for TarGz {
             }
         }
         panic!("file {filepath_in_archive} not found in archive");
+    }
+}
+
+fn print_header(output: &dyn Output) {
+    if output.is_active(CATEGORY) {
+        output.print("extracting tar.gz ...");
+    } else {
+        output.print("extracting ... ");
     }
 }
 

@@ -18,11 +18,7 @@ impl Archive for Zip {
     }
 
     fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
-        if output.is_active(CATEGORY) {
-            output.print("extracting zip ...");
-        } else {
-            output.print("extracting ... ");
-        }
+        print_header(output);
         let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&data)).expect("cannot read zip data");
         if let Some(parent_dir) = filepath_on_disk.parent() {
             if !parent_dir.exists() {
@@ -42,11 +38,7 @@ impl Archive for Zip {
     }
 
     fn extract_all(&self, data: Vec<u8>, target_dir: &Path, strip_prefix: &str, executable_path_in_archive: &str, output: &dyn Output) -> Result<Executable> {
-        if output.is_active(CATEGORY) {
-            output.print("extracting zip ...");
-        } else {
-            output.print("extracting ... ");
-        }
+        print_header(output);
         let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&data)).expect("cannot read zip data");
         if !target_dir.exists() {
             std::fs::create_dir_all(target_dir).unwrap();
@@ -70,6 +62,14 @@ impl Archive for Zip {
             }
         }
         executable.ok_or_else(|| panic!("file {executable_path_in_archive} not found in archive"))
+    }
+}
+
+fn print_header(output: &dyn Output) {
+    if output.is_active(CATEGORY) {
+        output.print("extracting zip ...");
+    } else {
+        output.print("extracting ... ");
     }
 }
 
