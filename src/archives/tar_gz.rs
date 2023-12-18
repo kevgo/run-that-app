@@ -27,9 +27,7 @@ impl Archive for TarGz {
             let mut file = file.unwrap();
             let filepath = file.path().unwrap();
             let filepath_str = filepath.to_string_lossy();
-            if output.is_active(CATEGORY) {
-                output.println(&format!("- {filepath_str}"));
-            }
+            super::log_archive_file(CATEGORY, &filepath_str, output);
             let filepath_stripped = strip_filepath(&filepath_str, strip_prefix);
             let filepath_on_disk = target_dir.join(filepath_stripped);
             let is_executable = filepath_stripped == executable_path_in_archive;
@@ -46,16 +44,11 @@ impl Archive for TarGz {
         print_header(output);
         let gz_decoder = GzDecoder::new(io::Cursor::new(&data));
         let mut archive = tar::Archive::new(gz_decoder);
-        if output.is_active(CATEGORY) {
-            output.println("\nFiles in archive:");
-        }
         for file in archive.entries().unwrap() {
             let mut file = file.unwrap();
             let filepath = file.path().unwrap();
             let filepath = filepath.to_string_lossy();
-            if output.is_active(CATEGORY) {
-                output.println(&format!("- {filepath}"));
-            }
+            super::log_archive_file(CATEGORY, &filepath, output);
             if filepath == filepath_in_archive {
                 file.unpack(file_path_on_disk).unwrap();
                 filesystem::make_file_executable(file_path_on_disk)?;
@@ -67,11 +60,7 @@ impl Archive for TarGz {
 }
 
 fn print_header(output: &dyn Output) {
-    if output.is_active(CATEGORY) {
-        output.print("extracting tar.gz ...");
-    } else {
-        output.print("extracting ... ");
-    }
+    super::print_header(CATEGORY, "tar.gz", output);
 }
 
 const CATEGORY: &str = "extract/tar.gz";

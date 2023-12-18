@@ -23,7 +23,7 @@ impl Archive for TarXz {
             let mut file = file.unwrap();
             let filepath = file.path().unwrap();
             let filepath = filepath.to_string_lossy();
-            output.log(CATEGORY, &format!("- {filepath}"));
+            super::log_archive_file(CATEGORY, &filepath, output);
             if filepath == filepath_in_archive {
                 file.unpack(filepath_on_disk).unwrap();
                 filesystem::make_file_executable(filepath_on_disk)?;
@@ -42,9 +42,7 @@ impl Archive for TarXz {
             let mut file = file.unwrap();
             let filepath = file.path().unwrap();
             let filepath_str = filepath.to_string_lossy();
-            if output.is_active(CATEGORY) {
-                output.println(&format!("- {filepath_str}"));
-            }
+            super::log_archive_file(CATEGORY, &filepath_str, output);
             let filepath_stripped = strip_filepath(&filepath_str, strip_prefix);
             if filepath_stripped.is_empty() {
                 continue;
@@ -62,11 +60,7 @@ impl Archive for TarXz {
 }
 
 fn print_header(output: &dyn Output) {
-    if output.is_active(CATEGORY) {
-        output.print("extracting tar.xz ...");
-    } else {
-        output.print("extracting ... ");
-    }
+    super::print_header(CATEGORY, "tar.xz", output);
 }
 
 const CATEGORY: &str = "extract/tar.xz";

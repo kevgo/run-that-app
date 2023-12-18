@@ -60,6 +60,20 @@ fn lookup(filepath: &str) -> Option<Box<dyn Archive>> {
     all_archives().into_iter().find(|archive| archive.can_extract(filepath))
 }
 
+fn print_header(category: &str, archive_type: &str, output: &dyn Output) {
+    if output.is_active(category) {
+        output.print(&format!("extracting {archive_type} ..."));
+    } else {
+        output.print("extracting ... ");
+    }
+}
+
+fn log_archive_file(category: &str, filepath: &str, output: &dyn Output) {
+    if output.is_active(category) {
+        output.println(&format!("- {filepath}"));
+    }
+}
+
 #[cfg(test)]
 mod tests {
 

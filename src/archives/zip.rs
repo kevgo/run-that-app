@@ -27,9 +27,7 @@ impl Archive for Zip {
         }
         for i in 0..zip_archive.len() {
             let file_in_zip = zip_archive.by_index(i).unwrap();
-            if output.is_active(CATEGORY) {
-                output.println(&format!("- {}", file_in_zip.name()));
-            }
+            super::log_archive_file(CATEGORY, file_in_zip.name(), output);
         }
         let mut file_in_zip = zip_archive.by_name(filepath_in_archive).expect("file not found in archive");
         let mut file_on_disk = fs::File::create(filepath_on_disk).unwrap();
@@ -49,9 +47,7 @@ impl Archive for Zip {
         for i in 0..zip_archive.len() {
             let mut file_in_zip = zip_archive.by_index(i).unwrap();
             let filepath_in_zip = file_in_zip.name();
-            if output.is_active(CATEGORY) {
-                output.println(&format!("- {filepath_in_zip}"));
-            }
+            super::log_archive_file(CATEGORY, filepath_in_zip, output);
             let filepath_stripped = strip_filepath(filepath_in_zip, strip_prefix);
             let filepath_on_disk = target_dir.join(filepath_stripped);
             let is_executable = filepath_stripped == executable_path_in_archive;
@@ -68,11 +64,7 @@ impl Archive for Zip {
 }
 
 fn print_header(output: &dyn Output) {
-    if output.is_active(CATEGORY) {
-        output.print("extracting zip ...");
-    } else {
-        output.print("extracting ... ");
-    }
+    super::print_header(CATEGORY, "zip", output);
 }
 
 const CATEGORY: &str = "extract/zip";
