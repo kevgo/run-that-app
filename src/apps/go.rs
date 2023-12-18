@@ -7,6 +7,9 @@ use big_s::S;
 
 pub struct Go {}
 
+const ORG: &str = "golang";
+const REPO: &str = "go";
+
 impl App for Go {
     fn name(&self) -> &'static str {
         "go"
@@ -35,9 +38,7 @@ impl App for Go {
     }
 
     fn latest_version(&self, _output: &dyn Output) -> Result<String> {
-        Ok(S("1.21.5"))
-        // TODO: parse https://go.dev/dl/?mode=json (which only has the most recent 2 versions)
-        // or look at the tags on the GitHub repo
+        github::tags::latest(ORG, REPO, output)
     }
 
     fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
@@ -45,8 +46,7 @@ impl App for Go {
     }
 
     fn versions(&self, _amount: u8, _output: &dyn Output) -> Result<Vec<String>> {
-        // TODO: look at the tags on the GitHub repo
-        Ok(vec![S("1.21.5")])
+        github::tags::latest(ORG, REPO, output)
     }
 }
 
