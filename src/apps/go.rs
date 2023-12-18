@@ -9,7 +9,7 @@ pub struct Go {}
 
 impl App for Go {
     fn name(&self) -> &'static str {
-        "Go"
+        "go"
     }
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
@@ -24,7 +24,7 @@ impl App for Go {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        archive::install(InstallArgs {
+        archive::install_subdir(InstallArgs {
             artifact_url: download_url(version, platform),
             target_dir: yard.app_folder(self.name(), version),
             strip_prefix: "",
