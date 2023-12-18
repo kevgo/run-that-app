@@ -17,7 +17,7 @@ pub fn print_options() {
     println!(
         "
 Options:
---ignore-unavailable             if an app is not available for the current platform, create a stub that does nothing
+--optional                       if an app is not available for the current platform, create a stub that does nothing
 --include-path                   if an app is not available but one is in the PATH, execute that one
 --update                         updates the versions in .tool-versions to the latest available
 --available                      indicates via the exit code whether the given application is available on this platform
