@@ -1,5 +1,4 @@
 use super::App;
-use crate::cli::RequestedApp;
 use crate::hosting::github;
 use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
@@ -41,7 +40,7 @@ impl App for NodeJS {
         github::latest(ORG, REPO, output)
     }
 
-    fn load(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Option<Executable> {
+    fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
         yard.load_app(self.name(), version, self.executable_filename(platform))
     }
 
