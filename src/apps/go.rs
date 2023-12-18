@@ -30,7 +30,7 @@ impl App for Go {
             dir_in_archive: "bin/",
             dir_on_disk: yard.app_folder(self.name(), version),
             strip_prefix: "go/",
-            executable_in_archive: executable_path(platform),
+            executable_in_archive: &self.executable_path(platform),
             output,
         })
     }
@@ -51,6 +51,16 @@ impl App for Go {
     }
 }
 
+impl Go {
+    fn executable_path(&self, platform: Platform) -> String {
+        let executable = self.executable_filename(platform);
+        match platform.os {
+            Os::Windows => format!("bin\\{executable}"),
+            Os::Linux | Os::MacOS => format!("bin/{executable}"),
+        }
+    }
+}
+
 pub fn download_url(version: &str, platform: Platform) -> String {
     format!(
         "https://go.dev/dl/go{version}.{os}-{cpu}.{ext}",
@@ -58,13 +68,6 @@ pub fn download_url(version: &str, platform: Platform) -> String {
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
     )
-}
-
-fn executable_path(platform: Platform) -> &'static str {
-    match platform.os {
-        Os::Windows => "bin\\node.exe",
-        Os::Linux | Os::MacOS => "bin/node",
-    }
 }
 
 fn os_text(os: Os) -> &'static str {
