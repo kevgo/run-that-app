@@ -1,4 +1,5 @@
 use super::nodejs::NodeJS;
+use super::nodejs::{ORG, REPO};
 use super::App;
 use crate::hosting::github;
 use crate::install::archive::{self, InstallArgs};
@@ -7,9 +8,6 @@ use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
 
 pub struct Npm {}
-
-const ORG: &str = "nodejs";
-const REPO: &str = "node";
 
 impl App for Npm {
     fn name(&self) -> &'static str {

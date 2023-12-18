@@ -7,8 +7,8 @@ use crate::{Output, Result};
 
 pub struct NodeJS {}
 
-const ORG: &str = "nodejs";
-const REPO: &str = "node";
+pub const ORG: &str = "nodejs";
+pub const REPO: &str = "node";
 
 impl App for NodeJS {
     fn name(&self) -> &'static str {
