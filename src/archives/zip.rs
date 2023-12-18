@@ -61,6 +61,42 @@ impl Archive for Zip {
         }
         executable.ok_or_else(|| panic!("file {executable_path_in_archive} not found in archive"))
     }
+
+    fn extract_dir(
+        &self,
+        data: Vec<u8>,
+        dir_in_archive: &str,
+        dir_on_disk: &Path,
+        strip_prefix: &str,
+        executable_path_in_archive: &str,
+        output: &dyn Output,
+    ) -> Result<Executable> {
+        print_header(output);
+        let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&data)).expect("cannot read zip data");
+        if !dir_on_disk.exists() {
+            std::fs::create_dir_all(dir_on_disk).unwrap();
+        }
+        let mut executable: Option<Executable> = None;
+        for i in 0..zip_archive.len() {
+            let mut file_in_zip = zip_archive.by_index(i).unwrap();
+            let filepath_in_zip = file_in_zip.name();
+            super::log_archive_file(CATEGORY, filepath_in_zip, output);
+            let filepath_stripped = strip_filepath(filepath_in_zip, strip_prefix);
+            if filepath_stripped.is_empty() || !filepath_stripped.starts_with(dir_in_archive) {
+                continue;
+            }
+            let filepath_on_disk = dir_on_disk.join(filepath_stripped);
+            let is_executable = filepath_stripped == executable_path_in_archive;
+            let mut file_on_disk = fs::File::create(&filepath_on_disk).unwrap();
+            io::copy(&mut file_in_zip, &mut file_on_disk).unwrap();
+            #[cfg(unix)]
+            file_on_disk.set_permissions(fs::Permissions::from_mode(0o744)).unwrap();
+            if is_executable {
+                executable = Some(Executable(filepath_on_disk));
+            }
+        }
+        executable.ok_or_else(|| panic!("file {executable_path_in_archive} not found in archive"))
+    }
 }
 
 fn print_header(output: &dyn Output) {

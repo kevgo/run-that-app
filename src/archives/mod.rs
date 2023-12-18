@@ -17,7 +17,18 @@ pub trait Archive {
     /// extracts all files from the given archive data to the given location on disk
     fn extract_all(&self, data: Vec<u8>, target_dir: &Path, strip_prefix: &str, executable_path_in_archive: &str, output: &dyn Output) -> Result<Executable>;
 
-    /// extracts the given file from the given data content to the given location on disk
+    /// extracts all files in the given directory from the given archive data to the given location on disk
+    fn extract_dir(
+        &self,
+        data: Vec<u8>,
+        directory: &str,
+        folder_on_disk: &Path,
+        strip_prefix: &str,
+        executable_path_in_archive: &str,
+        output: &dyn Output,
+    ) -> Result<Executable>;
+
+    /// extracts the given file from the given archive data to the given location on disk
     fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable>;
 }
 
@@ -40,6 +51,30 @@ pub struct ExtractAllArgs<'a> {
     pub target_dir: &'a Path,
     pub strip_prefix: &'a str,
     pub executable_path_in_archive: &'a str,
+    pub output: &'a dyn Output,
+}
+
+/// extracts the given file in the given artifact to the given location on disk
+pub fn extract_dir(args: ExtractDirArgs) -> Result<Executable> {
+    let Some(archive) = lookup(&args.artifact.filename) else {
+        return Err(UserError::UnknownArchive(args.artifact.filename));
+    };
+    archive.extract_dir(
+        args.artifact.data,
+        args.dir_in_archive,
+        args.dir_on_disk,
+        args.strip_prefix,
+        args.executable_in_archive,
+        args.output,
+    )
+}
+
+pub struct ExtractDirArgs<'a> {
+    pub artifact: Artifact,
+    pub dir_in_archive: &'a str,
+    pub dir_on_disk: &'a Path,
+    pub strip_prefix: &'a str,
+    pub executable_in_archive: &'a str,
     pub output: &'a dyn Output,
 }
 
