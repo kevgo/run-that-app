@@ -29,6 +29,7 @@ impl App for Goreleaser {
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         if let Some(executable) = packaged_executable::install(InstallArgs {
+            app_name: self.name(),
             artifact_url: download_url(version, platform),
             file_to_extract: self.executable_filename(platform),
             filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),

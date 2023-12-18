@@ -6,7 +6,7 @@ use std::path::PathBuf;
 
 /// downloads an uncompressed precompiled binary
 pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
-    let Some(artifact) = download::artifact(args.artifact_url, args.output)? else {
+    let Some(artifact) = download::artifact(args.artifact_url, args.app_name, args.output)? else {
         return Ok(None);
     };
     filesystem::create_parent(&args.filepath_on_disk)?;
@@ -16,6 +16,7 @@ pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
 }
 
 pub struct InstallArgs<'a> {
+    pub app_name: &'a str,
     pub artifact_url: String,
     pub filepath_on_disk: PathBuf,
     pub output: &'a dyn Output,
