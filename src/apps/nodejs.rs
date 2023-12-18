@@ -30,7 +30,7 @@ impl App for NodeJS {
         archive::install(InstallArgs {
             artifact_url: download_url(version, platform),
             target_dir: yard.app_folder(self.name(), version),
-            strip_prefix: &format!("node-v{version}-{os}-{cpu}/", os = platform.os, cpu = platform.cpu),
+            strip_prefix: &format!("node-v{version}-{os}-{cpu}/", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
             executable_path_in_archive: self.executable_filename(platform),
             output,
         })

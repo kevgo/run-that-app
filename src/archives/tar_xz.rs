@@ -54,6 +54,9 @@ impl Archive for TarXz {
                 output.println(&format!("- {filepath_str}"));
             }
             let filepath_stripped = strip_filepath(&filepath_str, strip_prefix);
+            if filepath_stripped.is_empty() {
+                continue;
+            }
             let filepath_on_disk = target_dir.join(filepath_stripped);
             let is_executable = filepath_stripped == executable_path_in_archive;
             file.unpack(&filepath_on_disk).unwrap();
