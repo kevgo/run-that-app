@@ -18,8 +18,8 @@ lint: build  # runs all linters
 	cargo clippy --all-targets --all-features -- --deny=warnings
 	git diff --check
 	target/debug/rta actionlint
-	# target/debug/rta dprint check  # this breaks the Windows CI
-	# target/debug/rta -f . | xargs target/rta/shellcheck
+	# target/debug/rta dprint check  # this breaks the Windows CI due to linebreak errors
+	target/debug/rta --ignore-unavailable shellcheck download.sh
 
 test: unit lint  # runs all tests
 
