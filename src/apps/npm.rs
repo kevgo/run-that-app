@@ -34,8 +34,7 @@ impl App for Npm {
     }
 
     fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
-        let nodejs = NodeJS {};
-        yard.load_app(nodejs.name(), version, self.executable_filename(platform))
+        yard.load_app((NodeJS {}).name(), version, self.executable_filename(platform))
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
