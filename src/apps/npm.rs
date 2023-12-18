@@ -1,6 +1,5 @@
-use super::nodejs::{self, NodeJS};
+use super::nodejs::NodeJS;
 use super::App;
-use crate::hosting::github;
 use crate::platform::{Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
@@ -31,7 +30,7 @@ impl App for Npm {
     }
 
     fn latest_version(&self, output: &dyn Output) -> Result<String> {
-        github::latest(nodejs::ORG, nodejs::REPO, output)
+        (NodeJS {}).latest_version(output)
     }
 
     fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
@@ -40,6 +39,6 @@ impl App for Npm {
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions(nodejs::ORG, nodejs::REPO, amount, output)
+        (NodeJS {}).versions(amount, output)
     }
 }
