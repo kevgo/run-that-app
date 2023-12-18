@@ -1,4 +1,5 @@
 use super::App;
+use crate::hosting::github;
 use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
