@@ -49,7 +49,7 @@ impl App for NodeJS {
     }
 }
 
-fn download_url(version: &str, platform: Platform) -> String {
+pub fn download_url(version: &str, platform: Platform) -> String {
     format!(
         "https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",
         os = os_text(platform.os),
