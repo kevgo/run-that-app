@@ -33,7 +33,7 @@ pub fn load_or_install(mut requested_app: RequestedApp, include_path: bool, outp
     let app = apps.lookup(&requested_app.name)?;
     let platform = platform::detect(output)?;
     let yard = yard::load_or_create(&yard::production_location()?)?;
-    if let Some(executable) = app.load(&requested_app.name, &requested_app.version, platform, &yard, output) {
+    if let Some(executable) = app.load(&requested_app.version, platform, &yard, output) {
         return Ok(Some(executable));
     };
     if yard.is_not_installable(&requested_app) {

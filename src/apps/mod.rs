@@ -35,7 +35,7 @@ pub trait App {
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>>;
 
     // loads this app from the given yard if it is already installed
-    fn load(&self, name: &str, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Option<Executable>;
+    fn load(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Option<Executable>;
 
     /// provides the available versions of this application
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>>;

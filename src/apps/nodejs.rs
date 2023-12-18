@@ -42,13 +42,7 @@ impl App for NodeJS {
     }
 
     fn load(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Option<Executable> {
-        yard.load_app(
-            &RequestedApp {
-                name: S("node"),
-                version: todo!(),
-            },
-            executable_filename,
-        )
+        yard.load_app(self.name(), version, self.executable_filename(platform))
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {

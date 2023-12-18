@@ -37,6 +37,10 @@ impl App for Deadcode {
         Ok(S("0.16.1"))
     }
 
+    fn load(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Option<Executable> {
+        yard.load_app(self.name(), version, self.executable_filename(platform))
+    }
+
     fn versions(&self, _amount: u8, _output: &dyn Output) -> Result<Vec<String>> {
         Ok(vec![S("0.16.1")])
     }

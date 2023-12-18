@@ -1,3 +1,4 @@
+use super::nodejs::NodeJS;
 use super::App;
 use crate::hosting::github;
 use crate::install::archive::{self, InstallArgs};
@@ -38,6 +39,11 @@ impl App for Npm {
 
     fn latest_version(&self, output: &dyn Output) -> Result<String> {
         github::latest(ORG, REPO, output)
+    }
+
+    fn load(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Option<Executable> {
+        let nodejs = NodeJS {};
+        yard.load_app(nodejs.name(), version, self.executable_filename(platform))
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
