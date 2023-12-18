@@ -27,7 +27,9 @@ impl Archive for Zip {
         }
         for i in 0..zip_archive.len() {
             let file_in_zip = zip_archive.by_index(i).unwrap();
-            output.log(CATEGORY, &format!("- {}", file_in_zip.name()));
+            if output.is_active(CATEGORY) {
+                output.println(&format!("- {}", file_in_zip.name()));
+            }
         }
         let mut file_in_zip = zip_archive.by_name(filepath_in_archive).expect("file not found in archive");
         let mut file_on_disk = fs::File::create(filepath_on_disk).unwrap();
