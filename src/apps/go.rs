@@ -41,7 +41,7 @@ impl App for Go {
     }
 
     fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(self.name(), version, self.executable_filename(platform))
+        yard.load_app(self.name(), version, &self.executable_path(platform))
     }
 
     fn versions(&self, _amount: u8, _output: &dyn Output) -> Result<Vec<String>> {
