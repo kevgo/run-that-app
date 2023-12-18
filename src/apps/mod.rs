@@ -11,6 +11,7 @@ mod gofumpt;
 mod golangci_lint;
 mod goreleaser;
 mod nodejs;
+mod npm;
 mod scc;
 mod shellcheck;
 mod shfmt;
@@ -33,6 +34,9 @@ pub trait App {
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>>;
 
+    // loads this app from the given yard if it is already installed
+    fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable>;
+
     /// provides the available versions of this application
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>>;
 
@@ -54,6 +58,7 @@ pub fn all() -> Apps {
             Box::new(golangci_lint::GolangCiLint {}),
             Box::new(goreleaser::Goreleaser {}),
             Box::new(nodejs::NodeJS {}),
+            Box::new(npm::Npm {}),
             Box::new(scc::Scc {}),
             Box::new(shellcheck::ShellCheck {}),
             Box::new(shfmt::Shfmt {}),

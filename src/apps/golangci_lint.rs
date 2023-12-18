@@ -41,6 +41,10 @@ impl App for GolangCiLint {
         github::latest(ORG, REPO, output)
     }
 
+    fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
+        yard.load_app(self.name(), version, self.executable_filename(platform))
+    }
+
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
         github::versions(ORG, REPO, amount, output)
     }
