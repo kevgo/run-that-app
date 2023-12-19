@@ -98,9 +98,9 @@ create_folder() {
 executable_filename() {
 	OS=$1
 	if [ "$OS" = "windows" ]; then
-		echo "run-that-app.exe"
+		echo "rta.exe"
 	else
-		echo "run-that-app"
+		echo "rta"
 	fi
 }
 

@@ -28,7 +28,7 @@ store very little (just the executables) on your hard drive.
 2. Run an app (in this case the GitHub CLI at version 2.39.1)
 
    ```bash
-   ./run-that-app actionlint@1.6.26
+   ./rta actionlint@1.6.26
    ```
 
 #### on Windows (Powershell)
@@ -42,7 +42,7 @@ store very little (just the executables) on your hard drive.
 2. Run an app (in this case actionlint at version 1.6.26)
 
    ```batchfile
-   .\run-that-app actionlint@1.6.26
+   .\rta actionlint@1.6.26
    ```
 
 #### installing the run-that-app executable into a specific directory
@@ -66,15 +66,15 @@ Now you can run these applications without having to provide their version
 numbers:
 
 ```bash
-./run-that-app actionlint
+./rta actionlint
 ```
 
-Executing `run-that-app --setup` creates this file.
+Executing `rta --setup` creates this file.
 
 ### usage
 
 ```bash
-run-that-app [run-that-app arguments] <app name>[@<app version override>] [app arguments]
+rta [run-that-app arguments] <app name>[@<app version override>] [app arguments]
 ```
 
 Arguments for run-that-app come before the name of the application to run. The
@@ -104,7 +104,7 @@ Runs [ShellCheck](https://shellcheck.net) version 0.9.0 with the arguments
 `--color=always myscript.sh`.
 
 ```bash
-run-that-app shellcheck@0.9.0 --color=always myscript.sh
+rta shellcheck@0.9.0 --color=always myscript.sh
 ```
 
 #### Ignore unavailable applications
@@ -113,7 +113,7 @@ ShellCheck is just a linter. If it isn't available on a particular platform, the
 tooling shouldn't abort with an error but simply skip ShellCheck.
 
 ```bash
-run-that-app --optional shellcheck@0.9.0 --color=always myscript.sh
+rta --optional shellcheck@0.9.0 --color=always myscript.sh
 ```
 
 #### Using run-that-app as an installer
@@ -122,7 +122,7 @@ This example calls `go vet` with `alphavet` as a custom vet tool. But only if
 `alphavet` is available for the current platform.
 
 ```bash
-run-that-app --available alphavet && go vet "-vettool=$(run-that-app --which alphavet)" ./...
+rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
 ```
 
 #### Usage in a Makefile
@@ -133,19 +133,19 @@ Here is a template for installing and using run-that-app in a `Makefile`:
 RUN_THAT_APP_VERSION = 0.3.0
 
 # an example Make target that uses run-that-app
-test: tools/run-that-app@${RUN_THAT_APP_VERSION}
+test: tools/rta@${RUN_THAT_APP_VERSION}
 	tools/rta actionlint
 
 # this Make target installs run-that-app if it isn't installed or has the wrong version
-tools/run-that-app@${RUN_THAT_APP_VERSION}:
-	@rm -f tools/run-that-app* tools/rta
+tools/rta@${RUN_THAT_APP_VERSION}:
+	@rm -f tools/rta*
   @mkdir -p tools
 	@(cd tools && curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh)
-	@mv tools/run-that-app tools/run-that-app@${RUN_THAT_APP_VERSION}
-	@ln -s run-that-app@${RUN_THAT_APP_VERSION} tools/rta
+	@mv tools/rta tools/rta@${RUN_THAT_APP_VERSION}
+	@ln -s rta@${RUN_THAT_APP_VERSION} tools/rta
 ```
 
-You would have to `.gitignore` the files `tools/run-that-app*` and `tools/rta`.
+You would have to `.gitignore` the files `tools/rta*`.
 
 ### Q&A
 
@@ -193,7 +193,7 @@ Run-that-app saves you from these headaches.
 #### What if an app does not distribute binaries for my platform?
 
 Run-that-app can compile applications from source. If that doesn't work, it can
-skip non-essential applications like linters via the `--ignore-unavailable`
+skip non-essential applications like linters via the `--optional`
 switch.
 
 #### What if I compile an app myself?
