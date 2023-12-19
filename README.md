@@ -130,7 +130,7 @@ run-that-app --available alphavet && go vet "-vettool=$(run-that-app --which alp
 Here is a template for installing and using run-that-app in a `Makefile`:
 
 ```make
-RUN_THAT_APP_VERSION = 0.2.1
+RUN_THAT_APP_VERSION = 0.3.0
 
 # an example Make target that uses run-that-app
 test: tools/run-that-app@${RUN_THAT_APP_VERSION}
