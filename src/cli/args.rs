@@ -128,7 +128,7 @@ mod tests {
 
         #[test]
         fn no_arguments() {
-            let have = parse_args(vec!["run-that-app"]);
+            let have = parse_args(vec!["rta"]);
             let want = Ok(Args { command: Command::DisplayHelp });
             pretty::assert_eq!(have, want);
         }
@@ -141,7 +141,7 @@ mod tests {
 
             #[test]
             fn with_app() {
-                let have = parse_args(vec!["run-that-app", "--available", "shellcheck"]);
+                let have = parse_args(vec!["rta", "--available", "shellcheck"]);
                 let want = Ok(Args {
                     command: Command::Available {
                         app: RequestedApp {
@@ -157,7 +157,7 @@ mod tests {
 
             #[test]
             fn with_all_options() {
-                let have = parse_args(vec!["run-that-app", "--available", "--include-path", "--log=detect", "shellcheck"]);
+                let have = parse_args(vec!["rta", "--available", "--include-path", "--log=detect", "shellcheck"]);
                 let want = Ok(Args {
                     command: Command::Available {
                         app: RequestedApp {
@@ -173,7 +173,7 @@ mod tests {
 
             #[test]
             fn without_app() {
-                let have = parse_args(vec!["run-that-app", "--available"]);
+                let have = parse_args(vec!["rta", "--available"]);
                 let want = Err(UserError::MissingApplication);
                 pretty::assert_eq!(have, want);
             }
@@ -187,7 +187,7 @@ mod tests {
 
             #[test]
             fn with_app() {
-                let have = parse_args(vec!["run-that-app", "--which", "shellcheck"]);
+                let have = parse_args(vec!["rta", "--which", "shellcheck"]);
                 let want = Ok(Args {
                     command: Command::Which {
                         app: RequestedApp {
@@ -203,7 +203,7 @@ mod tests {
 
             #[test]
             fn with_all_options() {
-                let have = parse_args(vec!["run-that-app", "--which", "--include-path", "--log=detect", "shellcheck"]);
+                let have = parse_args(vec!["rta", "--which", "--include-path", "--log=detect", "shellcheck"]);
                 let want = Ok(Args {
                     command: Command::Which {
                         app: RequestedApp {
@@ -219,7 +219,7 @@ mod tests {
 
             #[test]
             fn without_app() {
-                let have = parse_args(vec!["run-that-app", "--which"]);
+                let have = parse_args(vec!["rta", "--which"]);
                 let want = Err(UserError::MissingApplication);
                 pretty::assert_eq!(have, want);
             }
@@ -227,7 +227,7 @@ mod tests {
 
         #[test]
         fn multiple_commands() {
-            let have = parse_args(vec!["run-that-app", "--which", "--available", "shellcheck"]);
+            let have = parse_args(vec!["rta", "--which", "--available", "shellcheck"]);
             let want = Err(UserError::MultipleCommandsGiven);
             pretty::assert_eq!(have, want);
         }
@@ -239,7 +239,7 @@ mod tests {
 
             #[test]
             fn short() {
-                let have = parse_args(vec!["run-that-app", "-V"]);
+                let have = parse_args(vec!["rta", "-V"]);
                 let want = Ok(Args {
                     command: Command::DisplayVersion,
                 });
@@ -248,7 +248,7 @@ mod tests {
 
             #[test]
             fn long() {
-                let have = parse_args(vec!["run-that-app", "--version"]);
+                let have = parse_args(vec!["rta", "--version"]);
                 let want = Ok(Args {
                     command: Command::DisplayVersion,
                 });
@@ -263,14 +263,14 @@ mod tests {
 
             #[test]
             fn short() {
-                let have = parse_args(vec!["run-that-app", "-h"]);
+                let have = parse_args(vec!["rta", "-h"]);
                 let want = Ok(Args { command: Command::DisplayHelp });
                 pretty::assert_eq!(have, want);
             }
 
             #[test]
             fn long() {
-                let have = parse_args(vec!["run-that-app", "-h"]);
+                let have = parse_args(vec!["rta", "-h"]);
                 let want = Ok(Args { command: Command::DisplayHelp });
                 pretty::assert_eq!(have, want);
             }
@@ -284,7 +284,7 @@ mod tests {
 
             #[test]
             fn with_app() {
-                let have = parse_args(vec!["run-that-app", "--include-path", "app@2", "arg1"]);
+                let have = parse_args(vec!["rta", "--include-path", "app@2", "arg1"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
                         app: RequestedApp {
@@ -302,7 +302,7 @@ mod tests {
 
             #[test]
             fn without_app() {
-                let have = parse_args(vec!["run-that-app", "--include-path"]);
+                let have = parse_args(vec!["rta", "--include-path"]);
                 let want = Err(UserError::MissingApplication);
                 pretty::assert_eq!(have, want);
             }
@@ -316,7 +316,7 @@ mod tests {
 
             #[test]
             fn everything() {
-                let have = parse_args(vec!["run-that-app", "--log", "app@2"]);
+                let have = parse_args(vec!["rta", "--log", "app@2"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
                         app: RequestedApp {
@@ -334,7 +334,7 @@ mod tests {
 
             #[test]
             fn limited() {
-                let have = parse_args(vec!["run-that-app", "--log=scope", "app@2"]);
+                let have = parse_args(vec!["rta", "--log=scope", "app@2"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
                         app: RequestedApp {
@@ -352,7 +352,7 @@ mod tests {
 
             #[test]
             fn missing_app() {
-                let have = parse_args(vec!["run-that-app", "--log"]);
+                let have = parse_args(vec!["rta", "--log"]);
                 let want = Err(UserError::MissingApplication);
                 pretty::assert_eq!(have, want);
             }
@@ -360,7 +360,7 @@ mod tests {
 
         #[test]
         fn optional() {
-            let have = parse_args(vec!["run-that-app", "--optional", "app@2", "arg1"]);
+            let have = parse_args(vec!["rta", "--optional", "app@2", "arg1"]);
             let want = Ok(Args {
                 command: Command::RunApp {
                     app: RequestedApp {
@@ -384,7 +384,7 @@ mod tests {
 
             #[test]
             fn no_arguments() {
-                let have = parse_args(vec!["run-that-app", "app@2"]);
+                let have = parse_args(vec!["rta", "app@2"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
                         app: RequestedApp {
@@ -402,7 +402,7 @@ mod tests {
 
             #[test]
             fn some_arguments() {
-                let have = parse_args(vec!["run-that-app", "app@2", "--arg1", "arg2"]);
+                let have = parse_args(vec!["rta", "app@2", "--arg1", "arg2"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
                         app: RequestedApp {
@@ -420,7 +420,7 @@ mod tests {
 
             #[test]
             fn rta_and_app_arguments() {
-                let have = parse_args(vec!["run-that-app", "--log=l1", "app@2", "--arg1", "arg2"]);
+                let have = parse_args(vec!["rta", "--log=l1", "app@2", "--arg1", "arg2"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
                         app: RequestedApp {
@@ -438,7 +438,7 @@ mod tests {
 
             #[test]
             fn same_arguments_as_run_that_app() {
-                let have = parse_args(vec!["run-that-app", "app@2", "--log=app", "--version"]);
+                let have = parse_args(vec!["rta", "app@2", "--log=app", "--version"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
                         app: RequestedApp {

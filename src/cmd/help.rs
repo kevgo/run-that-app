@@ -10,7 +10,7 @@ pub fn help() -> ExitCode {
 }
 
 fn print_usage() {
-    println!("Usage: run-that-app install [options] application@version\n");
+    println!("Usage: rta install [options] application@version\n");
 }
 
 pub fn print_options() {
@@ -31,7 +31,7 @@ Options:
 
 fn print_examples() {
     println!("Examples:");
-    println!("\"run-that-app gh@2.34.0\" installs https://github.com/cli/cli at version 2.34.0\n");
+    println!("\"rta gh@2.34.0\" installs https://github.com/cli/cli at version 2.34.0\n");
 }
 
 pub fn print_installable_apps() {
