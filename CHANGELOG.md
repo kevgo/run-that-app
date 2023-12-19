@@ -1,5 +1,17 @@
 # run-that-app changelog
 
+### 0.3.0 (2023-12-18)
+
+#### BREAKING CHANGES
+
+- renames the executable from `run-that-app` to `rta`
+- renames `--show-path` to `--which`
+
+#### New Features
+
+- prints the name of the app being installed
+- apps: Node.js, npm, deadcode
+
 ### 0.2.1 (2023-12-05)
 
 #### Bug Fixes
