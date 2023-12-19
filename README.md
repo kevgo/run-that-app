@@ -193,8 +193,7 @@ Run-that-app saves you from these headaches.
 #### What if an app does not distribute binaries for my platform?
 
 Run-that-app can compile applications from source. If that doesn't work, it can
-skip non-essential applications like linters via the `--optional`
-switch.
+skip non-essential applications like linters via the `--optional` switch.
 
 #### What if I compile an app myself?
 
