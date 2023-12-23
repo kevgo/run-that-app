@@ -55,3 +55,5 @@ impl Archive for TarGz {
         panic!("file {filepath_in_archive} not found in archive");
     }
 }
+
+const CATEGORY: &str = "extract/tar.gz";
