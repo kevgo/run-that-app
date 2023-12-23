@@ -16,7 +16,7 @@ impl Archive for TarGz {
     }
 
     fn extract_all(&self, data: Vec<u8>, target_dir: &Path, strip_prefix: &str, executable_path_in_archive: &str, output: &dyn Output) -> Result<Executable> {
-        print_header(output);
+        print_header(CATEGORY, "tar.gz", output);
         let gz_decoder = GzDecoder::new(io::Cursor::new(&data));
         let mut archive = tar::Archive::new(gz_decoder);
         let mut executable: Option<Executable> = None;
@@ -38,7 +38,7 @@ impl Archive for TarGz {
     }
 
     fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, file_path_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
-        print_header(output);
+        print_header(CATEGORY, "tar.gz", output);
         let gz_decoder = GzDecoder::new(io::Cursor::new(&data));
         let mut archive = tar::Archive::new(gz_decoder);
         for file in archive.entries().unwrap() {
