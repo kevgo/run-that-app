@@ -3,10 +3,8 @@ mod tar_xz;
 mod zip;
 
 use crate::download::Artifact;
-use crate::error::UserError;
-use crate::output::Output;
 use crate::yard::Executable;
-use crate::Result;
+use crate::{Output, Result, UserError};
 use std::path::Path;
 
 /// An archive is a compressed file containing an application.
@@ -21,7 +19,7 @@ pub trait Archive {
     fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable>;
 }
 
-/// extracts the given file in the given artifact to the given location on disk
+/// extracts all files from the given artifact data to the given folder on disk
 pub fn extract_all(args: ExtractAllArgs) -> Result<Executable> {
     let Some(archive) = lookup(&args.artifact.filename) else {
         return Err(UserError::UnknownArchive(args.artifact.filename));
@@ -43,7 +41,7 @@ pub struct ExtractAllArgs<'a> {
     pub output: &'a dyn Output,
 }
 
-/// extracts the given file in the given artifact to the given location on disk
+/// extracts the given file from the given artifact data to the given folder on disk
 pub fn extract_file(artifact: Artifact, path_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
     let Some(archive) = lookup(&artifact.filename) else {
         return Err(UserError::UnknownArchive(artifact.filename));
