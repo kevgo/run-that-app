@@ -28,17 +28,14 @@ impl App for Go {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        let app_folder = yard.app_folder(self.name(), version);
-        let executable = Executable(app_folder.join(format!("go/bin/{}", self.executable_filename(platform))));
         archive::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
-            dir_on_disk: app_folder,
+            dir_on_disk: yard.app_folder(self.name(), version),
             strip_prefix: "go/",
             executable_in_archive: &self.executable_path(platform),
             output,
         })
-        Ok(Some(executable))
     }
 
     fn latest_version(&self, _output: &dyn Output) -> Result<String> {
