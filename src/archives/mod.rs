@@ -17,17 +17,6 @@ pub trait Archive {
     /// extracts all files from the given archive data to the given location on disk
     fn extract_all(&self, data: Vec<u8>, target_dir: &Path, strip_prefix: &str, executable_path_in_archive: &str, output: &dyn Output) -> Result<Executable>;
 
-    /// extracts all files in the given directory from the given archive data to the given location on disk
-    fn extract_dir(
-        &self,
-        data: Vec<u8>,
-        directory: &str,
-        folder_on_disk: &Path,
-        strip_prefix: &str,
-        executable_path_in_archive: &str,
-        output: &dyn Output,
-    ) -> Result<Executable>;
-
     /// extracts the given file from the given archive data to the given location on disk
     fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable>;
 }

@@ -57,39 +57,6 @@ impl Archive for TarXz {
         }
         executable.ok_or_else(|| panic!("file {executable_path_in_archive} not found in archive"))
     }
-
-    fn extract_dir(
-        &self,
-        data: Vec<u8>,
-        dir_in_archive: &str,
-        dir_on_disk: &Path,
-        strip_prefix: &str,
-        executable_path_in_archive: &str,
-        output: &dyn Output,
-    ) -> Result<Executable> {
-        print_header(output);
-        let decompressor = XzDecoder::new(Cursor::new(data));
-        let mut archive = tar::Archive::new(decompressor);
-        let mut executable: Option<Executable> = None;
-        for file in archive.entries().unwrap() {
-            let mut file = file.unwrap();
-            let filepath = file.path().unwrap();
-            let filepath_str = filepath.to_string_lossy();
-            super::log_archive_file(CATEGORY, &filepath_str, output);
-            let filepath_stripped = strip_filepath(&filepath_str, strip_prefix);
-            if filepath_stripped.is_empty() || !filepath_stripped.starts_with(dir_in_archive) {
-                continue;
-            }
-            let filepath_on_disk = dir_on_disk.join(filepath_stripped);
-            let is_executable = filepath_stripped == executable_path_in_archive;
-            file.unpack(&filepath_on_disk).unwrap();
-            let _ = filesystem::make_file_executable(&filepath_on_disk);
-            if is_executable {
-                executable = Some(Executable(filepath_on_disk));
-            }
-        }
-        executable.ok_or_else(|| panic!("file {executable_path_in_archive} not found in archive"))
-    }
 }
 
 fn print_header(output: &dyn Output) {
