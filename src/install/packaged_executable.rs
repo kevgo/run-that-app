@@ -19,7 +19,7 @@ pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
 pub struct InstallArgs<'a> {
     pub app_name: &'a str,
     pub artifact_url: String,
-    pub file_to_extract: &'a str, // TODO: make this a &str
+    pub file_to_extract: &'a str,
     pub filepath_on_disk: PathBuf,
     pub output: &'a dyn Output,
 }
