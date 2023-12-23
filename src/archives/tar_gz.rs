@@ -87,35 +87,4 @@ impl Archive for TarGz {
         }
         panic!("file {filepath_in_archive} not found in archive");
     }
-
-    fn extract_all(&self, data: Vec<u8>, folder_on_disk: &Path, trim: &str, output: &dyn Output) -> Result<()> {
-        if output.is_active(CATEGORY) {
-            output.print("extracting tar.gz ...");
-        } else {
-            output.print("extracting ... ");
-        }
-        let gz_decoder = GzDecoder::new(io::Cursor::new(&data));
-        let mut archive = tar::Archive::new(gz_decoder);
-        if output.is_active(CATEGORY) {
-            output.println("\nFiles in archive:");
-        }
-        for file in archive.entries().unwrap() {
-            let mut file = file.unwrap();
-            let filepath = file.path().unwrap();
-            let filepath = filepath.to_string_lossy();
-            if output.is_active(CATEGORY) {
-                output.println(&format!("- {}", filepath));
-            }
-            let trimmed = &filepath[trim.len()..];
-            let filepath_on_disk = folder_on_disk.join(trimmed);
-            file.unpack(filepath_on_disk).unwrap();
-        }
-        Ok(())
-    }
 }
-
-fn print_header(output: &dyn Output) {
-    super::print_header(CATEGORY, "tar.gz", output);
-}
-
-const CATEGORY: &str = "extract/tar.gz";

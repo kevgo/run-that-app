@@ -54,7 +54,6 @@ pub fn all() -> Apps {
             Box::new(depth::Depth {}),
             Box::new(dprint::Dprint {}),
             Box::new(gh::Gh {}),
-            Box::new(go::Go {}),
             Box::new(ghokin::Ghokin {}),
             Box::new(go::Go {}),
             Box::new(gofumpt::Gofumpt {}),
