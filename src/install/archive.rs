@@ -18,9 +18,9 @@ pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
     })?;
     let executable = archives::extract_all(ExtractAllArgs {
         artifact,
-        target_dir: &args.dir_on_disk,
+        dir_on_disk: &args.dir_on_disk,
         strip_prefix: args.strip_path_prefix,
-        executable_path_in_archive: args.executable_in_archive,
+        executable_in_archive: args.executable_in_archive,
         output: args.output,
     })?;
     args.output.println(&format!("{}", "ok".green()));
