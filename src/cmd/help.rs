@@ -10,14 +10,14 @@ pub fn help() -> ExitCode {
 }
 
 fn print_usage() {
-    println!("Usage: run-that-app install [options] application@version\n");
+    println!("Usage: rta install [options] application@version\n");
 }
 
 pub fn print_options() {
     println!(
         "
 Options:
---ignore-unavailable             if an app is not available for the current platform, create a stub that does nothing
+--optional                       if an app is not available for the current platform, create a stub that does nothing
 --include-path                   if an app is not available but one is in the PATH, execute that one
 --update                         updates the versions in .tool-versions to the latest available
 --available                      indicates via the exit code whether the given application is available on this platform
@@ -31,7 +31,7 @@ Options:
 
 fn print_examples() {
     println!("Examples:");
-    println!("\"run-that-app gh@2.34.0\" installs https://github.com/cli/cli at version 2.34.0\n");
+    println!("\"rta gh@2.34.0\" installs https://github.com/cli/cli at version 2.34.0\n");
 }
 
 pub fn print_installable_apps() {

@@ -30,25 +30,41 @@ impl App for Go {
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let app_folder = yard.app_folder(self.name(), version);
         let executable = Executable(app_folder.join(format!("go/bin/{}", self.executable_filename(platform))));
-        archive::install(Args {
+        archive::install(InstallArgs {
+            app_name: self.name(),
             artifact_url: download_url(version, platform),
-            folder_on_disk: app_folder,
-            trim: "go/",
+            dir_on_disk: app_folder,
+            strip_prefix: "go/",
+            executable_in_archive: &self.executable_path(platform),
             output,
-        })?;
+        })
         Ok(Some(executable))
     }
 
-    fn latest_version(&self, output: &dyn Output) -> Result<String> {
-        github::latest(ORG, REPO, output)
+    fn latest_version(&self, _output: &dyn Output) -> Result<String> {
+        github::tags::latest(ORG, REPO, output)
     }
 
-    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions("antham", "ghokin", amount, output)
+    fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
+        yard.load_app(self.name(), version, &self.executable_path(platform))
+    }
+
+    fn versions(&self, _amount: u8, _output: &dyn Output) -> Result<Vec<String>> {
+        github::tags::latest(ORG, REPO, output)
     }
 }
 
-fn download_url(version: &str, platform: Platform) -> String {
+impl Go {
+    fn executable_path(&self, platform: Platform) -> String {
+        let executable = self.executable_filename(platform);
+        match platform.os {
+            Os::Windows => format!("bin\\{executable}"),
+            Os::Linux | Os::MacOS => format!("bin/{executable}"),
+        }
+    }
+}
+
+pub fn download_url(version: &str, platform: Platform) -> String {
     format!(
         "https://go.dev/dl/go{version}.{os}-{cpu}.{ext}",
         os = os_text(platform.os),
@@ -74,25 +90,22 @@ fn cpu_text(cpu: Cpu) -> &'static str {
 
 fn ext_text(os: Os) -> &'static str {
     match os {
-        Os::Windows => "zip",
         Os::Linux | Os::MacOS => "tar.gz",
+        Os::Windows => "zip",
     }
 }
 
 #[cfg(test)]
 mod tests {
-    mod download_url {
-        use crate::platform::{Cpu, Os, Platform};
 
-        #[test]
-        fn macos_intel64() {
-            let platform = Platform {
-                os: Os::MacOS,
-                cpu: Cpu::Arm64,
-            };
-            let have = super::super::download_url("1.21.5", platform);
-            let want = "https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz";
-            assert_eq!(have, want);
-        }
+    #[test]
+    fn download_url() {
+        let platform = Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Arm64,
+        };
+        let have = super::download_url("1.21.5", platform);
+        let want = "https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz";
+        assert_eq!(have, want);
     }
 }

@@ -9,7 +9,7 @@ print_welcome() {
 	echo
 }
 
-VERSION="0.2.1" # the version of run-that-app to download
+VERSION="0.3.0" # the version of run-that-app to download
 TMP_DIR=./run_that_app_install
 
 main() {
@@ -98,9 +98,9 @@ create_folder() {
 executable_filename() {
 	OS=$1
 	if [ "$OS" = "windows" ]; then
-		echo "run-that-app.exe"
+		echo "rta.exe"
 	else
-		echo "run-that-app"
+		echo "rta"
 	fi
 }
 

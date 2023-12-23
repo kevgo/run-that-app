@@ -7,7 +7,7 @@ use std::path::PathBuf;
 
 /// downloads and installs a pre-compiled binary packaged in an archive file
 pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
-    let Some(artifact) = download::artifact(args.artifact_url, args.output)? else {
+    let Some(artifact) = download::artifact(args.artifact_url, args.app_name, args.output)? else {
         return Ok(None);
     };
     filesystem::create_parent(&args.filepath_on_disk)?;
@@ -17,6 +17,7 @@ pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
 }
 
 pub struct InstallArgs<'a> {
+    pub app_name: &'a str,
     pub artifact_url: String,
     pub file_to_extract: &'a str,
     pub filepath_on_disk: PathBuf,

@@ -1,28 +1,37 @@
-use crate::error::UserError;
+use crate::archives::{self, ExtractAllArgs};
 use crate::output::Output;
-use crate::Result;
-use crate::{archives, download};
+use crate::yard::Executable;
+use crate::UserError;
+use crate::{download, Result};
 use colored::Colorize;
 use std::fs;
 use std::path::PathBuf;
 
-/// downloads and extracts the given application by archive
-pub fn install(args: Args) -> Result<Option<()>> {
-    let Some(artifact) = download::artifact(args.artifact_url, args.output)? else {
+/// downloads and unpacks the entire content of an archive file
+pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
+    let Some(artifact) = download::artifact(args.artifact_url, args.app_name, args.output)? else {
         return Ok(None);
     };
-    fs::create_dir_all(&args.folder_on_disk).map_err(|err| UserError::CannotCreateFolder {
-        folder: args.folder_on_disk.clone(),
+    fs::create_dir_all(&args.dir_on_disk).map_err(|err| UserError::CannotCreateFolder {
+        folder: args.dir_on_disk.clone(),
         reason: err.to_string(),
     })?;
-    archives::extract_all(artifact, &args.folder_on_disk, args.trim, args.output)?;
+    let executable = archives::extract_all(ExtractAllArgs {
+        artifact,
+        dir_on_disk: &args.dir_on_disk,
+        strip_prefix: args.strip_prefix,
+        executable_in_archive: args.executable_in_archive,
+        output: args.output,
+    })?;
     args.output.println(&format!("{}", "ok".green()));
-    Ok(Some(()))
+    Ok(Some(executable))
 }
 
-pub struct Args<'a> {
+pub struct InstallArgs<'a> {
+    pub app_name: &'a str,
     pub artifact_url: String,
-    pub folder_on_disk: PathBuf,
-    pub trim: &'a str,
+    pub dir_on_disk: PathBuf,
+    pub strip_prefix: &'a str,
+    pub executable_in_archive: &'a str,
     pub output: &'a dyn Output,
 }

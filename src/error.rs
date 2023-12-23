@@ -142,8 +142,8 @@ impl UserError {
                 desc(
                     "It looks like there are no binary versions for this app for your platform.
 
-As a workaround, you could install this app in other ways and then run \"run-that-app --fallback-to-existing\".
-If you are okay moving forward without this app, you can provide the \"--ignore-unavailable\" switch and run-that-app will ignore this failure.",
+As a workaround, you could install this app in other ways and then run \"rta --include-path\".
+If you are okay moving forward without this app, you can provide the \"--optional\" switch and run-that-app will ignore this failure.",
                 );
             }
             UserError::UnsupportedOS(name) => {

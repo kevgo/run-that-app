@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-Set-Variable -Name "version" -Value "0.2.1" -Option Constant
+Set-Variable -Name "version" -Value "0.3.0" -Option Constant
 
 function Welcome() {
   Write-Output "RUN-THAT-APP DOWNLOAD SCRIPT"
@@ -48,9 +48,9 @@ function Expand-Archive {
   )
   Add-Type -AssemblyName System.IO.Compression.FileSystem
   $zip = [System.IO.Compression.ZipFile]::OpenRead($archivePath)
-  $zipEntry = $zip.Entries | Where-Object { $_.Name -eq "run-that-app.exe" }
+  $zipEntry = $zip.Entries | Where-Object { $_.Name -eq "rta.exe" }
   $currentDirectory = Get-Location
-  $targetPath = Join-Path $currentDirectory "run-that-app.exe"
+  $targetPath = Join-Path $currentDirectory "rta.exe"
   [System.IO.Compression.ZipFileExtensions]::ExtractToFile($zipEntry, $targetPath, $true)
   $zip.Dispose()
 }

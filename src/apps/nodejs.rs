@@ -1,14 +1,14 @@
 use super::App;
 use crate::hosting::github;
-use crate::install::packaged_executable::{self, InstallArgs};
+use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
 
 pub struct NodeJS {}
 
-const ORG: &str = "nodejs";
-const REPO: &str = "node";
+pub const ORG: &str = "nodejs";
+pub const REPO: &str = "node";
 
 impl App for NodeJS {
     fn name(&self) -> &'static str {
@@ -27,10 +27,12 @@ impl App for NodeJS {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        packaged_executable::install(InstallArgs {
+        archive::install(InstallArgs {
+            app_name: self.name(),
             artifact_url: download_url(version, platform),
-            file_to_extract: &executable_path(version, platform, self.executable_filename(platform)),
-            filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            dir_on_disk: yard.app_folder(self.name(), version),
+            strip_prefix: &format!("node-v{version}-{os}-{cpu}/", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
+            executable_in_archive: executable_path(platform),
             output,
         })
     }
@@ -39,12 +41,16 @@ impl App for NodeJS {
         github::latest(ORG, REPO, output)
     }
 
+    fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
+        yard.load_app(self.name(), version, executable_path(platform))
+    }
+
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
         github::versions(ORG, REPO, amount, output)
     }
 }
 
-fn download_url(version: &str, platform: Platform) -> String {
+pub fn download_url(version: &str, platform: Platform) -> String {
     format!(
         "https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",
         os = os_text(platform.os),
@@ -53,12 +59,11 @@ fn download_url(version: &str, platform: Platform) -> String {
     )
 }
 
-fn executable_path(version: &str, platform: Platform, filename: &str) -> String {
-    format!(
-        "node-v{version}-{os}-{cpu}/bin/{filename}",
-        cpu = cpu_text(platform.cpu),
-        os = os_text(platform.os)
-    )
+fn executable_path(platform: Platform) -> &'static str {
+    match platform.os {
+        Os::Windows => "bin\\node.exe",
+        Os::Linux | Os::MacOS => "bin/node",
+    }
 }
 
 fn os_text(os: Os) -> &'static str {
