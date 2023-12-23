@@ -1,6 +1,6 @@
 use super::App;
 use crate::hosting::github;
-use crate::install::archive::{self, Args};
+use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
@@ -32,13 +32,13 @@ impl App for Go {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
             dir_on_disk: yard.app_folder(self.name(), version),
-            strip_prefix: "go/",
+            strip_path_prefix: "go/",
             executable_in_archive: &self.executable_path(platform),
             output,
         })
     }
 
-    fn latest_version(&self, _output: &dyn Output) -> Result<String> {
+    fn latest_version(&self, output: &dyn Output) -> Result<String> {
         github::tags::latest(ORG, REPO, output)
     }
 
@@ -46,7 +46,7 @@ impl App for Go {
         yard.load_app(self.name(), version, &self.executable_path(platform))
     }
 
-    fn versions(&self, _amount: u8, _output: &dyn Output) -> Result<Vec<String>> {
+    fn versions(&self, _amount: u8, output: &dyn Output) -> Result<Vec<String>> {
         github::tags::latest(ORG, REPO, output)
     }
 }
@@ -94,6 +94,7 @@ fn ext_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
+    use crate::platform::{Cpu, Os, Platform};
 
     #[test]
     fn download_url() {
