@@ -42,9 +42,13 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
         return Err(UserError::NotOnline);
     };
     let response_text = response.as_str().unwrap();
-    let releases: Vec<Release> = json::from_str(response_text).map_err(|err| UserError::CannotParseApiResponse {
+    parse_versions_response(response_text, url)
+}
+
+fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
+    let releases: Vec<Release> = json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
         reason: err.to_string(),
-        text: response_text.to_string(),
+        text: text.to_string(),
         url,
     })?;
     let versions = releases.into_iter().map(Release::standardized_version).collect();
