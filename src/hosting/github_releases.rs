@@ -17,9 +17,13 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
         return Err(UserError::NotOnline);
     };
     let response_text = response.as_str().unwrap();
-    let release: serde_json::Value = serde_json::from_str(response_text).map_err(|err| UserError::CannotParseApiResponse {
+    parse_latest_response(response_text, url)
+}
+
+fn parse_latest_response(text: &str, url: String) -> Result<String> {
+    let release: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
         reason: err.to_string(),
-        text: response_text.to_string(),
+        text: text.to_string(),
         url,
     })?;
     Ok(strip_leading_v(release["tag_name"].as_str().unwrap()).to_string())
