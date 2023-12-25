@@ -17,19 +17,14 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
         return Err(UserError::NotOnline);
     };
     let response_text = response.as_str().unwrap();
-    let release: Release = json::from_str(response_text).map_err(|err| UserError::CannotParseApiResponse {
-        reason: err.to_string(),
-        text: response_text.to_string(),
-        url,
-    })?;
-    Ok(release.standardized_version())
+    parse_latest_response(response_text, url)
 }
 
-fn parse_latest_response<'a>(text: &'a str, url: &str) -> Result<&'a str> {
+fn parse_latest_response(text: &str, url: String) -> Result<String> {
     let release: Release = json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
         reason: err.to_string(),
         text: text.to_string(),
-        url: url.to_string(),
+        url,
     })?;
     Ok(release.standardized_version())
 }
@@ -58,8 +53,8 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
 
 /// data structure received from the GitHub API
 #[derive(Deserialize, Debug, PartialEq)]
-struct Release<'a> {
-    tag_name: &'a str,
+struct Release {
+    tag_name: String,
 }
 
 impl Release {
