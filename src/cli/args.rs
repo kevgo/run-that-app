@@ -30,6 +30,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             }
             if &arg == "--versions" {
                 versions = true;
+                continue;
             }
             if &arg == "--available" {
                 indicate_available = true;
