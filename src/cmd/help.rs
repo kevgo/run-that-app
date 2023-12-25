@@ -17,14 +17,14 @@ pub fn print_options() {
     println!(
         "
 Options:
---optional                       if an app is not available for the current platform, create a stub that does nothing
---include-path                   if an app is not available but one is in the PATH, execute that one
---update                         updates the versions in .tool-versions to the latest available
 --available                      indicates via the exit code whether the given application is available on this platform
---which                          displays the path to the installed executable of the given application
+--help, -h                       display this help screen
+--include-path                   if an app is not available but one is in the PATH, execute that one
 --log, -l                        enable logging of all categories
 --log=<category>, -l=<category>  enable logging for the given category
---help, -h                       display this help screen
+--optional                       if an app is not available for the current platform, create a stub that does nothing
+--update                         updates the versions in .tool-versions to the latest available
+--which                          displays the path to the installed executable of the given application
 ",
     );
 }
