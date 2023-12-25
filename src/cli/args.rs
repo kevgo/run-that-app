@@ -20,15 +20,17 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut indicate_available = false;
     let mut update = false;
     let mut optional = false;
+    let mut versions = false;
     for arg in cli_args {
         if requested_app.is_none() {
             if &arg == "--help" || &arg == "-h" {
                 return Ok(Args { command: Command::DisplayHelp });
             }
             if &arg == "--version" || &arg == "-V" {
-                return Ok(Args {
-                    command: Command::DisplayVersion,
-                });
+                return Ok(Args { command: Command::Version });
+            }
+            if &arg == "--versions" {
+                versions = true;
             }
             if &arg == "--available" {
                 indicate_available = true;
@@ -69,7 +71,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             app_args.push(arg);
         }
     }
-    if multiple_true(&[which, indicate_available, setup, update]) {
+    if multiple_true(&[which, indicate_available, setup, update, versions]) {
         return Err(UserError::MultipleCommandsGiven);
     } else if setup {
         return Ok(Args { command: Command::Setup });
@@ -86,6 +88,10 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
         } else if which {
             Ok(Args {
                 command: Command::Which { app, include_path, log },
+            })
+        } else if versions {
+            Ok(Args {
+                command: Command::Versions { app: app.name },
             })
         } else {
             Ok(Args {
@@ -179,7 +185,7 @@ mod tests {
             }
         }
 
-        mod show_path {
+        mod which {
             use super::parse_args;
             use crate::cli::{Args, Command, RequestedApp};
             use crate::error::UserError;
@@ -240,18 +246,14 @@ mod tests {
             #[test]
             fn short() {
                 let have = parse_args(vec!["rta", "-V"]);
-                let want = Ok(Args {
-                    command: Command::DisplayVersion,
-                });
+                let want = Ok(Args { command: Command::Version });
                 pretty::assert_eq!(have, want);
             }
 
             #[test]
             fn long() {
                 let have = parse_args(vec!["rta", "--version"]);
-                let want = Ok(Args {
-                    command: Command::DisplayVersion,
-                });
+                let want = Ok(Args { command: Command::Version });
                 pretty::assert_eq!(have, want);
             }
         }
@@ -270,7 +272,7 @@ mod tests {
 
             #[test]
             fn long() {
-                let have = parse_args(vec!["rta", "-h"]);
+                let have = parse_args(vec!["rta", "--help"]);
                 let want = Ok(Args { command: Command::DisplayHelp });
                 pretty::assert_eq!(have, want);
             }
