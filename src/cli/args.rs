@@ -179,7 +179,7 @@ mod tests {
             }
         }
 
-        mod show_path {
+        mod which {
             use super::parse_args;
             use crate::cli::{Args, Command, RequestedApp};
             use crate::error::UserError;
@@ -270,7 +270,7 @@ mod tests {
 
             #[test]
             fn long() {
-                let have = parse_args(vec!["rta", "-h"]);
+                let have = parse_args(vec!["rta", "--help"]);
                 let want = Ok(Args { command: Command::DisplayHelp });
                 pretty::assert_eq!(have, want);
             }
@@ -308,7 +308,7 @@ mod tests {
             }
         }
 
-        mod log_parameter {
+        mod log {
             use super::parse_args;
             use crate::cli::{Args, Command, RequestedApp};
             use crate::error::UserError;
