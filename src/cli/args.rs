@@ -45,9 +45,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 continue;
             }
             if &arg == "--version" || &arg == "-V" {
-                return Ok(Args {
-                    command: Command::DisplayVersion,
-                });
+                return Ok(Args { command: Command::Version });
             }
             if &arg == "--which" {
                 which = true;
@@ -318,18 +316,14 @@ mod tests {
                 #[test]
                 fn short() {
                     let have = parse_args(vec!["rta", "-V"]);
-                    let want = Ok(Args {
-                        command: Command::DisplayVersion,
-                    });
+                    let want = Ok(Args { command: Command::Version });
                     pretty::assert_eq!(have, want);
                 }
 
                 #[test]
                 fn long() {
                     let have = parse_args(vec!["rta", "--version"]);
-                    let want = Ok(Args {
-                        command: Command::DisplayVersion,
-                    });
+                    let want = Ok(Args { command: Command::Version });
                     pretty::assert_eq!(have, want);
                 }
             }
