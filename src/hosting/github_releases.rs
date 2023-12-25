@@ -4,7 +4,7 @@ use crate::UserError;
 use colored::Colorize;
 use miniserde::{json, Deserialize};
 
-use super::name_without_leading_v;
+use super::strip_leading_v;
 
 pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases/latest");
@@ -26,7 +26,7 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
             return Err(UserError::CannotDownload { url, reason: err.to_string() });
         }
     };
-    Ok(name_without_leading_v(release.tag_name))
+    Ok(strip_leading_v(release.tag_name))
 }
 
 pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
@@ -50,7 +50,7 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
             return Err(UserError::CannotDownload { url, reason: err.to_string() });
         }
     };
-    let versions = releases.into_iter().map(|release| name_without_leading_v(release.tag_name)).collect();
+    let versions = releases.into_iter().map(|release| strip_leading_v(release.tag_name)).collect();
     Ok(versions)
 }
 
