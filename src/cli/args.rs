@@ -21,17 +21,12 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut optional = false;
     for arg in cli_args {
         if requested_app.is_none() {
-            if &arg == "--help" || &arg == "-h" {
-                return Ok(Args { command: Command::DisplayHelp });
-            }
-            if &arg == "--version" || &arg == "-V" {
-                return Ok(Args {
-                    command: Command::DisplayVersion,
-                });
-            }
             if &arg == "--available" {
                 indicate_available = true;
                 continue;
+            }
+            if &arg == "--help" || &arg == "-h" {
+                return Ok(Args { command: Command::DisplayHelp });
             }
             if &arg == "--include-path" {
                 include_path = true;
@@ -45,12 +40,17 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 setup = true;
                 continue;
             }
-            if &arg == "--which" {
-                which = true;
-                continue;
-            }
             if &arg == "--update" {
                 update = true;
+                continue;
+            }
+            if &arg == "--version" || &arg == "-V" {
+                return Ok(Args {
+                    command: Command::DisplayVersion,
+                });
+            }
+            if &arg == "--which" {
+                which = true;
                 continue;
             }
             if arg.starts_with('-') {
