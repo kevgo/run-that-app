@@ -1,10 +1,9 @@
+use super::strip_leading_v;
 use crate::Output;
 use crate::Result;
 use crate::UserError;
 use colored::Colorize;
 use miniserde::{json, Deserialize};
-
-use super::strip_leading_v;
 
 pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases/latest");
