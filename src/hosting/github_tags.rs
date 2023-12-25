@@ -36,38 +36,50 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
         return Err(UserError::NotOnline);
     };
     let response_text = response.as_str().unwrap();
-    let tags: Vec<Tag> = json::from_str(response_text).map_err(|err| UserError::CannotParseApiResponse {
+    let tags: serde_json::Value = serde_json::from_str(response_text).map_err(|err| UserError::CannotParseApiResponse {
         reason: err.to_string(),
         text: response_text.to_string(),
         url,
     })?;
-    let tags = tags.into_iter().map(Tag::standardized_tag).collect();
-    Ok(tags)
+    Ok(vec![])
+}
+
+fn parse_api_response<'a>(text: &'a str, url: &str) -> Result<Vec<&'a str>> {
+    let tags: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
+        reason: err.to_string(),
+        text: text.to_string(),
+        url: url.to_string(),
+    })?;
+    if let serde_json::Value::Array(tags) = tags {
+        for tag in tags {
+            println!("tag: {}", tag["ref"]);
+        }
+    }
+    Ok(vec![])
 }
 
 /// data structure received from the GitHub API
-#[derive(Deserialize, Debug, PartialEq)]
-struct Tag {
-    r#ref: String,
-}
+// #[derive(Deserialize, Debug, PartialEq)]
+// struct Tag {
+//     r#ref: String,
+// }
 
-impl Tag {
-    fn standardized_tag(self) -> String {
-        match self.r#ref.strip_prefix("refs/tags/") {
-            Some(stripped) => stripped.to_string(),
-            None => self.r#ref,
-        }
-    }
-}
+// impl Tag {
+//     fn standardized_tag(self) -> String {
+//         match self.r#ref.strip_prefix("refs/tags/") {
+//             Some(stripped) => stripped.to_string(),
+//             None => self.r#ref,
+//         }
+//     }
+// }
 
 #[cfg(test)]
 mod tests {
 
     mod parse {
-        use crate::hosting::github_tags::Tag;
+        use crate::hosting::github_tags::parse_api_response;
         use crate::UserError;
         use big_s::S;
-        use miniserde::json;
 
         #[test]
         fn real_response() {
@@ -4126,13 +4138,7 @@ mod tests {
 ]
 
             "#;
-            let tags: Vec<Tag> = json::from_str(response)
-                .map_err(|err| UserError::CannotParseApiResponse {
-                    reason: err.to_string(),
-                    text: response.to_string(),
-                    url: S("xxx"),
-                })
-                .unwrap();
+            let tags: Vec<&str> = parse_api_response(response, "url").unwrap();
         }
     }
 }
