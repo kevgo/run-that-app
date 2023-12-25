@@ -1,7 +1,6 @@
 use super::Command;
 use super::{requested_app, RequestedApp};
-use crate::error::UserError;
-use crate::Result;
+use crate::{Result, UserError};
 
 /// all arguments that can be provided via the CLI
 #[derive(Debug, PartialEq)]
@@ -128,9 +127,7 @@ mod tests {
 
     mod parse {
         use super::parse_args;
-        use crate::cli::{Args, Command, RequestedApp};
-        use crate::error::UserError;
-        use big_s::S;
+        use crate::cli::{Args, Command};
 
         #[test]
         fn no_arguments() {
@@ -139,154 +136,171 @@ mod tests {
             pretty::assert_eq!(have, want);
         }
 
-        mod available {
+        mod rta_arguments {
+            use big_s::S;
+
             use super::parse_args;
             use crate::cli::{Args, Command, RequestedApp};
             use crate::error::UserError;
-            use big_s::S;
 
-            #[test]
-            fn with_app() {
-                let have = parse_args(vec!["rta", "--available", "shellcheck"]);
-                let want = Ok(Args {
-                    command: Command::Available {
-                        app: RequestedApp {
-                            name: S("shellcheck"),
-                            version: S(""),
+            mod available {
+                use super::super::parse_args;
+                use crate::cli::{Args, Command, RequestedApp};
+                use crate::error::UserError;
+                use big_s::S;
+
+                #[test]
+                fn with_app() {
+                    let have = parse_args(vec!["rta", "--available", "shellcheck"]);
+                    let want = Ok(Args {
+                        command: Command::Available {
+                            app: RequestedApp {
+                                name: S("shellcheck"),
+                                version: S(""),
+                            },
+                            include_path: false,
+                            log: None,
                         },
-                        include_path: false,
-                        log: None,
-                    },
-                });
-                pretty::assert_eq!(have, want);
-            }
+                    });
+                    pretty::assert_eq!(have, want);
+                }
 
-            #[test]
-            fn with_all_options() {
-                let have = parse_args(vec!["rta", "--available", "--include-path", "--log=detect", "shellcheck"]);
-                let want = Ok(Args {
-                    command: Command::Available {
-                        app: RequestedApp {
-                            name: S("shellcheck"),
-                            version: S(""),
+                #[test]
+                fn with_all_options() {
+                    let have = parse_args(vec!["rta", "--available", "--include-path", "--log=detect", "shellcheck"]);
+                    let want = Ok(Args {
+                        command: Command::Available {
+                            app: RequestedApp {
+                                name: S("shellcheck"),
+                                version: S(""),
+                            },
+                            include_path: true,
+                            log: Some(S("detect")),
                         },
-                        include_path: true,
-                        log: Some(S("detect")),
-                    },
-                });
-                pretty::assert_eq!(have, want);
+                    });
+                    pretty::assert_eq!(have, want);
+                }
+
+                #[test]
+                fn without_app() {
+                    let have = parse_args(vec!["rta", "--available"]);
+                    let want = Err(UserError::MissingApplication);
+                    pretty::assert_eq!(have, want);
+                }
             }
 
-            #[test]
-            fn without_app() {
-                let have = parse_args(vec!["rta", "--available"]);
-                let want = Err(UserError::MissingApplication);
-                pretty::assert_eq!(have, want);
+            mod help_parameter {
+                use super::super::parse_args;
+                use crate::cli::{args, Command};
+                use args::Args;
+
+                #[test]
+                fn short() {
+                    let have = parse_args(vec!["rta", "-h"]);
+                    let want = Ok(Args { command: Command::DisplayHelp });
+                    pretty::assert_eq!(have, want);
+                }
+
+                #[test]
+                fn long() {
+                    let have = parse_args(vec!["rta", "--help"]);
+                    let want = Ok(Args { command: Command::DisplayHelp });
+                    pretty::assert_eq!(have, want);
+                }
             }
-        }
 
-        mod which {
-            use super::parse_args;
-            use crate::cli::{Args, Command, RequestedApp};
-            use crate::error::UserError;
-            use big_s::S;
+            mod include_path {
+                use super::super::parse_args;
+                use crate::cli::{Args, Command, RequestedApp};
+                use crate::UserError;
+                use big_s::S;
 
-            #[test]
-            fn with_app() {
-                let have = parse_args(vec!["rta", "--which", "shellcheck"]);
-                let want = Ok(Args {
-                    command: Command::Which {
-                        app: RequestedApp {
-                            name: S("shellcheck"),
-                            version: S(""),
+                #[test]
+                fn with_app() {
+                    let have = parse_args(vec!["rta", "--include-path", "app@2", "arg1"]);
+                    let want = Ok(Args {
+                        command: Command::RunApp {
+                            app: RequestedApp {
+                                name: S("app"),
+                                version: S("2"),
+                            },
+                            args: vec![S("arg1")],
+                            include_path: true,
+                            optional: false,
+                            log: None,
                         },
-                        include_path: false,
-                        log: None,
-                    },
-                });
-                pretty::assert_eq!(have, want);
+                    });
+                    pretty::assert_eq!(have, want);
+                }
+
+                #[test]
+                fn without_app() {
+                    let have = parse_args(vec!["rta", "--include-path"]);
+                    let want = Err(UserError::MissingApplication);
+                    pretty::assert_eq!(have, want);
+                }
             }
 
-            #[test]
-            fn with_all_options() {
-                let have = parse_args(vec!["rta", "--which", "--include-path", "--log=detect", "shellcheck"]);
-                let want = Ok(Args {
-                    command: Command::Which {
-                        app: RequestedApp {
-                            name: S("shellcheck"),
-                            version: S(""),
+            mod log {
+                use super::super::parse_args;
+                use crate::cli::{Args, Command, RequestedApp};
+                use crate::error::UserError;
+                use big_s::S;
+
+                #[test]
+                fn everything() {
+                    let have = parse_args(vec!["rta", "--log", "app@2"]);
+                    let want = Ok(Args {
+                        command: Command::RunApp {
+                            app: RequestedApp {
+                                name: S("app"),
+                                version: S("2"),
+                            },
+                            args: vec![],
+                            include_path: false,
+                            optional: false,
+                            log: Some(S("")),
                         },
-                        include_path: true,
-                        log: Some(S("detect")),
-                    },
-                });
+                    });
+                    pretty::assert_eq!(have, want);
+                }
+
+                #[test]
+                fn limited() {
+                    let have = parse_args(vec!["rta", "--log=scope", "app@2"]);
+                    let want = Ok(Args {
+                        command: Command::RunApp {
+                            app: RequestedApp {
+                                name: S("app"),
+                                version: S("2"),
+                            },
+                            args: vec![],
+                            include_path: false,
+                            optional: false,
+                            log: Some(S("scope")),
+                        },
+                    });
+                    pretty::assert_eq!(have, want);
+                }
+
+                #[test]
+                fn missing_app() {
+                    let have = parse_args(vec!["rta", "--log"]);
+                    let want = Err(UserError::MissingApplication);
+                    pretty::assert_eq!(have, want);
+                }
+            }
+
+            #[test]
+            fn multiple_commands() {
+                let have = parse_args(vec!["rta", "--which", "--available", "shellcheck"]);
+                let want = Err(UserError::MultipleCommandsGiven);
                 pretty::assert_eq!(have, want);
             }
 
             #[test]
-            fn without_app() {
-                let have = parse_args(vec!["rta", "--which"]);
-                let want = Err(UserError::MissingApplication);
-                pretty::assert_eq!(have, want);
-            }
-        }
-
-        #[test]
-        fn multiple_commands() {
-            let have = parse_args(vec!["rta", "--which", "--available", "shellcheck"]);
-            let want = Err(UserError::MultipleCommandsGiven);
-            pretty::assert_eq!(have, want);
-        }
-
-        mod version_parameter {
-            use super::parse_args;
-            use crate::cli::{args, Command};
-            use args::Args;
-
-            #[test]
-            fn short() {
-                let have = parse_args(vec!["rta", "-V"]);
-                let want = Ok(Args { command: Command::Version });
-                pretty::assert_eq!(have, want);
-            }
-
-            #[test]
-            fn long() {
-                let have = parse_args(vec!["rta", "--version"]);
-                let want = Ok(Args { command: Command::Version });
-                pretty::assert_eq!(have, want);
-            }
-        }
-
-        mod help_parameter {
-            use super::parse_args;
-            use crate::cli::{args, Command};
-            use args::Args;
-
-            #[test]
-            fn short() {
-                let have = parse_args(vec!["rta", "-h"]);
-                let want = Ok(Args { command: Command::DisplayHelp });
-                pretty::assert_eq!(have, want);
-            }
-
-            #[test]
-            fn long() {
-                let have = parse_args(vec!["rta", "--help"]);
-                let want = Ok(Args { command: Command::DisplayHelp });
-                pretty::assert_eq!(have, want);
-            }
-        }
-
-        mod include_path {
-            use super::parse_args;
-            use crate::cli::{Args, Command, RequestedApp};
-            use crate::error::UserError;
-            use big_s::S;
-
-            #[test]
-            fn with_app() {
-                let have = parse_args(vec!["rta", "--include-path", "app@2", "arg1"]);
+            fn optional() {
+                let have = parse_args(vec!["rta", "--optional", "app@2", "arg1"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
                         app: RequestedApp {
@@ -294,88 +308,83 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![S("arg1")],
-                        include_path: true,
-                        optional: false,
+                        include_path: false,
+                        optional: true,
                         log: None,
                     },
                 });
                 pretty::assert_eq!(have, want);
             }
 
-            #[test]
-            fn without_app() {
-                let have = parse_args(vec!["rta", "--include-path"]);
-                let want = Err(UserError::MissingApplication);
-                pretty::assert_eq!(have, want);
+            mod version_parameter {
+                use super::parse_args;
+                use crate::cli::{args, Command};
+                use args::Args;
+
+                #[test]
+                fn short() {
+                    let have = parse_args(vec!["rta", "-V"]);
+                    let want = Ok(Args {
+                        command: Command::DisplayVersion,
+                    });
+                    pretty::assert_eq!(have, want);
+                }
+
+                #[test]
+                fn long() {
+                    let have = parse_args(vec!["rta", "--version"]);
+                    let want = Ok(Args {
+                        command: Command::DisplayVersion,
+                    });
+                    pretty::assert_eq!(have, want);
+                }
             }
-        }
 
-        mod log {
-            use super::parse_args;
-            use crate::cli::{Args, Command, RequestedApp};
-            use crate::error::UserError;
-            use big_s::S;
+            mod which {
+                use super::super::parse_args;
+                use crate::cli::{Args, Command, RequestedApp};
+                use crate::UserError;
+                use big_s::S;
 
-            #[test]
-            fn everything() {
-                let have = parse_args(vec!["rta", "--log", "app@2"]);
-                let want = Ok(Args {
-                    command: Command::RunApp {
-                        app: RequestedApp {
-                            name: S("app"),
-                            version: S("2"),
+                #[test]
+                fn with_app() {
+                    let have = parse_args(vec!["rta", "--which", "shellcheck"]);
+                    let want = Ok(Args {
+                        command: Command::Which {
+                            app: RequestedApp {
+                                name: S("shellcheck"),
+                                version: S(""),
+                            },
+                            include_path: false,
+                            log: None,
                         },
-                        args: vec![],
-                        include_path: false,
-                        optional: false,
-                        log: Some(S("")),
-                    },
-                });
-                pretty::assert_eq!(have, want);
-            }
+                    });
+                    pretty::assert_eq!(have, want);
+                }
 
-            #[test]
-            fn limited() {
-                let have = parse_args(vec!["rta", "--log=scope", "app@2"]);
-                let want = Ok(Args {
-                    command: Command::RunApp {
-                        app: RequestedApp {
-                            name: S("app"),
-                            version: S("2"),
+                #[test]
+                fn with_all_options() {
+                    let have = parse_args(vec!["rta", "--which", "--include-path", "--log=detect", "shellcheck"]);
+                    let want = Ok(Args {
+                        command: Command::Which {
+                            app: RequestedApp {
+                                name: S("shellcheck"),
+                                version: S(""),
+                            },
+                            include_path: true,
+                            log: Some(S("detect")),
                         },
-                        args: vec![],
-                        include_path: false,
-                        optional: false,
-                        log: Some(S("scope")),
-                    },
-                });
-                pretty::assert_eq!(have, want);
-            }
+                    });
+                    pretty::assert_eq!(have, want);
+                }
 
-            #[test]
-            fn missing_app() {
-                let have = parse_args(vec!["rta", "--log"]);
-                let want = Err(UserError::MissingApplication);
-                pretty::assert_eq!(have, want);
+                #[test]
+                fn without_app() {
+                    let have = parse_args(vec!["rta", "--which"]);
+                    let want = Err(UserError::MissingApplication);
+                    pretty::assert_eq!(have, want);
+                }
             }
-        }
-
-        #[test]
-        fn optional() {
-            let have = parse_args(vec!["rta", "--optional", "app@2", "arg1"]);
-            let want = Ok(Args {
-                command: Command::RunApp {
-                    app: RequestedApp {
-                        name: S("app"),
-                        version: S("2"),
-                    },
-                    args: vec![S("arg1")],
-                    include_path: false,
-                    optional: true,
-                    log: None,
-                },
-            });
-            pretty::assert_eq!(have, want);
         }
 
         mod application_arguments {
@@ -419,16 +428,23 @@ mod tests {
                 });
                 pretty::assert_eq!(have, want);
             }
+        }
+
+        mod rta_and_app_arguments {
+            use super::parse_args;
+            use crate::cli::{Args, Command, RequestedApp};
+            use big_s::S;
 
             #[test]
             fn rta_and_app_arguments() {
                 let have = parse_args(vec!["rta", "--log=l1", "app@2", "--arg1", "arg2"]);
+                let app = RequestedApp {
+                    name: S("app"),
+                    version: S("2"),
+                };
                 let want = Ok(Args {
                     command: Command::RunApp {
-                        app: RequestedApp {
-                            name: S("app"),
-                            version: S("2"),
-                        },
+                        app,
                         args: vec![S("--arg1"), S("arg2")],
                         include_path: false,
                         optional: false,
