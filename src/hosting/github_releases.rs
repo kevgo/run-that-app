@@ -25,6 +25,15 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
     Ok(release.standardized_version())
 }
 
+fn parse_latest_response<'a>(text: &'a str, url: &str) -> Result<&'a str> {
+    let release: Release = json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
+        reason: err.to_string(),
+        text: text.to_string(),
+        url: url.to_string(),
+    })?;
+    Ok(release.standardized_version())
+}
+
 pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases?per_page={amount}");
     output.log("HTTP", &format!("downloading {url}"));
@@ -49,8 +58,8 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
 
 /// data structure received from the GitHub API
 #[derive(Deserialize, Debug, PartialEq)]
-struct Release {
-    tag_name: String,
+struct Release<'a> {
+    tag_name: &'a str,
 }
 
 impl Release {
