@@ -336,6 +336,22 @@ mod tests {
                 }
             }
 
+            mod versions_parameter {
+                use super::parse_args;
+                use crate::cli::{args, Command};
+                use args::Args;
+                use big_s::S;
+
+                #[test]
+                fn long() {
+                    let have = parse_args(vec!["rta", "--versions", "actionlint"]);
+                    let want = Ok(Args {
+                        command: Command::Versions { app: S("actionlint") },
+                    });
+                    pretty::assert_eq!(have, want);
+                }
+            }
+
             mod which {
                 use super::super::parse_args;
                 use crate::cli::{Args, Command, RequestedApp};
