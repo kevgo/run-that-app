@@ -310,7 +310,7 @@ mod tests {
             }
         }
 
-        mod log_parameter {
+        mod log {
             use super::parse_args;
             use crate::cli::{Args, Command, RequestedApp};
             use crate::error::UserError;
