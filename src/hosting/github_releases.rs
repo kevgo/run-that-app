@@ -38,14 +38,11 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
         return Err(UserError::NotOnline);
     };
     let response_text = response.as_str().unwrap();
-    let releases: Vec<Release> = match json::from_str(response_text) {
-        Ok(releases) => releases,
-        Err(err) => {
-            println!("{}", "Error:".red());
-            println!("\n{response_text}");
-            return Err(UserError::CannotDownload { url, reason: err.to_string() });
-        }
-    };
+    let releases: Vec<Release> = json::from_str(response_text).map_err(|err| UserError::CannotParseApiResponse {
+        reason: err.to_string(),
+        text: response_text.to_string(),
+        url,
+    })?;
     let versions = releases.into_iter().map(Release::standardized_version).collect();
     Ok(versions)
 }
