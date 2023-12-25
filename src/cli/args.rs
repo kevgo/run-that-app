@@ -19,6 +19,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut indicate_available = false;
     let mut update = false;
     let mut optional = false;
+    let mut versions = false;
     for arg in cli_args {
         if requested_app.is_none() {
             if &arg == "--available" {
@@ -47,6 +48,10 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             if &arg == "--version" || &arg == "-V" {
                 return Ok(Args { command: Command::Version });
             }
+            if &arg == "--versions" {
+                versions = true;
+                continue;
+            }
             if &arg == "--which" {
                 which = true;
                 continue;
@@ -66,7 +71,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             app_args.push(arg);
         }
     }
-    if multiple_true(&[which, indicate_available, setup, update]) {
+    if multiple_true(&[which, indicate_available, setup, update, versions]) {
         return Err(UserError::MultipleCommandsGiven);
     } else if setup {
         return Ok(Args { command: Command::Setup });
@@ -83,6 +88,10 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
         } else if which {
             Ok(Args {
                 command: Command::Which { app, include_path, log },
+            })
+        } else if versions {
+            Ok(Args {
+                command: Command::Versions { app: app.name, log },
             })
         } else {
             Ok(Args {
@@ -324,6 +333,32 @@ mod tests {
                 fn long() {
                     let have = parse_args(vec!["rta", "--version"]);
                     let want = Ok(Args { command: Command::Version });
+                    pretty::assert_eq!(have, want);
+                }
+            }
+
+            mod versions_parameter {
+                use super::parse_args;
+                use crate::cli::{args, Command};
+                use args::Args;
+                use big_s::S;
+
+                #[test]
+                fn correct_usage() {
+                    let have = parse_args(vec!["rta", "--versions", "actionlint"]);
+                    let want = Ok(Args {
+                        command: Command::Versions {
+                            app: S("actionlint"),
+                            log: None,
+                        },
+                    });
+                    pretty::assert_eq!(have, want);
+                }
+
+                #[test]
+                fn missing_app() {
+                    let have = parse_args(vec!["rta", "--versions"]);
+                    let want = Ok(Args { command: Command::DisplayHelp });
                     pretty::assert_eq!(have, want);
                 }
             }
