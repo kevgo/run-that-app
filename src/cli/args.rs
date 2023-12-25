@@ -8,6 +8,7 @@ pub struct Args {
     pub command: Command,
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let _skipped_binary_name = cli_args.next();
     let mut requested_app: Option<RequestedApp> = None;
@@ -19,7 +20,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut indicate_available = false;
     let mut update = false;
     let mut optional = false;
-    let mut versions = false;
+    let mut versions: Option<u8> = None;
     for arg in cli_args {
         if requested_app.is_none() {
             if &arg == "--available" {
@@ -49,7 +50,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 return Ok(Args { command: Command::Version });
             }
             if &arg == "--versions" {
-                versions = true;
+                versions = Some(10);
                 continue;
             }
             if &arg == "--which" {
@@ -62,6 +63,10 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                     log = Some(value.to_string());
                     continue;
                 }
+                if key == "--versions" {
+                    versions = Some(value.parse().map_err(|_| UserError::InvalidNumber)?);
+                    continue;
+                }
                 return Err(UserError::UnknownCliOption(arg));
             }
         }
@@ -71,7 +76,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             app_args.push(arg);
         }
     }
-    if multiple_true(&[which, indicate_available, setup, update, versions]) {
+    if multiple_true(&[which, indicate_available, setup, update, versions.is_some()]) {
         return Err(UserError::MultipleCommandsGiven);
     } else if setup {
         return Ok(Args { command: Command::Setup });
@@ -89,13 +94,9 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             Ok(Args {
                 command: Command::Which { app, include_path, log },
             })
-        } else if versions {
+        } else if let Some(amount) = versions {
             Ok(Args {
-                command: Command::Versions {
-                    app: app.name,
-                    amount: 10,
-                    log,
-                },
+                command: Command::Versions { app: app.name, amount, log },
             })
         } else {
             Ok(Args {
