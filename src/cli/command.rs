@@ -26,4 +26,8 @@ pub enum Command {
         log: Option<String>,
     },
     Version,
+    Versions {
+        app: String,
+        log: Option<String>,
+    },
 }
