@@ -91,7 +91,11 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             })
         } else if versions {
             Ok(Args {
-                command: Command::Versions { app: app.name, log },
+                command: Command::Versions {
+                    app: app.name,
+                    amount: 10,
+                    log,
+                },
             })
         } else {
             Ok(Args {
@@ -349,6 +353,7 @@ mod tests {
                     let want = Ok(Args {
                         command: Command::Versions {
                             app: S("actionlint"),
+                            amount: 10,
                             log: None,
                         },
                     });
