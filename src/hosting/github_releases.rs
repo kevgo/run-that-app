@@ -542,4 +542,25 @@ mod tests {
         let want = vec![Release { tag_name: S("v1.6.26") }];
         assert_eq!(have, want);
     }
+
+    mod version {
+        use super::Release;
+        use big_s::S;
+
+        #[test]
+        fn leading_v() {
+            let release = Release { tag_name: S("v1.2.3") };
+            let have = release.standardized_version();
+            let want = "1.2.3";
+            assert_eq!(have, want);
+        }
+
+        #[test]
+        fn version_only() {
+            let release = Release { tag_name: S("1.2.3") };
+            let have = release.standardized_version();
+            let want = "1.2.3";
+            assert_eq!(have, want);
+        }
+    }
 }
