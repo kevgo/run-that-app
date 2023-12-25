@@ -46,9 +46,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 continue;
             }
             if &arg == "--version" || &arg == "-V" {
-                return Ok(Args {
-                    command: Command::DisplayVersion,
-                });
+                return Ok(Args { command: Command::Version });
             }
             if &arg == "--versions" {
                 versions = true;
