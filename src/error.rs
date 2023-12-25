@@ -33,6 +33,7 @@ pub enum UserError {
     GoCompilationFailed,
     GoNoPermission,
     GoNotInstalled,
+    InvalidNumber,
     MissingApplication,
     MultipleCommandsGiven,
     NotOnline,
@@ -56,6 +57,7 @@ pub enum UserError {
 }
 
 impl UserError {
+    #[allow(clippy::too_many_lines)]
     pub fn print(self) {
         match self {
             UserError::CannotAccessConfigFile(reason) => {
@@ -95,6 +97,9 @@ impl UserError {
             UserError::GoNotInstalled => {
                 error("The Go compiler is not installed");
                 desc("Installation instructions: https://go.dev/dl");
+            }
+            UserError::InvalidNumber => {
+                error("Invalid number given");
             }
             UserError::MissingApplication => {
                 error("missing application");
