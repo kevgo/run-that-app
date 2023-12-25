@@ -3,7 +3,6 @@ use crate::Output;
 use crate::Result;
 use crate::UserError;
 use colored::Colorize;
-use miniserde::{json, Deserialize};
 
 pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases/latest");
@@ -17,15 +16,12 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
         return Err(UserError::NotOnline);
     };
     let response_text = response.as_str().unwrap();
-    let release: Release = match json::from_str(response_text) {
-        Ok(release) => release,
-        Err(err) => {
-            println!("{}", "Error:".red());
-            println!("\n{response_text}");
-            return Err(UserError::CannotDownload { url, reason: err.to_string() });
-        }
-    };
-    Ok(release.standardized_version())
+    let release: serde_json::Value = serde_json::from_str(response_text).map_err(|err| UserError::CannotParseApiResponse {
+        reason: err.to_string(),
+        text: response_text.to_string(),
+        url,
+    })?;
+    Ok(strip_leading_v(release["tag_name"].as_str().unwrap()).to_string())
 }
 
 pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
@@ -54,16 +50,16 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
 }
 
 /// data structure received from the GitHub API
-#[derive(Deserialize, Debug, PartialEq)]
-struct Release {
-    tag_name: String,
-}
+// #[derive(Deserialize, Debug, PartialEq)]
+// struct Release {
+//     tag_name: String,
+// }
 
-impl Release {
-    fn standardized_version(self) -> String {
-        strip_leading_v(self.tag_name)
-    }
-}
+// impl Release {
+//     fn standardized_version(self) -> String {
+//         strip_leading_v(self.tag_name)
+//     }
+// }
 
 #[cfg(test)]
 mod tests {
