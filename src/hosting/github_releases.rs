@@ -1,3 +1,4 @@
+use super::strip_leading_v;
 use crate::Output;
 use crate::Result;
 use crate::UserError;
@@ -25,7 +26,7 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
             return Err(UserError::CannotDownload { url, reason: err.to_string() });
         }
     };
-    Ok(release.version().to_string())
+    Ok(release.standardized_version())
 }
 
 /// provides the given number of latest versions of the given application on GitHub Releases
@@ -50,7 +51,7 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
             return Err(UserError::CannotDownload { url, reason: err.to_string() });
         }
     };
-    let versions = releases.into_iter().map(|release| release.version().to_string()).collect();
+    let versions = releases.into_iter().map(Release::standardized_version).collect();
     Ok(versions)
 }
 
@@ -61,13 +62,8 @@ struct Release {
 }
 
 impl Release {
-    /// provides the version of this release without "v" in it
-    fn version(&self) -> &str {
-        if self.tag_name.starts_with('v') {
-            &self.tag_name[1..]
-        } else {
-            &self.tag_name
-        }
+    fn standardized_version(self) -> String {
+        strip_leading_v(self.tag_name)
     }
 }
 
@@ -556,15 +552,15 @@ mod tests {
         #[test]
         fn leading_v() {
             let release = Release { tag_name: S("v1.2.3") };
-            let have = release.version();
+            let have = release.standardized_version();
             let want = "1.2.3";
             assert_eq!(have, want);
         }
 
         #[test]
-        fn version_only() {
+        fn no_leading_v() {
             let release = Release { tag_name: S("1.2.3") };
-            let have = release.version();
+            let have = release.standardized_version();
             let want = "1.2.3";
             assert_eq!(have, want);
         }
