@@ -26,6 +26,7 @@ Options:
 --update                         updates the versions in .tool-versions to the latest available
 --which                          displays the path to the installed executable of the given application
 --version, -V                    displays the version of run-that-app
+--versions                       displays the 10 most recent available versions of the given app
 ",
     );
 }
