@@ -17,14 +17,11 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
         return Err(UserError::NotOnline);
     };
     let response_text = response.as_str().unwrap();
-    let release: Release = match json::from_str(response_text) {
-        Ok(release) => release,
-        Err(err) => {
-            println!("{}", "Error:".red());
-            println!("\n{response_text}");
-            return Err(UserError::CannotDownload { url, reason: err.to_string() });
-        }
-    };
+    let release: Release = json::from_str(response_text).map_err(|err| UserError::CannotParseApiResponse {
+        reason: err.to_string(),
+        text: response_text.to_string(),
+        url,
+    })?;
     Ok(release.standardized_version())
 }
 
