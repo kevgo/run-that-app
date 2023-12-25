@@ -322,7 +322,7 @@ mod tests {
                 pretty::assert_eq!(have, want);
             }
 
-            mod version_parameter {
+            mod version {
                 use super::parse_args;
                 use crate::cli::{args, Command};
                 use args::Args;
@@ -342,7 +342,7 @@ mod tests {
                 }
             }
 
-            mod versions_parameter {
+            mod versions {
                 use super::parse_args;
                 use crate::cli::{args, Command};
                 use args::Args;
@@ -355,6 +355,19 @@ mod tests {
                         command: Command::Versions {
                             app: S("actionlint"),
                             amount: 10,
+                            log: None,
+                        },
+                    });
+                    pretty::assert_eq!(have, want);
+                }
+
+                #[test]
+                fn custom_amount() {
+                    let have = parse_args(vec!["rta", "--versions=20", "actionlint"]);
+                    let want = Ok(Args {
+                        command: Command::Versions {
+                            app: S("actionlint"),
+                            amount: 20,
                             log: None,
                         },
                     });
