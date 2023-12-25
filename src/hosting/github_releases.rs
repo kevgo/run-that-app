@@ -4,6 +4,8 @@ use crate::UserError;
 use colored::Colorize;
 use miniserde::{json, Deserialize};
 
+use super::name_without_leading_v;
+
 pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases/latest");
     output.log("HTTP", &format!("downloading {url}"));
@@ -24,7 +26,7 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
             return Err(UserError::CannotDownload { url, reason: err.to_string() });
         }
     };
-    Ok(release.version().to_string())
+    Ok(name_without_leading_v(&release.tag_name).to_string())
 }
 
 pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
@@ -48,7 +50,10 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
             return Err(UserError::CannotDownload { url, reason: err.to_string() });
         }
     };
-    let versions = releases.into_iter().map(|release| release.version().to_string()).collect();
+    let versions = releases
+        .into_iter()
+        .map(|release| name_without_leading_v(&release.tag_name).to_string())
+        .collect();
     Ok(versions)
 }
 
@@ -56,17 +61,6 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
 #[derive(Deserialize, Debug, PartialEq)]
 struct Release {
     tag_name: String,
-}
-
-impl Release {
-    /// provides the version of this release without "v" in it
-    fn version(&self) -> &str {
-        if self.tag_name.starts_with('v') {
-            &self.tag_name[1..]
-        } else {
-            &self.tag_name
-        }
-    }
 }
 
 #[cfg(test)]
@@ -545,26 +539,5 @@ mod tests {
         let have: Vec<Release> = json::from_str(response).unwrap();
         let want = vec![Release { tag_name: S("v1.6.26") }];
         assert_eq!(have, want);
-    }
-
-    mod version {
-        use super::Release;
-        use big_s::S;
-
-        #[test]
-        fn leading_v() {
-            let release = Release { tag_name: S("v1.2.3") };
-            let have = release.version();
-            let want = "1.2.3";
-            assert_eq!(have, want);
-        }
-
-        #[test]
-        fn version_only() {
-            let release = Release { tag_name: S("1.2.3") };
-            let have = release.version();
-            let want = "1.2.3";
-            assert_eq!(have, want);
-        }
     }
 }
