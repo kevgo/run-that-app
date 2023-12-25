@@ -344,7 +344,7 @@ mod tests {
                 use big_s::S;
 
                 #[test]
-                fn long() {
+                fn correct_usage() {
                     let have = parse_args(vec!["rta", "--versions", "actionlint"]);
                     let want = Ok(Args {
                         command: Command::Versions {
@@ -352,6 +352,13 @@ mod tests {
                             log: None,
                         },
                     });
+                    pretty::assert_eq!(have, want);
+                }
+
+                #[test]
+                fn missing_app() {
+                    let have = parse_args(vec!["rta", "--versions"]);
+                    let want = Ok(Args { command: Command::DisplayHelp });
                     pretty::assert_eq!(have, want);
                 }
             }
