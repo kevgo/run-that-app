@@ -25,6 +25,11 @@ pub enum UserError {
         file: String,
         reason: String,
     },
+    CannotParseApiResponse {
+        reason: String,
+        text: String,
+        url: String,
+    },
     ConfigFileAlreadyExists,
     InvalidConfigFileFormat {
         line_no: usize,
@@ -80,6 +85,10 @@ impl UserError {
             UserError::CannotMakeFileExecutable { file, reason } => {
                 error(&format!("Cannot make file {file} executable: {reason}"));
                 desc("Please check access permissions and try again.");
+            }
+            UserError::CannotParseApiResponse { url, text: _, reason } => {
+                error(&format!("Cannot parse API response for {url}: {reason}"));
+                // desc(&text);
             }
             UserError::ConfigFileAlreadyExists => {
                 error("config file already exists");
