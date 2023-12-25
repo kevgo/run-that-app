@@ -6,8 +6,8 @@ pub mod github_releases;
 /// The way this function is used in this app, it's better to consume and provides an entire String.
 /// This saves an allocation if the string doesn't have a leading v.
 fn name_without_leading_v(name: String) -> String {
-    if name.starts_with('v') {
-        name[1..].to_string()
+    if let Some(stripped) = name.strip_prefix('v') {
+        stripped.to_string()
     } else {
         name
     }
