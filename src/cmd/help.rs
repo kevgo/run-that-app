@@ -27,6 +27,7 @@ Options:
 --which                          displays the path to the installed executable of the given application
 --version, -V                    displays the version of run-that-app
 --versions                       displays the 10 most recent available versions of the given app
+--versions=<number>              displays the given number of most recent available versions of the given app
 ",
     );
 }
