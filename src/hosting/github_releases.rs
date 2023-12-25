@@ -2,6 +2,7 @@ use super::strip_leading_v;
 use crate::Output;
 use crate::Result;
 use crate::UserError;
+use big_s::S;
 use colored::Colorize;
 
 pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
@@ -37,13 +38,21 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
         return Err(UserError::NotOnline);
     };
     let response_text = response.as_str().unwrap();
-    let releases: Vec<Release> = json::from_str(response_text).map_err(|err| UserError::CannotParseApiResponse {
+    let releases: serde_json::Value = serde_json::from_str(response_text).map_err(|err| UserError::CannotParseApiResponse {
         reason: err.to_string(),
         text: response_text.to_string(),
-        url,
+        url: url.clone(),
     })?;
-    let versions = releases.into_iter().map(Release::standardized_version).collect();
-    Ok(versions)
+    if let serde_json::Value::Array(releases) = releases {
+        let versions: Vec<String> = releases.into_iter().map(|release| release["tag_name"].as_str().unwrap().to_string()).collect();
+        Ok(versions)
+    } else {
+        Err(UserError::CannotParseApiResponse {
+            reason: S("unknown data format"),
+            text: response_text.to_string(),
+            url,
+        })
+    }
 }
 
 /// data structure received from the GitHub API
@@ -60,9 +69,7 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
 
 #[cfg(test)]
 mod tests {
-    use super::Release;
     use big_s::S;
-    use miniserde::json;
 
     #[test]
     #[allow(clippy::too_many_lines)]
@@ -531,13 +538,12 @@ mod tests {
     "mentions_count": 5
   }
 ]"#;
-        let have: Vec<Release> = json::from_str(response).unwrap();
+        let have = parse_api: Vec<Release> = json::from_str(response).unwrap();
         let want = vec![Release { tag_name: S("v1.6.26") }];
         assert_eq!(have, want);
     }
 
     mod version {
-        use super::Release;
         use big_s::S;
 
         #[test]
