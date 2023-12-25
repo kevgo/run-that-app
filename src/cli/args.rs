@@ -91,7 +91,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             })
         } else if versions {
             Ok(Args {
-                command: Command::Versions { app: app.name },
+                command: Command::Versions { app: app.name, log },
             })
         } else {
             Ok(Args {
@@ -347,7 +347,10 @@ mod tests {
                 fn long() {
                     let have = parse_args(vec!["rta", "--versions", "actionlint"]);
                     let want = Ok(Args {
-                        command: Command::Versions { app: S("actionlint") },
+                        command: Command::Versions {
+                            app: S("actionlint"),
+                            log: None,
+                        },
                     });
                     pretty::assert_eq!(have, want);
                 }
