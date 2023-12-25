@@ -25,5 +25,5 @@ pub enum Command {
     Update {
         log: Option<String>,
     },
-    DisplayVersion,
+    Version,
 }
