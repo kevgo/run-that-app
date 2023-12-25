@@ -25,7 +25,7 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
             return Err(UserError::CannotDownload { url, reason: err.to_string() });
         }
     };
-    Ok(strip_leading_v(release.tag_name))
+    Ok(release.standardized_version())
 }
 
 pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
@@ -49,7 +49,7 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
             return Err(UserError::CannotDownload { url, reason: err.to_string() });
         }
     };
-    let versions = releases.into_iter().map(|release| strip_leading_v(release.tag_name)).collect();
+    let versions = releases.into_iter().map(Release::standardized_version).collect();
     Ok(versions)
 }
 
@@ -57,6 +57,12 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
 #[derive(Deserialize, Debug, PartialEq)]
 struct Release {
     tag_name: String,
+}
+
+impl Release {
+    fn standardized_version(self) -> String {
+        strip_leading_v(self.tag_name)
+    }
 }
 
 #[cfg(test)]
