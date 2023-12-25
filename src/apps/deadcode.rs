@@ -34,6 +34,7 @@ impl App for Deadcode {
     }
 
     fn latest_version(&self, _output: &dyn Output) -> Result<String> {
+        // TODO: use github_tags here
         Ok(S("0.16.1"))
     }
 

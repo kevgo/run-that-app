@@ -1,5 +1,5 @@
 use super::App;
-use crate::hosting::github;
+use crate::hosting::github_releases;
 use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
@@ -39,7 +39,7 @@ impl App for GolangCiLint {
     }
 
     fn latest_version(&self, output: &dyn Output) -> Result<String> {
-        github::latest(ORG, REPO, output)
+        github_releases::latest(ORG, REPO, output)
     }
 
     fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
@@ -47,7 +47,7 @@ impl App for GolangCiLint {
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        github::versions(ORG, REPO, amount, output)
+        github_releases::versions(ORG, REPO, amount, output)
     }
 }
 

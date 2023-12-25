@@ -52,6 +52,7 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
     Ok(versions)
 }
 
+/// data structure received from the GitHub API
 #[derive(Deserialize, Debug, PartialEq)]
 struct Release {
     tag_name: String,
@@ -547,7 +548,7 @@ mod tests {
     }
 
     mod version {
-        use crate::hosting::github::Release;
+        use super::Release;
         use big_s::S;
 
         #[test]
