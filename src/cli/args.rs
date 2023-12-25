@@ -324,18 +324,14 @@ mod tests {
                 #[test]
                 fn short() {
                     let have = parse_args(vec!["rta", "-V"]);
-                    let want = Ok(Args {
-                        command: Command::DisplayVersion,
-                    });
+                    let want = Ok(Args { command: Command::Version });
                     pretty::assert_eq!(have, want);
                 }
 
                 #[test]
                 fn long() {
                     let have = parse_args(vec!["rta", "--version"]);
-                    let want = Ok(Args {
-                        command: Command::DisplayVersion,
-                    });
+                    let want = Ok(Args { command: Command::Version });
                     pretty::assert_eq!(have, want);
                 }
             }
