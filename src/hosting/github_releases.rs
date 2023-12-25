@@ -556,7 +556,7 @@ mod tests {
         }
 
         #[test]
-        fn version_only() {
+        fn no_leading_v() {
             let release = Release { tag_name: S("1.2.3") };
             let have = release.standardized_version();
             let want = "1.2.3";
