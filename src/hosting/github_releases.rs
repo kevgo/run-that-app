@@ -16,8 +16,7 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
         output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
     };
-    let response_text = response.as_str().unwrap();
-    parse_latest_response(response_text, url)
+    parse_latest_response(response.as_str().unwrap(), url)
 }
 
 fn parse_latest_response(text: &str, url: String) -> Result<String> {
@@ -41,8 +40,7 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
         output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
     };
-    let response_text = response.as_str().unwrap();
-    parse_versions_response(response_text, url)
+    parse_versions_response(response.as_str().unwrap(), url)
 }
 
 fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
@@ -52,7 +50,10 @@ fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
         url: url.clone(),
     })?;
     if let serde_json::Value::Array(releases) = releases {
-        let versions: Vec<String> = releases.into_iter().map(|release| release["tag_name"].as_str().unwrap().to_string()).collect();
+        let versions: Vec<String> = releases
+            .into_iter()
+            .map(|release| strip_leading_v(release["tag_name"].as_str().unwrap()).to_string())
+            .collect();
         Ok(versions)
     } else {
         Err(UserError::CannotParseApiResponse {
