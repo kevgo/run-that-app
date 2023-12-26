@@ -67,7 +67,7 @@ fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
         if !entry_ref.starts_with("refs/tags/") {
             continue;
         }
-        let tag = entry_ref[9..].to_string();
+        let tag = entry_ref[10..].to_string();
         result.push(tag);
     }
     Ok(result)
