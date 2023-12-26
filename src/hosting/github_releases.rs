@@ -71,11 +71,10 @@ impl Release {
 mod tests {
     use super::Release;
     use big_s::S;
-    use miniserde::json;
 
     #[test]
     #[allow(clippy::too_many_lines)]
-    fn parse() {
+    fn parse_versions_response() {
         let response = r#"
 [
   {
@@ -540,8 +539,8 @@ mod tests {
     "mentions_count": 5
   }
 ]"#;
-        let have: Vec<Release> = json::from_str(response).unwrap();
-        let want = vec![Release { tag_name: S("v1.6.26") }];
+        let have: Vec<String> = super::parse_versions_response(response, S("url")).unwrap();
+        let want = vec!["v1.6.26"];
         assert_eq!(have, want);
     }
 
