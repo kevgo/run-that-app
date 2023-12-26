@@ -46,9 +46,9 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
 }
 
 fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
-    let releases: serde_json::Value = serde_json::from_str(response_text).map_err(|err| UserError::CannotParseApiResponse {
+    let releases: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
         reason: err.to_string(),
-        text: response_text.to_string(),
+        text: text.to_string(),
         url: url.clone(),
     })?;
     if let serde_json::Value::Array(releases) = releases {
@@ -57,23 +57,11 @@ fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
     } else {
         Err(UserError::CannotParseApiResponse {
             reason: S("unknown data format"),
-            text: response_text.to_string(),
+            text: text.to_string(),
             url,
         })
     }
 }
-
-/// data structure received from the GitHub API
-// #[derive(Deserialize, Debug, PartialEq)]
-// struct Release {
-//     tag_name: String,
-// }
-
-// impl Release {
-//     fn standardized_version(self) -> String {
-//         strip_leading_v(self.tag_name)
-//     }
-// }
 
 #[cfg(test)]
 mod tests {
@@ -631,25 +619,5 @@ mod tests {
         let have: String = super::parse_latest_response(response, S("url")).unwrap();
         let want = S("1.0.0");
         assert_eq!(have, want);
-    }
-
-    mod version {
-        use big_s::S;
-
-        #[test]
-        fn leading_v() {
-            let release = Release { tag_name: S("v1.2.3") };
-            let have = release.standardized_version();
-            let want = "1.2.3";
-            assert_eq!(have, want);
-        }
-
-        #[test]
-        fn no_leading_v() {
-            let release = Release { tag_name: S("1.2.3") };
-            let have = release.standardized_version();
-            let want = "1.2.3";
-            assert_eq!(have, want);
-        }
     }
 }
