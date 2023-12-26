@@ -1,5 +1,6 @@
 use super::strip_leading_v;
 use crate::{Output, Result, UserError};
+use big_s::S;
 use colored::Colorize;
 
 /// provides the latest version that the given application is tagged with on GitHub
@@ -42,33 +43,42 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
 }
 
 fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
-    let tags: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
+    let value: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
         reason: err.to_string(),
         text: text.to_string(),
-        url,
+        url: url.clone(),
     })?;
-    Ok(vec![])
-}
-
-fn parse_api_response<'a>(text: &'a str, url: &str) -> Result<Vec<&'a str>> {
-    let tags: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
-        reason: err.to_string(),
-        text: text.to_string(),
-        url: url.to_string(),
-    })?;
-    if let serde_json::Value::Array(tags) = tags {
-        for tag in tags {
-            println!("tag: {}", tag["ref"]);
+    let serde_json::Value::Array(entries) = value else {
+        return Err(UserError::CannotParseApiResponse {
+            reason: S("response from GitHub API to load tags doesn't contain an Array"),
+            text: text.to_string(),
+            url,
+        });
+    };
+    let mut result: Vec<String> = Vec::with_capacity(entries.len());
+    for entry in entries {
+        let Some(entry_ref) = entry["ref"].as_str() else {
+            return Err(UserError::CannotParseApiResponse {
+                reason: S("entry does not contain a ref field"),
+                text: entry.to_string(),
+                url,
+            });
+        };
+        if !entry_ref.starts_with("refs/tags/") {
+            continue;
         }
+        result.push(entry_ref.to_string());
     }
-    Ok(vec![])
+    Ok(result)
 }
 
 #[cfg(test)]
 mod tests {
 
     mod parse_versions_response {
-        use crate::hosting::github_tags::parse_api_response;
+        use big_s::S;
+
+        use crate::hosting::github_tags::parse_versions_response;
 
         #[test]
         fn golang() {
@@ -4127,8 +4137,8 @@ mod tests {
 ]
 
             "#;
-            let have: Vec<&str> = parse_api_response(response, "url").unwrap();
-            let want = vec!["1.2.3"];
+            let have: Vec<String> = parse_versions_response(response, S("url")).unwrap();
+            let want = vec![S("1.2.3")];
             pretty::assert_eq!(have, want)
         }
     }
