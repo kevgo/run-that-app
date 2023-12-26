@@ -1,6 +1,5 @@
 use crate::{Output, Result, UserError};
 use colored::Colorize;
-use miniserde::{json, Deserialize};
 
 /// provides the latest version that the given application is tagged with on GitHub
 pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
@@ -15,7 +14,7 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
         return Err(UserError::NotOnline);
     };
     let response_text = response.as_str().unwrap();
-    let release: Tag = json::from_str(response_text).map_err(|err| UserError::CannotParseApiResponse {
+    let release: serde_json::Value = serde_json::from_str(response_text).map_err(|err| UserError::CannotParseApiResponse {
         reason: err.to_string(),
         text: response_text.to_string(),
         url,
