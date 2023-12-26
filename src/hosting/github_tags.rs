@@ -1,6 +1,6 @@
+use super::strip_leading_v;
 use crate::{Output, Result, UserError};
 use colored::Colorize;
-use miniserde::{json, Deserialize};
 
 /// provides the latest version that the given application is tagged with on GitHub
 pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
@@ -14,13 +14,16 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
         output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
     };
-    let response_text = response.as_str().unwrap();
-    let release: Tag = json::from_str(response_text).map_err(|err| UserError::CannotParseApiResponse {
+    parse_latest_response(response.as_str().unwrap(), url)
+}
+
+fn parse_latest_response(text: &str, url: String) -> Result<String> {
+    let release: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
         reason: err.to_string(),
-        text: response_text.to_string(),
+        text: text.to_string(),
         url,
     })?;
-    Ok(release.standardized_tag().to_string())
+    Ok(strip_leading_v(release["ref"].as_str().unwrap()).to_string())
 }
 
 pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
@@ -35,10 +38,13 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
         output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
     };
-    let response_text = response.as_str().unwrap();
-    let tags: serde_json::Value = serde_json::from_str(response_text).map_err(|err| UserError::CannotParseApiResponse {
+    parse_versions_response(response.as_str().unwrap(), url)
+}
+
+fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
+    let tags: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
         reason: err.to_string(),
-        text: response_text.to_string(),
+        text: text.to_string(),
         url,
     })?;
     Ok(vec![])
@@ -58,31 +64,14 @@ fn parse_api_response<'a>(text: &'a str, url: &str) -> Result<Vec<&'a str>> {
     Ok(vec![])
 }
 
-/// data structure received from the GitHub API
-// #[derive(Deserialize, Debug, PartialEq)]
-// struct Tag {
-//     r#ref: String,
-// }
-
-// impl Tag {
-//     fn standardized_tag(self) -> String {
-//         match self.r#ref.strip_prefix("refs/tags/") {
-//             Some(stripped) => stripped.to_string(),
-//             None => self.r#ref,
-//         }
-//     }
-// }
-
 #[cfg(test)]
 mod tests {
 
-    mod parse {
+    mod parse_versions_response {
         use crate::hosting::github_tags::parse_api_response;
-        use crate::UserError;
-        use big_s::S;
 
         #[test]
-        fn real_response() {
+        fn golang() {
             let response = r#"
 [
   {
@@ -4138,7 +4127,9 @@ mod tests {
 ]
 
             "#;
-            let tags: Vec<&str> = parse_api_response(response, "url").unwrap();
+            let have: Vec<&str> = parse_api_response(response, "url").unwrap();
+            let want = vec!["1.2.3"];
+            pretty::assert_eq!(have, want)
         }
     }
 }
