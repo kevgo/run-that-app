@@ -540,7 +540,7 @@ mod tests {
   }
 ]"#;
         let have: Vec<String> = super::parse_versions_response(response, S("url")).unwrap();
-        let want = vec!["v1.6.26"];
+        let want = vec!["1.6.26"];
         assert_eq!(have, want);
     }
 
