@@ -56,19 +56,18 @@ fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
         text: text.to_string(),
         url: url.clone(),
     })?;
-    if let serde_json::Value::Array(releases) = releases {
-        let versions: Vec<String> = releases
-            .into_iter()
-            .map(|release| strip_leading_v(release["tag_name"].as_str().unwrap()).to_string())
-            .collect();
-        Ok(versions)
-    } else {
-        Err(UserError::CannotParseApiResponse {
+    let serde_json::Value::Array(releases) = releases else {
+        return Err(UserError::CannotParseApiResponse {
             reason: S("unknown data format"),
             text: text.to_string(),
             url,
-        })
-    }
+        });
+    };
+    let versions: Vec<String> = releases
+        .into_iter()
+        .map(|release| strip_leading_v(release["tag_name"].as_str().unwrap()).to_string())
+        .collect();
+    Ok(versions)
 }
 
 #[cfg(test)]
