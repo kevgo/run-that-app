@@ -4,7 +4,6 @@ use crate::Result;
 use crate::UserError;
 use big_s::S;
 use colored::Colorize;
-use miniserde::{json, Deserialize};
 
 pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases/latest");
@@ -28,12 +27,12 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
 }
 
 fn parse_latest_response(text: &str, url: String) -> Result<String> {
-    let release: Release = json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
+    let release: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
         reason: err.to_string(),
         text: text.to_string(),
         url,
     })?;
-    Ok(release.standardized_version())
+    Ok(strip_leading_v(release["tag_name"].as_str().unwrap()).to_string())
 }
 
 pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
@@ -48,35 +47,33 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
         output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
     };
-    let response_text = response.as_str().unwrap();
-    parse_versions_response(response_text, url)
+    parse_versions_response(response.as_str().unwrap(), url)
 }
 
 fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
-    let releases: Vec<Release> = json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
+    let releases: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
         reason: err.to_string(),
         text: text.to_string(),
-        url,
+        url: url.clone(),
     })?;
-    let versions = releases.into_iter().map(Release::standardized_version).collect();
-    Ok(versions)
-}
-
-/// data structure received from the GitHub API
-#[derive(Deserialize, Debug, PartialEq)]
-struct Release {
-    tag_name: String,
-}
-
-impl Release {
-    fn standardized_version(self) -> String {
-        strip_leading_v(self.tag_name)
+    let serde_json::Value::Array(releases) = releases else {
+        return Err(UserError::CannotParseApiResponse {
+            reason: S("unknown API response: does not contain a list of releases"),
+            text: text.to_string(),
+            url,
+        });
+    };
+    let mut result: Vec<String> = Vec::with_capacity(releases.len());
+    for release in releases {
+        if let Some(release_tag) = release["tag_name"].as_str() {
+            result.push(strip_leading_v(release_tag).to_string());
+        };
     }
+    Ok(result)
 }
 
 #[cfg(test)]
 mod tests {
-    use super::Release;
     use big_s::S;
 
     #[test]
@@ -631,26 +628,5 @@ mod tests {
         let have: String = super::parse_latest_response(response, S("url")).unwrap();
         let want = S("1.0.0");
         assert_eq!(have, want);
-    }
-
-    mod version {
-        use super::Release;
-        use big_s::S;
-
-        #[test]
-        fn leading_v() {
-            let release = Release { tag_name: S("v1.2.3") };
-            let have = release.standardized_version();
-            let want = "1.2.3";
-            assert_eq!(have, want);
-        }
-
-        #[test]
-        fn no_leading_v() {
-            let release = Release { tag_name: S("1.2.3") };
-            let have = release.standardized_version();
-            let want = "1.2.3";
-            assert_eq!(have, want);
-        }
     }
 }
