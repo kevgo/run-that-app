@@ -34,7 +34,7 @@ impl App for Deadcode {
     }
 
     fn latest_version(&self, _output: &dyn Output) -> Result<String> {
-        // TODO: use github_tags here
+        // TODO: remove this file once deadcode is integrated into golangci-lint
         Ok(S("0.16.1"))
     }
 
