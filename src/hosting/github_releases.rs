@@ -63,13 +63,13 @@ fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
             url,
         });
     };
-    let mut versions: Vec<String> = Vec::with_capacity(releases.len());
+    let mut result: Vec<String> = Vec::with_capacity(releases.len());
     for release in releases {
         if let Some(release_tag) = release["tag_name"].as_str() {
-            versions.push(strip_leading_v(release_tag).to_string());
+            result.push(strip_leading_v(release_tag).to_string());
         };
     }
-    Ok(versions)
+    Ok(result)
 }
 
 #[cfg(test)]
