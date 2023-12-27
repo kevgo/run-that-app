@@ -56,8 +56,8 @@ impl App for Go {
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
         // The current implementation is too magical.
-        // I call a big complex subsystem with too many parameters
-        // and it does too many things, including reaching out and pulling in data it needs.
+        // It calls a big complex subsystem with too many parameters
+        // and it does too many things, including reaching out and pulling in needed data.
         // This makes the code hard to test.
         // Better to use a functional architecture.
         // step 1: download the JSON from the GitHub API
@@ -4187,7 +4187,7 @@ mod tests {
 ]
 
             "#;
-        let have: Vec<String> = parse_versions_response(response, S("url")).unwrap();
+        let have: Vec<String> = super::super::parse_versions_response(response, S("url")).unwrap();
         let want = vec![S("1.2.3")];
         pretty::assert_eq!(have, want)
     }
