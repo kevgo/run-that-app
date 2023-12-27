@@ -79,6 +79,36 @@ mod tests {
     mod parse_versions_response {
         use big_s::S;
 
-        use crate::hosting::github_tags::parse_versions_response;
+        #[test]
+        fn parse_versions_response() {
+            let response = r#"
+[
+  {
+    "ref": "refs/tags/v1.0.1",
+    "node_id": "MDM6UmVmMjMwOTY5NTk6cmVmcy90YWdzL2dvMS4wLjE=",
+    "url": "https://api.github.com/repos/foo/bar/git/refs/tags/v1.0.1",
+    "object": {
+      "sha": "2fffba7fe19690e038314d17a117d6b87979c89f",
+      "type": "commit",
+      "url": "https://api.github.com/repos/foo/bar/git/commits/2fffba7fe19690e038314d17a117d6b87979c89f"
+    }
+  },
+  {
+    "ref": "refs/tags/v1.0.2",
+    "node_id": "MDM6UmVmMjMwOTY5NTk6cmVmcy90YWdzL2dvMS4wLjE=",
+    "url": "https://api.github.com/repos/foo/bar/git/refs/tags/v1.0.2",
+    "object": {
+      "sha": "2fffba7fe19690e038314d17a117d6b87979c89f",
+      "type": "commit",
+      "url": "https://api.github.com/repos/foo/bar/git/commits/2fffba7fe19690e038314d17a117d6b87979c89f"
+    }
+  }
+]
+
+            "#;
+            let have: Vec<String> = super::super::parse_versions_response(response, S("url")).unwrap();
+            let want = vec![S("v1.0.1"), S("v1.0.2")];
+            pretty::assert_eq!(have, want)
+        }
     }
 }
