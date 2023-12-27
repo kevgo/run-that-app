@@ -2,6 +2,7 @@ use super::strip_leading_v;
 use crate::Output;
 use crate::Result;
 use crate::UserError;
+use big_s::S;
 use colored::Colorize;
 use miniserde::{json, Deserialize};
 
@@ -16,7 +17,13 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
         output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
     };
-    let response_text = response.as_str().unwrap();
+    let Ok(response_text) = response.as_str() else {
+        return Err(UserError::CannotParseApiResponse {
+            reason: S("API response contains no body"),
+            text: S(""),
+            url,
+        });
+    };
     parse_latest_response(response_text, url)
 }
 
