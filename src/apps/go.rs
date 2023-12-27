@@ -118,6 +118,7 @@ fn ext_text(os: Os) -> &'static str {
 #[cfg(test)]
 mod tests {
     use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
 
     #[test]
     fn download_url() {
