@@ -28,6 +28,14 @@ impl App for Go {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+        // God object anti-pattern.
+        // I call a complex subsystem with too many configuration parameters
+        // and the subsystem does too many things including pulling in data it needs on its own.
+        // This is hard to test.
+        // Better approach is functional architecture:
+        // step 1: download the artifact from the URL
+        // step 2: extract the artifact while stripping paths
+        // step 3: determine the executable
         archive::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
@@ -47,7 +55,22 @@ impl App for Go {
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        github_tags::versions(ORG, REPO, amount, output)
+        // The current implementation is too magical.
+        // I call a big complex subsystem with too many parameters
+        // and it does too many things, including reaching out and pulling in data it needs.
+        // This makes the code hard to test.
+        // Better to use a functional architecture.
+        // step 1: download the JSON from the GitHub API
+        // step 2: parse the JSON into tags - this is now testable with app-specific data
+        // step 3: filter out non-go tags - this is now testable with app-specific data
+        // step 4: sort
+        // step 5: limit to the given amount
+        let mut filtered: Vec<String> = github_tags::versions(ORG, REPO, amount, output)?
+            .into_iter()
+            .filter(|tag| tag.starts_with("go"))
+            .collect();
+        filtered.sort_unstable_by(|a, b| b.cmp(a));
+        Ok(filtered)
     }
 }
 
