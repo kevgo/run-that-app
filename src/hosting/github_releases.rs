@@ -19,7 +19,7 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
     };
     let Ok(response_text) = response.as_str() else {
         return Err(UserError::CannotParseApiResponse {
-            reason: S("API response contains to body"),
+            reason: S("API response contains no body"),
             text: S(""),
             url,
         });
