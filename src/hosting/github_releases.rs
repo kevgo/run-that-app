@@ -58,7 +58,7 @@ fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
     })?;
     let serde_json::Value::Array(releases) = releases else {
         return Err(UserError::CannotParseApiResponse {
-            reason: S("unknown data format"),
+            reason: S("API response does not contain a list of releases"),
             text: text.to_string(),
             url,
         });
