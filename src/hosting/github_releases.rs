@@ -5,7 +5,7 @@ use crate::UserError;
 use big_s::S;
 use colored::Colorize;
 
-/// provides the latest official version of the give application on GitHub Releases
+/// provides the latest official version of the given application on GitHub Releases
 pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases/latest");
     output.log("HTTP", &format!("downloading {url}"));
