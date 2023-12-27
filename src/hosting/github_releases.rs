@@ -16,7 +16,14 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
         output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
     };
-    parse_latest_response(response.as_str().unwrap(), url)
+    let Ok(response_text) = response.as_str() else {
+        return Err(UserError::CannotParseApiResponse {
+            reason: S("API response contains to text"),
+            text: S(""),
+            url,
+        });
+    };
+    parse_latest_response(response_text, url)
 }
 
 fn parse_latest_response(text: &str, url: String) -> Result<String> {
