@@ -6,7 +6,6 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
 use big_s::S;
-use const_format::formatcp;
 
 pub struct Go {}
 
@@ -26,7 +25,7 @@ impl App for Go {
     }
 
     fn homepage(&self) -> &'static str {
-        formatcp!("https://go.dev")
+        "https://go.dev"
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
