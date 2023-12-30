@@ -20,7 +20,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut indicate_available = false;
     let mut update = false;
     let mut optional = false;
-    let mut versions: Option<u8> = None;
+    let mut versions: Option<usize> = None;
     for arg in cli_args {
         if requested_app.is_none() {
             if &arg == "--available" {
