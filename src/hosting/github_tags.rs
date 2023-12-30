@@ -64,11 +64,9 @@ fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
                 url,
             });
         };
-        if !entry_ref.starts_with("refs/tags/") {
-            continue;
+        if entry_ref.starts_with("refs/tags/") {
+            result.push(entry_ref[10..].to_string());
         }
-        let tag = entry_ref[10..].to_string();
-        result.push(tag);
     }
     Ok(result)
 }
@@ -80,7 +78,7 @@ mod tests {
         use big_s::S;
 
         #[test]
-        fn parse_versions_response() {
+        fn simple() {
             let response = r#"
 [
   {
