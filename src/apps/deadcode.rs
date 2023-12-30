@@ -42,7 +42,7 @@ impl App for Deadcode {
         yard.load_app(self.name(), version, self.executable_filename(platform))
     }
 
-    fn versions(&self, _amount: u8, _output: &dyn Output) -> Result<Vec<String>> {
+    fn versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<String>> {
         Ok(vec![S("0.16.1")])
     }
 }
