@@ -66,6 +66,7 @@ impl App for Go {
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
         let tags = github_tags::all(ORG, REPO, amount, output)?;
         let mut go_tags: Vec<String> = tags.into_iter().filter(|tag| tag.starts_with("go")).collect();
+        // TODO: sort by numerical value, not alphabetically
         go_tags.sort_unstable_by(|a, b| b.cmp(a));
         Ok(go_tags)
     }
