@@ -42,7 +42,7 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
     parse_versions_response(response.as_str().unwrap(), url)
 }
 
-fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
+fn parse_versions_response(text: &str, url: String) -> Result<Vec<&str>> {
     let value: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
         reason: err.to_string(),
         text: text.to_string(),
@@ -55,7 +55,7 @@ fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
             url,
         });
     };
-    let mut result: Vec<String> = Vec::with_capacity(entries.len());
+    let mut result: Vec<&str> = Vec::with_capacity(entries.len());
     for entry in entries {
         let Some(entry_ref) = entry["ref"].as_str() else {
             return Err(UserError::CannotParseApiResponse {
@@ -65,7 +65,7 @@ fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
             });
         };
         if entry_ref.starts_with("refs/tags/") {
-            result.push(entry_ref[10..].to_string());
+            result.push(&entry_ref[10..]);
         }
     }
     Ok(result)
