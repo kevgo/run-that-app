@@ -25,10 +25,13 @@ pub enum UserError {
         file: String,
         reason: String,
     },
-    CannotParseApiResponse {
-        reason: String,
-        text: String,
-        url: String,
+    GitHubReleasesApiProblem {
+        problem: String,
+        payload: String,
+    },
+    GitHubTagsApiProblem {
+        problem: String,
+        payload: String,
     },
     ConfigFileAlreadyExists,
     InvalidConfigFileFormat {
@@ -86,9 +89,13 @@ impl UserError {
                 error(&format!("Cannot make file {file} executable: {reason}"));
                 desc("Please check access permissions and try again.");
             }
-            UserError::CannotParseApiResponse { url, text: _, reason } => {
-                error(&format!("Cannot parse API response for {url}: {reason}"));
-                // desc(&text);
+            UserError::GitHubReleasesApiProblem { problem, payload } => {
+                error(&format!("Problem with the GitHub Releases API: {problem}"));
+                desc(&payload);
+            }
+            UserError::GitHubTagsApiProblem { problem, payload } => {
+                error(&format!("Problem with the GitHub Tags API: {problem}"));
+                desc(&payload);
             }
             UserError::ConfigFileAlreadyExists => {
                 error("config file already exists");

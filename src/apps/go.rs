@@ -1,9 +1,11 @@
 use super::App;
+use crate::error::UserError;
 use crate::hosting::github_tags;
 use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
+use big_s::S;
 use const_format::formatcp;
 
 pub struct Go {}
@@ -47,7 +49,14 @@ impl App for Go {
     }
 
     fn latest_version(&self, output: &dyn Output) -> Result<String> {
-        github_tags::latest(ORG, REPO, output)
+        let versions = self.versions(1, output)?;
+        if versions.is_empty() {
+            return Err(UserError::GitHubTagsApiProblem {
+                problem: S("no tags found"),
+                payload: S(""),
+            });
+        }
+        Ok(versions.into_iter().next().unwrap())
     }
 
     fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
@@ -55,22 +64,10 @@ impl App for Go {
     }
 
     fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        // The current implementation is too magical.
-        // It calls a big complex subsystem with too many parameters
-        // and it does too many things, including reaching out and pulling in needed data.
-        // This makes the code hard to test.
-        // Better to use a functional architecture.
-        // step 1: download the JSON from the GitHub API
-        // step 2: parse the JSON into tags - this is now testable with app-specific data
-        // step 3: filter out non-go tags - this is now testable with app-specific data
-        // step 4: sort
-        // step 5: limit to the given amount
-        let mut filtered: Vec<String> = github_tags::versions(ORG, REPO, amount, output)?
-            .into_iter()
-            .filter(|tag| tag.starts_with("go"))
-            .collect();
-        filtered.sort_unstable_by(|a, b| b.cmp(a));
-        Ok(filtered)
+        let tags = github_tags::all(ORG, REPO, amount, output)?;
+        let mut go_tags: Vec<String> = tags.into_iter().filter(|tag| tag.starts_with("go")).collect();
+        go_tags.sort_unstable_by(|a, b| b.cmp(a));
+        Ok(go_tags)
     }
 }
 
