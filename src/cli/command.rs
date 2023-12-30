@@ -28,7 +28,7 @@ pub enum Command {
     Version,
     Versions {
         app: String,
-        amount: u8,
+        amount: usize,
         log: Option<String>,
     },
 }

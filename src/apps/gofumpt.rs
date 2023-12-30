@@ -53,7 +53,7 @@ impl App for Gofumpt {
         yard.load_app(self.name(), version, self.executable_filename(platform))
     }
 
-    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
+    fn versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
         github_releases::versions(ORG, REPO, amount, output)
     }
 }

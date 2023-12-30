@@ -35,7 +35,7 @@ fn parse_latest_response(text: &str) -> Result<String> {
 }
 
 /// provides the given number of latest versions of the given application on GitHub Releases
-pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
+pub fn versions(org: &str, repo: &str, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases?per_page={amount}");
     output.log("HTTP", &format!("downloading {url}"));
     let get = minreq::get(&url)

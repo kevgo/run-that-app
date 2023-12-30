@@ -39,7 +39,7 @@ pub trait App {
     fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable>;
 
     /// provides the available versions of this application
-    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>>;
+    fn versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>>;
 
     /// provides the latest version of this application
     fn latest_version(&self, output: &dyn Output) -> Result<String>;

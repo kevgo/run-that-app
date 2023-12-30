@@ -63,10 +63,13 @@ impl App for Go {
         yard.load_app(self.name(), version, &self.executable_path(platform))
     }
 
-    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-        let tags = github_tags::all(ORG, REPO, amount, output)?;
+    fn versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
+        let tags = github_tags::all(ORG, REPO, output)?;
         let mut go_tags: Vec<String> = tags.into_iter().filter(|tag| tag.starts_with("go")).collect();
         go_tags.sort_unstable_by(|a, b| human_sort::compare(b, a));
+        if go_tags.len() > amount {
+            go_tags.resize(amount, S(""));
+        }
         Ok(go_tags)
     }
 }
