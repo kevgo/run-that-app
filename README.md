@@ -14,7 +14,7 @@ application shims or stubs, no shell integrations or other trickery, no
 dependencies, no plugins, no application repository, no Docker, no emulation, no
 WASM. All you do is call a single stand-alone binary. Applications download in
 1-2 seconds, without _sudo_, and store very little (just the executables) on
-your hard drive.
+your hard drive. Applications execute at 100% native speed.
 
 ### quickstart
 
