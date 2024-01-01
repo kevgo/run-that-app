@@ -1,6 +1,5 @@
 use crate::{Output, Result, UserError};
 use big_s::S;
-use colored::Colorize;
 
 pub fn all(org: &str, repo: &str, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/git/refs/tags");
@@ -11,7 +10,6 @@ pub fn all(org: &str, repo: &str, amount: usize, output: &dyn Output) -> Result<
         .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
         .with_header("X-GitHub-Api-Version", "2022-11-28");
     let Ok(response) = get.send() else {
-        output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
     };
     let Ok(response_text) = response.as_str() else {

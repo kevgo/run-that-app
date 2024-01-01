@@ -125,7 +125,7 @@ impl UserError {
                 error("multiple commands given");
                 desc("Please provide either --which or --available or nothing to run the app, but not both");
             }
-            UserError::NotOnline => error("you seem to be offline"),
+            UserError::NotOnline => error("not online"),
             UserError::RunRequestMissingVersion => {
                 error("missing application version");
                 desc("Please provide the exact version of the app you want to execute in this format: app@1.2.3");
