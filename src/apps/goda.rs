@@ -29,17 +29,8 @@ impl App for Goda {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        if let Some(executable) = packaged_executable::install(InstallArgs {
-            app_name: self.name(),
-            artifact_url: download_url(version, platform),
-            file_to_extract: self.executable_filename(platform),
-            filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
-            output,
-        })? {
-            return Ok(Some(executable));
-        }
         compile_go(CompileArgs {
-            import_path: format!("github.com/{ORG}/{REPO}/cmd/actionlint@{version}"),
+            import_path: format!("github.com/{ORG}/{REPO}@{version}"),
             target_folder: yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),
             output,
@@ -56,52 +47,5 @@ impl App for Goda {
 
     fn versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
         github_releases::versions(ORG, REPO, amount, output)
-    }
-}
-
-fn download_url(version: &str, platform: Platform) -> String {
-    format!(
-        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}",
-        os = os_text(platform.os),
-        cpu = cpu_text(platform.cpu),
-        ext = ext_text(platform.os)
-    )
-}
-
-fn os_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux => "linux",
-        Os::MacOS => "darwin",
-        Os::Windows => "windows",
-    }
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "arm64",
-        Cpu::Intel64 => "amd64",
-    }
-}
-
-fn ext_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux | Os::MacOS => "tar.gz",
-        Os::Windows => "zip",
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::platform::{Cpu, Os, Platform};
-
-    #[test]
-    fn download_url() {
-        let platform = Platform {
-            os: Os::Linux,
-            cpu: Cpu::Arm64,
-        };
-        let have = super::download_url("1.6.26", platform);
-        let want = "https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_linux_arm64.tar.gz";
-        assert_eq!(have, want);
     }
 }
