@@ -1,13 +1,12 @@
-use super::strip_leading_v;
 use crate::{Output, Result, UserError};
 use big_s::S;
 use colored::Colorize;
 
-/// provides the latest version that the given application is tagged with on GitHub
-pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
+pub fn all(org: &str, repo: &str, output: &dyn Output) -> Result<Vec<String>> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/git/refs/tags");
     output.log("HTTP", &format!("downloading {url}"));
     let get = minreq::get(&url)
+        // .with_param("per_page", amount.to_string())
         .with_header("Accept", "application/vnd.github+json")
         .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
         .with_header("X-GitHub-Api-Version", "2022-11-28");
@@ -15,60 +14,37 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
         output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
     };
-    parse_latest_response(response.as_str().unwrap(), url)
-}
-
-fn parse_latest_response(text: &str, url: String) -> Result<String> {
-    let release: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
-        reason: err.to_string(),
-        text: text.to_string(),
-        url,
-    })?;
-    Ok(strip_leading_v(release["ref"].as_str().unwrap()).to_string())
-}
-
-pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
-    let url = format!("https://api.github.com/repos/{org}/{repo}/git/refs/tags");
-    output.log("HTTP", &format!("downloading {url}"));
-    let get = minreq::get(&url)
-        .with_param("per_page", amount.to_string())
-        .with_header("Accept", "application/vnd.github+json")
-        .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
-        .with_header("X-GitHub-Api-Version", "2022-11-28");
-    let Ok(response) = get.send() else {
-        output.println(&format!("{}", "not online".red()));
-        return Err(UserError::NotOnline);
+    let Ok(response_text) = response.as_str() else {
+        return Err(UserError::GitHubTagsApiProblem {
+            problem: S("Cannot get response payload"),
+            payload: S(""),
+        });
     };
-    parse_versions_response(response.as_str().unwrap(), url)
+    parse_response(response_text)
 }
 
-fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
-    let value: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
-        reason: err.to_string(),
-        text: text.to_string(),
-        url: url.clone(),
+fn parse_response(text: &str) -> Result<Vec<String>> {
+    let value: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::GitHubTagsApiProblem {
+        problem: err.to_string(),
+        payload: text.to_string(),
     })?;
     let serde_json::Value::Array(entries) = value else {
-        return Err(UserError::CannotParseApiResponse {
-            reason: S("response from GitHub API to load tags doesn't contain an Array"),
-            text: text.to_string(),
-            url,
+        return Err(UserError::GitHubTagsApiProblem {
+            problem: S("response doesn't contain an Array"),
+            payload: text.to_string(),
         });
     };
     let mut result: Vec<String> = Vec::with_capacity(entries.len());
     for entry in entries {
         let Some(entry_ref) = entry["ref"].as_str() else {
-            return Err(UserError::CannotParseApiResponse {
-                reason: S("entry does not contain a ref field"),
-                text: entry.to_string(),
-                url,
+            return Err(UserError::GitHubTagsApiProblem {
+                problem: S("entry does not contain a ref field"),
+                payload: entry.to_string(),
             });
         };
-        if !entry_ref.starts_with("refs/tags/") {
-            continue;
+        if let Some(stripped) = entry_ref.strip_prefix("refs/tags/") {
+            result.push(stripped.to_string());
         }
-        let tag = entry_ref[10..].to_string();
-        result.push(tag);
     }
     Ok(result)
 }
@@ -80,7 +56,7 @@ mod tests {
         use big_s::S;
 
         #[test]
-        fn parse_versions_response() {
+        fn simple() {
             let response = r#"
 [
   {
@@ -106,9 +82,9 @@ mod tests {
 ]
 
             "#;
-            let have: Vec<String> = super::super::parse_versions_response(response, S("url")).unwrap();
+            let have: Vec<String> = super::super::parse_response(response).unwrap();
             let want = vec![S("v1.0.1"), S("v1.0.2")];
-            pretty::assert_eq!(have, want)
+            pretty::assert_eq!(have, want);
         }
     }
 }

@@ -37,7 +37,7 @@ impl App for Npm {
         yard.load_app((NodeJS {}).name(), version, self.executable_filename(platform))
     }
 
-    fn versions(&self, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
+    fn versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
         (NodeJS {}).versions(amount, output)
     }
 }

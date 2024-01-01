@@ -18,26 +18,24 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
         return Err(UserError::NotOnline);
     };
     let Ok(response_text) = response.as_str() else {
-        return Err(UserError::CannotParseApiResponse {
-            reason: S("API response contains no body"),
-            text: S(""),
-            url,
+        return Err(UserError::GitHubReleasesApiProblem {
+            problem: S("API response contains no body"),
+            payload: S(""),
         });
     };
-    parse_latest_response(response_text, url)
+    parse_latest_response(response_text)
 }
 
-fn parse_latest_response(text: &str, url: String) -> Result<String> {
-    let release: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
-        reason: err.to_string(),
-        text: text.to_string(),
-        url,
+fn parse_latest_response(text: &str) -> Result<String> {
+    let release: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::GitHubReleasesApiProblem {
+        problem: err.to_string(),
+        payload: text.to_string(),
     })?;
     Ok(strip_leading_v(release["tag_name"].as_str().unwrap()).to_string())
 }
 
 /// provides the given number of latest versions of the given application on GitHub Releases
-pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Result<Vec<String>> {
+pub fn versions(org: &str, repo: &str, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases?per_page={amount}");
     output.log("HTTP", &format!("downloading {url}"));
     let get = minreq::get(&url)
@@ -49,20 +47,18 @@ pub fn versions(org: &str, repo: &str, amount: u8, output: &dyn Output) -> Resul
         output.println(&format!("{}", "not online".red()));
         return Err(UserError::NotOnline);
     };
-    parse_versions_response(response.as_str().unwrap(), url)
+    parse_versions_response(response.as_str().unwrap())
 }
 
-fn parse_versions_response(text: &str, url: String) -> Result<Vec<String>> {
-    let releases: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::CannotParseApiResponse {
-        reason: err.to_string(),
-        text: text.to_string(),
-        url: url.clone(),
+fn parse_versions_response(text: &str) -> Result<Vec<String>> {
+    let releases: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::GitHubReleasesApiProblem {
+        problem: err.to_string(),
+        payload: text.to_string(),
     })?;
     let serde_json::Value::Array(releases) = releases else {
-        return Err(UserError::CannotParseApiResponse {
-            reason: S("unknown API response: does not contain a list of releases"),
-            text: text.to_string(),
-            url,
+        return Err(UserError::GitHubReleasesApiProblem {
+            problem: S("unknown API response: does not contain a list of releases"),
+            payload: text.to_string(),
         });
     };
     let mut result: Vec<String> = Vec::with_capacity(releases.len());
@@ -545,7 +541,7 @@ mod tests {
     "mentions_count": 5
   }
 ]"#;
-        let have: Vec<String> = super::parse_versions_response(response, S("url")).unwrap();
+        let have: Vec<String> = super::parse_versions_response(response).unwrap();
         let want = vec!["1.6.26"];
         assert_eq!(have, want);
     }
@@ -627,7 +623,7 @@ mod tests {
     }
   ]
 }"#;
-        let have: String = super::parse_latest_response(response, S("url")).unwrap();
+        let have: String = super::parse_latest_response(response).unwrap();
         let want = S("1.0.0");
         assert_eq!(have, want);
     }
