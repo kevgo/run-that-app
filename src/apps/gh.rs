@@ -17,8 +17,8 @@ impl App for Gh {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "gh.exe",
             Os::Linux | Os::MacOS => "gh",
+            Os::Windows => "gh.exe",
         }
     }
 

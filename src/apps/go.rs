@@ -18,8 +18,8 @@ impl App for Go {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "go.exe",
             Os::Linux | Os::MacOS => "go",
+            Os::Windows => "go.exe",
         }
     }
 

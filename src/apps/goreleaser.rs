@@ -18,8 +18,8 @@ impl App for Goreleaser {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "goreleaser.exe",
             Os::Linux | Os::MacOS => "goreleaser",
+            Os::Windows => "goreleaser.exe",
         }
     }
 

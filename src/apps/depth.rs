@@ -19,8 +19,8 @@ impl App for Depth {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "depth.exe",
             Os::Linux | Os::MacOS => "depth",
+            Os::Windows => "depth.exe",
         }
     }
 

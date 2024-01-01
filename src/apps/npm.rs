@@ -13,8 +13,8 @@ impl App for Npm {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "bin\\npm.exe",
             Os::Linux | Os::MacOS => "bin/npm",
+            Os::Windows => "bin\\npm.exe",
         }
     }
 
