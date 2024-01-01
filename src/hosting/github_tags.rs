@@ -2,11 +2,11 @@ use crate::{Output, Result, UserError};
 use big_s::S;
 use colored::Colorize;
 
-pub fn all(org: &str, repo: &str, output: &dyn Output) -> Result<Vec<String>> {
+pub fn all(org: &str, repo: &str, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/git/refs/tags");
     output.log("HTTP", &format!("downloading {url}"));
     let get = minreq::get(&url)
-        // .with_param("per_page", amount.to_string())
+        .with_param("per_page", amount.to_string())
         .with_header("Accept", "application/vnd.github+json")
         .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
         .with_header("X-GitHub-Api-Version", "2022-11-28");
