@@ -8,6 +8,7 @@ mod dprint;
 mod gh;
 mod ghokin;
 mod go;
+mod goda;
 mod gofmt;
 mod gofumpt;
 mod golangci_lint;
@@ -58,6 +59,7 @@ pub fn all() -> Apps {
             Box::new(gh::Gh {}),
             Box::new(ghokin::Ghokin {}),
             Box::new(go::Go {}),
+            Box::new(goda::Goda {}),
             Box::new(gofmt::Gofmt {}),
             Box::new(gofumpt::Gofumpt {}),
             Box::new(golangci_lint::GolangCiLint {}),
