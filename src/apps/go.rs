@@ -28,14 +28,6 @@ impl App for Go {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        // God object anti-pattern.
-        // I call a complex subsystem with too many configuration parameters
-        // and the subsystem does too many things including pulling in data it needs on its own.
-        // This is hard to test.
-        // Better approach is functional architecture:
-        // step 1: download the artifact from the URL
-        // step 2: extract the artifact while stripping paths
-        // step 3: determine the executable
         archive::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
