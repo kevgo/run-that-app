@@ -20,7 +20,14 @@ pub fn all(org: &str, repo: &str, output: &dyn Output) -> Result<Vec<String>> {
             payload: S(""),
         });
     };
-    parse_response(response_text)
+    let tags = parse_response(response_text)?;
+    if tags.is_empty() {
+        return Err(UserError::GitHubTagsApiProblem {
+            problem: S("no tags found"),
+            payload: S(""),
+        });
+    }
+    Ok(tags)
 }
 
 fn parse_response(text: &str) -> Result<Vec<String>> {
