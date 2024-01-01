@@ -6,17 +6,16 @@
 > You don't want to install apps, you want to run them!
 
 _Run-that-app_ executes CLI applications on Linux, Windows, macOS, and BSD
-without the need to install them first in platform-specfic ways. 
+without the need to install them first. Installation across different operating systems is complex. Run-that-app removes this problem.
 
-Run-that-app is standalone, minimalistic, and completely non-invasive. No magic,
+Run-that-app is the missing step before Docker. It is standalone, minimalistic, and completely non-invasive. No magic,
 no environment or configuration changes, no environment variables to set, no
 application shims or stubs, no shell integrations or other trickery, no
 dependencies, no plugins, no application repository, no Docker, no emulation, no
 WASM. All you do is call a single stand-alone binary. Applications download in
-1-2 seconds, and store very little (just the executables) on
-your hard drive. The installation doesn't require _sudo_. Applications execute at 100% native speed.
-
-Run-that-app makes Docker unnecessary in 99% of use cases.
+1-2 seconds, and store very little (just the executables) on your hard drive.
+The installation doesn't require _sudo_. Applications execute at 100% native
+speed.
 
 
 ### quickstart
