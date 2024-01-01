@@ -2,11 +2,11 @@ build:  # compiles this app in debug mode
 	cargo build
 
 fix: build  # auto-corrects issues
-	cargo fix
-	cargo clippy --fix
-	cargo fmt
 	target/debug/rta dprint fmt
 	target/debug/rta shfmt -f . | xargs target/debug/rta shfmt -w
+	cargo fmt
+	cargo fix
+	cargo clippy --fix
 
 install:  # installs this tool locally for testing
 	cargo install --path .
