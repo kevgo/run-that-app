@@ -19,8 +19,8 @@ impl App for Scc {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "scc.exe",
             Os::Linux | Os::MacOS => "scc",
+            Os::Windows => "scc.exe",
         }
     }
 

@@ -18,8 +18,8 @@ impl App for Alphavet {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "alphavet.exe",
             Os::Linux | Os::MacOS => "alphavet",
+            Os::Windows => "alphavet.exe",
         }
     }
 

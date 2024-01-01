@@ -13,8 +13,8 @@ impl App for Npx {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "bin\\npx.exe",
             Os::Linux | Os::MacOS => "bin/npx",
+            Os::Windows => "bin\\npx.exe",
         }
     }
 

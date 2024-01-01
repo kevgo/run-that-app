@@ -19,8 +19,8 @@ impl App for Ghokin {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "ghokin.exe",
             Os::Linux | Os::MacOS => "ghokin",
+            Os::Windows => "ghokin.exe",
         }
     }
 
