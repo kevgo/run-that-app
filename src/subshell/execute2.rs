@@ -1,5 +1,5 @@
 use crate::subshell;
-use std::io::{BufRead, BufReader, Read};
+use std::io::{self, BufRead, BufReader, Read, Write};
 use std::process::{self, Child, Command, Stdio};
 use std::sync::mpsc;
 use std::thread;
@@ -19,12 +19,30 @@ pub enum Event {
 /// Starts the given Command instance in a separate thread.
 /// Signals activity (output, finished) using the given MPSC sender.
 pub fn start_cmd(mut command: Command, sender: mpsc::Sender<Event>) -> Result<(), std::io::Error> {
+    let (sender, receiver) = mpsc::channel();
     command.stdout(Stdio::piped());
     command.stderr(Stdio::piped());
     let mut process = command.spawn()?;
     monitor_output(process.stdout.take().unwrap(), sender.clone());
     monitor_output(process.stderr.take().unwrap(), sender.clone());
     monitor_exit(process, sender);
+
+    for event in receiver {
+        match event {
+            Event::PermanentLine(line) | Event::TempLine(line) => {
+                // register the output
+                io::stdout().write_all(&line).unwrap();
+            }
+            Event::UnterminatedLine(line) => {
+                io::stdout().write_all(&line).unwrap();
+                println!();
+            }
+            Event::Ended { exit_status } => {
+                //
+            }
+        }
+    }
+
     Ok(())
 }
 
