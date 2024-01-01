@@ -17,8 +17,8 @@ impl App for ShellCheck {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "shellcheck.exe",
             Os::Linux | Os::MacOS => "shellcheck",
+            Os::Windows => "shellcheck.exe",
         }
     }
 

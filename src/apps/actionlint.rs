@@ -19,8 +19,8 @@ impl App for ActionLint {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "actionlint.exe",
             Os::Linux | Os::MacOS => "actionlint",
+            Os::Windows => "actionlint.exe",
         }
     }
 

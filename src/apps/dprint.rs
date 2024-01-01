@@ -18,8 +18,8 @@ impl App for Dprint {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "dprint.exe",
             Os::Linux | Os::MacOS => "dprint",
+            Os::Windows => "dprint.exe",
         }
     }
 

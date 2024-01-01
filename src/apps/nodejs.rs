@@ -17,8 +17,8 @@ impl App for NodeJS {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "node.exe",
             Os::Linux | Os::MacOS => "node",
+            Os::Windows => "node.exe",
         }
     }
 
