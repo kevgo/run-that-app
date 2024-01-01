@@ -25,10 +25,13 @@ pub enum UserError {
         file: String,
         reason: String,
     },
-    CannotParseApiResponse {
-        reason: String,
-        text: String,
-        url: String,
+    GitHubReleasesApiProblem {
+        problem: String,
+        payload: String,
+    },
+    GitHubTagsApiProblem {
+        problem: String,
+        payload: String,
     },
     ConfigFileAlreadyExists,
     InvalidConfigFileFormat {
@@ -86,9 +89,13 @@ impl UserError {
                 error(&format!("Cannot make file {file} executable: {reason}"));
                 desc("Please check access permissions and try again.");
             }
-            UserError::CannotParseApiResponse { url, text: _, reason } => {
-                error(&format!("Cannot parse API response for {url}: {reason}"));
-                // desc(&text);
+            UserError::GitHubReleasesApiProblem { problem, payload } => {
+                error(&format!("Problem with the GitHub Releases API: {problem}"));
+                desc(&payload);
+            }
+            UserError::GitHubTagsApiProblem { problem, payload } => {
+                error(&format!("Problem with the GitHub Tags API: {problem}"));
+                desc(&payload);
             }
             UserError::ConfigFileAlreadyExists => {
                 error("config file already exists");
@@ -118,7 +125,7 @@ impl UserError {
                 error("multiple commands given");
                 desc("Please provide either --which or --available or nothing to run the app, but not both");
             }
-            UserError::NotOnline => error("you seem to be offline"),
+            UserError::NotOnline => error("not online"),
             UserError::RunRequestMissingVersion => {
                 error("missing application version");
                 desc("Please provide the exact version of the app you want to execute in this format: app@1.2.3");
