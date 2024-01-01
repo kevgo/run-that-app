@@ -1,8 +1,7 @@
 use super::App;
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
-use crate::install::packaged_executable::{self, InstallArgs};
-use crate::platform::{Cpu, Os, Platform};
+use crate::platform::{Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
 use const_format::formatcp;
@@ -30,7 +29,7 @@ impl App for Goda {
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         compile_go(CompileArgs {
-            import_path: format!("github.com/{ORG}/{REPO}@{version}"),
+            import_path: format!("github.com/{ORG}/{REPO}@v{version}"),
             target_folder: yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),
             output,
