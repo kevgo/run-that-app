@@ -35,7 +35,7 @@ fn parse_response(text: &str) -> Result<Vec<String>> {
     })?;
     let serde_json::Value::Array(entries) = value else {
         return Err(UserError::GitHubTagsApiProblem {
-            problem: S("response doesn't contain an Array"),
+            problem: S("response does not contain an Array"),
             payload: text.to_string(),
         });
     };
