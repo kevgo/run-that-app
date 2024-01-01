@@ -5,13 +5,13 @@
 
 > You don't want to install apps, you want to run them!
 
-_Run-that-app_ executes CLI applications at 100% native speed on Linux, Windows, macOS, and BSD
-without the need to install them first, without any dependencies like Docker, and on many CPU architectures.
+_Run-that-app_ executes CLI applications on Linux, Windows,
+macOS, and BSD without the need to install them first.
 
-Run-that-app does this in the most minimalistic, non-invasive way possible. No
+Run-that-app is standalone, minimalistic, and completely non-invasive. No
 magic, no environment or configuration changes, no environment variables to set,
-no application shims or stubs, no shell integrations or other shell trickery, no
-dependencies, no plugins, no application repository. All you do is call a single
+no application shims or stubs, no shell integrations or other trickery, no
+dependencies, no plugins, no application repository, no Docker, no emulation, no WASM. All you do is call a single
 stand-alone binary. Applications download in 1-2 seconds, without _sudo_, and
 store very little (just the executables) on your hard drive.
 
