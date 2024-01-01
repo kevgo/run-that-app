@@ -15,8 +15,8 @@ impl App for Deadcode {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "deadcode.exe",
             Os::Linux | Os::MacOS => "deadcode",
+            Os::Windows => "deadcode.exe",
         }
     }
 

@@ -18,8 +18,8 @@ impl App for GolangCiLint {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "golangci-lint.exe",
             Os::Linux | Os::MacOS => "golangci-lint",
+            Os::Windows => "golangci-lint.exe",
         }
     }
 

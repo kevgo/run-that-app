@@ -19,8 +19,8 @@ impl App for Shfmt {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "shfmt.exe",
             Os::Linux | Os::MacOS => "shfmt",
+            Os::Windows => "shfmt.exe",
         }
     }
 

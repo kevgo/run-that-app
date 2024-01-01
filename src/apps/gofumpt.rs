@@ -19,8 +19,8 @@ impl App for Gofumpt {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Windows => "gofumpt.exe",
             Os::Linux | Os::MacOS => "gofumpt",
+            Os::Windows => "gofumpt.exe",
         }
     }
 
