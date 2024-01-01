@@ -8,12 +8,13 @@
 _Run-that-app_ executes CLI applications on Linux, Windows, macOS, and BSD
 without the need to install them first.
 
-Run-that-app does this in the most minimalistic, non-invasive way possible. No
-magic, no environment or configuration changes, no environment variables to set,
-no application shims or stubs, no shell integrations or other shell trickery, no
-dependencies, no plugins, no application repository. All you do is call a single
-stand-alone binary. Applications download in 1-2 seconds, without _sudo_, and
-store very little (just the executables) on your hard drive.
+Run-that-app is standalone, minimalistic, and completely non-invasive. No magic,
+no environment or configuration changes, no environment variables to set, no
+application shims or stubs, no shell integrations or other trickery, no
+dependencies, no plugins, no application repository, no Docker, no emulation, no
+WASM. All you do is call a single stand-alone binary. Applications download in
+1-2 seconds, without _sudo_, and store very little (just the executables) on
+your hard drive. Applications execute at 100% native speed.
 
 ### quickstart
 
@@ -25,7 +26,8 @@ store very little (just the executables) on your hard drive.
    curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh
    ```
 
-2. Run an app (in this case the GitHub CLI at version 2.39.1)
+2. Run an app (in this case [actionlint](https://github.com/rhysd/actionlint) at
+   version 1.6.26)
 
    ```bash
    ./rta actionlint@1.6.26
@@ -39,7 +41,8 @@ store very little (just the executables) on your hard drive.
    Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kevgo/run-that-app/main/download.ps1" -UseBasicParsing).Content
    ```
 
-2. Run an app (in this case actionlint at version 1.6.26)
+2. Run an app (in this case [actionlint](https://github.com/rhysd/actionlint) at
+   version 1.6.26)
 
    ```batchfile
    .\rta actionlint@1.6.26
@@ -48,8 +51,8 @@ store very little (just the executables) on your hard drive.
 #### installing the run-that-app executable into a specific directory
 
 The installer script places the run-that-app executable into the current
-directory. To install into a specific directory, change into that directory and
-then execute the installer from there.
+directory. To install in another directory, change into that directory and then
+execute the installer from there.
 
 ### configuration
 
@@ -69,7 +72,7 @@ numbers:
 ./rta actionlint
 ```
 
-Executing `rta --setup` creates this file.
+Executing `rta --setup` creates a template of this file for you.
 
 ### usage
 
@@ -81,10 +84,11 @@ Arguments for run-that-app come before the name of the application to run. The
 application name is the first CLI argument that doesn't start with a dash. All
 CLI arguments after the application name are passed to the application.
 
-Arguments:
+Run-that-app Arguments:
 
 - `--available`: signal via exit code whether an app is available on the local
   platform
+- `--help` or `-h`: show help screen
 - `--include-path`: if there is no pre-compiled binary for your platform, but a
   similarly named binary in your PATH, run the latter.
 - `--log`: enable all logging
@@ -92,8 +96,13 @@ Arguments:
   - see the available domains by running with all logging enabled
 - `--optional`: if there is no pre-compiled binary for your platform, do
   nothing. This is useful for non-essential applications that shouldn't break
-  automation if they are not available.
-- `--which`: don't run the app but display the path to its executable
+- `--update`: updates the versions in `.tool-versions` automation if they are
+  not available.
+- `--which`: displays the path to the installed executable of the given
+  application
+- `--version` or `-V`: displays the version of run-that-app
+- `--versions=<number>`: displays the given amount of most recent versions of
+  the given app
 
 The app version override should consist of just the version number, i.e.
 `1.6.26` and not `v1.6.26`.

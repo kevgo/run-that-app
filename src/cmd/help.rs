@@ -34,7 +34,7 @@ Options:
 
 fn print_examples() {
     println!("Examples:");
-    println!("\"rta gh@2.34.0\" installs https://github.com/cli/cli at version 2.34.0\n");
+    println!("\"rta gh@2.34.0\" runs https://github.com/cli/cli at version 2.34.0\n");
 }
 
 pub fn print_installable_apps() {
