@@ -1,8 +1,9 @@
-use crate::subshell;
 use std::io::{self, BufRead, BufReader, Read, Write};
-use std::process::{self, Child, Command, Stdio};
+use std::process::{self, Child, Command, ExitCode, ExitStatus, Stdio};
 use std::sync::mpsc;
 use std::thread;
+
+use super::reduce_exit_status_to_code;
 
 /// events that can happen with subshells
 pub enum Event {
@@ -16,9 +17,12 @@ pub enum Event {
     Ended { exit_status: process::ExitStatus },
 }
 
+const BASH_RED: &[u8] = "\x1B[2m".as_bytes();
+const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
+
 /// Starts the given Command instance in a separate thread.
 /// Signals activity (output, finished) using the given MPSC sender.
-pub fn start_cmd(mut command: Command, sender: mpsc::Sender<Event>) -> Result<(), std::io::Error> {
+pub fn start_cmd(mut command: Command, sender: mpsc::Sender<Event>) -> Result<ExitCode, std::io::Error> {
     let (sender, receiver) = mpsc::channel();
     command.stdout(Stdio::piped());
     command.stderr(Stdio::piped());
@@ -26,24 +30,38 @@ pub fn start_cmd(mut command: Command, sender: mpsc::Sender<Event>) -> Result<()
     monitor_output(process.stdout.take().unwrap(), sender.clone());
     monitor_output(process.stderr.take().unwrap(), sender.clone());
     monitor_exit(process, sender);
-
+    let mut exit_code = ExitCode::SUCCESS;
     for event in receiver {
         match event {
             Event::PermanentLine(line) | Event::TempLine(line) => {
-                // register the output
+                exit_code = ExitCode::FAILURE;
+                let _ = io::stdout().write_all(BASH_RED);
                 io::stdout().write_all(&line).unwrap();
+                let _ = io::stdout().write_all(BASH_CLEAR);
             }
             Event::UnterminatedLine(line) => {
+                exit_code = ExitCode::FAILURE;
                 io::stdout().write_all(&line).unwrap();
                 println!();
             }
             Event::Ended { exit_status } => {
-                //
+                exit_code = exit_status_to_code(exit_status);
+                break;
             }
         }
     }
+    Ok(exit_code)
+}
 
-    Ok(())
+fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
+    let Some(exit_status) = exit_status.code() else {
+        return ExitCode::SUCCESS;
+    };
+    if exit_status == 0 {
+        ExitCode::SUCCESS
+    } else {
+        ExitCode::FAILURE
+    }
 }
 
 /// starts a thread that monitors the given STDOUT or STDERR stream
