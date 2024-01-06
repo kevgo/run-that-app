@@ -1,7 +1,7 @@
 //! Runs applications.
 
 mod execute;
-mod execute2;
+mod stream;
 
 pub use execute::execute;
-pub use execute2::execute2;
+pub use stream::stream;

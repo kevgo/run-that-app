@@ -23,7 +23,7 @@ const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
 
 /// Starts the given Command instance in a separate thread.
 /// Signals activity (output, finished) using the given MPSC sender.
-pub fn execute2(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode> {
+pub fn stream(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode> {
     let (sender, receiver) = mpsc::channel();
     let mut cmd = Command::new(&app);
     cmd.args(args);
