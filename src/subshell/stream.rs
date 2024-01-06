@@ -44,16 +44,20 @@ pub fn stream(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode
         match event {
             Event::PermanentLine(line) | Event::TempLine(line) => {
                 exit_code = ExitCode::FAILURE;
-                let _ = io::stdout().write_all(BASH_RED);
-                stdout.write_all(&line).unwrap();
-                let _ = io::stdout().write_all(BASH_CLEAR);
+                let mut colored_line: Vec<u8> = Vec::with_capacity(line.len() + BASH_RED.len() + BASH_CLEAR.len());
+                colored_line.extend(BASH_RED);
+                colored_line.extend(&line);
+                colored_line.extend(BASH_CLEAR);
+                stdout.write_all(&colored_line).unwrap();
             }
-            Event::UnterminatedLine(mut line) => {
+            Event::UnterminatedLine(line) => {
                 exit_code = ExitCode::FAILURE;
-                line.push(b'\n');
-                let _ = io::stdout().write_all(BASH_RED);
-                stdout.write_all(&line).unwrap();
-                let _ = io::stdout().write_all(BASH_CLEAR);
+                let mut colored_line: Vec<u8> = Vec::with_capacity(line.len() + BASH_RED.len() + BASH_CLEAR.len() + 1);
+                colored_line.extend(BASH_RED);
+                colored_line.extend(&line);
+                colored_line.extend(BASH_CLEAR);
+                colored_line.push(b'\n');
+                stdout.write_all(&colored_line).unwrap();
             }
             Event::Ended { exit_status } => {
                 exit_code = exit_status_to_code(exit_status);
