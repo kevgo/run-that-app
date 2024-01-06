@@ -1,8 +1,9 @@
+use super::exit_status_to_code;
 use crate::error::UserError;
 use crate::yard::Executable;
 use crate::Result;
 use std::io::{self, BufRead, BufReader, Read, Write};
-use std::process::{self, Child, Command, ExitCode, ExitStatus, Stdio};
+use std::process::{self, Child, Command, ExitCode, Stdio};
 use std::sync::mpsc;
 use std::thread;
 
@@ -61,11 +62,7 @@ pub fn stream(Executable(app): Executable, args: &[String]) -> Result<ExitCode> 
                 stdout.write_all(&colored_line).unwrap();
             }
             Event::Ended { exit_status } => {
-                if exit_status.success() {
-                    exit_code = ExitCode::SUCCESS;
-                } else {
-                    exit_code = exit_status_to_code(exit_status);
-                }
+                exit_code = exit_status_to_code(exit_status);
                 break;
             }
         }
@@ -80,17 +77,6 @@ pub fn stream(Executable(app): Executable, args: &[String]) -> Result<ExitCode> 
         })
     } else {
         Ok(exit_code)
-    }
-}
-
-fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
-    let Some(exit_status) = exit_status.code() else {
-        return ExitCode::SUCCESS;
-    };
-    if exit_status == 0 {
-        ExitCode::SUCCESS
-    } else {
-        ExitCode::FAILURE
     }
 }
 

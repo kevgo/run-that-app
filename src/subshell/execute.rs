@@ -1,3 +1,4 @@
+use super::exit_status_to_code;
 use crate::error::UserError;
 use crate::yard::Executable;
 use crate::Result;
@@ -11,20 +12,7 @@ pub fn execute(Executable(app): Executable, args: Vec<String>) -> Result<ExitCod
         executable: app,
         reason: err.to_string(),
     })?;
-    let Some(exit_code) = exit_status.code() else {
-        panic!("cannot determine exit code for {exit_status}");
-    };
-    Ok(ExitCode::from(reduce_exit_status_to_code(exit_code)))
-}
-
-fn reduce_exit_status_to_code(code: i32) -> u8 {
-    if code < 0 {
-        return 255;
-    }
-    if code > 255 {
-        return 255;
-    }
-    u8::try_from(code).unwrap()
+    Ok(exit_status_to_code(exit_status))
 }
 
 #[cfg(test)]
@@ -101,15 +89,6 @@ mod tests {
             let have = execute(executable, vec![]).unwrap();
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(3))"));
-        }
-    }
-
-    #[test]
-    fn reduce_exit_status_to_code() {
-        let tests: Vec<(i32, u8)> = vec![(i32::MIN, 255), (-1, 255), (0, 0), (1, 1), (254, 254), (255, 255), (256, 255), (i32::MAX, 255)];
-        for (give, want) in tests {
-            let have = super::reduce_exit_status_to_code(give);
-            assert_eq!(have, want);
         }
     }
 }
