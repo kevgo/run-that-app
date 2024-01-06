@@ -3,8 +3,6 @@ use std::process::{self, Child, Command, ExitCode, ExitStatus, Stdio};
 use std::sync::mpsc;
 use std::thread;
 
-use super::reduce_exit_status_to_code;
-
 /// events that can happen with subshells
 pub enum Event {
     /// a line of output to STDOUT or STDERR terminated by LF
