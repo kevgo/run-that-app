@@ -3,6 +3,7 @@ use crate::yard::Executable;
 use crate::Result;
 use std::process::{Command, ExitCode};
 
+/// Executes the given executable with the given arguments.
 pub fn execute(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode> {
     let mut cmd = Command::new(&app);
     cmd.args(args);

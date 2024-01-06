@@ -23,8 +23,8 @@ const BASH_RED: &[u8] = "\x1B[0;31m".as_bytes();
 /// escape sequence to reset the output color on the shell
 const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
 
-/// Starts the given Command instance in a separate thread.
-/// Signals activity (output, finished) using the given MPSC sender.
+/// Executes the given executable with the given arguments.
+/// The returned `ExitCode` also indicates failure if there has been any output.
 pub fn stream(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode> {
     let (sender, receiver) = mpsc::channel();
     let mut cmd = Command::new(&app);
