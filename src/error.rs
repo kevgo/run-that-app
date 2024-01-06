@@ -45,6 +45,9 @@ pub enum UserError {
     MissingApplication,
     MultipleCommandsGiven,
     NotOnline,
+    ProcessEmittedOutput {
+        cmd: String,
+    },
     RunRequestMissingVersion,
     RustCompilationFailed,
     RustNotInstalled,
@@ -126,6 +129,9 @@ impl UserError {
                 desc("Please provide either --which or --available or nothing to run the app, but not both");
             }
             UserError::NotOnline => error("not online"),
+            UserError::ProcessEmittedOutput { cmd } => {
+                error(&format!("process {cmd} emitted output"));
+            }
             UserError::RunRequestMissingVersion => {
                 error("missing application version");
                 desc("Please provide the exact version of the app you want to execute in this format: app@1.2.3");
