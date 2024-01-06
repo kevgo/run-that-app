@@ -3,20 +3,20 @@
 [![linux](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml)
 [![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
 
-> You don't want to install apps, you want to run them!
+> Minimalistic cross-platform application runner
 
 _Run-that-app_ executes CLI applications on Linux, Windows, macOS, and BSD
 without the need to install them first. Installation across different operating
-systems is complex. Run-that-app removes this problem.
+systems is a complex and nuanced problem. Run-that-app removes this problem.
 
-Run-that-app is the missing step before Docker. It is standalone, minimalistic,
-and completely non-invasive. No magic, no environment or configuration changes,
-no environment variables to set, no application shims or stubs, no shell
-integrations or other trickery, no dependencies, no plugins, no application
-repository, no Docker, no emulation, no WASM. All you do is call a single
-stand-alone binary. Applications download in 1-2 seconds, and store very little
-(just the executables) on your hard drive. The installation doesn't require
-_sudo_. Applications execute at 100% native speed.
+Run-that-app is standalone, minimalistic, and completely non-invasive. No magic,
+no environment or configuration changes, no environment variables to set, no
+application shims or stubs, no shell integrations or other trickery, no
+dependencies, no plugins, no application repository, no Docker, no emulation, no
+WASM. All you do is call a single stand-alone binary. Applications download in
+1-2 seconds, and store very little (just the executables) on your hard drive.
+The installation doesn't require _sudo_. Applications execute at 100% native
+speed.
 
 ### quickstart
 
