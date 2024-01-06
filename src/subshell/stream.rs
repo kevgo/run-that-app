@@ -49,7 +49,9 @@ pub fn stream(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode
             }
             Event::UnterminatedLine(line) => {
                 exit_code = ExitCode::FAILURE;
+                let _ = io::stdout().write_all(BASH_RED);
                 io::stdout().write_all(&line).unwrap();
+                let _ = io::stdout().write_all(BASH_CLEAR);
                 println!();
             }
             Event::Ended { exit_status } => {
