@@ -11,9 +11,13 @@ use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
 
-pub fn run(requested_app: RequestedApp, args: Vec<String>, include_path: bool, optional: bool, output: &dyn Output) -> Result<ExitCode> {
+pub fn run(requested_app: RequestedApp, args: Vec<String>, error_on_output: bool, include_path: bool, optional: bool, output: &dyn Output) -> Result<ExitCode> {
     if let Some(executable) = load_or_install(requested_app, include_path, output)? {
-        Ok(subshell::execute(executable, args)?)
+        if error_on_output {
+            Ok(subshell::stream(executable, &args)?)
+        } else {
+            Ok(subshell::execute(executable, args)?)
+        }
     } else if optional {
         Ok(ExitCode::SUCCESS)
     } else {

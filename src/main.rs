@@ -38,12 +38,13 @@ fn inner() -> Result<ExitCode> {
         Command::RunApp {
             app,
             args,
+            error_on_output,
             include_path,
             optional,
             log,
         } => {
             let output = output::StdErr { category: log };
-            cmd::run(app, args, include_path, optional, &output)
+            cmd::run(app, args, error_on_output, include_path, optional, &output)
         }
         Command::DisplayHelp => Ok(cmd::help()),
         Command::Setup => cmd::setup(),

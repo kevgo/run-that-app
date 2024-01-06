@@ -14,6 +14,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut requested_app: Option<RequestedApp> = None;
     let mut log: Option<String> = None;
     let mut app_args: Vec<String> = vec![];
+    let mut error_on_output = false;
     let mut include_path = false;
     let mut which = false;
     let mut setup = false;
@@ -29,6 +30,10 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             }
             if &arg == "--help" || &arg == "-h" {
                 return Ok(Args { command: Command::DisplayHelp });
+            }
+            if &arg == "--error-on-output" {
+                error_on_output = true;
+                continue;
             }
             if &arg == "--include-path" {
                 include_path = true;
@@ -103,13 +108,14 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 command: Command::RunApp {
                     app,
                     args: app_args,
+                    error_on_output,
                     include_path,
                     optional,
                     log,
                 },
             })
         }
-    } else if include_path || optional || log.is_some() || which || indicate_available {
+    } else if error_on_output || include_path || optional || log.is_some() || which || indicate_available {
         Err(UserError::MissingApplication)
     } else {
         Ok(Args { command: Command::DisplayHelp })
@@ -195,10 +201,42 @@ mod tests {
                 }
             }
 
+            mod error_on_output {
+                use super::super::parse_args;
+                use crate::cli::{Args, Command, RequestedApp};
+                use crate::error::UserError;
+                use big_s::S;
+
+                #[test]
+                fn normal() {
+                    let have = parse_args(vec!["rta", "--error-on-output", "app"]);
+                    let want = Ok(Args {
+                        command: Command::RunApp {
+                            app: RequestedApp {
+                                name: S("app"),
+                                version: S(""),
+                            },
+                            args: vec![],
+                            error_on_output: true,
+                            include_path: false,
+                            optional: false,
+                            log: None,
+                        },
+                    });
+                    pretty::assert_eq!(have, want);
+                }
+
+                #[test]
+                fn missing_app() {
+                    let have = parse_args(vec!["rta", "--error-on-output"]);
+                    let want = Err(UserError::MissingApplication);
+                    pretty::assert_eq!(have, want);
+                }
+            }
+
             mod help_parameter {
                 use super::super::parse_args;
-                use crate::cli::{args, Command};
-                use args::Args;
+                use crate::cli::{Args, Command};
 
                 #[test]
                 fn short() {
@@ -231,6 +269,7 @@ mod tests {
                                 version: S("2"),
                             },
                             args: vec![S("arg1")],
+                            error_on_output: false,
                             include_path: true,
                             optional: false,
                             log: None,
@@ -263,6 +302,7 @@ mod tests {
                                 version: S("2"),
                             },
                             args: vec![],
+                            error_on_output: false,
                             include_path: false,
                             optional: false,
                             log: Some(S("")),
@@ -281,6 +321,7 @@ mod tests {
                                 version: S("2"),
                             },
                             args: vec![],
+                            error_on_output: false,
                             include_path: false,
                             optional: false,
                             log: Some(S("scope")),
@@ -314,6 +355,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![S("arg1")],
+                        error_on_output: false,
                         include_path: false,
                         optional: true,
                         log: None,
@@ -445,6 +487,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![],
+                        error_on_output: false,
                         include_path: false,
                         optional: false,
                         log: None,
@@ -463,6 +506,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![S("--arg1"), S("arg2")],
+                        error_on_output: false,
                         include_path: false,
                         optional: false,
                         log: None,
@@ -488,6 +532,7 @@ mod tests {
                     command: Command::RunApp {
                         app,
                         args: vec![S("--arg1"), S("arg2")],
+                        error_on_output: false,
                         include_path: false,
                         optional: false,
                         log: Some(S("l1")),
@@ -506,6 +551,7 @@ mod tests {
                             version: S("2"),
                         },
                         args: vec![S("--log=app"), S("--version")],
+                        error_on_output: false,
                         include_path: false,
                         optional: false,
                         log: None,
