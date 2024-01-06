@@ -68,13 +68,9 @@ pub fn stream(Executable(app): Executable, args: &[String]) -> Result<ExitCode> 
         }
     }
     if encountered_output {
-        return Err(UserError::ProcessEmittedOutput {
-            cmd: format!(
-                "{cmd} {args}",
-                cmd = app.file_name().unwrap_or_default().to_string_lossy(),
-                args = args.join(" ")
-            ),
-        });
+        let mut call = vec![app.file_name().unwrap_or_default().to_string_lossy().to_string()];
+        call.extend(args.to_owned());
+        return Err(UserError::ProcessEmittedOutput { cmd: call.join(" ") });
     }
     Ok(exit_code)
 }
