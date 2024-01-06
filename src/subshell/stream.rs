@@ -68,16 +68,15 @@ pub fn stream(Executable(app): Executable, args: &[String]) -> Result<ExitCode> 
         }
     }
     if encountered_output {
-        Err(UserError::ProcessEmittedOutput {
+        return Err(UserError::ProcessEmittedOutput {
             cmd: format!(
                 "{cmd} {args}",
                 cmd = app.file_name().unwrap_or_default().to_string_lossy(),
                 args = args.join(" ")
             ),
-        })
-    } else {
-        Ok(exit_code)
+        });
     }
+    Ok(exit_code)
 }
 
 /// starts a thread that monitors the given STDOUT or STDERR stream
