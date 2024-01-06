@@ -38,13 +38,13 @@ pub fn stream(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode
     monitor_output(process.stdout.take().unwrap(), sender.clone());
     monitor_output(process.stderr.take().unwrap(), sender.clone());
     monitor_exit(process, sender);
-    let mut encountered_output = false;
+    let mut output = String::new();
     let mut exit_code = ExitCode::SUCCESS;
     let mut stdout = io::stdout();
     for event in receiver {
         match event {
             Event::PermanentLine(line) | Event::TempLine(line) => {
-                encountered_output = true;
+                output.push_str(&String::from_utf8_lossy(&line));
                 let mut colored_line: Vec<u8> = Vec::with_capacity(line.len() + BASH_RED.len() + BASH_CLEAR.len());
                 colored_line.extend(BASH_RED);
                 colored_line.extend(&line);
@@ -52,7 +52,7 @@ pub fn stream(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode
                 stdout.write_all(&colored_line).unwrap();
             }
             Event::UnterminatedLine(line) => {
-                encountered_output = true;
+                output.push_str(&String::from_utf8_lossy(&line));
                 let mut colored_line: Vec<u8> = Vec::with_capacity(line.len() + BASH_RED.len() + BASH_CLEAR.len() + 1);
                 colored_line.extend(BASH_RED);
                 colored_line.extend(&line);
@@ -70,12 +70,13 @@ pub fn stream(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode
             }
         }
     }
-    if encountered_output {
+    if output.is_empty() {
+        Ok(exit_code)
+    } else {
         Err(UserError::ProcessEmittedOutput {
             cmd: app.to_string_lossy().to_string(),
+            output,
         })
-    } else {
-        Ok(exit_code)
     }
 }
 
