@@ -32,18 +32,19 @@ pub fn stream(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode
     cmd.stdout(Stdio::piped());
     cmd.stderr(Stdio::piped());
     let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
-        executable: app,
+        executable: app.clone(),
         reason: err.to_string(),
     })?;
     monitor_output(process.stdout.take().unwrap(), sender.clone());
     monitor_output(process.stderr.take().unwrap(), sender.clone());
     monitor_exit(process, sender);
+    let mut encountered_output = false;
     let mut exit_code = ExitCode::SUCCESS;
     let mut stdout = io::stdout();
     for event in receiver {
         match event {
             Event::PermanentLine(line) | Event::TempLine(line) => {
-                exit_code = ExitCode::FAILURE;
+                encountered_output = true;
                 let mut colored_line: Vec<u8> = Vec::with_capacity(line.len() + BASH_RED.len() + BASH_CLEAR.len());
                 colored_line.extend(BASH_RED);
                 colored_line.extend(&line);
@@ -51,7 +52,7 @@ pub fn stream(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode
                 stdout.write_all(&colored_line).unwrap();
             }
             Event::UnterminatedLine(line) => {
-                exit_code = ExitCode::FAILURE;
+                encountered_output = true;
                 let mut colored_line: Vec<u8> = Vec::with_capacity(line.len() + BASH_RED.len() + BASH_CLEAR.len() + 1);
                 colored_line.extend(BASH_RED);
                 colored_line.extend(&line);
@@ -60,12 +61,22 @@ pub fn stream(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode
                 stdout.write_all(&colored_line).unwrap();
             }
             Event::Ended { exit_status } => {
-                exit_code = exit_status_to_code(exit_status);
+                if exit_status.success() {
+                    exit_code = ExitCode::SUCCESS;
+                } else {
+                    exit_code = exit_status_to_code(exit_status);
+                }
                 break;
             }
         }
     }
-    Ok(exit_code)
+    if encountered_output {
+        Err(UserError::ProcessEmittedOutput {
+            cmd: app.to_string_lossy().to_string(),
+        })
+    } else {
+        Ok(exit_code)
+    }
 }
 
 fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
