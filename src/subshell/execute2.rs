@@ -1,3 +1,6 @@
+use crate::error::UserError;
+use crate::yard::Executable;
+use crate::Result;
 use std::io::{self, BufRead, BufReader, Read, Write};
 use std::process::{self, Child, Command, ExitCode, ExitStatus, Stdio};
 use std::sync::mpsc;
@@ -20,11 +23,16 @@ const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
 
 /// Starts the given Command instance in a separate thread.
 /// Signals activity (output, finished) using the given MPSC sender.
-pub fn start_cmd(mut command: Command, sender: mpsc::Sender<Event>) -> Result<ExitCode, std::io::Error> {
+pub fn execute2(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode> {
     let (sender, receiver) = mpsc::channel();
-    command.stdout(Stdio::piped());
-    command.stderr(Stdio::piped());
-    let mut process = command.spawn()?;
+    let mut cmd = Command::new(&app);
+    cmd.args(args);
+    cmd.stdout(Stdio::piped());
+    cmd.stderr(Stdio::piped());
+    let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
+        executable: app,
+        reason: err.to_string(),
+    })?;
     monitor_output(process.stdout.take().unwrap(), sender.clone());
     monitor_output(process.stderr.take().unwrap(), sender.clone());
     monitor_exit(process, sender);

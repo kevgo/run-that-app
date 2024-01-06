@@ -11,6 +11,7 @@ pub enum Command {
     RunApp {
         app: RequestedApp,
         args: Vec<String>,
+        error_on_output: bool,
         include_path: bool,
         optional: bool,
         log: Option<String>,

@@ -6,15 +6,10 @@ use std::process::{Command, ExitCode};
 pub fn execute(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode> {
     let mut cmd = Command::new(&app);
     cmd.args(args);
-    let exit_status = match cmd.status() {
-        Ok(status) => status,
-        Err(err) => {
-            return Err(UserError::CannotExecuteBinary {
-                executable: app,
-                reason: err.to_string(),
-            });
-        }
-    };
+    let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
+        executable: app,
+        reason: err.to_string(),
+    })?;
     let Some(exit_code) = exit_status.code() else {
         panic!("cannot determine exit code for {exit_status}");
     };
