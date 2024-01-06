@@ -39,19 +39,20 @@ pub fn stream(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode
     monitor_output(process.stderr.take().unwrap(), sender.clone());
     monitor_exit(process, sender);
     let mut exit_code = ExitCode::SUCCESS;
+    let mut stdout = io::stdout();
     for event in receiver {
         match event {
             Event::PermanentLine(line) | Event::TempLine(line) => {
                 exit_code = ExitCode::FAILURE;
                 let _ = io::stdout().write_all(BASH_RED);
-                io::stdout().write_all(&line).unwrap();
+                stdout.write_all(&line).unwrap();
                 let _ = io::stdout().write_all(BASH_CLEAR);
             }
             Event::UnterminatedLine(mut line) => {
                 exit_code = ExitCode::FAILURE;
-                let _ = io::stdout().write_all(BASH_RED);
                 line.push(b'\n');
-                io::stdout().write_all(&line).unwrap();
+                let _ = io::stdout().write_all(BASH_RED);
+                stdout.write_all(&line).unwrap();
                 let _ = io::stdout().write_all(BASH_CLEAR);
             }
             Event::Ended { exit_status } => {
