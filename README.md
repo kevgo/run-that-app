@@ -90,6 +90,8 @@ Run-that-app Arguments:
 
 - `--available`: signal via exit code whether an app is available on the local
   platform
+- `--error-on-output`: treat all output of the executed application as an error
+  condidion
 - `--help` or `-h`: show help screen
 - `--include-path`: if there is no pre-compiled binary for your platform, but a
   similarly named binary in your PATH, run the latter.

@@ -18,6 +18,7 @@ pub fn print_options() {
         "
 Options:
 --available                      indicates via the exit code whether the given application is available on this platform
+--error-on-output                treat all output of the executed app as an error
 --help, -h                       display this help screen
 --include-path                   if an app is not available but one is in the PATH, execute that one
 --log, -l                        enable logging of all categories
