@@ -18,7 +18,7 @@ pub enum Event {
     Ended { exit_status: process::ExitStatus },
 }
 
-const BASH_RED: &[u8] = "\x1B[2m".as_bytes();
+const BASH_RED: &[u8] = "\x1B[0;31m".as_bytes();
 const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
 
 /// Starts the given Command instance in a separate thread.
