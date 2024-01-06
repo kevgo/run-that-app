@@ -204,6 +204,7 @@ mod tests {
             mod error_on_output {
                 use super::super::parse_args;
                 use crate::cli::{Args, Command, RequestedApp};
+                use crate::error::UserError;
                 use big_s::S;
 
                 #[test]
@@ -228,19 +229,7 @@ mod tests {
                 #[test]
                 fn missing_app() {
                     let have = parse_args(vec!["rta", "--error-on-output"]);
-                    let want = Ok(Args {
-                        command: Command::RunApp {
-                            app: RequestedApp {
-                                name: S("app"),
-                                version: S(""),
-                            },
-                            args: vec![],
-                            error_on_output: true,
-                            include_path: false,
-                            optional: false,
-                            log: None,
-                        },
-                    });
+                    let want = Err(UserError::MissingApplication);
                     pretty::assert_eq!(have, want);
                 }
             }
