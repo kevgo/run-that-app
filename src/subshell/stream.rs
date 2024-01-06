@@ -28,7 +28,7 @@ const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
 pub fn stream(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode> {
     let (sender, receiver) = mpsc::channel();
     let mut cmd = Command::new(&app);
-    cmd.args(args);
+    cmd.args(&args);
     cmd.stdout(Stdio::piped());
     cmd.stderr(Stdio::piped());
     let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
@@ -38,13 +38,13 @@ pub fn stream(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode
     monitor_output(process.stdout.take().unwrap(), sender.clone());
     monitor_output(process.stderr.take().unwrap(), sender.clone());
     monitor_exit(process, sender);
-    let mut output = String::new();
+    let mut encountered_output = false;
     let mut exit_code = ExitCode::SUCCESS;
     let mut stdout = io::stdout();
     for event in receiver {
         match event {
             Event::PermanentLine(line) | Event::TempLine(line) => {
-                output.push_str(&String::from_utf8_lossy(&line));
+                encountered_output = true;
                 let mut colored_line: Vec<u8> = Vec::with_capacity(line.len() + BASH_RED.len() + BASH_CLEAR.len());
                 colored_line.extend(BASH_RED);
                 colored_line.extend(&line);
@@ -52,7 +52,7 @@ pub fn stream(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode
                 stdout.write_all(&colored_line).unwrap();
             }
             Event::UnterminatedLine(line) => {
-                output.push_str(&String::from_utf8_lossy(&line));
+                encountered_output = true;
                 let mut colored_line: Vec<u8> = Vec::with_capacity(line.len() + BASH_RED.len() + BASH_CLEAR.len() + 1);
                 colored_line.extend(BASH_RED);
                 colored_line.extend(&line);
@@ -70,13 +70,16 @@ pub fn stream(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode
             }
         }
     }
-    if output.is_empty() {
-        Ok(exit_code)
-    } else {
+    if encountered_output {
         Err(UserError::ProcessEmittedOutput {
-            cmd: app.to_string_lossy().to_string(),
-            output,
+            cmd: format!(
+                "{cmd} {args}",
+                cmd = app.file_name().unwrap_or_default().to_string_lossy().to_string(),
+                args = args.join(" ")
+            ),
         })
+    } else {
+        Ok(exit_code)
     }
 }
 

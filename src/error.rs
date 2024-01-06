@@ -47,7 +47,6 @@ pub enum UserError {
     NotOnline,
     ProcessEmittedOutput {
         cmd: String,
-        output: String,
     },
     RunRequestMissingVersion,
     RustCompilationFailed,
@@ -130,11 +129,8 @@ impl UserError {
                 desc("Please provide either --which or --available or nothing to run the app, but not both");
             }
             UserError::NotOnline => error("not online"),
-            UserError::ProcessEmittedOutput { cmd, output } => {
-                error(&format!("process {cmd} emitted output"));
-                if output.split('\n').count() < 3 {
-                    desc(&format!("Output: {output}"));
-                }
+            UserError::ProcessEmittedOutput { cmd } => {
+                error(&format!("process \"{cmd}\" emitted unexpected output"));
             }
             UserError::RunRequestMissingVersion => {
                 error("missing application version");
@@ -197,7 +193,7 @@ If you are okay moving forward without this app, you can provide the \"--optiona
 pub type Result<T> = core::result::Result<T, UserError>;
 
 fn error(text: &str) {
-    println!("{} {}", "ERROR:".red().bold(), text.red().bold());
+    println!("\n{} {}", "ERROR:".red().bold(), text.red().bold());
 }
 
 fn desc(text: &str) {
