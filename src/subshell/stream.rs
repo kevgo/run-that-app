@@ -47,12 +47,12 @@ pub fn stream(Executable(app): Executable, args: Vec<String>) -> Result<ExitCode
                 io::stdout().write_all(&line).unwrap();
                 let _ = io::stdout().write_all(BASH_CLEAR);
             }
-            Event::UnterminatedLine(line) => {
+            Event::UnterminatedLine(mut line) => {
                 exit_code = ExitCode::FAILURE;
                 let _ = io::stdout().write_all(BASH_RED);
+                line.push(b'\n');
                 io::stdout().write_all(&line).unwrap();
                 let _ = io::stdout().write_all(BASH_CLEAR);
-                println!();
             }
             Event::Ended { exit_status } => {
                 exit_code = exit_status_to_code(exit_status);
