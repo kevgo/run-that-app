@@ -187,7 +187,7 @@ If you are okay moving forward without this app, you can provide the \"--optiona
 pub type Result<T> = core::result::Result<T, UserError>;
 
 fn error(text: &str) {
-    println!("{} {}", "ERROR:".red(), text.red());
+    println!("{} {}", "ERROR:".red().bold(), text.red().bold());
 }
 
 fn desc(text: &str) {
