@@ -5,18 +5,19 @@
 
 > Minimalistic cross-platform application runner
 
-_Run-that-app_ executes CLI applications on Linux, Windows, macOS, and BSD
-without the need to install them first. Installation across different operating
-systems is a complex and nuanced problem. Run-that-app removes this problem.
+_Run-that-app_ executes native CLI applications on Linux, Windows, macOS, and
+BSD without the need to install them first. Installation across all possible
+operating systems is a complex and nuanced problem without a good solution.
+Run-that-app bypasses this problem.
 
-Run-that-app is standalone, minimalistic, and completely non-invasive. No magic,
-no environment or configuration changes, no environment variables to set, no
-application shims or stubs, no shell integrations or other trickery, no
-dependencies, no plugins, no application repository, no Docker, no emulation, no
-WASM. All you do is call a single stand-alone binary. Applications download in
-1-2 seconds, and store very little (just the executables) on your hard drive.
-The installation doesn't require _sudo_. Applications execute at 100% native
-speed.
+Run-that-app is minimalistic and completely non-invasive. It ships as a single
+stand-alone binary. Run-that-app uses no magic, no configuration changes, no
+environment variables, no application shims or stubs, no shell integrations, no
+dependencies, no plugins, no need to package applications to install in a
+special way, no application repository, no Docker, no emulation, no WASM.
+Applications download in 1-2 seconds, and store very little (just the
+executables) on your hard drive. The installation doesn't require _sudo_.
+Applications execute at 100% native speed.
 
 ### quickstart
 
