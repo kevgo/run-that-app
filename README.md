@@ -241,9 +241,9 @@ Compared to asdf, run-that-app also supports Windows, offers conditional
 execution, allows writing application installation logic in a robust programming
 language that eliminates most runtime errors, and is faster.
 
-#### RTX
+#### mise
 
-[Rtx](https://github.com/jdx/rtx) is a rewrite of asdf in Rust. It allows
+[Mise](https://github.com/jdx/mise) is a rewrite of asdf in Rust. It allows
 installing applications, sets up shims and shell integration.
 
 Compared to rtx, run-that-app also supports Windows, offers conditional
