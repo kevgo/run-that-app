@@ -69,7 +69,8 @@ impl App for Go {
         let Some(executable) = self.system_executable() else {
             return None;
         };
-        let result = subshell::execute(executable, "version");
+        let output = subshell::execute(executable, &[S("version")])?;
+        let words := output
     }
 }
 

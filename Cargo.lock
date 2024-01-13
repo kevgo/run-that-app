@@ -560,6 +560,7 @@ dependencies = [
  "human-sort",
  "minreq",
  "pretty_assertions",
+ "semver",
  "serde_json",
  "tar",
  "tempfile",
@@ -618,6 +619,12 @@ dependencies = [
  "ring",
  "untrusted",
 ]
+
+[[package]]
+name = "semver"
+version = "1.0.21"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b97ed7a9823b74f99c7742f5336af7be5ecd3eeafcb1507d1fa93347b1d589b0"
 
 [[package]]
 name = "serde"
