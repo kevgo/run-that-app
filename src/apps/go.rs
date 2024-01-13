@@ -1,9 +1,10 @@
 use super::App;
+use crate::error::UserError;
 use crate::hosting::github_tags;
 use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
-use crate::{Output, Result};
+use crate::{subshell, Output, Result};
 use big_s::S;
 
 pub struct Go {}
@@ -55,6 +56,20 @@ impl App for Go {
             go_tags.resize(amount, S(""));
         }
         Ok(go_tags)
+    }
+
+    fn system_executable(&self) -> Option<Executable> {
+        match which::which_global("go") {
+            Ok(go_path) => Some(Executable(go_path)),
+            Err(_) => None,
+        }
+    }
+
+    fn system_version(&self, output: &dyn Output) -> Option<String> {
+        let Some(executable) = self.system_executable() else {
+            return None;
+        };
+        let result = subshell::execute(executable, "version");
     }
 }
 

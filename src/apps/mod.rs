@@ -47,6 +47,12 @@ pub trait App {
 
     /// provides the latest version of this application
     fn latest_installable_version(&self, output: &dyn Output) -> Result<String>;
+
+    /// provides the executable of this app that was installed on the system using external means
+    fn system_executable(&self) -> Option<Executable>;
+
+    /// provides the version of the app that was installed on the system using external means
+    fn system_version(&self, output: &dyn Output) -> Result<Option<String>>;
 }
 
 pub fn all() -> Apps {
