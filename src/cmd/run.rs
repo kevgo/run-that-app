@@ -16,7 +16,7 @@ pub fn run(requested_app: RequestedApp, args: &[String], error_on_output: bool, 
         if error_on_output {
             Ok(subshell::stream(executable, args)?)
         } else {
-            Ok(subshell::execute(executable, args)?)
+            Ok(subshell::run(executable, args)?)
         }
     } else if optional {
         Ok(ExitCode::SUCCESS)
