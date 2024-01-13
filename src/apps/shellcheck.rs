@@ -36,7 +36,7 @@ impl App for ShellCheck {
         })
     }
 
-    fn latest_version(&self, output: &dyn Output) -> Result<String> {
+    fn latest_installable_version(&self, output: &dyn Output) -> Result<String> {
         github_releases::latest(ORG, REPO, output)
     }
 
@@ -44,7 +44,7 @@ impl App for ShellCheck {
         yard.load_app(self.name(), version, self.executable_filename(platform))
     }
 
-    fn versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
+    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
         github_releases::versions(ORG, REPO, amount, output)
     }
 }

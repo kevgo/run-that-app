@@ -36,16 +36,17 @@ pub trait App {
     /// link to the (human-readable) homepage of the app
     fn homepage(&self) -> &'static str;
 
+    /// installs this app at the given version into the given yard
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>>;
 
     // loads this app from the given yard if it is already installed
     fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable>;
 
-    /// provides the available versions of this application
-    fn versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>>;
+    /// provides the versions of this application that can be installed
+    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>>;
 
     /// provides the latest version of this application
-    fn latest_version(&self, output: &dyn Output) -> Result<String>;
+    fn latest_installable_version(&self, output: &dyn Output) -> Result<String>;
 }
 
 pub fn all() -> Apps {
