@@ -4,8 +4,9 @@ use crate::yard::Executable;
 use crate::Result;
 use std::process::{Command, ExitCode};
 
-/// Executes the given executable with the given arguments.
-pub fn execute(Executable(app): Executable, args: &[String]) -> Result<ExitCode> {
+/// Runs the given executable with the given arguments.
+/// Streams output to the user's terminal.
+pub fn run(Executable(app): Executable, args: &[String]) -> Result<ExitCode> {
     let mut cmd = Command::new(&app);
     cmd.args(args);
     let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
@@ -22,7 +23,7 @@ mod tests {
         #[test]
         #[cfg(unix)]
         fn unix_success() {
-            use crate::subshell::execute;
+            use crate::subshell::run;
             use crate::yard::Executable;
             use big_s::S;
             use std::io::Write;
@@ -36,7 +37,7 @@ mod tests {
             file.set_permissions(fs::Permissions::from_mode(0o744)).unwrap();
             drop(file);
             thread::sleep(Duration::from_millis(10)); // give the OS time to close the file to avoid a flaky test
-            let have = execute(Executable(executable_path), &[]).unwrap();
+            let have = run(Executable(executable_path), &[]).unwrap();
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(0))"));
         }
@@ -45,7 +46,7 @@ mod tests {
         #[cfg(unix)]
         fn unix_error() {
             use crate::filesystem::make_file_executable;
-            use crate::subshell::execute;
+            use crate::subshell::run;
             use crate::yard::Executable;
             use big_s::S;
             use std::fs;
@@ -54,7 +55,7 @@ mod tests {
             fs::write(&executable_path, b"#!/bin/sh\nexit 3").unwrap();
             make_file_executable(&executable_path).unwrap();
             let executable = Executable(executable_path);
-            let have = execute(executable, &[]).unwrap();
+            let have = run(executable, &[]).unwrap();
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(3))"));
         }
@@ -62,7 +63,7 @@ mod tests {
         #[test]
         #[cfg(windows)]
         fn windows_success() {
-            use crate::subshell::execute;
+            use crate::subshell::run;
             use crate::yard::Executable;
             use big_s::S;
             use std::fs;
@@ -78,7 +79,7 @@ mod tests {
         #[test]
         #[cfg(windows)]
         fn windows_error() {
-            use crate::subshell::execute;
+            use crate::subshell::run;
             use crate::yard::Executable;
             use big_s::S;
             use std::fs;
