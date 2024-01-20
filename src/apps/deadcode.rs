@@ -1,7 +1,8 @@
 use super::App;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::platform::{Os, Platform};
-use crate::yard::{Executable, Yard};
+use crate::subshell::Executable;
+use crate::yard::Yard;
 use crate::{Output, Result};
 use big_s::S;
 use const_format::formatcp;

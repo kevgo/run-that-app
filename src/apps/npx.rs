@@ -1,7 +1,8 @@
 use super::nodejs::NodeJS;
 use super::App;
 use crate::platform::{Os, Platform};
-use crate::yard::{Executable, Yard};
+use crate::subshell::Executable;
+use crate::yard::Yard;
 use crate::{Output, Result};
 
 pub struct Npx {}

@@ -1,5 +1,6 @@
 use super::{exit_status_to_code, Executable};
 use crate::error::UserError;
+use crate::subshell::Executable;
 use crate::Result;
 use std::io::{self, BufRead, BufReader, Read, Write};
 use std::process::{self, Child, Command, ExitCode, Stdio};

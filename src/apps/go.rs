@@ -3,8 +3,9 @@ use crate::error::UserError;
 use crate::hosting::github_tags;
 use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
-use crate::yard::{Executable, Yard};
-use crate::{subshell, Output, Result};
+use crate::subshell::Executable;
+use crate::yard::Yard;
+use crate::{Output, Result};
 use big_s::S;
 
 pub struct Go {}

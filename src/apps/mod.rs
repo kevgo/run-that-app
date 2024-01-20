@@ -22,8 +22,8 @@ mod shfmt;
 
 use crate::error::UserError;
 use crate::platform::Platform;
-use crate::system_executable::SystemExecutable;
-use crate::yard::{Executable, Yard};
+use crate::subshell::Executable;
+use crate::yard::Yard;
 use crate::{Output, Result};
 use std::slice::Iter;
 

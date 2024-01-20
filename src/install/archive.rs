@@ -1,6 +1,6 @@
 use crate::archives::{self, ExtractAllArgs};
 use crate::output::Output;
-use crate::yard::Executable;
+use crate::subshell::Executable;
 use crate::UserError;
 use crate::{download, Result};
 use colored::Colorize;
