@@ -1,5 +1,5 @@
 use crate::output::Output;
-use crate::yard::Executable;
+use crate::subshell::Executable;
 use crate::{archives, filesystem};
 use crate::{download, Result};
 use colored::Colorize;

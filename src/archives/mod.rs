@@ -3,7 +3,7 @@ mod tar_xz;
 mod zip;
 
 use crate::download::Artifact;
-use crate::yard::Executable;
+use crate::subshell::Executable;
 use crate::{Output, Result, UserError};
 use std::path::Path;
 

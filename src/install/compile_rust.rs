@@ -1,5 +1,5 @@
 use crate::error::UserError;
-use crate::yard::Executable;
+use crate::subshell::Executable;
 use crate::{Output, Result};
 use std::path::PathBuf;
 use std::process::Command;

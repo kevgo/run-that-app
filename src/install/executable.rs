@@ -1,5 +1,5 @@
 use crate::output::Output;
-use crate::yard::Executable;
+use crate::subshell::Executable;
 use crate::{download, filesystem, Result};
 use colored::Colorize;
 use std::path::PathBuf;

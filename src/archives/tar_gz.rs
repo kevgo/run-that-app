@@ -1,6 +1,6 @@
 use super::Archive;
 use crate::filesystem::strip_filepath;
-use crate::yard::Executable;
+use crate::subshell::Executable;
 use crate::Output;
 use crate::{filesystem, Result};
 use flate2::read::GzDecoder;
