@@ -33,7 +33,7 @@ impl App for Deadcode {
         })
     }
 
-    fn latest_version(&self, _output: &dyn Output) -> Result<String> {
+    fn latest_installable_version(&self, _output: &dyn Output) -> Result<String> {
         // TODO: remove this file once deadcode is integrated into golangci-lint
         Ok(S("0.16.1"))
     }
@@ -42,7 +42,7 @@ impl App for Deadcode {
         yard.load_app(self.name(), version, self.executable_filename(platform))
     }
 
-    fn versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<String>> {
+    fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<String>> {
         Ok(vec![S("0.16.1")])
     }
 }

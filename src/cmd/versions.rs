@@ -6,7 +6,7 @@ use std::process::ExitCode;
 pub fn versions(app_name: &str, amount: usize, output: &dyn Output) -> Result<ExitCode> {
     let apps = &apps::all();
     let app = apps.lookup(app_name)?;
-    let versions = app.versions(amount, output)?;
+    let versions = app.installable_versions(amount, output)?;
     println!("{app_name} is available in these versions:");
     for version in versions {
         println!("- {version}");

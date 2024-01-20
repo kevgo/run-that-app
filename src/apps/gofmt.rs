@@ -29,16 +29,16 @@ impl App for Gofmt {
         Ok(Some(Executable(executable_path)))
     }
 
-    fn latest_version(&self, output: &dyn Output) -> Result<String> {
-        (Go {}).latest_version(output)
+    fn latest_installable_version(&self, output: &dyn Output) -> Result<String> {
+        (Go {}).latest_installable_version(output)
     }
 
     fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
         yard.load_app((Go {}).name(), version, &self.executable_path(platform))
     }
 
-    fn versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
-        (Go {}).versions(amount, output)
+    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
+        (Go {}).installable_versions(amount, output)
     }
 }
 

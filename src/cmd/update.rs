@@ -13,7 +13,7 @@ pub fn update(output: &dyn Output) -> Result<ExitCode> {
     for old_app in &old_config.apps {
         let app = all_apps.lookup(&old_app.name)?;
         output.print(&format!("updating {} ... ", old_app.name));
-        let latest = app.latest_version(output)?;
+        let latest = app.latest_installable_version(output)?;
         if latest == old_app.version {
             output.println(&format!("{}", "current".green()));
         } else {
