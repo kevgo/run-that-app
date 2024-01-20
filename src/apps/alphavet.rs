@@ -31,7 +31,7 @@ impl App for Alphavet {
         // the precompiled binaries are crashing on Linux
         compile_go(CompileArgs {
             import_path: format!("github.com/{ORG}/{REPO}/cmd/alphavet@v{version}"),
-            target_folder: yard.app_folder(self.name(), version),
+            target_folder: &yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),
             output,
         })
