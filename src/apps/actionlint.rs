@@ -3,6 +3,7 @@ use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
+use crate::systempath::SystemExecutable;
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
 use const_format::formatcp;
@@ -48,6 +49,19 @@ impl App for ActionLint {
 
     fn latest_installable_version(&self, output: &dyn Output) -> Result<String> {
         github_releases::latest(ORG, REPO, output)
+    }
+
+    fn load_from_system(&self, platform: Platform) -> Option<SystemExecutable> {
+        let Ok(executable) = which::which(self.executable_filename(platform)) else {
+            return None;
+        };
+        let Ok(version) = self.version(executable) else {
+            return None;
+        }
+        SystemExecutable {
+            executable,
+            version,
+        }
     }
 
     fn load_from_yard(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {

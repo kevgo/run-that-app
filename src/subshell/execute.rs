@@ -1,6 +1,5 @@
-use super::exit_status_to_code;
+use super::{exit_status_to_code, Executable};
 use crate::error::UserError;
-use crate::yard::Executable;
 use crate::Result;
 use std::process::{Command, ExitCode};
 use std::str;
@@ -38,8 +37,7 @@ mod tests {
         #[test]
         #[cfg(unix)]
         fn unix_success() {
-            use crate::subshell::run;
-            use crate::yard::Executable;
+            use crate::subshell::{run, Executable};
             use big_s::S;
             use std::io::Write;
             use std::os::unix::fs::PermissionsExt;
@@ -61,8 +59,7 @@ mod tests {
         #[cfg(unix)]
         fn unix_error() {
             use crate::filesystem::make_file_executable;
-            use crate::subshell::run;
-            use crate::yard::Executable;
+            use crate::subshell::{run, Executable};
             use big_s::S;
             use std::fs;
             let tempdir = tempfile::tempdir().unwrap();

@@ -1,5 +1,5 @@
 use crate::output::Output;
-use crate::yard::Executable;
+use crate::subshell::Executable;
 use std::path::Path;
 use which::which_global;
 

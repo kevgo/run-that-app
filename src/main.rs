@@ -11,7 +11,7 @@ mod install;
 mod output;
 mod platform;
 mod subshell;
-mod system_executable;
+mod systempath;
 mod yard;
 
 use cli::Command;

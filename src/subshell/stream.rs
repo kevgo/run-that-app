@@ -1,6 +1,5 @@
-use super::exit_status_to_code;
+use super::{exit_status_to_code, Executable};
 use crate::error::UserError;
-use crate::yard::Executable;
 use crate::Result;
 use std::io::{self, BufRead, BufReader, Read, Write};
 use std::process::{self, Child, Command, ExitCode, Stdio};
@@ -33,7 +32,7 @@ pub fn stream(Executable(app): Executable, args: &[String]) -> Result<ExitCode> 
     cmd.stdout(Stdio::piped());
     cmd.stderr(Stdio::piped());
     let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
-        executable: app.clone(),
+        call_signature: format!("{} {}", app.to_string_lossy(), args.join(" ")),
         reason: err.to_string(),
     })?;
     monitor_output(process.stdout.take().unwrap(), sender.clone());
