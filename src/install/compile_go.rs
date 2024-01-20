@@ -12,7 +12,7 @@ pub fn compile_go(args: CompileArgs) -> Result<Option<Executable>> {
     let Ok(go_path) = which("go") else {
         return Err(UserError::GoNotInstalled);
     };
-    fs::create_dir_all(&args.target_folder).map_err(|err| UserError::CannotCreateFolder {
+    fs::create_dir_all(args.target_folder).map_err(|err| UserError::CannotCreateFolder {
         folder: args.target_folder.to_path_buf(),
         reason: err.to_string(),
     })?;

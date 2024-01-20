@@ -39,7 +39,7 @@ impl App for Depth {
         }
         compile_go(CompileArgs {
             import_path: format!("github.com/{ORG}/{REPO}/cmd/depth@v{version}"),
-            target_folder: yard.app_folder(self.name(), version),
+            target_folder: &yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),
             output,
         })
