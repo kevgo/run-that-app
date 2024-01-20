@@ -11,7 +11,7 @@ pub fn run(Executable(app): Executable, args: &[String]) -> Result<ExitCode> {
     let mut cmd = Command::new(&app);
     cmd.args(args);
     let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
-        call_signature: format!("{} {}", app.to_string_lossy(), args.join(" ")),
+        call: format!("{} {}", app.to_string_lossy(), args.join(" ")),
         reason: err.to_string(),
     })?;
     Ok(exit_status_to_code(exit_status))
@@ -23,7 +23,7 @@ pub fn query(Executable(app): Executable, args: &[String]) -> Result<String> {
     let mut cmd = Command::new(&app);
     cmd.args(args);
     let output = cmd.output().map_err(|err| UserError::CannotExecuteBinary {
-        call_signature: format!("{} {}", app.to_string_lossy(), args.join(" ")),
+        call: format!("{} {}", app.to_string_lossy(), args.join(" ")),
         reason: err.to_string(),
     })?;
     let stdout = str::from_utf8(&output.stdout).unwrap_or("");
