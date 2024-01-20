@@ -1,7 +1,8 @@
 use super::go::Go;
 use super::App;
 use crate::platform::{Os, Platform};
-use crate::yard::{Executable, Yard};
+use crate::subshell::Executable;
+use crate::yard::Yard;
 use crate::{Output, Result};
 
 pub struct Gofmt {}

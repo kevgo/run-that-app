@@ -3,7 +3,8 @@ use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
-use crate::yard::{Executable, Yard};
+use crate::subshell::Executable;
+use crate::yard::Yard;
 use crate::{Output, Result};
 use const_format::formatcp;
 

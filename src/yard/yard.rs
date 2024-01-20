@@ -1,6 +1,6 @@
-use super::Executable;
 use crate::cli::RequestedApp;
 use crate::error::UserError;
+use crate::subshell::Executable;
 use crate::Result;
 use std::fs::{self, File};
 use std::path::PathBuf;
@@ -118,7 +118,8 @@ mod tests {
 
     mod load_app {
         use crate::cli::RequestedApp;
-        use crate::yard::{create, Executable, Yard};
+        use crate::subshell::Executable;
+        use crate::yard::{create, Yard};
         use big_s::S;
         use std::path::PathBuf;
 
