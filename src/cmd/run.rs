@@ -48,7 +48,8 @@ pub fn load_or_install(mut requested_app: RequestedApp, include_path: bool, outp
         }
         return Ok(None);
     }
-    if let Some(executable) = app.install(&requested_app.version, platform, &yard, output)? {
+    let app_folder = yard.app_folder(app.name(), &requested_app.version);
+    if let Some(executable) = app.install(&requested_app.version, platform, &app_folder, output)? {
         return Ok(Some(executable));
     }
     yard.mark_not_installable(&requested_app)?;

@@ -24,6 +24,7 @@ use crate::error::UserError;
 use crate::platform::Platform;
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
+use std::path::Path;
 use std::slice::Iter;
 
 pub trait App {
@@ -36,7 +37,7 @@ pub trait App {
     /// link to the (human-readable) homepage of the app
     fn homepage(&self) -> &'static str;
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>>;
+    fn install(&self, version: &str, platform: Platform, folder: &Path, output: &dyn Output) -> Result<Option<Executable>>;
 
     // loads this app from the given yard if it is already installed
     fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable>;
