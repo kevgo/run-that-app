@@ -69,8 +69,15 @@ impl App for Go {
         let Some(executable) = self.system_executable() else {
             return None;
         };
-        let output = subshell::execute(executable, &[S("version")])?;
-        let words := output
+        let Ok(output) = subshell::query(executable, &[S("version")]) else {
+            return None;
+        };
+        let mut words = output.split(' ');
+        let Some(version_word) = words.nth(2) else { return None };
+        if version_word.len() < 3 {
+            return None;
+        }
+        Some(version_word[2..].to_string())
     }
 }
 

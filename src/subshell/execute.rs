@@ -3,6 +3,7 @@ use crate::error::UserError;
 use crate::yard::Executable;
 use crate::Result;
 use std::process::{Command, ExitCode};
+use std::str;
 
 /// Runs the given executable with the given arguments.
 /// Streams output to the user's terminal.
@@ -10,10 +11,24 @@ pub fn run(Executable(app): Executable, args: &[String]) -> Result<ExitCode> {
     let mut cmd = Command::new(&app);
     cmd.args(args);
     let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
-        executable: app,
+        call_signature: format!("{} {}", app.to_string_lossy(), args.join(" ")),
         reason: err.to_string(),
     })?;
     Ok(exit_status_to_code(exit_status))
+}
+
+/// Runs the given executable with the given arguments.
+/// Captures and returns the output.
+pub fn query(Executable(app): Executable, args: &[String]) -> Result<String> {
+    let mut cmd = Command::new(&app);
+    cmd.args(args);
+    let output = cmd.output().map_err(|err| UserError::CannotExecuteBinary {
+        call_signature: format!("{} {}", app.to_string_lossy(), args.join(" ")),
+        reason: err.to_string(),
+    })?;
+    let stdout = str::from_utf8(&output.stdout).unwrap_or("");
+    let stderr = str::from_utf8(&output.stderr).unwrap_or("");
+    Ok(format!("{stdout}{stderr}"))
 }
 
 #[cfg(test)]

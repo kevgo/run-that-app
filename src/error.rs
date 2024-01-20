@@ -17,7 +17,7 @@ pub enum UserError {
         reason: String,
     },
     CannotExecuteBinary {
-        executable: PathBuf,
+        call_signature: String,
         reason: String,
     },
     #[cfg(unix)]
@@ -75,8 +75,8 @@ impl UserError {
                 error(&format!("cannot read the config file: {reason}"));
                 desc(&format!("please make sure {} is a file and accessible to you", config::FILE_NAME,));
             }
-            UserError::CannotExecuteBinary { executable, reason } => {
-                error(&format!("cannot execute the binary {}:\n{reason}", executable.to_string_lossy()));
+            UserError::CannotExecuteBinary { call_signature, reason } => {
+                error(&format!("cannot execute {call_signature}:\n{reason}"));
             }
             UserError::CannotDetermineHomeDirectory => error("cannot determine home directory"),
             UserError::CannotCreateFolder { folder, reason } => {

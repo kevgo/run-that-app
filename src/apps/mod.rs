@@ -52,7 +52,7 @@ pub trait App {
     fn system_executable(&self) -> Option<Executable>;
 
     /// provides the version of the app that was installed on the system using external means
-    fn system_version(&self, output: &dyn Output) -> Result<Option<String>>;
+    fn system_version(&self, output: &dyn Output) -> Option<String>;
 }
 
 pub fn all() -> Apps {
