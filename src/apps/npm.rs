@@ -3,6 +3,7 @@ use super::App;
 use crate::platform::{Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
+use std::path::Path;
 
 pub struct Npm {}
 
@@ -22,10 +23,10 @@ impl App for Npm {
         "https://www.npmjs.com"
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &str, platform: Platform, folder: &Path, output: &dyn Output) -> Result<Option<Executable>> {
         let nodejs = NodeJS {};
-        nodejs.install(version, platform, yard, output)?;
-        let executable_path = yard.app_file_path(nodejs.name(), version, self.executable_filename(platform));
+        nodejs.install(version, platform, folder, output)?;
+        let executable_path = folder.join(self.executable_filename(platform));
         Ok(Some(Executable(executable_path)))
     }
 

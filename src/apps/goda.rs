@@ -5,6 +5,7 @@ use crate::platform::{Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
 use const_format::formatcp;
+use std::path::Path;
 
 pub struct Goda {}
 
@@ -27,10 +28,10 @@ impl App for Goda {
         formatcp!("https://github.com/{ORG}/{REPO}")
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &str, platform: Platform, folder: &Path, output: &dyn Output) -> Result<Option<Executable>> {
         compile_go(CompileArgs {
             import_path: format!("github.com/{ORG}/{REPO}@v{version}"),
-            target_folder: &yard.app_folder(self.name(), version),
+            target_folder: folder,
             executable_filename: self.executable_filename(platform),
             output,
         })

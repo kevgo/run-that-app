@@ -4,6 +4,7 @@ use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
+use std::path::Path;
 
 pub struct NodeJS {}
 
@@ -26,11 +27,11 @@ impl App for NodeJS {
         "https://nodejs.org"
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &str, platform: Platform, folder: &Path, output: &dyn Output) -> Result<Option<Executable>> {
         archive::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
-            dir_on_disk: yard.app_folder(self.name(), version),
+            dir_on_disk: folder,
             strip_path_prefix: &format!("node-v{version}-{os}-{cpu}/", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
             executable_in_archive: executable_path(platform),
             output,

@@ -6,6 +6,7 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
 use const_format::formatcp;
+use std::path::Path;
 
 pub struct Gofumpt {}
 
@@ -32,18 +33,18 @@ impl App for Gofumpt {
         github_releases::latest(ORG, REPO, output)
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &str, platform: Platform, folder: &Path, output: &dyn Output) -> Result<Option<Executable>> {
         if let Some(executable) = executable::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
-            filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            filepath_on_disk: folder.join(self.executable_filename(platform)),
             output,
         })? {
             return Ok(Some(executable));
         }
         compile_go(CompileArgs {
             import_path: format!("mvdan.cc/gofumpt@{version}"),
-            target_folder: &yard.app_folder(self.name(), version),
+            target_folder: folder,
             executable_filename: self.executable_filename(platform),
             output,
         })

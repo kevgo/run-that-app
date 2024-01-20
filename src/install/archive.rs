@@ -5,7 +5,7 @@ use crate::UserError;
 use crate::{download, Result};
 use colored::Colorize;
 use std::fs;
-use std::path::PathBuf;
+use std::path::Path;
 
 /// downloads and unpacks the entire content of an archive file
 pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
@@ -13,7 +13,7 @@ pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
         return Ok(None);
     };
     fs::create_dir_all(&args.dir_on_disk).map_err(|err| UserError::CannotCreateFolder {
-        folder: args.dir_on_disk.clone(),
+        folder: args.dir_on_disk.to_path_buf(),
         reason: err.to_string(),
     })?;
     let executable = archives::extract_all(ExtractAllArgs {
@@ -30,7 +30,7 @@ pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
 pub struct InstallArgs<'a> {
     pub app_name: &'a str,
     pub artifact_url: String,
-    pub dir_on_disk: PathBuf,
+    pub dir_on_disk: &'a Path,
     pub strip_path_prefix: &'a str,
     pub executable_in_archive: &'a str,
     pub output: &'a dyn Output,

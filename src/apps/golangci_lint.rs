@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use super::App;
 use crate::hosting::github_releases;
 use crate::install::packaged_executable::{self, InstallArgs};
@@ -27,12 +29,12 @@ impl App for GolangCiLint {
         formatcp!("https://github.com/{ORG}/{REPO}")
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &str, platform: Platform, folder: &Path, output: &dyn Output) -> Result<Option<Executable>> {
         packaged_executable::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
             file_to_extract: &executable_path(version, platform, self.executable_filename(platform)),
-            filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            filepath_on_disk: folder.join(self.executable_filename(platform)),
             output,
         })
         // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source

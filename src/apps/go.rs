@@ -5,6 +5,7 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
 use big_s::S;
+use std::path::Path;
 
 pub struct Go {}
 
@@ -27,11 +28,11 @@ impl App for Go {
         "https://go.dev"
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &str, platform: Platform, folder: &Path, output: &dyn Output) -> Result<Option<Executable>> {
         archive::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
-            dir_on_disk: yard.app_folder(self.name(), version),
+            dir_on_disk: folder,
             strip_path_prefix: "go/",
             executable_in_archive: &self.executable_path(platform),
             output,

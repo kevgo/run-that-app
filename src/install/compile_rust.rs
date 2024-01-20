@@ -1,7 +1,7 @@
 use crate::error::UserError;
 use crate::yard::Executable;
 use crate::{Output, Result};
-use std::path::PathBuf;
+use std::path::Path;
 use std::process::Command;
 use which::which;
 
@@ -35,7 +35,7 @@ pub fn compile_rust(args: CompileArgs) -> Result<Option<Executable>> {
 
 pub struct CompileArgs<'a> {
     pub crate_name: &'static str,
-    pub target_folder: PathBuf,
+    pub target_folder: &'a Path,
     pub executable_filename: &'static str,
     pub output: &'a dyn Output,
 }
