@@ -22,6 +22,7 @@ mod shfmt;
 
 use crate::error::UserError;
 use crate::platform::Platform;
+use crate::system_executable::SystemExecutable;
 use crate::yard::{Executable, Yard};
 use crate::{Output, Result};
 use std::slice::Iter;
@@ -40,19 +41,16 @@ pub trait App {
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>>;
 
     // loads this app from the given yard if it is already installed
-    fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable>;
+    fn load_from_yard(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable>;
+
+    /// try to load an executable for this app installed outside of run-that-app
+    fn load_from_system(&self, platform: Platform) -> Option<SystemExecutable>;
 
     /// provides the versions of this application that can be installed
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>>;
 
     /// provides the latest version of this application
     fn latest_installable_version(&self, output: &dyn Output) -> Result<String>;
-
-    /// provides the executable of this app that was installed on the system using external means
-    fn system_executable(&self) -> Option<Executable>;
-
-    /// provides the version of the app that was installed on the system using external means
-    fn system_version(&self, output: &dyn Output) -> Option<String>;
 }
 
 pub fn all() -> Apps {
