@@ -3,7 +3,7 @@ use crate::output::Output;
 use crate::yard::Executable;
 use crate::Result;
 use std::fs;
-use std::path::PathBuf;
+use std::path::Path;
 use std::process::Command;
 use which::which;
 
@@ -12,15 +12,15 @@ pub fn compile_go(args: CompileArgs) -> Result<Option<Executable>> {
     let Ok(go_path) = which("go") else {
         return Err(UserError::GoNotInstalled);
     };
-    fs::create_dir_all(&args.target_folder).map_err(|err| UserError::CannotCreateFolder {
-        folder: args.target_folder.clone(),
+    fs::create_dir_all(args.target_folder).map_err(|err| UserError::CannotCreateFolder {
+        folder: args.target_folder.to_path_buf(),
         reason: err.to_string(),
     })?;
     let go_args = vec!["install", &args.import_path];
     args.output.println(&format!("go {}", go_args.join(" ")));
     let mut cmd = Command::new(go_path);
     cmd.args(go_args);
-    cmd.env("GOBIN", &args.target_folder);
+    cmd.env("GOBIN", args.target_folder);
     let status = match cmd.status() {
         Ok(status) => status,
         Err(err) => match err.kind() {
@@ -41,7 +41,7 @@ pub fn compile_go(args: CompileArgs) -> Result<Option<Executable>> {
 pub struct CompileArgs<'a> {
     /// the fully qualified Go import path for the package to install
     pub import_path: String,
-    pub target_folder: PathBuf,
+    pub target_folder: &'a Path,
     pub executable_filename: &'static str,
     pub output: &'a dyn Output,
 }
