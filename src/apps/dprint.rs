@@ -38,7 +38,7 @@ impl App for Dprint {
         })? {
             return Ok(Some(executable));
         }
-        compile_rust(CompileArgs {
+        compile_rust(&CompileArgs {
             crate_name: "dprint",
             target_folder: folder,
             executable_filename: self.executable_filename(platform),

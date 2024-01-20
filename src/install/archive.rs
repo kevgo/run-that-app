@@ -12,13 +12,13 @@ pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
     let Some(artifact) = download::artifact(args.artifact_url, args.app_name, args.output)? else {
         return Ok(None);
     };
-    fs::create_dir_all(&args.dir_on_disk).map_err(|err| UserError::CannotCreateFolder {
+    fs::create_dir_all(args.dir_on_disk).map_err(|err| UserError::CannotCreateFolder {
         folder: args.dir_on_disk.to_path_buf(),
         reason: err.to_string(),
     })?;
     let executable = archives::extract_all(ExtractAllArgs {
         artifact,
-        dir_on_disk: &args.dir_on_disk,
+        dir_on_disk: args.dir_on_disk,
         strip_prefix: args.strip_path_prefix,
         executable_in_archive: args.executable_in_archive,
         output: args.output,

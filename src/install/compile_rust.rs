@@ -6,14 +6,14 @@ use std::process::Command;
 use which::which;
 
 /// installs the given Rust-based application by compiling it from source
-pub fn compile_rust(args: CompileArgs) -> Result<Option<Executable>> {
+pub fn compile_rust(args: &CompileArgs) -> Result<Option<Executable>> {
     let Ok(cargo_path) = which("cargo") else {
         return Err(UserError::RustNotInstalled);
     };
     let mut cmd = Command::new(cargo_path);
     cmd.arg("install");
     cmd.arg("--root");
-    cmd.arg(&args.target_folder);
+    cmd.arg(args.target_folder);
     cmd.arg("--locked");
     cmd.arg(args.crate_name);
     let status = match cmd.status() {
@@ -29,7 +29,6 @@ pub fn compile_rust(args: CompileArgs) -> Result<Option<Executable>> {
         return Err(UserError::RustCompilationFailed);
     }
     let executable = Executable(args.target_folder.join(args.executable_filename));
-    drop(args);
     Ok(Some(executable))
 }
 
