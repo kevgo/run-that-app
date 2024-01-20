@@ -86,7 +86,7 @@ mod tests {
             let executable_path = tempdir.path().join("executable.cmd");
             fs::write(&executable_path, b"echo hello").unwrap();
             let executable = Executable(executable_path);
-            let have = execute(executable, vec![]).unwrap();
+            let have = run(executable, &[]).unwrap();
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(0))"));
         }
@@ -102,7 +102,7 @@ mod tests {
             let executable_path = tempdir.path().join("executable.cmd");
             fs::write(&executable_path, b"EXIT 3").unwrap();
             let executable = Executable(executable_path);
-            let have = execute(executable, vec![]).unwrap();
+            let have = run(executable, &[]).unwrap();
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(3))"));
         }
