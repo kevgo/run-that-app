@@ -40,10 +40,10 @@ pub trait App {
     /// installs this app at the given version into the given yard
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>>;
 
-    // loads this app from the given yard if it is already installed
+    // try to load this app from the given yard
     fn load_from_yard(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable>;
 
-    /// try to load an executable for this app installed outside of run-that-app
+    /// try to load this app's executable from the system path
     fn load_from_system(&self, platform: Platform) -> Option<SystemExecutable>;
 
     /// provides the versions of this application that can be installed
