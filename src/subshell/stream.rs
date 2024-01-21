@@ -26,14 +26,14 @@ const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
 
 /// Executes the given executable with the given arguments.
 /// The returned `ExitCode` also indicates failure if there has been any output.
-pub fn stream(executable: Executable, args: &[String]) -> Result<ExitCode> {
+pub fn stream(executable: &Executable, args: &[String]) -> Result<ExitCode> {
     let (sender, receiver) = mpsc::channel();
     let mut cmd = Command::new(&executable.0);
     cmd.args(args);
     cmd.stdout(Stdio::piped());
     cmd.stderr(Stdio::piped());
     let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
-        call: call_signature(&executable, args),
+        call: call_signature(executable, args),
         reason: err.to_string(),
     })?;
     monitor_output(process.stdout.take().unwrap(), sender.clone());
