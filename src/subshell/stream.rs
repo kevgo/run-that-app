@@ -1,4 +1,4 @@
-use super::{exit_status_to_code, Executable};
+use super::{call_signature, exit_status_to_code};
 use crate::error::UserError;
 use crate::Result;
 use std::io::{self, BufRead, BufReader, Read, Write};
@@ -25,14 +25,14 @@ const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
 
 /// Executes the given executable with the given arguments.
 /// The returned `ExitCode` also indicates failure if there has been any output.
-pub fn stream(Executable(app): Executable, args: &[String]) -> Result<ExitCode> {
+pub fn stream(executable: &Executable, args: &[String]) -> Result<ExitCode> {
     let (sender, receiver) = mpsc::channel();
-    let mut cmd = Command::new(&app);
+    let mut cmd = Command::new(&executable.0);
     cmd.args(args);
     cmd.stdout(Stdio::piped());
     cmd.stderr(Stdio::piped());
     let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
-        call: format!("{} {}", app.to_string_lossy(), args.join(" ")),
+        call: call_signature(executable, args),
         reason: err.to_string(),
     })?;
     monitor_output(process.stdout.take().unwrap(), sender.clone());
@@ -67,7 +67,7 @@ pub fn stream(Executable(app): Executable, args: &[String]) -> Result<ExitCode> 
         }
     }
     if encountered_output {
-        let mut call = vec![app.file_name().unwrap_or_default().to_string_lossy().to_string()];
+        let mut call = vec![executable.0.file_name().unwrap_or_default().to_string_lossy().to_string()];
         call.extend(args.to_owned());
         return Err(UserError::ProcessEmittedOutput { cmd: call.join(" ") });
     }

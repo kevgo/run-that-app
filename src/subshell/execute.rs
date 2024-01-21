@@ -1,4 +1,4 @@
-use super::{exit_status_to_code, Executable};
+use super::{call_signature, exit_status_to_code};
 use crate::error::UserError;
 use crate::subshell::Executable;
 use crate::Result;
@@ -7,11 +7,11 @@ use std::str;
 
 /// Runs the given executable with the given arguments.
 /// Streams output to the user's terminal.
-pub fn run(executable: Executable, args: &[String]) -> Result<ExitCode> {
+pub fn run(executable: &Executable, args: &[String]) -> Result<ExitCode> {
     let mut cmd = Command::new(&executable.0);
     cmd.args(args);
     let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
-        call: format!("{} {}", executable.0.to_string_lossy(), args.join(" ")),
+        call: call_signature(executable, args),
         reason: err.to_string(),
     })?;
     Ok(exit_status_to_code(exit_status))
@@ -52,7 +52,7 @@ mod tests {
             file.set_permissions(fs::Permissions::from_mode(0o744)).unwrap();
             drop(file);
             thread::sleep(Duration::from_millis(10)); // give the OS time to close the file to avoid a flaky test
-            let have = run(Executable(executable_path), &[]).unwrap();
+            let have = run(&Executable(executable_path), &[]).unwrap();
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(0))"));
         }
@@ -70,7 +70,7 @@ mod tests {
             fs::write(&executable_path, b"#!/bin/sh\nexit 3").unwrap();
             make_file_executable(&executable_path).unwrap();
             let executable = Executable(executable_path);
-            let have = run(executable, &[]).unwrap();
+            let have = run(&executable, &[]).unwrap();
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(3))"));
         }
@@ -86,7 +86,7 @@ mod tests {
             let executable_path = tempdir.path().join("executable.cmd");
             fs::write(&executable_path, b"echo hello").unwrap();
             let executable = Executable(executable_path);
-            let have = run(executable, &[]).unwrap();
+            let have = run(&executable, &[]).unwrap();
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(0))"));
         }
@@ -102,7 +102,7 @@ mod tests {
             let executable_path = tempdir.path().join("executable.cmd");
             fs::write(&executable_path, b"EXIT 3").unwrap();
             let executable = Executable(executable_path);
-            let have = run(executable, &[]).unwrap();
+            let have = run(&executable, &[]).unwrap();
             // HACK: is there a better way to compare ExitCode?
             assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(3))"));
         }
