@@ -6,11 +6,11 @@ use std::process::{Command, ExitCode};
 
 /// Runs the given executable with the given arguments.
 /// Streams output to the user's terminal.
-pub fn run(Executable(app): Executable, args: &[String]) -> Result<ExitCode> {
-    let mut cmd = Command::new(&app);
+pub fn run(executable: Executable, args: &[String]) -> Result<ExitCode> {
+    let mut cmd = Command::new(&executable.0);
     cmd.args(args);
     let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
-        executable: app,
+        executable: executable.0,
         reason: err.to_string(),
     })?;
     Ok(exit_status_to_code(exit_status))
