@@ -1,4 +1,4 @@
-use super::exit_status_to_code;
+use super::{call_signature, exit_status_to_code};
 use crate::error::UserError;
 use crate::subshell::Executable;
 use crate::Result;
@@ -33,7 +33,7 @@ pub fn stream(Executable(app): Executable, args: &[String]) -> Result<ExitCode> 
     cmd.stdout(Stdio::piped());
     cmd.stderr(Stdio::piped());
     let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
-        executable: app.clone(),
+        call: call_signature(executable, args),
         reason: err.to_string(),
     })?;
     monitor_output(process.stdout.take().unwrap(), sender.clone());
