@@ -144,16 +144,16 @@ rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
 Here is a template for installing and using run-that-app in a `Makefile`:
 
 ```make
-RUN_THAT_APP_VERSION = 0.3.0
+RTA_VERSION = 0.3.0
 
 # an example Make target that uses run-that-app
-test: tools/rta@${RUN_THAT_APP_VERSION}
+test: tools/rta@${RTA_VERSION}
 	tools/rta actionlint
 
 # this Make target installs run-that-app if it isn't installed or has the wrong version
-tools/rta@${RUN_THAT_APP_VERSION}:
+tools/rta@${RTA_VERSION}:
 	@rm -f tools/rta*
-  @mkdir -p tools
+	@mkdir -p tools
 	@(cd tools && curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh)
 	@mv tools/rta tools/rta@${RUN_THAT_APP_VERSION}
 	@ln -s rta@${RUN_THAT_APP_VERSION} tools/rta
