@@ -13,6 +13,7 @@ mod gofmt;
 mod gofumpt;
 mod golangci_lint;
 mod goreleaser;
+mod mdbook;
 mod nodejs;
 mod npm;
 mod npx;
