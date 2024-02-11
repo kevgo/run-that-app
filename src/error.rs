@@ -7,13 +7,14 @@ use std::path::PathBuf;
 #[allow(clippy::module_name_repetitions)]
 pub enum UserError {
     CannotAccessConfigFile(String),
+    CannotCreateFolder {
+        folder: PathBuf,
+        reason: String,
+    },
+    CannotDetermineCurrentDirectory(String),
     CannotDetermineHomeDirectory,
     CannotDownload {
         url: String,
-        reason: String,
-    },
-    CannotCreateFolder {
-        folder: PathBuf,
         reason: String,
     },
     CannotExecuteBinary {
@@ -78,6 +79,7 @@ impl UserError {
             UserError::CannotExecuteBinary { call, reason } => {
                 error(&format!("cannot execute \"{call}\":\n{reason}"));
             }
+            UserError::CannotDetermineCurrentDirectory(reason) => error(&format!("cannot determine the current directory: {reason}")),
             UserError::CannotDetermineHomeDirectory => error("cannot determine home directory"),
             UserError::CannotCreateFolder { folder, reason } => {
                 error(&format!("cannot create folder {folder}: {reason}", folder = folder.to_string_lossy()));
