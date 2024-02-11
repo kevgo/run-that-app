@@ -1,5 +1,15 @@
 # run-that-app changelog
 
+### 0.4.0 (2024-02-11)
+
+#### New Features
+
+- can now execute in subfolders of the folder that contains the
+  `.tools-versions` file
+- `--error-on-output` option
+- print available versions using `--versions` and `--versions=<amount>`
+- apps: go, goda, gofmt, npx, mdBook
+
 ### 0.3.0 (2023-12-18)
 
 #### BREAKING CHANGES
