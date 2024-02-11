@@ -11,6 +11,7 @@ pub enum UserError {
         folder: PathBuf,
         reason: String,
     },
+    CannotDetermineCurrentDirectory(String),
     CannotDetermineHomeDirectory,
     CannotDownload {
         url: String,
@@ -75,6 +76,7 @@ impl UserError {
                 error(&format!("cannot read the config file: {reason}"));
                 desc(&format!("please make sure {} is a file and accessible to you", config::FILE_NAME,));
             }
+            UserError::CannotDetermineCurrentDirectory(reason) => error(&format!("cannot determine the current directory: {reason}")),
             UserError::CannotCreateFolder { folder, reason } => {
                 error(&format!("cannot create folder {folder}: {reason}", folder = folder.to_string_lossy()));
                 desc("Please check access permissions and try again.");
