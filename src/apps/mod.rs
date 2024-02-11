@@ -67,6 +67,7 @@ pub fn all() -> Apps {
             Box::new(gofumpt::Gofumpt {}),
             Box::new(golangci_lint::GolangCiLint {}),
             Box::new(goreleaser::Goreleaser {}),
+            Box::new(mdbook::MdBook {}),
             Box::new(nodejs::NodeJS {}),
             Box::new(npm::Npm {}),
             Box::new(npx::Npx {}),
