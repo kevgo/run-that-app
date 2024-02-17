@@ -3,18 +3,34 @@ use super::FILE_NAME;
 use crate::cli::RequestedApp;
 use crate::Result;
 use crate::UserError;
+use std::env;
 use std::str::SplitAsciiWhitespace;
 use std::{fs, io};
 
+pub fn find() -> Result<Option<String>> {
+    let cwd = env::current_dir().map_err(|err| UserError::CannotDetermineCurrentDirectory(err.to_string()))?;
+    let mut dir = cwd.as_path();
+    loop {
+        let file_path = dir.join(FILE_NAME);
+        match fs::read_to_string(file_path) {
+            Ok(text) => return Ok(Some(text)),
+            Err(err) => match err.kind() {
+                io::ErrorKind::NotFound => {}
+                _ => return Err(UserError::CannotAccessConfigFile(err.to_string())),
+            },
+        }
+        dir = match dir.parent() {
+            Some(parent) => parent,
+            None => return Ok(None),
+        };
+    }
+}
+
 pub fn load() -> Result<Config> {
-    let text = match fs::read_to_string(FILE_NAME) {
-        Ok(text) => text,
-        Err(err) => match err.kind() {
-            io::ErrorKind::NotFound => return Ok(Config::default()),
-            _ => return Err(UserError::CannotAccessConfigFile(err.to_string())),
-        },
-    };
-    parse(&text)
+    match find()? {
+        Some(text) => parse(&text),
+        None => Ok(Config::default()),
+    }
 }
 
 fn parse(text: &str) -> Result<Config> {

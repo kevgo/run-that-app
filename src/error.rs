@@ -7,13 +7,14 @@ use std::path::PathBuf;
 #[allow(clippy::module_name_repetitions)]
 pub enum UserError {
     CannotAccessConfigFile(String),
+    CannotCreateFolder {
+        folder: PathBuf,
+        reason: String,
+    },
+    CannotDetermineCurrentDirectory(String),
     CannotDetermineHomeDirectory,
     CannotDownload {
         url: String,
-        reason: String,
-    },
-    CannotCreateFolder {
-        folder: PathBuf,
         reason: String,
     },
     CannotExecuteBinary {
@@ -25,6 +26,7 @@ pub enum UserError {
         file: String,
         reason: String,
     },
+    ConfigFileAlreadyExists,
     GitHubReleasesApiProblem {
         problem: String,
         payload: String,
@@ -33,14 +35,13 @@ pub enum UserError {
         problem: String,
         payload: String,
     },
-    ConfigFileAlreadyExists,
+    GoCompilationFailed,
+    GoNoPermission,
+    GoNotInstalled,
     InvalidConfigFileFormat {
         line_no: usize,
         text: String,
     },
-    GoCompilationFailed,
-    GoNoPermission,
-    GoNotInstalled,
     InvalidNumber,
     MissingApplication,
     MultipleCommandsGiven,
@@ -75,22 +76,27 @@ impl UserError {
                 error(&format!("cannot read the config file: {reason}"));
                 desc(&format!("please make sure {} is a file and accessible to you", config::FILE_NAME,));
             }
-            UserError::CannotExecuteBinary { call, reason } => {
-                error(&format!("cannot execute \"{call}\":\n{reason}"));
-            }
-            UserError::CannotDetermineHomeDirectory => error("cannot determine home directory"),
+            UserError::CannotDetermineCurrentDirectory(reason) => error(&format!("cannot determine the current directory: {reason}")),
             UserError::CannotCreateFolder { folder, reason } => {
                 error(&format!("cannot create folder {folder}: {reason}", folder = folder.to_string_lossy()));
                 desc("Please check access permissions and try again.");
             }
+            UserError::CannotDetermineHomeDirectory => error("cannot determine home directory"),
             UserError::CannotDownload { url, reason } => {
                 error(&format!("cannot download URL {url}: {reason}"));
                 desc("Please try again later.");
+            }
+            UserError::CannotExecuteBinary { call, reason } => {
+                error(&format!("cannot execute \"{call}\":\n{reason}"));
             }
             #[cfg(unix)]
             UserError::CannotMakeFileExecutable { file, reason } => {
                 error(&format!("Cannot make file {file} executable: {reason}"));
                 desc("Please check access permissions and try again.");
+            }
+            UserError::ConfigFileAlreadyExists => {
+                error("config file already exists");
+                desc(&format!("The file {FILE_NAME} already exists, no changes have been made to it."));
             }
             UserError::GitHubReleasesApiProblem { problem, payload } => {
                 error(&format!("Problem with the GitHub Releases API: {problem}"));
@@ -100,14 +106,6 @@ impl UserError {
                 error(&format!("Problem with the GitHub Tags API: {problem}"));
                 desc(&payload);
             }
-            UserError::ConfigFileAlreadyExists => {
-                error("config file already exists");
-                desc(&format!("The file {FILE_NAME} already exists, no changes have been made to it."));
-            }
-            UserError::InvalidConfigFileFormat { line_no, text } => {
-                error("Invalid config file format");
-                desc(&format!("{}:{line_no}: {text}", config::FILE_NAME));
-            }
             UserError::GoCompilationFailed => {
                 error("Compilation from Go source failed.");
                 desc("Please see the error output above and try again with a different version.");
@@ -116,6 +114,10 @@ impl UserError {
             UserError::GoNotInstalled => {
                 error("The Go compiler is not installed");
                 desc("Installation instructions: https://go.dev/dl");
+            }
+            UserError::InvalidConfigFileFormat { line_no, text } => {
+                error("Invalid config file format");
+                desc(&format!("{}:{line_no}: {text}", config::FILE_NAME));
             }
             UserError::InvalidNumber => {
                 error("Invalid number given");
@@ -164,6 +166,10 @@ impl UserError {
                 error(&format!("Your CPU ({name}) is currently not supported."));
                 desc("Request support for your platform at https://github.com/kevgo/run-that-app/issues.");
             }
+            UserError::UnsupportedOS(name) => {
+                error(&format!("Your operating system ({name}) is currently not supported."));
+                desc("Request support for your platform at https://github.com/kevgo/run-that-app/issues.");
+            } // UserError::UnsupportedPlatformAndNoGlobalApp { app_name, platform } => {
             UserError::UnsupportedPlatform => {
                 error("This application does not seem to support your platform.");
                 desc(
@@ -173,10 +179,6 @@ As a workaround, you could install this app in other ways and then run \"rta --i
 If you are okay moving forward without this app, you can provide the \"--optional\" switch and run-that-app will ignore this failure.",
                 );
             }
-            UserError::UnsupportedOS(name) => {
-                error(&format!("Your operating system ({name}) is currently not supported."));
-                desc("Request support for your platform at https://github.com/kevgo/run-that-app/issues.");
-            } // UserError::UnsupportedPlatformAndNoGlobalApp { app_name, platform } => {
             UserError::YardAccessDenied { msg, path } => {
                 error(&format!("Access to the Yard denied: {msg}"));
                 desc(&format!("Make sure the folder {} is accessible to you", path.to_string_lossy()));
