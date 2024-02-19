@@ -14,10 +14,10 @@ Run-that-app is minimalistic and completely non-invasive. It ships as a single
 stand-alone binary. Run-that-app uses no magic, no configuration changes, no
 environment variables, no application shims or stubs, no shell integrations, no
 dependencies, no plugins, no need to package applications to install in a
-special way, no application repository, no Docker, no emulation, no WASM.
-Applications download in 1-2 seconds, and store very little (just the
-executables) on your hard drive. The installation doesn't require _sudo_.
-Applications execute at 100% native speed.
+special way, no application repository, no Docker, no system daemons, no sudo,
+no emulation, no WASM, no bloat. Applications download in 1-2 seconds, and store
+very little (just the executables) on your hard drive. Applications execute at
+100% native speed.
 
 ### quickstart
 
