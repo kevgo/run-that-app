@@ -95,23 +95,23 @@ mod tests {
         fn is_marked() {
             let tempdir = tempfile::tempdir().unwrap();
             let yard = create(tempdir.path()).unwrap();
-            let requested_app = AppVersion {
+            let app_version = AppVersion {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             };
-            yard.mark_not_installable(&requested_app).unwrap();
-            let have = yard.is_not_installable(&requested_app);
+            yard.mark_not_installable(&app_version).unwrap();
+            let have = yard.is_not_installable(&app_version);
             assert!(have);
         }
 
         #[test]
         fn is_not_marked() {
             let yard = Yard { root: PathBuf::from("/root") };
-            let requested_app = AppVersion {
+            let app_version = AppVersion {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             };
-            let have = yard.is_not_installable(&requested_app);
+            let have = yard.is_not_installable(&app_version);
             assert!(!have);
         }
     }
@@ -149,11 +149,11 @@ mod tests {
         #[test]
         fn app_is_not_installed() {
             let yard = Yard { root: PathBuf::from("/root") };
-            let requested_app = AppVersion {
+            let app_version = AppVersion {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             };
-            let loaded = yard.load_app(&requested_app.name, &requested_app.version, "executable");
+            let loaded = yard.load_app(&app_version.name, &app_version.version, "executable");
             assert!(loaded.is_none());
         }
 

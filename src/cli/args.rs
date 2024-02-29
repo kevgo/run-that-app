@@ -11,7 +11,7 @@ pub struct Args {
 #[allow(clippy::too_many_lines)]
 pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let _skipped_binary_name = cli_args.next();
-    let mut requested_app: Option<AppVersion> = None;
+    let mut app_version: Option<AppVersion> = None;
     let mut log: Option<String> = None;
     let mut app_args: Vec<String> = vec![];
     let mut error_on_output = false;
@@ -23,7 +23,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut optional = false;
     let mut versions: Option<usize> = None;
     for arg in cli_args {
-        if requested_app.is_none() {
+        if app_version.is_none() {
             if &arg == "--available" {
                 indicate_available = true;
                 continue;
@@ -75,8 +75,8 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 return Err(UserError::UnknownCliOption(arg));
             }
         }
-        if requested_app.is_none() {
-            requested_app = Some(app_version::parse(&arg));
+        if app_version.is_none() {
+            app_version = Some(app_version::parse(&arg));
         } else {
             app_args.push(arg);
         }
@@ -90,7 +90,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             command: Command::Update { log },
         });
     }
-    if let Some(app) = requested_app {
+    if let Some(app) = app_version {
         if indicate_available {
             Ok(Args {
                 command: Command::Available { app, include_path, log },

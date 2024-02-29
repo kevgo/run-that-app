@@ -36,8 +36,8 @@ pub fn load() -> Result<Config> {
 fn parse(text: &str) -> Result<Config> {
     let mut apps = vec![];
     for (i, line) in text.lines().enumerate() {
-        if let Some(requested_app) = parse_line(line, i)? {
-            apps.push(requested_app);
+        if let Some(app_version) = parse_line(line, i)? {
+            apps.push(app_version);
         }
     }
     Ok(Config { apps })
