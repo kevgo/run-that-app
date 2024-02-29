@@ -1,5 +1,5 @@
 use crate::apps;
-use crate::cli::RequestedApp;
+use crate::cli::AppVersion;
 use crate::config;
 use crate::error::UserError;
 use crate::filesystem::find_global_install;
@@ -11,7 +11,7 @@ use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
 
-pub fn run(requested_app: RequestedApp, args: &[String], error_on_output: bool, include_path: bool, optional: bool, output: &dyn Output) -> Result<ExitCode> {
+pub fn run(requested_app: AppVersion, args: &[String], error_on_output: bool, include_path: bool, optional: bool, output: &dyn Output) -> Result<ExitCode> {
     if let Some(executable) = load_or_install(requested_app, include_path, output)? {
         if error_on_output {
             Ok(subshell::stream(&executable, args)?)
@@ -25,7 +25,7 @@ pub fn run(requested_app: RequestedApp, args: &[String], error_on_output: bool, 
     }
 }
 
-pub fn load_or_install(mut requested_app: RequestedApp, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
+pub fn load_or_install(mut requested_app: AppVersion, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
     if requested_app.version.is_empty() {
         let config = config::load()?;
         let Some(configured_app) = config.lookup(&requested_app.name) else {

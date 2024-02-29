@@ -1,5 +1,5 @@
 use super::Command;
-use super::{requested_app, RequestedApp};
+use super::{app_version, AppVersion};
 use crate::{Result, UserError};
 
 /// all arguments that can be provided via the CLI
@@ -11,7 +11,7 @@ pub struct Args {
 #[allow(clippy::too_many_lines)]
 pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let _skipped_binary_name = cli_args.next();
-    let mut requested_app: Option<RequestedApp> = None;
+    let mut requested_app: Option<AppVersion> = None;
     let mut log: Option<String> = None;
     let mut app_args: Vec<String> = vec![];
     let mut error_on_output = false;
@@ -76,7 +76,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             }
         }
         if requested_app.is_none() {
-            requested_app = Some(requested_app::parse(&arg));
+            requested_app = Some(app_version::parse(&arg));
         } else {
             app_args.push(arg);
         }
@@ -152,12 +152,12 @@ mod tests {
             use big_s::S;
 
             use super::parse_args;
-            use crate::cli::{Args, Command, RequestedApp};
+            use crate::cli::{AppVersion, Args, Command};
             use crate::error::UserError;
 
             mod available {
                 use super::super::parse_args;
-                use crate::cli::{Args, Command, RequestedApp};
+                use crate::cli::{AppVersion, Args, Command};
                 use crate::error::UserError;
                 use big_s::S;
 
@@ -166,7 +166,7 @@ mod tests {
                     let have = parse_args(vec!["rta", "--available", "shellcheck"]);
                     let want = Ok(Args {
                         command: Command::Available {
-                            app: RequestedApp {
+                            app: AppVersion {
                                 name: S("shellcheck"),
                                 version: S(""),
                             },
@@ -182,7 +182,7 @@ mod tests {
                     let have = parse_args(vec!["rta", "--available", "--include-path", "--log=detect", "shellcheck"]);
                     let want = Ok(Args {
                         command: Command::Available {
-                            app: RequestedApp {
+                            app: AppVersion {
                                 name: S("shellcheck"),
                                 version: S(""),
                             },
@@ -203,7 +203,7 @@ mod tests {
 
             mod error_on_output {
                 use super::super::parse_args;
-                use crate::cli::{Args, Command, RequestedApp};
+                use crate::cli::{AppVersion, Args, Command};
                 use crate::error::UserError;
                 use big_s::S;
 
@@ -212,7 +212,7 @@ mod tests {
                     let have = parse_args(vec!["rta", "--error-on-output", "app"]);
                     let want = Ok(Args {
                         command: Command::RunApp {
-                            app: RequestedApp {
+                            app: AppVersion {
                                 name: S("app"),
                                 version: S(""),
                             },
@@ -255,7 +255,7 @@ mod tests {
 
             mod include_path {
                 use super::super::parse_args;
-                use crate::cli::{Args, Command, RequestedApp};
+                use crate::cli::{AppVersion, Args, Command};
                 use crate::UserError;
                 use big_s::S;
 
@@ -264,7 +264,7 @@ mod tests {
                     let have = parse_args(vec!["rta", "--include-path", "app@2", "arg1"]);
                     let want = Ok(Args {
                         command: Command::RunApp {
-                            app: RequestedApp {
+                            app: AppVersion {
                                 name: S("app"),
                                 version: S("2"),
                             },
@@ -288,7 +288,7 @@ mod tests {
 
             mod log {
                 use super::super::parse_args;
-                use crate::cli::{Args, Command, RequestedApp};
+                use crate::cli::{AppVersion, Args, Command};
                 use crate::error::UserError;
                 use big_s::S;
 
@@ -297,7 +297,7 @@ mod tests {
                     let have = parse_args(vec!["rta", "--log", "app@2"]);
                     let want = Ok(Args {
                         command: Command::RunApp {
-                            app: RequestedApp {
+                            app: AppVersion {
                                 name: S("app"),
                                 version: S("2"),
                             },
@@ -316,7 +316,7 @@ mod tests {
                     let have = parse_args(vec!["rta", "--log=scope", "app@2"]);
                     let want = Ok(Args {
                         command: Command::RunApp {
-                            app: RequestedApp {
+                            app: AppVersion {
                                 name: S("app"),
                                 version: S("2"),
                             },
@@ -350,7 +350,7 @@ mod tests {
                 let have = parse_args(vec!["rta", "--optional", "app@2", "arg1"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
-                        app: RequestedApp {
+                        app: AppVersion {
                             name: S("app"),
                             version: S("2"),
                         },
@@ -426,7 +426,7 @@ mod tests {
 
             mod which {
                 use super::super::parse_args;
-                use crate::cli::{Args, Command, RequestedApp};
+                use crate::cli::{AppVersion, Args, Command};
                 use crate::UserError;
                 use big_s::S;
 
@@ -435,7 +435,7 @@ mod tests {
                     let have = parse_args(vec!["rta", "--which", "shellcheck"]);
                     let want = Ok(Args {
                         command: Command::Which {
-                            app: RequestedApp {
+                            app: AppVersion {
                                 name: S("shellcheck"),
                                 version: S(""),
                             },
@@ -451,7 +451,7 @@ mod tests {
                     let have = parse_args(vec!["rta", "--which", "--include-path", "--log=detect", "shellcheck"]);
                     let want = Ok(Args {
                         command: Command::Which {
-                            app: RequestedApp {
+                            app: AppVersion {
                                 name: S("shellcheck"),
                                 version: S(""),
                             },
@@ -473,7 +473,7 @@ mod tests {
 
         mod application_arguments {
             use super::parse_args;
-            use crate::cli::{args, Command, RequestedApp};
+            use crate::cli::{args, AppVersion, Command};
             use args::Args;
             use big_s::S;
 
@@ -482,7 +482,7 @@ mod tests {
                 let have = parse_args(vec!["rta", "app@2"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
-                        app: RequestedApp {
+                        app: AppVersion {
                             name: S("app"),
                             version: S("2"),
                         },
@@ -501,7 +501,7 @@ mod tests {
                 let have = parse_args(vec!["rta", "app@2", "--arg1", "arg2"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
-                        app: RequestedApp {
+                        app: AppVersion {
                             name: S("app"),
                             version: S("2"),
                         },
@@ -518,13 +518,13 @@ mod tests {
 
         mod rta_and_app_arguments {
             use super::parse_args;
-            use crate::cli::{Args, Command, RequestedApp};
+            use crate::cli::{AppVersion, Args, Command};
             use big_s::S;
 
             #[test]
             fn rta_and_app_arguments() {
                 let have = parse_args(vec!["rta", "--log=l1", "app@2", "--arg1", "arg2"]);
-                let app = RequestedApp {
+                let app = AppVersion {
                     name: S("app"),
                     version: S("2"),
                 };
@@ -546,7 +546,7 @@ mod tests {
                 let have = parse_args(vec!["rta", "app@2", "--log=app", "--version"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
-                        app: RequestedApp {
+                        app: AppVersion {
                             name: S("app"),
                             version: S("2"),
                         },

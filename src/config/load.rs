@@ -1,6 +1,6 @@
 use super::Config;
 use super::FILE_NAME;
-use crate::cli::RequestedApp;
+use crate::cli::AppVersion;
 use crate::Result;
 use crate::UserError;
 use std::env;
@@ -43,7 +43,7 @@ fn parse(text: &str) -> Result<Config> {
     Ok(Config { apps })
 }
 
-pub fn parse_line(line_text: &str, line_no: usize) -> Result<Option<RequestedApp>> {
+pub fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersion>> {
     let line_text = line_text.trim();
     let mut parts = LinePartsIterator::from(line_text);
     let Some(name) = parts.next() else {
@@ -64,7 +64,7 @@ pub fn parse_line(line_text: &str, line_no: usize) -> Result<Option<RequestedApp
             text: line_text.to_string(),
         });
     }
-    Ok(Some(RequestedApp {
+    Ok(Some(AppVersion {
         name: name.to_string(),
         version: version.to_string(),
     }))
@@ -102,7 +102,7 @@ mod tests {
 
     mod parse {
         use super::super::parse;
-        use crate::cli::RequestedApp;
+        use crate::cli::AppVersion;
         use crate::config::Config;
         use big_s::S;
 
@@ -114,15 +114,15 @@ mod tests {
             let have = parse(give).unwrap();
             let want = Config {
                 apps: vec![
-                    RequestedApp {
+                    AppVersion {
                         name: S("alpha"),
                         version: S("1.2.3"),
                     },
-                    RequestedApp {
+                    AppVersion {
                         name: S("beta"),
                         version: S("2.3.4"),
                     },
-                    RequestedApp {
+                    AppVersion {
                         name: S("gamma"),
                         version: S("3.4.5"),
                     },
@@ -134,7 +134,7 @@ mod tests {
 
     mod parse_line {
         use super::super::parse_line;
-        use crate::cli::RequestedApp;
+        use crate::cli::AppVersion;
         use crate::error::UserError;
         use big_s::S;
 
@@ -142,7 +142,7 @@ mod tests {
         fn normal() {
             let give = "shellcheck 0.9.0";
             let have = parse_line(give, 1).unwrap();
-            let want = Some(RequestedApp {
+            let want = Some(AppVersion {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             });
@@ -153,7 +153,7 @@ mod tests {
         fn normal_with_multiple_spaces() {
             let give = "     shellcheck            0.9.0      ";
             let have = parse_line(give, 1).unwrap();
-            let want = Some(RequestedApp {
+            let want = Some(AppVersion {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             });
@@ -164,7 +164,7 @@ mod tests {
         fn normal_with_tabs() {
             let give = "shellcheck\t0.9.0";
             let have = parse_line(give, 1).unwrap();
-            let want = Some(RequestedApp {
+            let want = Some(AppVersion {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             });
@@ -207,7 +207,7 @@ mod tests {
         fn valid_with_comment_at_end() {
             let give = "shellcheck 0.9.0  # comment";
             let have = parse_line(give, 1).unwrap();
-            let want = Some(RequestedApp {
+            let want = Some(AppVersion {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             });

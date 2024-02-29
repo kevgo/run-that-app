@@ -1,4 +1,4 @@
-use crate::cli::RequestedApp;
+use crate::cli::AppVersion;
 use crate::error::UserError;
 use crate::subshell::Executable;
 use crate::Result;
@@ -21,7 +21,7 @@ impl Yard {
         self.root.join("apps").join(app_name).join(app_version)
     }
 
-    pub fn is_not_installable(&self, app: &RequestedApp) -> bool {
+    pub fn is_not_installable(&self, app: &AppVersion) -> bool {
         self.not_installable_path(&app.name, &app.version).exists()
     }
 
@@ -35,7 +35,7 @@ impl Yard {
         }
     }
 
-    pub fn mark_not_installable(&self, app: &RequestedApp) -> Result<()> {
+    pub fn mark_not_installable(&self, app: &AppVersion) -> Result<()> {
         let app_folder = self.app_folder(&app.name, &app.version);
         fs::create_dir_all(&app_folder).map_err(|err| UserError::YardAccessDenied {
             msg: err.to_string(),
@@ -85,7 +85,7 @@ mod tests {
     }
 
     mod is_not_installable {
-        use crate::cli::RequestedApp;
+        use crate::cli::AppVersion;
         use crate::yard::create;
         use crate::yard::Yard;
         use big_s::S;
@@ -95,7 +95,7 @@ mod tests {
         fn is_marked() {
             let tempdir = tempfile::tempdir().unwrap();
             let yard = create(tempdir.path()).unwrap();
-            let requested_app = RequestedApp {
+            let requested_app = AppVersion {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             };
@@ -107,7 +107,7 @@ mod tests {
         #[test]
         fn is_not_marked() {
             let yard = Yard { root: PathBuf::from("/root") };
-            let requested_app = RequestedApp {
+            let requested_app = AppVersion {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             };
@@ -117,7 +117,7 @@ mod tests {
     }
 
     mod load_app {
-        use crate::cli::RequestedApp;
+        use crate::cli::AppVersion;
         use crate::subshell::Executable;
         use crate::yard::{create, Yard};
         use big_s::S;
@@ -149,7 +149,7 @@ mod tests {
         #[test]
         fn app_is_not_installed() {
             let yard = Yard { root: PathBuf::from("/root") };
-            let requested_app = RequestedApp {
+            let requested_app = AppVersion {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             };

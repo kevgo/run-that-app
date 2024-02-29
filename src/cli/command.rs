@@ -1,15 +1,15 @@
-use super::RequestedApp;
+use super::AppVersion;
 
 /// the main commands that run-this-app can execute
 #[derive(Debug, PartialEq)]
 pub enum Command {
     Available {
-        app: RequestedApp,
+        app: AppVersion,
         include_path: bool,
         log: Option<String>,
     },
     RunApp {
-        app: RequestedApp,
+        app: AppVersion,
         args: Vec<String>,
         error_on_output: bool,
         include_path: bool,
@@ -19,7 +19,7 @@ pub enum Command {
     DisplayHelp,
     Setup,
     Which {
-        app: RequestedApp,
+        app: AppVersion,
         include_path: bool,
         log: Option<String>,
     },
