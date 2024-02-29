@@ -7,14 +7,13 @@ mod load_or_create;
 #[allow(clippy::module_inception)] // I can't come up with a better name for this
 mod yard;
 
+use crate::error::UserError;
 use crate::Result;
 pub use create::create;
 pub use load::load;
 pub use load_or_create::load_or_create;
 use std::path::{Path, PathBuf};
 pub use yard::Yard;
-
-use crate::error::UserError;
 
 /// provides the location of the production yard
 pub fn production_location() -> Result<PathBuf> {
