@@ -34,7 +34,7 @@ impl App for MdBook {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
             file_to_extract: self.executable_filename(platform),
-            filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            filepath_on_disk: yard.app_folder(self.name(), version).join(self.executable_filename(platform)),
             output,
         })? {
             return Ok(Some(executable));
