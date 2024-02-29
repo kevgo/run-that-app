@@ -1,5 +1,5 @@
+use super::AppVersion;
 use super::Command;
-use super::{app_version, AppVersion};
 use crate::{Result, UserError};
 
 /// all arguments that can be provided via the CLI
@@ -76,7 +76,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             }
         }
         if app_version.is_none() {
-            app_version = Some(app_version::parse(&arg));
+            app_version = Some(AppVersion::from(arg.as_str()));
         } else {
             app_args.push(arg);
         }
