@@ -26,7 +26,7 @@ impl App for Npx {
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let nodejs = NodeJS {};
         nodejs.install(version, platform, yard, output)?;
-        let executable_path = yard.app_file_path(nodejs.name(), version, self.executable_filename(platform));
+        let executable_path = yard.app_folder(nodejs.name(), version).join(self.executable_filename(platform));
         Ok(Some(Executable(executable_path)))
     }
 
