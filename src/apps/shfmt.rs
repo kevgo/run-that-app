@@ -30,13 +30,14 @@ impl App for Shfmt {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        if let Some(executable) = executable::install(InstallArgs {
+        let result = executable::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
             filepath_on_disk: yard.app_folder(self.name(), version).join(self.executable_filename(platform)),
             output,
-        })? {
-            return Ok(Some(executable));
+        })?;
+        if result.is_some() {
+            return Ok(result);
         }
         compile_go(CompileArgs {
             import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}"),

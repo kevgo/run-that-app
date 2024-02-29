@@ -30,14 +30,15 @@ impl App for MdBook {
     }
 
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        if let Some(executable) = packaged_executable::install(InstallArgs {
+        let result = packaged_executable::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
             file_to_extract: self.executable_filename(platform),
             filepath_on_disk: yard.app_folder(self.name(), version).join(self.executable_filename(platform)),
             output,
-        })? {
-            return Ok(Some(executable));
+        })?;
+        if result.is_some() {
+            return Ok(result);
         }
         compile_rust(CompileArgs {
             crate_name: "mdbook",
