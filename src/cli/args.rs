@@ -76,7 +76,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             }
         }
         if app_version.is_none() {
-            app_version = Some(AppVersion::from(arg.as_str()));
+            app_version = Some(AppVersion::new(arg));
         } else {
             app_args.push(arg);
         }

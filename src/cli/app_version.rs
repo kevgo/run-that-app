@@ -5,9 +5,9 @@ pub struct AppVersion {
     pub version: String,
 }
 
-impl From<&str> for AppVersion {
-    fn from(token: &str) -> Self {
-        let (app_name, version) = token.split_once('@').unwrap_or((token, ""));
+impl AppVersion {
+    pub fn new<S: AsRef<str>>(token: S) -> Self {
+        let (app_name, version) = token.as_ref().split_once('@').unwrap_or((token.as_ref(), ""));
         AppVersion {
             name: app_name.to_string(),
             version: version.to_string(),
@@ -24,7 +24,7 @@ mod tests {
         #[test]
         fn name_and_version() {
             let give = "shellcheck@0.9.0";
-            let have = AppVersion::from(give);
+            let have = AppVersion::new(give);
             let want = AppVersion {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
@@ -35,7 +35,7 @@ mod tests {
         #[test]
         fn name_only() {
             let give = "shellcheck";
-            let have = AppVersion::from(give);
+            let have = AppVersion::new(give);
             let want = AppVersion {
                 name: S("shellcheck"),
                 version: S(""),
@@ -46,7 +46,7 @@ mod tests {
         #[test]
         fn empty_version() {
             let give = "shellcheck@";
-            let have = AppVersion::from(give);
+            let have = AppVersion::new(give);
             let want = AppVersion {
                 name: S("shellcheck"),
                 version: S(""),
