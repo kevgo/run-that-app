@@ -11,11 +11,6 @@ pub struct Yard {
 
 /// stores executables of and metadata about applications
 impl Yard {
-    /// provides the path to the given file that is part of the given application
-    pub fn app_file_path(&self, app_name: &str, app_version: &str, file: &str) -> PathBuf {
-        self.app_folder(app_name, app_version).join(file)
-    }
-
     /// provides the path to the folder containing the given application
     pub fn app_folder(&self, app_name: &str, app_version: &str) -> PathBuf {
         self.root.join("apps").join(app_name).join(app_version)
@@ -27,7 +22,7 @@ impl Yard {
 
     /// provides the path to the executable of the given application
     pub fn load_app(&self, name: &str, version: &str, executable_filename: &str) -> Option<Executable> {
-        let file_path = self.app_file_path(name, version, executable_filename);
+        let file_path = self.app_folder(name, version).join(executable_filename);
         if file_path.exists() {
             Some(Executable(file_path))
         } else {
@@ -58,7 +53,7 @@ impl Yard {
     fn save_app_file(&self, name: &str, version: &str, file_name: &str, file_content: &[u8]) {
         use std::io::Write;
         fs::create_dir_all(self.app_folder(name, version)).unwrap();
-        let mut file = fs::File::create(self.app_file_path(name, version, file_name)).unwrap();
+        let mut file = fs::File::create(self.app_folder(name, version).join(file_name)).unwrap();
         file.write_all(file_content).unwrap();
     }
 }
@@ -71,7 +66,7 @@ mod tests {
     #[test]
     fn app_file_path() {
         let yard = Yard { root: PathBuf::from("/root") };
-        let have = yard.app_file_path("shellcheck", "0.9.0", "shellcheck.exe");
+        let have = yard.app_folder("shellcheck", "0.9.0").join("shellcheck.exe");
         let want = PathBuf::from("/root/apps/shellcheck/0.9.0/shellcheck.exe");
         assert_eq!(have, want);
     }

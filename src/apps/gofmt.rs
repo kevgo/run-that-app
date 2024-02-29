@@ -26,7 +26,7 @@ impl App for Gofmt {
     fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let go = Go {};
         go.install(version, platform, yard, output)?;
-        let executable_path = yard.app_file_path(go.name(), version, self.executable_filename(platform));
+        let executable_path = yard.app_folder(go.name(), version).join(self.executable_filename(platform));
         Ok(Some(Executable(executable_path)))
     }
 

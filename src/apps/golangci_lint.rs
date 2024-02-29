@@ -33,7 +33,7 @@ impl App for GolangCiLint {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
             file_to_extract: &executable_path(version, platform, self.executable_filename(platform)),
-            filepath_on_disk: yard.app_file_path(self.name(), version, self.executable_filename(platform)),
+            filepath_on_disk: yard.app_folder(self.name(), version).join(self.executable_filename(platform)),
             output,
         })
         // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
