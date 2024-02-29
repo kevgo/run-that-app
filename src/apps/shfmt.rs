@@ -1,9 +1,10 @@
+use std::path::Path;
 use super::App;
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
-use crate::subshell::Executable;
+use crate::subshell::{self, Executable};
 use crate::yard::Yard;
 use crate::{Output, Result};
 use const_format::formatcp;
@@ -57,6 +58,15 @@ impl App for Shfmt {
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
         github_releases::versions(ORG, REPO, amount, output)
+    }
+
+    fn version(&self, executable: &Executable) -> Option<&str> {
+        let mut cmd = Command::new(&executable.0);
+        cmd.args(args);
+        let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
+
+
+        let output = subshell::run(executable, args)
     }
 }
 

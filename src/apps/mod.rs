@@ -49,6 +49,9 @@ pub trait App {
 
     /// provides the latest version of this application
     fn latest_installable_version(&self, output: &dyn Output) -> Result<String>;
+
+    /// provides the version of the executable that is installed at the given path
+    fn version(&self, path: &Executable) -> Option<&str>;
 }
 
 pub fn all() -> Apps {
