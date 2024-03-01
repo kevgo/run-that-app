@@ -11,14 +11,14 @@ use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
 
-pub fn run(args: Data, output: &dyn Output) -> Result<ExitCode> {
-    if let Some(executable) = load_or_install(args.app_version, args.include_path, output)? {
-        if args.error_on_output {
-            Ok(subshell::stream(&executable, &args.app_args)?)
+pub fn run(data: Data, output: &dyn Output) -> Result<ExitCode> {
+    if let Some(executable) = load_or_install(data.app_version, data.include_path, output)? {
+        if data.error_on_output {
+            Ok(subshell::stream(&executable, &data.app_args)?)
         } else {
-            Ok(subshell::run(&executable, &args.app_args)?)
+            Ok(subshell::run(&executable, &data.app_args)?)
         }
-    } else if args.optional {
+    } else if data.optional {
         Ok(ExitCode::SUCCESS)
     } else {
         Err(UserError::UnsupportedPlatform)
