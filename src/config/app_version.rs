@@ -18,7 +18,7 @@ impl AppVersion {
 #[cfg(test)]
 mod tests {
     mod parse {
-        use crate::cli::AppVersion;
+        use crate::config::AppVersion;
         use big_s::S;
 
         #[test]

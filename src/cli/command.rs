@@ -1,5 +1,5 @@
-use super::AppVersion;
 use crate::cmd::run;
+use crate::config::AppVersion;
 
 /// the main commands that run-this-app can execute
 #[derive(Debug, PartialEq)]
