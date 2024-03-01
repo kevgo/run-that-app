@@ -56,8 +56,7 @@ impl App for Go {
         if go_tags.len() > amount {
             go_tags.resize(amount, S(""));
         }
-        let versions: Vec<Version> = go_tags.into_iter().map(|tag| Version::from(tag)).collect();
-        Ok(versions)
+        Ok(go_tags.into_iter().map(Version::from).collect())
     }
 }
 
