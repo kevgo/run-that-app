@@ -154,7 +154,7 @@ rta go build
 Here is a template for installing and using run-that-app in a `Makefile`:
 
 ```make
-RTA_VERSION = 0.4.0
+RTA_VERSION = 0.4.1
 
 # an example Make target that uses run-that-app
 test: tools/rta@${RTA_VERSION}
