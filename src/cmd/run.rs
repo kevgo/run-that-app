@@ -28,10 +28,19 @@ pub fn run(data: Data, output: &dyn Output) -> Result<ExitCode> {
 #[derive(Debug, PartialEq)]
 /// data needed to run an executable
 pub struct Data {
+    /// name and version of the app to execute
     pub app_version: AppVersion,
+
+    /// arguments to call the app with
     pub app_args: Vec<String>,
+
+    /// if true, any output produced by the app is equivalent to an exit code > 0
     pub error_on_output: bool,
+
+    /// whether to include apps in the PATH
     pub include_path: bool,
+
+    /// whether it's okay to not run the app if it cannot be installed
     pub optional: bool,
 }
 
