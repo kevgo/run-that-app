@@ -1,4 +1,5 @@
 use super::strip_leading_v;
+use crate::config::Version;
 use crate::Output;
 use crate::Result;
 use crate::UserError;
@@ -6,7 +7,7 @@ use big_s::S;
 use colored::Colorize;
 
 /// provides the latest official version of the given application on GitHub Releases
-pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
+pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<Version> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases/latest");
     output.log("HTTP", &format!("downloading {url}"));
     let get = minreq::get(&url)
@@ -26,16 +27,16 @@ pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<String> {
     parse_latest_response(response_text)
 }
 
-fn parse_latest_response(text: &str) -> Result<String> {
+fn parse_latest_response(text: &str) -> Result<Version> {
     let release: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::GitHubReleasesApiProblem {
         problem: err.to_string(),
         payload: text.to_string(),
     })?;
-    Ok(strip_leading_v(release["tag_name"].as_str().unwrap()).to_string())
+    Ok(strip_leading_v(release["tag_name"].as_str().unwrap()).into())
 }
 
 /// provides the given number of latest versions of the given application on GitHub Releases
-pub fn versions(org: &str, repo: &str, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
+pub fn versions(org: &str, repo: &str, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases?per_page={amount}");
     output.log("HTTP", &format!("downloading {url}"));
     let get = minreq::get(&url)
@@ -50,7 +51,7 @@ pub fn versions(org: &str, repo: &str, amount: usize, output: &dyn Output) -> Re
     parse_versions_response(response.as_str().unwrap())
 }
 
-fn parse_versions_response(text: &str) -> Result<Vec<String>> {
+fn parse_versions_response(text: &str) -> Result<Vec<Version>> {
     let releases: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::GitHubReleasesApiProblem {
         problem: err.to_string(),
         payload: text.to_string(),
@@ -61,10 +62,10 @@ fn parse_versions_response(text: &str) -> Result<Vec<String>> {
             payload: text.to_string(),
         });
     };
-    let mut result: Vec<String> = Vec::with_capacity(releases.len());
+    let mut result: Vec<Version> = Vec::with_capacity(releases.len());
     for release in releases {
         if let Some(release_tag) = release["tag_name"].as_str() {
-            result.push(strip_leading_v(release_tag).to_string());
+            result.push(strip_leading_v(release_tag).into());
         };
     }
     Ok(result)
@@ -72,7 +73,7 @@ fn parse_versions_response(text: &str) -> Result<Vec<String>> {
 
 #[cfg(test)]
 mod tests {
-    use big_s::S;
+    use crate::config::Version;
 
     #[test]
     #[allow(clippy::too_many_lines)]
@@ -541,8 +542,8 @@ mod tests {
     "mentions_count": 5
   }
 ]"#;
-        let have: Vec<String> = super::parse_versions_response(response).unwrap();
-        let want = vec!["1.6.26"];
+        let have = super::parse_versions_response(response).unwrap();
+        let want = vec![Version::from("1.6.26")];
         assert_eq!(have, want);
     }
 
@@ -623,8 +624,8 @@ mod tests {
     }
   ]
 }"#;
-        let have: String = super::parse_latest_response(response).unwrap();
-        let want = S("1.0.0");
+        let have = super::parse_latest_response(response).unwrap();
+        let want = Version::from("1.0.0");
         assert_eq!(have, want);
     }
 }

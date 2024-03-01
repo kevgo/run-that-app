@@ -1,4 +1,5 @@
 use super::App;
+use crate::config::Version;
 use crate::hosting::github_releases;
 use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
@@ -27,7 +28,7 @@ impl App for NodeJS {
         "https://nodejs.org"
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         archive::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
@@ -38,20 +39,20 @@ impl App for NodeJS {
         })
     }
 
-    fn latest_installable_version(&self, output: &dyn Output) -> Result<String> {
+    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
         github_releases::latest(ORG, REPO, output)
     }
 
-    fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
+    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
         yard.load_app(self.name(), version, executable_path(platform))
     }
 
-    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
+    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, output)
     }
 }
 
-pub fn download_url(version: &str, platform: Platform) -> String {
+pub fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",
         os = os_text(platform.os),
@@ -92,6 +93,7 @@ fn ext_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
+    use crate::config::Version;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
@@ -100,7 +102,7 @@ mod tests {
             os: Os::MacOS,
             cpu: Cpu::Arm64,
         };
-        let have = super::download_url("20.10.0", platform);
+        let have = super::download_url(&Version::from("20.10.0"), platform);
         let want = "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz";
         assert_eq!(have, want);
     }

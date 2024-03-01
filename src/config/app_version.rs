@@ -20,7 +20,7 @@ impl AppVersion {
 #[cfg(test)]
 mod tests {
     mod parse {
-        use super::super::AppVersion;
+        use crate::config::{AppVersion, Version};
         use big_s::S;
 
         #[test]
@@ -29,7 +29,7 @@ mod tests {
             let have = AppVersion::new(give);
             let want = AppVersion {
                 name: S("shellcheck"),
-                version: "0.9.0".into(),
+                version: Version::from("0.9.0"),
             };
             pretty::assert_eq!(have, want);
         }
@@ -40,7 +40,7 @@ mod tests {
             let have = AppVersion::new(give);
             let want = AppVersion {
                 name: S("shellcheck"),
-                version: "".into(),
+                version: Version::None,
             };
             pretty::assert_eq!(have, want);
         }
@@ -51,7 +51,7 @@ mod tests {
             let have = AppVersion::new(give);
             let want = AppVersion {
                 name: S("shellcheck"),
-                version: "".into(),
+                version: Version::None,
             };
             pretty::assert_eq!(have, want);
         }
