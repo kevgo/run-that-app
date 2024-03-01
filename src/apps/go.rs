@@ -40,7 +40,7 @@ impl App for Go {
         })
     }
 
-    fn latest_installable_version(&self, output: &dyn Output) -> Result<String> {
+    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
         let versions = self.installable_versions(1, output)?;
         Ok(versions.into_iter().next().unwrap())
     }
@@ -49,14 +49,15 @@ impl App for Go {
         yard.load_app(self.name(), version, &self.executable_path(platform))
     }
 
-    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
+    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         let tags = github_tags::all(ORG, REPO, 100, output)?;
         let mut go_tags: Vec<String> = tags.into_iter().filter(|tag| tag.starts_with("go")).filter(|tag| !tag.contains("rc")).collect();
         go_tags.sort_unstable_by(|a, b| human_sort::compare(b, a));
         if go_tags.len() > amount {
             go_tags.resize(amount, S(""));
         }
-        Ok(go_tags)
+        let versions: Vec<Version> = go_tags.into_iter().map(|tag| Version::from(tag)).collect();
+        Ok(versions)
     }
 }
 

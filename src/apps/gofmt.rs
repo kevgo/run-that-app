@@ -31,7 +31,7 @@ impl App for Gofmt {
         Ok(Some(Executable(executable_path)))
     }
 
-    fn latest_installable_version(&self, output: &dyn Output) -> Result<String> {
+    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
         (Go {}).latest_installable_version(output)
     }
 
@@ -39,7 +39,7 @@ impl App for Gofmt {
         yard.load_app((Go {}).name(), version, &self.executable_path(platform))
     }
 
-    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
+    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         (Go {}).installable_versions(amount, output)
     }
 }

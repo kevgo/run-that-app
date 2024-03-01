@@ -46,10 +46,10 @@ pub trait App {
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable>;
 
     /// provides the versions of this application that can be installed
-    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>>;
+    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>>;
 
     /// provides the latest version of this application
-    fn latest_installable_version(&self, output: &dyn Output) -> Result<String>;
+    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version>;
 }
 
 pub fn all() -> Apps {

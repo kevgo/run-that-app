@@ -7,7 +7,15 @@ pub enum Version {
     Some(String),
     None,
 }
+
 impl Version {
+    pub(crate) fn as_str(&self) -> &str {
+        match self {
+            Version::Some(text) => text,
+            Version::None => "",
+        }
+    }
+
     pub(crate) fn is_some(&self) -> bool {
         matches!(*self, Version::Some(_))
     }
@@ -47,5 +55,28 @@ impl From<&str> for Version {
             return Version::None;
         }
         Version::Some(text.to_string())
+    }
+}
+
+impl From<String> for Version {
+    fn from(text: String) -> Self {
+        if text.is_empty() {
+            return Version::None;
+        }
+        Version::Some(text)
+    }
+}
+
+impl PartialEq<str> for Version {
+    fn eq(&self, other: &str) -> bool {
+        let text: &str = self.as_ref();
+        text == other
+    }
+}
+
+impl PartialEq<String> for Version {
+    fn eq(&self, other: &String) -> bool {
+        let text: &str = self.as_ref();
+        text == *other
     }
 }
