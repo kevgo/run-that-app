@@ -16,9 +16,6 @@ impl Version {
         }
     }
 
-    pub(crate) fn is_some(&self) -> bool {
-        matches!(*self, Version::Some(_))
-    }
     pub(crate) fn is_none(&self) -> bool {
         matches!(*self, Version::None)
     }
@@ -43,7 +40,7 @@ impl AsRef<str> for Version {
 impl Display for Version{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if let Version::Some(text) = self {
-            f.write_str(&text);
+            f.write_str(&text)?;
         }
         Ok(())
     }
