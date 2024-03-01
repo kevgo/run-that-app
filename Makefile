@@ -21,12 +21,16 @@ lint: build  # runs all linters
 	# target/debug/rta dprint check  # this breaks the Windows CI due to linebreak errors
 	target/debug/rta --optional shellcheck download.sh
 
+setup:  # sets this codebase up on this machine
+	cargo install cargo-machete
+
 test: unit lint  # runs all tests
 
 unit:  # runs the unit tests
 	cargo test
 
-update:  # updates the dependencies
+update: setup  # updates the dependencies
+	cargo machete
 	cargo upgrade
 
 
