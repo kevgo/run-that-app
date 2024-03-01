@@ -1,6 +1,6 @@
 use crate::apps;
-use crate::config::AppVersion;
 use crate::config;
+use crate::config::AppVersion;
 use crate::error::UserError;
 use crate::filesystem::find_global_install;
 use crate::platform;

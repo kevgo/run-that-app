@@ -498,7 +498,7 @@ mod tests {
             use super::parse_args;
             use crate::cli::{args, Command};
             use crate::cmd::run;
-            use crate::config::{AppVersion, Version} ;
+            use crate::config::{AppVersion, Version};
             use args::Args;
             use big_s::S;
 

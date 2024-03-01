@@ -102,7 +102,7 @@ mod tests {
 
     mod parse {
         use super::super::parse;
-        use crate::config::{AppVersion,Config, Version};
+        use crate::config::{AppVersion, Config, Version};
         use big_s::S;
 
         #[test]
