@@ -3,6 +3,8 @@
 mod config;
 mod create;
 mod load;
+mod app_versions;
+mod version;
 mod save;
 
 pub use config::Config;
