@@ -49,6 +49,10 @@ impl App for NodeJS {
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
         github_releases::versions(ORG, REPO, amount, output)
     }
+
+    fn version(&self, path: &Executable) -> Option<String> {
+        todo!()
+    }
 }
 
 pub fn download_url(version: &str, platform: Platform) -> String {

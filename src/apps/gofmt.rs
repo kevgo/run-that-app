@@ -41,6 +41,10 @@ impl App for Gofmt {
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
         (Go {}).installable_versions(amount, output)
     }
+
+    fn version(&self, path: &Executable) -> Option<String> {
+        todo!()
+    }
 }
 
 impl Gofmt {

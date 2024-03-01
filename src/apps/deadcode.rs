@@ -46,4 +46,8 @@ impl App for Deadcode {
     fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<String>> {
         Ok(vec![S("0.16.1")])
     }
+
+    fn version(&self, path: &Executable) -> Option<String> {
+        todo!()
+    }
 }

@@ -41,4 +41,8 @@ impl App for Npx {
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
         (NodeJS {}).installable_versions(amount, output)
     }
+
+    fn version(&self, path: &Executable) -> Option<String> {
+        todo!()
+    }
 }

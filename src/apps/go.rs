@@ -57,6 +57,10 @@ impl App for Go {
         }
         Ok(go_tags)
     }
+
+    fn version(&self, path: &Executable) -> Option<String> {
+        todo!()
+    }
 }
 
 impl Go {
