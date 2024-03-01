@@ -48,6 +48,18 @@ impl App for ShellCheck {
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
         github_releases::versions(ORG, REPO, amount, output)
     }
+
+    fn version(&self, executable: &Executable) -> Option<String> {
+        let mut cmd = Command::new(executable);
+        cmd.arg("--version");
+        let Ok(output) = cmd.output() else {
+            return None;
+        };
+        let Ok(output) = String::from_utf8(output.stdout) else {
+            return None;
+        };
+        extract_version(&output).map(ToString::to_string)
+    }
 }
 
 fn download_url(version: &str, platform: Platform) -> String {
