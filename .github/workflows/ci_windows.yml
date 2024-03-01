@@ -22,4 +22,5 @@ jobs:
           override: true
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
+      - run: make setup
       - run: make test
