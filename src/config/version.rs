@@ -26,17 +26,8 @@ impl Version {
 
 impl AsRef<Path> for Version {
     fn as_ref(&self) -> &Path {
-        let text: &str = self.as_ref();
+        let text: &str = self.as_str();
         Path::new(text)
-    }
-}
-
-impl AsRef<str> for Version {
-    fn as_ref(&self) -> &str {
-        match self {
-            Version::Some(text) => text,
-            Version::None => "",
-        }
     }
 }
 
@@ -69,14 +60,12 @@ impl From<String> for Version {
 
 impl PartialEq<str> for Version {
     fn eq(&self, other: &str) -> bool {
-        let text: &str = self.as_ref();
-        text == other
+        self.as_str() == other
     }
 }
 
 impl PartialEq<String> for Version {
     fn eq(&self, other: &String) -> bool {
-        let text: &str = self.as_ref();
-        text == *other
+        self.as_str() == *other
     }
 }
