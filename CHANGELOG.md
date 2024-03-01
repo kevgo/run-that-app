@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+### 0.4.1 (2024-02-29)
+
+#### Bug Fixes
+
+- fixed installation of `scc` from source
+
 ### 0.4.0 (2024-02-11)
 
 #### New Features
