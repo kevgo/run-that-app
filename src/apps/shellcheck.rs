@@ -96,7 +96,7 @@ fn ext_text(os: Os) -> &'static str {
 }
 
 fn extract_version(output: &str) -> Option<&str> {
-    let re = Regex::new(r"^v(\d+\.\d+\.\d+)$").unwrap();
+    let re = Regex::new(r"version: (\d+\.\d+\.\d+)").unwrap();
     let Some(captures) = re.captures(output) else {
         return None;
     };
