@@ -62,8 +62,7 @@ impl App for Shfmt {
 
     fn version(&self, executable: &Executable) -> Option<&str> {
         let mut cmd = Command::new(executable);
-        cmd.args(args);
-        let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
+        cmd.arg(args);
 
 
         let output = subshell::run(executable, args)
