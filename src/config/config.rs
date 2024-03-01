@@ -1,3 +1,4 @@
+use crate::config::AppVersion;
 use std::fmt::Display;
 
 #[derive(Debug, Default, PartialEq)]
