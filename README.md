@@ -130,7 +130,7 @@ tooling shouldn't abort with an error but simply skip ShellCheck.
 rta --optional shellcheck@0.9.0 --color=always myscript.sh
 ```
 
-#### Using run-that-app as an installer
+#### Access the installed executables
 
 This example calls `go vet` with `alphavet` as a custom vet tool. But only if
 `alphavet` is available for the current platform.
