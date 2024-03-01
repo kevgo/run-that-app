@@ -27,7 +27,7 @@ const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
 /// The returned `ExitCode` also indicates failure if there has been any output.
 pub fn stream(executable: &Executable, args: &[String]) -> Result<ExitCode> {
     let (sender, receiver) = mpsc::channel();
-    let mut cmd = Command::new(&executable.0);
+    let mut cmd = Command::new(executable);
     cmd.args(args);
     cmd.stdout(Stdio::piped());
     cmd.stderr(Stdio::piped());
