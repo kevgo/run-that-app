@@ -26,6 +26,7 @@ pub fn run(args: Data, output: &dyn Output) -> Result<ExitCode> {
 }
 
 #[derive(Debug, PartialEq)]
+/// data needed to run an executable
 pub struct Data {
     pub app_version: AppVersion,
     pub run_args: Vec<String>,

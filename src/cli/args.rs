@@ -107,7 +107,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
         } else {
             Ok(Args {
                 command: Command::RunApp {
-                    run_args: run::Data {
+                    data: run::Data {
                         app_version: app,
                         run_args: app_args,
                         error_on_output,
@@ -217,7 +217,7 @@ mod tests {
                     let have = parse_args(vec!["rta", "--error-on-output", "app"]);
                     let want = Ok(Args {
                         command: Command::RunApp {
-                            run_args: run::Data {
+                            data: run::Data {
                                 app_version: AppVersion {
                                     name: S("app"),
                                     version: S(""),
@@ -272,7 +272,7 @@ mod tests {
                     let have = parse_args(vec!["rta", "--include-path", "app@2", "arg1"]);
                     let want = Ok(Args {
                         command: Command::RunApp {
-                            run_args: run::Data {
+                            data: run::Data {
                                 app_version: AppVersion {
                                     name: S("app"),
                                     version: S("2"),
@@ -308,7 +308,7 @@ mod tests {
                     let have = parse_args(vec!["rta", "--log", "app@2"]);
                     let want = Ok(Args {
                         command: Command::RunApp {
-                            run_args: run::Data {
+                            data: run::Data {
                                 app_version: AppVersion {
                                     name: S("app"),
                                     version: S("2"),
@@ -329,7 +329,7 @@ mod tests {
                     let have = parse_args(vec!["rta", "--log=scope", "app@2"]);
                     let want = Ok(Args {
                         command: Command::RunApp {
-                            run_args: run::Data {
+                            data: run::Data {
                                 app_version: AppVersion {
                                     name: S("app"),
                                     version: S("2"),
@@ -365,7 +365,7 @@ mod tests {
                 let have = parse_args(vec!["rta", "--optional", "app@2", "arg1"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
-                        run_args: run::Data {
+                        data: run::Data {
                             app_version: AppVersion {
                                 name: S("app"),
                                 version: S("2"),
@@ -500,7 +500,7 @@ mod tests {
                 let have = parse_args(vec!["rta", "app@2"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
-                        run_args: run::Data {
+                        data: run::Data {
                             app_version: AppVersion {
                                 name: S("app"),
                                 version: S("2"),
@@ -521,7 +521,7 @@ mod tests {
                 let have = parse_args(vec!["rta", "app@2", "--arg1", "arg2"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
-                        run_args: run::Data {
+                        data: run::Data {
                             app_version: AppVersion {
                                 name: S("app"),
                                 version: S("2"),
@@ -553,7 +553,7 @@ mod tests {
                 };
                 let want = Ok(Args {
                     command: Command::RunApp {
-                        run_args: run::Data {
+                        data: run::Data {
                             app_version: app,
                             run_args: vec![S("--arg1"), S("arg2")],
                             error_on_output: false,
@@ -571,7 +571,7 @@ mod tests {
                 let have = parse_args(vec!["rta", "app@2", "--log=app", "--version"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
-                        run_args: run::Data {
+                        data: run::Data {
                             app_version: AppVersion {
                                 name: S("app"),
                                 version: S("2"),

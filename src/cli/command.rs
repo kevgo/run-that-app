@@ -5,7 +5,7 @@ use crate::cmd::run;
 #[derive(Debug, PartialEq)]
 pub enum Command {
     Available { app: AppVersion, include_path: bool, log: Option<String> },
-    RunApp { run_args: run::Data, log: Option<String> },
+    RunApp { data: run::Data, log: Option<String> },
     DisplayHelp,
     Setup,
     Which { app: AppVersion, include_path: bool, log: Option<String> },
