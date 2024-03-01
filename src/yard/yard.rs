@@ -13,7 +13,7 @@ pub struct Yard {
 impl Yard {
     /// provides the path to the folder containing the given application
     pub fn app_folder(&self, app_name: &str, app_version: &Version) -> PathBuf {
-        self.root.join("apps").join(app_name).join(&app_version)
+        self.root.join("apps").join(app_name).join(app_version)
     }
 
     pub fn is_not_installable(&self, app: &AppVersion) -> bool {
