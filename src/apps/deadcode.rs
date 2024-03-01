@@ -36,7 +36,7 @@ impl App for Deadcode {
 
     fn latest_installable_version(&self, _output: &dyn Output) -> Result<Version> {
         // TODO: remove this file once deadcode is integrated into golangci-lint
-        Ok("0.16.1".into())
+        Ok(Version::from("0.16.1"))
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
@@ -44,6 +44,6 @@ impl App for Deadcode {
     }
 
     fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<Version>> {
-        Ok(vec!["0.16.1".into()])
+        Ok(vec![Version::from("0.16.1")])
     }
 }

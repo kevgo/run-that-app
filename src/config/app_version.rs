@@ -29,7 +29,7 @@ mod tests {
             let have = AppVersion::new(give);
             let want = AppVersion {
                 name: S("shellcheck"),
-                version: "0.9.0".into(),
+                version: Version::from("0.9.0"),
             };
             pretty::assert_eq!(have, want);
         }
