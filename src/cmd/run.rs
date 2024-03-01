@@ -11,7 +11,7 @@ use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
 
-pub fn run(args: RunArgs, output: &dyn Output) -> Result<ExitCode> {
+pub fn run(args: Args, output: &dyn Output) -> Result<ExitCode> {
     if let Some(executable) = load_or_install(args.app_version, args.include_path, output)? {
         if args.error_on_output {
             Ok(subshell::stream(&executable, &args.args)?)
@@ -26,7 +26,7 @@ pub fn run(args: RunArgs, output: &dyn Output) -> Result<ExitCode> {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct RunArgs {
+pub struct Args {
     pub app_version: AppVersion,
     pub args: Vec<String>,
     pub error_on_output: bool,
