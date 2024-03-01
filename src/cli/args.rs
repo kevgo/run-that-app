@@ -107,9 +107,9 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
         } else {
             Ok(Args {
                 command: Command::RunApp {
-                    run_args: run::Args {
+                    run_args: run::Data {
                         app_version: app,
-                        args: app_args,
+                        run_args: app_args,
                         error_on_output,
                         include_path,
                         optional,
@@ -217,12 +217,12 @@ mod tests {
                     let have = parse_args(vec!["rta", "--error-on-output", "app"]);
                     let want = Ok(Args {
                         command: Command::RunApp {
-                            run_args: run::Args {
+                            run_args: run::Data {
                                 app_version: AppVersion {
                                     name: S("app"),
                                     version: S(""),
                                 },
-                                args: vec![],
+                                run_args: vec![],
                                 error_on_output: true,
                                 include_path: false,
                                 optional: false,
@@ -272,12 +272,12 @@ mod tests {
                     let have = parse_args(vec!["rta", "--include-path", "app@2", "arg1"]);
                     let want = Ok(Args {
                         command: Command::RunApp {
-                            run_args: run::Args {
+                            run_args: run::Data {
                                 app_version: AppVersion {
                                     name: S("app"),
                                     version: S("2"),
                                 },
-                                args: vec![S("arg1")],
+                                run_args: vec![S("arg1")],
                                 error_on_output: false,
                                 include_path: true,
                                 optional: false,
@@ -308,12 +308,12 @@ mod tests {
                     let have = parse_args(vec!["rta", "--log", "app@2"]);
                     let want = Ok(Args {
                         command: Command::RunApp {
-                            run_args: run::Args {
+                            run_args: run::Data {
                                 app_version: AppVersion {
                                     name: S("app"),
                                     version: S("2"),
                                 },
-                                args: vec![],
+                                run_args: vec![],
                                 error_on_output: false,
                                 include_path: false,
                                 optional: false,
@@ -329,12 +329,12 @@ mod tests {
                     let have = parse_args(vec!["rta", "--log=scope", "app@2"]);
                     let want = Ok(Args {
                         command: Command::RunApp {
-                            run_args: run::Args {
+                            run_args: run::Data {
                                 app_version: AppVersion {
                                     name: S("app"),
                                     version: S("2"),
                                 },
-                                args: vec![],
+                                run_args: vec![],
                                 error_on_output: false,
                                 include_path: false,
                                 optional: false,
@@ -365,12 +365,12 @@ mod tests {
                 let have = parse_args(vec!["rta", "--optional", "app@2", "arg1"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
-                        run_args: run::Args {
+                        run_args: run::Data {
                             app_version: AppVersion {
                                 name: S("app"),
                                 version: S("2"),
                             },
-                            args: vec![S("arg1")],
+                            run_args: vec![S("arg1")],
                             error_on_output: false,
                             include_path: false,
                             optional: true,
@@ -500,12 +500,12 @@ mod tests {
                 let have = parse_args(vec!["rta", "app@2"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
-                        run_args: run::Args {
+                        run_args: run::Data {
                             app_version: AppVersion {
                                 name: S("app"),
                                 version: S("2"),
                             },
-                            args: vec![],
+                            run_args: vec![],
                             error_on_output: false,
                             include_path: false,
                             optional: false,
@@ -521,12 +521,12 @@ mod tests {
                 let have = parse_args(vec!["rta", "app@2", "--arg1", "arg2"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
-                        run_args: run::Args {
+                        run_args: run::Data {
                             app_version: AppVersion {
                                 name: S("app"),
                                 version: S("2"),
                             },
-                            args: vec![S("--arg1"), S("arg2")],
+                            run_args: vec![S("--arg1"), S("arg2")],
                             error_on_output: false,
                             include_path: false,
                             optional: false,
@@ -553,9 +553,9 @@ mod tests {
                 };
                 let want = Ok(Args {
                     command: Command::RunApp {
-                        run_args: run::Args {
+                        run_args: run::Data {
                             app_version: app,
-                            args: vec![S("--arg1"), S("arg2")],
+                            run_args: vec![S("--arg1"), S("arg2")],
                             error_on_output: false,
                             include_path: false,
                             optional: false,
@@ -571,12 +571,12 @@ mod tests {
                 let have = parse_args(vec!["rta", "app@2", "--log=app", "--version"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
-                        run_args: run::Args {
+                        run_args: run::Data {
                             app_version: AppVersion {
                                 name: S("app"),
                                 version: S("2"),
                             },
-                            args: vec![S("--log=app"), S("--version")],
+                            run_args: vec![S("--log=app"), S("--version")],
                             error_on_output: false,
                             include_path: false,
                             optional: false,
