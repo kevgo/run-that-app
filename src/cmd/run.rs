@@ -27,11 +27,11 @@ pub fn run(args: RunArgs, output: &dyn Output) -> Result<ExitCode> {
 
 #[derive(Debug, PartialEq)]
 pub struct RunArgs {
-    app_version: AppVersion,
-    args: Vec<String>,
-    error_on_output: bool,
-    include_path: bool,
-    optional: bool,
+    pub app_version: AppVersion,
+    pub args: Vec<String>,
+    pub error_on_output: bool,
+    pub include_path: bool,
+    pub optional: bool,
 }
 
 pub fn load_or_install(mut app_version: AppVersion, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {

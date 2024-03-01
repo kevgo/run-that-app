@@ -1,5 +1,6 @@
 use super::AppVersion;
 use super::Command;
+use crate::cmd::RunArgs;
 use crate::{Result, UserError};
 
 /// all arguments that can be provided via the CLI
@@ -106,11 +107,13 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
         } else {
             Ok(Args {
                 command: Command::RunApp {
-                    app,
-                    args: app_args,
-                    error_on_output,
-                    include_path,
-                    optional,
+                    run_args: RunArgs {
+                        app_version: app,
+                        args: app_args,
+                        error_on_output,
+                        include_path,
+                        optional,
+                    },
                     log,
                 },
             })
