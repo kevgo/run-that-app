@@ -132,7 +132,7 @@ mod tests {
     }
 
     #[test]
-    fn is_correct_version() {
+    fn extract_version() {
         assert_eq!(Some("3.7.0"), super::extract_version("v3.7.0"));
         assert_eq!(None, super::extract_version("3.7.0"));
         assert_eq!(None, super::extract_version("other"));
