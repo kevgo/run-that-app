@@ -66,7 +66,7 @@ pub fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersion>>
     }
     Ok(Some(AppVersion {
         name: name.to_string(),
-        version: version.to_string(),
+        version: version.into(),
     }))
 }
 
@@ -115,15 +115,15 @@ mod tests {
                 apps: vec![
                     AppVersion {
                         name: S("alpha"),
-                        version: S("1.2.3"),
+                        version: "1.2.3".into(),
                     },
                     AppVersion {
                         name: S("beta"),
-                        version: S("2.3.4"),
+                        version: "2.3.4".into(),
                     },
                     AppVersion {
                         name: S("gamma"),
-                        version: S("3.4.5"),
+                        version: "3.4.5".into(),
                     },
                 ],
             };
@@ -143,7 +143,7 @@ mod tests {
             let have = parse_line(give, 1).unwrap();
             let want = Some(AppVersion {
                 name: S("shellcheck"),
-                version: S("0.9.0"),
+                version: "0.9.0".into(),
             });
             pretty::assert_eq!(have, want);
         }
@@ -154,7 +154,7 @@ mod tests {
             let have = parse_line(give, 1).unwrap();
             let want = Some(AppVersion {
                 name: S("shellcheck"),
-                version: S("0.9.0"),
+                version: "0.9.0".into(),
             });
             pretty::assert_eq!(have, want);
         }
@@ -165,7 +165,7 @@ mod tests {
             let have = parse_line(give, 1).unwrap();
             let want = Some(AppVersion {
                 name: S("shellcheck"),
-                version: S("0.9.0"),
+                version: "0.9.0".into(),
             });
             pretty::assert_eq!(have, want);
         }
@@ -208,7 +208,7 @@ mod tests {
             let have = parse_line(give, 1).unwrap();
             let want = Some(AppVersion {
                 name: S("shellcheck"),
-                version: S("0.9.0"),
+                version: "0.9.0".into(),
             });
             pretty::assert_eq!(have, want);
         }

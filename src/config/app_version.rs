@@ -4,7 +4,7 @@ use super::Version;
 #[derive(Debug, PartialEq)]
 pub struct AppVersion {
     pub name: String,
-    pub version: Option<String>,
+    pub version: Version,
 }
 
 impl AppVersion {
@@ -40,7 +40,7 @@ mod tests {
             let have = AppVersion::new(give);
             let want = AppVersion {
                 name: S("shellcheck"),
-                version: Version::none(),
+                version: Version::None,
             };
             pretty::assert_eq!(have, want);
         }
@@ -51,7 +51,7 @@ mod tests {
             let have = AppVersion::new(give);
             let want = AppVersion {
                 name: S("shellcheck"),
-                version: S(""),
+                version: Version::None,
             };
             pretty::assert_eq!(have, want);
         }

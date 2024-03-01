@@ -1,4 +1,4 @@
-use crate::config::AppVersion;
+use crate::config::{AppVersion, Version};
 use crate::error::UserError;
 use crate::subshell::Executable;
 use crate::Result;
@@ -12,8 +12,8 @@ pub struct Yard {
 /// stores executables of and metadata about applications
 impl Yard {
     /// provides the path to the folder containing the given application
-    pub fn app_folder(&self, app_name: &str, app_version: &str) -> PathBuf {
-        self.root.join("apps").join(app_name).join(app_version)
+    pub fn app_folder(&self, app_name: &str, app_version: &Version) -> PathBuf {
+        self.root.join("apps").join(app_name).join(&app_version)
     }
 
     pub fn is_not_installable(&self, app: &AppVersion) -> bool {
@@ -21,7 +21,7 @@ impl Yard {
     }
 
     /// provides the path to the executable of the given application
-    pub fn load_app(&self, name: &str, version: &str, executable_filename: &str) -> Option<Executable> {
+    pub fn load_app(&self, name: &str, version: &Version, executable_filename: &str) -> Option<Executable> {
         let file_path = self.app_folder(name, version).join(executable_filename);
         if file_path.exists() {
             Some(Executable(file_path))
@@ -44,13 +44,13 @@ impl Yard {
     }
 
     /// provides the path to the given file that is part of the given application
-    fn not_installable_path(&self, app_name: &str, app_version: &str) -> PathBuf {
+    fn not_installable_path(&self, app_name: &str, app_version: &Version) -> PathBuf {
         self.app_folder(app_name, app_version).join("not_installable")
     }
 
     /// stores the given application consisting of the given executable file
     #[cfg(test)]
-    fn save_app_file(&self, name: &str, version: &str, file_name: &str, file_content: &[u8]) {
+    fn save_app_file(&self, name: &str, version: &Version, file_name: &str, file_content: &[u8]) {
         use std::io::Write;
         fs::create_dir_all(self.app_folder(name, version)).unwrap();
         let mut file = fs::File::create(self.app_folder(name, version).join(file_name)).unwrap();
@@ -66,7 +66,7 @@ mod tests {
     #[test]
     fn app_file_path() {
         let yard = Yard { root: PathBuf::from("/root") };
-        let have = yard.app_folder("shellcheck", "0.9.0").join("shellcheck.exe");
+        let have = yard.app_folder("shellcheck", "0.9.0".into()).join("shellcheck.exe");
         let want = PathBuf::from("/root/apps/shellcheck/0.9.0/shellcheck.exe");
         assert_eq!(have, want);
     }

@@ -1,4 +1,5 @@
 use super::App;
+use crate::config::Version;
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::executable::{self, InstallArgs};
@@ -29,7 +30,7 @@ impl App for Shfmt {
         formatcp!("https://github.com/{ORG}/{REPO}")
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let result = executable::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
@@ -51,7 +52,7 @@ impl App for Shfmt {
         github_releases::latest(ORG, REPO, output)
     }
 
-    fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
+    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
         yard.load_app(self.name(), version, self.executable_filename(platform))
     }
 
@@ -60,7 +61,7 @@ impl App for Shfmt {
     }
 }
 
-fn download_url(version: &str, platform: Platform) -> String {
+fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://github.com/{ORG}/{REPO}/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}",
         os = os_text(platform.os),
@@ -101,7 +102,7 @@ mod tests {
             os: Os::MacOS,
             cpu: Cpu::Arm64,
         };
-        let have = super::download_url("3.7.0", platform);
+        let have = super::download_url(&"3.7.0".into(), platform);
         let want = "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_arm64";
         assert_eq!(have, want);
     }

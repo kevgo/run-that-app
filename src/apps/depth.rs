@@ -1,4 +1,5 @@
 use super::App;
+use crate::config::Version;
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::executable::{self, InstallArgs};
@@ -29,7 +30,7 @@ impl App for Depth {
         formatcp!("https://github.com/{ORG}/{REPO}")
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let result = executable::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
@@ -51,7 +52,7 @@ impl App for Depth {
         github_releases::latest(ORG, REPO, output)
     }
 
-    fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
+    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
         yard.load_app(self.name(), version, self.executable_filename(platform))
     }
 
@@ -60,7 +61,7 @@ impl App for Depth {
     }
 }
 
-fn download_url(version: &str, platform: Platform) -> String {
+fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}",
         os = os_text(platform.os),
@@ -93,7 +94,7 @@ mod tests {
             os: Os::Linux,
             cpu: Cpu::Intel64,
         };
-        let have = super::download_url("1.2.1", platform);
+        let have = super::download_url(&"1.2.1".into(), platform);
         let want = "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_linux_amd64";
         assert_eq!(have, want);
     }

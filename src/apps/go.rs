@@ -1,4 +1,5 @@
 use super::App;
+use crate::config::Version;
 use crate::hosting::github_tags;
 use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
@@ -28,7 +29,7 @@ impl App for Go {
         "https://go.dev"
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         archive::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
@@ -44,7 +45,7 @@ impl App for Go {
         Ok(versions.into_iter().next().unwrap())
     }
 
-    fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
+    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
         yard.load_app(self.name(), version, &self.executable_path(platform))
     }
 
@@ -69,7 +70,7 @@ impl Go {
     }
 }
 
-pub fn download_url(version: &str, platform: Platform) -> String {
+pub fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://go.dev/dl/go{version}.{os}-{cpu}.{ext}",
         os = os_text(platform.os),
@@ -110,7 +111,7 @@ mod tests {
             os: Os::MacOS,
             cpu: Cpu::Arm64,
         };
-        let have = super::download_url("1.21.5", platform);
+        let have = super::download_url(&"1.21.5".into(), platform);
         let want = "https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz";
         assert_eq!(have, want);
     }

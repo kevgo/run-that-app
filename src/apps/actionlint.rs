@@ -1,4 +1,5 @@
 use super::App;
+use crate::config::Version;
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::packaged_executable::{self, InstallArgs};
@@ -29,7 +30,7 @@ impl App for ActionLint {
         formatcp!("https://{ORG}.github.io/{REPO}")
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let result = packaged_executable::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
@@ -52,7 +53,7 @@ impl App for ActionLint {
         github_releases::latest(ORG, REPO, output)
     }
 
-    fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
+    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
         yard.load_app(self.name(), version, self.executable_filename(platform))
     }
 
@@ -61,12 +62,12 @@ impl App for ActionLint {
     }
 }
 
-fn download_url(version: &str, platform: Platform) -> String {
+fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}",
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu),
-        ext = ext_text(platform.os)
+        ext = ext_text(platform.os),
     )
 }
 
@@ -94,6 +95,7 @@ fn ext_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
+    use crate::config::Version;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
@@ -102,7 +104,7 @@ mod tests {
             os: Os::Linux,
             cpu: Cpu::Arm64,
         };
-        let have = super::download_url("1.6.26", platform);
+        let have = super::download_url(&Version::from("1.6.26"), platform);
         let want = "https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_linux_arm64.tar.gz";
         assert_eq!(have, want);
     }

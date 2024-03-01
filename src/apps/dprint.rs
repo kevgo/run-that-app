@@ -1,4 +1,5 @@
 use super::App;
+use crate::config::Version;
 use crate::hosting::github_releases;
 use crate::install::compile_rust::{compile_rust, CompileArgs};
 use crate::install::packaged_executable::{self, InstallArgs};
@@ -28,7 +29,7 @@ impl App for Dprint {
         "https://dprint.dev"
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let result = packaged_executable::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
@@ -51,7 +52,7 @@ impl App for Dprint {
         github_releases::latest(ORG, REPO, output)
     }
 
-    fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
+    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
         yard.load_app(self.name(), version, self.executable_filename(platform))
     }
 
@@ -60,7 +61,7 @@ impl App for Dprint {
     }
 }
 
-fn download_url(version: &str, platform: Platform) -> String {
+fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip",
         os = os_text(platform.os),
@@ -93,7 +94,7 @@ mod tests {
             os: Os::MacOS,
             cpu: Cpu::Arm64,
         };
-        let have = super::download_url("0.43.0", platform);
+        let have = super::download_url(&"0.43.0".into(), platform);
         let want = "https://github.com/dprint/dprint/releases/download/0.43.0/dprint-aarch64-apple-darwin.zip";
         assert_eq!(have, want);
     }
@@ -104,7 +105,7 @@ mod tests {
             os: Os::Linux,
             cpu: Cpu::Arm64,
         };
-        let have = super::download_url("0.43.1", platform);
+        let have = super::download_url(&"0.43.1".into(), platform);
         let want = "https://github.com/dprint/dprint/releases/download/0.43.1/dprint-aarch64-unknown-linux-gnu.zip";
         assert_eq!(have, want);
     }

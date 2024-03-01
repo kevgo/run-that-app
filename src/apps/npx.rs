@@ -1,5 +1,6 @@
 use super::nodejs::NodeJS;
 use super::App;
+use crate::config::Version;
 use crate::platform::{Os, Platform};
 use crate::subshell::Executable;
 use crate::yard::Yard;
@@ -23,7 +24,7 @@ impl App for Npx {
         "https://www.npmjs.com"
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let nodejs = NodeJS {};
         nodejs.install(version, platform, yard, output)?;
         let executable_path = yard.app_folder(nodejs.name(), version).join(self.executable_filename(platform));
@@ -34,7 +35,7 @@ impl App for Npx {
         (NodeJS {}).latest_installable_version(output)
     }
 
-    fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
+    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
         yard.load_app((NodeJS {}).name(), version, self.executable_filename(platform))
     }
 

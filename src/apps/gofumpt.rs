@@ -1,4 +1,5 @@
 use super::App;
+use crate::config::Version;
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::executable::{self, InstallArgs};
@@ -33,7 +34,7 @@ impl App for Gofumpt {
         github_releases::latest(ORG, REPO, output)
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let result = executable::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
@@ -51,7 +52,7 @@ impl App for Gofumpt {
         })
     }
 
-    fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
+    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
         yard.load_app(self.name(), version, self.executable_filename(platform))
     }
 
@@ -60,7 +61,7 @@ impl App for Gofumpt {
     }
 }
 
-fn download_url(version: &str, platform: Platform) -> String {
+fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://github.com/{ORG}/{REPO}/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}{ext}",
         os = os_text(platform.os),
@@ -102,7 +103,7 @@ mod tests {
                 os: Os::MacOS,
                 cpu: Cpu::Arm64,
             };
-            let have = super::super::download_url("0.5.0", platform);
+            let have = super::super::download_url(&"0.5.0".into(), platform);
             let want = "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_darwin_arm64";
             assert_eq!(have, want);
         }
@@ -113,7 +114,7 @@ mod tests {
                 os: Os::Windows,
                 cpu: Cpu::Intel64,
             };
-            let have = super::super::download_url("0.5.0", platform);
+            let have = super::super::download_url(&"0.5.0".into(), platform);
             let want = "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_windows_amd64.exe";
             assert_eq!(have, want);
         }

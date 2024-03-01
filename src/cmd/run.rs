@@ -45,7 +45,7 @@ pub struct Data {
 }
 
 pub fn load_or_install(mut app_version: AppVersion, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
-    if app_version.version.is_empty() {
+    if app_version.version.is_none() {
         let config = config::load()?;
         let Some(configured_app) = config.lookup(&app_version.name) else {
             return Err(UserError::RunRequestMissingVersion);
