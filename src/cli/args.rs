@@ -12,7 +12,7 @@ pub struct Args {
 #[allow(clippy::too_many_lines)]
 pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let _skipped_binary_name = cli_args.next();
-    let mut app_version: Option<AppVersion> = None;
+    let mut app_version: Option<AppVersions> = None;
     let mut log: Option<String> = None;
     let mut app_args: Vec<String> = vec![];
     let mut error_on_output = false;
@@ -108,7 +108,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             Ok(Args {
                 command: Command::RunApp {
                     data: run::Data {
-                        app_version: app,
+                        app_versions: app,
                         app_args,
                         error_on_output,
                         include_path,

@@ -1,5 +1,7 @@
 use std::fmt::Display;
 
+use super::AppVersions;
+
 #[derive(Debug, Default, PartialEq)]
 pub struct Config {
     pub apps: Vec<AppVersions>,
@@ -14,7 +16,7 @@ impl Config {
 impl Display for Config {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for AppVersions { name, versions } in &self.apps {
-            f.write_fmt(format_args!("{name} {versions}\n"))?;
+            f.write_fmt(format_args!("{name} {}\n", versions.join(", ")))?;
         }
         Ok(())
     }
