@@ -1,8 +1,10 @@
+use super::Version;
+
 /// a request from the user to run a particular app
 #[derive(Debug, PartialEq)]
 pub struct AppVersion {
     pub name: String,
-    pub version: String,
+    pub version: Option<String>,
 }
 
 impl AppVersion {
@@ -10,7 +12,7 @@ impl AppVersion {
         let (app_name, version) = token.as_ref().split_once('@').unwrap_or((token.as_ref(), ""));
         AppVersion {
             name: app_name.to_string(),
-            version: version.to_string(),
+            version: version.into(),
         }
     }
 }
@@ -18,7 +20,7 @@ impl AppVersion {
 #[cfg(test)]
 mod tests {
     mod parse {
-        use crate::config::AppVersion;
+        use crate::config::{AppVersion, Version};
         use big_s::S;
 
         #[test]
@@ -27,7 +29,7 @@ mod tests {
             let have = AppVersion::new(give);
             let want = AppVersion {
                 name: S("shellcheck"),
-                version: S("0.9.0"),
+                version: "0.9.0".into(),
             };
             pretty::assert_eq!(have, want);
         }
@@ -38,7 +40,7 @@ mod tests {
             let have = AppVersion::new(give);
             let want = AppVersion {
                 name: S("shellcheck"),
-                version: S(""),
+                version: Version::none(),
             };
             pretty::assert_eq!(have, want);
         }
