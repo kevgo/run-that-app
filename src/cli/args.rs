@@ -157,13 +157,13 @@ mod tests {
             use super::parse_args;
             use crate::cli::{Args, Command};
             use crate::cmd::run;
-            use crate::config::{AppVersion, Version};
+            use crate::config::{AppName, AppVersion, Version};
             use crate::error::UserError;
 
             mod available {
                 use super::super::parse_args;
                 use crate::cli::{Args, Command};
-                use crate::config::{AppVersion, Version};
+                use crate::config::{AppName, AppVersion, Version};
                 use crate::error::UserError;
                 use big_s::S;
 
@@ -173,7 +173,7 @@ mod tests {
                     let want = Ok(Args {
                         command: Command::Available {
                             app: AppVersion {
-                                name: S("shellcheck"),
+                                name: AppName::from("shellcheck"),
                                 version: Version::None,
                             },
                             include_path: false,
@@ -189,7 +189,7 @@ mod tests {
                     let want = Ok(Args {
                         command: Command::Available {
                             app: AppVersion {
-                                name: S("shellcheck"),
+                                name: AppName::from("shellcheck"),
                                 version: Version::None,
                             },
                             include_path: true,
@@ -211,9 +211,8 @@ mod tests {
                 use super::super::parse_args;
                 use crate::cli::{Args, Command};
                 use crate::cmd::run;
-                use crate::config::{AppVersion, Version};
+                use crate::config::{AppName, AppVersion, Version};
                 use crate::error::UserError;
-                use big_s::S;
 
                 #[test]
                 fn normal() {
@@ -222,7 +221,7 @@ mod tests {
                         command: Command::RunApp {
                             data: run::Data {
                                 app_version: AppVersion {
-                                    name: S("app"),
+                                    name: AppName::from("app"),
                                     version: Version::None,
                                 },
                                 app_args: vec![],
@@ -267,7 +266,7 @@ mod tests {
                 use super::super::parse_args;
                 use crate::cli::{Args, Command};
                 use crate::cmd::run;
-                use crate::config::{AppVersion, Version};
+                use crate::config::{AppName, AppVersion, Version};
                 use crate::UserError;
                 use big_s::S;
 
@@ -278,7 +277,7 @@ mod tests {
                         command: Command::RunApp {
                             data: run::Data {
                                 app_version: AppVersion {
-                                    name: S("app"),
+                                    name: AppName::from("app"),
                                     version: Version::from("2"),
                                 },
                                 app_args: vec![S("arg1")],
@@ -304,7 +303,7 @@ mod tests {
                 use super::super::parse_args;
                 use crate::cli::{Args, Command};
                 use crate::cmd::run;
-                use crate::config::{AppVersion, Version};
+                use crate::config::{AppName, AppVersion, Version};
                 use crate::error::UserError;
                 use big_s::S;
 
@@ -315,7 +314,7 @@ mod tests {
                         command: Command::RunApp {
                             data: run::Data {
                                 app_version: AppVersion {
-                                    name: S("app"),
+                                    name: AppName::from("app"),
                                     version: Version::from("2"),
                                 },
                                 app_args: vec![],
@@ -336,7 +335,7 @@ mod tests {
                         command: Command::RunApp {
                             data: run::Data {
                                 app_version: AppVersion {
-                                    name: S("app"),
+                                    name: AppName::from("app"),
                                     version: Version::from("2"),
                                 },
                                 app_args: vec![],
@@ -372,7 +371,7 @@ mod tests {
                     command: Command::RunApp {
                         data: run::Data {
                             app_version: AppVersion {
-                                name: S("app"),
+                                name: AppName::from("app"),
                                 version: Version::from("2"),
                             },
                             app_args: vec![S("arg1")],
@@ -409,15 +408,15 @@ mod tests {
             mod versions {
                 use super::parse_args;
                 use crate::cli::{args, Command};
+                use crate::config::AppName;
                 use args::Args;
-                use big_s::S;
 
                 #[test]
                 fn correct_usage() {
                     let have = parse_args(vec!["rta", "--versions", "actionlint"]);
                     let want = Ok(Args {
                         command: Command::Versions {
-                            app: S("actionlint"),
+                            app: AppName::from("actionlint"),
                             amount: 10,
                             log: None,
                         },
@@ -430,7 +429,7 @@ mod tests {
                     let have = parse_args(vec!["rta", "--versions=20", "actionlint"]);
                     let want = Ok(Args {
                         command: Command::Versions {
-                            app: S("actionlint"),
+                            app: AppName::from("actionlint"),
                             amount: 20,
                             log: None,
                         },
@@ -449,7 +448,7 @@ mod tests {
             mod which {
                 use super::super::parse_args;
                 use crate::cli::{Args, Command};
-                use crate::config::{AppVersion, Version};
+                use crate::config::{AppName, AppVersion, Version};
                 use crate::UserError;
                 use big_s::S;
 
@@ -459,7 +458,7 @@ mod tests {
                     let want = Ok(Args {
                         command: Command::Which {
                             app: AppVersion {
-                                name: S("shellcheck"),
+                                name: AppName::from("shellcheck"),
                                 version: Version::None,
                             },
                             include_path: false,
@@ -475,7 +474,7 @@ mod tests {
                     let want = Ok(Args {
                         command: Command::Which {
                             app: AppVersion {
-                                name: S("shellcheck"),
+                                name: AppName::from("shellcheck"),
                                 version: Version::None,
                             },
                             include_path: true,
@@ -498,7 +497,7 @@ mod tests {
             use super::parse_args;
             use crate::cli::{args, Command};
             use crate::cmd::run;
-            use crate::config::{AppVersion, Version};
+            use crate::config::{AppName, AppVersion, Version};
             use args::Args;
             use big_s::S;
 
@@ -509,7 +508,7 @@ mod tests {
                     command: Command::RunApp {
                         data: run::Data {
                             app_version: AppVersion {
-                                name: S("app"),
+                                name: AppName::from("app"),
                                 version: Version::from("2"),
                             },
                             app_args: vec![],
@@ -530,7 +529,7 @@ mod tests {
                     command: Command::RunApp {
                         data: run::Data {
                             app_version: AppVersion {
-                                name: S("app"),
+                                name: AppName::from("app"),
                                 version: Version::from("2"),
                             },
                             app_args: vec![S("--arg1"), S("arg2")],
@@ -549,14 +548,14 @@ mod tests {
             use super::parse_args;
             use crate::cli::{Args, Command};
             use crate::cmd::run;
-            use crate::config::{AppVersion, Version};
+            use crate::config::{AppName, AppVersion, Version};
             use big_s::S;
 
             #[test]
             fn rta_and_app_arguments() {
                 let have = parse_args(vec!["rta", "--log=l1", "app@2", "--arg1", "arg2"]);
                 let app = AppVersion {
-                    name: S("app"),
+                    name: AppName::from("app"),
                     version: Version::from("2"),
                 };
                 let want = Ok(Args {
@@ -581,7 +580,7 @@ mod tests {
                     command: Command::RunApp {
                         data: run::Data {
                             app_version: AppVersion {
-                                name: S("app"),
+                                name: AppName::from("app"),
                                 version: Version::from("2"),
                             },
                             app_args: vec![S("--log=app"), S("--version")],
