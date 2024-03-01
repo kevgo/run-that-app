@@ -17,7 +17,10 @@ impl Version {
     }
 
     pub(crate) fn is_none(&self) -> bool {
-        matches!(*self, Version::None)
+        match self {
+            Version::None => true,
+            Version::Some(_) => false,
+        }
     }
 }
 
