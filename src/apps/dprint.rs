@@ -48,7 +48,7 @@ impl App for Dprint {
         })
     }
 
-    fn latest_installable_version(&self, output: &dyn Output) -> Result<String> {
+    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
         github_releases::latest(ORG, REPO, output)
     }
 
@@ -56,7 +56,7 @@ impl App for Dprint {
         yard.load_app(self.name(), version, self.executable_filename(platform))
     }
 
-    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
+    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, output)
     }
 }

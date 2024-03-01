@@ -5,7 +5,6 @@ use crate::platform::{Os, Platform};
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
-use big_s::S;
 use const_format::formatcp;
 
 pub struct Deadcode {}
@@ -35,16 +34,16 @@ impl App for Deadcode {
         })
     }
 
-    fn latest_installable_version(&self, _output: &dyn Output) -> Result<String> {
+    fn latest_installable_version(&self, _output: &dyn Output) -> Result<Version> {
         // TODO: remove this file once deadcode is integrated into golangci-lint
-        Ok(S("0.16.1"))
+        Ok("0.16.1".into())
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
         yard.load_app(self.name(), version, self.executable_filename(platform))
     }
 
-    fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<String>> {
-        Ok(vec![S("0.16.1")])
+    fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<Version>> {
+        Ok(vec!["0.16.1".into()])
     }
 }
