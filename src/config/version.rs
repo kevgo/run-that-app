@@ -1,1 +1,2 @@
-pub struct Version(String)
+/// newtype for strings containing a version
+pub struct Version(String);
