@@ -67,7 +67,7 @@ fn download_url(version: &Version, platform: Platform) -> String {
         "https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}",
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu),
-        ext = ext_text(platform.os),
+        ext = ext_text(platform.os)
     )
 }
 
