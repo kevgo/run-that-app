@@ -21,6 +21,7 @@ mod scc;
 mod shellcheck;
 mod shfmt;
 
+use crate::config::Version;
 use crate::error::UserError;
 use crate::platform::Platform;
 use crate::subshell::Executable;
@@ -39,16 +40,16 @@ pub trait App {
     fn homepage(&self) -> &'static str;
 
     /// installs this app at the given version into the given yard
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>>;
+    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>>;
 
     // loads this app from the given yard if it is already installed
-    fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable>;
+    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable>;
 
     /// provides the versions of this application that can be installed
-    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>>;
+    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>>;
 
     /// provides the latest version of this application
-    fn latest_installable_version(&self, output: &dyn Output) -> Result<String>;
+    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version>;
 
     /// provides the version of the executable that is installed at the given path
     fn version(&self, path: &Executable) -> Option<String>;

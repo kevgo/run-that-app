@@ -13,10 +13,10 @@ pub fn update(output: &dyn Output) -> Result<ExitCode> {
         let app = all_apps.lookup(&old_app.name)?;
         output.print(&format!("updating {} ... ", old_app.name));
         let latest = app.latest_installable_version(output)?;
-        if latest == old_app.version {
+        if old_app.version == latest {
             output.println(&format!("{}", "current".green()));
         } else {
-            output.println(&format!("{} -> {}", old_app.version.cyan(), latest.cyan()));
+            output.println(&format!("{} -> {}", old_app.version.as_str().cyan(), latest.as_str().cyan()));
         }
         new_config.apps.push(AppVersion {
             name: old_app.name.to_string(),
