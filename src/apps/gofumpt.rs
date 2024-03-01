@@ -1,5 +1,5 @@
 use super::App;
-use crate::config::Version;
+use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::executable::{self, InstallArgs};
@@ -15,8 +15,8 @@ const ORG: &str = "mvdan";
 const REPO: &str = "gofumpt";
 
 impl App for Gofumpt {
-    fn name(&self) -> &'static str {
-        "gofumpt"
+    fn name(&self) -> AppName {
+        AppName::from("gofumpt")
     }
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
@@ -35,10 +35,11 @@ impl App for Gofumpt {
     }
 
     fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+        let name = self.name();
         let result = executable::install(InstallArgs {
-            app_name: self.name(),
+            app_name: &name,
             artifact_url: download_url(version, platform),
-            filepath_on_disk: yard.app_folder(self.name(), version).join(self.executable_filename(platform)),
+            filepath_on_disk: yard.app_folder(&name, version).join(self.executable_filename(platform)),
             output,
         })?;
         if result.is_some() {
@@ -46,14 +47,14 @@ impl App for Gofumpt {
         }
         compile_go(CompileArgs {
             import_path: format!("mvdan.cc/gofumpt@{version}"),
-            target_folder: &yard.app_folder(self.name(), version),
+            target_folder: &yard.app_folder(&name, version),
             executable_filename: self.executable_filename(platform),
             output,
         })
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(self.name(), version, self.executable_filename(platform))
+        yard.load_app(&self.name(), version, self.executable_filename(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

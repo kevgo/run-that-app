@@ -1,3 +1,4 @@
+use crate::config::AppName;
 use crate::output::Output;
 use crate::subshell::Executable;
 use crate::{download, filesystem, Result};
@@ -16,7 +17,7 @@ pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
 }
 
 pub struct InstallArgs<'a> {
-    pub app_name: &'a str,
+    pub app_name: &'a AppName,
     pub artifact_url: String,
     pub filepath_on_disk: PathBuf,
     pub output: &'a dyn Output,

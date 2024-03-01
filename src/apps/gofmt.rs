@@ -1,6 +1,6 @@
 use super::go::Go;
 use super::App;
-use crate::config::Version;
+use crate::config::{AppName, Version};
 use crate::platform::{Os, Platform};
 use crate::subshell::Executable;
 use crate::yard::Yard;
@@ -9,8 +9,8 @@ use crate::{Output, Result};
 pub struct Gofmt {}
 
 impl App for Gofmt {
-    fn name(&self) -> &'static str {
-        "gofmt"
+    fn name(&self) -> AppName {
+        AppName::from("gofmt")
     }
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
@@ -27,7 +27,7 @@ impl App for Gofmt {
     fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let go = Go {};
         go.install(version, platform, yard, output)?;
-        let executable_path = yard.app_folder(go.name(), version).join(self.executable_filename(platform));
+        let executable_path = yard.app_folder(&go.name(), version).join(self.executable_filename(platform));
         Ok(Some(Executable(executable_path)))
     }
 
@@ -36,7 +36,7 @@ impl App for Gofmt {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app((Go {}).name(), version, &self.executable_path(platform))
+        yard.load_app(&(Go {}).name(), version, &self.executable_path(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
