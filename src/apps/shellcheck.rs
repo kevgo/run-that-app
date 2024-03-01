@@ -138,7 +138,7 @@ website: https://www.shellcheck.net";
         #[test]
         fn other() {
             let give = "other";
-            let want = Some("0.9.0");
+            let want = None;
             let have = super::super::extract_version(give);
             assert_eq!(have, want);
         }
