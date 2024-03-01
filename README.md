@@ -139,6 +139,16 @@ This example calls `go vet` with `alphavet` as a custom vet tool. But only if
 rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
 ```
 
+#### Run globally installed applications if possible
+
+It would be nice to use globally installed applications if they are available at
+a suitable version.
+
+If Go 1.21 is installed in the local system, runs this globally installed
+version. Otherwise installs
+
+rta go build
+
 #### Usage in a Makefile
 
 Here is a template for installing and using run-that-app in a `Makefile`:
