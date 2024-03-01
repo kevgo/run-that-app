@@ -26,7 +26,7 @@ test: unit lint  # runs all tests
 unit:  # runs the unit tests
 	cargo test
 
-update: setup  # updates the dependencies
+update:  # updates the dependencies
 	cargo install cargo-machete
 	cargo machete
 	cargo install cargo-edit
