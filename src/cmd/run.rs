@@ -1,6 +1,7 @@
 use crate::apps;
 use crate::config;
 use crate::config::AppVersion;
+use crate::config::Version;
 use crate::error::UserError;
 use crate::filesystem::find_global_install;
 use crate::platform;
@@ -32,7 +33,7 @@ pub struct Data {
     pub app_name: String,
 
     /// possible versions of the app to execute
-    pub app_versions: Vec<String>,
+    pub app_versions: Vec<Version>,
 
     /// arguments to call the app with
     pub app_args: Vec<String>,
