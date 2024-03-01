@@ -14,9 +14,9 @@ use std::process::ExitCode;
 pub fn run(args: Data, output: &dyn Output) -> Result<ExitCode> {
     if let Some(executable) = load_or_install(args.app_version, args.include_path, output)? {
         if args.error_on_output {
-            Ok(subshell::stream(&executable, &args.run_args)?)
+            Ok(subshell::stream(&executable, &args.app_args)?)
         } else {
-            Ok(subshell::run(&executable, &args.run_args)?)
+            Ok(subshell::run(&executable, &args.app_args)?)
         }
     } else if args.optional {
         Ok(ExitCode::SUCCESS)
@@ -29,7 +29,7 @@ pub fn run(args: Data, output: &dyn Output) -> Result<ExitCode> {
 /// data needed to run an executable
 pub struct Data {
     pub app_version: AppVersion,
-    pub run_args: Vec<String>,
+    pub app_args: Vec<String>,
     pub error_on_output: bool,
     pub include_path: bool,
     pub optional: bool,
