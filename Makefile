@@ -25,12 +25,12 @@ setup:  # sets this codebase up on this machine
 	cargo install cargo-machete
 
 test: unit lint  # runs all tests
-	cargo machete
 
 unit:  # runs the unit tests
 	cargo test
 
-update:  # updates the dependencies
+update: setup  # updates the dependencies
+	cargo machete
 	cargo upgrade
 
 
