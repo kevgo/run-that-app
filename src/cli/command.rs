@@ -1,35 +1,15 @@
 use super::AppVersion;
+use crate::cmd::run;
 
 /// the main commands that run-this-app can execute
 #[derive(Debug, PartialEq)]
 pub enum Command {
-    Available {
-        app: AppVersion,
-        include_path: bool,
-        log: Option<String>,
-    },
-    RunApp {
-        app: AppVersion,
-        args: Vec<String>,
-        error_on_output: bool,
-        include_path: bool,
-        optional: bool,
-        log: Option<String>,
-    },
+    Available { app: AppVersion, include_path: bool, log: Option<String> },
+    RunApp { data: run::Data, log: Option<String> },
     DisplayHelp,
     Setup,
-    Which {
-        app: AppVersion,
-        include_path: bool,
-        log: Option<String>,
-    },
-    Update {
-        log: Option<String>,
-    },
+    Which { app: AppVersion, include_path: bool, log: Option<String> },
+    Update { log: Option<String> },
     Version,
-    Versions {
-        app: String,
-        amount: usize,
-        log: Option<String>,
-    },
+    Versions { app: String, amount: usize, log: Option<String> },
 }

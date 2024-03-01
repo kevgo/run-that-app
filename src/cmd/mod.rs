@@ -1,6 +1,6 @@
 mod available;
 mod help;
-mod run;
+pub mod run;
 mod setup;
 mod update;
 mod version;

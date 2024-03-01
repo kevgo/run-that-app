@@ -11,18 +11,28 @@ use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
 
-pub fn run(app_version: AppVersion, args: &[String], error_on_output: bool, include_path: bool, optional: bool, output: &dyn Output) -> Result<ExitCode> {
-    if let Some(executable) = load_or_install(app_version, include_path, output)? {
-        if error_on_output {
-            Ok(subshell::stream(&executable, args)?)
+pub fn run(data: Data, output: &dyn Output) -> Result<ExitCode> {
+    if let Some(executable) = load_or_install(data.app_version, data.include_path, output)? {
+        if data.error_on_output {
+            Ok(subshell::stream(&executable, &data.app_args)?)
         } else {
-            Ok(subshell::run(&executable, args)?)
+            Ok(subshell::run(&executable, &data.app_args)?)
         }
-    } else if optional {
+    } else if data.optional {
         Ok(ExitCode::SUCCESS)
     } else {
         Err(UserError::UnsupportedPlatform)
     }
+}
+
+#[derive(Debug, PartialEq)]
+/// data needed to run an executable
+pub struct Data {
+    pub app_version: AppVersion,
+    pub app_args: Vec<String>,
+    pub error_on_output: bool,
+    pub include_path: bool,
+    pub optional: bool,
 }
 
 pub fn load_or_install(mut app_version: AppVersion, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
