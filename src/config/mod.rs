@@ -7,7 +7,6 @@ mod load;
 mod app_versions;
 mod version;
 mod save;
-mod version;
 
 pub use app_version::AppVersion;
 pub use app_versions::AppVersions;
