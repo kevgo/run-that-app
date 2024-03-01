@@ -1,4 +1,4 @@
-use crate::cli::AppVersion;
+use crate::config::AppVersion;
 use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
