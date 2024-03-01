@@ -8,7 +8,7 @@ mod app_versions;
 mod version;
 mod save;
 
-pub use app_version::AppVersion;
+pub use app_versions::AppVersions;
 pub use config::Config;
 pub use create::create;
 pub use load::load;

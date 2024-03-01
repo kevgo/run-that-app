@@ -1,4 +1,3 @@
-use super::AppVersions;
 use std::fmt::Display;
 
 #[derive(Debug, Default, PartialEq)]
@@ -15,7 +14,7 @@ impl Config {
 impl Display for Config {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for AppVersions { name, versions } in &self.apps {
-            f.write_fmt(format_args!("{name} {version}\n"))?;
+            f.write_fmt(format_args!("{name} {versions}\n"))?;
         }
         Ok(())
     }

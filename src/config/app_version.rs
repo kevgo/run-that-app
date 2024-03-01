@@ -18,14 +18,14 @@ impl AppVersion {
 #[cfg(test)]
 mod tests {
     mod parse {
-        use crate::config::AppVersion;
+        use crate::config::AppVersions;
         use big_s::S;
 
         #[test]
         fn name_and_version() {
             let give = "shellcheck@0.9.0";
-            let have = AppVersion::new(give);
-            let want = AppVersion {
+            let have = AppVersions::new(give);
+            let want = AppVersions {
                 name: S("shellcheck"),
                 version: S("0.9.0"),
             };
