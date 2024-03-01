@@ -5,6 +5,8 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
+use regex::Regex;
+use std::process::Command;
 
 pub struct ShellCheck {}
 
@@ -91,6 +93,17 @@ fn ext_text(os: Os) -> &'static str {
         Os::Linux | Os::MacOS => "tar.xz",
         Os::Windows => "zip",
     }
+}
+
+fn extract_version(output: &str) -> Option<&str> {
+    let re = Regex::new(r"^v(\d+\.\d+\.\d+)$").unwrap();
+    let Some(captures) = re.captures(output) else {
+        return None;
+    };
+    let Some(capture) = captures.get(1) else {
+        return None;
+    };
+    Some(capture.as_str())
 }
 
 #[cfg(test)]
