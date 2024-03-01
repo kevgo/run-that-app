@@ -1,4 +1,5 @@
 use super::App;
+use crate::config::Version;
 use crate::hosting::github_tags;
 use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
@@ -28,7 +29,7 @@ impl App for Go {
         "https://go.dev"
     }
 
-    fn install(&self, version: &str, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         archive::install(InstallArgs {
             app_name: self.name(),
             artifact_url: download_url(version, platform),
@@ -39,23 +40,23 @@ impl App for Go {
         })
     }
 
-    fn latest_installable_version(&self, output: &dyn Output) -> Result<String> {
+    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
         let versions = self.installable_versions(1, output)?;
         Ok(versions.into_iter().next().unwrap())
     }
 
-    fn load(&self, version: &str, platform: Platform, yard: &Yard) -> Option<Executable> {
+    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
         yard.load_app(self.name(), version, &self.executable_path(platform))
     }
 
-    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<String>> {
+    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         let tags = github_tags::all(ORG, REPO, 100, output)?;
         let mut go_tags: Vec<String> = tags.into_iter().filter(|tag| tag.starts_with("go")).filter(|tag| !tag.contains("rc")).collect();
         go_tags.sort_unstable_by(|a, b| human_sort::compare(b, a));
         if go_tags.len() > amount {
             go_tags.resize(amount, S(""));
         }
-        Ok(go_tags)
+        Ok(go_tags.into_iter().map(Version::from).collect())
     }
 }
 
@@ -69,7 +70,7 @@ impl Go {
     }
 }
 
-pub fn download_url(version: &str, platform: Platform) -> String {
+pub fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://go.dev/dl/go{version}.{os}-{cpu}.{ext}",
         os = os_text(platform.os),
@@ -102,6 +103,7 @@ fn ext_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
+    use crate::config::Version;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
@@ -110,7 +112,7 @@ mod tests {
             os: Os::MacOS,
             cpu: Cpu::Arm64,
         };
-        let have = super::download_url("1.21.5", platform);
+        let have = super::download_url(&Version::from("1.21.5"), platform);
         let want = "https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz";
         assert_eq!(have, want);
     }
