@@ -87,6 +87,7 @@ fn cpu_text(cpu: Cpu) -> &'static str {
 
 #[cfg(test)]
 mod tests {
+    use crate::config::Version;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
@@ -95,7 +96,7 @@ mod tests {
             os: Os::Linux,
             cpu: Cpu::Intel64,
         };
-        let have = super::download_url(&"0.4.37".into(), platform);
+        let have = super::download_url(&Version::from("0.4.37"), platform);
         let want = "https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz";
         assert_eq!(have, want);
     }

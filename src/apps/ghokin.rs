@@ -88,6 +88,7 @@ fn cpu_text(cpu: Cpu) -> &'static str {
 #[cfg(test)]
 mod tests {
     mod download_url {
+        use crate::config::Version;
         use crate::platform::{Cpu, Os, Platform};
 
         #[test]
@@ -96,7 +97,7 @@ mod tests {
                 os: Os::MacOS,
                 cpu: Cpu::Intel64,
             };
-            let have = super::super::download_url(&"3.4.1".into(), platform);
+            let have = super::super::download_url(&Version::from("3.4.1"), platform);
             let want = "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_amd64.tar.gz";
             assert_eq!(have, want);
         }
@@ -107,7 +108,7 @@ mod tests {
                 os: Os::Windows,
                 cpu: Cpu::Intel64,
             };
-            let have = super::super::download_url(&"3.4.1".into(), platform);
+            let have = super::super::download_url(&Version::from("3.4.1"), platform);
             let want = "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_windows_amd64.tar.gz";
             assert_eq!(have, want);
         }

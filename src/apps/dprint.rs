@@ -86,6 +86,7 @@ fn cpu_text(cpu: Cpu) -> &'static str {
 
 #[cfg(test)]
 mod tests {
+    use crate::config::Version;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
@@ -94,7 +95,7 @@ mod tests {
             os: Os::MacOS,
             cpu: Cpu::Arm64,
         };
-        let have = super::download_url(&"0.43.0".into(), platform);
+        let have = super::download_url(&Version::from("0.43.0"), platform);
         let want = "https://github.com/dprint/dprint/releases/download/0.43.0/dprint-aarch64-apple-darwin.zip";
         assert_eq!(have, want);
     }
@@ -105,7 +106,7 @@ mod tests {
             os: Os::Linux,
             cpu: Cpu::Arm64,
         };
-        let have = super::download_url(&"0.43.1".into(), platform);
+        let have = super::download_url(&Version::from("0.43.1"), platform);
         let want = "https://github.com/dprint/dprint/releases/download/0.43.1/dprint-aarch64-unknown-linux-gnu.zip";
         assert_eq!(have, want);
     }

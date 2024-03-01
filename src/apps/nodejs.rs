@@ -93,6 +93,7 @@ fn ext_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
+    use crate::config::Version;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
@@ -101,7 +102,7 @@ mod tests {
             os: Os::MacOS,
             cpu: Cpu::Arm64,
         };
-        let have = super::download_url(&"20.10.0".into(), platform);
+        let have = super::download_url(&Version::from("20.10.0"), platform);
         let want = "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz";
         assert_eq!(have, want);
     }

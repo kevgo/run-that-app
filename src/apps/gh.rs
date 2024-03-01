@@ -92,6 +92,7 @@ fn ext_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
+    use crate::config::Version;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
@@ -100,7 +101,7 @@ mod tests {
             os: Os::Linux,
             cpu: Cpu::Intel64,
         };
-        let have = super::download_url(&"2.39.1".into(), platform);
+        let have = super::download_url(&Version::from("2.39.1"), platform);
         let want = "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_amd64.tar.gz";
         assert_eq!(have, want);
     }

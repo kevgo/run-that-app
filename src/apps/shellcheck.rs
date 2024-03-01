@@ -84,6 +84,7 @@ fn ext_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
+    use crate::config::Version;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
@@ -92,7 +93,7 @@ mod tests {
             os: Os::Linux,
             cpu: Cpu::Intel64,
         };
-        let have = super::download_url(&"0.9.0".into(), platform);
+        let have = super::download_url(&Version::from("0.9.0"), platform);
         let want = "https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.linux.x86_64.tar.xz";
         assert_eq!(have, want);
     }

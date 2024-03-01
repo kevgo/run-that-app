@@ -103,6 +103,7 @@ fn ext_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
+    use crate::config::Version;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
@@ -111,7 +112,7 @@ mod tests {
             os: Os::MacOS,
             cpu: Cpu::Arm64,
         };
-        let have = super::download_url(&"1.21.5".into(), platform);
+        let have = super::download_url(&Version::from("1.21.5"), platform);
         let want = "https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz";
         assert_eq!(have, want);
     }

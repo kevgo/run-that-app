@@ -86,6 +86,7 @@ fn cpu_text(cpu: Cpu) -> &'static str {
 
 #[cfg(test)]
 mod tests {
+    use crate::config::Version;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
@@ -94,7 +95,7 @@ mod tests {
             os: Os::Linux,
             cpu: Cpu::Intel64,
         };
-        let have = super::download_url(&"1.2.1".into(), platform);
+        let have = super::download_url(&Version::from("1.2.1"), platform);
         let want = "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_linux_amd64";
         assert_eq!(have, want);
     }

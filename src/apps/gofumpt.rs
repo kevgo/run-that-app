@@ -95,6 +95,7 @@ fn ext_text(os: Os) -> &'static str {
 #[cfg(test)]
 mod tests {
     mod download_url {
+        use crate::config::Version;
         use crate::platform::{Cpu, Os, Platform};
 
         #[test]
@@ -103,7 +104,7 @@ mod tests {
                 os: Os::MacOS,
                 cpu: Cpu::Arm64,
             };
-            let have = super::super::download_url(&"0.5.0".into(), platform);
+            let have = super::super::download_url(&Version::from("0.5.0"), platform);
             let want = "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_darwin_arm64";
             assert_eq!(have, want);
         }
@@ -114,7 +115,7 @@ mod tests {
                 os: Os::Windows,
                 cpu: Cpu::Intel64,
             };
-            let have = super::super::download_url(&"0.5.0".into(), platform);
+            let have = super::super::download_url(&Version::from("0.5.0"), platform);
             let want = "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_windows_amd64.exe";
             assert_eq!(have, want);
         }

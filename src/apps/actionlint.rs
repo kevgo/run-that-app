@@ -95,6 +95,7 @@ fn ext_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
+    use crate::config::Version;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
@@ -103,7 +104,7 @@ mod tests {
             os: Os::Linux,
             cpu: Cpu::Arm64,
         };
-        let have = super::download_url(&"1.6.26".into(), platform);
+        let have = super::download_url(&Version::from("1.6.26"), platform);
         let want = "https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_linux_arm64.tar.gz";
         assert_eq!(have, want);
     }

@@ -92,6 +92,7 @@ fn ext_text(_os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
+    use crate::config::Version;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
@@ -100,7 +101,7 @@ mod tests {
             os: Os::MacOS,
             cpu: Cpu::Arm64,
         };
-        let have = super::download_url(&"3.1.0".into(), platform);
+        let have = super::download_url(&Version::from("3.1.0"), platform);
         let want = "https://github.com/boyter/scc/releases/download/v3.1.0/scc_3.1.0_Darwin_arm64.tar.gz";
         assert_eq!(have, want);
     }

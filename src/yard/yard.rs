@@ -60,13 +60,14 @@ impl Yard {
 
 #[cfg(test)]
 mod tests {
+    use crate::config::Version;
     use crate::yard::Yard;
     use std::path::PathBuf;
 
     #[test]
     fn app_file_path() {
         let yard = Yard { root: PathBuf::from("/root") };
-        let have = yard.app_folder("shellcheck", &"0.9.0".into()).join("shellcheck.exe");
+        let have = yard.app_folder("shellcheck", &Version::from("0.9.0").into()).join("shellcheck.exe");
         let want = PathBuf::from("/root/apps/shellcheck/0.9.0/shellcheck.exe");
         assert_eq!(have, want);
     }
@@ -74,7 +75,7 @@ mod tests {
     #[test]
     fn app_folder() {
         let yard = Yard { root: PathBuf::from("/root") };
-        let have = yard.app_folder("shellcheck", &"0.9.0".into());
+        let have = yard.app_folder("shellcheck", &Version::from("0.9.0").into());
         let want = PathBuf::from("/root/apps/shellcheck/0.9.0");
         assert_eq!(have, want);
     }
@@ -112,7 +113,7 @@ mod tests {
     }
 
     mod load_app {
-        use crate::config::AppVersion;
+        use crate::config::{AppVersion, Version};
         use crate::subshell::Executable;
         use crate::yard::{create, Yard};
         use big_s::S;
@@ -123,8 +124,8 @@ mod tests {
             let tempdir = tempfile::tempdir().unwrap();
             let yard = create(tempdir.path()).unwrap();
             let executable = "executable";
-            yard.save_app_file("shellcheck", &"0.9.0".into(), executable, b"content");
-            let Some(Executable(executable_path)) = yard.load_app("shellcheck", &"0.9.0".into(), executable) else {
+            yard.save_app_file("shellcheck", &Version::from("0.9.0"), executable, b"content");
+            let Some(Executable(executable_path)) = yard.load_app("shellcheck", &Version::from("0.9.0"), executable) else {
                 panic!();
             };
             #[cfg(unix)]
@@ -157,8 +158,8 @@ mod tests {
             let tempdir = tempfile::tempdir().unwrap();
             let yard = create(tempdir.path()).unwrap();
             let executable = "executable";
-            yard.save_app_file("shellcheck", &"0.1.0".into(), executable, b"content");
-            let loaded = yard.load_app("shellcheck", &"0.9.0".into(), "executable");
+            yard.save_app_file("shellcheck", &Version::from("0.1.0"), executable, b"content");
+            let loaded = yard.load_app("shellcheck", &Version::from("0.9.0"), "executable");
             assert!(loaded.is_none());
         }
     }
@@ -166,7 +167,7 @@ mod tests {
     #[test]
     fn not_installable_path() {
         let yard = Yard { root: PathBuf::from("/root") };
-        let have = yard.not_installable_path("shellcheck", &"0.9.0".into());
+        let have = yard.not_installable_path("shellcheck", &Version::from("0.9.0").into());
         let want = PathBuf::from("/root/apps/shellcheck/0.9.0/not_installable");
         assert_eq!(have, want);
     }
