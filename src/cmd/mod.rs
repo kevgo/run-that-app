@@ -9,7 +9,7 @@ mod which;
 
 pub use available::available;
 pub use help::help;
-pub use run::run;
+pub use run::{run, RunArgs};
 pub use setup::setup;
 pub use update::update;
 pub use version::version;
