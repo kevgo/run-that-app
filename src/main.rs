@@ -35,16 +35,9 @@ fn inner() -> Result<ExitCode> {
             let output = output::StdErr { category: log };
             cmd::available(app, include_path, &output)
         }
-        Command::RunApp {
-            app,
-            args,
-            error_on_output,
-            include_path,
-            optional,
-            log,
-        } => {
+        Command::RunApp { data, log } => {
             let output = output::StdErr { category: log };
-            cmd::run(app, &args, error_on_output, include_path, optional, &output)
+            cmd::run(data, &output)
         }
         Command::DisplayHelp => Ok(cmd::help()),
         Command::Setup => cmd::setup(),
