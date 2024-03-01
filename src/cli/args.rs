@@ -1,6 +1,6 @@
-use super::AppVersion;
 use super::Command;
 use crate::cmd::run;
+use crate::config::AppVersion;
 use crate::{Result, UserError};
 
 /// all arguments that can be provided via the CLI
@@ -155,13 +155,15 @@ mod tests {
             use big_s::S;
 
             use super::parse_args;
-            use crate::cli::{AppVersion, Args, Command};
+            use crate::cli::{Args, Command};
             use crate::cmd::run;
+            use crate::config::AppVersion;
             use crate::error::UserError;
 
             mod available {
                 use super::super::parse_args;
-                use crate::cli::{AppVersion, Args, Command};
+                use crate::cli::{Args, Command};
+                use crate::config::AppVersion;
                 use crate::error::UserError;
                 use big_s::S;
 
@@ -207,8 +209,9 @@ mod tests {
 
             mod error_on_output {
                 use super::super::parse_args;
-                use crate::cli::{AppVersion, Args, Command};
+                use crate::cli::{Args, Command};
                 use crate::cmd::run;
+                use crate::config::AppVersion;
                 use crate::error::UserError;
                 use big_s::S;
 
@@ -262,8 +265,9 @@ mod tests {
 
             mod include_path {
                 use super::super::parse_args;
-                use crate::cli::{AppVersion, Args, Command};
+                use crate::cli::{Args, Command};
                 use crate::cmd::run;
+                use crate::config::AppVersion;
                 use crate::UserError;
                 use big_s::S;
 
@@ -298,8 +302,9 @@ mod tests {
 
             mod log {
                 use super::super::parse_args;
-                use crate::cli::{AppVersion, Args, Command};
+                use crate::cli::{Args, Command};
                 use crate::cmd::run;
+                use crate::config::AppVersion;
                 use crate::error::UserError;
                 use big_s::S;
 
@@ -443,7 +448,8 @@ mod tests {
 
             mod which {
                 use super::super::parse_args;
-                use crate::cli::{AppVersion, Args, Command};
+                use crate::cli::{Args, Command};
+                use crate::config::AppVersion;
                 use crate::UserError;
                 use big_s::S;
 
@@ -490,8 +496,9 @@ mod tests {
 
         mod application_arguments {
             use super::parse_args;
-            use crate::cli::{args, AppVersion, Command};
+            use crate::cli::{args, Command};
             use crate::cmd::run;
+            use crate::config::AppVersion;
             use args::Args;
             use big_s::S;
 
@@ -540,8 +547,9 @@ mod tests {
 
         mod rta_and_app_arguments {
             use super::parse_args;
-            use crate::cli::{AppVersion, Args, Command};
+            use crate::cli::{Args, Command};
             use crate::cmd::run;
+            use crate::config::AppVersion;
             use big_s::S;
 
             #[test]

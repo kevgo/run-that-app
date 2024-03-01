@@ -1,4 +1,4 @@
-use crate::cli::AppVersion;
+use crate::config::AppVersion;
 use crate::error::UserError;
 use crate::subshell::Executable;
 use crate::Result;
@@ -80,7 +80,7 @@ mod tests {
     }
 
     mod is_not_installable {
-        use crate::cli::AppVersion;
+        use crate::config::AppVersion;
         use crate::yard::create;
         use crate::yard::Yard;
         use big_s::S;
@@ -112,7 +112,7 @@ mod tests {
     }
 
     mod load_app {
-        use crate::cli::AppVersion;
+        use crate::config::AppVersion;
         use crate::subshell::Executable;
         use crate::yard::{create, Yard};
         use big_s::S;

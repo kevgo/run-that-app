@@ -1,6 +1,6 @@
 use super::Config;
 use super::FILE_NAME;
-use crate::cli::AppVersion;
+use crate::config::AppVersion;
 use crate::Result;
 use crate::UserError;
 use std::env;
@@ -102,8 +102,7 @@ mod tests {
 
     mod parse {
         use super::super::parse;
-        use crate::cli::AppVersion;
-        use crate::config::Config;
+        use crate::config::{AppVersion,Config};
         use big_s::S;
 
         #[test]
@@ -134,7 +133,7 @@ mod tests {
 
     mod parse_line {
         use super::super::parse_line;
-        use crate::cli::AppVersion;
+        use crate::config::AppVersion;
         use crate::error::UserError;
         use big_s::S;
 

@@ -1,5 +1,4 @@
-use crate::cli::AppVersion;
-use crate::config::Config;
+use crate::config::{AppVersion, Config};
 use crate::output::Output;
 use crate::Result;
 use crate::{apps, config};
