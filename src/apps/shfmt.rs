@@ -1,13 +1,14 @@
-use std::path::Path;
 use super::App;
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
-use crate::subshell::{self, Executable};
+use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
 use const_format::formatcp;
+use regex::Regex;
+use std::process::Command;
 
 pub struct Shfmt {}
 
@@ -60,12 +61,16 @@ impl App for Shfmt {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, executable: &Executable) -> Option<&str> {
+    fn version(&self, executable: &Executable) -> Option<String> {
         let mut cmd = Command::new(executable);
-        cmd.arg(args);
-
-
-        let output = subshell::run(executable, args)
+        cmd.arg("--version");
+        let Ok(output) = cmd.output() else {
+            return None;
+        };
+        let Ok(output) = String::from_utf8(output.stdout) else {
+            return None;
+        };
+        extract_version(&output).map(ToString::to_string)
     }
 }
 
@@ -100,6 +105,17 @@ fn ext_text(os: Os) -> &'static str {
     }
 }
 
+fn extract_version(output: &str) -> Option<&str> {
+    let re = Regex::new(r"^v(\d+\.\d+\.\d+)$").unwrap();
+    let Some(captures) = re.captures(output) else {
+        return None;
+    };
+    let Some(capture) = captures.get(1) else {
+        return None;
+    };
+    Some(capture.as_str())
+}
+
 #[cfg(test)]
 mod tests {
     use crate::platform::{Cpu, Os, Platform};
@@ -113,5 +129,12 @@ mod tests {
         let have = super::download_url("3.7.0", platform);
         let want = "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_arm64";
         assert_eq!(have, want);
+    }
+
+    #[test]
+    fn is_correct_version() {
+        assert_eq!(Some("3.7.0"), super::extract_version("v3.7.0"));
+        assert_eq!(None, super::extract_version("3.7.0"));
+        assert_eq!(None, super::extract_version("other"));
     }
 }
