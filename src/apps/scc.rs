@@ -41,7 +41,7 @@ impl App for Scc {
             return Ok(result);
         }
         compile_go(CompileArgs {
-            import_path: format!("github.com/{ORG}/{REPO}/v3@{version}"),
+            import_path: format!("github.com/{ORG}/{REPO}/v3@v{version}"),
             target_folder: &yard.app_folder(self.name(), version),
             executable_filename: self.executable_filename(platform),
             output,
