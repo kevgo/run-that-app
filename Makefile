@@ -3,7 +3,7 @@ build:  # compiles this app in debug mode
 
 fix: build  # auto-corrects issues
 	cargo fix --allow-dirty
-	cargo clippy --fix
+	cargo clippy --fix --allow-dirty
 	cargo fmt
 	target/debug/rta dprint fmt
 	target/debug/rta shfmt -f . | xargs target/debug/rta shfmt -w
