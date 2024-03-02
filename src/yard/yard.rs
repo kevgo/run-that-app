@@ -17,7 +17,7 @@ impl Yard {
     }
 
     pub fn is_not_installable(&self, app: &AppName, version: &Version) -> bool {
-        self.not_installable_path(&app, &version).exists()
+        self.not_installable_path(app, version).exists()
     }
 
     /// provides the path to the executable of the given application
@@ -31,12 +31,12 @@ impl Yard {
     }
 
     pub fn mark_not_installable(&self, app: &AppName, version: &Version) -> Result<()> {
-        let app_folder = self.app_folder(&app, &version);
+        let app_folder = self.app_folder(app, version);
         fs::create_dir_all(&app_folder).map_err(|err| UserError::YardAccessDenied {
             msg: err.to_string(),
             path: app_folder,
         })?;
-        let path = self.not_installable_path(&app, &version);
+        let path = self.not_installable_path(app, version);
         match File::create(&path) {
             Ok(_) => Ok(()),
             Err(err) => Err(UserError::YardAccessDenied { msg: err.to_string(), path }),
