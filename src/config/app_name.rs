@@ -8,12 +8,16 @@ impl AppName {
     pub fn as_str(&self) -> &str {
         &self.0
     }
+
+    pub fn new(name: String) -> AppName {
+        AppName(name)
+    }
 }
 
 impl From<&str> for AppName {
     fn from(value: &str) -> Self {
         assert!(!value.is_empty(), "empty app name");
-        AppName(value.to_string())
+        AppName::new(value.to_string())
     }
 }
 
