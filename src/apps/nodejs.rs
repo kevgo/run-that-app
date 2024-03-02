@@ -99,10 +99,7 @@ mod tests {
 
     #[test]
     fn download_url() {
-        let platform = Platform {
-            os: Os::MacOS,
-            cpu: Cpu::Arm64,
-        };
+        let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
         let have = super::download_url(&Version::from("20.10.0"), platform);
         let want = "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz";
         assert_eq!(have, want);

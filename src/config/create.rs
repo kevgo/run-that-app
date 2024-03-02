@@ -15,8 +15,7 @@ pub fn create() -> Result<()> {
             panic!("{}", err);
         }
     };
-    file.write_all(CONFIG_TEXT.as_bytes())
-        .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
+    file.write_all(CONFIG_TEXT.as_bytes()).map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
 }
 
 const CONFIG_TEXT: &str = "\
