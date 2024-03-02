@@ -12,6 +12,7 @@ impl AppName {
 
 impl From<&str> for AppName {
     fn from(value: &str) -> Self {
+        assert!(!value.is_empty(), "empty app name");
         AppName(value.to_string())
     }
 }
