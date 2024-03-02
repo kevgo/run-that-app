@@ -116,11 +116,7 @@ mod tests {
         #[test]
         fn longest_name_length() {
             let apps = Apps {
-                list: vec![
-                    Box::new(dprint::Dprint {}),
-                    Box::new(actionlint::ActionLint {}),
-                    Box::new(shellcheck::ShellCheck {}),
-                ],
+                list: vec![Box::new(dprint::Dprint {}), Box::new(actionlint::ActionLint {}), Box::new(shellcheck::ShellCheck {})],
             };
             let have = apps.longest_name_length();
             assert_eq!(have, 10);

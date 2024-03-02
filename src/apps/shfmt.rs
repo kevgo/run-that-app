@@ -125,10 +125,7 @@ mod tests {
 
     #[test]
     fn download_url() {
-        let platform = Platform {
-            os: Os::MacOS,
-            cpu: Cpu::Arm64,
-        };
+        let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
         let have = super::download_url(&Version::from("3.7.0"), platform);
         let want = "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_arm64";
         assert_eq!(have, want);

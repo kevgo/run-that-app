@@ -97,10 +97,7 @@ mod tests {
 
     #[test]
     fn linux_intel() {
-        let platform = Platform {
-            os: Os::Linux,
-            cpu: Cpu::Intel64,
-        };
+        let platform = Platform { os: Os::Linux, cpu: Cpu::Intel64 };
         let have = super::download_url(&Version::from("0.4.37"), platform);
         let want = "https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz";
         assert_eq!(have, want);

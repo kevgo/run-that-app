@@ -68,11 +68,7 @@ fn download_url(version: &Version, platform: Platform) -> String {
 }
 
 fn executable_path(version: &Version, platform: Platform, filename: &str) -> String {
-    format!(
-        "golangci-lint-{version}-{os}-{cpu}/{filename}",
-        os = os_text(platform.os),
-        cpu = cpu_text(platform.cpu),
-    )
+    format!("golangci-lint-{version}-{os}-{cpu}/{filename}", os = os_text(platform.os), cpu = cpu_text(platform.cpu),)
 }
 
 fn os_text(os: Os) -> &'static str {
@@ -104,10 +100,7 @@ mod tests {
 
     #[test]
     fn download_url() {
-        let platform = Platform {
-            os: Os::MacOS,
-            cpu: Cpu::Arm64,
-        };
+        let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
         let have = super::download_url(&Version::from("1.55.2"), platform);
         let want = "https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-darwin-arm64.tar.gz";
         assert_eq!(have, want);

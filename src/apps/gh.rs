@@ -102,10 +102,7 @@ mod tests {
 
     #[test]
     fn download_url() {
-        let platform = Platform {
-            os: Os::Linux,
-            cpu: Cpu::Intel64,
-        };
+        let platform = Platform { os: Os::Linux, cpu: Cpu::Intel64 };
         let have = super::download_url(&Version::from("2.39.1"), platform);
         let want = "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_amd64.tar.gz";
         assert_eq!(have, want);
