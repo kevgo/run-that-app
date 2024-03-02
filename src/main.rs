@@ -31,9 +31,14 @@ fn main() -> ExitCode {
 fn inner() -> Result<ExitCode> {
     let cli_args = cli::parse(std::env::args())?;
     match cli_args.command {
-        Command::Available { app, include_path, log } => {
+        Command::Available {
+            app,
+            version,
+            include_path,
+            log,
+        } => {
             let output = output::StdErr { category: log };
-            cmd::available(app, include_path, &output)
+            cmd::available(&app, &version, include_path, &output)
         }
         Command::RunApp { data, log } => {
             let output = output::StdErr { category: log };
@@ -41,9 +46,14 @@ fn inner() -> Result<ExitCode> {
         }
         Command::DisplayHelp => Ok(cmd::help()),
         Command::Setup => cmd::setup(),
-        Command::Which { app, include_path, log } => {
+        Command::Which {
+            app,
+            version,
+            include_path,
+            log,
+        } => {
             let output = output::StdErr { category: log };
-            cmd::which(app, include_path, &output)
+            cmd::which(&app, &version, include_path, &output)
         }
         Command::Update { log } => {
             let output = output::StdErr { category: log };

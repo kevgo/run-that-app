@@ -1,4 +1,4 @@
-use crate::config::{AppName, AppVersion, Version};
+use crate::config::{AppName, Version};
 use crate::error::UserError;
 use crate::subshell::Executable;
 use crate::Result;
