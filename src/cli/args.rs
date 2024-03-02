@@ -87,9 +87,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     } else if setup {
         return Ok(Args { command: Command::Setup });
     } else if update {
-        return Ok(Args {
-            command: Command::Update { log },
-        });
+        return Ok(Args { command: Command::Update { log } });
     }
     if let Some(app) = app_version {
         if indicate_available {
