@@ -38,7 +38,7 @@ fn inner() -> Result<ExitCode> {
             log,
         } => {
             let output = output::StdErr { category: log };
-            cmd::available(&app, &version, include_path, &output)
+            cmd::available(&app, version, include_path, &output)
         }
         Command::RunApp { data, log } => {
             let output = output::StdErr { category: log };
@@ -53,7 +53,7 @@ fn inner() -> Result<ExitCode> {
             log,
         } => {
             let output = output::StdErr { category: log };
-            cmd::which(&app, &version, include_path, &output)
+            cmd::which(&app, version, include_path, &output)
         }
         Command::Update { log } => {
             let output = output::StdErr { category: log };
