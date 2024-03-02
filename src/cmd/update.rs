@@ -16,7 +16,7 @@ pub fn update(output: &dyn Output) -> Result<ExitCode> {
         if old_app.version == latest {
             output.println(&format!("{}", "current".green()));
         } else {
-            output.println(&format!("{} -> {}", &old_app.version.as_str().cyan(), latest.as_str().cyan()));
+            output.println(&format!("{} -> {}", old_app.version.as_str().cyan(), latest.as_str().cyan()));
         }
         new_config.apps.push(AppVersion {
             name: old_app.name,
