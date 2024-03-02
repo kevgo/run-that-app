@@ -66,9 +66,7 @@ mod tests {
 
         #[test]
         fn sub_category() {
-            let output = StdErr {
-                category: Some(S("detect/os")),
-            };
+            let output = StdErr { category: Some(S("detect/os")) };
             assert!(!output.is_active("detect"));
             assert!(output.is_active("detect/os"));
             assert!(!output.is_active("detect/cpu"));
