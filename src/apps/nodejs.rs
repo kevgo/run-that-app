@@ -1,5 +1,5 @@
 use super::App;
-use crate::config::Version;
+use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
@@ -13,8 +13,8 @@ pub const ORG: &str = "nodejs";
 pub const REPO: &str = "node";
 
 impl App for NodeJS {
-    fn name(&self) -> &'static str {
-        "node"
+    fn name(&self) -> AppName {
+        AppName::from("node")
     }
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
@@ -29,10 +29,11 @@ impl App for NodeJS {
     }
 
     fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+        let name = self.name();
         archive::install(InstallArgs {
-            app_name: self.name(),
+            app_name: &name,
             artifact_url: download_url(version, platform),
-            dir_on_disk: yard.app_folder(self.name(), version),
+            dir_on_disk: yard.app_folder(&name, version),
             strip_path_prefix: &format!("node-v{version}-{os}-{cpu}/", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
             executable_in_archive: executable_path(platform),
             output,
@@ -44,7 +45,7 @@ impl App for NodeJS {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(self.name(), version, executable_path(platform))
+        yard.load_app(&self.name(), version, executable_path(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
