@@ -1,5 +1,5 @@
 use super::App;
-use crate::config::Version;
+use crate::config::{AppName, Version};
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::platform::{Os, Platform};
 use crate::subshell::Executable;
@@ -10,8 +10,8 @@ use const_format::formatcp;
 pub struct Deadcode {}
 
 impl App for Deadcode {
-    fn name(&self) -> &'static str {
-        "deadcode"
+    fn name(&self) -> AppName {
+        AppName::from("deadcode")
     }
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
@@ -28,7 +28,7 @@ impl App for Deadcode {
     fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         compile_go(CompileArgs {
             import_path: format!("golang.org/x/tools/cmd/deadcode@v{version}"),
-            target_folder: &yard.app_folder(self.name(), version),
+            target_folder: &yard.app_folder(&self.name(), version),
             executable_filename: self.executable_filename(platform),
             output,
         })
@@ -40,7 +40,7 @@ impl App for Deadcode {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(self.name(), version, self.executable_filename(platform))
+        yard.load_app(&self.name(), version, self.executable_filename(platform))
     }
 
     fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<Version>> {

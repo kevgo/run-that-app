@@ -21,7 +21,7 @@ mod scc;
 mod shellcheck;
 mod shfmt;
 
-use crate::config::Version;
+use crate::config::{AppName, Version};
 use crate::error::UserError;
 use crate::platform::Platform;
 use crate::subshell::Executable;
@@ -31,7 +31,7 @@ use std::slice::Iter;
 
 pub trait App {
     /// the name by which the user can select this application at the run-that-app CLI
-    fn name(&self) -> &'static str;
+    fn name(&self) -> AppName;
 
     /// the filename of the executable that starts this app
     fn executable_filename(&self, platform: Platform) -> &'static str;
@@ -93,7 +93,7 @@ impl Apps {
     }
 
     /// provides the app with the given name
-    pub fn lookup(&self, name: &str) -> Result<&dyn App> {
+    pub fn lookup(&self, name: &AppName) -> Result<&dyn App> {
         for app in &self.list {
             if app.name() == name {
                 return Ok(app.as_ref());
@@ -104,7 +104,7 @@ impl Apps {
 
     /// provides the length of the name of the app with the longest name
     pub fn longest_name_length(&self) -> usize {
-        self.iter().map(|app| app.name().len()).max().unwrap()
+        self.iter().map(|app| app.name().as_str().len()).max().unwrap()
     }
 }
 
@@ -128,6 +128,7 @@ mod tests {
 
         mod lookup {
             use crate::apps::{dprint, shellcheck, Apps};
+            use crate::config::AppName;
             use crate::UserError;
             use big_s::S;
 
@@ -136,8 +137,9 @@ mod tests {
                 let apps = Apps {
                     list: vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})],
                 };
-                let have = apps.lookup("shellcheck").unwrap();
-                assert_eq!(have.name(), "shellcheck");
+                let shellcheck = AppName::from("shellcheck");
+                let have = apps.lookup(&shellcheck).unwrap();
+                assert_eq!(have.name(), &shellcheck);
             }
 
             #[test]
@@ -145,7 +147,7 @@ mod tests {
                 let apps = Apps {
                     list: vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})],
                 };
-                let Err(err) = apps.lookup("zonk") else {
+                let Err(err) = apps.lookup(&AppName::from("zonk")) else {
                     panic!("expected an error here");
                 };
                 assert_eq!(err, UserError::UnknownApp(S("zonk")));

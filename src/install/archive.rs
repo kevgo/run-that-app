@@ -1,4 +1,5 @@
 use crate::archives::{self, ExtractAllArgs};
+use crate::config::AppName;
 use crate::output::Output;
 use crate::subshell::Executable;
 use crate::UserError;
@@ -28,7 +29,7 @@ pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
 }
 
 pub struct InstallArgs<'a> {
-    pub app_name: &'a str,
+    pub app_name: &'a AppName,
     pub artifact_url: String,
     pub dir_on_disk: PathBuf,
     pub strip_path_prefix: &'a str,

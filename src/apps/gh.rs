@@ -1,5 +1,5 @@
 use super::App;
-use crate::config::Version;
+use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
@@ -13,8 +13,8 @@ const ORG: &str = "cli";
 const REPO: &str = "cli";
 
 impl App for Gh {
-    fn name(&self) -> &'static str {
-        "gh"
+    fn name(&self) -> AppName {
+        AppName::from("gh")
     }
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
@@ -29,11 +29,12 @@ impl App for Gh {
     }
 
     fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+        let name = self.name();
         packaged_executable::install(InstallArgs {
-            app_name: self.name(),
+            app_name: &name,
             artifact_url: download_url(version, platform),
             file_to_extract: &executable_path(version, platform),
-            filepath_on_disk: yard.app_folder(self.name(), version).join(self.executable_filename(platform)),
+            filepath_on_disk: yard.app_folder(&name, version).join(self.executable_filename(platform)),
             output,
         })
         // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
@@ -44,7 +45,7 @@ impl App for Gh {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(self.name(), version, self.executable_filename(platform))
+        yard.load_app(&self.name(), version, self.executable_filename(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

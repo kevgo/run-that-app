@@ -1,6 +1,6 @@
 use super::nodejs::NodeJS;
 use super::App;
-use crate::config::Version;
+use crate::config::{AppName, Version};
 use crate::platform::{Os, Platform};
 use crate::subshell::Executable;
 use crate::yard::Yard;
@@ -9,8 +9,8 @@ use crate::{Output, Result};
 pub struct Npm {}
 
 impl App for Npm {
-    fn name(&self) -> &'static str {
-        "npm"
+    fn name(&self) -> AppName {
+        AppName::from("npm")
     }
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
@@ -27,7 +27,7 @@ impl App for Npm {
     fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let nodejs = NodeJS {};
         nodejs.install(version, platform, yard, output)?;
-        let executable_path = yard.app_folder(nodejs.name(), version).join(self.executable_filename(platform));
+        let executable_path = yard.app_folder(&nodejs.name(), version).join(self.executable_filename(platform));
         Ok(Some(Executable(executable_path)))
     }
 
@@ -36,7 +36,7 @@ impl App for Npm {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app((NodeJS {}).name(), version, self.executable_filename(platform))
+        yard.load_app(&(NodeJS {}).name(), version, self.executable_filename(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

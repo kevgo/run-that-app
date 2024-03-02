@@ -1,5 +1,5 @@
 use super::App;
-use crate::config::Version;
+use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_rust::{compile_rust, CompileArgs};
 use crate::install::packaged_executable::{self, InstallArgs};
@@ -15,8 +15,8 @@ const ORG: &str = "rust-lang";
 const REPO: &str = "mdBook";
 
 impl App for MdBook {
-    fn name(&self) -> &'static str {
-        "mdBook"
+    fn name(&self) -> AppName {
+        AppName::from("mdBook")
     }
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
@@ -31,11 +31,12 @@ impl App for MdBook {
     }
 
     fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+        let name = self.name();
         let result = packaged_executable::install(InstallArgs {
-            app_name: self.name(),
+            app_name: &name,
             artifact_url: download_url(version, platform),
             file_to_extract: self.executable_filename(platform),
-            filepath_on_disk: yard.app_folder(self.name(), version).join(self.executable_filename(platform)),
+            filepath_on_disk: yard.app_folder(&name, version).join(self.executable_filename(platform)),
             output,
         })?;
         if result.is_some() {
@@ -43,7 +44,7 @@ impl App for MdBook {
         }
         compile_rust(CompileArgs {
             crate_name: "mdbook",
-            target_folder: yard.app_folder(self.name(), version),
+            target_folder: yard.app_folder(&name, version),
             executable_filename: self.executable_filename(platform),
             output,
         })
@@ -54,7 +55,7 @@ impl App for MdBook {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(self.name(), version, self.executable_filename(platform))
+        yard.load_app(&self.name(), version, self.executable_filename(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
