@@ -87,28 +87,16 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     } else if setup {
         return Ok(Args { command: Command::Setup });
     } else if update {
-        return Ok(Args {
-            command: Command::Update { log },
-        });
+        return Ok(Args { command: Command::Update { log } });
     }
     if let Some(AppVersion { app, version }) = app_version {
         if indicate_available {
             Ok(Args {
-                command: Command::Available {
-                    app,
-                    version,
-                    include_path,
-                    log,
-                },
+                command: Command::Available { app, version, include_path, log },
             })
         } else if which {
             Ok(Args {
-                command: Command::Which {
-                    app,
-                    version,
-                    include_path,
-                    log,
-                },
+                command: Command::Which { app, version, include_path, log },
             })
         } else if let Some(amount) = versions {
             Ok(Args {
