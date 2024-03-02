@@ -1,3 +1,5 @@
+use super::AppName;
+use crate::config::AppVersion;
 use std::fmt::Display;
 
 use super::AppVersions;
@@ -8,7 +10,7 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn lookup(self, app_name: &str) -> Option<AppVersions> {
+    pub fn lookup(self, app_name: &AppName) -> Option<AppVersions> {
         self.apps.into_iter().find(|app| app.name == app_name)
     }
 }

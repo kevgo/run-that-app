@@ -1,5 +1,6 @@
 //! functionality for the `.tool-versions` file
 
+mod app_name;
 mod app_version;
 mod config;
 mod create;
@@ -8,6 +9,7 @@ mod app_versions;
 mod version;
 mod save;
 
+pub use app_name::AppName;
 pub use app_version::AppVersion;
 pub use app_versions::AppVersions;
 pub use config::Config;

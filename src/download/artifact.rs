@@ -1,13 +1,14 @@
+use crate::config::AppName;
 use crate::output::Output;
 use crate::{Result, UserError};
 use colored::Colorize;
 
 /// downloads the artifact at the given URL
-pub fn artifact(url: String, name: &str, output: &dyn Output) -> Result<Option<Artifact>> {
+pub fn artifact(url: String, name: &AppName, output: &dyn Output) -> Result<Option<Artifact>> {
     if output.is_active("download") {
         output.print(&format!("downloading {} ... ", url.cyan()));
     } else {
-        output.print(&format!("downloading {} ... ", name.cyan()));
+        output.print(&format!("downloading {} ... ", name.as_str().cyan()));
     }
     let Ok(response) = minreq::get(&url).send() else {
         output.println(&format!("{}", "not online".red()));

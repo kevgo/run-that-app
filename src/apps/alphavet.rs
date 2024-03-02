@@ -1,5 +1,5 @@
 use super::App;
-use crate::config::Version;
+use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::platform::{Os, Platform};
@@ -14,8 +14,8 @@ const ORG: &str = "skx";
 const REPO: &str = "alphavet";
 
 impl App for Alphavet {
-    fn name(&self) -> &'static str {
-        "alphavet"
+    fn name(&self) -> AppName {
+        AppName::from("alphavet")
     }
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
@@ -33,7 +33,7 @@ impl App for Alphavet {
         // the precompiled binaries are crashing on Linux
         compile_go(CompileArgs {
             import_path: format!("github.com/{ORG}/{REPO}/cmd/alphavet@v{version}"),
-            target_folder: &yard.app_folder(self.name(), version),
+            target_folder: &yard.app_folder(&self.name(), version),
             executable_filename: self.executable_filename(platform),
             output,
         })
@@ -44,7 +44,7 @@ impl App for Alphavet {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(self.name(), version, self.executable_filename(platform))
+        yard.load_app(&self.name(), version, self.executable_filename(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
