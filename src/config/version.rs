@@ -8,10 +8,21 @@ pub struct Version(String);
 
 impl PartialOrd for Version {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        let self_version = semver::Version::parse(self.as_str()).unwrap();
-        let other_version = semver::Version::parse(other.as_str()).unwrap();
-        self_version.partial_cmp(&other_version)
+        if let Some(semver_order) = compare_semver(self, other) {
+            return Some(semver_order);
+        }
+        self.as_str().partial_cmp(other.as_str())
     }
+}
+
+fn compare_semver(v1: &Version, v2: &Version) -> Option<Ordering> {
+    let Ok(self_version) = semver::Version::parse(v1.as_str()) else {
+        return None;
+    };
+    let Ok(other_version) = semver::Version::parse(v2.as_str()) else {
+        return None;
+    };
+    self_version.partial_cmp(&other_version)
 }
 
 impl Version {
@@ -64,15 +75,13 @@ impl PartialEq<String> for Version {
 #[cfg(test)]
 mod tests {
 
-    mod is_system {
-        use crate::config::Version;
+    use crate::config::Version;
 
-        #[test]
-        fn tests() {
-            assert!(Version::from("system").is_system());
-            assert!(Version::from("system@1.2").is_system());
-            assert!(!Version::from("1.2.3").is_system());
-        }
+    #[test]
+    fn is_system() {
+        assert!(Version::from("system").is_system());
+        assert!(Version::from("system@1.2").is_system());
+        assert!(!Version::from("1.2.3").is_system());
     }
 
     mod partial_cmp {
@@ -83,6 +92,13 @@ mod tests {
             let version = Version::from("3.10.2");
             let other = Version::from("3.2.1");
             assert!(version > other);
+        }
+
+        #[test]
+        fn tag() {
+            let version = Version::from("1.2.3-alpha");
+            let other = Version::from("1.2.3");
+            assert!(version < other);
         }
     }
 }
