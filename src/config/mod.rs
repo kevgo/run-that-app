@@ -2,12 +2,12 @@
 
 mod app_name;
 mod app_version;
+mod app_versions;
 mod config;
 mod create;
 mod load;
-mod app_versions;
-mod version;
 mod save;
+mod version;
 
 pub use app_name::AppName;
 pub use app_version::AppVersion;

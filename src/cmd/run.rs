@@ -55,7 +55,7 @@ pub fn load_or_install(app_name: &AppName, mut version: Version, include_path: b
     if version.is_none() {
         let config = config::load()?;
         match config.lookup(app_name) {
-            Some(configured_version) => version = configured_version.version,
+            Some(configured_versions) => version = configured_version.version,
             None => return Err(UserError::RunRequestMissingVersion),
         }
     }

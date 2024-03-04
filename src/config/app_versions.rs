@@ -1,15 +1,15 @@
-use super::{AppVersion, Version};
+use super::{AppName, AppVersion, Version};
 
-#[derive(Debug, Default, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AppVersions {
-    pub name: String,
+    pub app: AppName,
     pub versions: Vec<Version>,
 }
 
 impl From<AppVersion> for AppVersions {
     fn from(app_version: AppVersion) -> Self {
         AppVersions {
-            name: app_version.name,
+            app: app_version.app,
             versions: vec![app_version.version],
         }
     }
