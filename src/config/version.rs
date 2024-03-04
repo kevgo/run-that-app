@@ -8,9 +8,9 @@ pub struct Version(String);
 
 impl PartialOrd for Version {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        // TODO: compare each version number element (major, minor) using human-sort
-        // maybe the semver crate has a comp function that we can use here?
-        self.0.partial_cmp(&other.0)
+        let self_version = semver::Version::parse(self.as_str()).unwrap();
+        let other_version = semver::Version::parse(other.as_str()).unwrap();
+        self_version.partial_cmp(&other_version)
     }
 }
 
@@ -58,5 +58,20 @@ impl PartialEq<str> for Version {
 impl PartialEq<String> for Version {
     fn eq(&self, other: &String) -> bool {
         self.as_str() == *other
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    mod partial_cmp {
+        use crate::config::Version;
+
+        #[test]
+        fn semantic() {
+            let version = Version::from("3.10.2");
+            let other = Version::from("3.2.1");
+            assert!(version > other);
+        }
     }
 }
