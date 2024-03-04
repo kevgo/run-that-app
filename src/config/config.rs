@@ -1,4 +1,4 @@
-use super::{AppName, AppVersion, AppVersions, Version, FILE_NAME};
+use super::{AppName, AppVersions, Versions, FILE_NAME};
 use crate::error::UserError;
 use crate::Result;
 use std::fmt::Display;
@@ -18,8 +18,8 @@ impl Config {
         }
     }
 
-    pub fn lookup(self, app_name: &AppName) -> Option<Version> {
-        self.apps.into_iter().find(|app| app.app == app_name).map(|app_version| app_version.version)
+    pub fn lookup(self, app_name: &AppName) -> Option<Versions> {
+        self.apps.into_iter().find(|app| app.app == app_name).map(|app_version| app_version.versions)
     }
 }
 
@@ -28,7 +28,7 @@ impl Display for Config {
         for AppVersions { app, versions } in &self.apps {
             f.write_str(app.as_str());
             f.write_str(" ");
-            let texts: Vec<&str> = versions.into_iter().map(|version| version.as_str()).collect();
+            let texts: Vec<&str> = versions.iter().map(|version| version.as_str()).collect();
             f.write_str(&texts.join(", "));
             f.write_str("\n")?;
         }
@@ -46,7 +46,7 @@ fn parse(text: &str) -> Result<Config> {
     Ok(Config { apps })
 }
 
-fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersion>> {
+fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersions>> {
     let line_text = line_text.trim();
     let mut parts = LinePartsIterator::from(line_text);
     let Some(name) = parts.next() else {
@@ -67,9 +67,9 @@ fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersion>> {
             text: line_text.to_string(),
         });
     }
-    Ok(Some(AppVersion {
+    Ok(Some(AppVersions {
         app: name.into(),
-        version: version.into(),
+        versions: version.into(),
     }))
 }
 
@@ -125,7 +125,7 @@ mod tests {
 
     mod parse {
         use super::super::parse;
-        use crate::config::{AppName, AppVersion, AppVersions, Config, Version};
+        use crate::config::{AppName, AppVersions, Config, Versions};
 
         #[test]
         fn normal() {
@@ -137,15 +137,15 @@ mod tests {
                 apps: vec![
                     AppVersions {
                         app: AppName::from("alpha"),
-                        versions: vec![Version::from("1.2.3")],
+                        versions: Versions::from("1.2.3"),
                     },
                     AppVersions {
                         app: AppName::from("beta"),
-                        versions: Version::from("2.3.4"),
+                        versions: Versions::from("2.3.4"),
                     },
                     AppVersions {
                         app: AppName::from("gamma"),
-                        versions: Version::from("3.4.5"),
+                        versions: Versions::from("3.4.5"),
                     },
                 ],
             };
@@ -155,7 +155,7 @@ mod tests {
 
     mod parse_line {
         use super::super::parse_line;
-        use crate::config::{AppName, AppVersions, Version};
+        use crate::config::{AppName, AppVersions, Versions};
         use crate::error::UserError;
         use big_s::S;
 
@@ -165,7 +165,7 @@ mod tests {
             let have = parse_line(give, 1).unwrap();
             let want = Some(AppVersions {
                 app: AppName::from("shellcheck"),
-                versions: Version::from("0.9.0"),
+                versions: Versions::from("0.9.0"),
             });
             pretty::assert_eq!(have, want);
         }
@@ -176,7 +176,7 @@ mod tests {
             let have = parse_line(give, 1).unwrap();
             let want = Some(AppVersions {
                 app: AppName::from("shellcheck"),
-                versions: Version::from("0.9.0"),
+                versions: Versions::from("0.9.0"),
             });
             pretty::assert_eq!(have, want);
         }
@@ -187,7 +187,7 @@ mod tests {
             let have = parse_line(give, 1).unwrap();
             let want = Some(AppVersions {
                 app: AppName::from("shellcheck"),
-                versions: Version::from("0.9.0"),
+                versions: Versions::from("0.9.0"),
             });
             pretty::assert_eq!(have, want);
         }
@@ -230,7 +230,7 @@ mod tests {
             let have = parse_line(give, 1).unwrap();
             let want = Some(AppVersions {
                 app: AppName::from("shellcheck"),
-                versions: Version::from("0.9.0"),
+                versions: Versions::from("0.9.0"),
             });
             pretty::assert_eq!(have, want);
         }

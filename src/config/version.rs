@@ -10,18 +10,17 @@ impl PartialOrd for Version {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         // TODO: compare each version number element (major, minor) using human-sort
         // maybe the semver crate has a comp function that we can use here?
-        match (self, other) {
-            (Version::Some(this), Version::Some(other)) => this.partial_cmp(other),
-            (Version::Some(_), Version::None) => Some(Ordering::Greater),
-            (Version::None, Version::Some(_)) => Some(Ordering::Less),
-            (Version::None, Version::None) => Some(Ordering::Equal),
-        }
+        self.0.partial_cmp(&other.0)
     }
 }
 
 impl Version {
     pub(crate) fn as_str(&self) -> &str {
         &self.0
+    }
+
+    pub(crate) fn is_system(&self) -> bool {
+        self.0.starts_with("system@") || self.0 == "system"
     }
 }
 

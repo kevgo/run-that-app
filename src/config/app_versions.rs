@@ -1,16 +1,17 @@
-use super::{AppName, AppVersion, Version};
+use super::{AppName, Versions};
+use crate::cli::AppVersion;
 
 #[derive(Debug, PartialEq)]
 pub struct AppVersions {
     pub app: AppName,
-    pub versions: Vec<Version>,
+    pub versions: Versions,
 }
 
 impl From<AppVersion> for AppVersions {
     fn from(app_version: AppVersion) -> Self {
         AppVersions {
             app: app_version.app,
-            versions: vec![app_version.version],
+            versions: Versions::from(app_version.version),
         }
     }
 }
