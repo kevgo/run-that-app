@@ -51,6 +51,7 @@ pub fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersion>>
     }))
 }
 
+/// provides the textual content of the config file
 fn read() -> Result<Option<String>> {
     let cwd = env::current_dir().map_err(|err| UserError::CannotDetermineCurrentDirectory(err.to_string()))?;
     let mut dir = cwd.as_path();
