@@ -16,7 +16,11 @@ impl Config {
 impl Display for Config {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for AppVersion { app, version } in &self.apps {
-            f.write_fmt(format_args!("{app} {version}\n"))?;
+            f.write_str(app.as_str());
+            if let Some(version) = version {
+                f.write_str(" ");
+                f.write_str(version.as_str());
+            }
         }
         Ok(())
     }

@@ -4,7 +4,7 @@ use super::{AppName, Version};
 #[derive(Debug, PartialEq)]
 pub struct AppVersion {
     pub app: AppName,
-    pub version: Version,
+    pub version: Option<Version>,
 }
 
 impl AppVersion {
@@ -12,7 +12,7 @@ impl AppVersion {
         let (app_name, version) = token.as_ref().split_once('@').unwrap_or((token.as_ref(), ""));
         AppVersion {
             app: app_name.into(),
-            version: version.into(),
+            version: Some(version.into()),
         }
     }
 }
@@ -28,7 +28,7 @@ mod tests {
             let have = AppVersion::new(give);
             let want = AppVersion {
                 app: AppName::from("shellcheck"),
-                version: Version::from("0.9.0"),
+                version: Some(Version::from("0.9.0")),
             };
             pretty::assert_eq!(have, want);
         }
@@ -39,7 +39,7 @@ mod tests {
             let have = AppVersion::new(give);
             let want = AppVersion {
                 app: AppName::from("shellcheck"),
-                version: Version::None,
+                version: None,
             };
             pretty::assert_eq!(have, want);
         }
@@ -50,7 +50,7 @@ mod tests {
             let have = AppVersion::new(give);
             let want = AppVersion {
                 app: AppName::from("shellcheck"),
-                version: Version::None,
+                version: None,
             };
             pretty::assert_eq!(have, want);
         }
