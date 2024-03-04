@@ -15,7 +15,7 @@ pub use config::Config;
 pub use create::create;
 pub use save::save;
 pub use version::Version;
-pub use version_for::version_for;
+pub use version_for::versions_for;
 pub use versions::Versions;
 
 pub const FILE_NAME: &str = ".tool-versions";

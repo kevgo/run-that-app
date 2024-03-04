@@ -1,14 +1,14 @@
-use super::{AppName, Config, Version};
+use super::{AppName, Config, Version, Versions};
 use crate::error::UserError;
 use crate::Result;
 
-pub fn version_for(app: &AppName, cli_version: Option<Version>) -> Result<Version> {
+pub fn versions_for(app: &AppName, cli_version: Option<Version>) -> Result<Versions> {
     if let Some(version) = cli_version {
-        return Ok(version);
+        return Ok(Versions::from(version));
     }
     let config = Config::load()?;
-    match config.lookup(app) {
-        Some(version) => Ok(version),
-        None => Err(UserError::RunRequestMissingVersion),
-    }
+    let Some(versions) = config.lookup(app) else {
+        return Err(UserError::RunRequestMissingVersion);
+    };
+    Ok(versions)
 }

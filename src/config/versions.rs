@@ -50,6 +50,12 @@ impl Versions {
     }
 }
 
+impl From<Version> for Versions {
+    fn from(version: Version) -> Self {
+        Versions(vec![version])
+    }
+}
+
 impl From<Option<Version>> for Versions {
     fn from(version: Option<Version>) -> Self {
         match version {
