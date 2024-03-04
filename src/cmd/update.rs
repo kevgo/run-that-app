@@ -6,9 +6,9 @@ use colored::Colorize;
 use std::process::ExitCode;
 
 pub fn update(output: &dyn Output) -> Result<ExitCode> {
-    let mut old_config = Config::load()?;
+    let mut config = Config::load()?;
     let all_apps = apps::all();
-    for old_app in &mut old_config.apps {
+    for old_app in &mut config.apps {
         let app = all_apps.lookup(&old_app.app)?;
         output.print(&format!("updating {} ... ", &old_app.app));
         let latest = app.latest_installable_version(output)?;
@@ -19,6 +19,6 @@ pub fn update(output: &dyn Output) -> Result<ExitCode> {
             output.println(&format!("{}", "current".green()));
         }
     }
-    config::save(&old_config)?;
+    config::save(&config)?;
     Ok(ExitCode::SUCCESS)
 }
