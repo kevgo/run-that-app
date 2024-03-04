@@ -88,16 +88,12 @@ mod tests {
 
         #[test]
         fn semantic() {
-            let version = Version::from("3.10.2");
-            let other = Version::from("3.2.1");
-            assert!(version > other);
+            assert!(Version::from("3.10.2") > Version::from("3.2.1"));
         }
 
         #[test]
-        fn tag() {
-            let version = Version::from("1.2.3-alpha");
-            let other = Version::from("1.2.3");
-            assert!(version < other);
+        fn version_with_prerelease_tag() {
+            assert!(Version::from("1.2.3-alpha") < Version::from("1.2.3"));
         }
     }
 }
