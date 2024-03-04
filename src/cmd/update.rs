@@ -6,7 +6,7 @@ use colored::Colorize;
 use std::process::ExitCode;
 
 pub fn update(output: &dyn Output) -> Result<ExitCode> {
-    let old_config = config::load()?;
+    let old_config = Config::load()?;
     let mut new_config = Config::default();
     let all_apps = apps::all();
     for old_app in old_config.apps {
