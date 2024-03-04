@@ -32,12 +32,12 @@ impl Versions {
 
     /// Updates the largest non-system version in this collection with the given value.
     /// Returns the value that was replaced.
-    pub fn update_largest_with(&mut self, value: Version) -> Option<Version> {
+    pub fn update_largest_with(&mut self, value: &Version) -> Option<Version> {
         let Some(largest) = self.largest_non_system() else {
             return None;
         };
         let largest2 = largest.clone();
-        if largest2 == value.to_string() {
+        if &largest2 == value {
             return None;
         }
         let mut updated = None;
