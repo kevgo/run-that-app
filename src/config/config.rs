@@ -122,15 +122,16 @@ mod tests {
 
         #[test]
         fn normal() {
-            let give = "alpha 1.2.3 4.5.6\n\
+            let give = "alpha 1.2.3\n\
                         beta  2.3.4 # comment\n\
-                        gamma 3.4.5";
+                        gamma 3.4.5 6.7.8\n\
+                        delta system@3.4 5.6.7";
             let have = parse(give).unwrap();
             let want = Config {
                 apps: vec![
                     AppVersions {
                         app: AppName::from("alpha"),
-                        versions: Versions::from(vec!["1.2.3", "4.5.6"]),
+                        versions: Versions::from(vec!["1.2.3"]),
                     },
                     AppVersions {
                         app: AppName::from("beta"),
@@ -138,10 +139,22 @@ mod tests {
                     },
                     AppVersions {
                         app: AppName::from("gamma"),
-                        versions: Versions::from("3.4.5"),
+                        versions: Versions::from(vec!["3.4.5", "6.7.8"]),
+                    },
+                    AppVersions {
+                        app: AppName::from("delta"),
+                        versions: Versions::from(vec!["system@3.4", "5.6.7"]),
                     },
                 ],
             };
+            pretty::assert_eq!(have, want);
+        }
+
+        #[test]
+        fn empty() {
+            let give = "";
+            let have = parse(give).unwrap();
+            let want = Config { apps: vec![] };
             pretty::assert_eq!(have, want);
         }
     }
