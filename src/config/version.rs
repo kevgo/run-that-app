@@ -74,7 +74,6 @@ fn compare_semver(v1: &Version, v2: &Version) -> Option<Ordering> {
 
 #[cfg(test)]
 mod tests {
-
     use crate::config::Version;
 
     #[test]
