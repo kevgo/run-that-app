@@ -270,7 +270,7 @@ mod tests {
                         command: Command::RunApp {
                             data: run::Data {
                                 app: AppName::from("app"),
-                                version: Version::from("2"),
+                                versions: vec![Version::from("2")],
                                 app_args: vec![S("arg1")],
                                 error_on_output: false,
                                 include_path: true,
@@ -305,7 +305,7 @@ mod tests {
                         command: Command::RunApp {
                             data: run::Data {
                                 app: AppName::from("app"),
-                                version: Version::from("2"),
+                                versions: vec![Version::from("2")],
                                 app_args: vec![],
                                 error_on_output: false,
                                 include_path: false,
@@ -324,7 +324,7 @@ mod tests {
                         command: Command::RunApp {
                             data: run::Data {
                                 app: AppName::from("app"),
-                                version: Version::from("2"),
+                                versions: vec![Version::from("2")],
                                 app_args: vec![],
                                 error_on_output: false,
                                 include_path: false,
@@ -358,7 +358,7 @@ mod tests {
                     command: Command::RunApp {
                         data: run::Data {
                             app: AppName::from("app"),
-                            version: Version::from("2"),
+                            versions: vec![Version::from("2")],
                             app_args: vec![S("arg1")],
                             error_on_output: false,
                             include_path: false,
@@ -489,7 +489,7 @@ mod tests {
                     command: Command::RunApp {
                         data: run::Data {
                             app: AppName::from("app"),
-                            version: Version::from("2"),
+                            versions: vec![Version::from("2")],
                             app_args: vec![],
                             error_on_output: false,
                             include_path: false,
@@ -508,7 +508,7 @@ mod tests {
                     command: Command::RunApp {
                         data: run::Data {
                             app: AppName::from("app"),
-                            version: Version::from("2"),
+                            versions: vec![Version::from("2")],
                             app_args: vec![S("--arg1"), S("arg2")],
                             error_on_output: false,
                             include_path: false,
@@ -535,7 +535,7 @@ mod tests {
                     command: Command::RunApp {
                         data: run::Data {
                             app: AppName::from("app"),
-                            version: Version::from("2"),
+                            versions: vec![Version::from("2")],
                             app_args: vec![S("--arg1"), S("arg2")],
                             error_on_output: false,
                             include_path: false,
@@ -554,7 +554,7 @@ mod tests {
                     command: Command::RunApp {
                         data: run::Data {
                             app: AppName::from("app"),
-                            version: Version::from("2"),
+                            versions: vec![Version::from("2")],
                             app_args: vec![S("--log=app"), S("--version")],
                             error_on_output: false,
                             include_path: false,
