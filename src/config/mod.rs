@@ -8,6 +8,7 @@ mod create;
 mod load;
 mod save;
 mod version;
+mod versions;
 
 pub use app_name::AppName;
 pub use app_version::AppVersion;
@@ -17,5 +18,6 @@ pub use create::create;
 pub use load::load;
 pub use save::save;
 pub use version::Version;
+pub use versions::Versions;
 
 pub const FILE_NAME: &str = ".tool-versions";

@@ -4,7 +4,7 @@ use super::{AppName, Version};
 #[derive(Debug, PartialEq)]
 pub struct AppVersion {
     pub app: AppName,
-    pub version: Version,
+    pub version: Option<Version>,
 }
 
 impl AppVersion {

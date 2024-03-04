@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 use std::fmt::Display;
 use std::path::Path;
 
@@ -6,6 +7,19 @@ use std::path::Path;
 pub enum Version {
     Some(String),
     None,
+}
+
+impl PartialOrd for Version {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        // TODO: compare each version number element (major, minor) using human-sort
+        // maybe the semver crate has a comp function that we can use here?
+        match (self, other) {
+            (Version::Some(this), Version::Some(other)) => this.partial_cmp(other),
+            (Version::Some(_), Version::None) => Some(Ordering::Greater),
+            (Version::None, Version::Some(_)) => Some(Ordering::Less),
+            (Version::None, Version::None) => Some(Ordering::Equal),
+        }
+    }
 }
 
 impl Version {
@@ -17,9 +31,13 @@ impl Version {
     }
 
     pub(crate) fn is_none(&self) -> bool {
+        self == &Version::None
+    }
+
+    pub(crate) fn is_system(&self) -> bool {
         match self {
-            Version::None => true,
-            Version::Some(_) => false,
+            Version::Some(version) => version.starts_with("system"),
+            Version::None => false,
         }
     }
 }
