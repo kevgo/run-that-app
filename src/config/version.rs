@@ -15,16 +15,6 @@ impl PartialOrd for Version {
     }
 }
 
-fn compare_semver(v1: &Version, v2: &Version) -> Option<Ordering> {
-    let Ok(self_version) = semver::Version::parse(v1.as_str()) else {
-        return None;
-    };
-    let Ok(other_version) = semver::Version::parse(v2.as_str()) else {
-        return None;
-    };
-    self_version.partial_cmp(&other_version)
-}
-
 impl Version {
     pub(crate) fn as_str(&self) -> &str {
         &self.0
@@ -70,6 +60,16 @@ impl PartialEq<String> for Version {
     fn eq(&self, other: &String) -> bool {
         self.as_str() == *other
     }
+}
+
+fn compare_semver(v1: &Version, v2: &Version) -> Option<Ordering> {
+    let Ok(self_version) = semver::Version::parse(v1.as_str()) else {
+        return None;
+    };
+    let Ok(other_version) = semver::Version::parse(v2.as_str()) else {
+        return None;
+    };
+    self_version.partial_cmp(&other_version)
 }
 
 #[cfg(test)]
