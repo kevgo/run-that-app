@@ -7,27 +7,8 @@ use std::env;
 use std::str::SplitAsciiWhitespace;
 use std::{fs, io};
 
-pub fn find() -> Result<Option<String>> {
-    let cwd = env::current_dir().map_err(|err| UserError::CannotDetermineCurrentDirectory(err.to_string()))?;
-    let mut dir = cwd.as_path();
-    loop {
-        let file_path = dir.join(FILE_NAME);
-        match fs::read_to_string(file_path) {
-            Ok(text) => return Ok(Some(text)),
-            Err(err) => match err.kind() {
-                io::ErrorKind::NotFound => {}
-                _ => return Err(UserError::CannotAccessConfigFile(err.to_string())),
-            },
-        }
-        dir = match dir.parent() {
-            Some(parent) => parent,
-            None => return Ok(None),
-        };
-    }
-}
-
 pub fn load() -> Result<Config> {
-    match find()? {
+    match read()? {
         Some(text) => parse(&text),
         None => Ok(Config::default()),
     }
@@ -43,7 +24,7 @@ fn parse(text: &str) -> Result<Config> {
     Ok(Config { apps })
 }
 
-pub fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersion>> {
+fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersion>> {
     let line_text = line_text.trim();
     let mut parts = LinePartsIterator::from(line_text);
     let Some(name) = parts.next() else {
@@ -68,6 +49,26 @@ pub fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersion>>
         app: name.into(),
         version: version.into(),
     }))
+}
+
+/// provides the textual content of the config file
+fn read() -> Result<Option<String>> {
+    let cwd = env::current_dir().map_err(|err| UserError::CannotDetermineCurrentDirectory(err.to_string()))?;
+    let mut dir = cwd.as_path();
+    loop {
+        let file_path = dir.join(FILE_NAME);
+        match fs::read_to_string(file_path) {
+            Ok(text) => return Ok(Some(text)),
+            Err(err) => match err.kind() {
+                io::ErrorKind::NotFound => {}
+                _ => return Err(UserError::CannotAccessConfigFile(err.to_string())),
+            },
+        }
+        dir = match dir.parent() {
+            Some(parent) => parent,
+            None => return Ok(None),
+        };
+    }
 }
 
 /// provides active (non-comment) words in the given line
