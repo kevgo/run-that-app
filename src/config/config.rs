@@ -28,8 +28,7 @@ impl Display for Config {
         for AppVersions { app, versions } in &self.apps {
             f.write_str(app.as_str())?;
             f.write_str(" ")?;
-            let texts: Vec<&str> = versions.iter().map(Version::as_str).collect();
-            f.write_str(&texts.join(", "))?;
+            f.write_str(&versions.join(", "))?;
             f.write_str("\n")?;
         }
         Ok(())

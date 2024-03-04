@@ -9,10 +9,10 @@ impl Versions {
         self.0.iter()
     }
 
-    // pub fn join(&self, sep: &str) -> String {
-    //     let strings: Vec<&str> = self.0.iter().map(|version| version.as_str()).collect();
-    //     strings.join(sep)
-    // }
+    pub fn join(&self, sep: &str) -> String {
+        let strings: Vec<&str> = self.0.iter().map(Version::as_str).collect();
+        strings.join(sep)
+    }
 
     /// provides the largest non-system version contained in this collection
     fn largest_non_system(&self) -> Option<&Version> {
