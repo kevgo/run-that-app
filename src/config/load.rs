@@ -1,4 +1,6 @@
+use super::AppName;
 use super::Config;
+use super::Version;
 use super::FILE_NAME;
 use crate::config::AppVersion;
 use crate::Result;
@@ -11,6 +13,15 @@ pub fn load() -> Result<Config> {
     match read()? {
         Some(text) => parse(&text),
         None => Ok(Config::default()),
+    }
+}
+
+/// provides the version defined by the config file to use for the given app
+pub fn version_for(app: &AppName) -> Result<Version> {
+    let config = load()?;
+    match config.lookup(app) {
+        Some(app_version) => Ok(app_version.version),
+        None => todo!(),
     }
 }
 
