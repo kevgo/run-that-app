@@ -14,6 +14,7 @@ mod subshell;
 mod yard;
 
 use cli::Command;
+use cmd::run::Data;
 use error::{Result, UserError};
 use output::Output;
 use std::process::ExitCode;
@@ -33,17 +34,38 @@ fn inner() -> Result<ExitCode> {
     match cli_args.command {
         Command::Available { app, version, include_path, log } => {
             let output = output::StdErr { category: log };
-            cmd::available(&app, version, include_path, &output)
+            let version = config::version_for(&app, version)?;
+            cmd::available(&app, &version, include_path, &output)
         }
-        Command::RunApp { data, log } => {
+        Command::RunApp {
+            log,
+            app,
+            version,
+            app_args,
+            error_on_output,
+            include_path,
+            optional,
+        } => {
             let output = output::StdErr { category: log };
-            cmd::run(data, &output)
+            let version = config::version_for(&app, version)?;
+            cmd::run(
+                &Data {
+                    app,
+                    version,
+                    app_args,
+                    error_on_output,
+                    include_path,
+                    optional,
+                },
+                &output,
+            )
         }
         Command::DisplayHelp => Ok(cmd::help()),
         Command::Setup => cmd::setup(),
         Command::Which { app, version, include_path, log } => {
             let output = output::StdErr { category: log };
-            cmd::which(&app, version, include_path, &output)
+            let version = config::version_for(&app, version)?;
+            cmd::which(&app, &version, include_path, &output)
         }
         Command::Update { log } => {
             let output = output::StdErr { category: log };

@@ -4,10 +4,7 @@ use std::path::Path;
 
 /// a string that represents
 #[derive(Debug, PartialEq)]
-pub enum Version {
-    Some(String),
-    None,
-}
+pub struct Version(String);
 
 impl PartialOrd for Version {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
@@ -24,21 +21,7 @@ impl PartialOrd for Version {
 
 impl Version {
     pub(crate) fn as_str(&self) -> &str {
-        match self {
-            Version::Some(text) => text,
-            Version::None => "",
-        }
-    }
-
-    pub(crate) fn is_none(&self) -> bool {
-        self == &Version::None
-    }
-
-    pub(crate) fn is_system(&self) -> bool {
-        match self {
-            Version::Some(version) => version.starts_with("system"),
-            Version::None => false,
-        }
+        &self.0
     }
 }
 
@@ -51,28 +34,19 @@ impl AsRef<Path> for Version {
 
 impl Display for Version {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if let Version::Some(text) = self {
-            f.write_str(text)?;
-        }
-        Ok(())
+        f.write_str(&self.0)
     }
 }
 
 impl From<&str> for Version {
     fn from(text: &str) -> Self {
-        if text.is_empty() {
-            return Version::None;
-        }
-        Version::Some(text.to_string())
+        Version(text.to_string())
     }
 }
 
 impl From<String> for Version {
     fn from(text: String) -> Self {
-        if text.is_empty() {
-            return Version::None;
-        }
-        Version::Some(text)
+        Version(text)
     }
 }
 

@@ -1,5 +1,5 @@
 use crate::apps;
-use crate::config::{AppName, Config, Version};
+use crate::config::{AppName, Version};
 use crate::error::UserError;
 use crate::filesystem::find_global_install;
 use crate::platform;
@@ -10,12 +10,12 @@ use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
 
-pub fn run(data: &mut Data, output: &dyn Output) -> Result<ExitCode> {
-    if data.versions.is_empty() {
-        let config = config::load()?;
-        match config.lookup(&data.app) {
-            Some(configured_versions) => data.versions = configured_versions.versions,
-            None => return Err(UserError::RunRequestMissingVersion),
+pub fn run(data: &Data, output: &dyn Output) -> Result<ExitCode> {
+    if let Some(executable) = load_or_install(&data.app, &data.version, data.include_path, output)? {
+        if data.error_on_output {
+            Ok(subshell::stream(&executable, &data.app_args)?)
+        } else {
+            Ok(subshell::run(&executable, &data.app_args)?)
         }
     }
     for version in data.versions {
@@ -56,15 +56,15 @@ pub struct Data {
     pub optional: bool,
 }
 
-pub fn load_or_install(app_name: &AppName, version: Version, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
+pub fn load_or_install(app_name: &AppName, version: &Version, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
     let apps = apps::all();
     let app = apps.lookup(app_name)?;
     let platform = platform::detect(output)?;
     let yard = yard::load_or_create(&yard::production_location()?)?;
-    if let Some(executable) = app.load(&version, platform, &yard) {
+    if let Some(executable) = app.load(version, platform, &yard) {
         return Ok(Some(executable));
     };
-    if yard.is_not_installable(app_name, &version) {
+    if yard.is_not_installable(app_name, version) {
         if include_path {
             if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
                 return Ok(Some(executable));
@@ -72,10 +72,10 @@ pub fn load_or_install(app_name: &AppName, version: Version, include_path: bool,
         }
         return Ok(None);
     }
-    if let Some(executable) = app.install(&version, platform, &yard, output)? {
+    if let Some(executable) = app.install(version, platform, &yard, output)? {
         return Ok(Some(executable));
     }
-    yard.mark_not_installable(app_name, &version)?;
+    yard.mark_not_installable(app_name, version)?;
     if include_path {
         if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
             return Ok(Some(executable));

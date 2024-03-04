@@ -1,5 +1,4 @@
-use super::{AppName, Version, FILE_NAME};
-use crate::config::AppVersion;
+use super::{AppName, AppVersion, Version, FILE_NAME};
 use crate::error::UserError;
 use crate::Result;
 use std::fmt::Display;
@@ -31,6 +30,7 @@ impl Display for Config {
             f.write_str(" ");
             let texts: Vec<&str> = versions.into_iter().map(|version| version.as_str()).collect();
             f.write_str(&texts.join(", "));
+            f.write_str("\n")?;
         }
         Ok(())
     }
