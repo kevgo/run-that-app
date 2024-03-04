@@ -34,7 +34,8 @@ fn inner() -> Result<ExitCode> {
     match cli_args.command {
         Command::Available { app, version, include_path, log } => {
             let output = output::StdErr { category: log };
-            cmd::available(&app, version, include_path, &output)
+            let version = config::version_for(&app, version)?;
+            cmd::available(&app, &version, include_path, &output)
         }
         Command::RunApp {
             log,
@@ -46,10 +47,11 @@ fn inner() -> Result<ExitCode> {
             optional,
         } => {
             let output = output::StdErr { category: log };
+            let version = config::version_for(&app, version)?;
             cmd::run(
-                Data {
+                &Data {
                     app,
-                    version: version,
+                    version,
                     app_args,
                     error_on_output,
                     include_path,
@@ -62,7 +64,8 @@ fn inner() -> Result<ExitCode> {
         Command::Setup => cmd::setup(),
         Command::Which { app, version, include_path, log } => {
             let output = output::StdErr { category: log };
-            cmd::which(&app, version, include_path, &output)
+            let version = config::version_for(&app, version)?;
+            cmd::which(&app, &version, include_path, &output)
         }
         Command::Update { log } => {
             let output = output::StdErr { category: log };

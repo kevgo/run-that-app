@@ -109,7 +109,7 @@ mod tests {
     }
 
     mod load_app {
-        use crate::config::{AppName, AppVersion, Version};
+        use crate::config::{AppName, Version};
         use crate::subshell::Executable;
         use crate::yard::{create, Yard};
         use std::path::PathBuf;

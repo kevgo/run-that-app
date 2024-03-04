@@ -30,6 +30,12 @@ impl From<&str> for Version {
     }
 }
 
+impl From<String> for Version {
+    fn from(text: String) -> Self {
+        Version(text)
+    }
+}
+
 impl PartialEq<str> for Version {
     fn eq(&self, other: &str) -> bool {
         self.as_str() == other

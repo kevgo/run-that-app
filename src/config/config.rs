@@ -1,5 +1,4 @@
-use super::{AppName, Version, FILE_NAME};
-use crate::config::AppVersion;
+use super::{AppName, AppVersion, Version, FILE_NAME};
 use crate::error::UserError;
 use crate::Result;
 use std::fmt::Display;
@@ -20,18 +19,16 @@ impl Config {
     }
 
     pub fn lookup(self, app_name: &AppName) -> Option<Version> {
-        self.apps.into_iter().find(|app| app.app == app_name).map(|app_version| app_version.version)?
+        self.apps.into_iter().find(|app| app.app == app_name).map(|app_version| app_version.version)
     }
 }
 
 impl Display for Config {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for AppVersion { app, version } in &self.apps {
-            f.write_str(app.as_str());
-            if let Some(version) = version {
-                f.write_str(" ");
-                f.write_str(version.as_str());
-            }
+            f.write_str(app.as_str())?;
+            f.write_str(" ")?;
+            f.write_str(version.as_str())?;
         }
         Ok(())
     }

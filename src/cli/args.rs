@@ -1,5 +1,5 @@
+use super::AppVersion;
 use super::Command;
-use crate::config::AppVersion;
 use crate::{Result, UserError};
 
 /// all arguments that can be provided via the CLI
@@ -152,7 +152,6 @@ mod tests {
 
             use super::parse_args;
             use crate::cli::{Args, Command};
-            use crate::cmd::run;
             use crate::config::{AppName, Version};
             use crate::error::UserError;
 
