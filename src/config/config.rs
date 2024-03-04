@@ -60,17 +60,11 @@ fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersions>> {
             text: line_text.to_string(),
         });
     };
-    if parts.next().is_some() {
-        // line has more than 2 elements --> invalid
-        return Err(UserError::InvalidConfigFileFormat {
-            line_no,
-            text: line_text.to_string(),
-        });
+    let mut versions = Versions::from(version);
+    for part in parts {
+        versions.push(Version::from(part));
     }
-    Ok(Some(AppVersions {
-        app: name.into(),
-        versions: version.into(),
-    }))
+    Ok(Some(AppVersions { app: name.into(), versions }))
 }
 
 /// provides the textual content of the config file
@@ -137,7 +131,7 @@ mod tests {
                 apps: vec![
                     AppVersions {
                         app: AppName::from("alpha"),
-                        versions: Versions::from("1.2.3"),
+                        versions: Versions::from(vec!["1.2.3", "4.5.6"]),
                     },
                     AppVersions {
                         app: AppName::from("beta"),

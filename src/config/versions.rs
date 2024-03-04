@@ -30,6 +30,10 @@ impl Versions {
         result
     }
 
+    pub fn push(&mut self, value: Version) {
+        self.0.push(value);
+    }
+
     /// Updates the largest non-system version in this collection with the given value.
     /// Returns the value that was replaced.
     pub fn update_largest_with(&mut self, value: &Version) -> Option<Version> {
@@ -69,5 +73,12 @@ impl From<Option<Version>> for Versions {
 impl From<&str> for Versions {
     fn from(version: &str) -> Self {
         Versions(vec![Version::from(version)])
+    }
+}
+
+impl From<Vec<&str>> for Versions {
+    fn from(versions: Vec<&str>) -> Self {
+        let versions = versions.into_iter().map(Version::from).collect();
+        Versions(versions)
     }
 }
