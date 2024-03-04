@@ -107,7 +107,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                 command: Command::RunApp {
                     data: run::Data {
                         app,
-                        versions,
+                        versions: vec![version],
                         app_args,
                         error_on_output,
                         include_path,
@@ -206,7 +206,7 @@ mod tests {
                 use super::super::parse_args;
                 use crate::cli::{Args, Command};
                 use crate::cmd::run;
-                use crate::config::{AppName, Version};
+                use crate::config::AppName;
                 use crate::error::UserError;
 
                 #[test]
@@ -216,7 +216,7 @@ mod tests {
                         command: Command::RunApp {
                             data: run::Data {
                                 app: AppName::from("app"),
-                                version: Version::None,
+                                versions: vec![],
                                 app_args: vec![],
                                 error_on_output: true,
                                 include_path: false,
