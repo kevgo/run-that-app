@@ -29,6 +29,7 @@ impl Display for Config {
             f.write_str(app.as_str())?;
             f.write_str(" ")?;
             f.write_str(version.as_str())?;
+            f.write_str("\n")?;
         }
         Ok(())
     }
