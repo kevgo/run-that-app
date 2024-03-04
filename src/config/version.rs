@@ -68,18 +68,15 @@ mod tests {
         use crate::config::Version;
 
         #[test]
-        fn pure_system() {
-            assert!(Version::from("system").is_system());
+        fn tests() {
+            check("system", true);
+            check("system@1.2", true);
+            check("1.2.3", false);
         }
 
-        #[test]
-        fn system_with_version() {
-            assert!(Version::from("system@1.2").is_system());
-        }
-
-        #[test]
-        fn no_system() {
-            assert!(!Version::from("1.2.3").is_system());
+        #[track_caller]
+        fn check(give: &str, want: bool) {
+            assert_eq!(Version::from(give).is_system(), want);
         }
     }
 
