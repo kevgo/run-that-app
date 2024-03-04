@@ -1,7 +1,5 @@
 use crate::apps;
-use crate::config;
-use crate::config::AppName;
-use crate::config::Version;
+use crate::config::{AppName, Config, Version};
 use crate::error::UserError;
 use crate::filesystem::find_global_install;
 use crate::platform;
@@ -49,7 +47,7 @@ pub struct Data {
 
 pub fn load_or_install(app_name: &AppName, mut version: Version, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
     if version.is_none() {
-        let config = config::load()?;
+        let config = Config::load()?;
         match config.lookup(app_name) {
             Some(configured_version) => version = configured_version,
             None => return Err(UserError::RunRequestMissingVersion),
