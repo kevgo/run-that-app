@@ -7,7 +7,7 @@ use std::process::ExitCode;
 
 pub fn available(app: &AppName, versions: &Versions, include_path: bool, output: &dyn Output) -> Result<ExitCode> {
     for version in versions.iter() {
-        if let Some(_) = load_or_install(app, version, include_path, output)? {
+        if load_or_install(app, version, include_path, output)?.is_some() {
             return Ok(ExitCode::SUCCESS);
         }
     }

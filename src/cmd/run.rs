@@ -12,12 +12,11 @@ use std::process::ExitCode;
 
 pub fn run(data: &Data, output: &dyn Output) -> Result<ExitCode> {
     for version in data.versions.iter() {
-        if let Some(executable) = load_or_install(&data.app, &version, data.include_path, output)? {
+        if let Some(executable) = load_or_install(&data.app, version, data.include_path, output)? {
             if data.error_on_output {
-                return Ok(subshell::stream(&executable, &data.app_args)?);
-            } else {
-                return Ok(subshell::run(&executable, &data.app_args)?);
+                return subshell::stream(&executable, &data.app_args);
             }
+            return subshell::run(&executable, &data.app_args);
         }
     }
     if data.optional {
