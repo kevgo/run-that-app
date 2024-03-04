@@ -12,7 +12,14 @@ use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
 
-pub fn run(data: Data, output: &dyn Output) -> Result<ExitCode> {
+pub fn run(data: &mut Data, output: &dyn Output) -> Result<ExitCode> {
+    if data.versions.is_empty() {
+        let config = config::load()?;
+        match config.lookup(&data.app) {
+            Some(configured_versions) => data.versions = configured_versions.versions,
+            None => return Err(UserError::RunRequestMissingVersion),
+        }
+    }
     for version in data.versions {
         if let Some(executable) = load_or_install(&data.app, version, data.include_path, output)? {
             if data.error_on_output {
@@ -51,14 +58,7 @@ pub struct Data {
     pub optional: bool,
 }
 
-pub fn load_or_install(app_name: &AppName, mut version: Version, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
-    if version.is_none() {
-        let config = config::load()?;
-        match config.lookup(app_name) {
-            Some(configured_versions) => version = configured_version.version,
-            None => return Err(UserError::RunRequestMissingVersion),
-        }
-    }
+pub fn load_or_install(app_name: &AppName, version: Version, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
     let apps = apps::all();
     let app = apps.lookup(app_name)?;
     let platform = platform::detect(output)?;

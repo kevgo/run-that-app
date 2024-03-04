@@ -128,6 +128,8 @@ mod tests {
     }
 
     mod parse_line {
+        use big_s::S;
+
         use super::super::parse_line;
         use crate::config::{AppName, AppVersions, Version};
         use crate::error::UserError;
