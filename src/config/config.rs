@@ -177,6 +177,17 @@ mod tests {
         }
 
         #[test]
+        fn multiple_versions() {
+            let give = "shellcheck 0.9.0 0.6.0";
+            let have = parse_line(give, 1).unwrap();
+            let want = Some(AppVersions {
+                app: AppName::from("shellcheck"),
+                versions: Versions::from(vec!["0.9.0", "0.6.0"]),
+            });
+            pretty::assert_eq!(have, want);
+        }
+
+        #[test]
         fn normal_with_multiple_spaces() {
             let give = "     shellcheck            0.9.0      ";
             let have = parse_line(give, 1).unwrap();
