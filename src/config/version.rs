@@ -64,6 +64,25 @@ impl PartialEq<String> for Version {
 #[cfg(test)]
 mod tests {
 
+    mod is_system {
+        use crate::config::Version;
+
+        #[test]
+        fn pure_system() {
+            assert!(Version::from("system").is_system());
+        }
+
+        #[test]
+        fn system_with_version() {
+            assert!(Version::from("system@1.2").is_system());
+        }
+
+        #[test]
+        fn no_system() {
+            assert!(!Version::from("1.2.3").is_system());
+        }
+    }
+
     mod partial_cmp {
         use crate::config::Version;
 
