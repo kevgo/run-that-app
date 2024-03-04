@@ -1,5 +1,6 @@
 use crate::apps;
 use crate::config;
+use crate::config::AppName;
 use crate::config::AppVersion;
 use crate::config::Version;
 use crate::error::UserError;
@@ -13,7 +14,7 @@ use crate::Result;
 use std::process::ExitCode;
 
 pub fn run(data: Data, output: &dyn Output) -> Result<ExitCode> {
-    if let Some(executable) = load_or_install(data.app_version, data.include_path, output)? {
+    if let Some(executable) = load_or_install(&data.app, data.version, data.include_path, output)? {
         if data.error_on_output {
             Ok(subshell::stream(&executable, &data.app_args)?)
         } else {
@@ -30,10 +31,10 @@ pub fn run(data: Data, output: &dyn Output) -> Result<ExitCode> {
 /// data needed to run an executable
 pub struct Data {
     /// name of the app to execute
-    pub app_name: String,
+    pub app: AppName,
 
     /// possible versions of the app to execute
-    pub app_versions: Vec<Version>,
+    pub versions: Vec<Version>,
 
     /// arguments to call the app with
     pub app_args: Vec<String>,
@@ -48,22 +49,22 @@ pub struct Data {
     pub optional: bool,
 }
 
-pub fn load_or_install(mut app_version: AppVersion, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
-    if app_version.version.is_none() {
+pub fn load_or_install(app_name: &AppName, mut version: Version, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
+    if version.is_none() {
         let config = config::load()?;
-        let Some(configured_app) = config.lookup(&app_version.name) else {
-            return Err(UserError::RunRequestMissingVersion);
-        };
-        app_version.version = configured_app.version;
+        match config.lookup(app_name) {
+            Some(configured_version) => version = configured_version.version,
+            None => return Err(UserError::RunRequestMissingVersion),
+        }
     }
-    let apps = &apps::all();
-    let app = apps.lookup(&app_version.name)?;
+    let apps = apps::all();
+    let app = apps.lookup(app_name)?;
     let platform = platform::detect(output)?;
     let yard = yard::load_or_create(&yard::production_location()?)?;
-    if let Some(executable) = app.load(&app_version.version, platform, &yard) {
+    if let Some(executable) = app.load(&version, platform, &yard) {
         return Ok(Some(executable));
     };
-    if yard.is_not_installable(&app_version) {
+    if yard.is_not_installable(app_name, &version) {
         if include_path {
             if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
                 return Ok(Some(executable));
@@ -71,10 +72,10 @@ pub fn load_or_install(mut app_version: AppVersion, include_path: bool, output: 
         }
         return Ok(None);
     }
-    if let Some(executable) = app.install(&app_version.version, platform, &yard, output)? {
+    if let Some(executable) = app.install(&version, platform, &yard, output)? {
         return Ok(Some(executable));
     }
-    yard.mark_not_installable(&app_version)?;
+    yard.mark_not_installable(app_name, &version)?;
     if include_path {
         if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
             return Ok(Some(executable));

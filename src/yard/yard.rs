@@ -1,4 +1,4 @@
-use crate::config::{AppName, AppVersion, Version};
+use crate::config::{AppName, Version};
 use crate::error::UserError;
 use crate::subshell::Executable;
 use crate::Result;
@@ -16,8 +16,8 @@ impl Yard {
         self.root.join("apps").join(app_name).join(app_version)
     }
 
-    pub fn is_not_installable(&self, app: &AppVersion) -> bool {
-        self.not_installable_path(&app.name, &app.version).exists()
+    pub fn is_not_installable(&self, app: &AppName, version: &Version) -> bool {
+        self.not_installable_path(app, version).exists()
     }
 
     /// provides the path to the executable of the given application
@@ -30,13 +30,13 @@ impl Yard {
         }
     }
 
-    pub fn mark_not_installable(&self, app: &AppVersion) -> Result<()> {
-        let app_folder = self.app_folder(&app.name, &app.version);
+    pub fn mark_not_installable(&self, app: &AppName, version: &Version) -> Result<()> {
+        let app_folder = self.app_folder(app, version);
         fs::create_dir_all(&app_folder).map_err(|err| UserError::YardAccessDenied {
             msg: err.to_string(),
             path: app_folder,
         })?;
-        let path = self.not_installable_path(&app.name, &app.version);
+        let path = self.not_installable_path(app, version);
         match File::create(&path) {
             Ok(_) => Ok(()),
             Err(err) => Err(UserError::YardAccessDenied { msg: err.to_string(), path }),
@@ -82,7 +82,6 @@ mod tests {
 
     mod is_not_installable {
         use crate::config::AppName;
-        use crate::config::AppVersion;
         use crate::config::Version;
         use crate::yard::create;
         use crate::yard::Yard;
@@ -92,23 +91,19 @@ mod tests {
         fn is_marked() {
             let tempdir = tempfile::tempdir().unwrap();
             let yard = create(tempdir.path()).unwrap();
-            let app_version = AppVersion {
-                name: AppName::from("shellcheck"),
-                version: Version::from("0.9.0"),
-            };
-            yard.mark_not_installable(&app_version).unwrap();
-            let have = yard.is_not_installable(&app_version);
+            let app = AppName::from("shellcheck");
+            let version = Version::from("0.9.0");
+            yard.mark_not_installable(&app, &version).unwrap();
+            let have = yard.is_not_installable(&app, &version);
             assert!(have);
         }
 
         #[test]
         fn is_not_marked() {
             let yard = Yard { root: PathBuf::from("/root") };
-            let app_version = AppVersion {
-                name: AppName::from("shellcheck"),
-                version: Version::from("0.9.0"),
-            };
-            let have = yard.is_not_installable(&app_version);
+            let app = AppName::from("shellcheck");
+            let version = Version::from("0.9.0");
+            let have = yard.is_not_installable(&app, &version);
             assert!(!have);
         }
     }
@@ -146,10 +141,10 @@ mod tests {
         fn app_is_not_installed() {
             let yard = Yard { root: PathBuf::from("/root") };
             let app_version = AppVersion {
-                name: AppName::from("shellcheck"),
+                app: AppName::from("shellcheck"),
                 version: Version::from("0.9.0"),
             };
-            let loaded = yard.load_app(&app_version.name, &app_version.version, "executable");
+            let loaded = yard.load_app(&app_version.app, &app_version.version, "executable");
             assert!(loaded.is_none());
         }
 
