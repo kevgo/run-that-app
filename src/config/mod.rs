@@ -6,6 +6,7 @@ mod config;
 mod create;
 mod save;
 mod version;
+mod version_for;
 
 pub use app_name::AppName;
 pub use app_version::AppVersion;
@@ -13,5 +14,6 @@ pub use config::Config;
 pub use create::create;
 pub use save::save;
 pub use version::Version;
+pub use version_for::version_for;
 
 pub const FILE_NAME: &str = ".tool-versions";

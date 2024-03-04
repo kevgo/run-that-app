@@ -1,5 +1,4 @@
-use super::{AppName, Version, FILE_NAME};
-use crate::config::AppVersion;
+use super::{AppName, AppVersion, Version, FILE_NAME};
 use crate::error::UserError;
 use crate::Result;
 use std::fmt::Display;
@@ -27,7 +26,10 @@ impl Config {
 impl Display for Config {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for AppVersion { app, version } in &self.apps {
-            f.write_fmt(format_args!("{app} {version}\n"))?;
+            f.write_str(app.as_str())?;
+            f.write_str(" ")?;
+            f.write_str(version.as_str())?;
+            f.write_str("\n")?;
         }
         Ok(())
     }
