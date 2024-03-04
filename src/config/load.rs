@@ -24,7 +24,7 @@ fn parse(text: &str) -> Result<Config> {
     Ok(Config { apps })
 }
 
-pub fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersion>> {
+fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersion>> {
     let line_text = line_text.trim();
     let mut parts = LinePartsIterator::from(line_text);
     let Some(name) = parts.next() else {
