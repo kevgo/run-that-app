@@ -105,7 +105,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             Ok(Args {
                 command: Command::RunApp {
                     app,
-                    versions,
+                    version,
                     app_args,
                     error_on_output,
                     include_path,
@@ -210,7 +210,7 @@ mod tests {
                     let want = Ok(Args {
                         command: Command::RunApp {
                             app: AppName::from("app"),
-                            versions: vec![],
+                            version: None,
                             app_args: vec![],
                             error_on_output: true,
                             include_path: false,
@@ -261,7 +261,7 @@ mod tests {
                     let want = Ok(Args {
                         command: Command::RunApp {
                             app: AppName::from("app"),
-                            versions: vec![Version::from("2")],
+                            version: Some(Version::from("2")),
                             app_args: vec![S("arg1")],
                             error_on_output: false,
                             include_path: true,
@@ -293,7 +293,7 @@ mod tests {
                     let want = Ok(Args {
                         command: Command::RunApp {
                             app: AppName::from("app"),
-                            versions: vec![Version::from("2")],
+                            version: Some(Version::from("2")),
                             app_args: vec![],
                             error_on_output: false,
                             include_path: false,
@@ -310,7 +310,7 @@ mod tests {
                     let want = Ok(Args {
                         command: Command::RunApp {
                             app: AppName::from("app"),
-                            versions: vec![Version::from("2")],
+                            version: Some(Version::from("2")),
                             app_args: vec![],
                             error_on_output: false,
                             include_path: false,
@@ -342,7 +342,7 @@ mod tests {
                 let want = Ok(Args {
                     command: Command::RunApp {
                         app: AppName::from("app"),
-                        versions: vec![Version::from("2")],
+                        version: Some(Version::from("2")),
                         app_args: vec![S("arg1")],
                         error_on_output: false,
                         include_path: false,
@@ -470,7 +470,7 @@ mod tests {
                 let want = Ok(Args {
                     command: Command::RunApp {
                         app: AppName::from("app"),
-                        versions: vec![Version::from("2")],
+                        version: Some(Version::from("2")),
                         app_args: vec![],
                         error_on_output: false,
                         include_path: false,
@@ -487,7 +487,7 @@ mod tests {
                 let want = Ok(Args {
                     command: Command::RunApp {
                         app: AppName::from("app"),
-                        versions: vec![Version::from("2")],
+                        version: Some(Version::from("2")),
                         app_args: vec![S("--arg1"), S("arg2")],
                         error_on_output: false,
                         include_path: false,
@@ -511,7 +511,7 @@ mod tests {
                 let want = Ok(Args {
                     command: Command::RunApp {
                         app: AppName::from("app"),
-                        versions: vec![Version::from("2")],
+                        version: Some(Version::from("2")),
                         app_args: vec![S("--arg1"), S("arg2")],
                         error_on_output: false,
                         include_path: false,
@@ -528,7 +528,7 @@ mod tests {
                 let want = Ok(Args {
                     command: Command::RunApp {
                         app: AppName::from("app"),
-                        versions: vec![Version::from("2")],
+                        version: Some(Version::from("2")),
                         app_args: vec![S("--log=app"), S("--version")],
                         error_on_output: false,
                         include_path: false,

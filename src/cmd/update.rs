@@ -1,4 +1,4 @@
-use crate::config::{AppVersion, Config};
+use crate::config::{AppVersions, Config};
 use crate::output::Output;
 use crate::Result;
 use crate::{apps, config};
@@ -18,7 +18,7 @@ pub fn update(output: &dyn Output) -> Result<ExitCode> {
         } else {
             output.println(&format!("{} -> {}", old_app.version.as_str().cyan(), latest.as_str().cyan()));
         }
-        new_config.apps.push(AppVersion {
+        new_config.apps.push(AppVersions {
             app: old_app.app,
             version: latest,
         });

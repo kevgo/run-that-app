@@ -19,7 +19,7 @@ pub fn run(data: &Data, output: &dyn Output) -> Result<ExitCode> {
         }
     }
     for version in data.versions {
-        if let Some(executable) = load_or_install(&data.app, version, data.include_path, output)? {
+        if let Some(executable) = load_or_install(&data.app, &version, data.include_path, output)? {
             if data.error_on_output {
                 return Ok(subshell::stream(&executable, &data.app_args)?);
             } else {
