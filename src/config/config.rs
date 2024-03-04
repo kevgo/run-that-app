@@ -26,10 +26,10 @@ impl Config {
 impl Display for Config {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for AppVersions { app, versions } in &self.apps {
-            f.write_str(app.as_str());
-            f.write_str(" ");
+            f.write_str(app.as_str())?;
+            f.write_str(" ")?;
             let texts: Vec<&str> = versions.iter().map(|version| version.as_str()).collect();
-            f.write_str(&texts.join(", "));
+            f.write_str(&texts.join(", "))?;
             f.write_str("\n")?;
         }
         Ok(())
