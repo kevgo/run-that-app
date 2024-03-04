@@ -69,14 +69,9 @@ mod tests {
 
         #[test]
         fn tests() {
-            check("system", true);
-            check("system@1.2", true);
-            check("1.2.3", false);
-        }
-
-        #[track_caller]
-        fn check(give: &str, want: bool) {
-            assert_eq!(Version::from(give).is_system(), want);
+            assert!(Version::from("system").is_system());
+            assert!(Version::from("system@1.2").is_system());
+            assert!(!Version::from("1.2.3").is_system());
         }
     }
 
