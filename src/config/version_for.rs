@@ -7,8 +7,7 @@ pub fn versions_for(app: &AppName, cli_version: Option<Version>) -> Result<Versi
     if let Some(version) = cli_version {
         return Ok(Versions::from(version));
     }
-    let config = Config::load()?;
-    match config.lookup(app) {
+    match Config::load()?.lookup(app) {
         Some(versions) => Ok(versions),
         None => Err(UserError::RunRequestMissingVersion),
     }
