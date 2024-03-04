@@ -15,15 +15,15 @@ impl Versions {
     }
 
     /// provides the largest non-system version contained in this collection
-    fn largest_non_system(&self) -> Option<Version> {
+    fn largest_non_system(&self) -> Option<&Version> {
         let mut result = None;
-        for version in self.0 {
+        for version in &self.0 {
             if version.is_system() {
                 continue;
             }
             match result {
                 Some(max) if version > max => result = Some(version),
-                Some(max) => {}
+                Some(_) => {}
                 None => result = Some(version),
             }
         }
@@ -36,14 +36,15 @@ impl Versions {
         let Some(largest) = self.largest_non_system() else {
             return None;
         };
-        if largest == value {
+        let largest2 = largest.to_string();
+        if largest2 == value.to_string() {
             return None;
         }
         let mut updated = None;
         for i in 0..5 {
-            if self.0[i] == largest {
-                updated = Some(self.0[i]);
-                self.0[i] = value;
+            if self.0[i].to_string() == largest2 {
+                updated = Some(self.0[i].clone());
+                self.0[i] = value.clone();
             }
         }
         updated

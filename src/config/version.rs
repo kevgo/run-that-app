@@ -3,7 +3,7 @@ use std::fmt::Display;
 use std::path::Path;
 
 /// a string that represents
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Version(String);
 
 impl PartialOrd for Version {
