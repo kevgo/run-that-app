@@ -1,4 +1,3 @@
-use crate::cmd::run;
 use crate::config::{AppName, Version};
 
 /// the main commands that run-this-app can execute
@@ -6,19 +5,24 @@ use crate::config::{AppName, Version};
 pub enum Command {
     Available {
         app: AppName,
-        version: Version,
+        version: Option<Version>,
         include_path: bool,
         log: Option<String>,
     },
     RunApp {
-        data: run::Data,
+        app: AppName,
+        version: Option<Version>,
+        app_args: Vec<String>,
+        error_on_output: bool,
+        include_path: bool,
+        optional: bool,
         log: Option<String>,
     },
     DisplayHelp,
     Setup,
     Which {
         app: AppName,
-        version: Version,
+        version: Option<Version>,
         include_path: bool,
         log: Option<String>,
     },

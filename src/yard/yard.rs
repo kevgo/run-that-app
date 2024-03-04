@@ -109,7 +109,7 @@ mod tests {
     }
 
     mod load_app {
-        use crate::config::{AppName, AppVersion, Version};
+        use crate::config::{AppName, Version};
         use crate::subshell::Executable;
         use crate::yard::{create, Yard};
         use std::path::PathBuf;
@@ -140,11 +140,7 @@ mod tests {
         #[test]
         fn app_is_not_installed() {
             let yard = Yard { root: PathBuf::from("/root") };
-            let app_version = AppVersion {
-                app: AppName::from("shellcheck"),
-                version: Version::from("0.9.0"),
-            };
-            let loaded = yard.load_app(&app_version.app, &app_version.version, "executable");
+            let loaded = yard.load_app(&AppName::from("shellcheck"), &Version::from("0.9.0"), "executable");
             assert!(loaded.is_none());
         }
 
