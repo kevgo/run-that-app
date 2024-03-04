@@ -1,5 +1,6 @@
 use super::{AppName, Version};
 use crate::config::AppVersion;
+use crate::Result;
 use std::fmt::Display;
 
 #[derive(Debug, Default, PartialEq)]
@@ -8,8 +9,12 @@ pub struct Config {
 }
 
 impl Config {
+    pub fn load() -> Result<Config> {
+        super::load()
+    }
+
     pub fn lookup(self, app_name: &AppName) -> Option<Version> {
-        self.apps.into_iter().find(|app| app.app == app_name).map(|app_version| app_version.version)
+        self.apps.into_iter().find(|app| app.app == app_name).map(|app_version| app_version.version)?
     }
 }
 

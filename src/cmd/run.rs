@@ -48,13 +48,6 @@ pub struct Data {
 }
 
 pub fn load_or_install(app_name: &AppName, mut version: Version, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
-    if version.is_none() {
-        let config = config::load()?;
-        match config.lookup(app_name) {
-            Some(configured_version) => version = configured_version,
-            None => return Err(UserError::RunRequestMissingVersion),
-        }
-    }
     let apps = apps::all();
     let app = apps.lookup(app_name)?;
     let platform = platform::detect(output)?;

@@ -20,7 +20,7 @@ pub fn load() -> Result<Config> {
 pub fn version_for(app: &AppName) -> Result<Version> {
     let config = load()?;
     match config.lookup(app) {
-        Some(app_version) => Ok(app_version.version),
+        Some(app_version) => Ok(app_version),
         None => todo!(),
     }
 }
@@ -58,7 +58,7 @@ fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersion>> {
     }
     Ok(Some(AppVersion {
         app: name.into(),
-        version: version.into(),
+        version: Some(version.into()),
     }))
 }
 
@@ -126,15 +126,15 @@ mod tests {
                 apps: vec![
                     AppVersion {
                         app: AppName::from("alpha"),
-                        version: Version::from("1.2.3"),
+                        version: Some(Version::from("1.2.3")),
                     },
                     AppVersion {
                         app: AppName::from("beta"),
-                        version: Version::from("2.3.4"),
+                        version: Some(Version::from("2.3.4")),
                     },
                     AppVersion {
                         app: AppName::from("gamma"),
-                        version: Version::from("3.4.5"),
+                        version: Some(Version::from("3.4.5")),
                     },
                 ],
             };
@@ -154,7 +154,7 @@ mod tests {
             let have = parse_line(give, 1).unwrap();
             let want = Some(AppVersion {
                 app: AppName::from("shellcheck"),
-                version: Version::from("0.9.0"),
+                version: Some(Version::from("0.9.0")),
             });
             pretty::assert_eq!(have, want);
         }
@@ -165,7 +165,7 @@ mod tests {
             let have = parse_line(give, 1).unwrap();
             let want = Some(AppVersion {
                 app: AppName::from("shellcheck"),
-                version: Version::from("0.9.0"),
+                version: Some(Version::from("0.9.0")),
             });
             pretty::assert_eq!(have, want);
         }
@@ -176,7 +176,7 @@ mod tests {
             let have = parse_line(give, 1).unwrap();
             let want = Some(AppVersion {
                 app: AppName::from("shellcheck"),
-                version: Version::from("0.9.0"),
+                version: Some(Version::from("0.9.0")),
             });
             pretty::assert_eq!(have, want);
         }
@@ -219,7 +219,7 @@ mod tests {
             let have = parse_line(give, 1).unwrap();
             let want = Some(AppVersion {
                 app: AppName::from("shellcheck"),
-                version: Version::from("0.9.0"),
+                version: Some(Version::from("0.9.0")),
             });
             pretty::assert_eq!(have, want);
         }
