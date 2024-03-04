@@ -1,5 +1,5 @@
-use super::AppName;
 use super::AppVersions;
+use super::{AppName, Version};
 use std::fmt::Display;
 
 #[derive(Debug, Default, PartialEq)]
@@ -8,8 +8,8 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn lookup(self, app_name: &AppName) -> Option<AppVersions> {
-        self.apps.into_iter().find(|app| &app.app == app_name)
+    pub fn lookup(self, app_name: &AppName) -> Option<Version> {
+        self.apps.into_iter().find(|app| app.app == app_name).map(|app_version| app_version.version)
     }
 }
 
