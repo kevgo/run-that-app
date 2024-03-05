@@ -106,6 +106,7 @@ mod tests {
     }
 
     mod extract_version {
+        use super::super::extract_version;
 
         #[test]
         fn success() {
@@ -115,16 +116,13 @@ version: 0.9.0
 license: GNU General Public License, version 3
 website: https://www.shellcheck.net";
             let want = Some("0.9.0");
-            let have = super::super::extract_version(give);
+            let have = extract_version(give);
             assert_eq!(have, want);
         }
 
         #[test]
         fn other() {
-            let give = "other";
-            let want = None;
-            let have = super::super::extract_version(give);
-            assert_eq!(have, want);
+            assert_eq!(extract_version("other"), None);
         }
     }
 }
