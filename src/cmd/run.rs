@@ -10,9 +10,9 @@ use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
 
-pub fn run(data: &Data, output: &dyn Output) -> Result<ExitCode> {
+pub fn run(data: &Data) -> Result<ExitCode> {
     for version in data.versions.iter() {
-        if let Some(executable) = load_or_install(&data.app, version, data.include_path, output)? {
+        if let Some(executable) = load_or_install(&data.app, version, data.include_path, data.output)? {
             if data.error_on_output {
                 return subshell::stream(&executable, &data.app_args);
             }
@@ -26,9 +26,8 @@ pub fn run(data: &Data, output: &dyn Output) -> Result<ExitCode> {
     }
 }
 
-#[derive(Debug, PartialEq)]
 /// data needed to run an executable
-pub struct Data {
+pub struct Data<'a> {
     /// name of the app to execute
     pub app: AppName,
 
@@ -46,6 +45,8 @@ pub struct Data {
 
     /// whether it's okay to not run the app if it cannot be installed
     pub optional: bool,
+
+    pub output: &'a dyn Output,
 }
 
 pub fn load_or_install(app_name: &AppName, version: &Version, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
