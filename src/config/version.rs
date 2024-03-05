@@ -1,13 +1,27 @@
+use std::cmp::Ordering;
 use std::fmt::Display;
 use std::path::Path;
 
 /// a string that represents
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Version(String);
+
+impl PartialOrd for Version {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        match compare_semver(self, other) {
+            Some(ordering) => Some(ordering),
+            None => self.as_str().partial_cmp(other.as_str()),
+        }
+    }
+}
 
 impl Version {
     pub(crate) fn as_str(&self) -> &str {
         &self.0
+    }
+
+    pub(crate) fn is_system(&self) -> bool {
+        self.0.starts_with("system@") || self.0 == "system"
     }
 }
 
@@ -45,5 +59,45 @@ impl PartialEq<str> for Version {
 impl PartialEq<String> for Version {
     fn eq(&self, other: &String) -> bool {
         self.as_str() == *other
+    }
+}
+
+fn compare_semver(v1: &Version, v2: &Version) -> Option<Ordering> {
+    let Ok(self_version) = semver::Version::parse(v1.as_str()) else {
+        return None;
+    };
+    let Ok(other_version) = semver::Version::parse(v2.as_str()) else {
+        return None;
+    };
+    self_version.partial_cmp(&other_version)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::config::Version;
+
+    #[test]
+    fn is_system() {
+        assert!(Version::from("system").is_system());
+        assert!(Version::from("system@1.2").is_system());
+        assert!(!Version::from("1.2.3").is_system());
+    }
+
+    mod partial_cmp {
+        use crate::config::Version;
+
+        #[test]
+        fn semantic() {
+            let bigger = Version::from("3.10.2");
+            let smaller = Version::from("3.2.1");
+            assert!(bigger > smaller);
+        }
+
+        #[test]
+        fn tag() {
+            let pre_release = Version::from("1.2.3-alpha");
+            let final_release = Version::from("1.2.3");
+            assert!(pre_release < final_release);
+        }
     }
 }

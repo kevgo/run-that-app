@@ -1,4 +1,4 @@
-use super::{AppName, AppVersion, Version, FILE_NAME};
+use super::{AppName, AppVersions, Version, Versions, FILE_NAME};
 use crate::error::UserError;
 use crate::Result;
 use std::fmt::Display;
@@ -7,7 +7,7 @@ use std::{env, fs, io};
 
 #[derive(Debug, Default, PartialEq)]
 pub struct Config {
-    pub apps: Vec<AppVersion>,
+    pub apps: Vec<AppVersions>,
 }
 
 impl Config {
@@ -18,17 +18,17 @@ impl Config {
         }
     }
 
-    pub fn lookup(self, app_name: &AppName) -> Option<Version> {
-        self.apps.into_iter().find(|app| app.app == app_name).map(|app_version| app_version.version)
+    pub fn lookup(self, app_name: &AppName) -> Option<Versions> {
+        self.apps.into_iter().find(|app| app.app == app_name).map(|app_version| app_version.versions)
     }
 }
 
 impl Display for Config {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        for AppVersion { app, version } in &self.apps {
+        for AppVersions { app, versions } in &self.apps {
             f.write_str(app.as_str())?;
             f.write_str(" ")?;
-            f.write_str(version.as_str())?;
+            f.write_str(&versions.join(", "))?;
             f.write_str("\n")?;
         }
         Ok(())
@@ -45,7 +45,7 @@ fn parse(text: &str) -> Result<Config> {
     Ok(Config { apps })
 }
 
-fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersion>> {
+fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersions>> {
     let line_text = line_text.trim();
     let mut parts = LinePartsIterator::from(line_text);
     let Some(name) = parts.next() else {
@@ -59,17 +59,11 @@ fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersion>> {
             text: line_text.to_string(),
         });
     };
-    if parts.next().is_some() {
-        // line has more than 2 elements --> invalid
-        return Err(UserError::InvalidConfigFileFormat {
-            line_no,
-            text: line_text.to_string(),
-        });
+    let mut versions = Versions::from(version);
+    for part in parts {
+        versions.push(Version::from(part));
     }
-    Ok(Some(AppVersion {
-        app: name.into(),
-        version: version.into(),
-    }))
+    Ok(Some(AppVersions { app: name.into(), versions }))
 }
 
 /// provides the textual content of the config file
@@ -124,37 +118,50 @@ mod tests {
 
     mod parse {
         use super::super::parse;
-        use crate::config::{AppName, AppVersion, Config, Version};
+        use crate::config::{AppName, AppVersions, Config, Versions};
 
         #[test]
         fn normal() {
             let give = "alpha 1.2.3\n\
                         beta  2.3.4 # comment\n\
-                        gamma 3.4.5";
+                        gamma 3.4.5 6.7.8\n\
+                        delta system@3.4 5.6.7";
             let have = parse(give).unwrap();
             let want = Config {
                 apps: vec![
-                    AppVersion {
+                    AppVersions {
                         app: AppName::from("alpha"),
-                        version: Version::from("1.2.3"),
+                        versions: Versions::from(vec!["1.2.3"]),
                     },
-                    AppVersion {
+                    AppVersions {
                         app: AppName::from("beta"),
-                        version: Version::from("2.3.4"),
+                        versions: Versions::from("2.3.4"),
                     },
-                    AppVersion {
+                    AppVersions {
                         app: AppName::from("gamma"),
-                        version: Version::from("3.4.5"),
+                        versions: Versions::from(vec!["3.4.5", "6.7.8"]),
+                    },
+                    AppVersions {
+                        app: AppName::from("delta"),
+                        versions: Versions::from(vec!["system@3.4", "5.6.7"]),
                     },
                 ],
             };
+            pretty::assert_eq!(have, want);
+        }
+
+        #[test]
+        fn empty() {
+            let give = "";
+            let have = parse(give).unwrap();
+            let want = Config { apps: vec![] };
             pretty::assert_eq!(have, want);
         }
     }
 
     mod parse_line {
         use super::super::parse_line;
-        use crate::config::{AppName, AppVersion, Version};
+        use crate::config::{AppName, AppVersions, Versions};
         use crate::error::UserError;
         use big_s::S;
 
@@ -162,9 +169,20 @@ mod tests {
         fn normal() {
             let give = "shellcheck 0.9.0";
             let have = parse_line(give, 1).unwrap();
-            let want = Some(AppVersion {
+            let want = Some(AppVersions {
                 app: AppName::from("shellcheck"),
-                version: Version::from("0.9.0"),
+                versions: Versions::from("0.9.0"),
+            });
+            pretty::assert_eq!(have, want);
+        }
+
+        #[test]
+        fn multiple_versions() {
+            let give = "shellcheck 0.9.0 0.6.0";
+            let have = parse_line(give, 1).unwrap();
+            let want = Some(AppVersions {
+                app: AppName::from("shellcheck"),
+                versions: Versions::from(vec!["0.9.0", "0.6.0"]),
             });
             pretty::assert_eq!(have, want);
         }
@@ -173,9 +191,9 @@ mod tests {
         fn normal_with_multiple_spaces() {
             let give = "     shellcheck            0.9.0      ";
             let have = parse_line(give, 1).unwrap();
-            let want = Some(AppVersion {
+            let want = Some(AppVersions {
                 app: AppName::from("shellcheck"),
-                version: Version::from("0.9.0"),
+                versions: Versions::from("0.9.0"),
             });
             pretty::assert_eq!(have, want);
         }
@@ -184,9 +202,9 @@ mod tests {
         fn normal_with_tabs() {
             let give = "shellcheck\t0.9.0";
             let have = parse_line(give, 1).unwrap();
-            let want = Some(AppVersion {
+            let want = Some(AppVersions {
                 app: AppName::from("shellcheck"),
-                version: Version::from("0.9.0"),
+                versions: Versions::from("0.9.0"),
             });
             pretty::assert_eq!(have, want);
         }
@@ -227,9 +245,9 @@ mod tests {
         fn valid_with_comment_at_end() {
             let give = "shellcheck 0.9.0  # comment";
             let have = parse_line(give, 1).unwrap();
-            let want = Some(AppVersion {
+            let want = Some(AppVersions {
                 app: AppName::from("shellcheck"),
-                version: Version::from("0.9.0"),
+                versions: Versions::from("0.9.0"),
             });
             pretty::assert_eq!(have, want);
         }
