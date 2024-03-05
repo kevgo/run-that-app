@@ -65,7 +65,6 @@ fn load_from_path(app_name: &AppName, want_version: &str, output: &dyn Output) -
     let Some(have_version) = app.version(&executable) else {
         return Ok(None);
     };
-    println!("444444444444444 {have_version} {want_version}");
     if &have_version == want_version {
         Ok(Some(executable))
     } else {

@@ -110,7 +110,6 @@ fn ext_text(os: Os) -> &'static str {
 }
 
 fn extract_version(output: &str) -> Option<&str> {
-    println!("3333333333333333 {output}");
     regex::first_capture(output, r"go(\d+\.\d+\.\d+)")
 }
 
