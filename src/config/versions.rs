@@ -77,6 +77,34 @@ impl From<Vec<&str>> for Versions {
 #[cfg(test)]
 mod tests {
 
+    mod join {
+        use crate::config::Versions;
+
+        #[test]
+        fn multiple() {
+            let versions = Versions::from(vec!["system@1.2", "1.2", "1.1"]);
+            let have = versions.join(", ");
+            let want = "system@1.2, 1.2, 1.1";
+            assert_eq!(have, want);
+        }
+
+        #[test]
+        fn one() {
+            let versions = Versions::from(vec!["system@1.2"]);
+            let have = versions.join(", ");
+            let want = "system@1.2";
+            assert_eq!(have, want);
+        }
+
+        #[test]
+        fn zero() {
+            let versions = Versions::from(vec![]);
+            let have = versions.join(", ");
+            let want = "";
+            assert_eq!(have, want);
+        }
+    }
+
     mod largest_non_system {
         use crate::config::{Version, Versions};
 
