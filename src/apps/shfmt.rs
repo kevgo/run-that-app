@@ -62,8 +62,7 @@ impl App for Shfmt {
     }
 
     fn version(&self, executable: &Executable) -> Option<String> {
-        let output = executable.run_output("--version");
-        extract_version(&output).map(ToString::to_string)
+        extract_version(&executable.run_output("--version")).map(ToString::to_string)
     }
 }
 
