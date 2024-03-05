@@ -69,10 +69,7 @@ fn load_from_path(app_name: &AppName, want_version: &semver::VersionReq, output:
     if want_version.matches(&have_version.semver()?) {
         Ok(Some(executable))
     } else {
-        output.println(&format!(
-            "You looking for {app_name} matching {want_version} but {} is {have_version}",
-            executable.0.to_string_lossy()
-        ));
+        output.println(&format!("\n{} is version {have_version} but I need {want_version}", executable.0.to_string_lossy()));
         Ok(None)
     }
 }
