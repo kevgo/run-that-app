@@ -81,11 +81,18 @@ mod tests {
         use crate::config::{Version, Versions};
 
         #[test]
-        fn system_one_version() {
+        fn system_and_versions() {
             let versions = Versions::from(vec!["system@1.2", "1.2", "1.1"]);
             let have = versions.largest_non_system();
             let want = Version::from("1.2");
             assert_eq!(have, Some(&want));
+        }
+
+        #[test]
+        fn system_no_versions() {
+            let versions = Versions::from(vec!["system@1.2"]);
+            let have = versions.largest_non_system();
+            assert_eq!(have, None);
         }
     }
 }
