@@ -15,6 +15,7 @@ mod yard;
 
 use cli::Command;
 use cmd::run::Data;
+use config::Versions;
 use error::{Result, UserError};
 use output::Output;
 use std::process::ExitCode;
@@ -34,7 +35,7 @@ fn inner() -> Result<ExitCode> {
     match cli_args.command {
         Command::Available { app, version, include_path, log } => {
             let output = output::StdErr { category: log };
-            let versions = config::versions_for(&app, version)?;
+            let versions = Versions::determine(&app, version)?;
             cmd::available(&app, &versions, include_path, &output)
         }
         Command::RunApp {
@@ -47,7 +48,7 @@ fn inner() -> Result<ExitCode> {
             optional,
         } => {
             let output = output::StdErr { category: log };
-            let versions = config::versions_for(&app, version)?;
+            let versions = Versions::determine(&app, version)?;
             cmd::run(
                 &Data {
                     app,
@@ -64,7 +65,7 @@ fn inner() -> Result<ExitCode> {
         Command::Setup => cmd::setup(),
         Command::Which { app, version, include_path, log } => {
             let output = output::StdErr { category: log };
-            let versions = config::versions_for(&app, version)?;
+            let versions = Versions::determine(&app, version)?;
             cmd::which(&app, &versions, include_path, &output)
         }
         Command::Update { log } => {

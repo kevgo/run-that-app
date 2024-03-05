@@ -1,7 +1,7 @@
+use crate::apps;
 use crate::config::Config;
 use crate::output::Output;
 use crate::Result;
-use crate::{apps, config};
 use colored::Colorize;
 use std::process::ExitCode;
 
@@ -19,6 +19,6 @@ pub fn update(output: &dyn Output) -> Result<ExitCode> {
             output.println(&format!("{}", "current".green()));
         }
     }
-    config::save(&config)?;
+    config.save()?;
     Ok(ExitCode::SUCCESS)
 }

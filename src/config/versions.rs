@@ -1,10 +1,24 @@
-use super::Version;
+use super::{AppName, Config, Version};
+use crate::error::UserError;
+use crate::Result;
 
 /// a collection of Version instances
 #[derive(Debug, PartialEq)]
 pub struct Versions(Vec<Version>);
 
 impl Versions {
+    /// Provides the version to use: if the user provided a version to use via CLI, use it.
+    /// Otherwise provide the versions from the config file.
+    pub fn determine(app: &AppName, cli_version: Option<Version>) -> Result<Versions> {
+        if let Some(version) = cli_version {
+            return Ok(Versions::from(version));
+        }
+        match Config::load()?.lookup(app) {
+            Some(versions) => Ok(versions),
+            None => Err(UserError::RunRequestMissingVersion),
+        }
+    }
+
     pub fn iter(&self) -> std::slice::Iter<'_, Version> {
         self.0.iter()
     }
@@ -71,5 +85,85 @@ impl From<Vec<&str>> for Versions {
     fn from(versions: Vec<&str>) -> Self {
         let versions = versions.into_iter().map(Version::from).collect();
         Versions(versions)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    mod join {
+        use crate::config::Versions;
+
+        #[test]
+        fn multiple() {
+            let versions = Versions::from(vec!["system@1.2", "1.2", "1.1"]);
+            let have = versions.join(", ");
+            let want = "system@1.2, 1.2, 1.1";
+            assert_eq!(have, want);
+        }
+
+        #[test]
+        fn one() {
+            let versions = Versions::from(vec!["system@1.2"]);
+            let have = versions.join(", ");
+            let want = "system@1.2";
+            assert_eq!(have, want);
+        }
+
+        #[test]
+        fn zero() {
+            let versions = Versions::from(vec![]);
+            let have = versions.join(", ");
+            let want = "";
+            assert_eq!(have, want);
+        }
+    }
+
+    mod largest_non_system {
+        use crate::config::{Version, Versions};
+
+        #[test]
+        fn system_and_versions() {
+            let versions = Versions::from(vec!["system@1.2", "1.2", "1.1"]);
+            let have = versions.largest_non_system();
+            let want = Version::from("1.2");
+            assert_eq!(have, Some(&want));
+        }
+
+        #[test]
+        fn system_no_versions() {
+            let versions = Versions::from(vec!["system@1.2"]);
+            let have = versions.largest_non_system();
+            assert_eq!(have, None);
+        }
+
+        #[test]
+        fn empty() {
+            let versions = Versions::from(vec![]);
+            let have = versions.largest_non_system();
+            assert_eq!(have, None);
+        }
+    }
+
+    mod update_largest_with {
+        use crate::config::{Version, Versions};
+
+        #[test]
+        fn system_and_versions() {
+            let mut versions = Versions::from(vec!["system@1.2", "1.2", "1.1"]);
+            let have = versions.update_largest_with(&Version::from("1.4"));
+            assert_eq!(have, Some(Version::from("1.2")));
+            let want = Versions::from(vec!["system@1.2", "1.4", "1.1"]);
+            assert_eq!(versions, want);
+        }
+
+        #[test]
+        fn system_only() {
+            let mut versions = Versions::from(vec!["system@1.2"]);
+            let have = versions.update_largest_with(&Version::from("1.4"));
+            assert_eq!(have, None);
+            let want = Versions::from(vec!["system@1.2"]);
+            assert_eq!(versions, want);
+        }
     }
 }
