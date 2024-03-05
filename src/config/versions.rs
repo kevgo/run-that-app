@@ -63,7 +63,7 @@ impl From<Version> for Versions {
 
 impl From<&str> for Versions {
     fn from(version: &str) -> Self {
-        Versions(vec![Version::from(version)])
+        Versions::from(Version::from(version))
     }
 }
 
