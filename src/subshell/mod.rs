@@ -2,12 +2,12 @@
 
 mod call_signature;
 mod executable;
-mod execute;
+mod execute_check_output;
+mod execute_stream_output;
 mod exit_status_to_code;
-mod stream;
 
 pub use call_signature::call_signature;
 pub use executable::Executable;
-pub use execute::run;
+pub use execute_check_output::execute_check_output;
+pub use execute_stream_output::execute_stream_output;
 pub use exit_status_to_code::exit_status_to_code;
-pub use stream::stream;

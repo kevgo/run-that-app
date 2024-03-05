@@ -14,9 +14,9 @@ pub fn run(args: &Args) -> Result<ExitCode> {
     for version in args.versions.iter() {
         if let Some(executable) = load_or_install(&args.app, version, args.include_path, args.output)? {
             if args.error_on_output {
-                return subshell::stream(&executable, &args.app_args);
+                return subshell::execute_check_output(&executable, &args.app_args);
             }
-            return subshell::run(&executable, &args.app_args);
+            return subshell::execute_stream_output(&executable, &args.app_args);
         }
     }
     if args.optional {
