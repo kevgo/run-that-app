@@ -24,7 +24,7 @@ impl RequestedVersions {
     }
 
     pub fn join(&self, sep: &str) -> String {
-        let strings: Vec<&str> = self.0.iter().map(RequestedVersion::as_str).collect();
+        let strings: Vec<String> = self.0.iter().map(RequestedVersion::to_string).collect();
         strings.join(sep)
     }
 

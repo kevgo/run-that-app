@@ -10,10 +10,10 @@ pub enum RequestedVersion {
 }
 
 impl RequestedVersion {
-    pub fn as_str(&self) -> &str {
+    pub fn to_string(&self) -> String {
         match self {
-            RequestedVersion::Path(version) => &version,
-            RequestedVersion::Yard(version) => version.as_str(),
+            RequestedVersion::Path(version) => format!("system@{}", version.as_str()),
+            RequestedVersion::Yard(version) => version.to_string(),
         }
     }
 }
@@ -26,14 +26,44 @@ impl From<Version> for RequestedVersion {
 
 impl From<&str> for RequestedVersion {
     fn from(value: &str) -> Self {
-        if is_system(value) {
-            RequestedVersion::Path(value.into())
+        if let Some(version_req) = is_system(value) {
+            RequestedVersion::Path(version_req)
         } else {
             RequestedVersion::Yard(value.into())
         }
     }
 }
 
-fn is_system(value: &str) -> bool {
-    value.starts_with("system@") || value == "system"
+fn is_system(value: &str) -> Option<String> {
+    if value.starts_with("system@") {
+        return Some(value[7..].to_string());
+    }
+    if value == "system" {
+        return Some(String::from("*"));
+    }
+    None
+}
+
+#[cfg(test)]
+mod tests {
+    use big_s::S;
+
+    mod from {
+        use crate::config::RequestedVersion;
+        use big_s::S;
+
+        #[test]
+        fn system_request() {
+            let have = RequestedVersion::from("system@1.2");
+            let want = RequestedVersion::Path(S("1.2"));
+            assert_eq!(have, want);
+        }
+    }
+
+    #[test]
+    fn is_system() {
+        assert_eq!(super::is_system("system@1.2"), Some(S("1.2")));
+        assert_eq!(super::is_system("system"), Some(S("*")));
+        assert_eq!(super::is_system("1.2.3"), None);
+    }
 }
