@@ -24,6 +24,13 @@ impl App for NodeJS {
         }
     }
 
+    fn executable_filepath(&self, platform: Platform) -> &'static str {
+        match platform.os {
+            Os::Windows => "bin\\node.exe",
+            Os::Linux | Os::MacOS => "bin/node",
+        }
+    }
+
     fn homepage(&self) -> &'static str {
         "https://nodejs.org"
     }
@@ -35,7 +42,7 @@ impl App for NodeJS {
             artifact_url: download_url(version, platform),
             dir_on_disk: yard.app_folder(&name, version),
             strip_path_prefix: &format!("node-v{version}-{os}-{cpu}/", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
-            executable_in_archive: executable_path(platform),
+            executable_in_archive: self.executable_filepath(platform),
             output,
         })
     }
@@ -45,7 +52,7 @@ impl App for NodeJS {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, executable_path(platform))
+        yard.load_app(&self.name(), version, self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
@@ -60,13 +67,6 @@ pub fn download_url(version: &Version, platform: Platform) -> String {
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
     )
-}
-
-fn executable_path(platform: Platform) -> &'static str {
-    match platform.os {
-        Os::Windows => "bin\\node.exe",
-        Os::Linux | Os::MacOS => "bin/node",
-    }
 }
 
 fn os_text(os: Os) -> &'static str {

@@ -25,6 +25,10 @@ impl App for Goda {
         }
     }
 
+    fn executable_filepath(&self, platform: Platform) -> &'static str {
+        self.executable_filename(platform)
+    }
+
     fn homepage(&self) -> &'static str {
         formatcp!("https://github.com/{ORG}/{REPO}")
     }
@@ -33,7 +37,7 @@ impl App for Goda {
         compile_go(CompileArgs {
             import_path: format!("github.com/{ORG}/{REPO}@v{version}"),
             target_folder: &yard.app_folder(&self.name(), version),
-            executable_filepath: self.executable_filename(platform),
+            executable_filepath: self.executable_filepath(platform),
             output,
         })
     }
@@ -43,7 +47,7 @@ impl App for Goda {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, self.executable_filename(platform))
+        yard.load_app(&self.name(), version, self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

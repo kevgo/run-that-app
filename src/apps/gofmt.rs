@@ -20,6 +20,13 @@ impl App for Gofmt {
         }
     }
 
+    fn executable_filepath(&self, platform: Platform) -> &'static str {
+        match platform.os {
+            Os::Linux | Os::MacOS => "bin/go",
+            Os::Windows => "bin\\go.exe",
+        }
+    }
+
     fn homepage(&self) -> &'static str {
         "https://go.dev"
     }
@@ -27,7 +34,7 @@ impl App for Gofmt {
     fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let go = Go {};
         go.install(version, platform, yard, output)?;
-        let executable_path = yard.app_folder(&go.name(), version).join(self.executable_filename(platform));
+        let executable_path = yard.app_folder(&go.name(), version).join(self.executable_filepath(platform));
         Ok(Some(Executable(executable_path)))
     }
 
@@ -36,20 +43,10 @@ impl App for Gofmt {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&(Go {}).name(), version, &self.executable_path(platform))
+        yard.load_app(&(Go {}).name(), version, self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         (Go {}).installable_versions(amount, output)
-    }
-}
-
-impl Gofmt {
-    fn executable_path(&self, platform: Platform) -> String {
-        let executable = self.executable_filename(platform);
-        match platform.os {
-            Os::Windows => format!("bin\\{executable}"),
-            Os::Linux | Os::MacOS => format!("bin/{executable}"),
-        }
     }
 }

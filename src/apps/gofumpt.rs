@@ -26,6 +26,10 @@ impl App for Gofumpt {
         }
     }
 
+    fn executable_filepath(&self, platform: Platform) -> &'static str {
+        self.executable_filename(platform)
+    }
+
     fn homepage(&self) -> &'static str {
         formatcp!("https://github.com/{ORG}/{REPO}")
     }
@@ -39,7 +43,7 @@ impl App for Gofumpt {
         let result = executable::install(InstallArgs {
             app_name: &name,
             artifact_url: download_url(version, platform),
-            filepath_on_disk: yard.app_folder(&name, version).join(self.executable_filename(platform)),
+            filepath_on_disk: yard.app_folder(&name, version).join(self.executable_filepath(platform)),
             output,
         })?;
         if result.is_some() {
@@ -48,13 +52,13 @@ impl App for Gofumpt {
         compile_go(CompileArgs {
             import_path: format!("mvdan.cc/gofumpt@{version}"),
             target_folder: &yard.app_folder(&name, version),
-            executable_filepath: self.executable_filename(platform),
+            executable_filepath: self.executable_filepath(platform),
             output,
         })
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, self.executable_filename(platform))
+        yard.load_app(&self.name(), version, self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
