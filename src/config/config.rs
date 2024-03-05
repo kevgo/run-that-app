@@ -2,6 +2,8 @@ use super::{AppName, AppVersions, Version, Versions, FILE_NAME};
 use crate::error::UserError;
 use crate::Result;
 use std::fmt::Display;
+use std::fs::OpenOptions;
+use std::io::Write;
 use std::str::SplitAsciiWhitespace;
 use std::{env, fs, io};
 
@@ -20,6 +22,17 @@ impl Config {
 
     pub fn lookup(self, app_name: &AppName) -> Option<Versions> {
         self.apps.into_iter().find(|app| app.app == app_name).map(|app_version| app_version.versions)
+    }
+
+    pub fn save(&self) -> Result<()> {
+        let mut file = OpenOptions::new()
+            .write(true)
+            .truncate(true)
+            .open(FILE_NAME)
+            .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))?;
+        file.write_all(self.to_string().as_bytes())
+            .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))?;
+        Ok(())
     }
 }
 
