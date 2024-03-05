@@ -14,7 +14,7 @@ mod subshell;
 mod yard;
 
 use cli::Command;
-use cmd::run::Data;
+use cmd::run;
 use config::Versions;
 use error::{Result, UserError};
 use output::Output;
@@ -49,7 +49,7 @@ fn inner() -> Result<ExitCode> {
         } => {
             let output = output::StdErr { category: log };
             let versions = Versions::determine(&app, version)?;
-            cmd::run(&Data {
+            cmd::run(&run::Data {
                 app,
                 versions,
                 app_args,
