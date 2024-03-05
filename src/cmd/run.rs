@@ -10,25 +10,24 @@ use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
 
-pub fn run(data: &Data, output: &dyn Output) -> Result<ExitCode> {
-    for version in data.versions.iter() {
-        if let Some(executable) = load_or_install(&data.app, version, data.include_path, output)? {
-            if data.error_on_output {
-                return subshell::stream(&executable, &data.app_args);
+pub fn run(args: &Args) -> Result<ExitCode> {
+    for version in args.versions.iter() {
+        if let Some(executable) = load_or_install(&args.app, version, args.include_path, args.output)? {
+            if args.error_on_output {
+                return subshell::stream(&executable, &args.app_args);
             }
-            return subshell::run(&executable, &data.app_args);
+            return subshell::run(&executable, &args.app_args);
         }
     }
-    if data.optional {
+    if args.optional {
         Ok(ExitCode::SUCCESS)
     } else {
         Err(UserError::UnsupportedPlatform)
     }
 }
 
-#[derive(Debug, PartialEq)]
 /// data needed to run an executable
-pub struct Data {
+pub struct Args<'a> {
     /// name of the app to execute
     pub app: AppName,
 
@@ -36,6 +35,7 @@ pub struct Data {
     pub versions: Versions,
 
     /// arguments to call the app with
+    #[allow(clippy::struct_field_names)]
     pub app_args: Vec<String>,
 
     /// if true, any output produced by the app is equivalent to an exit code > 0
@@ -46,6 +46,8 @@ pub struct Data {
 
     /// whether it's okay to not run the app if it cannot be installed
     pub optional: bool,
+
+    pub output: &'a dyn Output,
 }
 
 pub fn load_or_install(app_name: &AppName, version: &Version, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
