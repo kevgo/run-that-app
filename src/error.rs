@@ -26,6 +26,10 @@ pub enum UserError {
         file: String,
         reason: String,
     },
+    CannotParseSemverVersion {
+        expression: String,
+        reason: String,
+    },
     ConfigFileAlreadyExists,
     GitHubReleasesApiProblem {
         problem: String,
@@ -93,6 +97,10 @@ impl UserError {
             UserError::CannotMakeFileExecutable { file, reason } => {
                 error(&format!("Cannot make file {file} executable: {reason}"));
                 desc("Please check access permissions and try again.");
+            }
+            UserError::CannotParseSemverVersion { expression, reason } => {
+                error(&format!("semver version \"{expression}\" is incorrect: {reason}"));
+                desc("Please use exactly three numbers separated by dots, e.g. 1.2.3");
             }
             UserError::ConfigFileAlreadyExists => {
                 error("config file already exists");

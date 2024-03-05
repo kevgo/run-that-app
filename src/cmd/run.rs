@@ -55,7 +55,7 @@ pub fn load_or_install(app_name: &AppName, version: &RequestedVersion, output: &
 }
 
 // checks if the app is in the PATH and has the correct version
-fn load_from_path(app_name: &AppName, want_version: &str, output: &dyn Output) -> Result<Option<Executable>> {
+fn load_from_path(app_name: &AppName, want_version: &semver::VersionReq, output: &dyn Output) -> Result<Option<Executable>> {
     let apps = apps::all();
     let app = apps.lookup(app_name)?;
     let platform = platform::detect(output)?;
@@ -65,7 +65,7 @@ fn load_from_path(app_name: &AppName, want_version: &str, output: &dyn Output) -
     let Some(have_version) = app.version(&executable) else {
         return Ok(None);
     };
-    if &have_version == want_version {
+    if want_version.matches(&have_version.semver()?) {
         Ok(Some(executable))
     } else {
         Ok(None)

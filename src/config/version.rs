@@ -1,3 +1,5 @@
+use crate::error::UserError;
+use crate::Result;
 use std::cmp::Ordering;
 use std::fmt::Display;
 use std::path::Path;
@@ -24,6 +26,13 @@ impl Version {
 
     pub(crate) fn is_system(&self) -> bool {
         self.0.starts_with("system@") || self.0 == "system"
+    }
+
+    pub(crate) fn semver(&self) -> Result<semver::Version> {
+        semver::Version::parse(&self.0).map_err(|err| UserError::CannotParseSemverVersion {
+            expression: self.0.to_string(),
+            reason: err.to_string(),
+        })
     }
 }
 
