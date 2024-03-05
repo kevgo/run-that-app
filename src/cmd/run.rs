@@ -1,14 +1,14 @@
-use crate::apps;
 use crate::config::{AppName, RequestedVersion, RequestedVersions, Version};
 use crate::error::UserError;
 use crate::filesystem::find_global_install;
-use crate::install::executable;
 use crate::platform;
 use crate::subshell;
 use crate::subshell::Executable;
 use crate::yard;
 use crate::Output;
 use crate::Result;
+use crate::{apps, config};
+use colored::Colorize;
 use std::process::ExitCode;
 
 pub fn run(args: &Args) -> Result<ExitCode> {
@@ -69,7 +69,13 @@ fn load_from_path(app_name: &AppName, want_version: &semver::VersionReq, output:
     if want_version.matches(&have_version.semver()?) {
         Ok(Some(executable))
     } else {
-        output.println(&format!("\n{} is version {have_version} but I need {want_version}", executable.0.to_string_lossy()));
+        output.println(&format!(
+            "\n{} is version {} but {} requires {}",
+            executable.0.to_string_lossy().green().bold(),
+            have_version.as_str().cyan().bold(),
+            config::FILE_NAME.green().bold(),
+            want_version.to_string().cyan().bold(),
+        ));
         Ok(None)
     }
 }
@@ -93,7 +99,7 @@ fn load_or_install_from_yard(app_name: &AppName, version: &Version, output: &dyn
 }
 
 fn parse_semver_req(text: &str) -> Result<semver::VersionReq> {
-    semver::VersionReq::parse(text).map_err(|err| UserError::CannotParseSemverVersion {
+    semver::VersionReq::parse(text).map_err(|err| UserError::CannotParseSemverRange {
         expression: text.to_string(),
         reason: err.to_string(),
     })

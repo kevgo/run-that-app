@@ -24,10 +24,6 @@ impl Version {
         &self.0
     }
 
-    pub(crate) fn is_system(&self) -> bool {
-        self.0.starts_with("system@") || self.0 == "system"
-    }
-
     pub(crate) fn semver(&self) -> Result<semver::Version> {
         semver::Version::parse(&self.0).map_err(|err| UserError::CannotParseSemverVersion {
             expression: self.0.to_string(),
@@ -85,14 +81,6 @@ fn compare_semver(v1: &Version, v2: &Version) -> Option<Ordering> {
 
 #[cfg(test)]
 mod tests {
-    use crate::config::Version;
-
-    #[test]
-    fn is_system() {
-        assert!(Version::from("system").is_system());
-        assert!(Version::from("system@1.2").is_system());
-        assert!(!Version::from("1.2.3").is_system());
-    }
 
     mod partial_cmp {
         use crate::config::Version;
