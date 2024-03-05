@@ -101,8 +101,7 @@ fn ext_text(os: Os) -> &'static str {
 }
 
 fn extract_version(output: &str) -> Option<&str> {
-    let re = Regex::new(r"^v(\d+\.\d+\.\d+)$").unwrap();
-    Some(re.captures(output)?.get(1)?.as_str())
+    Some(Regex::new(r"^v(\d+\.\d+\.\d+)$").unwrap().captures(output)?.get(1)?.as_str())
 }
 
 #[cfg(test)]
