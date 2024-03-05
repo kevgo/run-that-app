@@ -3,11 +3,10 @@ use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
+use crate::regex;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
-use regex::Regex;
-use std::process::Command;
 
 pub struct ShellCheck {}
 
@@ -54,14 +53,7 @@ impl App for ShellCheck {
     }
 
     fn version(&self, executable: &Executable) -> Option<String> {
-        let mut cmd = Command::new(executable);
-        cmd.arg("--version");
-        let Ok(output) = cmd.output() else {
-            return None;
-        };
-        let Ok(output) = String::from_utf8(output.stdout) else {
-            return None;
-        };
+        let output = executable.run_output("--version");
         extract_version(&output).map(ToString::to_string)
     }
 }
@@ -98,14 +90,7 @@ fn ext_text(os: Os) -> &'static str {
 }
 
 fn extract_version(output: &str) -> Option<&str> {
-    let re = Regex::new(r"version: (\d+\.\d+\.\d+)").unwrap();
-    let Some(captures) = re.captures(output) else {
-        return None;
-    };
-    let Some(capture) = captures.get(1) else {
-        return None;
-    };
-    Some(capture.as_str())
+    regex::first_capture(output, r"version: (\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]

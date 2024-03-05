@@ -62,7 +62,7 @@ impl App for Shfmt {
     }
 
     fn version(&self, executable: &Executable) -> Option<String> {
-        let output = subshell::execute_capture_output(executable, "--version")?;
+        let output = executable.run_output("--version");
         extract_version(&output).map(ToString::to_string)
     }
 }
