@@ -75,7 +75,7 @@ pub fn download_url(version: &Version, platform: Platform) -> String {
 }
 
 pub fn extract_version(output: &str) -> Option<&str> {
-    regex::first_capture(output, r"(\d+\.\d+\.\d+)")
+    regex::first_capture(output, r"v(\d+\.\d+\.\d+)")
 }
 
 fn os_text(os: Os) -> &'static str {
@@ -112,5 +112,11 @@ mod tests {
         let have = super::download_url(&Version::from("20.10.0"), platform);
         let want = "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz";
         assert_eq!(have, want);
+    }
+
+    #[test]
+    fn extract_version() {
+        assert_eq!(super::extract_version("v10.2.4"), Some("10.2.4"));
+        assert_eq!(super::extract_version("other"), None);
     }
 }
