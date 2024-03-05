@@ -62,7 +62,7 @@ impl App for Ghokin {
         github_releases::versions("antham", "ghokin", amount, output)
     }
 
-    fn version(&self, path: &Executable) -> Option<String> {
+    fn version(&self, path: &Executable) -> Option<Version> {
         todo!()
     }
 }

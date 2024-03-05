@@ -61,7 +61,7 @@ impl App for Goreleaser {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, path: &Executable) -> Option<String> {
+    fn version(&self, path: &Executable) -> Option<Version> {
         todo!()
     }
 }

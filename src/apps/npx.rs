@@ -43,7 +43,7 @@ impl App for Npx {
         (NodeJS {}).installable_versions(amount, output)
     }
 
-    fn version(&self, path: &Executable) -> Option<String> {
+    fn version(&self, path: &Executable) -> Option<Version> {
         todo!()
     }
 }

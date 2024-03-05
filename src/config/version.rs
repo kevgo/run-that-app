@@ -8,10 +8,12 @@ pub struct Version(String);
 
 impl PartialOrd for Version {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        match compare_semver(self, other) {
-            Some(ordering) => Some(ordering),
-            None => self.as_str().partial_cmp(other.as_str()),
+        let result = compare_semver(self, other);
+        if result.is_some() {
+            return result;
         }
+        // no conclusive semver order --> compare alphabetically
+        self.as_str().partial_cmp(other.as_str())
     }
 }
 

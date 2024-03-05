@@ -62,7 +62,7 @@ impl App for ActionLint {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, path: &Executable) -> Option<String> {
+    fn version(&self, path: &Executable) -> Option<Version> {
         todo!()
     }
 }

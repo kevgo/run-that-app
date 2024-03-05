@@ -47,7 +47,7 @@ impl App for Deadcode {
         Ok(vec![Version::from("0.16.1")])
     }
 
-    fn version(&self, path: &Executable) -> Option<String> {
+    fn version(&self, path: &Executable) -> Option<Version> {
         todo!()
     }
 }

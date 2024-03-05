@@ -61,8 +61,8 @@ impl App for Shfmt {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, executable: &Executable) -> Option<String> {
-        extract_version(&executable.run_output("--version")).map(ToString::to_string)
+    fn version(&self, executable: &Executable) -> Option<Version> {
+        extract_version(&executable.run_output("--version")).map(Version::from)
     }
 }
 

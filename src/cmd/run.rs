@@ -1,5 +1,5 @@
 use crate::apps;
-use crate::config::{AppName, Version, Versions};
+use crate::config::{AppName, RequestedVersion, RequestedVersions, Version};
 use crate::error::UserError;
 use crate::filesystem::find_global_install;
 use crate::platform;
@@ -32,7 +32,7 @@ pub struct Args<'a> {
     pub app: AppName,
 
     /// possible versions of the app to execute
-    pub versions: Versions,
+    pub versions: RequestedVersions,
 
     /// arguments to call the app with
     #[allow(clippy::struct_field_names)]
@@ -50,27 +50,30 @@ pub struct Args<'a> {
     pub output: &'a dyn Output,
 }
 
-pub fn load_or_install(app_name: &AppName, version: &Version, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
-    if version.is_system() {
-        load_from_path(app_name, version, output)
-    } else {
-        load_or_install_from_yard(app_name, version, output)
+pub fn load_or_install(app_name: &AppName, version: &RequestedVersion, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
+    match version {
+        RequestedVersion::System(version) => load_from_path(app_name, version, output),
+        RequestedVersion::Yard(version) => load_or_install_from_yard(app_name, version, output),
     }
 }
 
 // checks if the app is in the PATH and has the correct version
-fn load_from_path(app_name: &AppName, version: &Version, output: &dyn Output) -> Result<Option<Executable>> {
+fn load_from_path(app_name: &AppName, want_version: &str, output: &dyn Output) -> Result<Option<Executable>> {
     let apps = apps::all();
     let app = apps.lookup(app_name)?;
     let platform = platform::detect(output)?;
     let Some(executable) = find_global_install(app.executable_filename(platform), output) else {
         return Ok(None);
     };
-    let Some(version) = app.version(&executable) else {
+    let Some(have_version) = app.version(&executable) else {
         return Ok(None);
     };
-    // TODO: check that the version matches
-    Ok(None)
+    println!("444444444444444 {have_version} {want_version}");
+    if &have_version == want_version {
+        Ok(Some(executable))
+    } else {
+        Ok(None)
+    }
 }
 
 fn load_or_install_from_yard(app_name: &AppName, version: &Version, output: &dyn Output) -> Result<Option<Executable>> {
