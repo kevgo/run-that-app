@@ -51,6 +51,29 @@ pub struct Args<'a> {
 }
 
 pub fn load_or_install(app_name: &AppName, version: &Version, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
+    if version.is_system() {
+        load_from_path(app_name, version, output)
+    } else {
+        load_or_install_from_yard(app_name, version, output)
+    }
+}
+
+// checks if the app is in the PATH and has the correct version
+fn load_from_path(app_name: &AppName, version: &Version, output: &dyn Output) -> Result<Option<Executable>> {
+    let apps = apps::all();
+    let app = apps.lookup(app_name)?;
+    let platform = platform::detect(output)?;
+    let Some(executable) = find_global_install(app.executable_filename(platform), output) else {
+        return Ok(None);
+    };
+    let Some(version) = app.version(&executable) else {
+        return Ok(None);
+    };
+    // TODO: check that the version matches
+    Ok(None)
+}
+
+fn load_or_install_from_yard(app_name: &AppName, version: &Version, output: &dyn Output) -> Result<Option<Executable>> {
     let apps = apps::all();
     let app = apps.lookup(app_name)?;
     let platform = platform::detect(output)?;
@@ -59,21 +82,11 @@ pub fn load_or_install(app_name: &AppName, version: &Version, include_path: bool
         return Ok(Some(executable));
     };
     if yard.is_not_installable(app_name, version) {
-        if include_path {
-            if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
-                return Ok(Some(executable));
-            }
-        }
         return Ok(None);
     }
     if let Some(executable) = app.install(version, platform, &yard, output)? {
         return Ok(Some(executable));
     }
     yard.mark_not_installable(app_name, version)?;
-    if include_path {
-        if let Some(executable) = find_global_install(app.executable_filename(platform), output) {
-            return Ok(Some(executable));
-        }
-    }
     Ok(None)
 }
