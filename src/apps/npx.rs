@@ -16,6 +16,13 @@ impl App for Npx {
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
         match platform.os {
+            Os::Linux | Os::MacOS => "npx",
+            Os::Windows => "npx.exe",
+        }
+    }
+
+    fn executable_filepath(&self, platform: Platform) -> &'static str {
+        match platform.os {
             Os::Linux | Os::MacOS => "bin/npx",
             Os::Windows => "bin\\npx.exe",
         }
@@ -28,7 +35,7 @@ impl App for Npx {
     fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let nodejs = NodeJS {};
         nodejs.install(version, platform, yard, output)?;
-        let executable_path = yard.app_folder(&nodejs.name(), version).join(self.executable_filename(platform));
+        let executable_path = yard.app_folder(&nodejs.name(), version).join(self.executable_filepath(platform));
         Ok(Some(Executable(executable_path)))
     }
 
@@ -37,7 +44,7 @@ impl App for Npx {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&(NodeJS {}).name(), version, self.executable_filename(platform))
+        yard.load_app(&(NodeJS {}).name(), version, self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

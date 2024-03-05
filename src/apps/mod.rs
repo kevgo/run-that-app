@@ -36,6 +36,9 @@ pub trait App {
     /// the filename of the executable that starts this app
     fn executable_filename(&self, platform: Platform) -> &'static str;
 
+    /// relative path of the executable that starts this app in the folder the downloaded artifact gets unpacked into
+    fn executable_filepath(&self, platform: Platform) -> &'static str;
+
     /// link to the (human-readable) homepage of the app
     fn homepage(&self) -> &'static str;
 

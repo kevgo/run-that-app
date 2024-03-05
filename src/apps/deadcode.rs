@@ -21,6 +21,10 @@ impl App for Deadcode {
         }
     }
 
+    fn executable_filepath(&self, platform: Platform) -> &'static str {
+        self.executable_filename(platform)
+    }
+
     fn homepage(&self) -> &'static str {
         formatcp!("https://pkg.go.dev/golang.org/x/tools/cmd/deadcode")
     }
@@ -29,7 +33,7 @@ impl App for Deadcode {
         compile_go(CompileArgs {
             import_path: format!("golang.org/x/tools/cmd/deadcode@v{version}"),
             target_folder: &yard.app_folder(&self.name(), version),
-            executable_filename: self.executable_filename(platform),
+            executable_filepath: self.executable_filepath(platform),
             output,
         })
     }
@@ -40,7 +44,7 @@ impl App for Deadcode {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, self.executable_filename(platform))
+        yard.load_app(&self.name(), version, self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<Version>> {

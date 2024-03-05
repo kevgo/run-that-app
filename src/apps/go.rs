@@ -28,6 +28,13 @@ impl App for Go {
         }
     }
 
+    fn executable_filepath(&self, platform: Platform) -> &'static str {
+        match platform.os {
+            Os::Linux | Os::MacOS => "bin/go",
+            Os::Windows => "bin\\go.exe",
+        }
+    }
+
     fn homepage(&self) -> &'static str {
         "https://go.dev"
     }
@@ -39,7 +46,7 @@ impl App for Go {
             artifact_url: download_url(version, platform),
             dir_on_disk: yard.app_folder(&name, version),
             strip_path_prefix: "go/",
-            executable_in_archive: &self.executable_path(platform),
+            executable_in_archive: self.executable_filepath(platform),
             output,
         })
     }
@@ -50,7 +57,7 @@ impl App for Go {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, &self.executable_path(platform))
+        yard.load_app(&self.name(), version, self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
@@ -65,16 +72,6 @@ impl App for Go {
 
     fn version(&self, executable: &Executable) -> Option<Version> {
         extract_version(&executable.run_output("version")).map(Version::from)
-    }
-}
-
-impl Go {
-    fn executable_path(&self, platform: Platform) -> String {
-        let executable = self.executable_filename(platform);
-        match platform.os {
-            Os::Windows => format!("bin\\{executable}"),
-            Os::Linux | Os::MacOS => format!("bin/{executable}"),
-        }
     }
 }
 
