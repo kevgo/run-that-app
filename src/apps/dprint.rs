@@ -44,7 +44,7 @@ impl App for Dprint {
         compile_rust(CompileArgs {
             crate_name: "dprint",
             target_folder: yard.app_folder(&name, version),
-            executable_filename: self.executable_filename(platform),
+            executable_filepath: self.executable_filename(platform),
             output,
         })
     }

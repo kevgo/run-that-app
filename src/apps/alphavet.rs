@@ -34,7 +34,7 @@ impl App for Alphavet {
         compile_go(CompileArgs {
             import_path: format!("github.com/{ORG}/{REPO}/cmd/alphavet@v{version}"),
             target_folder: &yard.app_folder(&self.name(), version),
-            executable_filename: self.executable_filename(platform),
+            executable_filepath: self.executable_filename(platform),
             output,
         })
     }

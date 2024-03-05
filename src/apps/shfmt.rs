@@ -44,7 +44,7 @@ impl App for Shfmt {
         compile_go(CompileArgs {
             import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}"),
             target_folder: &yard.app_folder(&name, version),
-            executable_filename: self.executable_filename(platform),
+            executable_filepath: self.executable_filename(platform),
             output,
         })
     }
