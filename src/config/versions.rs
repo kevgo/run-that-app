@@ -61,15 +61,6 @@ impl From<Version> for Versions {
     }
 }
 
-impl From<Option<Version>> for Versions {
-    fn from(version: Option<Version>) -> Self {
-        match version {
-            Some(version) => Versions(vec![version]),
-            None => Versions(vec![]),
-        }
-    }
-}
-
 impl From<&str> for Versions {
     fn from(version: &str) -> Self {
         Versions(vec![Version::from(version)])
