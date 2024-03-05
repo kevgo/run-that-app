@@ -35,6 +35,7 @@ pub struct Args<'a> {
     pub versions: Versions,
 
     /// arguments to call the app with
+    #[allow(clippy::struct_field_names)]
     pub app_args: Vec<String>,
 
     /// if true, any output produced by the app is equivalent to an exit code > 0
