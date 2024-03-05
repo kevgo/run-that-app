@@ -45,7 +45,7 @@ impl Versions {
         }
         let largest = largest.clone();
         let mut updated = None;
-        for i in 0..5 {
+        for i in 0..self.0.len() {
             if self.0[i] == largest {
                 updated = Some(self.0[i].clone());
                 self.0[i] = value.clone();
