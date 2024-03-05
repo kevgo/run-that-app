@@ -14,10 +14,6 @@ pub struct Config {
 
 impl Config {
     pub fn create() -> Result<()> {
-        const CONFIG_DEFAULT: &str = "\
-# actionlint 1.2.26
-# gh 2.39.1
-";
         let mut file = match OpenOptions::new().write(true).create_new(true).open(FILE_NAME) {
             Ok(file) => file,
             Err(err) => {
@@ -27,7 +23,11 @@ impl Config {
                 panic!("{}", err);
             }
         };
-        file.write_all(CONFIG_DEFAULT.as_bytes()).map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
+        let content = "\
+# actionlint 1.2.26
+# gh 2.39.1
+";
+        file.write_all(content.as_bytes()).map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
     }
 
     pub fn load() -> Result<Config> {
