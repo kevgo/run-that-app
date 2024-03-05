@@ -2,6 +2,7 @@ use crate::apps;
 use crate::config::{AppName, RequestedVersion, RequestedVersions, Version};
 use crate::error::UserError;
 use crate::filesystem::find_global_install;
+use crate::install::executable;
 use crate::platform;
 use crate::subshell;
 use crate::subshell::Executable;
@@ -68,6 +69,10 @@ fn load_from_path(app_name: &AppName, want_version: &semver::VersionReq, output:
     if want_version.matches(&have_version.semver()?) {
         Ok(Some(executable))
     } else {
+        output.println(&format!(
+            "You looking for {app_name} matching {want_version} but {} is {have_version}",
+            executable.0.to_string_lossy()
+        ));
         Ok(None)
     }
 }
