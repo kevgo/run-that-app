@@ -26,7 +26,7 @@ const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
 
 /// Executes the given executable with the given arguments.
 /// The returned `ExitCode` also indicates failure if there has been any output.
-pub fn stream(executable: &Executable, args: &[String]) -> Result<ExitCode> {
+pub fn execute_track_output(executable: &Executable, args: &[String]) -> Result<ExitCode> {
     let (sender, receiver) = mpsc::channel();
     let mut cmd = Command::new(executable);
     cmd.args(args);
