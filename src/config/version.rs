@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 use std::fmt::Display;
 use std::path::Path;
 
-/// a string that represents
+/// the desired version of an application
 #[derive(Clone, Debug, PartialEq)]
 pub struct Version(String);
 
