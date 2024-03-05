@@ -34,8 +34,8 @@ fn inner() -> Result<ExitCode> {
     match cli_args.command {
         Command::Available { app, version, include_path, log } => {
             let output = output::StdErr { category: log };
-            let version = config::versions_for(&app, version)?;
-            cmd::available(&app, &version, include_path, &output)
+            let versions = config::versions_for(&app, version)?;
+            cmd::available(&app, &versions, include_path, &output)
         }
         Command::RunApp {
             log,
