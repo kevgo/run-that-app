@@ -2,6 +2,6 @@ actionlint 1.6.26
 dprint 0.43.1
 shellcheck 0.9.0
 shfmt 3.7.0
-go system@1.21
+go system@1.21.*
 
 app  "system" with VersionReq    Version   Version

@@ -30,6 +30,10 @@ pub enum UserError {
         expression: String,
         reason: String,
     },
+    CannotParseSemverRange {
+        expression: String,
+        reason: String,
+    },
     ConfigFileAlreadyExists,
     GitHubReleasesApiProblem {
         problem: String,
@@ -101,6 +105,10 @@ impl UserError {
             UserError::CannotParseSemverVersion { expression, reason } => {
                 error(&format!("semver version \"{expression}\" is incorrect: {reason}"));
                 desc("Please use exactly three numbers separated by dots, e.g. 1.2.3");
+            }
+            UserError::CannotParseSemverRange { expression, reason } => {
+                error(&format!("semver range \"{expression}\" is incorrect: {reason}"));
+                desc("Please use formats described at https://devhints.io/semver.");
             }
             UserError::ConfigFileAlreadyExists => {
                 error("config file already exists");
