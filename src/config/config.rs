@@ -7,11 +7,6 @@ use std::io::{ErrorKind, Write};
 use std::str::SplitAsciiWhitespace;
 use std::{env, fs, io};
 
-const CONFIG_DEFAULT: &str = "\
-# actionlint 1.2.26
-# gh 2.39.1
-";
-
 #[derive(Debug, Default, PartialEq)]
 pub struct Config {
     pub apps: Vec<AppVersions>,
@@ -19,6 +14,10 @@ pub struct Config {
 
 impl Config {
     pub fn create() -> Result<()> {
+        const CONFIG_DEFAULT: &str = "\
+# actionlint 1.2.26
+# gh 2.39.1
+";
         let mut file = match OpenOptions::new().write(true).create_new(true).open(FILE_NAME) {
             Ok(file) => file,
             Err(err) => {
