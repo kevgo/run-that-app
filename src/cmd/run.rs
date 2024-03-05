@@ -1,5 +1,5 @@
 use crate::apps;
-use crate::config::{AppName, Version};
+use crate::config::{AppName, Version, Versions};
 use crate::error::UserError;
 use crate::filesystem::find_global_install;
 use crate::platform;
@@ -11,13 +11,15 @@ use crate::Result;
 use std::process::ExitCode;
 
 pub fn run(data: &Data, output: &dyn Output) -> Result<ExitCode> {
-    if let Some(executable) = load_or_install(&data.app, &data.version, data.include_path, output)? {
-        if data.error_on_output {
-            Ok(subshell::stream(&executable, &data.app_args)?)
-        } else {
-            Ok(subshell::run(&executable, &data.app_args)?)
+    for version in data.versions.iter() {
+        if let Some(executable) = load_or_install(&data.app, version, data.include_path, output)? {
+            if data.error_on_output {
+                return subshell::stream(&executable, &data.app_args);
+            }
+            return subshell::run(&executable, &data.app_args);
         }
-    } else if data.optional {
+    }
+    if data.optional {
         Ok(ExitCode::SUCCESS)
     } else {
         Err(UserError::UnsupportedPlatform)
@@ -27,10 +29,11 @@ pub fn run(data: &Data, output: &dyn Output) -> Result<ExitCode> {
 #[derive(Debug, PartialEq)]
 /// data needed to run an executable
 pub struct Data {
-    /// name and version of the app to execute
+    /// name of the app to execute
     pub app: AppName,
 
-    pub version: Version,
+    /// possible versions of the app to execute
+    pub versions: Versions,
 
     /// arguments to call the app with
     pub app_args: Vec<String>,
