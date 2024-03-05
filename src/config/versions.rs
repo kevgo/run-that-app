@@ -40,13 +40,13 @@ impl Versions {
         let Some(largest) = self.largest_non_system() else {
             return None;
         };
-        let largest2 = largest.clone();
-        if &largest2 == value {
+        let largest = largest.clone();
+        if &largest == value {
             return None;
         }
         let mut updated = None;
         for i in 0..5 {
-            if self.0[i] == largest2 {
+            if self.0[i] == largest {
                 updated = Some(self.0[i].clone());
                 self.0[i] = value.clone();
             }
