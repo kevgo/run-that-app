@@ -114,5 +114,14 @@ mod tests {
             let want = Versions::from(vec!["system@1.2", "1.4", "1.1"]);
             assert_eq!(versions, want);
         }
+
+        #[test]
+        fn system_only() {
+            let mut versions = Versions::from(vec!["system@1.2"]);
+            let have = versions.update_largest_with(&Version::from("1.4"));
+            assert_eq!(have, None);
+            let want = Versions::from(vec!["system@1.2"]);
+            assert_eq!(versions, want);
+        }
     }
 }
