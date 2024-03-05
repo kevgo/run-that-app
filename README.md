@@ -94,8 +94,6 @@ Run-that-app Arguments:
 - `--error-on-output`: treat all output of the executed application as an error
   condidion
 - `--help` or `-h`: show help screen
-- `--include-path`: if there is no pre-compiled binary for your platform, but a
-  similarly named binary in your PATH, run the latter.
 - `--log`: enable all logging
 - `--log=domain`: enable logging for the given domain
   - see the available domains by running with all logging enabled
@@ -221,9 +219,30 @@ skip non-essential applications like linters via the `--optional` switch.
 
 #### What if I compile an app myself?
 
-Add the app that you compiled to the PATH and call _run-that-app_ with the
-`--include-path` option. In this case _run-that-app_ does not guarantee that the
-app has the correct version.
+Add the app that you compiled to the PATH and add a "system" version in the
+configuration file that looks like this:
+
+```asdf
+acme 1.2.3 system
+```
+
+This tries to first install and run the app named `acme` at version 1.2.3. If
+this is not successful, _run-that-app_ looks for an application named `acme` in
+the PATH and executes it instead. In this case _run-that-app_ does not guarantee
+that the app has the correct version.
+
+You can restrict the acceptable versions of the globally installed applications
+like this:
+
+```asdf
+acme 1.2.3 system@1.2.*
+```
+
+This tries to first install and run the app named `acme` at version 1.2.3. If
+this is not successful, _run-that-app_ looks for an application named `acme` in
+the PATH, determines its version, and if that version matches the given semver
+restrictions, executes it. For example, if you have `acme` at version 1.2.1
+installed somewhere in your PATH, _run-that-app_ would execute it.
 
 #### What about apps is written in NodeJS, Python, or Ruby?
 
@@ -271,3 +290,6 @@ blockchain component to this.
 Compared to pkgx, run-that-app is leaner, supports more platforms (Windows), and
 offers additional features like the ability to compile from source, optional
 execution, and checking whether an application is available for your platform.
+
+```
+```
