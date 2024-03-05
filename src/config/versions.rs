@@ -94,5 +94,12 @@ mod tests {
             let have = versions.largest_non_system();
             assert_eq!(have, None);
         }
+
+        #[test]
+        fn empty() {
+            let versions = Versions::from(vec![]);
+            let have = versions.largest_non_system();
+            assert_eq!(have, None);
+        }
     }
 }
