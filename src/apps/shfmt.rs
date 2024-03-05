@@ -4,7 +4,7 @@ use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
-use crate::subshell::{self, Executable};
+use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{regex, Output, Result};
 use const_format::formatcp;
