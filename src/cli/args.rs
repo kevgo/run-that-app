@@ -15,7 +15,6 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut log: Option<String> = None;
     let mut app_args: Vec<String> = vec![];
     let mut error_on_output = false;
-    let mut include_path = false;
     let mut which = false;
     let mut setup = false;
     let mut indicate_available = false;
@@ -33,10 +32,6 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             }
             if &arg == "--error-on-output" {
                 error_on_output = true;
-                continue;
-            }
-            if &arg == "--include-path" {
-                include_path = true;
                 continue;
             }
             if &arg == "--optional" {
@@ -91,11 +86,11 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     if let Some(AppVersion { app, version }) = app_version {
         if indicate_available {
             Ok(Args {
-                command: Command::Available { app, version, include_path, log },
+                command: Command::Available { app, version, log },
             })
         } else if which {
             Ok(Args {
-                command: Command::Which { app, version, include_path, log },
+                command: Command::Which { app, version, log },
             })
         } else if let Some(amount) = versions {
             Ok(Args {
@@ -108,13 +103,12 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                     version,
                     app_args,
                     error_on_output,
-                    include_path,
                     optional,
                     log,
                 },
             })
         }
-    } else if error_on_output || include_path || optional || log.is_some() || which || indicate_available {
+    } else if error_on_output || optional || log.is_some() || which || indicate_available {
         Err(UserError::MissingApplication)
     } else {
         Ok(Args { command: Command::DisplayHelp })
@@ -169,7 +163,6 @@ mod tests {
                         command: Command::Available {
                             app: AppName::from("shellcheck"),
                             version: None,
-                            include_path: false,
                             log: None,
                         },
                     });
@@ -178,12 +171,11 @@ mod tests {
 
                 #[test]
                 fn with_all_options() {
-                    let have = parse_args(vec!["rta", "--available", "--include-path", "--log=detect", "shellcheck"]);
+                    let have = parse_args(vec!["rta", "--available", "--log=detect", "shellcheck"]);
                     let want = Ok(Args {
                         command: Command::Available {
                             app: AppName::from("shellcheck"),
                             version: None,
-                            include_path: true,
                             log: Some(S("detect")),
                         },
                     });
@@ -213,7 +205,6 @@ mod tests {
                             version: None,
                             app_args: vec![],
                             error_on_output: true,
-                            include_path: false,
                             optional: false,
                             log: None,
                         },
@@ -248,38 +239,6 @@ mod tests {
                 }
             }
 
-            mod include_path {
-                use super::super::parse_args;
-                use crate::cli::{Args, Command};
-                use crate::config::{AppName, Version};
-                use crate::UserError;
-                use big_s::S;
-
-                #[test]
-                fn with_app() {
-                    let have = parse_args(vec!["rta", "--include-path", "app@2", "arg1"]);
-                    let want = Ok(Args {
-                        command: Command::RunApp {
-                            app: AppName::from("app"),
-                            version: Some(Version::from("2")),
-                            app_args: vec![S("arg1")],
-                            error_on_output: false,
-                            include_path: true,
-                            optional: false,
-                            log: None,
-                        },
-                    });
-                    pretty::assert_eq!(have, want);
-                }
-
-                #[test]
-                fn without_app() {
-                    let have = parse_args(vec!["rta", "--include-path"]);
-                    let want = Err(UserError::MissingApplication);
-                    pretty::assert_eq!(have, want);
-                }
-            }
-
             mod log {
                 use super::super::parse_args;
                 use crate::cli::{Args, Command};
@@ -296,7 +255,6 @@ mod tests {
                             version: Some(Version::from("2")),
                             app_args: vec![],
                             error_on_output: false,
-                            include_path: false,
                             optional: false,
                             log: Some(S("")),
                         },
@@ -313,7 +271,6 @@ mod tests {
                             version: Some(Version::from("2")),
                             app_args: vec![],
                             error_on_output: false,
-                            include_path: false,
                             optional: false,
                             log: Some(S("scope")),
                         },
@@ -345,7 +302,6 @@ mod tests {
                         version: Some(Version::from("2")),
                         app_args: vec![S("arg1")],
                         error_on_output: false,
-                        include_path: false,
                         optional: true,
                         log: None,
                     },
@@ -427,7 +383,6 @@ mod tests {
                         command: Command::Which {
                             app: AppName::from("shellcheck"),
                             version: None,
-                            include_path: false,
                             log: None,
                         },
                     });
@@ -436,12 +391,11 @@ mod tests {
 
                 #[test]
                 fn with_all_options() {
-                    let have = parse_args(vec!["rta", "--which", "--include-path", "--log=detect", "shellcheck"]);
+                    let have = parse_args(vec!["rta", "--which", "--log=detect", "shellcheck"]);
                     let want = Ok(Args {
                         command: Command::Which {
                             app: AppName::from("shellcheck"),
                             version: None,
-                            include_path: true,
                             log: Some(S("detect")),
                         },
                     });
@@ -473,7 +427,6 @@ mod tests {
                         version: Some(Version::from("2")),
                         app_args: vec![],
                         error_on_output: false,
-                        include_path: false,
                         optional: false,
                         log: None,
                     },
@@ -490,7 +443,6 @@ mod tests {
                         version: Some(Version::from("2")),
                         app_args: vec![S("--arg1"), S("arg2")],
                         error_on_output: false,
-                        include_path: false,
                         optional: false,
                         log: None,
                     },
@@ -514,7 +466,6 @@ mod tests {
                         version: Some(Version::from("2")),
                         app_args: vec![S("--arg1"), S("arg2")],
                         error_on_output: false,
-                        include_path: false,
                         optional: false,
                         log: Some(S("l1")),
                     },
@@ -531,7 +482,6 @@ mod tests {
                         version: Some(Version::from("2")),
                         app_args: vec![S("--log=app"), S("--version")],
                         error_on_output: false,
-                        include_path: false,
                         optional: false,
                         log: None,
                     },

@@ -12,7 +12,7 @@ use std::process::ExitCode;
 
 pub fn run(args: &Args) -> Result<ExitCode> {
     for version in args.versions.iter() {
-        if let Some(executable) = load_or_install(&args.app, version, args.include_path, args.output)? {
+        if let Some(executable) = load_or_install(&args.app, version, args.output)? {
             if args.error_on_output {
                 return subshell::execute_check_output(&executable, &args.app_args);
             }
@@ -41,16 +41,13 @@ pub struct Args<'a> {
     /// if true, any output produced by the app is equivalent to an exit code > 0
     pub error_on_output: bool,
 
-    /// whether to include apps in the PATH
-    pub include_path: bool,
-
     /// whether it's okay to not run the app if it cannot be installed
     pub optional: bool,
 
     pub output: &'a dyn Output,
 }
 
-pub fn load_or_install(app_name: &AppName, version: &RequestedVersion, include_path: bool, output: &dyn Output) -> Result<Option<Executable>> {
+pub fn load_or_install(app_name: &AppName, version: &RequestedVersion, output: &dyn Output) -> Result<Option<Executable>> {
     match version {
         RequestedVersion::Path(version) => load_from_path(app_name, version, output),
         RequestedVersion::Yard(version) => load_or_install_from_yard(app_name, version, output),

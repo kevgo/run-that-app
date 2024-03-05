@@ -5,9 +5,9 @@ use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
 
-pub fn available(app: &AppName, versions: &RequestedVersions, include_path: bool, output: &dyn Output) -> Result<ExitCode> {
+pub fn available(app: &AppName, versions: &RequestedVersions, output: &dyn Output) -> Result<ExitCode> {
     for version in versions.iter() {
-        if load_or_install(app, version, include_path, output)?.is_some() {
+        if load_or_install(app, version, output)?.is_some() {
             return Ok(ExitCode::SUCCESS);
         }
     }

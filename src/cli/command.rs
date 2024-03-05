@@ -6,7 +6,6 @@ pub enum Command {
     Available {
         app: AppName,
         version: Option<Version>,
-        include_path: bool,
         log: Option<String>,
     },
     RunApp {
@@ -14,7 +13,6 @@ pub enum Command {
         version: Option<Version>,
         app_args: Vec<String>,
         error_on_output: bool,
-        include_path: bool,
         optional: bool,
         log: Option<String>,
     },
@@ -23,7 +21,6 @@ pub enum Command {
     Which {
         app: AppName,
         version: Option<Version>,
-        include_path: bool,
         log: Option<String>,
     },
     Update {
