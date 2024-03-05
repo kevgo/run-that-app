@@ -49,7 +49,7 @@ fn inner() -> Result<ExitCode> {
         } => {
             let output = output::StdErr { category: log };
             let versions = Versions::determine(&app, version)?;
-            cmd::run(&run::Data {
+            cmd::run(&run::Args {
                 app,
                 versions,
                 app_args,
