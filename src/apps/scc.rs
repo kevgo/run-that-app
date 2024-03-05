@@ -4,6 +4,7 @@ use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
+use crate::regex;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -62,8 +63,8 @@ impl App for Scc {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, path: &Executable) -> Option<Version> {
-        todo!()
+    fn version(&self, executable: &Executable) -> Option<Version> {
+        extract_version(&executable.run_output("--version")).map(Version::from)
     }
 }
 
@@ -95,6 +96,10 @@ fn ext_text(_os: Os) -> &'static str {
     "tar.gz"
 }
 
+fn extract_version(output: &str) -> Option<&str> {
+    regex::first_capture(output, r"scc version (\d+\.\d+\.\d+)")
+}
+
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
@@ -106,5 +111,24 @@ mod tests {
         let have = super::download_url(&Version::from("3.1.0"), platform);
         let want = "https://github.com/boyter/scc/releases/download/v3.1.0/scc_3.1.0_Darwin_arm64.tar.gz";
         assert_eq!(have, want);
+    }
+
+    mod extract_version {
+
+        #[test]
+        fn success() {
+            let give = "scc version 3.2.0";
+            let want = Some("3.2.0");
+            let have = super::super::extract_version(give);
+            assert_eq!(have, want);
+        }
+
+        #[test]
+        fn other() {
+            let give = "other";
+            let want = None;
+            let have = super::super::extract_version(give);
+            assert_eq!(have, want);
+        }
     }
 }
