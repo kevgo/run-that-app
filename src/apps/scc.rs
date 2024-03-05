@@ -113,22 +113,9 @@ mod tests {
         assert_eq!(have, want);
     }
 
-    mod extract_version {
-
-        #[test]
-        fn success() {
-            let give = "scc version 3.2.0";
-            let want = Some("3.2.0");
-            let have = super::super::extract_version(give);
-            assert_eq!(have, want);
-        }
-
-        #[test]
-        fn other() {
-            let give = "other";
-            let want = None;
-            let have = super::super::extract_version(give);
-            assert_eq!(have, want);
-        }
+    #[test]
+    fn extract_version() {
+        assert_eq!(super::extract_version("scc version 3.2.0"), Some("3.2.0"));
+        assert_eq!(super::extract_version("other"), None);
     }
 }

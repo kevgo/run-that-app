@@ -116,8 +116,8 @@ mod tests {
 
     #[test]
     fn extract_version() {
-        assert_eq!(Some("3.7.0"), super::extract_version("v3.7.0"));
-        assert_eq!(None, super::extract_version("3.7.0"));
-        assert_eq!(None, super::extract_version("other"));
+        assert_eq!(super::extract_version("v3.7.0"), Some("3.7.0"));
+        assert_eq!(super::extract_version("3.7.0"), None);
+        assert_eq!(super::extract_version("other"), None);
     }
 }
