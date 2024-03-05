@@ -102,4 +102,17 @@ mod tests {
             assert_eq!(have, None);
         }
     }
+
+    mod update_largest_with {
+        use crate::config::{Version, Versions};
+
+        #[test]
+        fn system_and_versions() {
+            let mut versions = Versions::from(vec!["system@1.2", "1.2", "1.1"]);
+            let have = versions.update_largest_with(&Version::from("1.4"));
+            assert_eq!(have, Some(Version::from("1.2")));
+            let want = Versions::from(vec!["system@1.2", "1.4", "1.1"]);
+            assert_eq!(versions, want);
+        }
+    }
 }
