@@ -72,7 +72,7 @@ Now you can run these applications without having to provide their version
 numbers:
 
 ```bash
-./rta actionlint
+rta actionlint
 ```
 
 Executing `rta --setup` creates a template of this file for you.
