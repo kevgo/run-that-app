@@ -3,9 +3,14 @@ use crate::error::UserError;
 use crate::Result;
 use std::fmt::Display;
 use std::fs::OpenOptions;
-use std::io::Write;
+use std::io::{ErrorKind, Write};
 use std::str::SplitAsciiWhitespace;
 use std::{env, fs, io};
+
+const CONFIG_DEFAULT: &str = "\
+# actionlint 1.2.26
+# gh 2.39.1
+";
 
 #[derive(Debug, Default, PartialEq)]
 pub struct Config {
@@ -13,6 +18,19 @@ pub struct Config {
 }
 
 impl Config {
+    pub fn create() -> Result<()> {
+        let mut file = match OpenOptions::new().write(true).create_new(true).open(FILE_NAME) {
+            Ok(file) => file,
+            Err(err) => {
+                if err.kind() == ErrorKind::AlreadyExists {
+                    return Err(UserError::ConfigFileAlreadyExists);
+                }
+                panic!("{}", err);
+            }
+        };
+        file.write_all(CONFIG_DEFAULT.as_bytes()).map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
+    }
+
     pub fn load() -> Result<Config> {
         match read()? {
             Some(text) => parse(&text),
