@@ -3,6 +3,7 @@ use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
+use crate::regex;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -59,8 +60,8 @@ impl App for NodeJS {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, path: &Executable) -> Option<Version> {
-        todo!()
+    fn version(&self, executable: &Executable) -> Option<Version> {
+        extract_version(&executable.run_output("--version")).map(Version::from)
     }
 }
 
@@ -71,6 +72,10 @@ pub fn download_url(version: &Version, platform: Platform) -> String {
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
     )
+}
+
+pub fn extract_version(output: &str) -> Option<&str> {
+    regex::first_capture(output, r"(\d+\.\d+\.\d+)")
 }
 
 fn os_text(os: Os) -> &'static str {

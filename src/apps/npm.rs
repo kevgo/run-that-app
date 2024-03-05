@@ -2,6 +2,7 @@ use super::nodejs::NodeJS;
 use super::App;
 use crate::config::{AppName, Version};
 use crate::platform::{Os, Platform};
+use crate::regex;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -50,7 +51,21 @@ impl App for Npm {
         (NodeJS {}).installable_versions(amount, output)
     }
 
-    fn version(&self, path: &Executable) -> Option<Version> {
-        todo!()
+    fn version(&self, executable: &Executable) -> Option<Version> {
+        extract_version(&executable.run_output("--version")).map(Version::from)
+    }
+}
+
+pub fn extract_version(output: &str) -> Option<&str> {
+    regex::first_capture(output, r"(\d+\.\d+\.\d+)")
+}
+
+#[cfg(test)]
+mod tests {
+
+    #[test]
+    fn extract_version() {
+        assert_eq!(super::extract_version("10.2.4"), Some("10.2.4"));
+        assert_eq!(super::extract_version("other"), None);
     }
 }
