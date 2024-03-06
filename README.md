@@ -137,16 +137,6 @@ This example calls `go vet` with `alphavet` as a custom vet tool. But only if
 rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
 ```
 
-#### Run globally installed applications if possible
-
-It would be nice to use globally installed applications if they are available at
-a suitable version.
-
-If Go 1.21 is installed in the local system, runs this globally installed
-version. Otherwise installs
-
-rta go build
-
 #### Usage in a Makefile
 
 Here is a template for installing and using run-that-app in a `Makefile`:
@@ -168,6 +158,35 @@ tools/rta@${RTA_VERSION}:
 ```
 
 You would have to `.gitignore` the files `tools/rta*`.
+
+### npm and npx
+
+_Run-that-app_ executes the `npm` and `npx` executables that come with the
+Node.js installation. Hence, to install them, you need to provide the Node
+version. To use already installed executables in your PATH, you need to provide
+the versions of `npm` and `npx`.
+
+Example _.tool-versions_ for npm:
+
+```asdf
+npm system@10.2 20.10.0
+```
+
+This tries to use an existing npm installation as long as it has version 10.2 or
+higher. If your machine has no npm installed, this installs Node 20.10.0 and
+uses the npm version that comes with it.
+
+### gofmt
+
+_Gofmt_ is distributed as part of a Go installation. So please provide the Go
+version when specifying the desired gofmt version. Example _.tools-versions_
+file:
+
+```asdf
+gofmt 1.21.6
+```
+
+This installs Go 1.21.6 and calls the gofmt contained in this installation.
 
 ### Q&A
 
