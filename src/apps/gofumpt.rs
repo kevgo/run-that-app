@@ -4,6 +4,7 @@ use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
+use crate::regex;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -65,8 +66,8 @@ impl App for Gofumpt {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, path: &Executable) -> Option<Version> {
-        todo!()
+    fn version(&self, executable: &Executable) -> Option<Version> {
+        extract_version(&executable.run_output("--version")).map(Version::from)
     }
 }
 
@@ -77,6 +78,10 @@ fn download_url(version: &Version, platform: Platform) -> String {
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
     )
+}
+
+pub fn extract_version(output: &str) -> Option<&str> {
+    regex::first_capture(output, r"v(\d+\.\d+\.\d+) \(go")
 }
 
 fn os_text(os: Os) -> &'static str {
@@ -125,5 +130,11 @@ mod tests {
             let want = "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_windows_amd64.exe";
             assert_eq!(have, want);
         }
+    }
+
+    #[test]
+    fn extract_version() {
+        assert_eq!(super::extract_version("v0.6.0 (go1.21.6)"), Some("0.6.0"));
+        assert_eq!(super::extract_version("other"), None);
     }
 }
