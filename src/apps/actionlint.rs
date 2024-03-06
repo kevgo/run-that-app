@@ -78,6 +78,13 @@ impl App for ActionLint {
     }
 }
 
+fn cpu_text(cpu: Cpu) -> &'static str {
+    match cpu {
+        Cpu::Arm64 => "arm64",
+        Cpu::Intel64 => "amd64",
+    }
+}
+
 fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}",
@@ -87,12 +94,19 @@ fn download_url(version: &Version, platform: Platform) -> String {
     )
 }
 
-fn identify(output: &str) -> bool {
-    output.contains("actionlint is a linter for GitHub Actions workflow files")
+fn ext_text(os: Os) -> &'static str {
+    match os {
+        Os::Linux | Os::MacOS => "tar.gz",
+        Os::Windows => "zip",
+    }
 }
 
 fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
+}
+
+fn identify(output: &str) -> bool {
+    output.contains("actionlint is a linter for GitHub Actions workflow files")
 }
 
 fn os_text(os: Os) -> &'static str {
@@ -100,20 +114,6 @@ fn os_text(os: Os) -> &'static str {
         Os::Linux => "linux",
         Os::MacOS => "darwin",
         Os::Windows => "windows",
-    }
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "arm64",
-        Cpu::Intel64 => "amd64",
-    }
-}
-
-fn ext_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux | Os::MacOS => "tar.gz",
-        Os::Windows => "zip",
     }
 }
 

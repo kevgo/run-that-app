@@ -75,6 +75,13 @@ impl App for MdBook {
     }
 }
 
+fn cpu_text(cpu: Cpu) -> &'static str {
+    match cpu {
+        Cpu::Arm64 => "aarch64",
+        Cpu::Intel64 => "x86_64",
+    }
+}
+
 fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-v{version}-{cpu}-{os}.tar.gz",
@@ -92,13 +99,6 @@ fn os_text(os: Os) -> &'static str {
         Os::Linux => "unknown-linux-gnu",
         Os::MacOS => "apple-darwin",
         Os::Windows => "pc-windows-msvc",
-    }
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "aarch64",
-        Cpu::Intel64 => "x86_64",
     }
 }
 

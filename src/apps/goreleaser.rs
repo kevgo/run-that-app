@@ -71,6 +71,13 @@ impl App for Goreleaser {
     }
 }
 
+fn cpu_text(cpu: Cpu) -> &'static str {
+    match cpu {
+        Cpu::Arm64 => "arm64",
+        Cpu::Intel64 => "x86_64",
+    }
+}
+
 fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}",
@@ -78,6 +85,13 @@ fn download_url(version: &Version, platform: Platform) -> String {
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
     )
+}
+
+fn ext_text(os: Os) -> &'static str {
+    match os {
+        Os::Linux | Os::MacOS => "tar.gz",
+        Os::Windows => "zip",
+    }
 }
 
 fn extract_version(output: &str) -> Option<&str> {
@@ -89,20 +103,6 @@ fn os_text(os: Os) -> &'static str {
         Os::Linux => "Linux",
         Os::MacOS => "Darwin",
         Os::Windows => "Windows",
-    }
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "arm64",
-        Cpu::Intel64 => "x86_64",
-    }
-}
-
-fn ext_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux | Os::MacOS => "tar.gz",
-        Os::Windows => "zip",
     }
 }
 

@@ -68,6 +68,13 @@ impl App for Gh {
     }
 }
 
+fn cpu_text(cpu: Cpu) -> &'static str {
+    match cpu {
+        Cpu::Arm64 => "arm64",
+        Cpu::Intel64 => "amd64",
+    }
+}
+
 fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}",
@@ -77,15 +84,22 @@ fn download_url(version: &Version, platform: Platform) -> String {
     )
 }
 
-fn extract_version(output: &str) -> Option<&str> {
-    regexp::first_capture(output, r"gh version (\d+\.\d+\.\d+)")
-}
-
 fn executable_path(version: &Version, platform: Platform) -> String {
     match platform.os {
         Os::Windows => "bin/gh.exe".to_string(),
         Os::Linux | Os::MacOS => format!("gh_{version}_{os}_{cpu}/bin/gh", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
     }
+}
+
+fn ext_text(os: Os) -> &'static str {
+    match os {
+        Os::Linux => "tar.gz",
+        Os::Windows | Os::MacOS => "zip",
+    }
+}
+
+fn extract_version(output: &str) -> Option<&str> {
+    regexp::first_capture(output, r"gh version (\d+\.\d+\.\d+)")
 }
 
 fn identify(output: &str) -> bool {
@@ -97,20 +111,6 @@ fn os_text(os: Os) -> &'static str {
         Os::Linux => "linux",
         Os::MacOS => "macOS",
         Os::Windows => "windows",
-    }
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "arm64",
-        Cpu::Intel64 => "amd64",
-    }
-}
-
-fn ext_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux => "tar.gz",
-        Os::Windows | Os::MacOS => "zip",
     }
 }
 

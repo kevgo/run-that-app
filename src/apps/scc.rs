@@ -72,6 +72,13 @@ impl App for Scc {
     }
 }
 
+fn cpu_text(cpu: Cpu) -> &'static str {
+    match cpu {
+        Cpu::Arm64 => "arm64",
+        Cpu::Intel64 => "x86_64",
+    }
+}
+
 fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://github.com/{ORG}/{REPO}/releases/download/v{version}/scc_{version}_{os}_{cpu}.{ext}",
@@ -81,27 +88,20 @@ fn download_url(version: &Version, platform: Platform) -> String {
     )
 }
 
-fn os_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux => "Linux",
-        Os::MacOS => "Darwin",
-        Os::Windows => "Windows",
-    }
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "arm64",
-        Cpu::Intel64 => "x86_64",
-    }
-}
-
 fn ext_text(_os: Os) -> &'static str {
     "tar.gz"
 }
 
 fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"scc version (\d+\.\d+\.\d+)")
+}
+
+fn os_text(os: Os) -> &'static str {
+    match os {
+        Os::Linux => "Linux",
+        Os::MacOS => "Darwin",
+        Os::Windows => "Windows",
+    }
 }
 
 #[cfg(test)]

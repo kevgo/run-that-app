@@ -87,6 +87,13 @@ fn cpu_text(cpu: Cpu) -> &'static str {
     }
 }
 
+fn cpu_text(cpu: Cpu) -> &'static str {
+    match cpu {
+        Cpu::Arm64 => "arm64",
+        Cpu::Intel64 => "amd64",
+    }
+}
+
 fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://go.dev/dl/go{version}.{os}-{cpu}.{ext}",

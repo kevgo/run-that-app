@@ -63,6 +63,13 @@ impl App for GolangCiLint {
     }
 }
 
+fn cpu_text(cpu: Cpu) -> &'static str {
+    match cpu {
+        Cpu::Arm64 => "arm64",
+        Cpu::Intel64 => "amd64",
+    }
+}
+
 fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}",
@@ -77,6 +84,13 @@ fn executable_path(version: &Version, platform: Platform, filename: &str) -> Str
     format!("golangci-lint-{version}-{os}-{cpu}/{filename}", os = os_text(platform.os), cpu = cpu_text(platform.cpu),)
 }
 
+fn ext_text(os: Os) -> &'static str {
+    match os {
+        Os::Linux | Os::MacOS => "tar.gz",
+        Os::Windows => "zip",
+    }
+}
+
 fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"golangci-lint has version (\d+\.\d+\.\d+) built with")
 }
@@ -86,20 +100,6 @@ fn os_text(os: Os) -> &'static str {
         Os::Linux => "linux",
         Os::MacOS => "darwin",
         Os::Windows => "windows",
-    }
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "arm64",
-        Cpu::Intel64 => "amd64",
-    }
-}
-
-fn ext_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux | Os::MacOS => "tar.gz",
-        Os::Windows => "zip",
     }
 }
 
