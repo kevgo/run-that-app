@@ -51,7 +51,7 @@ impl App for Deadcode {
         Ok(vec![Version::from("0.16.1")])
     }
 
-    fn version(&self, path: &Executable) -> Option<Version> {
-        todo!()
+    fn version(&self, _executable: &Executable) -> Option<Version> {
+        None // as of 0.16.1 deadcode does not display the version of the installed executable
     }
 }
