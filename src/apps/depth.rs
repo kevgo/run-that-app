@@ -65,8 +65,8 @@ impl App for Depth {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, path: &Executable) -> Option<Version> {
-        todo!()
+    fn version(&self, _executable: &Executable) -> Option<Version> {
+        None // as of 1.2.1 depth doesn't display the version of the installed executable
     }
 }
 
@@ -88,7 +88,7 @@ fn os_text(os: Os) -> &'static str {
 
 fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
-        Cpu::Arm64 => "arm",
+        Cpu::Arm64 => "aarch64", // the "arm" binaries don't run on Apple Silicon
         Cpu::Intel64 => "amd64",
     }
 }
