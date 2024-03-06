@@ -124,7 +124,7 @@ mod tests {
 
         #[test]
         fn success() {
-            let give = r#"
+            let output = r#"
   ____       ____      _
  / ___| ___ |  _ \ ___| | ___  __ _ ___  ___ _ __
 | |  _ / _ \| |_) / _ \ |/ _ \/ _` / __|/ _ \ '__|
@@ -143,9 +143,7 @@ Compiler:      gc
 ModuleSum:     h1:jsoS5T2CvPKOyECPATAo8hCvUaX8ok4iAq9m5Zyl1L0=
 Platform:      linux/arm64
 "#;
-            let want = Some("1.24.0");
-            let have = extract_version(give);
-            assert_eq!(have, want);
+            assert_eq!(extract_version(output), Some("1.24.0"));
         }
 
         #[test]
