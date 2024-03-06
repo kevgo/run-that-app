@@ -59,7 +59,13 @@ impl App for GolangCiLint {
     }
 
     fn version(&self, executable: &Executable) -> VersionResult {
-        extract_version(&executable.run_output("--version")).map(Version::from)
+        if !identify(&executable.run_output("-h")) {
+            return VersionResult::NotIdentified;
+        }
+        match extract_version(&executable.run_output("--version")) {
+            Some(version) => VersionResult::IdentifiedWithVersion(version.into()),
+            None => VersionResult::IdentifiedButUnknownVersion,
+        }
     }
 }
 
@@ -93,6 +99,10 @@ fn ext_text(os: Os) -> &'static str {
 
 fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"golangci-lint has version (\d+\.\d+\.\d+) built with")
+}
+
+fn identify(output: &str) -> bool {
+    output.contains("Smart, fast linters runner")
 }
 
 fn os_text(os: Os) -> &'static str {
