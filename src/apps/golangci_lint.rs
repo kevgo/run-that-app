@@ -77,7 +77,7 @@ fn executable_path(version: &Version, platform: Platform, filename: &str) -> Str
     format!("golangci-lint-{version}-{os}-{cpu}/{filename}", os = os_text(platform.os), cpu = cpu_text(platform.cpu),)
 }
 
-pub fn extract_version(output: &str) -> Option<&str> {
+fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"golangci-lint has version (\d+\.\d+\.\d+) built with")
 }
 

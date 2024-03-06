@@ -73,7 +73,7 @@ impl App for Go {
     }
 }
 
-pub fn download_url(version: &Version, platform: Platform) -> String {
+fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://go.dev/dl/go{version}.{os}-{cpu}.{ext}",
         os = os_text(platform.os),
