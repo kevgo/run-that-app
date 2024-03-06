@@ -1,5 +1,5 @@
 use super::nodejs::NodeJS;
-use super::App;
+use super::{App, VersionResult};
 use crate::config::{AppName, Version};
 use crate::platform::{Os, Platform};
 use crate::regexp;
@@ -51,13 +51,23 @@ impl App for Npm {
         (NodeJS {}).installable_versions(amount, output)
     }
 
-    fn version(&self, executable: &Executable) -> Option<Version> {
-        extract_version(&executable.run_output("--version")).map(Version::from)
+    fn version(&self, executable: &Executable) -> VersionResult {
+        if !identify(&executable.run_output_args(&vec!["help", "npm"])) {
+            return VersionResult::NotIdentified;
+        }
+        match extract_version(&executable.run_output("--version")) {
+            Some(version) => VersionResult::IdentifiedWithVersion(version.into()),
+            None => VersionResult::IdentifiedButUnknownVersion,
+        }
     }
 }
 
 fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
+}
+
+fn identify(output: &str) -> bool {
+    output.contains("javascript package manager")
 }
 
 #[cfg(test)]
