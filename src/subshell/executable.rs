@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::ffi::OsStr;
 use std::path::PathBuf;
 use std::process::Command;
@@ -13,6 +14,10 @@ impl AsRef<OsStr> for Executable {
 }
 
 impl Executable {
+    pub fn as_str(&self) -> Cow<'_, str> {
+        self.0.to_string_lossy()
+    }
+
     /// runs this executable with the given args and returns the output it produced
     pub fn run_output(&self, arg: &str) -> String {
         let mut cmd = Command::new(self);

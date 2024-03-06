@@ -68,10 +68,10 @@ impl App for Goreleaser {
 
     fn version(&self, executable: &Executable) -> VersionResult {
         let output = &executable.run_output("-V");
-        if !identify(&output) {
+        if !identify(output) {
             return VersionResult::NotIdentified;
         }
-        match extract_version(&output) {
+        match extract_version(output) {
             Some(version) => VersionResult::IdentifiedWithVersion(version.into()),
             None => VersionResult::IdentifiedButUnknownVersion,
         }

@@ -52,7 +52,7 @@ impl App for Npm {
     }
 
     fn version(&self, executable: &Executable) -> VersionResult {
-        if !identify(&executable.run_output_args(&vec!["help", "npm"])) {
+        if !identify(&executable.run_output_args(&["help", "npm"])) {
             return VersionResult::NotIdentified;
         }
         match extract_version(&executable.run_output("--version")) {
