@@ -65,6 +65,10 @@ impl App for Ghokin {
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         github_releases::versions("antham", "ghokin", amount, output)
     }
+
+    fn version(&self, _executable: &Executable) -> Option<Version> {
+        None // as of 3.4.0 ghokin's "version" command prints nothing
+    }
 }
 
 fn download_url(version: &Version, platform: Platform) -> String {

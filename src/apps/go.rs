@@ -3,6 +3,7 @@ use crate::config::{AppName, Version};
 use crate::hosting::github_tags;
 use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
+use crate::regexp;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -66,6 +67,10 @@ impl App for Go {
         }
         Ok(go_tags.into_iter().map(Version::from).collect())
     }
+
+    fn version(&self, executable: &Executable) -> Option<Version> {
+        extract_version(&executable.run_output("version")).map(Version::from)
+    }
 }
 
 pub fn download_url(version: &Version, platform: Platform) -> String {
@@ -99,6 +104,10 @@ fn ext_text(os: Os) -> &'static str {
     }
 }
 
+fn extract_version(output: &str) -> Option<&str> {
+    regexp::first_capture(output, r"go version go(\d+\.\d+\.\d+)")
+}
+
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
@@ -109,6 +118,14 @@ mod tests {
         let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
         let have = super::download_url(&Version::from("1.21.5"), platform);
         let want = "https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz";
+        assert_eq!(have, want);
+    }
+
+    #[test]
+    fn extract_version() {
+        let give = "go version go1.21.7 linux/arm64";
+        let have = super::extract_version(give);
+        let want = Some("1.21.7");
         assert_eq!(have, want);
     }
 }

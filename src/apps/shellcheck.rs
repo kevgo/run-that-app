@@ -3,6 +3,7 @@ use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
+use crate::regexp;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -54,6 +55,10 @@ impl App for ShellCheck {
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, output)
     }
+
+    fn version(&self, executable: &Executable) -> Option<Version> {
+        extract_version(&executable.run_output("--version")).map(Version::from)
+    }
 }
 
 fn download_url(version: &Version, platform: Platform) -> String {
@@ -87,6 +92,10 @@ fn ext_text(os: Os) -> &'static str {
     }
 }
 
+fn extract_version(output: &str) -> Option<&str> {
+    regexp::first_capture(output, r"version: (\d+\.\d+\.\d+)")
+}
+
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
@@ -98,5 +107,24 @@ mod tests {
         let have = super::download_url(&Version::from("0.9.0"), platform);
         let want = "https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.linux.x86_64.tar.xz";
         assert_eq!(have, want);
+    }
+
+    mod extract_version {
+        use super::super::extract_version;
+
+        #[test]
+        fn success() {
+            let give = "
+ShellCheck - shell script analysis tool
+version: 0.9.0
+license: GNU General Public License, version 3
+website: https://www.shellcheck.net";
+            assert_eq!(extract_version(give), Some("0.9.0"));
+        }
+
+        #[test]
+        fn other() {
+            assert_eq!(extract_version("other"), None);
+        }
     }
 }

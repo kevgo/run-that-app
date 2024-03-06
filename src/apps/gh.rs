@@ -3,6 +3,7 @@ use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
+use crate::regexp;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -55,6 +56,10 @@ impl App for Gh {
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, output)
     }
+
+    fn version(&self, executable: &Executable) -> Option<Version> {
+        extract_version(&executable.run_output("--version")).map(Version::from)
+    }
 }
 
 fn download_url(version: &Version, platform: Platform) -> String {
@@ -64,6 +69,10 @@ fn download_url(version: &Version, platform: Platform) -> String {
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
     )
+}
+
+pub fn extract_version(output: &str) -> Option<&str> {
+    regexp::first_capture(output, r"gh version (\d+\.\d+\.\d+)")
 }
 
 fn executable_path(version: &Version, platform: Platform) -> String {
@@ -106,5 +115,23 @@ mod tests {
         let have = super::download_url(&Version::from("2.39.1"), platform);
         let want = "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_amd64.tar.gz";
         assert_eq!(have, want);
+    }
+
+    mod extract_version {
+        use super::super::extract_version;
+
+        #[test]
+        fn success() {
+            let output = "
+gh version 2.45.0 (2024-03-04)
+https://github.com/cli/cli/releases/tag/v2.45.0
+";
+            assert_eq!(extract_version(output), Some("2.45.0"));
+        }
+
+        #[test]
+        fn other() {
+            assert_eq!(extract_version("other"), None);
+        }
     }
 }

@@ -4,6 +4,7 @@ use crate::hosting::github_releases;
 use crate::install::compile_rust::{compile_rust, CompileArgs};
 use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
+use crate::regexp;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -27,7 +28,10 @@ impl App for MdBook {
     }
 
     fn executable_filepath(&self, platform: Platform) -> &'static str {
-        self.executable_filename(platform)
+        match platform.os {
+            Os::Linux | Os::MacOS => "bin/mdbook",
+            Os::Windows => "bin//mdbook.exe",
+        }
     }
 
     fn homepage(&self) -> &'static str {
@@ -65,6 +69,10 @@ impl App for MdBook {
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, output)
     }
+
+    fn version(&self, executable: &Executable) -> Option<Version> {
+        extract_version(&executable.run_output("-V")).map(Version::from)
+    }
 }
 
 fn download_url(version: &Version, platform: Platform) -> String {
@@ -73,6 +81,10 @@ fn download_url(version: &Version, platform: Platform) -> String {
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu)
     )
+}
+
+pub fn extract_version(output: &str) -> Option<&str> {
+    regexp::first_capture(output, r"mdbook v(\d+\.\d+\.\d+)")
 }
 
 fn os_text(os: Os) -> &'static str {
@@ -101,5 +113,11 @@ mod tests {
         let have = super::download_url(&Version::from("0.4.37"), platform);
         let want = "https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz";
         assert_eq!(have, want);
+    }
+
+    #[test]
+    fn extract_version() {
+        assert_eq!(super::extract_version("mdbook v0.4.37"), Some("0.4.37"));
+        assert_eq!(super::extract_version("other"), None);
     }
 }

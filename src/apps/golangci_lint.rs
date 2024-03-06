@@ -3,6 +3,7 @@ use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
+use crate::regexp;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -56,6 +57,10 @@ impl App for GolangCiLint {
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, output)
     }
+
+    fn version(&self, executable: &Executable) -> Option<Version> {
+        extract_version(&executable.run_output("--version")).map(Version::from)
+    }
 }
 
 fn download_url(version: &Version, platform: Platform) -> String {
@@ -67,8 +72,13 @@ fn download_url(version: &Version, platform: Platform) -> String {
     )
 }
 
+// TODO: move into the executable_filepath method of the App trait
 fn executable_path(version: &Version, platform: Platform, filename: &str) -> String {
     format!("golangci-lint-{version}-{os}-{cpu}/{filename}", os = os_text(platform.os), cpu = cpu_text(platform.cpu),)
+}
+
+pub fn extract_version(output: &str) -> Option<&str> {
+    regexp::first_capture(output, r"golangci-lint has version (\d+\.\d+\.\d+) built with")
 }
 
 fn os_text(os: Os) -> &'static str {
@@ -104,5 +114,14 @@ mod tests {
         let have = super::download_url(&Version::from("1.55.2"), platform);
         let want = "https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-darwin-arm64.tar.gz";
         assert_eq!(have, want);
+    }
+
+    #[test]
+    fn extract_version() {
+        assert_eq!(
+            super::extract_version("golangci-lint has version 1.56.2 built with go1.22.0 from 58a724a0 on 2024-02-15T18:01:51Z"),
+            Some("1.56.2")
+        );
+        assert_eq!(super::extract_version("other"), None);
     }
 }

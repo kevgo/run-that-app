@@ -1,7 +1,7 @@
-use super::{AppName, Versions};
+use super::{AppName, RequestedVersions};
 
 #[derive(Debug, PartialEq)]
 pub struct AppVersions {
     pub app: AppName,
-    pub versions: Versions,
+    pub versions: RequestedVersions,
 }

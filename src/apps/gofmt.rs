@@ -22,8 +22,8 @@ impl App for Gofmt {
 
     fn executable_filepath(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Linux | Os::MacOS => "bin/go",
-            Os::Windows => "bin\\go.exe",
+            Os::Linux | Os::MacOS => "bin/gofmt",
+            Os::Windows => "bin\\gofmt.exe",
         }
     }
 
@@ -48,5 +48,10 @@ impl App for Gofmt {
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         (Go {}).installable_versions(amount, output)
+    }
+
+    fn version(&self, _executable: &Executable) -> Option<Version> {
+        // TODO: return the version of Go here
+        None
     }
 }

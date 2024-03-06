@@ -26,6 +26,14 @@ pub enum UserError {
         file: String,
         reason: String,
     },
+    CannotParseSemverVersion {
+        expression: String,
+        reason: String,
+    },
+    CannotParseSemverRange {
+        expression: String,
+        reason: String,
+    },
     ConfigFileAlreadyExists,
     GitHubReleasesApiProblem {
         problem: String,
@@ -93,6 +101,14 @@ impl UserError {
             UserError::CannotMakeFileExecutable { file, reason } => {
                 error(&format!("Cannot make file {file} executable: {reason}"));
                 desc("Please check access permissions and try again.");
+            }
+            UserError::CannotParseSemverVersion { expression, reason } => {
+                error(&format!("semver version \"{expression}\" is incorrect: {reason}"));
+                desc("Please use exactly three numbers separated by dots, e.g. 1.2.3");
+            }
+            UserError::CannotParseSemverRange { expression, reason } => {
+                error(&format!("semver range \"{expression}\" is incorrect: {reason}"));
+                desc("Please use formats described at https://devhints.io/semver.");
             }
             UserError::ConfigFileAlreadyExists => {
                 error("config file already exists");
@@ -175,7 +191,7 @@ impl UserError {
                 desc(
                     "It looks like there are no binary versions for this app for your platform.
 
-As a workaround, you could install this app in other ways and then run \"rta --include-path\".
+As a workaround, you could install this app in other ways and then add a \"system\" version to .tool-versions.
 If you are okay moving forward without this app, you can provide the \"--optional\" switch and run-that-app will ignore this failure.",
                 );
             }

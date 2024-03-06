@@ -4,6 +4,7 @@ use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
+use crate::regexp;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -64,6 +65,10 @@ impl App for Goreleaser {
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, output)
     }
+
+    fn version(&self, executable: &Executable) -> Option<Version> {
+        extract_version(&executable.run_output("-V")).map(Version::from)
+    }
 }
 
 fn download_url(version: &Version, platform: Platform) -> String {
@@ -73,6 +78,10 @@ fn download_url(version: &Version, platform: Platform) -> String {
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
     )
+}
+
+pub fn extract_version(output: &str) -> Option<&str> {
+    regexp::first_capture(output, r"GitVersion:\s*(\d+\.\d+\.\d+)")
 }
 
 fn os_text(os: Os) -> &'static str {
@@ -108,5 +117,38 @@ mod tests {
         let have = super::download_url(&Version::from("1.22.1"), platform);
         let want = "https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz";
         assert_eq!(have, want);
+    }
+
+    mod extract_version {
+        use super::super::extract_version;
+
+        #[test]
+        fn success() {
+            let output = r"
+  ____       ____      _
+ / ___| ___ |  _ \ ___| | ___  __ _ ___  ___ _ __
+| |  _ / _ \| |_) / _ \ |/ _ \/ _` / __|/ _ \ '__|
+| |_| | (_) |  _ <  __/ |  __/ (_| \__ \  __/ |
+ \____|\___/|_| \_\___|_|\___|\__,_|___/\___|_|
+goreleaser: Deliver Go Binaries as fast and easily as possible
+https://goreleaser.com
+
+GitVersion:    1.24.0
+GitCommit:     00c2ff733758f63201811c337f8d043e8fcc9d58
+GitTreeState:  false
+BuildDate:     2024-02-05T12:18:01Z
+BuiltBy:       goreleaser
+GoVersion:     go1.21.6
+Compiler:      gc
+ModuleSum:     h1:jsoS5T2CvPKOyECPATAo8hCvUaX8ok4iAq9m5Zyl1L0=
+Platform:      linux/arm64
+";
+            assert_eq!(extract_version(output), Some("1.24.0"));
+        }
+
+        #[test]
+        fn other() {
+            assert_eq!(extract_version("other"), None);
+        }
     }
 }

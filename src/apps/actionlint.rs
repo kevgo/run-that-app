@@ -4,6 +4,7 @@ use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
+use crate::regexp;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -65,6 +66,10 @@ impl App for ActionLint {
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, output)
     }
+
+    fn version(&self, executable: &Executable) -> Option<Version> {
+        extract_version(&executable.run_output("--version")).map(Version::from)
+    }
 }
 
 fn download_url(version: &Version, platform: Platform) -> String {
@@ -74,6 +79,10 @@ fn download_url(version: &Version, platform: Platform) -> String {
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
     )
+}
+
+pub fn extract_version(output: &str) -> Option<&str> {
+    regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
 }
 
 fn os_text(os: Os) -> &'static str {
@@ -109,5 +118,11 @@ mod tests {
         let have = super::download_url(&Version::from("1.6.26"), platform);
         let want = "https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_linux_arm64.tar.gz";
         assert_eq!(have, want);
+    }
+
+    #[test]
+    fn extract_version() {
+        assert_eq!(super::extract_version("1.6.27"), Some("1.6.27"));
+        assert_eq!(super::extract_version("other"), None);
     }
 }

@@ -4,6 +4,7 @@ use crate::hosting::github_releases;
 use crate::install::compile_rust::{compile_rust, CompileArgs};
 use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
+use crate::regexp;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -64,6 +65,10 @@ impl App for Dprint {
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, output)
     }
+
+    fn version(&self, executable: &Executable) -> Option<Version> {
+        extract_version(&executable.run_output("--version")).map(Version::from)
+    }
 }
 
 fn download_url(version: &Version, platform: Platform) -> String {
@@ -72,6 +77,10 @@ fn download_url(version: &Version, platform: Platform) -> String {
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu)
     )
+}
+
+pub fn extract_version(output: &str) -> Option<&str> {
+    regexp::first_capture(output, r"dprint (\d+\.\d+\.\d+)")
 }
 
 fn os_text(os: Os) -> &'static str {
@@ -108,5 +117,11 @@ mod tests {
         let have = super::download_url(&Version::from("0.43.1"), platform);
         let want = "https://github.com/dprint/dprint/releases/download/0.43.1/dprint-aarch64-unknown-linux-gnu.zip";
         assert_eq!(have, want);
+    }
+
+    #[test]
+    fn extract_version() {
+        assert_eq!(super::extract_version("dprint 0.45.0"), Some("0.45.0"));
+        assert_eq!(super::extract_version("other"), None);
     }
 }

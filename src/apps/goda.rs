@@ -53,4 +53,8 @@ impl App for Goda {
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, output)
     }
+
+    fn version(&self, _executable: &Executable) -> Option<Version> {
+        None // as of 0.5.7 goda has no way to determine the version of the installed executable
+    }
 }

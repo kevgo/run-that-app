@@ -4,6 +4,7 @@ use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
+use crate::regexp;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -65,6 +66,10 @@ impl App for Scc {
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, output)
     }
+
+    fn version(&self, executable: &Executable) -> Option<Version> {
+        extract_version(&executable.run_output("--version")).map(Version::from)
+    }
 }
 
 fn download_url(version: &Version, platform: Platform) -> String {
@@ -95,6 +100,10 @@ fn ext_text(_os: Os) -> &'static str {
     "tar.gz"
 }
 
+fn extract_version(output: &str) -> Option<&str> {
+    regexp::first_capture(output, r"scc version (\d+\.\d+\.\d+)")
+}
+
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
@@ -106,5 +115,11 @@ mod tests {
         let have = super::download_url(&Version::from("3.1.0"), platform);
         let want = "https://github.com/boyter/scc/releases/download/v3.1.0/scc_3.1.0_Darwin_arm64.tar.gz";
         assert_eq!(have, want);
+    }
+
+    #[test]
+    fn extract_version() {
+        assert_eq!(super::extract_version("scc version 3.2.0"), Some("3.2.0"));
+        assert_eq!(super::extract_version("other"), None);
     }
 }
