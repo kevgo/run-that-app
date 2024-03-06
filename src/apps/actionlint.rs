@@ -72,7 +72,7 @@ impl App for ActionLint {
             return VersionResult::NotIdentified;
         }
         match extract_version(&executable.run_output("--version")) {
-            Some(version) => VersionResult::IdentifiedWithVersion(Version::from(version)),
+            Some(version) => VersionResult::IdentifiedWithVersion(version.into()),
             None => VersionResult::NotIdentified,
         }
     }

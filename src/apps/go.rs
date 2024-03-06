@@ -70,7 +70,7 @@ impl App for Go {
 
     fn version(&self, executable: &Executable) -> VersionResult {
         if let Some(version) = extract_version(&executable.run_output("version")) {
-            return VersionResult::IdentifiedWithVersion(Version::from(version));
+            return VersionResult::IdentifiedWithVersion(version.into());
         }
         if identify(&executable.run_output("-h")) {
             VersionResult::IdentifiedButUnknownVersion

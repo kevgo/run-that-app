@@ -67,7 +67,13 @@ impl App for Gofumpt {
     }
 
     fn version(&self, executable: &Executable) -> VersionResult {
-        extract_version(&executable.run_output("--version")).map(Version::from)
+        if !identify(&executable.run_output("-h")) {
+            return VersionResult::NotIdentified;
+        }
+        match extract_version(&executable.run_output("--version")) {
+            Some(version) => VersionResult::IdentifiedWithVersion(version.into()),
+            None => VersionResult::IdentifiedButUnknownVersion,
+        }
     }
 }
 
@@ -96,6 +102,10 @@ fn ext_text(os: Os) -> &'static str {
 
 fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"v(\d+\.\d+\.\d+) \(go")
+}
+
+fn identify(output: &str) -> bool {
+    output.contains("display diffs instead of rewriting files")
 }
 
 fn os_text(os: Os) -> &'static str {
