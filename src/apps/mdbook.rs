@@ -1,4 +1,4 @@
-use super::App;
+use super::{App, VersionResult};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_rust::{compile_rust, CompileArgs};
@@ -70,8 +70,14 @@ impl App for MdBook {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, executable: &Executable) -> Option<Version> {
-        extract_version(&executable.run_output("-V")).map(Version::from)
+    fn version(&self, executable: &Executable) -> VersionResult {
+        if !identify(&executable.run_output("-h")) {
+            return VersionResult::NotIdentified;
+        }
+        match extract_version(&executable.run_output("-V")) {
+            Some(version) => VersionResult::IdentifiedWithVersion(version.into()),
+            None => VersionResult::IdentifiedButUnknownVersion,
+        }
     }
 }
 
@@ -92,6 +98,10 @@ fn download_url(version: &Version, platform: Platform) -> String {
 
 fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"mdbook v(\d+\.\d+\.\d+)")
+}
+
+fn identify(output: &str) -> bool {
+    output.contains("Creates a book from markdown files")
 }
 
 fn os_text(os: Os) -> &'static str {
