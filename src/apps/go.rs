@@ -1,5 +1,3 @@
-use std::num::FpCategory;
-
 use super::App;
 use crate::config::{AppName, Version};
 use crate::hosting::github_tags;

@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use super::Version;
 
 /// an application version requested by the user
@@ -9,11 +11,14 @@ pub enum RequestedVersion {
     Yard(Version),
 }
 
-impl RequestedVersion {
-    pub fn to_string(&self) -> String {
+impl Display for RequestedVersion {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            RequestedVersion::Path(version) => format!("system@{}", version.as_str()),
-            RequestedVersion::Yard(version) => version.to_string(),
+            RequestedVersion::Path(version) => {
+                f.write_str("system@")?;
+                f.write_str(version.as_str())
+            }
+            RequestedVersion::Yard(version) => f.write_str(version.as_str()),
         }
     }
 }
@@ -36,7 +41,7 @@ impl From<&str> for RequestedVersion {
 
 fn is_system(value: &str) -> Option<String> {
     if value.starts_with("system@") {
-        return Some(value[7..].to_string());
+        return value.strip_prefix("system@").map(ToString::to_string);
     }
     if value == "system" {
         return Some(String::from("*"));

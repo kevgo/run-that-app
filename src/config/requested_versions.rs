@@ -29,7 +29,7 @@ impl RequestedVersions {
     }
 
     /// provides the largest yard version contained in this collection
-    /// TODO: rename to largest_yard
+    /// TODO: rename to `largest_yard`
     fn largest_non_system(&self) -> Option<&Version> {
         let mut result = None;
         for version in &self.0 {
