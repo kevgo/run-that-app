@@ -68,6 +68,7 @@ impl App for ActionLint {
     }
 
     fn version(&self, executable: &Executable) -> VersionResult {
+        if !identify(&executable.run_output("-h"))
         extract_version(&executable.run_output("--version"))
     }
 }
@@ -81,15 +82,11 @@ fn download_url(version: &Version, platform: Platform) -> String {
     )
 }
 
-<<<<<<< HEAD
 fn identify(output: &str) -> bool {
-    output.contains("")
+    output.contains("actionlint is a linter for GitHub Actions workflow files")
 }
 
 fn extract_version(output: &str) -> VersionResult {
-=======
-fn extract_version(output: &str) -> Option<&str> {
->>>>>>> main
     regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
 }
 
