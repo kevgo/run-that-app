@@ -2,7 +2,6 @@ use super::go::Go;
 use super::App;
 use crate::config::{AppName, Version};
 use crate::platform::{Os, Platform};
-use crate::regex;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -51,11 +50,8 @@ impl App for Gofmt {
         (Go {}).installable_versions(amount, output)
     }
 
-    fn version(&self, path: &Executable) -> Option<Version> {
-        todo!()
+    fn version(&self, _executable: &Executable) -> Option<Version> {
+        // TODO: return the version of Go here
+        None
     }
-}
-
-pub fn extract_version(output: &str) -> Option<&str> {
-    regex::first_capture(output, r"v(\d+\.\d+\.\d+) \(go")
 }
