@@ -265,7 +265,7 @@ installed somewhere in your PATH, _run-that-app_ would execute it.
 
 #### What about apps is written in NodeJS, Python, or Ruby?
 
-Use the tooling of those frameworks to run that app!
+Use the package managers of those frameworks to run that app!
 
 #### What if my app has dependencies that run-that-app doesn't support?
 
