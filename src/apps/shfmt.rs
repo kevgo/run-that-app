@@ -70,6 +70,13 @@ impl App for Shfmt {
     }
 }
 
+fn cpu_text(cpu: Cpu) -> &'static str {
+    match cpu {
+        Cpu::Arm64 => "arm64",
+        Cpu::Intel64 => "amd64",
+    }
+}
+
 fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://github.com/{ORG}/{REPO}/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}",
@@ -77,21 +84,6 @@ fn download_url(version: &Version, platform: Platform) -> String {
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
     )
-}
-
-fn os_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux => "linux",
-        Os::MacOS => "darwin",
-        Os::Windows => "windows",
-    }
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "arm64",
-        Cpu::Intel64 => "amd64",
-    }
 }
 
 fn ext_text(os: Os) -> &'static str {
@@ -103,6 +95,14 @@ fn ext_text(os: Os) -> &'static str {
 
 fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"^v(\d+\.\d+\.\d+)$")
+}
+
+fn os_text(os: Os) -> &'static str {
+    match os {
+        Os::Linux => "linux",
+        Os::MacOS => "darwin",
+        Os::Windows => "windows",
+    }
 }
 
 #[cfg(test)]
