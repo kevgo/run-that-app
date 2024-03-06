@@ -119,9 +119,7 @@ ShellCheck - shell script analysis tool
 version: 0.9.0
 license: GNU General Public License, version 3
 website: https://www.shellcheck.net";
-            let want = Some("0.9.0");
-            let have = extract_version(give);
-            assert_eq!(have, want);
+            assert_eq!(extract_version(give), Some("0.9.0"));
         }
 
         #[test]
