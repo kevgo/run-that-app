@@ -81,7 +81,7 @@ fn download_url(version: &Version, platform: Platform) -> String {
     )
 }
 
-pub fn extract_version(output: &str) -> Option<&str> {
+fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
 }
 
