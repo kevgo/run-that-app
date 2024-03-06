@@ -56,7 +56,7 @@ impl App for Npx {
     }
 }
 
-pub fn extract_version(output: &str) -> Option<&str> {
+fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
 }
 

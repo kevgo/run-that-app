@@ -65,7 +65,7 @@ impl App for NodeJS {
     }
 }
 
-pub fn download_url(version: &Version, platform: Platform) -> String {
+fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",
         os = os_text(platform.os),
@@ -74,7 +74,7 @@ pub fn download_url(version: &Version, platform: Platform) -> String {
     )
 }
 
-pub fn extract_version(output: &str) -> Option<&str> {
+fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"v(\d+\.\d+\.\d+)")
 }
 

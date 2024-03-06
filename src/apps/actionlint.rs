@@ -81,11 +81,15 @@ fn download_url(version: &Version, platform: Platform) -> String {
     )
 }
 
+<<<<<<< HEAD
 fn identify(output: &str) -> bool {
     output.contains("")
 }
 
 fn extract_version(output: &str) -> VersionResult {
+=======
+fn extract_version(output: &str) -> Option<&str> {
+>>>>>>> main
     regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
 }
 
