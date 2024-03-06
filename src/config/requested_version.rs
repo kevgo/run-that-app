@@ -39,6 +39,8 @@ impl From<&str> for RequestedVersion {
     }
 }
 
+/// Indicates whether the given version string requests an executable in the PATH or in the yard.
+/// Also provides the sanitized version string without the "system" prefix.
 fn is_system(value: &str) -> Option<String> {
     if value.starts_with("system@") {
         return value.strip_prefix("system@").map(ToString::to_string);
