@@ -71,6 +71,7 @@ fn download_url(version: &Version, platform: Platform) -> String {
     )
 }
 
+// TODO: move into the executable_filepath method of the App trait
 fn executable_path(version: &Version, platform: Platform, filename: &str) -> String {
     format!("golangci-lint-{version}-{os}-{cpu}/{filename}", os = os_text(platform.os), cpu = cpu_text(platform.cpu),)
 }
