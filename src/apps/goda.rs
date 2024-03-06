@@ -1,4 +1,4 @@
-use super::App;
+use super::{App, VersionResult};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
@@ -54,7 +54,15 @@ impl App for Goda {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, _executable: &Executable) -> Option<Version> {
-        None // as of 0.5.7 goda has no way to determine the version of the installed executable
+    fn version(&self, executable: &Executable) -> VersionResult {
+        if !identify(&executable.run_output("-h")) {
+            return VersionResult::NotIdentified;
+        }
+        // as of 0.5.7 goda has no way to determine the version of the installed executable
+        VersionResult::IdentifiedButUnknownVersion
     }
+}
+
+fn identify(output: &str) -> bool {
+    output.contains("Clean and/or apply transformation on gherkin files")
 }
