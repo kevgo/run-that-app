@@ -309,6 +309,3 @@ blockchain component to this.
 Compared to pkgx, run-that-app is leaner, supports more platforms (Windows), and
 offers additional features like the ability to compile from source, optional
 execution, and checking whether an application is available for your platform.
-
-```
-```
