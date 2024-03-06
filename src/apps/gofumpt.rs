@@ -4,7 +4,7 @@ use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
-use crate::regex;
+use crate::regexp;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -81,7 +81,7 @@ fn download_url(version: &Version, platform: Platform) -> String {
 }
 
 pub fn extract_version(output: &str) -> Option<&str> {
-    regex::first_capture(output, r"v(\d+\.\d+\.\d+) \(go")
+    regexp::first_capture(output, r"v(\d+\.\d+\.\d+) \(go")
 }
 
 fn os_text(os: Os) -> &'static str {

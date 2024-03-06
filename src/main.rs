@@ -10,7 +10,7 @@ mod hosting;
 mod install;
 mod output;
 mod platform;
-mod regex;
+mod regexp;
 mod subshell;
 mod yard;
 

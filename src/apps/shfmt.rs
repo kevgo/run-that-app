@@ -6,7 +6,7 @@ use crate::install::executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::subshell::Executable;
 use crate::yard::Yard;
-use crate::{regex, Output, Result};
+use crate::{regexp, Output, Result};
 use const_format::formatcp;
 
 pub struct Shfmt {}
@@ -102,7 +102,7 @@ fn ext_text(os: Os) -> &'static str {
 }
 
 fn extract_version(output: &str) -> Option<&str> {
-    regex::first_capture(output, r"^v(\d+\.\d+\.\d+)$")
+    regexp::first_capture(output, r"^v(\d+\.\d+\.\d+)$")
 }
 
 #[cfg(test)]

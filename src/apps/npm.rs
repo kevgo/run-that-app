@@ -2,7 +2,7 @@ use super::nodejs::NodeJS;
 use super::App;
 use crate::config::{AppName, Version};
 use crate::platform::{Os, Platform};
-use crate::regex;
+use crate::regexp;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -57,7 +57,7 @@ impl App for Npm {
 }
 
 pub fn extract_version(output: &str) -> Option<&str> {
-    regex::first_capture(output, r"(\d+\.\d+\.\d+)")
+    regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]

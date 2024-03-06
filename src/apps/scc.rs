@@ -4,7 +4,7 @@ use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
-use crate::regex;
+use crate::regexp;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -101,7 +101,7 @@ fn ext_text(_os: Os) -> &'static str {
 }
 
 fn extract_version(output: &str) -> Option<&str> {
-    regex::first_capture(output, r"scc version (\d+\.\d+\.\d+)")
+    regexp::first_capture(output, r"scc version (\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
