@@ -3,7 +3,6 @@ use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::platform::{Os, Platform};
-use crate::regex;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -55,7 +54,7 @@ impl App for Goda {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, executable: &Executable) -> Option<Version> {
+    fn version(&self, _executable: &Executable) -> Option<Version> {
         None // as of 0.5.7, goda has no way to determine the version of the installed executable
     }
 }
