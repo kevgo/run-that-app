@@ -1,4 +1,4 @@
-use super::App;
+use super::{App, VersionResult};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_rust::{compile_rust, CompileArgs};
@@ -66,8 +66,14 @@ impl App for Dprint {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, executable: &Executable) -> Option<Version> {
-        extract_version(&executable.run_output("--version")).map(Version::from)
+    fn version(&self, executable: &Executable) -> VersionResult {
+        if !identify(&executable.run_output("-h")) {
+            return VersionResult::NotIdentified;
+        }
+        match extract_version(&executable.run_output("--version")) {
+            Some(version) => VersionResult::IdentifiedWithVersion(Version::from(version)),
+            None => VersionResult::IdentifiedButUnknownVersion,
+        }
     }
 }
 
@@ -81,6 +87,10 @@ fn download_url(version: &Version, platform: Platform) -> String {
 
 fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"dprint (\d+\.\d+\.\d+)")
+}
+
+fn identify(output: &str) -> bool {
+    output.contains("Auto-formats source code based on the specified plugins")
 }
 
 fn os_text(os: Os) -> &'static str {
