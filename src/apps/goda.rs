@@ -55,6 +55,6 @@ impl App for Goda {
     }
 
     fn version(&self, _executable: &Executable) -> Option<Version> {
-        None // as of 0.5.7, goda has no way to determine the version of the installed executable
+        None // as of 0.5.7 goda has no way to determine the version of the installed executable
     }
 }
