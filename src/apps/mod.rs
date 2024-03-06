@@ -55,7 +55,18 @@ pub trait App {
     fn latest_installable_version(&self, output: &dyn Output) -> Result<Version>;
 
     /// provides the version of the executable that is installed at the given path
-    fn version(&self, path: &Executable) -> Option<Version>;
+    fn version(&self, path: &Executable) -> VersionResult;
+}
+
+pub enum VersionResult {
+    /// the given executable seems to belong to another application
+    NotIdentified,
+
+    /// the given executable is for this app but doesn't provide a way to determine the version
+    IdentifiedButUnknownVersion,
+
+    /// the given executable is for this app, and here is its version
+    IdentifiedAndVersioned(Version),
 }
 
 pub fn all() -> Apps {

@@ -1,4 +1,4 @@
-use super::App;
+use super::{App, VersionResult};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
@@ -67,8 +67,8 @@ impl App for ActionLint {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, executable: &Executable) -> Option<Version> {
-        extract_version(&executable.run_output("--version")).map(Version::from)
+    fn version(&self, executable: &Executable) -> VersionResult {
+        extract_version(&executable.run_output("--version"))
     }
 }
 
@@ -81,7 +81,7 @@ fn download_url(version: &Version, platform: Platform) -> String {
     )
 }
 
-pub fn extract_version(output: &str) -> Option<&str> {
+pub fn extract_version(output: &str) -> VersionResult {
     regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
 }
 
