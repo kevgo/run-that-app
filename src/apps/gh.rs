@@ -122,13 +122,11 @@ mod tests {
 
         #[test]
         fn success() {
-            let give = "
+            let output = "
 gh version 2.45.0 (2024-03-04)
 https://github.com/cli/cli/releases/tag/v2.45.0
 ";
-            let want = Some("2.45.0");
-            let have = extract_version(give);
-            assert_eq!(have, want);
+            assert_eq!(extract_version(output), Some("2.45.0"));
         }
 
         #[test]
