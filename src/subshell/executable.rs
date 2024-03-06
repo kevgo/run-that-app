@@ -13,6 +13,7 @@ impl AsRef<OsStr> for Executable {
 }
 
 impl Executable {
+    /// runs this executable with the given args and returns the output it produced
     pub fn run_output(&self, arg: &str) -> String {
         let mut cmd = Command::new(self);
         cmd.arg(arg);
