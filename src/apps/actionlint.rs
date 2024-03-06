@@ -68,7 +68,9 @@ impl App for ActionLint {
     }
 
     fn version(&self, executable: &Executable) -> VersionResult {
-        if !identify(&executable.run_output("-h"))
+        if !identify(&executable.run_output("-h")) {
+            return VersionResult;
+        }
         extract_version(&executable.run_output("--version"))
     }
 }
