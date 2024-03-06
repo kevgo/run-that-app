@@ -67,7 +67,7 @@ impl App for Ghokin {
     }
 
     fn version(&self, _executable: &Executable) -> Option<Version> {
-        None // ghokin's "version" command prints nothing
+        None // as of 3.4.0 ghokin's "version" command prints nothing
     }
 }
 
