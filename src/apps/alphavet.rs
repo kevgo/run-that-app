@@ -1,4 +1,4 @@
-use super::App;
+use super::{App, VersionResult};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
@@ -55,7 +55,15 @@ impl App for Alphavet {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, _executable: &Executable) -> Option<Version> {
-        None // as of 0.1.0 the -V switch of alphavet is broken
+    fn version(&self, executable: &Executable) -> VersionResult {
+        if !identify(&executable.run_output("-h")) {
+            return VersionResult::NotIdentified;
+        }
+        // as of 0.1.0 the -V switch of alphavet is broken
+        VersionResult::IdentifiedButUnknownVersion
     }
+}
+
+fn identify(output: &str) -> bool {
+    output.contains("Checks that functions are ordered alphabetically within packages")
 }
