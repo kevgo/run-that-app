@@ -71,6 +71,13 @@ impl App for Gofumpt {
     }
 }
 
+fn cpu_text(cpu: Cpu) -> &'static str {
+    match cpu {
+        Cpu::Arm64 => "arm64",
+        Cpu::Intel64 => "amd64",
+    }
+}
+
 fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://github.com/{ORG}/{REPO}/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}{ext}",
@@ -78,6 +85,13 @@ fn download_url(version: &Version, platform: Platform) -> String {
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
     )
+}
+
+fn ext_text(os: Os) -> &'static str {
+    match os {
+        Os::Windows => ".exe",
+        Os::Linux | Os::MacOS => "",
+    }
 }
 
 fn extract_version(output: &str) -> Option<&str> {
@@ -89,20 +103,6 @@ fn os_text(os: Os) -> &'static str {
         Os::Linux => "linux",
         Os::MacOS => "darwin",
         Os::Windows => "windows",
-    }
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "arm64",
-        Cpu::Intel64 => "amd64",
-    }
-}
-
-fn ext_text(os: Os) -> &'static str {
-    match os {
-        Os::Windows => ".exe",
-        Os::Linux | Os::MacOS => "",
     }
 }
 

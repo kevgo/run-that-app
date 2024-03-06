@@ -61,6 +61,13 @@ impl App for ShellCheck {
     }
 }
 
+fn cpu_text(cpu: Cpu) -> &'static str {
+    match cpu {
+        Cpu::Arm64 => "aarch64",
+        Cpu::Intel64 => "x86_64",
+    }
+}
+
 fn download_url(version: &Version, platform: Platform) -> String {
     format!(
         "https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}",
@@ -68,21 +75,6 @@ fn download_url(version: &Version, platform: Platform) -> String {
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
     )
-}
-
-fn os_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux => "linux",
-        Os::MacOS => "darwin",
-        Os::Windows => "windows",
-    }
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "aarch64",
-        Cpu::Intel64 => "x86_64",
-    }
 }
 
 fn ext_text(os: Os) -> &'static str {
@@ -94,6 +86,14 @@ fn ext_text(os: Os) -> &'static str {
 
 fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"version: (\d+\.\d+\.\d+)")
+}
+
+fn os_text(os: Os) -> &'static str {
+    match os {
+        Os::Linux => "linux",
+        Os::MacOS => "darwin",
+        Os::Windows => "windows",
+    }
 }
 
 #[cfg(test)]
