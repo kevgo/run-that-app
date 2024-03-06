@@ -273,34 +273,39 @@ Use Docker or WASI.
 
 #### Why does run-that-app not have a marketplace that I can submit my application to?
 
-The marketplace data is embedded into the _run-that-app_ executable. This has
-several advantages.
+_Run-that-app_ has such a marketplace, it is embedded into its executable. This
+has several advantages.
 
 1. It's much better to use a proper programming language rather than some data
    format like JSON or YML to define applications that _run-that-app_ is aware
    of. You get really strong type checking (not just basic JSON-Schema linting),
    intelligent auto-completion, much more flexibility in how you implement
-   downloading, installing, and extracting an application, and the ability to
-   run automated tests. Defining a new app means copy-and-pasting the definition
-   of an existing app and replacing a few placeholders. This can be done equally
-   well in JSON or a programming language.
+   downloading and unpacking archives or installing an application in other
+   ways, and the ability to run automated tests.
+
+   Defining a new app in means copy-and-pasting the definition of an existing
+   app and replacing a few strings. This can be done equally easily in JSON or a
+   programming language.
 
 2. Having a separate marketplace would result in two separate codebases that are
    versioned independently of each other: the version of _run-that-app_ and the
    version of the marketplace. Two separate versions lead to fun problems like
    an older versions of _run-that-app_ not able to work with newer versions of
-   the marketplace.
+   the marketplace. This severely limits how the data format of the marketplace
+   can evolve. An embedded marketplace does not have this problem.
+   _Run-that-app_ can make breaking changes to the marketplace data without that
+   resulting in a breaking change to the solution itself.
 
 3. If _run-that-app_ would use an external marketplace, it have to check the
-   version of the local copy of that marketplace at each invocation, and
-   determine if it needs to download updates for the marketplace. This
-   introduces delays that might be acceptable for package managers that one runs
-   once to install an app, but not for a package manager that gets called a lot
-   to execute the app.
+   version of the local replica of that marketplace at each invocation, and
+   determine if it needs to download updates for the marketplace. And then
+   sometimes download updates. This introduces delays that might be acceptable
+   for package managers that get called once to install an app, but not for an
+   app runner that gets called a lot to execute the apps directly.
 
 4. Even with an external marketplace, you would still need to update the
-   _run-that-app_ executable regularly. So why not just do that and save the
-   hassle to also update a separate marketplace.
+   _run-that-app_ executable regularly. So why not just do that and save
+   yourself the hassle to also update a separate marketplace.
 
 ### Related solutions
 
