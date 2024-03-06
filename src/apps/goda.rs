@@ -55,7 +55,7 @@ impl App for Goda {
     }
 
     fn version(&self, executable: &Executable) -> VersionResult {
-        if !identify(&executable.run_output("-h")) {
+        if !identify(&executable.run_output("help")) {
             return VersionResult::NotIdentified;
         }
         // as of 0.5.7 goda has no way to determine the version of the installed executable
@@ -64,5 +64,5 @@ impl App for Goda {
 }
 
 fn identify(output: &str) -> bool {
-    output.contains("Clean and/or apply transformation on gherkin files")
+    output.contains("Print dependency graph")
 }
