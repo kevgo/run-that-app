@@ -107,7 +107,7 @@ fn ext_text(os: Os) -> &'static str {
 }
 
 fn extract_version(output: &str) -> Option<&str> {
-    regex::first_capture(output, r"go(\d+\.\d+\.\d+)")
+    regex::first_capture(output, r"go version go(\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
