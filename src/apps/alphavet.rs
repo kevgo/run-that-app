@@ -55,7 +55,7 @@ impl App for Alphavet {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, path: &Executable) -> Option<Version> {
-        todo!()
+    fn version(&self, _executable: &Executable) -> Option<Version> {
+        None // as of 0.1.0 the -V switch of alphavet is broken
     }
 }
