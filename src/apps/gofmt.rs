@@ -2,6 +2,7 @@ use super::go::Go;
 use super::App;
 use crate::config::{AppName, Version};
 use crate::platform::{Os, Platform};
+use crate::regex;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -22,8 +23,8 @@ impl App for Gofmt {
 
     fn executable_filepath(&self, platform: Platform) -> &'static str {
         match platform.os {
-            Os::Linux | Os::MacOS => "bin/go",
-            Os::Windows => "bin\\go.exe",
+            Os::Linux | Os::MacOS => "bin/gofmt",
+            Os::Windows => "bin\\gofmt.exe",
         }
     }
 
@@ -53,4 +54,8 @@ impl App for Gofmt {
     fn version(&self, path: &Executable) -> Option<Version> {
         todo!()
     }
+}
+
+pub fn extract_version(output: &str) -> Option<&str> {
+    regex::first_capture(output, r"v(\d+\.\d+\.\d+) \(go")
 }
