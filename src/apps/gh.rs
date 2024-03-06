@@ -1,4 +1,4 @@
-use super::App;
+use super::{App, VersionResult};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::packaged_executable::{self, InstallArgs};
@@ -57,8 +57,14 @@ impl App for Gh {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, executable: &Executable) -> Option<Version> {
-        extract_version(&executable.run_output("--version")).map(Version::from)
+    fn version(&self, executable: &Executable) -> VersionResult {
+        if !identify(&executable.run_output("-h")) {
+            return VersionResult::NotIdentified;
+        }
+        match extract_version(&executable.run_output("--version")) {
+            Some(version) => VersionResult::IdentifiedWithVersion(Version::from(version)),
+            None => VersionResult::IdentifiedButUnknownVersion,
+        }
     }
 }
 
@@ -80,6 +86,10 @@ fn executable_path(version: &Version, platform: Platform) -> String {
         Os::Windows => "bin/gh.exe".to_string(),
         Os::Linux | Os::MacOS => format!("gh_{version}_{os}_{cpu}/bin/gh", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
     }
+}
+
+fn identify(output: &str) -> bool {
+    output.contains("Work seamlessly with GitHub from the command line")
 }
 
 fn os_text(os: Os) -> &'static str {
