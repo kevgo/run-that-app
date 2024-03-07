@@ -1,11 +1,10 @@
 use super::{AppName, AppVersions, RequestedVersion, RequestedVersions, FILE_NAME};
 use crate::error::UserError;
-use crate::Result;
+use crate::{filesystem, Result};
 use std::fmt::Display;
 use std::fs::OpenOptions;
 use std::io::{ErrorKind, Write};
 use std::str::SplitAsciiWhitespace;
-use std::{env, fs, io};
 
 #[derive(Debug, Default, PartialEq)]
 pub struct Config {
@@ -31,7 +30,7 @@ impl Config {
     }
 
     pub fn load() -> Result<Config> {
-        match read()? {
+        match filesystem::read_file(FILE_NAME)? {
             Some(text) => parse(&text),
             None => Ok(Config::default()),
         }
