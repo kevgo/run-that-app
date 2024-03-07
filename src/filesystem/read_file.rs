@@ -1,7 +1,6 @@
-use std::{env, fs, io};
-
 use crate::error::UserError;
 use crate::Result;
+use std::{env, fs, io};
 
 /// looks for the file with the given name in the current or parent folders, and provides its content if it finds one
 pub fn read_file(name: &str) -> Result<Option<String>> {
