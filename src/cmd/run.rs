@@ -56,7 +56,7 @@ pub struct Args {
 
 pub fn load_or_install(app: &dyn App, version: &RequestedVersion, platform: Platform, output: &dyn Output) -> Result<Option<Executable>> {
     match version {
-        RequestedVersion::Path(version) => load_from_path(app, &parse_semver_req(version)?, platform, output),
+        RequestedVersion::Path(version) => load_from_path(app, &version, platform, output),
         RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, output),
     }
 }
@@ -112,11 +112,4 @@ fn load_or_install_from_yard(app: &dyn App, version: &Version, output: &dyn Outp
     }
     yard.mark_not_installable(&app.name(), version)?;
     Ok(None)
-}
-
-fn parse_semver_req(text: &str) -> Result<semver::VersionReq> {
-    semver::VersionReq::parse(text).map_err(|err| UserError::CannotParseSemverRange {
-        expression: text.to_string(),
-        reason: err.to_string(),
-    })
 }

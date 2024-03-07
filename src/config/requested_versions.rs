@@ -85,16 +85,20 @@ impl From<Version> for RequestedVersions {
     }
 }
 
-impl From<&str> for RequestedVersions {
-    fn from(version: &str) -> Self {
-        RequestedVersions::from(RequestedVersion::from(version))
+impl TryFrom<&str> for RequestedVersions {
+    type Error = UserError;
+
+    fn try_from(version: &str) -> std::prelude::v1::Result<Self, Self::Error> {
+        Ok(RequestedVersions::from(RequestedVersion::try_from(version)?))
     }
 }
 
-impl From<Vec<&str>> for RequestedVersions {
-    fn from(versions: Vec<&str>) -> Self {
-        let versions = versions.into_iter().map(RequestedVersion::from).collect();
-        RequestedVersions(versions)
+impl TryFrom<Vec<&str>> for RequestedVersions {
+    type Error = UserError;
+
+    fn try_from(versions: Vec<&str>) -> std::prelude::v1::Result<Self, Self::Error> {
+        let versions = versions.into_iter().map(|version| RequestedVersion::try_from(version).unwrap()).collect();
+        Ok(RequestedVersions(versions))
     }
 }
 
@@ -106,7 +110,7 @@ mod tests {
 
         #[test]
         fn multiple() {
-            let versions = RequestedVersions::from(vec!["system@1.2", "1.2", "1.1"]);
+            let versions = RequestedVersions::try_from(vec!["system@1.2", "1.2", "1.1"]).unwrap();
             let have = versions.join(", ");
             let want = "system@1.2, 1.2, 1.1";
             assert_eq!(have, want);
@@ -114,7 +118,7 @@ mod tests {
 
         #[test]
         fn one() {
-            let versions = RequestedVersions::from(vec!["system@1.2"]);
+            let versions = RequestedVersions::try_from(vec!["system@1.2"]).unwrap();
             let have = versions.join(", ");
             let want = "system@1.2";
             assert_eq!(have, want);
@@ -122,7 +126,7 @@ mod tests {
 
         #[test]
         fn zero() {
-            let versions = RequestedVersions::from(vec![]);
+            let versions = RequestedVersions::try_from(vec![]).unwrap();
             let have = versions.join(", ");
             let want = "";
             assert_eq!(have, want);
@@ -134,7 +138,7 @@ mod tests {
 
         #[test]
         fn system_and_versions() {
-            let versions = RequestedVersions::from(vec!["system@1.2", "1.2", "1.1"]);
+            let versions = RequestedVersions::try_from(vec!["system@1.2", "1.2", "1.1"]).unwrap();
             let have = versions.largest_non_system();
             let want = Version::from("1.2");
             assert_eq!(have, Some(&want));
@@ -142,14 +146,14 @@ mod tests {
 
         #[test]
         fn system_no_versions() {
-            let versions = RequestedVersions::from(vec!["system@1.2"]);
+            let versions = RequestedVersions::try_from(vec!["system@1.2"]).unwrap();
             let have = versions.largest_non_system();
             assert_eq!(have, None);
         }
 
         #[test]
         fn empty() {
-            let versions = RequestedVersions::from(vec![]);
+            let versions = RequestedVersions::try_from(vec![]).unwrap();
             let have = versions.largest_non_system();
             assert_eq!(have, None);
         }
@@ -160,19 +164,19 @@ mod tests {
 
         #[test]
         fn system_and_versions() {
-            let mut versions = RequestedVersions::from(vec!["system@1.2", "1.2", "1.1"]);
+            let mut versions = RequestedVersions::try_from(vec!["system@1.2", "1.2", "1.1"]).unwrap();
             let have = versions.update_largest_with(&Version::from("1.4"));
             assert_eq!(have, Some(Version::from("1.2")));
-            let want = RequestedVersions::from(vec!["system@1.2", "1.4", "1.1"]);
+            let want = RequestedVersions::try_from(vec!["system@1.2", "1.4", "1.1"]).unwrap();
             assert_eq!(versions, want);
         }
 
         #[test]
         fn system_only() {
-            let mut versions = RequestedVersions::from(vec!["system@1.2"]);
+            let mut versions = RequestedVersions::try_from(vec!["system@1.2"]).unwrap();
             let have = versions.update_largest_with(&Version::from("1.4"));
             assert_eq!(have, None);
-            let want = RequestedVersions::from(vec!["system@1.2"]);
+            let want = RequestedVersions::try_from(vec!["system@1.2"]).unwrap();
             assert_eq!(versions, want);
         }
     }
