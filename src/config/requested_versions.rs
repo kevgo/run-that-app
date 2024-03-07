@@ -112,7 +112,7 @@ mod tests {
         fn multiple() {
             let versions = RequestedVersions::try_from(vec!["system@1.2", "1.2", "1.1"]).unwrap();
             let have = versions.join(", ");
-            let want = "system@1.2, 1.2, 1.1";
+            let want = "system@^1.2, 1.2, 1.1";
             assert_eq!(have, want);
         }
 
@@ -120,7 +120,7 @@ mod tests {
         fn one() {
             let versions = RequestedVersions::try_from(vec!["system@1.2"]).unwrap();
             let have = versions.join(", ");
-            let want = "system@1.2";
+            let want = "system@^1.2";
             assert_eq!(have, want);
         }
 
