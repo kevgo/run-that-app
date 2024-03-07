@@ -3,21 +3,22 @@ use crate::config::{AppName, RequestedVersion, RequestedVersions, Version};
 use crate::error::UserError;
 use crate::filesystem::find_global_install;
 use crate::platform::{self, Platform};
-use crate::subshell;
 use crate::subshell::Executable;
 use crate::yard;
 use crate::Output;
 use crate::Result;
 use crate::{apps, config};
+use crate::{output, subshell};
 use colored::Colorize;
 use std::process::ExitCode;
 
-pub fn run(args: &Args) -> Result<ExitCode> {
+pub fn run(args: Args) -> Result<ExitCode> {
     let apps = apps::all();
     let app = apps.lookup(&args.app)?;
-    let platform = platform::detect(args.output)?;
+    let output = output::StdErr { category: args.log };
+    let platform = platform::detect(&output)?;
     for version in args.versions.iter() {
-        if let Some(executable) = load_or_install(app, version, platform, args.output)? {
+        if let Some(executable) = load_or_install(app, version, platform, &output)? {
             if args.error_on_output {
                 return subshell::execute_check_output(&executable, &args.app_args);
             }
@@ -32,7 +33,7 @@ pub fn run(args: &Args) -> Result<ExitCode> {
 }
 
 /// data needed to run an executable
-pub struct Args<'a> {
+pub struct Args {
     /// name of the app to execute
     pub app: AppName,
 
@@ -49,7 +50,7 @@ pub struct Args<'a> {
     /// whether it's okay to not run the app if it cannot be installed
     pub optional: bool,
 
-    pub output: &'a dyn Output,
+    pub log: Option<String>,
 }
 
 pub fn load_or_install(app: &dyn App, version: &RequestedVersion, platform: Platform, output: &dyn Output) -> Result<Option<Executable>> {
