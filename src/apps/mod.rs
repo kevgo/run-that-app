@@ -70,45 +70,41 @@ pub enum AnalyzeResult {
 }
 
 pub fn all() -> Apps {
-    Apps {
-        list: vec![
-            Box::new(actionlint::ActionLint {}),
-            Box::new(alphavet::Alphavet {}),
-            Box::new(deadcode::Deadcode {}),
-            Box::new(depth::Depth {}),
-            Box::new(dprint::Dprint {}),
-            Box::new(gh::Gh {}),
-            Box::new(ghokin::Ghokin {}),
-            Box::new(go::Go {}),
-            Box::new(goda::Goda {}),
-            Box::new(gofmt::Gofmt {}),
-            Box::new(gofumpt::Gofumpt {}),
-            Box::new(golangci_lint::GolangCiLint {}),
-            Box::new(goreleaser::Goreleaser {}),
-            Box::new(mdbook::MdBook {}),
-            Box::new(nodejs::NodeJS {}),
-            Box::new(npm::Npm {}),
-            Box::new(npx::Npx {}),
-            Box::new(scc::Scc {}),
-            Box::new(shellcheck::ShellCheck {}),
-            Box::new(shfmt::Shfmt {}),
-        ],
-    }
+    Apps(vec![
+        Box::new(actionlint::ActionLint {}),
+        Box::new(alphavet::Alphavet {}),
+        Box::new(deadcode::Deadcode {}),
+        Box::new(depth::Depth {}),
+        Box::new(dprint::Dprint {}),
+        Box::new(gh::Gh {}),
+        Box::new(ghokin::Ghokin {}),
+        Box::new(go::Go {}),
+        Box::new(goda::Goda {}),
+        Box::new(gofmt::Gofmt {}),
+        Box::new(gofumpt::Gofumpt {}),
+        Box::new(golangci_lint::GolangCiLint {}),
+        Box::new(goreleaser::Goreleaser {}),
+        Box::new(mdbook::MdBook {}),
+        Box::new(nodejs::NodeJS {}),
+        Box::new(npm::Npm {}),
+        Box::new(npx::Npx {}),
+        Box::new(scc::Scc {}),
+        Box::new(shellcheck::ShellCheck {}),
+        Box::new(shfmt::Shfmt {}),
+    ])
 }
 
-pub struct Apps {
-    pub list: Vec<Box<dyn App>>,
-}
+pub struct Apps(Vec<Box<dyn App>>);
 
 impl Apps {
     /// provides an `Iterator` over the applications
     pub fn iter(&self) -> Iter<'_, Box<dyn App>> {
-        self.list.iter()
+        self.0.iter()
     }
 
     /// provides the app with the given name
     pub fn lookup(&self, name: &AppName) -> Result<&dyn App> {
-        for app in &self.list {
+        for app in &self.0 {
             if app.name() == name {
                 return Ok(app.as_ref());
             }
@@ -129,9 +125,7 @@ mod tests {
 
         #[test]
         fn longest_name_length() {
-            let apps = Apps {
-                list: vec![Box::new(dprint::Dprint {}), Box::new(actionlint::ActionLint {}), Box::new(shellcheck::ShellCheck {})],
-            };
+            let apps = Apps(vec![Box::new(dprint::Dprint {}), Box::new(actionlint::ActionLint {}), Box::new(shellcheck::ShellCheck {})]);
             let have = apps.longest_name_length();
             assert_eq!(have, 10);
         }
@@ -144,9 +138,7 @@ mod tests {
 
             #[test]
             fn known_app() {
-                let apps = Apps {
-                    list: vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})],
-                };
+                let apps = Apps(vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})]);
                 let shellcheck = AppName::from("shellcheck");
                 let have = apps.lookup(&shellcheck).unwrap();
                 assert_eq!(have.name(), &shellcheck);
@@ -154,9 +146,7 @@ mod tests {
 
             #[test]
             fn unknown_app() {
-                let apps = Apps {
-                    list: vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})],
-                };
+                let apps = Apps(vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})]);
                 let Err(err) = apps.lookup(&AppName::from("zonk")) else {
                     panic!("expected an error here");
                 };
