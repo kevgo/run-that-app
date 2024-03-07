@@ -1,8 +1,6 @@
-use std::fmt::Display;
-
-use crate::error::UserError;
-
 use super::Version;
+use crate::error::UserError;
+use std::fmt::Display;
 
 /// an application version requested by the user
 #[derive(Clone, Debug, PartialEq)]
