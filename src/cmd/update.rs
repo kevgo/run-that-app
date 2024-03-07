@@ -6,8 +6,8 @@ use colored::Colorize;
 use std::process::ExitCode;
 
 pub fn update(log: Option<String>) -> Result<ExitCode> {
-    let mut config = Config::load()?;
     let all_apps = apps::all();
+    let mut config = Config::load(&all_apps)?;
     let output = output::StdErr { category: log };
     for old_app in &mut config.apps {
         let app = all_apps.lookup(&old_app.app)?;

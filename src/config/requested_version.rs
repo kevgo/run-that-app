@@ -16,17 +16,17 @@ pub enum RequestedVersion {
 impl RequestedVersion {
     pub fn parse(version: &str, app: &dyn App) -> Result<RequestedVersion> {
         if let Some(version_req) = is_system(version) {
-            if version_req == "auto" {
-                // determine the version restriction embedded in the codebase
-                app.
-            }
-            let version_req = semver::VersionReq::parse(&version_req).map_err(|err| UserError::CannotParseSemverRange {
-                expression: version_req.to_string(),
-                reason: err.to_string(),
-            })?;
+            let version_req = if version_req == "auto" {
+                app.allowed_versions()?.unwrap_or_default()
+            } else {
+                semver::VersionReq::parse(&version_req).map_err(|err| UserError::CannotParseSemverRange {
+                    expression: version_req.to_string(),
+                    reason: err.to_string(),
+                })?
+            };
             Ok(RequestedVersion::Path(version_req))
         } else {
-            Ok(RequestedVersion::Yard(value.into()))
+            Ok(RequestedVersion::Yard(version.into()))
         }
     }
 }
@@ -49,12 +49,6 @@ impl From<Version> for RequestedVersion {
     }
 }
 
-impl TryFrom<&str> for RequestedVersion {
-    type Error = UserError;
-
-    fn try_from(value: &str) -> Result<Self, Self::Error> {}
-}
-
 /// Indicates whether the given version string requests an executable in the PATH or in the yard.
 /// Also provides the sanitized version string without the "system" prefix.
 fn is_system(value: &str) -> Option<String> {
@@ -71,12 +65,98 @@ fn is_system(value: &str) -> Option<String> {
 mod tests {
     use big_s::S;
 
-    mod from {
+    mod parse {
+        use crate::apps::App;
         use crate::config::RequestedVersion;
+        use crate::Result;
+
+        #[test]
+        fn yard_request() {
+            struct TestApp {}
+            impl App for TestApp {
+                fn name(&self) -> crate::config::AppName {
+                    todo!()
+                }
+                fn executable_filename(&self, platform: crate::platform::Platform) -> &'static str {
+                    todo!()
+                }
+                fn executable_filepath(&self, platform: crate::platform::Platform) -> &'static str {
+                    todo!()
+                }
+                fn homepage(&self) -> &'static str {
+                    todo!()
+                }
+                fn install(
+                    &self,
+                    version: &crate::config::Version,
+                    platform: crate::platform::Platform,
+                    yard: &crate::yard::Yard,
+                    output: &dyn crate::output::Output,
+                ) -> crate::error::Result<Option<crate::subshell::Executable>> {
+                    todo!()
+                }
+                fn load(&self, version: &crate::config::Version, platform: crate::platform::Platform, yard: &crate::yard::Yard) -> Option<crate::subshell::Executable> {
+                    todo!()
+                }
+                fn installable_versions(&self, amount: usize, output: &dyn crate::output::Output) -> crate::error::Result<Vec<crate::config::Version>> {
+                    todo!()
+                }
+                fn latest_installable_version(&self, output: &dyn crate::output::Output) -> crate::error::Result<crate::config::Version> {
+                    todo!()
+                }
+                fn analyze_executable(&self, path: &crate::subshell::Executable) -> crate::apps::AnalyzeResult {
+                    todo!()
+                }
+            }
+            let app = TestApp {};
+            let have = RequestedVersion::parse("system@1.2", &app).unwrap();
+            let want = RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap());
+            assert_eq!(have, want);
+        }
 
         #[test]
         fn system_request() {
-            let have = RequestedVersion::try_from("system@1.2").unwrap();
+            struct TestApp {}
+            impl App for TestApp {
+                fn name(&self) -> crate::config::AppName {
+                    todo!()
+                }
+                fn executable_filename(&self, platform: crate::platform::Platform) -> &'static str {
+                    todo!()
+                }
+                fn executable_filepath(&self, platform: crate::platform::Platform) -> &'static str {
+                    todo!()
+                }
+                fn homepage(&self) -> &'static str {
+                    todo!()
+                }
+                fn install(
+                    &self,
+                    version: &crate::config::Version,
+                    platform: crate::platform::Platform,
+                    yard: &crate::yard::Yard,
+                    output: &dyn crate::output::Output,
+                ) -> crate::error::Result<Option<crate::subshell::Executable>> {
+                    todo!()
+                }
+                fn load(&self, version: &crate::config::Version, platform: crate::platform::Platform, yard: &crate::yard::Yard) -> Option<crate::subshell::Executable> {
+                    todo!()
+                }
+                fn installable_versions(&self, amount: usize, output: &dyn crate::output::Output) -> crate::error::Result<Vec<crate::config::Version>> {
+                    todo!()
+                }
+                fn latest_installable_version(&self, output: &dyn crate::output::Output) -> crate::error::Result<crate::config::Version> {
+                    todo!()
+                }
+                fn analyze_executable(&self, path: &crate::subshell::Executable) -> crate::apps::AnalyzeResult {
+                    todo!()
+                }
+                fn allowed_versions(&self) -> Result<Option<semver::VersionReq>> {
+                    Ok(Some(semver::VersionReq::parse("1.21").unwrap()))
+                }
+            }
+            let app = TestApp {};
+            let have = RequestedVersion::parse("system@1.2", &app).unwrap();
             let want = RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap());
             assert_eq!(have, want);
         }
