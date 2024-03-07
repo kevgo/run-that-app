@@ -1,4 +1,4 @@
-use super::{App, ExecutableIdentity};
+use super::{App, IdentifyResult};
 use crate::config::{AppName, Version};
 use crate::hosting::github_tags;
 use crate::install::archive::{self, InstallArgs};
@@ -68,14 +68,14 @@ impl App for Go {
         Ok(go_tags.into_iter().map(Version::from).collect())
     }
 
-    fn identify_executable(&self, executable: &Executable) -> ExecutableIdentity {
+    fn identify_executable(&self, executable: &Executable) -> IdentifyResult {
         if let Some(version) = extract_version(&executable.run_output("version")) {
-            return ExecutableIdentity::IdentifiedWithVersion(version.into());
+            return IdentifyResult::IdentifiedWithVersion(version.into());
         }
         if identify(&executable.run_output("-h")) {
-            ExecutableIdentity::IdentifiedButUnknownVersion
+            IdentifyResult::IdentifiedButUnknownVersion
         } else {
-            ExecutableIdentity::NotIdentified
+            IdentifyResult::NotIdentified
         }
     }
 }

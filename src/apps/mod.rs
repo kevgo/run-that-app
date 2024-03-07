@@ -55,10 +55,10 @@ pub trait App {
     fn latest_installable_version(&self, output: &dyn Output) -> Result<Version>;
 
     /// ensures that the given executable belongs to this app and if yes returns the installed version
-    fn identify_executable(&self, path: &Executable) -> ExecutableIdentity;
+    fn identify_executable(&self, path: &Executable) -> IdentifyResult;
 }
 
-pub enum ExecutableIdentity {
+pub enum IdentifyResult {
     /// the given executable does not belong to this app
     NotIdentified,
 

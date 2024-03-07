@@ -1,4 +1,4 @@
-use super::{App, ExecutableIdentity};
+use super::{App, IdentifyResult};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::archive::{self, InstallArgs};
@@ -60,13 +60,13 @@ impl App for NodeJS {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn identify_executable(&self, executable: &Executable) -> ExecutableIdentity {
+    fn identify_executable(&self, executable: &Executable) -> IdentifyResult {
         if !identify(&executable.run_output("-h")) {
-            return ExecutableIdentity::NotIdentified;
+            return IdentifyResult::NotIdentified;
         }
         match extract_version(&executable.run_output("--version")) {
-            Some(version) => ExecutableIdentity::IdentifiedWithVersion(version.into()),
-            None => ExecutableIdentity::IdentifiedButUnknownVersion,
+            Some(version) => IdentifyResult::IdentifiedWithVersion(version.into()),
+            None => IdentifyResult::IdentifiedButUnknownVersion,
         }
     }
 }

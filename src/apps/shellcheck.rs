@@ -1,4 +1,4 @@
-use super::{App, ExecutableIdentity};
+use super::{App, IdentifyResult};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::packaged_executable::{self, InstallArgs};
@@ -56,14 +56,14 @@ impl App for ShellCheck {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn identify_executable(&self, executable: &Executable) -> ExecutableIdentity {
+    fn identify_executable(&self, executable: &Executable) -> IdentifyResult {
         let output = executable.run_output("--version");
         if !identify(&output) {
-            return ExecutableIdentity::NotIdentified;
+            return IdentifyResult::NotIdentified;
         }
         match extract_version(&output) {
-            Some(version) => ExecutableIdentity::IdentifiedWithVersion(version.into()),
-            None => ExecutableIdentity::IdentifiedButUnknownVersion,
+            Some(version) => IdentifyResult::IdentifiedWithVersion(version.into()),
+            None => IdentifyResult::IdentifiedButUnknownVersion,
         }
     }
 }
