@@ -81,12 +81,14 @@ impl App for Go {
     }
 
     fn allowed_versions(&self) -> Result<Option<semver::VersionReq>> {
-        let go_mod_version = match filesystem::read_file("go.mod") {
-            Ok(content) => parse_go_mod(content)?,
-            Err(_) => todo!(),
+        let Some(go_mod_content) = filesystem::read_file("go.mod")? else {
+            return Ok(None);
         };
-        let version_req = semver::VersionReq::parse(go_mod_version).map_err(|err| UserError::CannotParseSemverRange {
-            expression: go_mod_version.to_string(),
+        let Some(go_version_req) = parse_go_mod(&go_mod_content) else {
+            return Ok(None);
+        };
+        let version_req = semver::VersionReq::parse(go_version_req).map_err(|err| UserError::CannotParseSemverRange {
+            expression: go_version_req.to_string(),
             reason: err.to_string(),
         })?;
         Ok(Some(version_req))
@@ -132,6 +134,10 @@ fn os_text(os: Os) -> &'static str {
     }
 }
 
+fn parse_go_mod(text: &str) -> Option<&str> {
+    regexp::first_capture(text, r#"(?m)^go\s+(\d+\.\d+)\s*$"#)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
@@ -151,5 +157,47 @@ mod tests {
         let have = super::extract_version(give);
         let want = Some("1.21.7");
         assert_eq!(have, want);
+    }
+
+    mod parse_go_mod {
+        use crate::apps::go::parse_go_mod;
+
+        #[test]
+        fn with_version() {
+            let go_mod = "
+module github.com/git-town/git-town/v12
+
+go 1.21
+
+require (
+	code.gitea.io/sdk/gitea v0.17.1
+	github.com/BurntSushi/toml v1.3.2
+	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d
+	github.com/charmbracelet/bubbles v0.18.0
+	github.com/charmbracelet/bubbletea v0.25.0
+)";
+            assert_eq!(parse_go_mod(go_mod), Some("1.21"));
+        }
+
+        #[test]
+        fn without_version() {
+            let go_mod = "
+module github.com/git-town/git-town/v12
+
+require (
+	code.gitea.io/sdk/gitea v0.17.1
+	github.com/BurntSushi/toml v1.3.2
+	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d
+	github.com/charmbracelet/bubbles v0.18.0
+	github.com/charmbracelet/bubbletea v0.25.0
+)";
+            assert_eq!(parse_go_mod(go_mod), None);
+        }
+
+        #[test]
+        fn unrelated_file() {
+            let go_mod = "other file randomly named go.mod";
+            assert_eq!(parse_go_mod(go_mod), None);
+        }
     }
 }
