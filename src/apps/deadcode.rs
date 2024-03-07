@@ -1,4 +1,4 @@
-use super::{AnalyzeExecutableResult, App};
+use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::platform::{Os, Platform};
@@ -51,12 +51,12 @@ impl App for Deadcode {
         Ok(vec![Version::from("0.16.1")])
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeExecutableResult {
+    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
         if !identify(&executable.run_output("-h")) {
-            return AnalyzeExecutableResult::NotIdentified;
+            return AnalyzeResult::NotIdentified;
         }
         // as of 0.16.1 deadcode does not display the version of the installed executable
-        AnalyzeExecutableResult::IdentifiedButUnknownVersion
+        AnalyzeResult::IdentifiedButUnknownVersion
     }
 }
 

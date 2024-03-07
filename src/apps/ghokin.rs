@@ -1,4 +1,4 @@
-use super::{AnalyzeExecutableResult, App};
+use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
@@ -66,12 +66,12 @@ impl App for Ghokin {
         github_releases::versions("antham", "ghokin", amount, output)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeExecutableResult {
+    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
         if !identify(&executable.run_output("-h")) {
-            return AnalyzeExecutableResult::NotIdentified;
+            return AnalyzeResult::NotIdentified;
         }
         // as of 3.4.0 ghokin's "version" command prints nothing
-        AnalyzeExecutableResult::IdentifiedButUnknownVersion
+        AnalyzeResult::IdentifiedButUnknownVersion
     }
 }
 

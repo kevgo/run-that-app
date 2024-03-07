@@ -1,5 +1,5 @@
 use super::nodejs::NodeJS;
-use super::{AnalyzeExecutableResult, App};
+use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::platform::{Os, Platform};
 use crate::regexp;
@@ -51,13 +51,13 @@ impl App for Npm {
         (NodeJS {}).installable_versions(amount, output)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeExecutableResult {
+    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
         if !identify(&executable.run_output_args(&["help", "npm"])) {
-            return AnalyzeExecutableResult::NotIdentified;
+            return AnalyzeResult::NotIdentified;
         }
         match extract_version(&executable.run_output("--version")) {
-            Some(version) => AnalyzeExecutableResult::IdentifiedWithVersion(version.into()),
-            None => AnalyzeExecutableResult::IdentifiedButUnknownVersion,
+            Some(version) => AnalyzeResult::IdentifiedWithVersion(version.into()),
+            None => AnalyzeResult::IdentifiedButUnknownVersion,
         }
     }
 }
