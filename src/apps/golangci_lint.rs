@@ -1,4 +1,4 @@
-use super::{App, VersionResult};
+use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::packaged_executable::{self, InstallArgs};
@@ -58,10 +58,10 @@ impl App for GolangCiLint {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, executable: &Executable) -> VersionResult {
+    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
         match extract_version(&executable.run_output("--version")) {
-            Some(version) => VersionResult::IdentifiedWithVersion(version.into()),
-            None => VersionResult::IdentifiedButUnknownVersion,
+            Some(version) => AnalyzeResult::IdentifiedWithVersion(version.into()),
+            None => AnalyzeResult::IdentifiedButUnknownVersion,
         }
     }
 }

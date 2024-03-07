@@ -1,4 +1,4 @@
-use super::{App, VersionResult};
+use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
@@ -65,12 +65,12 @@ impl App for Depth {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, executable: &Executable) -> VersionResult {
+    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
         if !identify(&executable.run_output("-h")) {
-            return VersionResult::NotIdentified;
+            return AnalyzeResult::NotIdentified;
         }
         // as of 1.2.1 depth doesn't display the version of the installed executable
-        VersionResult::IdentifiedButUnknownVersion
+        AnalyzeResult::IdentifiedButUnknownVersion
     }
 }
 
