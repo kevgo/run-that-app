@@ -1,4 +1,4 @@
-use super::{App, IdentifyResult};
+use super::{AnalyzeExecutableResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_rust::{compile_rust, CompileArgs};
@@ -66,13 +66,13 @@ impl App for Dprint {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn identify_executable(&self, executable: &Executable) -> IdentifyResult {
+    fn analyze_executable(&self, executable: &Executable) -> AnalyzeExecutableResult {
         if !identify(&executable.run_output("-h")) {
-            return IdentifyResult::NotIdentified;
+            return AnalyzeExecutableResult::NotIdentified;
         }
         match extract_version(&executable.run_output("--version")) {
-            Some(version) => IdentifyResult::IdentifiedWithVersion(version.into()),
-            None => IdentifyResult::IdentifiedButUnknownVersion,
+            Some(version) => AnalyzeExecutableResult::IdentifiedWithVersion(version.into()),
+            None => AnalyzeExecutableResult::IdentifiedButUnknownVersion,
         }
     }
 }

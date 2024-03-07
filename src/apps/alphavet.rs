@@ -1,4 +1,4 @@
-use super::{App, IdentifyResult};
+use super::{AnalyzeExecutableResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
@@ -55,12 +55,12 @@ impl App for Alphavet {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn identify_executable(&self, executable: &Executable) -> IdentifyResult {
+    fn analyze_executable(&self, executable: &Executable) -> AnalyzeExecutableResult {
         if !identify(&executable.run_output("-h")) {
-            return IdentifyResult::NotIdentified;
+            return AnalyzeExecutableResult::NotIdentified;
         }
         // as of 0.1.0 the -V switch of alphavet is broken
-        IdentifyResult::IdentifiedButUnknownVersion
+        AnalyzeExecutableResult::IdentifiedButUnknownVersion
     }
 }
 

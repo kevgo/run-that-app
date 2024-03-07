@@ -1,4 +1,4 @@
-use super::{App, IdentifyResult};
+use super::{AnalyzeExecutableResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
@@ -66,14 +66,14 @@ impl App for Goreleaser {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn identify_executable(&self, executable: &Executable) -> IdentifyResult {
+    fn analyze_executable(&self, executable: &Executable) -> AnalyzeExecutableResult {
         let output = &executable.run_output("-V");
         if !identify(output) {
-            return IdentifyResult::NotIdentified;
+            return AnalyzeExecutableResult::NotIdentified;
         }
         match extract_version(output) {
-            Some(version) => IdentifyResult::IdentifiedWithVersion(version.into()),
-            None => IdentifyResult::IdentifiedButUnknownVersion,
+            Some(version) => AnalyzeExecutableResult::IdentifiedWithVersion(version.into()),
+            None => AnalyzeExecutableResult::IdentifiedButUnknownVersion,
         }
     }
 }
