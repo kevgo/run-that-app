@@ -57,6 +57,7 @@ pub trait App {
     /// ensures that the given executable belongs to this app and if yes returns the installed version
     fn analyze_executable(&self, path: &Executable) -> AnalyzeResult;
 
+    /// provides the versions allowed by the codebase in the working directory
     fn allowed_versions(&self) -> Result<Option<semver::VersionReq>> {
         return Ok(None);
     }

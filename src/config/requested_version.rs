@@ -1,5 +1,7 @@
 use super::Version;
+use crate::apps::App;
 use crate::error::UserError;
+use crate::Result;
 use std::fmt::Display;
 
 /// an application version requested by the user
@@ -9,6 +11,24 @@ pub enum RequestedVersion {
     Path(semver::VersionReq),
     /// the user has requested an application in the Yard with the exact version given
     Yard(Version),
+}
+
+impl RequestedVersion {
+    pub fn parse(version: &str, app: &dyn App) -> Result<RequestedVersion> {
+        if let Some(version_req) = is_system(version) {
+            if version_req == "auto" {
+                // determine the version restriction embedded in the codebase
+                app.
+            }
+            let version_req = semver::VersionReq::parse(&version_req).map_err(|err| UserError::CannotParseSemverRange {
+                expression: version_req.to_string(),
+                reason: err.to_string(),
+            })?;
+            Ok(RequestedVersion::Path(version_req))
+        } else {
+            Ok(RequestedVersion::Yard(value.into()))
+        }
+    }
 }
 
 impl Display for RequestedVersion {
@@ -32,17 +52,7 @@ impl From<Version> for RequestedVersion {
 impl TryFrom<&str> for RequestedVersion {
     type Error = UserError;
 
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        if let Some(version_req) = is_system(value) {
-            let version_req = semver::VersionReq::parse(&version_req).map_err(|err| UserError::CannotParseSemverRange {
-                expression: version_req.to_string(),
-                reason: err.to_string(),
-            })?;
-            Ok(RequestedVersion::Path(version_req))
-        } else {
-            Ok(RequestedVersion::Yard(value.into()))
-        }
-    }
+    fn try_from(value: &str) -> Result<Self, Self::Error> {}
 }
 
 /// Indicates whether the given version string requests an executable in the PATH or in the yard.
