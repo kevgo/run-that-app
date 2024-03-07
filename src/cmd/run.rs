@@ -119,10 +119,3 @@ fn load_or_install_from_yard(app: &dyn App, version: &Version, output: &dyn Outp
     yard.mark_not_installable(&app.name(), version)?;
     Ok(None)
 }
-
-fn parse_semver_req(text: &str) -> Result<semver::VersionReq> {
-    semver::VersionReq::parse(text).map_err(|err| UserError::CannotParseSemverRange {
-        expression: text.to_string(),
-        reason: err.to_string(),
-    })
-}
