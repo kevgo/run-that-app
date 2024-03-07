@@ -72,6 +72,10 @@ impl App for Depth {
         // as of 1.2.1 depth doesn't display the version of the installed executable
         AnalyzeResult::IdentifiedButUnknownVersion
     }
+
+    fn allowed_versions(&self) -> Option<semver::VersionReq> {
+        None
+    }
 }
 
 fn cpu_text(cpu: Cpu) -> &'static str {

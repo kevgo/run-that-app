@@ -3,9 +3,9 @@ use crate::config::{AppName, Version};
 use crate::hosting::github_tags;
 use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
-use crate::regexp;
 use crate::subshell::Executable;
 use crate::yard::Yard;
+use crate::{filesystem, regexp};
 use crate::{Output, Result};
 use big_s::S;
 
@@ -77,6 +77,10 @@ impl App for Go {
         } else {
             AnalyzeResult::NotIdentified
         }
+    }
+
+    fn allowed_versions(&self) -> Option<semver::VersionReq> {
+        filesystem::find_in_current_or_parent_dir("go.mod")
     }
 }
 

@@ -58,6 +58,10 @@ impl App for Deadcode {
         // as of 0.16.1 deadcode does not display the version of the installed executable
         AnalyzeResult::IdentifiedButUnknownVersion
     }
+
+    fn allowed_versions(&self) -> Option<semver::VersionReq> {
+        None
+    }
 }
 
 fn identify(output: &str) -> bool {

@@ -73,6 +73,10 @@ impl App for Ghokin {
         // as of 3.4.0 ghokin's "version" command prints nothing
         AnalyzeResult::IdentifiedButUnknownVersion
     }
+
+    fn allowed_versions(&self) -> Option<semver::VersionReq> {
+        None
+    }
 }
 
 fn cpu_text(cpu: Cpu) -> &'static str {
