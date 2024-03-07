@@ -7,8 +7,8 @@ use std::process::ExitCode;
 use super::run::load_or_install;
 
 pub fn which(app_name: &AppName, version: Option<Version>, log: Option<String>) -> Result<ExitCode> {
-    let binding = apps::all();
-    let app = binding.lookup(app_name)?;
+    let apps = apps::all();
+    let app = apps.lookup(app_name)?;
     let output = output::StdErr { category: log };
     let platform = platform::detect(&output)?;
     let versions = RequestedVersions::determine(&app_name, version)?;
