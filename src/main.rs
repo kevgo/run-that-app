@@ -16,7 +16,6 @@ mod yard;
 
 use cli::Command;
 use cmd::run;
-use config::RequestedVersions;
 use error::{Result, UserError};
 use output::Output;
 use std::process::ExitCode;
@@ -52,10 +51,7 @@ fn inner() -> Result<ExitCode> {
         }),
         Command::DisplayHelp => Ok(cmd::help()),
         Command::Setup => cmd::setup(),
-        Command::Which { app, version, log } => {
-            let versions = RequestedVersions::determine(&app, version)?;
-            cmd::which(&app, &versions, log)
-        }
+        Command::Which { app, version, log } => cmd::which(&app, version, log),
         Command::Update { log } => {
             let output = output::StdErr { category: log };
             cmd::update(&output)
