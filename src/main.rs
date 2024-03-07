@@ -42,17 +42,14 @@ fn inner() -> Result<ExitCode> {
             app_args,
             error_on_output,
             optional,
-        } => {
-            let args = run::Args {
-                app,
-                version,
-                app_args,
-                error_on_output,
-                optional,
-                log,
-            };
-            cmd::run(args)
-        }
+        } => cmd::run(run::Args {
+            app,
+            version,
+            app_args,
+            error_on_output,
+            optional,
+            log,
+        }),
         Command::DisplayHelp => Ok(cmd::help()),
         Command::Setup => cmd::setup(),
         Command::Which { app, version, log } => {
