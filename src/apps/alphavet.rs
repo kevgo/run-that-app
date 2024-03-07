@@ -62,10 +62,6 @@ impl App for Alphavet {
         // as of 0.1.0 the -V switch of alphavet is broken
         AnalyzeResult::IdentifiedButUnknownVersion
     }
-
-    fn allowed_versions(&self) -> Option<semver::VersionReq> {
-        None
-    }
 }
 
 fn identify(output: &str) -> bool {

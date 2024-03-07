@@ -1,5 +1,6 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
+use crate::error::UserError;
 use crate::hosting::github_tags;
 use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
@@ -79,11 +80,16 @@ impl App for Go {
         }
     }
 
-    fn allowed_versions(&self) -> Option<semver::VersionReq> {
-        match filesystem::read_file("go.mod") {
-            Ok(_) => todo!(),
+    fn allowed_versions(&self) -> Result<Option<semver::VersionReq>> {
+        let go_mod_version = match filesystem::read_file("go.mod") {
+            Ok(content) => parse_go_mod(content)?,
             Err(_) => todo!(),
-        }
+        };
+        let version_req = semver::VersionReq::parse(go_mod_version).map_err(|err| UserError::CannotParseSemverRange {
+            expression: go_mod_version.to_string(),
+            reason: err.to_string(),
+        })?;
+        Ok(Some(version_req))
     }
 }
 

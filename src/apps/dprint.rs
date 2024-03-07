@@ -75,10 +75,6 @@ impl App for Dprint {
             None => AnalyzeResult::IdentifiedButUnknownVersion,
         }
     }
-
-    fn allowed_versions(&self) -> Option<semver::VersionReq> {
-        None
-    }
 }
 
 fn cpu_text(cpu: Cpu) -> &'static str {

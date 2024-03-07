@@ -76,10 +76,6 @@ impl App for ActionLint {
             None => AnalyzeResult::NotIdentified,
         }
     }
-
-    fn allowed_versions(&self) -> Option<semver::VersionReq> {
-        None
-    }
 }
 
 fn cpu_text(cpu: Cpu) -> &'static str {
