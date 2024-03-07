@@ -1,4 +1,4 @@
-use super::{App, VersionResult};
+use super::{App, ExecutableIdentity};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
@@ -54,12 +54,12 @@ impl App for Goda {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, executable: &Executable) -> VersionResult {
+    fn identify_executable(&self, executable: &Executable) -> ExecutableIdentity {
         if !identify(&executable.run_output("help")) {
-            return VersionResult::NotIdentified;
+            return ExecutableIdentity::NotIdentified;
         }
         // as of 0.5.7 goda has no way to determine the version of the installed executable
-        VersionResult::IdentifiedButUnknownVersion
+        ExecutableIdentity::IdentifiedButUnknownVersion
     }
 }
 

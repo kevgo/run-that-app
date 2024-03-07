@@ -1,5 +1,5 @@
 use super::go::Go;
-use super::{App, VersionResult};
+use super::{App, ExecutableIdentity};
 use crate::config::{AppName, Version};
 use crate::platform::{Os, Platform};
 use crate::subshell::Executable;
@@ -50,12 +50,12 @@ impl App for Gofmt {
         (Go {}).installable_versions(amount, output)
     }
 
-    fn version(&self, executable: &Executable) -> VersionResult {
+    fn identify_executable(&self, executable: &Executable) -> ExecutableIdentity {
         if !identify(&executable.run_output("-h")) {
-            return VersionResult::NotIdentified;
+            return ExecutableIdentity::NotIdentified;
         }
         // TODO: return the version of Go here
-        VersionResult::IdentifiedButUnknownVersion
+        ExecutableIdentity::IdentifiedButUnknownVersion
     }
 }
 

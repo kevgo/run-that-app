@@ -63,8 +63,8 @@ fn load_from_path(app_name: &AppName, want_version: &semver::VersionReq, output:
     let Some(executable) = find_global_install(app.executable_filename(platform), output) else {
         return Ok(None);
     };
-    match app.version(&executable) {
-        apps::VersionResult::NotIdentified => {
+    match app.identify_executable(&executable) {
+        apps::ExecutableIdentity::NotIdentified => {
             output.println(&format!(
                 "found {} but it doesn't seem an {} executable",
                 executable.as_str().cyan().bold(),
@@ -72,8 +72,8 @@ fn load_from_path(app_name: &AppName, want_version: &semver::VersionReq, output:
             ));
             Ok(None)
         }
-        apps::VersionResult::IdentifiedButUnknownVersion if want_version.to_string() == "*" => Ok(Some(executable)),
-        apps::VersionResult::IdentifiedButUnknownVersion => {
+        apps::ExecutableIdentity::IdentifiedButUnknownVersion if want_version.to_string() == "*" => Ok(Some(executable)),
+        apps::ExecutableIdentity::IdentifiedButUnknownVersion => {
             output.println(&format!(
                 "{} is an {} executable but I'm unable to determine its version.",
                 executable.as_str().cyan().bold(),
@@ -81,8 +81,8 @@ fn load_from_path(app_name: &AppName, want_version: &semver::VersionReq, output:
             ));
             Ok(None)
         }
-        apps::VersionResult::IdentifiedWithVersion(version) if want_version.matches(&version.semver()?) => Ok(Some(executable)),
-        apps::VersionResult::IdentifiedWithVersion(version) => {
+        apps::ExecutableIdentity::IdentifiedWithVersion(version) if want_version.matches(&version.semver()?) => Ok(Some(executable)),
+        apps::ExecutableIdentity::IdentifiedWithVersion(version) => {
             output.println(&format!(
                 "\n{} is version {} but {} requires {}",
                 executable.as_str().green().bold(),
