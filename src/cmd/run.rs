@@ -63,20 +63,35 @@ fn load_from_path(app_name: &AppName, want_version: &semver::VersionReq, output:
     let Some(executable) = find_global_install(app.executable_filename(platform), output) else {
         return Ok(None);
     };
-    let Some(have_version) = app.version(&executable) else {
-        return Ok(None);
-    };
-    if want_version.matches(&have_version.semver()?) {
-        Ok(Some(executable))
-    } else {
-        output.println(&format!(
-            "\n{} is version {} but {} requires {}",
-            executable.0.to_string_lossy().green().bold(),
-            have_version.as_str().cyan().bold(),
-            config::FILE_NAME.green().bold(),
-            want_version.to_string().cyan().bold(),
-        ));
-        Ok(None)
+    match app.version(&executable) {
+        apps::VersionResult::NotIdentified => {
+            output.println(&format!(
+                "found {} but it doesn't seem an {} executable",
+                executable.as_str().cyan().bold(),
+                app_name.as_str().cyan().bold()
+            ));
+            Ok(None)
+        }
+        apps::VersionResult::IdentifiedButUnknownVersion if want_version.to_string() == "*" => Ok(Some(executable)),
+        apps::VersionResult::IdentifiedButUnknownVersion => {
+            output.println(&format!(
+                "{} is an {} executable but I'm unable to determine its version.",
+                executable.as_str().cyan().bold(),
+                app_name.as_str().cyan().bold(),
+            ));
+            Ok(None)
+        }
+        apps::VersionResult::IdentifiedWithVersion(version) if want_version.matches(&version.semver()?) => Ok(Some(executable)),
+        apps::VersionResult::IdentifiedWithVersion(version) => {
+            output.println(&format!(
+                "\n{} is version {} but {} requires {}",
+                executable.as_str().green().bold(),
+                version.as_str().cyan().bold(),
+                config::FILE_NAME.green().bold(),
+                want_version.to_string().cyan().bold(),
+            ));
+            Ok(None)
+        }
     }
 }
 

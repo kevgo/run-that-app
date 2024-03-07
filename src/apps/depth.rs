@@ -1,4 +1,4 @@
-use super::App;
+use super::{App, VersionResult};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
@@ -65,8 +65,12 @@ impl App for Depth {
         github_releases::versions(ORG, REPO, amount, output)
     }
 
-    fn version(&self, _executable: &Executable) -> Option<Version> {
-        None // as of 1.2.1 depth doesn't display the version of the installed executable
+    fn version(&self, executable: &Executable) -> VersionResult {
+        if !identify(&executable.run_output("-h")) {
+            return VersionResult::NotIdentified;
+        }
+        // as of 1.2.1 depth doesn't display the version of the installed executable
+        VersionResult::IdentifiedButUnknownVersion
     }
 }
 
@@ -83,6 +87,10 @@ fn download_url(version: &Version, platform: Platform) -> String {
         os = os_text(platform.os),
         cpu = cpu_text(platform.cpu)
     )
+}
+
+fn identify(output: &str) -> bool {
+    output.contains("resolves dependencies of internal (stdlib) packages.")
 }
 
 fn os_text(os: Os) -> &'static str {

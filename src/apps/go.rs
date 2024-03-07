@@ -1,4 +1,4 @@
-use super::App;
+use super::{App, VersionResult};
 use crate::config::{AppName, Version};
 use crate::hosting::github_tags;
 use crate::install::archive::{self, InstallArgs};
@@ -68,8 +68,15 @@ impl App for Go {
         Ok(go_tags.into_iter().map(Version::from).collect())
     }
 
-    fn version(&self, executable: &Executable) -> Option<Version> {
-        extract_version(&executable.run_output("version")).map(Version::from)
+    fn version(&self, executable: &Executable) -> VersionResult {
+        if let Some(version) = extract_version(&executable.run_output("version")) {
+            return VersionResult::IdentifiedWithVersion(version.into());
+        }
+        if identify(&executable.run_output("-h")) {
+            VersionResult::IdentifiedButUnknownVersion
+        } else {
+            VersionResult::NotIdentified
+        }
     }
 }
 
@@ -98,6 +105,10 @@ fn ext_text(os: Os) -> &'static str {
 
 fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"go version go(\d+\.\d+\.\d+)")
+}
+
+fn identify(output: &str) -> bool {
+    output.contains("Go is a tool for managing Go source code")
 }
 
 fn os_text(os: Os) -> &'static str {
