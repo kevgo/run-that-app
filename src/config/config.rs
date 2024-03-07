@@ -1,11 +1,10 @@
 use super::{AppName, AppVersions, RequestedVersion, RequestedVersions, FILE_NAME};
 use crate::error::UserError;
-use crate::Result;
+use crate::{filesystem, Result};
 use std::fmt::Display;
 use std::fs::OpenOptions;
 use std::io::{ErrorKind, Write};
 use std::str::SplitAsciiWhitespace;
-use std::{env, fs, io};
 
 #[derive(Debug, Default, PartialEq)]
 pub struct Config {
@@ -31,7 +30,7 @@ impl Config {
     }
 
     pub fn load() -> Result<Config> {
-        match read()? {
+        match filesystem::read_file(FILE_NAME)? {
             Some(text) => parse(&text),
             None => Ok(Config::default()),
         }
@@ -94,26 +93,6 @@ fn parse_line(line_text: &str, line_no: usize) -> Result<Option<AppVersions>> {
         versions.push(RequestedVersion::from(part));
     }
     Ok(Some(AppVersions { app: name.into(), versions }))
-}
-
-/// provides the textual content of the config file
-fn read() -> Result<Option<String>> {
-    let cwd = env::current_dir().map_err(|err| UserError::CannotDetermineCurrentDirectory(err.to_string()))?;
-    let mut dir = cwd.as_path();
-    loop {
-        let file_path = dir.join(FILE_NAME);
-        match fs::read_to_string(file_path) {
-            Ok(text) => return Ok(Some(text)),
-            Err(err) => match err.kind() {
-                io::ErrorKind::NotFound => {}
-                _ => return Err(UserError::CannotAccessConfigFile(err.to_string())),
-            },
-        }
-        dir = match dir.parent() {
-            Some(parent) => parent,
-            None => return Ok(None),
-        };
-    }
 }
 
 /// provides active (non-comment) words in the given line
