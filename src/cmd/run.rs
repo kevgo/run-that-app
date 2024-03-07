@@ -17,7 +17,8 @@ pub fn run(args: Args) -> Result<ExitCode> {
     let app = apps.lookup(&args.app)?;
     let output = output::StdErr { category: args.log };
     let platform = platform::detect(&output)?;
-    for version in args.versions.iter() {
+    let versions = RequestedVersions::determine(&args.app, args.version)?;
+    for version in versions.iter() {
         if let Some(executable) = load_or_install(app, version, platform, &output)? {
             if args.error_on_output {
                 return subshell::execute_check_output(&executable, &args.app_args);
@@ -38,7 +39,7 @@ pub struct Args {
     pub app: AppName,
 
     /// possible versions of the app to execute
-    pub versions: RequestedVersions,
+    pub version: Option<Version>,
 
     /// arguments to call the app with
     #[allow(clippy::struct_field_names)]

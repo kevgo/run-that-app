@@ -43,15 +43,15 @@ fn inner() -> Result<ExitCode> {
             error_on_output,
             optional,
         } => {
-            let versions = RequestedVersions::determine(&app, version)?;
-            cmd::run(run::Args {
+            let args = run::Args {
                 app,
-                versions,
+                version,
                 app_args,
                 error_on_output,
                 optional,
                 log,
-            })
+            };
+            cmd::run(args)
         }
         Command::DisplayHelp => Ok(cmd::help()),
         Command::Setup => cmd::setup(),
