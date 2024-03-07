@@ -80,7 +80,10 @@ impl App for Go {
     }
 
     fn allowed_versions(&self) -> Option<semver::VersionReq> {
-        filesystem::find_in_current_or_parent_dir("go.mod")
+        match filesystem::read_file("go.mod") {
+            Ok(_) => todo!(),
+            Err(_) => todo!(),
+        }
     }
 }
 

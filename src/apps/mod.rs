@@ -57,7 +57,9 @@ pub trait App {
     /// ensures that the given executable belongs to this app and if yes returns the installed version
     fn analyze_executable(&self, path: &Executable) -> AnalyzeResult;
 
-    fn allowed_versions(&self) -> Option<semver::VersionReq>;
+    fn allowed_versions(&self) -> Option<semver::VersionReq> {
+        return None;
+    }
 }
 
 pub enum AnalyzeResult {
