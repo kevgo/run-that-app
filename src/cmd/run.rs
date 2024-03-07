@@ -1,3 +1,4 @@
+use crate::apps::AnalyzeExecutableResult;
 use crate::config::{AppName, RequestedVersion, RequestedVersions, Version};
 use crate::error::UserError;
 use crate::filesystem::find_global_install;
@@ -64,7 +65,7 @@ fn load_from_path(app_name: &AppName, want_version: &semver::VersionReq, output:
         return Ok(None);
     };
     match app.analyze_executable(&executable) {
-        apps::AnalyzeExecutableResult::NotIdentified => {
+        AnalyzeExecutableResult::NotIdentified => {
             output.println(&format!(
                 "found {} but it doesn't seem an {} executable",
                 executable.as_str().cyan().bold(),
@@ -72,8 +73,8 @@ fn load_from_path(app_name: &AppName, want_version: &semver::VersionReq, output:
             ));
             Ok(None)
         }
-        apps::AnalyzeExecutableResult::IdentifiedButUnknownVersion if want_version.to_string() == "*" => Ok(Some(executable)),
-        apps::AnalyzeExecutableResult::IdentifiedButUnknownVersion => {
+        AnalyzeExecutableResult::IdentifiedButUnknownVersion if want_version.to_string() == "*" => Ok(Some(executable)),
+        AnalyzeExecutableResult::IdentifiedButUnknownVersion => {
             output.println(&format!(
                 "{} is an {} executable but I'm unable to determine its version.",
                 executable.as_str().cyan().bold(),
@@ -81,8 +82,8 @@ fn load_from_path(app_name: &AppName, want_version: &semver::VersionReq, output:
             ));
             Ok(None)
         }
-        apps::AnalyzeExecutableResult::IdentifiedWithVersion(version) if want_version.matches(&version.semver()?) => Ok(Some(executable)),
-        apps::AnalyzeExecutableResult::IdentifiedWithVersion(version) => {
+        AnalyzeExecutableResult::IdentifiedWithVersion(version) if want_version.matches(&version.semver()?) => Ok(Some(executable)),
+        AnalyzeExecutableResult::IdentifiedWithVersion(version) => {
             output.println(&format!(
                 "\n{} is version {} but {} requires {}",
                 executable.as_str().green().bold(),
