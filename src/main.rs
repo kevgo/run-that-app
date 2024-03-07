@@ -52,10 +52,7 @@ fn inner() -> Result<ExitCode> {
         Command::DisplayHelp => Ok(cmd::help()),
         Command::Setup => cmd::setup(),
         Command::Which { app, version, log } => cmd::which(&app, version, log),
-        Command::Update { log } => {
-            let output = output::StdErr { category: log };
-            cmd::update(&output)
-        }
+        Command::Update { log } => cmd::update(log),
         Command::Version => Ok(cmd::version()),
         Command::Versions { app, amount, log } => {
             let output = output::StdErr { category: log };
