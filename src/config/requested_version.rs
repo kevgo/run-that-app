@@ -1,12 +1,12 @@
-use std::fmt::Display;
-
 use super::Version;
+use crate::error::UserError;
+use std::fmt::Display;
 
 /// an application version requested by the user
 #[derive(Clone, Debug, PartialEq)]
 pub enum RequestedVersion {
     /// the user has requested an externally installed application that matches the given version requirement
-    Path(String),
+    Path(semver::VersionReq),
     /// the user has requested an application in the Yard with the exact version given
     Yard(Version),
 }
@@ -16,7 +16,7 @@ impl Display for RequestedVersion {
         match self {
             RequestedVersion::Path(version) => {
                 f.write_str("system@")?;
-                f.write_str(version.as_str())
+                f.write_str(&version.to_string())
             }
             RequestedVersion::Yard(version) => f.write_str(version.as_str()),
         }
@@ -29,12 +29,18 @@ impl From<Version> for RequestedVersion {
     }
 }
 
-impl From<&str> for RequestedVersion {
-    fn from(value: &str) -> Self {
+impl TryFrom<&str> for RequestedVersion {
+    type Error = UserError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
         if let Some(version_req) = is_system(value) {
-            RequestedVersion::Path(version_req)
+            let version_req = semver::VersionReq::parse(&version_req).map_err(|err| UserError::CannotParseSemverRange {
+                expression: version_req.to_string(),
+                reason: err.to_string(),
+            })?;
+            Ok(RequestedVersion::Path(version_req))
         } else {
-            RequestedVersion::Yard(value.into())
+            Ok(RequestedVersion::Yard(value.into()))
         }
     }
 }
@@ -57,12 +63,11 @@ mod tests {
 
     mod from {
         use crate::config::RequestedVersion;
-        use big_s::S;
 
         #[test]
         fn system_request() {
-            let have = RequestedVersion::from("system@1.2");
-            let want = RequestedVersion::Path(S("1.2"));
+            let have = RequestedVersion::try_from("system@1.2").unwrap();
+            let want = RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap());
             assert_eq!(have, want);
         }
     }
