@@ -51,7 +51,13 @@ pub struct Args<'a> {
 
 pub fn load_or_install(app_name: &AppName, version: &RequestedVersion, output: &dyn Output) -> Result<Option<Executable>> {
     match version {
-        RequestedVersion::Path(version) => load_from_path(app_name, &parse_semver_req(version)?, output),
+        RequestedVersion::Path(version) => {
+            if version == "auto" {
+                version =
+            } else {
+                load_from_path(app_name, &parse_semver_req(version)?, output)
+            }
+        }
         RequestedVersion::Yard(version) => load_or_install_from_yard(app_name, version, output),
     }
 }
