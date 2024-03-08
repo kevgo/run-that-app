@@ -196,7 +196,7 @@ require (
 
         #[test]
         fn unrelated_file() {
-            let go_mod = "other file randomly named go.mod";
+            let go_mod = "other file coincidentally named go.mod";
             assert_eq!(parse_go_mod(go_mod), None);
         }
     }
