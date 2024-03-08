@@ -46,15 +46,6 @@ impl RequestedVersions {
         result
     }
 
-    pub fn parse(existing_versions: Vec<&str>, apps: &Apps) -> Result<RequestedVersions> {
-        let mut result: Vec<RequestedVersion> = Vec::with_capacity(existing_versions.len());
-        for text in existing_versions {
-            let app = apps.lookup(&text.into())?;
-            result.push(RequestedVersion::parse(text, app).unwrap());
-        }
-        Ok(RequestedVersions(result))
-    }
-
     pub fn push(&mut self, value: RequestedVersion) {
         self.0.push(value);
     }
@@ -99,12 +90,15 @@ impl From<Version> for RequestedVersions {
 mod tests {
 
     mod join {
-        use crate::apps::Apps;
-        use crate::config::RequestedVersions;
+        use crate::config::{RequestedVersion, RequestedVersions};
 
         #[test]
         fn multiple() {
-            let versions = RequestedVersions::parse(vec!["system@1.2", "1.2", "1.1"], &Apps::default()).unwrap();
+            let versions = RequestedVersions(vec![
+                RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap()),
+                RequestedVersion::Yard("1.2".into()),
+                RequestedVersion::Yard("1.1".into()),
+            ]);
             let have = versions.join(", ");
             let want = "system@^1.2, 1.2, 1.1";
             assert_eq!(have, want);
@@ -112,7 +106,7 @@ mod tests {
 
         #[test]
         fn one() {
-            let versions = RequestedVersions::parse(vec!["system@1.2"], &Apps::default()).unwrap();
+            let versions = RequestedVersions(vec![RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap())]);
             let have = versions.join(", ");
             let want = "system@^1.2";
             assert_eq!(have, want);
@@ -120,7 +114,7 @@ mod tests {
 
         #[test]
         fn zero() {
-            let versions = RequestedVersions::parse(vec![], &Apps::default()).unwrap();
+            let versions = RequestedVersions(vec![]);
             let have = versions.join(", ");
             let want = "";
             assert_eq!(have, want);
@@ -129,11 +123,15 @@ mod tests {
 
     mod largest_non_system {
         use crate::apps::Apps;
-        use crate::config::{RequestedVersions, Version};
+        use crate::config::{RequestedVersion, RequestedVersions, Version};
 
         #[test]
         fn system_and_versions() {
-            let versions = RequestedVersions::parse(vec!["system@1.2", "1.2", "1.1"], &Apps::default()).unwrap();
+            let versions = RequestedVersions(vec![
+                RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap()),
+                RequestedVersion::Yard("1.2".into()),
+                RequestedVersion::Yard("1.1".into()),
+            ]);
             let have = versions.largest_non_system();
             let want = Version::from("1.2");
             assert_eq!(have, Some(&want));
@@ -141,7 +139,7 @@ mod tests {
 
         #[test]
         fn system_no_versions() {
-            let versions = RequestedVersions::parse(vec!["system@1.2"], &Apps::default()).unwrap();
+            let versions = RequestedVersions(vec![RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap())]);
             let have = versions.largest_non_system();
             assert_eq!(have, None);
         }

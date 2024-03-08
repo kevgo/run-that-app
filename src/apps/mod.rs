@@ -27,8 +27,6 @@ use crate::platform::Platform;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
-#[cfg(test)]
-pub use shellcheck::ShellCheck;
 use std::slice::Iter;
 
 pub trait App {
@@ -101,7 +99,6 @@ pub fn all() -> Apps {
     ])
 }
 
-#[derive(Default)]
 pub struct Apps(pub Vec<Box<dyn App>>);
 
 impl Apps {
