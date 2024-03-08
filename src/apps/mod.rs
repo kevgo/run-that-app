@@ -99,7 +99,7 @@ pub fn all() -> Apps {
     ])
 }
 
-pub struct Apps(pub Vec<Box<dyn App>>);
+pub struct Apps(Vec<Box<dyn App>>);
 
 impl Apps {
     /// provides an `Iterator` over the applications
