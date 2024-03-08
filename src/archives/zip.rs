@@ -1,4 +1,5 @@
 use super::Archive;
+use crate::error::UserError;
 use crate::filesystem::strip_filepath;
 use crate::output::Output;
 use crate::subshell::Executable;
@@ -29,7 +30,8 @@ impl Archive for Zip {
             let file_in_zip = zip_archive.by_index(i).unwrap();
             super::log_archive_file(CATEGORY, file_in_zip.name(), output);
         }
-        let mut file_in_zip = zip_archive.by_name(filepath_in_archive).expect("file not found in archive");
+        let mut Ok(file_in_zip) = zip_archive.by_name(filepath_in_archive) else {
+            return Err(UserError::ArchiveFileNotFound { archive: (), filepath: () }.map_err("file not found in archive");
         let mut file_on_disk = fs::File::create(filepath_on_disk).unwrap();
         io::copy(&mut file_in_zip, &mut file_on_disk).unwrap();
         #[cfg(unix)]
