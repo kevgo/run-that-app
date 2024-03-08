@@ -5,7 +5,7 @@ use crate::Result;
 
 /// a collection of Version instances
 #[derive(Debug, PartialEq)]
-pub struct RequestedVersions(pub Vec<RequestedVersion>);
+pub struct RequestedVersions(Vec<RequestedVersion>);
 
 impl RequestedVersions {
     /// Provides the version to use: if the user provided a version to use via CLI, use it.
@@ -44,6 +44,10 @@ impl RequestedVersions {
             }
         }
         result
+    }
+
+    pub fn new(inner: Vec<RequestedVersion>) -> RequestedVersions {
+        RequestedVersions(inner)
     }
 
     pub fn push(&mut self, value: RequestedVersion) {
@@ -94,7 +98,7 @@ mod tests {
 
         #[test]
         fn multiple() {
-            let versions = RequestedVersions(vec![
+            let versions = RequestedVersions::new(vec![
                 RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap()),
                 RequestedVersion::Yard("1.2".into()),
                 RequestedVersion::Yard("1.1".into()),
@@ -106,7 +110,7 @@ mod tests {
 
         #[test]
         fn one() {
-            let versions = RequestedVersions(vec![RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap())]);
+            let versions = RequestedVersions::new(vec![RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap())]);
             let have = versions.join(", ");
             let want = "system@^1.2";
             assert_eq!(have, want);
@@ -114,7 +118,7 @@ mod tests {
 
         #[test]
         fn zero() {
-            let versions = RequestedVersions(vec![]);
+            let versions = RequestedVersions::new(vec![]);
             let have = versions.join(", ");
             let want = "";
             assert_eq!(have, want);
@@ -126,7 +130,7 @@ mod tests {
 
         #[test]
         fn system_and_versions() {
-            let versions = RequestedVersions(vec![
+            let versions = RequestedVersions::new(vec![
                 RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap()),
                 RequestedVersion::Yard("1.2".into()),
                 RequestedVersion::Yard("1.1".into()),
@@ -138,14 +142,14 @@ mod tests {
 
         #[test]
         fn system_no_versions() {
-            let versions = RequestedVersions(vec![RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap())]);
+            let versions = RequestedVersions::new(vec![RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap())]);
             let have = versions.largest_non_system();
             assert_eq!(have, None);
         }
 
         #[test]
         fn empty() {
-            let versions = RequestedVersions(vec![]);
+            let versions = RequestedVersions::new(vec![]);
             let have = versions.largest_non_system();
             assert_eq!(have, None);
         }
@@ -156,14 +160,14 @@ mod tests {
 
         #[test]
         fn system_and_versions() {
-            let mut versions = RequestedVersions(vec![
+            let mut versions = RequestedVersions::new(vec![
                 RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap()),
                 RequestedVersion::Yard("1.2".into()),
                 RequestedVersion::Yard("1.1".into()),
             ]);
             let have = versions.update_largest_with(&Version::from("1.4"));
             assert_eq!(have, Some(Version::from("1.2")));
-            let want = RequestedVersions(vec![
+            let want = RequestedVersions::new(vec![
                 RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap()),
                 RequestedVersion::Yard("1.4".into()),
                 RequestedVersion::Yard("1.1".into()),
@@ -173,10 +177,10 @@ mod tests {
 
         #[test]
         fn system_only() {
-            let mut versions = RequestedVersions(vec![RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap())]);
+            let mut versions = RequestedVersions::new(vec![RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap())]);
             let have = versions.update_largest_with(&Version::from("1.4"));
             assert_eq!(have, None);
-            let want = RequestedVersions(vec![RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap())]);
+            let want = RequestedVersions::new(vec![RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap())]);
             assert_eq!(versions, want);
         }
     }
