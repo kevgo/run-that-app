@@ -66,18 +66,20 @@ mod tests {
     use big_s::S;
 
     mod parse {
-        use crate::apps::{AnalyzeResult, App};
-        use crate::config::{RequestedVersion, Version};
-        use crate::output::Output;
-        use crate::platform::Platform;
-        use crate::subshell::Executable;
-        use crate::yard::Yard;
-        use crate::Result;
 
-        #[test]
-        fn yard_request() {
-            struct TestApp {}
-            impl App for TestApp {
+        mod unknown_allowed_versions {
+            use crate::apps::{AnalyzeResult, App};
+            use crate::config::{RequestedVersion, Version};
+            use crate::output::Output;
+            use crate::platform::Platform;
+            use crate::subshell::Executable;
+            use crate::yard::Yard;
+            use crate::Result;
+
+            struct AppWithoutAllowedVersions {}
+            impl App for AppWithoutAllowedVersions {
+                // this struct does not define an allowed_versions method
+
                 fn name(&self) -> crate::config::AppName {
                     unimplemented!()
                 }
@@ -106,16 +108,30 @@ mod tests {
                     unimplemented!()
                 }
             }
-            let app = TestApp {};
-            let have = RequestedVersion::parse("system@1.2", &app).unwrap();
-            let want = RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap());
-            assert_eq!(have, want);
+            #[test]
+            fn system_request() {
+                let app = AppWithoutAllowedVersions {};
+                let have = RequestedVersion::parse("system@1.2", &app).unwrap();
+                let want = RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap());
+                assert_eq!(have, want);
+            }
         }
 
-        #[test]
-        fn system_request() {
-            struct TestApp {}
-            impl App for TestApp {
+        mod known_allowed_versions {
+            use crate::apps::App;
+            use crate::config::{RequestedVersion, Version};
+            use crate::output::Output;
+            use crate::platform::Platform;
+            use crate::subshell::Executable;
+            use crate::yard::Yard;
+            use crate::Result;
+
+            struct AppWithAllowedVersions {}
+            impl App for AppWithAllowedVersions {
+                fn allowed_versions(&self) -> Result<Option<semver::VersionReq>> {
+                    Ok(Some(semver::VersionReq::parse("1.21").unwrap()))
+                }
+
                 fn name(&self) -> crate::config::AppName {
                     unimplemented!()
                 }
@@ -143,14 +159,15 @@ mod tests {
                 fn analyze_executable(&self, _path: &crate::subshell::Executable) -> crate::apps::AnalyzeResult {
                     unimplemented!()
                 }
-                fn allowed_versions(&self) -> Result<Option<semver::VersionReq>> {
-                    Ok(Some(semver::VersionReq::parse("1.21").unwrap()))
-                }
             }
-            let app = TestApp {};
-            let have = RequestedVersion::parse("system@1.2", &app).unwrap();
-            let want = RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap());
-            assert_eq!(have, want);
+
+            #[test]
+            fn system_request_with_allowed_version() {
+                let app = AppWithAllowedVersions {};
+                let have = RequestedVersion::parse("system@1.2", &app).unwrap();
+                let want = RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap());
+                assert_eq!(have, want);
+            }
         }
     }
 
