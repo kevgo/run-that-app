@@ -108,11 +108,20 @@ mod tests {
                     unimplemented!()
                 }
             }
+
             #[test]
-            fn system_request() {
+            fn system_request_with_version() {
                 let app = AppWithoutAllowedVersions {};
                 let have = RequestedVersion::parse("system@1.2", &app).unwrap();
                 let want = RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap());
+                assert_eq!(have, want);
+            }
+
+            #[test]
+            fn system_request_auto_version() {
+                let app = AppWithoutAllowedVersions {};
+                let have = RequestedVersion::parse("system@auto", &app).unwrap();
+                let want = RequestedVersion::Path(semver::VersionReq::STAR);
                 assert_eq!(have, want);
             }
         }
@@ -162,10 +171,18 @@ mod tests {
             }
 
             #[test]
-            fn system_request_with_allowed_version() {
+            fn system_request_with_version() {
                 let app = AppWithAllowedVersions {};
                 let have = RequestedVersion::parse("system@1.2", &app).unwrap();
                 let want = RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap());
+                assert_eq!(have, want);
+            }
+
+            #[test]
+            fn system_request_auto_version() {
+                let app = AppWithAllowedVersions {};
+                let have = RequestedVersion::parse("system@auto", &app).unwrap();
+                let want = RequestedVersion::Path(semver::VersionReq::parse("1.21").unwrap());
                 assert_eq!(have, want);
             }
         }
