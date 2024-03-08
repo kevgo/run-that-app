@@ -17,7 +17,7 @@ pub fn run(args: Args) -> Result<ExitCode> {
     let app = apps.lookup(&args.app)?;
     let output = output::StdErr { category: args.log };
     let platform = platform::detect(&output)?;
-    let versions = RequestedVersions::determine(&args.app, args.version)?;
+    let versions = RequestedVersions::determine(&args.app, args.version, &apps)?;
     for version in versions.iter() {
         if let Some(executable) = load_or_install(app, version, platform, &output)? {
             if args.error_on_output {
