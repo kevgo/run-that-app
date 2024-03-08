@@ -47,11 +47,7 @@ pub trait App {
     /// By default, apps use the executable filename.
     /// Apps can override this method to provide a custom path.
     fn executable_filepath(&self, platform: Platform) -> String {
-        let bare = self.executable_filename(platform);
-        match platform.os {
-            Os::Linux | Os::MacOS => bare,
-            Os::Windows => format!("{bare}.exe"),
-        }
+        self.executable_filename(platform)
     }
 
     /// link to the (human-readable) homepage of the app
