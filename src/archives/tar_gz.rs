@@ -8,16 +8,14 @@ use std::io;
 use std::path::Path;
 
 /// a .tar.gz file downloaded from the internet, containing an application
-pub struct TarGz {}
+pub struct TarGz {
+    pub data: Vec<u8>,
+}
 
 impl Archive for TarGz {
-    fn can_extract(&self, filename: &str) -> bool {
-        filesystem::has_extension(filename, ".tar.gz")
-    }
-
-    fn extract_all(&self, data: Vec<u8>, target_dir: &Path, strip_prefix: &str, executable_path_in_archive: &str, output: &dyn Output) -> Result<Executable> {
+    fn extract_all(&self, target_dir: &Path, strip_prefix: &str, executable_path_in_archive: &str, output: &dyn Output) -> Result<Executable> {
         print_header(output);
-        let gz_decoder = GzDecoder::new(io::Cursor::new(&data));
+        let gz_decoder = GzDecoder::new(io::Cursor::new(&self.data));
         let mut archive = tar::Archive::new(gz_decoder);
         let mut executable: Option<Executable> = None;
         for file in archive.entries().unwrap() {
@@ -37,9 +35,9 @@ impl Archive for TarGz {
         executable.ok_or_else(|| panic!("file {executable_path_in_archive} not found in archive"))
     }
 
-    fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, file_path_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
+    fn extract_file(&self, filepath_in_archive: &str, file_path_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
         print_header(output);
-        let gz_decoder = GzDecoder::new(io::Cursor::new(&data));
+        let gz_decoder = GzDecoder::new(io::Cursor::new(&self.data));
         let mut archive = tar::Archive::new(gz_decoder);
         for file in archive.entries().unwrap() {
             let mut file = file.unwrap();

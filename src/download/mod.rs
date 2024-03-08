@@ -1,3 +1,3 @@
 mod artifact;
 
-pub use artifact::{artifact, Artifact};
+pub use artifact::artifact;

@@ -8,16 +8,14 @@ use std::path::Path;
 use xz2::read::XzDecoder;
 
 /// a .tar.xz file downloaded from the internet, containing an application
-pub struct TarXz {}
+pub struct TarXz {
+    pub data: Vec<u8>,
+}
 
 impl Archive for TarXz {
-    fn can_extract(&self, filename: &str) -> bool {
-        filesystem::has_extension(filename, ".tar.xz")
-    }
-
-    fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
+    fn extract_file(&self, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
         print_header(output);
-        let decompressor = XzDecoder::new(Cursor::new(data));
+        let decompressor = XzDecoder::new(Cursor::new(&self.data));
         let mut archive = tar::Archive::new(decompressor);
         for file in archive.entries().unwrap() {
             let mut file = file.unwrap();
@@ -33,9 +31,9 @@ impl Archive for TarXz {
         panic!("file {filepath_in_archive} not found in archive");
     }
 
-    fn extract_all(&self, data: Vec<u8>, target_dir: &Path, strip_prefix: &str, executable_path_in_archive: &str, output: &dyn Output) -> Result<Executable> {
+    fn extract_all(&self, target_dir: &Path, strip_prefix: &str, executable_path_in_archive: &str, output: &dyn Output) -> Result<Executable> {
         print_header(output);
-        let decompressor = XzDecoder::new(Cursor::new(data));
+        let decompressor = XzDecoder::new(Cursor::new(&self.data));
         let mut archive = tar::Archive::new(decompressor);
         let mut executable: Option<Executable> = None;
         for file in archive.entries().unwrap() {
