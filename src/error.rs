@@ -84,7 +84,7 @@ impl UserError {
     pub fn print(self) {
         match self {
             UserError::ArchiveFileNotFound { filepath } => {
-                error(&format!("file {filepath} not found in archive"));
+                error(&format!("filepath \"{filepath}\" not found in archive"));
             }
             UserError::CannotAccessConfigFile(reason) => {
                 error(&format!("cannot read the config file: {reason}"));
