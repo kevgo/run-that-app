@@ -2,13 +2,12 @@ mod tar_gz;
 mod tar_xz;
 mod zip;
 
-use crate::subshell::Executable;
-use crate::{filesystem, Output, Result};
-use std::path::Path;
-
 use self::tar_gz::TarGz;
 use self::tar_xz::TarXz;
 use self::zip::Zip;
+use crate::subshell::Executable;
+use crate::{filesystem, Output, Result};
+use std::path::Path;
 
 /// An archive is a compressed file containing an application.
 pub trait Archive {
