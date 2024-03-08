@@ -1,8 +1,8 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
+use crate::install::archive::{self, InstallArgs};
 use crate::install::compile_rust::{compile_rust, CompileArgs};
-use crate::install::packaged_executable::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
@@ -33,12 +33,13 @@ impl App for MdBook {
 
     fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let name = self.name();
-        let result = packaged_executable::install(InstallArgs {
+        let result = archive::install(InstallArgs {
             app_name: &name,
             artifact_url: download_url(version, platform),
-            file_to_extract: &self.executable_filepath(platform),
-            filepath_on_disk: yard.app_folder(&name, version).join(self.executable_filepath(platform)),
             output,
+            dir_on_disk: yard.app_folder(&name, version),
+            strip_path_prefix: "",
+            executable_in_archive: &self.executable_filepath(platform),
         })?;
         if result.is_some() {
             return Ok(result);
