@@ -66,8 +66,12 @@ mod tests {
     use big_s::S;
 
     mod parse {
-        use crate::apps::App;
-        use crate::config::RequestedVersion;
+        use crate::apps::{AnalyzeResult, App};
+        use crate::config::{RequestedVersion, Version};
+        use crate::output::Output;
+        use crate::platform::Platform;
+        use crate::subshell::Executable;
+        use crate::yard::Yard;
         use crate::Result;
 
         #[test]
@@ -77,34 +81,28 @@ mod tests {
                 fn name(&self) -> crate::config::AppName {
                     todo!()
                 }
-                fn executable_filename(&self, platform: crate::platform::Platform) -> &'static str {
+                fn executable_filename(&self, _platform: Platform) -> &'static str {
                     todo!()
                 }
-                fn executable_filepath(&self, platform: crate::platform::Platform) -> &'static str {
+                fn executable_filepath(&self, _platform: Platform) -> &'static str {
                     todo!()
                 }
                 fn homepage(&self) -> &'static str {
                     todo!()
                 }
-                fn install(
-                    &self,
-                    version: &crate::config::Version,
-                    platform: crate::platform::Platform,
-                    yard: &crate::yard::Yard,
-                    output: &dyn crate::output::Output,
-                ) -> crate::error::Result<Option<crate::subshell::Executable>> {
+                fn install(&self, _version: &Version, _platform: Platform, _yard: &Yard, _output: &dyn Output) -> Result<Option<Executable>> {
                     todo!()
                 }
-                fn load(&self, version: &crate::config::Version, platform: crate::platform::Platform, yard: &crate::yard::Yard) -> Option<crate::subshell::Executable> {
+                fn load(&self, _version: &Version, _platform: Platform, _yard: &Yard) -> Option<Executable> {
                     todo!()
                 }
-                fn installable_versions(&self, amount: usize, output: &dyn crate::output::Output) -> crate::error::Result<Vec<crate::config::Version>> {
+                fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<Version>> {
                     todo!()
                 }
-                fn latest_installable_version(&self, output: &dyn crate::output::Output) -> crate::error::Result<crate::config::Version> {
+                fn latest_installable_version(&self, _output: &dyn Output) -> Result<Version> {
                     todo!()
                 }
-                fn analyze_executable(&self, path: &crate::subshell::Executable) -> crate::apps::AnalyzeResult {
+                fn analyze_executable(&self, _path: &Executable) -> AnalyzeResult {
                     todo!()
                 }
             }
@@ -121,34 +119,28 @@ mod tests {
                 fn name(&self) -> crate::config::AppName {
                     todo!()
                 }
-                fn executable_filename(&self, platform: crate::platform::Platform) -> &'static str {
+                fn executable_filename(&self, _platform: Platform) -> &'static str {
                     todo!()
                 }
-                fn executable_filepath(&self, platform: crate::platform::Platform) -> &'static str {
+                fn executable_filepath(&self, _platform: Platform) -> &'static str {
                     todo!()
                 }
                 fn homepage(&self) -> &'static str {
                     todo!()
                 }
-                fn install(
-                    &self,
-                    version: &crate::config::Version,
-                    platform: crate::platform::Platform,
-                    yard: &crate::yard::Yard,
-                    output: &dyn crate::output::Output,
-                ) -> crate::error::Result<Option<crate::subshell::Executable>> {
+                fn install(&self, _version: &Version, _platform: Platform, _yard: &Yard, _output: &dyn Output) -> Result<Option<Executable>> {
                     todo!()
                 }
-                fn load(&self, version: &crate::config::Version, platform: crate::platform::Platform, yard: &crate::yard::Yard) -> Option<crate::subshell::Executable> {
+                fn load(&self, _version: &Version, _platform: Platform, _yard: &Yard) -> Option<Executable> {
                     todo!()
                 }
-                fn installable_versions(&self, amount: usize, output: &dyn crate::output::Output) -> crate::error::Result<Vec<crate::config::Version>> {
+                fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<Version>> {
                     todo!()
                 }
-                fn latest_installable_version(&self, output: &dyn crate::output::Output) -> crate::error::Result<crate::config::Version> {
+                fn latest_installable_version(&self, _output: &dyn Output) -> Result<Version> {
                     todo!()
                 }
-                fn analyze_executable(&self, path: &crate::subshell::Executable) -> crate::apps::AnalyzeResult {
+                fn analyze_executable(&self, _path: &crate::subshell::Executable) -> crate::apps::AnalyzeResult {
                     todo!()
                 }
                 fn allowed_versions(&self) -> Result<Option<semver::VersionReq>> {

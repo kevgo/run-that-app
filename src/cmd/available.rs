@@ -13,7 +13,7 @@ pub fn available(app_name: &AppName, version: Option<Version>, log: Option<Strin
     let app = apps.lookup(app_name)?;
     let output = output::StdErr { category: log };
     let platform = platform::detect(&output)?;
-    let versions = RequestedVersions::determine(app_name, version)?;
+    let versions = RequestedVersions::determine(app_name, version, &apps)?;
     for version in versions.iter() {
         if load_or_install(app, version, platform, &output)?.is_some() {
             return Ok(ExitCode::SUCCESS);
