@@ -17,6 +17,7 @@ impl AppName {
 impl From<&str> for AppName {
     fn from(value: &str) -> Self {
         assert!(!value.is_empty(), "empty app name");
+        assert!(value.to_lowercase() == value, "app name is not all lowercase");
         AppName::new(value.to_string())
     }
 }
