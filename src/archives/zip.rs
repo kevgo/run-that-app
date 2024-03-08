@@ -2,7 +2,7 @@ use super::Archive;
 use crate::filesystem::strip_filepath;
 use crate::output::Output;
 use crate::subshell::Executable;
-use crate::{filesystem, Result};
+use crate::Result;
 use std::path::Path;
 use std::{fs, io};
 
@@ -10,16 +10,14 @@ use std::{fs, io};
 use std::os::unix::fs::PermissionsExt;
 
 /// a .zip file downloaded from the internet, containing an application
-pub struct Zip {}
+pub struct Zip {
+    pub data: Vec<u8>,
+}
 
 impl Archive for Zip {
-    fn can_extract(&self, filename: &str) -> bool {
-        filesystem::has_extension(filename, ".zip")
-    }
-
-    fn extract_file(&self, data: Vec<u8>, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
+    fn extract_file(&self, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
         print_header(output);
-        let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&data)).expect("cannot read zip data");
+        let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&self.data)).expect("cannot read zip data");
         if let Some(parent_dir) = filepath_on_disk.parent() {
             if !parent_dir.exists() {
                 std::fs::create_dir_all(parent_dir).unwrap();
@@ -37,9 +35,9 @@ impl Archive for Zip {
         Ok(Executable(filepath_on_disk.to_path_buf()))
     }
 
-    fn extract_all(&self, data: Vec<u8>, target_dir: &Path, strip_prefix: &str, executable_path_in_archive: &str, output: &dyn Output) -> Result<Executable> {
+    fn extract_all(&self, target_dir: &Path, strip_prefix: &str, executable_path_in_archive: &str, output: &dyn Output) -> Result<Executable> {
         print_header(output);
-        let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&data)).expect("cannot read zip data");
+        let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&self.data)).expect("cannot read zip data");
         if !target_dir.exists() {
             std::fs::create_dir_all(target_dir).unwrap();
         }
