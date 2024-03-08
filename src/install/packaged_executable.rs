@@ -1,4 +1,5 @@
 use crate::config::AppName;
+use crate::error::UserError;
 use crate::output::Output;
 use crate::subshell::Executable;
 use crate::{archives, filesystem};
@@ -12,7 +13,10 @@ pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
         return Ok(None);
     };
     filesystem::create_parent(&args.filepath_on_disk)?;
-    let executable = archives::extract_file(artifact, args.file_to_extract, &args.filepath_on_disk, args.output)?;
+    let Some(archive) = archives::lookup(&artifact.filename, artifact.data) else {
+        return Err(UserError::UnknownArchive(artifact.filename));
+    };
+    let executable = archive.extract_file(args.file_to_extract, &args.filepath_on_disk, args.output)?;
     args.output.println(&format!("{}", "ok".green()));
     Ok(Some(executable))
 }
