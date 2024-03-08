@@ -19,18 +19,16 @@ pub enum RequestedVersion {
 impl RequestedVersion {
     pub fn parse(version: &str, app: &dyn App) -> Result<RequestedVersion> {
         if let Some(system_version) = is_system(version) {
-            let version_req = if system_version == AUTO {
-                app.allowed_versions()?
-            } else {
-                semver::VersionReq::parse(&system_version).map_err(|err| UserError::CannotParseSemverRange {
-                    expression: system_version.to_string(),
-                    reason: err.to_string(),
-                })?
-            };
-            Ok(RequestedVersion::Path(version_req))
-        } else {
-            Ok(RequestedVersion::Yard(version.into()))
+            if system_version == AUTO {
+                return Ok(RequestedVersion::Path(app.allowed_versions()?));
+            }
+            let version_req = semver::VersionReq::parse(&system_version).map_err(|err| UserError::CannotParseSemverRange {
+                expression: system_version.to_string(),
+                reason: err.to_string(),
+            })?;
+            return Ok(RequestedVersion::Path(version_req));
         }
+        Ok(RequestedVersion::Yard(version.into()))
     }
 }
 
