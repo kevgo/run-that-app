@@ -4,6 +4,9 @@ use crate::error::UserError;
 use crate::Result;
 use std::fmt::Display;
 
+/// the version string for using the version restriction embedded in the codebase
+const AUTO: &str = "auto";
+
 /// an application version requested by the user
 #[derive(Clone, Debug, PartialEq)]
 pub enum RequestedVersion {
@@ -15,12 +18,12 @@ pub enum RequestedVersion {
 
 impl RequestedVersion {
     pub fn parse(version: &str, app: &dyn App) -> Result<RequestedVersion> {
-        if let Some(version_req) = is_system(version) {
-            let version_req = if version_req == "auto" {
+        if let Some(system_version) = is_system(version) {
+            let version_req = if system_version == AUTO {
                 app.allowed_versions()?
             } else {
-                semver::VersionReq::parse(&version_req).map_err(|err| UserError::CannotParseSemverRange {
-                    expression: version_req.to_string(),
+                semver::VersionReq::parse(&system_version).map_err(|err| UserError::CannotParseSemverRange {
+                    expression: system_version.to_string(),
                     reason: err.to_string(),
                 })?
             };
