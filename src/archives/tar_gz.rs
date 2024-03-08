@@ -34,24 +34,6 @@ impl Archive for TarGz {
         }
         executable.ok_or_else(|| panic!("file {executable_path_in_archive} not found in archive"))
     }
-
-    fn extract_file(&self, filepath_in_archive: &str, file_path_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
-        print_header(output);
-        let gz_decoder = GzDecoder::new(io::Cursor::new(&self.data));
-        let mut archive = tar::Archive::new(gz_decoder);
-        for file in archive.entries().unwrap() {
-            let mut file = file.unwrap();
-            let filepath = file.path().unwrap();
-            let filepath = filepath.to_string_lossy();
-            super::log_archive_file(CATEGORY, &filepath, output);
-            if filepath == filepath_in_archive {
-                file.unpack(file_path_on_disk).unwrap();
-                filesystem::make_file_executable(file_path_on_disk)?;
-                return Ok(Executable(file_path_on_disk.to_path_buf()));
-            }
-        }
-        panic!("file {filepath_in_archive} not found in archive");
-    }
 }
 
 fn print_header(output: &dyn Output) {

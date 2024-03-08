@@ -1,5 +1,4 @@
 use super::Archive;
-use crate::error::UserError;
 use crate::filesystem::strip_filepath;
 use crate::output::Output;
 use crate::subshell::Executable;
@@ -16,30 +15,6 @@ pub struct Zip {
 }
 
 impl Archive for Zip {
-    fn extract_file(&self, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
-        print_header(output);
-        let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&self.data)).expect("cannot read zip data");
-        if let Some(parent_dir) = filepath_on_disk.parent() {
-            if !parent_dir.exists() {
-                std::fs::create_dir_all(parent_dir).unwrap();
-            }
-        }
-        for i in 0..zip_archive.len() {
-            let file_in_zip = zip_archive.by_index(i).unwrap();
-            super::log_archive_file(CATEGORY, file_in_zip.name(), output);
-        }
-        let Ok(mut file_in_zip) = zip_archive.by_name(filepath_in_archive) else {
-            return Err(UserError::ArchiveFileNotFound {
-                filepath: filepath_in_archive.to_string(),
-            });
-        };
-        let mut file_on_disk = fs::File::create(filepath_on_disk).unwrap();
-        io::copy(&mut file_in_zip, &mut file_on_disk).unwrap();
-        #[cfg(unix)]
-        file_on_disk.set_permissions(fs::Permissions::from_mode(0o744)).unwrap();
-        Ok(Executable(filepath_on_disk.to_path_buf()))
-    }
-
     fn extract_all(&self, target_dir: &Path, strip_prefix: &str, executable_path_in_archive: &str, output: &dyn Output) -> Result<Executable> {
         print_header(output);
         let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&self.data)).expect("cannot read zip data");
