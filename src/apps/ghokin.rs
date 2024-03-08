@@ -19,13 +19,6 @@ impl App for Ghokin {
         AppName::from("ghokin")
     }
 
-    fn executable_filename(&self, platform: Platform) -> &'static str {
-        match platform.os {
-            Os::Linux | Os::MacOS => "ghokin",
-            Os::Windows => "ghokin.exe",
-        }
-    }
-
     fn homepage(&self) -> &'static str {
         formatcp!("https://github.com/{ORG}/{REPO}")
     }
@@ -35,7 +28,7 @@ impl App for Ghokin {
         let result = packaged_executable::install(InstallArgs {
             app_name: &name,
             artifact_url: download_url(version, platform),
-            file_to_extract: self.executable_filepath(platform),
+            file_to_extract: &self.executable_filepath(platform),
             filepath_on_disk: yard.app_folder(&name, version).join(self.executable_filepath(platform)),
             output,
         })?;
@@ -55,7 +48,7 @@ impl App for Ghokin {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, self.executable_filepath(platform))
+        yard.load_app(&self.name(), version, &self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

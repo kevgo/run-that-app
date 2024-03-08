@@ -20,13 +20,6 @@ impl App for Gofumpt {
         AppName::from("gofumpt")
     }
 
-    fn executable_filename(&self, platform: Platform) -> &'static str {
-        match platform.os {
-            Os::Linux | Os::MacOS => "gofumpt",
-            Os::Windows => "gofumpt.exe",
-        }
-    }
-
     fn homepage(&self) -> &'static str {
         formatcp!("https://github.com/{ORG}/{REPO}")
     }
@@ -55,7 +48,7 @@ impl App for Gofumpt {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, self.executable_filepath(platform))
+        yard.load_app(&self.name(), version, &self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

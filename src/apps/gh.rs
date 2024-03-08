@@ -18,13 +18,6 @@ impl App for Gh {
         AppName::from("gh")
     }
 
-    fn executable_filename(&self, platform: Platform) -> &'static str {
-        match platform.os {
-            Os::Linux | Os::MacOS => "gh",
-            Os::Windows => "gh.exe",
-        }
-    }
-
     fn homepage(&self) -> &'static str {
         "https://cli.github.com"
     }
@@ -46,7 +39,7 @@ impl App for Gh {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, self.executable_filepath(platform))
+        yard.load_app(&self.name(), version, &self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

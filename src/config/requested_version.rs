@@ -84,10 +84,10 @@ mod tests {
             fn name(&self) -> crate::config::AppName {
                 unimplemented!()
             }
-            fn executable_filename(&self, _platform: Platform) -> &'static str {
+            fn executable_filename(&self, _platform: Platform) -> String {
                 unimplemented!()
             }
-            fn executable_filepath(&self, _platform: Platform) -> &'static str {
+            fn executable_filepath(&self, _platform: Platform) -> String {
                 unimplemented!()
             }
             fn homepage(&self) -> &'static str {

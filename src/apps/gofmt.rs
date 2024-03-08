@@ -13,17 +13,10 @@ impl App for Gofmt {
         AppName::from("gofmt")
     }
 
-    fn executable_filename(&self, platform: Platform) -> &'static str {
+    fn executable_filepath(&self, platform: Platform) -> String {
         match platform.os {
-            Os::Linux | Os::MacOS => "gofmt",
-            Os::Windows => "gofmt.exe",
-        }
-    }
-
-    fn executable_filepath(&self, platform: Platform) -> &'static str {
-        match platform.os {
-            Os::Linux | Os::MacOS => "bin/gofmt",
-            Os::Windows => "bin\\gofmt.exe",
+            Os::Linux | Os::MacOS => "bin/gofmt".into(),
+            Os::Windows => "bin\\gofmt.exe".into(),
         }
     }
 
@@ -43,7 +36,7 @@ impl App for Gofmt {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&(Go {}).name(), version, self.executable_filepath(platform))
+        yard.load_app(&(Go {}).name(), version, &self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

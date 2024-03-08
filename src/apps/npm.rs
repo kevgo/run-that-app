@@ -14,17 +14,10 @@ impl App for Npm {
         AppName::from("npm")
     }
 
-    fn executable_filename(&self, platform: Platform) -> &'static str {
+    fn executable_filepath(&self, platform: Platform) -> String {
         match platform.os {
-            Os::Linux | Os::MacOS => "npm",
-            Os::Windows => "npm.exe",
-        }
-    }
-
-    fn executable_filepath(&self, platform: Platform) -> &'static str {
-        match platform.os {
-            Os::Linux | Os::MacOS => "bin/npm",
-            Os::Windows => "bin\\npm.exe",
+            Os::Linux | Os::MacOS => "bin/npm".into(),
+            Os::Windows => "bin\\npm.exe".into(),
         }
     }
 
@@ -44,7 +37,7 @@ impl App for Npm {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&(NodeJS {}).name(), version, self.executable_filepath(platform))
+        yard.load_app(&(NodeJS {}).name(), version, &self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

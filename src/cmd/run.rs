@@ -63,7 +63,7 @@ pub fn load_or_install(app: &dyn App, version: &RequestedVersion, platform: Plat
 
 // checks if the app is in the PATH and has the correct version
 fn load_from_path(app: &dyn App, want_version: &semver::VersionReq, platform: Platform, output: &dyn Output) -> Result<Option<Executable>> {
-    let Some(executable) = find_global_install(app.executable_filename(platform), output) else {
+    let Some(executable) = find_global_install(&app.executable_filename(platform), output) else {
         return Ok(None);
     };
     match app.analyze_executable(&executable) {
