@@ -122,7 +122,6 @@ mod tests {
     }
 
     mod largest_non_system {
-        use crate::apps::Apps;
         use crate::config::{RequestedVersion, RequestedVersions, Version};
 
         #[test]
@@ -146,7 +145,7 @@ mod tests {
 
         #[test]
         fn empty() {
-            let versions = RequestedVersions::parse(vec![], &Apps::default()).unwrap();
+            let versions = RequestedVersions(vec![]);
             let have = versions.largest_non_system();
             assert_eq!(have, None);
         }
@@ -154,14 +153,22 @@ mod tests {
 
     mod update_largest_with {
         use crate::apps::Apps;
-        use crate::config::{RequestedVersions, Version};
+        use crate::config::{RequestedVersion, RequestedVersions, Version};
 
         #[test]
         fn system_and_versions() {
-            let mut versions = RequestedVersions::parse(vec!["system@1.2", "1.2", "1.1"], &Apps::default()).unwrap();
+            let mut versions = RequestedVersions(vec![
+                RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap()),
+                RequestedVersion::Yard("1.2".into()),
+                RequestedVersion::Yard("1.1".into()),
+            ]);
             let have = versions.update_largest_with(&Version::from("1.4"));
             assert_eq!(have, Some(Version::from("1.2")));
-            let want = RequestedVersions::parse(vec!["system@1.2", "1.4", "1.1"], &Apps::default()).unwrap();
+            let want = RequestedVersions(vec![
+                RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap()),
+                RequestedVersion::Yard("1.4".into()),
+                RequestedVersion::Yard("1.1".into()),
+            ]);
             assert_eq!(versions, want);
         }
 
