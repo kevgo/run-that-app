@@ -3,7 +3,7 @@ mod tar_xz;
 mod zip;
 
 use crate::subshell::Executable;
-use crate::{Output, Result};
+use crate::{filesystem, Output, Result};
 use std::path::Path;
 
 use self::tar_gz::TarGz;
@@ -22,9 +22,9 @@ pub trait Archive {
 /// provides the archive that can extract the given file path
 pub fn lookup(filepath: &str, data: Vec<u8>) -> Option<Box<dyn Archive>> {
     match () {
-        () if filepath.ends_with(".zip") => Some(Box::new(Zip { data })),
-        () if filepath.ends_with(".tar.gz") => Some(Box::new(TarGz { data })),
-        () if filepath.ends_with(".tar.xz") => Some(Box::new(TarXz { data })),
+        () if filesystem::has_extension(filepath, ".zip") => Some(Box::new(Zip { data })),
+        () if filesystem::has_extension(filepath, ".tar.gz") => Some(Box::new(TarGz { data })),
+        () if filesystem::has_extension(filepath, ".tar.xz") => Some(Box::new(TarXz { data })),
         () => None,
     }
 }
@@ -57,7 +57,7 @@ mod tests {
 
         #[test]
         fn unknown_archive_type() {
-            let have = lookup(".zonk", vec![]);
+            let have = lookup("archive.zonk", vec![]);
             assert!(have.is_none());
         }
     }

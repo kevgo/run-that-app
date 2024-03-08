@@ -15,7 +15,7 @@ pub struct TarXz {
 impl Archive for TarXz {
     fn extract_file(&self, filepath_in_archive: &str, filepath_on_disk: &Path, output: &dyn Output) -> Result<Executable> {
         print_header(output);
-        let decompressor = XzDecoder::new(Cursor::new(self.data));
+        let decompressor = XzDecoder::new(Cursor::new(&self.data));
         let mut archive = tar::Archive::new(decompressor);
         for file in archive.entries().unwrap() {
             let mut file = file.unwrap();
@@ -33,7 +33,7 @@ impl Archive for TarXz {
 
     fn extract_all(&self, target_dir: &Path, strip_prefix: &str, executable_path_in_archive: &str, output: &dyn Output) -> Result<Executable> {
         print_header(output);
-        let decompressor = XzDecoder::new(Cursor::new(self.data));
+        let decompressor = XzDecoder::new(Cursor::new(&self.data));
         let mut archive = tar::Archive::new(decompressor);
         let mut executable: Option<Executable> = None;
         for file in archive.entries().unwrap() {
