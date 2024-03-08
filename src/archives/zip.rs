@@ -28,8 +28,11 @@ impl Archive for Zip {
             let file_in_zip = zip_archive.by_index(i).unwrap();
             super::log_archive_file(CATEGORY, file_in_zip.name(), output);
         }
-        let mut Ok(file_in_zip) = zip_archive.by_name(filepath_in_archive) else {
-            return Err(UserError::ArchiveFileNotFound { archive: (), filepath: () }.map_err("file not found in archive");
+        let Ok(mut file_in_zip) = zip_archive.by_name(filepath_in_archive) else {
+            return Err(UserError::ArchiveFileNotFound {
+                filepath: filepath_in_archive.to_string(),
+            });
+        };
         let mut file_on_disk = fs::File::create(filepath_on_disk).unwrap();
         io::copy(&mut file_in_zip, &mut file_on_disk).unwrap();
         #[cfg(unix)]

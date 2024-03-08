@@ -7,7 +7,6 @@ use std::path::PathBuf;
 #[allow(clippy::module_name_repetitions)]
 pub enum UserError {
     ArchiveFileNotFound {
-        archive: String,
         filepath: String,
     },
     CannotAccessConfigFile(String),
@@ -84,8 +83,8 @@ impl UserError {
     #[allow(clippy::too_many_lines)]
     pub fn print(self) {
         match self {
-            UserError::ArchiveFileNotFound { archive, filepath } => {
-                error(&format!("file {filepath} not found in archive {archive}"));
+            UserError::ArchiveFileNotFound { filepath } => {
+                error(&format!("file {filepath} not found in archive"));
             }
             UserError::CannotAccessConfigFile(reason) => {
                 error(&format!("cannot read the config file: {reason}"));
