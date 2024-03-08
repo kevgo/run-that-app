@@ -25,10 +25,6 @@ impl App for ShellCheck {
         }
     }
 
-    fn executable_filepath(&self, platform: Platform) -> &'static str {
-        self.executable_filename(platform)
-    }
-
     fn homepage(&self) -> &'static str {
         "https://www.shellcheck.net"
     }

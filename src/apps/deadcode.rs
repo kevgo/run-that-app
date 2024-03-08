@@ -21,10 +21,6 @@ impl App for Deadcode {
         }
     }
 
-    fn executable_filepath(&self, platform: Platform) -> &'static str {
-        self.executable_filename(platform)
-    }
-
     fn homepage(&self) -> &'static str {
         formatcp!("https://pkg.go.dev/golang.org/x/tools/cmd/deadcode")
     }

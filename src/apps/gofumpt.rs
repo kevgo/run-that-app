@@ -27,10 +27,6 @@ impl App for Gofumpt {
         }
     }
 
-    fn executable_filepath(&self, platform: Platform) -> &'static str {
-        self.executable_filename(platform)
-    }
-
     fn homepage(&self) -> &'static str {
         formatcp!("https://github.com/{ORG}/{REPO}")
     }

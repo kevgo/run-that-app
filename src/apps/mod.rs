@@ -37,7 +37,12 @@ pub trait App {
     fn executable_filename(&self, platform: Platform) -> &'static str;
 
     /// relative path of the executable that starts this app in the folder the downloaded artifact gets unpacked into
-    fn executable_filepath(&self, platform: Platform) -> &'static str;
+    ///
+    /// By default, apps use the executable filename.
+    /// Apps can override this method to provide a custom path.
+    fn executable_filepath(&self, platform: Platform) -> &'static str {
+        self.executable_filename(platform)
+    }
 
     /// link to the (human-readable) homepage of the app
     fn homepage(&self) -> &'static str;

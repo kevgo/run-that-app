@@ -25,10 +25,6 @@ impl App for Gh {
         }
     }
 
-    fn executable_filepath(&self, platform: Platform) -> &'static str {
-        self.executable_filename(platform)
-    }
-
     fn homepage(&self) -> &'static str {
         "https://cli.github.com"
     }
