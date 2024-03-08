@@ -146,16 +146,19 @@ mod tests {
                         versions: RequestedVersions(vec![RequestedVersion::Yard("1.2.3".into())]),
                     },
                     AppVersions {
-                        app: AppName::from("beta"),
+                        app: AppName::from("dprint"),
                         versions: RequestedVersions(vec![RequestedVersion::Yard("2.3.4".into())]),
                     },
                     AppVersions {
-                        app: AppName::from("gamma"),
+                        app: AppName::from("mdbook"),
                         versions: RequestedVersions(vec![RequestedVersion::Yard("3.4.5".into()), RequestedVersion::Yard("6.7.8".into())]),
                     },
                     AppVersions {
-                        app: AppName::from("delta"),
-                        versions: RequestedVersions(vec![RequestedVersion::Yard("system@3.4".into()), RequestedVersion::Yard("5.6.7".into())]),
+                        app: AppName::from("go"),
+                        versions: RequestedVersions(vec![
+                            RequestedVersion::Path(semver::VersionReq::parse("1.21").unwrap()),
+                            RequestedVersion::Yard("1.22.1".into()),
+                        ]),
                     },
                 ],
             };
