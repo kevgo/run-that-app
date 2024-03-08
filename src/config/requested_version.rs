@@ -72,7 +72,7 @@ mod tests {
         use crate::yard::Yard;
         use crate::Result;
 
-        /// an application stub that allows to mock the allowed version
+        /// an App instance that allows to mock the system version restrictions
         struct TestApp {
             allowed_versions: semver::VersionReq,
         }
