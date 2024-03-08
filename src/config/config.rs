@@ -90,7 +90,7 @@ fn parse_line(line_text: &str, line_no: usize, apps: &Apps) -> Result<Option<App
             text: line_text.to_string(),
         });
     };
-    let mut versions = RequestedVersions::try_from(version)?;
+    let mut versions = RequestedVersions::parse(vec![version], apps)?;
     for part in parts {
         versions.push(RequestedVersion::parse(part, app)?);
     }
@@ -143,19 +143,19 @@ mod tests {
                 apps: vec![
                     AppVersions {
                         app: AppName::from("alpha"),
-                        versions: RequestedVersions::try_from(vec!["1.2.3"]).unwrap(),
+                        versions: RequestedVersions::parse(vec!["1.2.3"], &Apps::default()).unwrap(),
                     },
                     AppVersions {
                         app: AppName::from("beta"),
-                        versions: RequestedVersions::try_from("2.3.4").unwrap(),
+                        versions: RequestedVersions::parse(vec!["2.3.4"], &Apps::default()).unwrap(),
                     },
                     AppVersions {
                         app: AppName::from("gamma"),
-                        versions: RequestedVersions::try_from(vec!["3.4.5", "6.7.8"]).unwrap(),
+                        versions: RequestedVersions::parse(vec!["3.4.5", "6.7.8"], &Apps::default()).unwrap(),
                     },
                     AppVersions {
                         app: AppName::from("delta"),
-                        versions: RequestedVersions::try_from(vec!["system@3.4", "5.6.7"]).unwrap(),
+                        versions: RequestedVersions::parse(vec!["system@3.4", "5.6.7"], &Apps::default()).unwrap(),
                     },
                 ],
             };
@@ -184,7 +184,7 @@ mod tests {
             let have = parse_line(give, 1, &Apps::default()).unwrap();
             let want = Some(AppVersions {
                 app: AppName::from("shellcheck"),
-                versions: RequestedVersions::try_from("0.9.0").unwrap(),
+                versions: RequestedVersions::parse(vec!["0.9.0"], &Apps::default()).unwrap(),
             });
             pretty::assert_eq!(have, want);
         }
@@ -195,7 +195,7 @@ mod tests {
             let have = parse_line(give, 1, &Apps::default()).unwrap();
             let want = Some(AppVersions {
                 app: AppName::from("shellcheck"),
-                versions: RequestedVersions::try_from(vec!["0.9.0", "0.6.0"]).unwrap(),
+                versions: RequestedVersions::parse(vec!["0.9.0", "0.6.0"], &Apps::default()).unwrap(),
             });
             pretty::assert_eq!(have, want);
         }
@@ -206,7 +206,7 @@ mod tests {
             let have = parse_line(give, 1, &Apps::default()).unwrap();
             let want = Some(AppVersions {
                 app: AppName::from("shellcheck"),
-                versions: RequestedVersions::try_from("0.9.0").unwrap(),
+                versions: RequestedVersions::parse(vec!["0.9.0"], &Apps::default()).unwrap(),
             });
             pretty::assert_eq!(have, want);
         }
@@ -217,7 +217,7 @@ mod tests {
             let have = parse_line(give, 1, &Apps::default()).unwrap();
             let want = Some(AppVersions {
                 app: AppName::from("shellcheck"),
-                versions: RequestedVersions::try_from("0.9.0").unwrap(),
+                versions: RequestedVersions::parse(vec!["0.9.0"], &Apps::default()).unwrap(),
             });
             pretty::assert_eq!(have, want);
         }
@@ -260,7 +260,7 @@ mod tests {
             let have = parse_line(give, 1, &Apps::default()).unwrap();
             let want = Some(AppVersions {
                 app: AppName::from("shellcheck"),
-                versions: RequestedVersions::try_from("0.9.0").unwrap(),
+                versions: RequestedVersions::parse(vec!["0.9.0"], &Apps::default()).unwrap(),
             });
             pretty::assert_eq!(have, want);
         }
