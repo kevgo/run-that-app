@@ -152,7 +152,6 @@ mod tests {
     }
 
     mod update_largest_with {
-        use crate::apps::Apps;
         use crate::config::{RequestedVersion, RequestedVersions, Version};
 
         #[test]
@@ -174,10 +173,10 @@ mod tests {
 
         #[test]
         fn system_only() {
-            let mut versions = RequestedVersions::parse(vec!["system@1.2"], &Apps::default()).unwrap();
+            let mut versions = RequestedVersions(vec![RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap())]);
             let have = versions.update_largest_with(&Version::from("1.4"));
             assert_eq!(have, None);
-            let want = RequestedVersions::parse(vec!["system@1.2"], &Apps::default()).unwrap();
+            let want = RequestedVersions(vec![RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap())]);
             assert_eq!(versions, want);
         }
     }
