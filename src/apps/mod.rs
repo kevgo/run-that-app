@@ -35,7 +35,11 @@ pub trait App {
 
     /// the filename of the executable that starts this app
     fn executable_filename(&self, platform: Platform) -> String {
-        self.name().to_string()
+        let bare = self.name().to_string();
+        match platform.os {
+            Os::Linux | Os::MacOS => bare,
+            Os::Windows => format!("{bare}.exe"),
+        }
     }
 
     /// relative path of the executable that starts this app in the folder the downloaded artifact gets unpacked into

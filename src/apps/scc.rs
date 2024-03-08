@@ -39,7 +39,7 @@ impl App for Scc {
         compile_go(CompileArgs {
             import_path: format!("github.com/{ORG}/{REPO}/v3@v{version}"),
             target_folder: &yard.app_folder(&name, version),
-            executable_filepath: &self.executable_filepath(platform),
+            executable_filepath: self.executable_filepath(platform),
             output,
         })
     }

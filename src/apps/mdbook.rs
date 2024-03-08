@@ -46,7 +46,7 @@ impl App for MdBook {
         compile_rust(CompileArgs {
             crate_name: "mdbook",
             target_folder: yard.app_folder(&name, version),
-            executable_filepath: &self.executable_filepath(platform),
+            executable_filepath: self.executable_filepath(platform),
             output,
         })
     }

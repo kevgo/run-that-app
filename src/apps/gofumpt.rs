@@ -42,7 +42,7 @@ impl App for Gofumpt {
         compile_go(CompileArgs {
             import_path: format!("mvdan.cc/gofumpt@{version}"),
             target_folder: &yard.app_folder(&name, version),
-            executable_filepath: &self.executable_filepath(platform),
+            executable_filepath: self.executable_filepath(platform),
             output,
         })
     }

@@ -34,7 +34,6 @@ pub fn compile_go(args: CompileArgs) -> Result<Option<Executable>> {
         return Err(UserError::GoCompilationFailed);
     }
     let executable = Executable(args.target_folder.join(args.executable_filepath));
-    drop(args);
     Ok(Some(executable))
 }
 
@@ -42,6 +41,6 @@ pub struct CompileArgs<'a> {
     /// the fully qualified Go import path for the package to install
     pub import_path: String,
     pub target_folder: &'a Path,
-    pub executable_filepath: &'static str,
+    pub executable_filepath: String,
     pub output: &'a dyn Output,
 }

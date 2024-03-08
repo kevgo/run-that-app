@@ -29,13 +29,12 @@ pub fn compile_rust(args: CompileArgs) -> Result<Option<Executable>> {
         return Err(UserError::RustCompilationFailed);
     }
     let executable = Executable(args.target_folder.join(args.executable_filepath));
-    drop(args);
     Ok(Some(executable))
 }
 
 pub struct CompileArgs<'a> {
     pub crate_name: &'static str,
     pub target_folder: PathBuf,
-    pub executable_filepath: &'static str,
+    pub executable_filepath: String,
     pub output: &'a dyn Output,
 }
