@@ -8,7 +8,7 @@ use colored::Colorize;
 use std::fs;
 use std::path::PathBuf;
 
-/// downloads and unpacks the entire content of an archive file
+/// downloads and unpacks the content of an archive file
 pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
     let Some(artifact) = download::artifact(args.artifact_url, args.app_name, args.output)? else {
         return Ok(None);

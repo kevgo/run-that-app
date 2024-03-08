@@ -13,9 +13,6 @@ use std::path::Path;
 pub trait Archive {
     /// extracts all files from the given archive data to the given location on disk
     fn extract_all(&self, target_dir: &Path, strip_prefix: &str, executable_path_in_archive: &str, output: &dyn Output) -> Result<Executable>;
-
-    /// extracts the given file from the given archive data to the given location on disk
-    fn extract_file(&self, filepath_in_archive: &str, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable>;
 }
 
 /// provides the archive that can extract the given file path

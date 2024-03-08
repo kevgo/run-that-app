@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::packaged_executable::{self, InstallArgs};
+use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
@@ -25,12 +25,13 @@ impl App for GolangCiLint {
 
     fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let name = self.name();
-        packaged_executable::install(InstallArgs {
+        archive::install(InstallArgs {
             app_name: &name,
             artifact_url: download_url(version, platform),
-            file_to_extract: &executable_path(version, platform, &self.executable_filepath(platform)),
-            filepath_on_disk: yard.app_folder(&name, version).join(self.executable_filepath(platform)),
             output,
+            dir_on_disk: yard.app_folder(&name, version),
+            strip_path_prefix: &format!("golangci-lint-{version}-{os}-{cpu}/", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
+            executable_in_archive: &self.executable_filepath(platform),
         })
         // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
     }
@@ -69,11 +70,6 @@ fn download_url(version: &Version, platform: Platform) -> String {
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os)
     )
-}
-
-// TODO: move into the executable_filepath method of the App trait
-fn executable_path(version: &Version, platform: Platform, filename: &str) -> String {
-    format!("golangci-lint-{version}-{os}-{cpu}/{filename}", os = os_text(platform.os), cpu = cpu_text(platform.cpu),)
 }
 
 fn ext_text(os: Os) -> &'static str {
