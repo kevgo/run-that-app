@@ -79,31 +79,31 @@ mod tests {
             struct TestApp {}
             impl App for TestApp {
                 fn name(&self) -> crate::config::AppName {
-                    todo!()
+                    unimplemented!()
                 }
                 fn executable_filename(&self, _platform: Platform) -> &'static str {
-                    todo!()
+                    unimplemented!()
                 }
                 fn executable_filepath(&self, _platform: Platform) -> &'static str {
-                    todo!()
+                    unimplemented!()
                 }
                 fn homepage(&self) -> &'static str {
-                    todo!()
+                    unimplemented!()
                 }
                 fn install(&self, _version: &Version, _platform: Platform, _yard: &Yard, _output: &dyn Output) -> Result<Option<Executable>> {
-                    todo!()
+                    unimplemented!()
                 }
                 fn load(&self, _version: &Version, _platform: Platform, _yard: &Yard) -> Option<Executable> {
-                    todo!()
+                    unimplemented!()
                 }
                 fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<Version>> {
-                    todo!()
+                    unimplemented!()
                 }
                 fn latest_installable_version(&self, _output: &dyn Output) -> Result<Version> {
-                    todo!()
+                    unimplemented!()
                 }
                 fn analyze_executable(&self, _path: &Executable) -> AnalyzeResult {
-                    todo!()
+                    unimplemented!()
                 }
             }
             let app = TestApp {};
@@ -117,31 +117,31 @@ mod tests {
             struct TestApp {}
             impl App for TestApp {
                 fn name(&self) -> crate::config::AppName {
-                    todo!()
+                    unimplemented!()
                 }
                 fn executable_filename(&self, _platform: Platform) -> &'static str {
-                    todo!()
+                    unimplemented!()
                 }
                 fn executable_filepath(&self, _platform: Platform) -> &'static str {
-                    todo!()
+                    unimplemented!()
                 }
                 fn homepage(&self) -> &'static str {
-                    todo!()
+                    unimplemented!()
                 }
                 fn install(&self, _version: &Version, _platform: Platform, _yard: &Yard, _output: &dyn Output) -> Result<Option<Executable>> {
-                    todo!()
+                    unimplemented!()
                 }
                 fn load(&self, _version: &Version, _platform: Platform, _yard: &Yard) -> Option<Executable> {
-                    todo!()
+                    unimplemented!()
                 }
                 fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<Version>> {
-                    todo!()
+                    unimplemented!()
                 }
                 fn latest_installable_version(&self, _output: &dyn Output) -> Result<Version> {
-                    todo!()
+                    unimplemented!()
                 }
                 fn analyze_executable(&self, _path: &crate::subshell::Executable) -> crate::apps::AnalyzeResult {
-                    todo!()
+                    unimplemented!()
                 }
                 fn allowed_versions(&self) -> Result<Option<semver::VersionReq>> {
                     Ok(Some(semver::VersionReq::parse("1.21").unwrap()))
