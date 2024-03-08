@@ -59,7 +59,7 @@ pub trait App {
 
     /// provides the version restrictions by the codebase in the working directory
     fn allowed_versions(&self) -> Result<Option<semver::VersionReq>> {
-        return Ok(None);
+        Ok(None)
     }
 }
 

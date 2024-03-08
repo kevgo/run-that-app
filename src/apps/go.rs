@@ -135,7 +135,7 @@ fn os_text(os: Os) -> &'static str {
 }
 
 fn parse_go_mod(text: &str) -> Option<&str> {
-    regexp::first_capture(text, r#"(?m)^go\s+(\d+\.\d+)\s*$"#)
+    regexp::first_capture(text, r"(?m)^go\s+(\d+\.\d+)\s*$")
 }
 
 #[cfg(test)]
