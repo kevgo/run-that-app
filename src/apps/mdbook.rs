@@ -17,7 +17,7 @@ const REPO: &str = "mdBook";
 
 impl App for MdBook {
     fn name(&self) -> AppName {
-        AppName::from("mdBook")
+        AppName::from("mdbook")
     }
 
     fn executable_filename(&self, platform: Platform) -> &'static str {
