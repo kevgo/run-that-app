@@ -90,7 +90,7 @@ fn parse_line(line_text: &str, line_no: usize, apps: &Apps) -> Result<Option<App
             text: line_text.to_string(),
         });
     };
-    let mut versions = RequestedVersions::parse(vec![version], apps)?;
+    let mut versions = RequestedVersions(vec![RequestedVersion::parse(version, app)?]);
     for part in parts {
         versions.push(RequestedVersion::parse(part, app)?);
     }
@@ -174,7 +174,7 @@ mod tests {
     mod parse_line {
         use super::super::parse_line;
         use crate::apps::{Apps, ShellCheck};
-        use crate::config::{AppName, AppVersions, RequestedVersions};
+        use crate::config::{AppName, AppVersions, RequestedVersion, RequestedVersions, Version};
         use crate::error::UserError;
         use big_s::S;
 
@@ -217,7 +217,7 @@ mod tests {
             let have = parse_line(give, 1, &Apps(vec![Box::new(ShellCheck {})])).unwrap();
             let want = Some(AppVersions {
                 app: AppName::from("shellcheck"),
-                versions: RequestedVersions::parse(vec!["0.9.0"], &Apps::default()).unwrap(),
+                versions: RequestedVersions(vec![RequestedVersion::Yard(Version(S("0.9.0")))]),
             });
             pretty::assert_eq!(have, want);
         }

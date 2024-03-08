@@ -5,7 +5,7 @@ use crate::Result;
 
 /// a collection of Version instances
 #[derive(Debug, PartialEq)]
-pub struct RequestedVersions(Vec<RequestedVersion>);
+pub struct RequestedVersions(pub Vec<RequestedVersion>);
 
 impl RequestedVersions {
     /// Provides the version to use: if the user provided a version to use via CLI, use it.
@@ -46,9 +46,9 @@ impl RequestedVersions {
         result
     }
 
-    pub fn parse(texts: Vec<&str>, apps: &Apps) -> Result<RequestedVersions> {
-        let mut result: Vec<RequestedVersion> = Vec::with_capacity(texts.len());
-        for text in texts {
+    pub fn parse(existing_versions: Vec<&str>, apps: &Apps) -> Result<RequestedVersions> {
+        let mut result: Vec<RequestedVersion> = Vec::with_capacity(existing_versions.len());
+        for text in existing_versions {
             let app = apps.lookup(&text.into())?;
             result.push(RequestedVersion::parse(text, app).unwrap());
         }

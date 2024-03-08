@@ -6,7 +6,7 @@ use std::path::Path;
 
 /// the desired version of an application
 #[derive(Clone, Debug, PartialEq)]
-pub struct Version(String);
+pub struct Version(pub String);
 
 impl PartialOrd for Version {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
