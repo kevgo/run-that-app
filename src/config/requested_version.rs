@@ -173,8 +173,8 @@ mod tests {
             #[test]
             fn system_request_with_version() {
                 let app = AppWithAllowedVersions {};
-                let have = RequestedVersion::parse("system@1.2", &app).unwrap();
-                let want = RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap());
+                let have = RequestedVersion::parse("system@1.5", &app).unwrap();
+                let want = RequestedVersion::Path(semver::VersionReq::parse("1.5").unwrap());
                 assert_eq!(have, want);
             }
 
