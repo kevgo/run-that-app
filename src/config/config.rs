@@ -173,7 +173,7 @@ mod tests {
 
     mod parse_line {
         use super::super::parse_line;
-        use crate::apps::Apps;
+        use crate::apps::{Apps, ShellCheck};
         use crate::config::{AppName, AppVersions, RequestedVersions};
         use crate::error::UserError;
         use big_s::S;
@@ -214,7 +214,7 @@ mod tests {
         #[test]
         fn normal_with_tabs() {
             let give = "shellcheck\t0.9.0";
-            let have = parse_line(give, 1, &Apps::default()).unwrap();
+            let have = parse_line(give, 1, &Apps(vec![Box::new(ShellCheck {})])).unwrap();
             let want = Some(AppVersions {
                 app: AppName::from("shellcheck"),
                 versions: RequestedVersions::parse(vec!["0.9.0"], &Apps::default()).unwrap(),
