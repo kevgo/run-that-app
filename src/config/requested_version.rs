@@ -17,7 +17,7 @@ impl RequestedVersion {
     pub fn parse(version: &str, app: &dyn App) -> Result<RequestedVersion> {
         if let Some(version_req) = is_system(version) {
             let version_req = if version_req == "auto" {
-                app.allowed_versions()?.unwrap_or_default()
+                app.allowed_versions()?
             } else {
                 semver::VersionReq::parse(&version_req).map_err(|err| UserError::CannotParseSemverRange {
                     expression: version_req.to_string(),
@@ -66,52 +66,60 @@ mod tests {
     use big_s::S;
 
     mod parse {
+        use crate::apps::{AnalyzeResult, App};
+        use crate::config::Version;
+        use crate::output::Output;
+        use crate::platform::Platform;
+        use crate::subshell::Executable;
+        use crate::yard::Yard;
+        use crate::Result;
+
+        /// an application stub that allows to mock the allowed version
+        struct TestApp {
+            allowed_versions: semver::VersionReq,
+        }
+        impl App for TestApp {
+            fn allowed_versions(&self) -> Result<semver::VersionReq> {
+                Ok(self.allowed_versions.clone())
+            }
+
+            fn name(&self) -> crate::config::AppName {
+                unimplemented!()
+            }
+            fn executable_filename(&self, _platform: Platform) -> &'static str {
+                unimplemented!()
+            }
+            fn executable_filepath(&self, _platform: Platform) -> &'static str {
+                unimplemented!()
+            }
+            fn homepage(&self) -> &'static str {
+                unimplemented!()
+            }
+            fn install(&self, _version: &Version, _platform: Platform, _yard: &Yard, _output: &dyn Output) -> Result<Option<Executable>> {
+                unimplemented!()
+            }
+            fn load(&self, _version: &Version, _platform: Platform, _yard: &Yard) -> Option<Executable> {
+                unimplemented!()
+            }
+            fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<Version>> {
+                unimplemented!()
+            }
+            fn latest_installable_version(&self, _output: &dyn Output) -> Result<Version> {
+                unimplemented!()
+            }
+            fn analyze_executable(&self, _path: &Executable) -> AnalyzeResult {
+                unimplemented!()
+            }
+        }
 
         mod unknown_allowed_versions {
-            use crate::apps::{AnalyzeResult, App};
-            use crate::config::{RequestedVersion, Version};
-            use crate::output::Output;
-            use crate::platform::Platform;
-            use crate::subshell::Executable;
-            use crate::yard::Yard;
-            use crate::Result;
-
-            struct AppWithoutAllowedVersions {}
-            impl App for AppWithoutAllowedVersions {
-                // this struct does not define an allowed_versions method
-
-                fn name(&self) -> crate::config::AppName {
-                    unimplemented!()
-                }
-                fn executable_filename(&self, _platform: Platform) -> &'static str {
-                    unimplemented!()
-                }
-                fn executable_filepath(&self, _platform: Platform) -> &'static str {
-                    unimplemented!()
-                }
-                fn homepage(&self) -> &'static str {
-                    unimplemented!()
-                }
-                fn install(&self, _version: &Version, _platform: Platform, _yard: &Yard, _output: &dyn Output) -> Result<Option<Executable>> {
-                    unimplemented!()
-                }
-                fn load(&self, _version: &Version, _platform: Platform, _yard: &Yard) -> Option<Executable> {
-                    unimplemented!()
-                }
-                fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<Version>> {
-                    unimplemented!()
-                }
-                fn latest_installable_version(&self, _output: &dyn Output) -> Result<Version> {
-                    unimplemented!()
-                }
-                fn analyze_executable(&self, _path: &Executable) -> AnalyzeResult {
-                    unimplemented!()
-                }
-            }
+            use crate::config::RequestedVersion;
 
             #[test]
             fn system_request_with_version() {
-                let app = AppWithoutAllowedVersions {};
+                let app = super::TestApp {
+                    allowed_versions: semver::VersionReq::STAR,
+                };
                 let have = RequestedVersion::parse("system@1.2", &app).unwrap();
                 let want = RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap());
                 assert_eq!(have, want);
@@ -119,7 +127,9 @@ mod tests {
 
             #[test]
             fn system_request_auto_version() {
-                let app = AppWithoutAllowedVersions {};
+                let app = super::TestApp {
+                    allowed_versions: semver::VersionReq::STAR,
+                };
                 let have = RequestedVersion::parse("system@auto", &app).unwrap();
                 let want = RequestedVersion::Path(semver::VersionReq::STAR);
                 assert_eq!(have, want);
@@ -135,10 +145,11 @@ mod tests {
             use crate::yard::Yard;
             use crate::Result;
 
+            /// a test application that defines its `allowed_versions` method
             struct AppWithAllowedVersions {}
             impl App for AppWithAllowedVersions {
-                fn allowed_versions(&self) -> Result<Option<semver::VersionReq>> {
-                    Ok(Some(semver::VersionReq::parse("1.21").unwrap()))
+                fn allowed_versions(&self) -> Result<semver::VersionReq> {
+                    Ok(semver::VersionReq::parse("1.21").unwrap())
                 }
 
                 fn name(&self) -> crate::config::AppName {

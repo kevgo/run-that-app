@@ -80,18 +80,18 @@ impl App for Go {
         }
     }
 
-    fn allowed_versions(&self) -> Result<Option<semver::VersionReq>> {
+    fn allowed_versions(&self) -> Result<semver::VersionReq> {
         let Some(go_mod_content) = filesystem::read_file("go.mod")? else {
-            return Ok(None);
+            return Ok(semver::VersionReq::STAR);
         };
         let Some(go_version_req) = parse_go_mod(&go_mod_content) else {
-            return Ok(None);
+            return Ok(semver::VersionReq::STAR);
         };
         let version_req = semver::VersionReq::parse(go_version_req).map_err(|err| UserError::CannotParseSemverRange {
             expression: go_version_req.to_string(),
             reason: err.to_string(),
         })?;
-        Ok(Some(version_req))
+        Ok(version_req)
     }
 }
 

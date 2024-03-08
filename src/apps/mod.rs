@@ -57,9 +57,13 @@ pub trait App {
     /// ensures that the given executable belongs to this app and if yes returns the installed version
     fn analyze_executable(&self, path: &Executable) -> AnalyzeResult;
 
-    /// provides the version restrictions by the codebase in the working directory
-    fn allowed_versions(&self) -> Result<Option<semver::VersionReq>> {
-        Ok(None)
+    /// Apps can override this method to provide version restrictions defined by config files in the working directory.
+    /// Apps that don't override this method are considered to have no such version restrictions.
+    ///
+    /// Examples: in a Go codebase, a file "go.mod" might define which Go version to use to compile this codebase
+    /// Similar version restrictions can exist in "package.json" for `NodeJS` or "Gemfile" for Ruby.
+    fn allowed_versions(&self) -> Result<semver::VersionReq> {
+        Ok(semver::VersionReq::STAR)
     }
 }
 
