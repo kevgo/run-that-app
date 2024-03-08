@@ -20,17 +20,10 @@ impl App for Go {
         AppName::from("go")
     }
 
-    fn executable_filename(&self, platform: Platform) -> &'static str {
+    fn executable_filepath(&self, platform: Platform) -> String {
         match platform.os {
-            Os::Linux | Os::MacOS => "go",
-            Os::Windows => "go.exe",
-        }
-    }
-
-    fn executable_filepath(&self, platform: Platform) -> &'static str {
-        match platform.os {
-            Os::Linux | Os::MacOS => "bin/go",
-            Os::Windows => "bin\\go.exe",
+            Os::Linux | Os::MacOS => "bin/go".into(),
+            Os::Windows => "bin\\go.exe".into(),
         }
     }
 
@@ -45,7 +38,7 @@ impl App for Go {
             artifact_url: download_url(version, platform),
             dir_on_disk: yard.app_folder(&name, version),
             strip_path_prefix: "go/",
-            executable_in_archive: self.executable_filepath(platform),
+            executable_in_archive: &self.executable_filepath(platform),
             output,
         })
     }
@@ -56,7 +49,7 @@ impl App for Go {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, self.executable_filepath(platform))
+        yard.load_app(&self.name(), version, &self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

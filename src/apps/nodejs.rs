@@ -18,17 +18,11 @@ impl App for NodeJS {
         AppName::from("node")
     }
 
-    fn executable_filename(&self, platform: Platform) -> &'static str {
+    // TODO: use MAIN_SEPARATOR here
+    fn executable_filepath(&self, platform: Platform) -> String {
         match platform.os {
-            Os::Linux | Os::MacOS => "node",
-            Os::Windows => "node.exe",
-        }
-    }
-
-    fn executable_filepath(&self, platform: Platform) -> &'static str {
-        match platform.os {
-            Os::Windows => "bin\\node.exe",
-            Os::Linux | Os::MacOS => "bin/node",
+            Os::Windows => "bin\\node.exe".into(),
+            Os::Linux | Os::MacOS => "bin/node".into(),
         }
     }
 
@@ -43,7 +37,7 @@ impl App for NodeJS {
             artifact_url: download_url(version, platform),
             dir_on_disk: yard.app_folder(&name, version),
             strip_path_prefix: &format!("node-v{version}-{os}-{cpu}/", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
-            executable_in_archive: self.executable_filepath(platform),
+            executable_in_archive: &self.executable_filepath(platform),
             output,
         })
     }
@@ -53,7 +47,7 @@ impl App for NodeJS {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, self.executable_filepath(platform))
+        yard.load_app(&self.name(), version, &self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

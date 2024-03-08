@@ -2,7 +2,7 @@ use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
-use crate::platform::{Os, Platform};
+use crate::platform::Platform;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -18,13 +18,6 @@ impl App for Alphavet {
         AppName::from("alphavet")
     }
 
-    fn executable_filename(&self, platform: Platform) -> &'static str {
-        match platform.os {
-            Os::Linux | Os::MacOS => "alphavet",
-            Os::Windows => "alphavet.exe",
-        }
-    }
-
     fn homepage(&self) -> &'static str {
         formatcp!("https://github.com/{ORG}/{REPO}")
     }
@@ -34,7 +27,7 @@ impl App for Alphavet {
         compile_go(CompileArgs {
             import_path: format!("github.com/{ORG}/{REPO}/cmd/alphavet@v{version}"),
             target_folder: &yard.app_folder(&self.name(), version),
-            executable_filepath: self.executable_filepath(platform),
+            executable_filepath: &self.executable_filepath(platform),
             output,
         })
     }
@@ -44,7 +37,7 @@ impl App for Alphavet {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, self.executable_filepath(platform))
+        yard.load_app(&self.name(), version, &self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

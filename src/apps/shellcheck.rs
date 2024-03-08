@@ -18,13 +18,6 @@ impl App for ShellCheck {
         AppName::from("shellcheck")
     }
 
-    fn executable_filename(&self, platform: Platform) -> &'static str {
-        match platform.os {
-            Os::Linux | Os::MacOS => "shellcheck",
-            Os::Windows => "shellcheck.exe",
-        }
-    }
-
     fn homepage(&self) -> &'static str {
         "https://www.shellcheck.net"
     }
@@ -45,7 +38,7 @@ impl App for ShellCheck {
     }
 
     fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, self.executable_filepath(platform))
+        yard.load_app(&self.name(), version, &self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

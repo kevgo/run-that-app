@@ -23,7 +23,7 @@ mod shfmt;
 
 use crate::config::{AppName, Version};
 use crate::error::UserError;
-use crate::platform::Platform;
+use crate::platform::{Os, Platform};
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{Output, Result};
@@ -34,14 +34,20 @@ pub trait App {
     fn name(&self) -> AppName;
 
     /// the filename of the executable that starts this app
-    fn executable_filename(&self, platform: Platform) -> &'static str;
+    fn executable_filename(&self, platform: Platform) -> String {
+        self.name().to_string()
+    }
 
     /// relative path of the executable that starts this app in the folder the downloaded artifact gets unpacked into
     ///
     /// By default, apps use the executable filename.
     /// Apps can override this method to provide a custom path.
-    fn executable_filepath(&self, platform: Platform) -> &'static str {
-        self.executable_filename(platform)
+    fn executable_filepath(&self, platform: Platform) -> String {
+        let bare = self.executable_filename(platform);
+        match platform.os {
+            Os::Linux | Os::MacOS => bare,
+            Os::Windows => format!("{bare}.exe"),
+        }
     }
 
     /// link to the (human-readable) homepage of the app
