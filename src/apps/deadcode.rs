@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
-use crate::install::{CompileFromGoSource, Method};
+use crate::install::{self, CompileFromGoSource, Method};
 use crate::subshell::Executable;
 use crate::{Output, Result};
 use const_format::formatcp;
@@ -16,7 +16,7 @@ impl App for Deadcode {
         formatcp!("https://pkg.go.dev/golang.org/x/tools/cmd/deadcode")
     }
 
-    fn install_methods(&self) -> Vec<crate::install::Method> {
+    fn install_methods(&self) -> Vec<install::Method> {
         vec![Method::CompileGoSource(self)]
     }
 

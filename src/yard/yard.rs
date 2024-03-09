@@ -12,6 +12,7 @@ pub struct Yard {
 /// stores executables of and metadata about applications
 impl Yard {
     /// provides the path to the folder containing the given application
+    // TODO: rename to app_folder_path, add app_folder method that creates the folder if needed
     pub fn app_folder(&self, app_name: &AppName, app_version: &Version) -> PathBuf {
         self.root.join("apps").join(app_name).join(app_version)
     }

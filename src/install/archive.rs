@@ -1,12 +1,11 @@
 use crate::apps::App;
-use crate::config::{AppName, Version};
+use crate::config::Version;
 use crate::output::Output;
 use crate::platform::Platform;
 use crate::UserError;
 use crate::{archives, yard};
 use crate::{download, Result};
 use std::fs;
-use std::path::Path;
 
 pub trait InstallByArchive: App {
     /// provides the URL of the archive to download
@@ -29,12 +28,4 @@ pub fn install(app: &dyn InstallByArchive, version: &Version, platform: Platform
     };
     archive.extract_all(&app_folder, output)?;
     Ok(true)
-}
-
-pub struct InstallArgs<'a> {
-    pub app_name: &'a AppName,
-    pub artifact_url: String,
-    pub dir_on_disk: &'a Path,
-    pub executable_locations: Vec<String>,
-    pub output: &'a dyn Output,
 }

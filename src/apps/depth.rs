@@ -5,10 +5,10 @@ use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::install::executable::{self, InstallArgs};
+use crate::install::{CompileFromGoSource, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::subshell::Executable;
-use crate::yard::Yard;
-use crate::{Output, Result};
+use crate::{install, Output, Result};
 use const_format::formatcp;
 
 pub struct Depth {}
@@ -36,11 +36,10 @@ impl App for Depth {
         if installed {
             return Ok(true);
         }
-        compile_go(CompileArgs {
-            import_path: format!("github.com/{ORG}/{REPO}/cmd/depth@v{version}"),
-            target_folder: folder,
-            output,
-        })
+    }
+
+    fn install_methods(&self) -> Vec<install::Method> {
+        vec![Method::DownloadExecutable(self), Method::CompileGoSource(self)]
     }
 
     fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
@@ -57,6 +56,12 @@ impl App for Depth {
         }
         // as of 1.2.1 depth doesn't display the version of the installed executable
         AnalyzeResult::IdentifiedButUnknownVersion
+    }
+}
+
+impl CompileFromGoSource for Depth {
+    fn import_path(&self, version: &Version) -> String {
+        format!("github.com/{ORG}/{REPO}/cmd/depth@v{version}")
     }
 }
 
