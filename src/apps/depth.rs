@@ -30,7 +30,7 @@ impl App for Depth {
         let installed = executable::install(InstallArgs {
             app_name: &name,
             artifact_url: download_url(version, platform),
-            filepath_on_disk: folder,
+            filepath_on_disk: yard.create_app_folder(&name, version)?.join(self.executable_filepath(platform)),
             output,
         })?;
         if installed {

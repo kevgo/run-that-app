@@ -21,6 +21,16 @@ impl Yard {
         todo!()
     }
 
+    /// provides the path to the folder containing the given application, creates the folder if it doesn't exist
+    pub fn create_app_folder(&self, app_name: &AppName, app_version: &Version) -> Result<PathBuf> {
+        let folder = self.app_folder(app_name, app_version);
+        fs::create_dir_all(&folder).map_err(|err| UserError::CannotCreateFolder {
+            folder: folder.clone(),
+            reason: err.to_string(),
+        })?;
+        Ok(folder)
+    }
+
     pub fn is_not_installable(&self, app: &AppName, version: &Version) -> bool {
         self.not_installable_path(app, version).exists()
     }
@@ -36,11 +46,7 @@ impl Yard {
     }
 
     pub fn mark_not_installable(&self, app: &AppName, version: &Version) -> Result<()> {
-        let app_folder = self.app_folder(app, version);
-        fs::create_dir_all(&app_folder).map_err(|err| UserError::YardAccessDenied {
-            msg: err.to_string(),
-            path: app_folder,
-        })?;
+        self.create_app_folder(app, version)?;
         let path = self.not_installable_path(app, version);
         match File::create(&path) {
             Ok(_) => Ok(()),
@@ -57,8 +63,7 @@ impl Yard {
     #[cfg(test)]
     fn save_app_file(&self, name: &AppName, version: &Version, file_name: &str, file_content: &[u8]) {
         use std::io::Write;
-        fs::create_dir_all(self.app_folder(name, version)).unwrap();
-        let mut file = fs::File::create(self.app_folder(name, version).join(file_name)).unwrap();
+        let mut file = fs::File::create(self.create_app_folder(name, version).unwrap().join(file_name)).unwrap();
         file.write_all(file_content).unwrap();
     }
 }

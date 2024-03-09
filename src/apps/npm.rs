@@ -28,7 +28,7 @@ impl App for Npm {
     fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let nodejs = NodeJS {};
         nodejs.install(version, platform, yard, output)?;
-        let executable_path = yard.app_folder(&nodejs.name(), version).join(self.executable_filepath(platform));
+        let executable_path = yard.create_app_folder(&nodejs.name(), version)?.join(self.executable_filepath(platform));
         Ok(Some(Executable(executable_path)))
     }
 
