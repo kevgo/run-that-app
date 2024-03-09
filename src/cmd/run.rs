@@ -103,22 +103,22 @@ fn load_or_install_from_yard(app: &dyn App, version: &Version, output: &dyn Outp
     let platform = platform::detect(output)?;
     let yard = yard::load_or_create(&yard::production_location()?)?;
     // try to load the app here
-    let yard_app = app.yard_app();
     let locations = app.executable_locations(platform);
-    if let Some(executable) = yard.find_executable(&yard_app, &locations)? {
+    if let Some(executable) = yard.find_executable(&app.yard_app(), &locations)? {
         return Ok(Some(executable));
     }
     // app not installed --> check if uninstallable
-    if yard.is_not_installable(&app.name(), version) {
+    let app_name = app.name();
+    if yard.is_not_installable(&app_name, version) {
         return Ok(None);
     }
     // app not installed and installable --> try to install
     if install(app.install_methods(), version, platform, output)? {
-        return yard.find_executable(&app.name(), &locations);
+        return yard.find_executable(&app_name, &locations);
     }
 
     // app could not be installed -> mark as uninstallable
-    yard.mark_not_installable(&app.name(), version)?;
+    yard.mark_not_installable(&app_name, version)?;
     Ok(None)
 }
 
