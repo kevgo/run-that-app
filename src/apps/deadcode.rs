@@ -1,9 +1,6 @@
-use std::path::Path;
-
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
-use crate::install::compile_go::{compile_go, CompileArgs};
-use crate::platform::Platform;
+use crate::install::{CompileFromGoSource, Method};
 use crate::subshell::Executable;
 use crate::{Output, Result};
 use const_format::formatcp;
@@ -19,12 +16,8 @@ impl App for Deadcode {
         formatcp!("https://pkg.go.dev/golang.org/x/tools/cmd/deadcode")
     }
 
-    fn install(&self, version: &Version, platform: Platform, folder: &Path, output: &dyn Output) -> Result<bool> {
-        compile_go(CompileArgs {
-            import_path: format!("golang.org/x/tools/cmd/deadcode@v{version}"),
-            target_folder: folder,
-            output,
-        })
+    fn install_methods(&self) -> Vec<crate::install::Method> {
+        vec![Method::CompileGoSource(self)]
     }
 
     fn latest_installable_version(&self, _output: &dyn Output) -> Result<Version> {
@@ -37,7 +30,7 @@ impl App for Deadcode {
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !identify(&executable.run_output("-h")) {
+        if !executable.run_output("-h").contains("The deadcode command reports unreachable functions in Go programs") {
             return AnalyzeResult::NotIdentified;
         }
         // as of 0.16.1 deadcode does not display the version of the installed executable
@@ -45,6 +38,8 @@ impl App for Deadcode {
     }
 }
 
-fn identify(output: &str) -> bool {
-    output.contains("The deadcode command reports unreachable functions in Go programs")
+impl CompileFromGoSource for Deadcode {
+    fn import_path(&self, version: &Version) -> String {
+        format!("golang.org/x/tools/cmd/deadcode@v{version}")
+    }
 }
