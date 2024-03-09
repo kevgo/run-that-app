@@ -31,7 +31,7 @@ impl App for ActionLint {
             artifact_url: download_url(version, platform),
             output,
             dir_on_disk: yard.app_folder(&name, version),
-            strip_path_prefix: "", // TODO: make this an option rather than relying on the magic empty string
+            strip_path_prefix: "", // TODO: remove this or make it an option rather than relying on the magic empty string
             executable_in_archive: &self.executable_filepath(platform),
         })?;
         if result.is_some() {
