@@ -36,7 +36,7 @@ impl App for Go {
         archive::install(InstallArgs {
             app_name: &name,
             artifact_url: download_url(version, platform),
-            dir_on_disk: yard.app_folder(&name, version)?,
+            dir_on_disk: yard.create_app_folder(&name, version)?,
             strip_path_prefix: "go/",
             executable_in_archive: &self.executable_filepath(platform),
             output,
