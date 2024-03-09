@@ -29,7 +29,7 @@ impl App for Ghokin {
             app_name: &name,
             artifact_url: download_url(version, platform),
             file_to_extract: &self.executable_filepath(platform),
-            filepath_on_disk: yard.app_folder(&name, version).join(self.executable_filepath(platform)),
+            filepath_on_disk: yard.create_app_folder(&name, version)?.join(self.executable_filepath(platform)),
             output,
         })?;
         if result.is_some() {

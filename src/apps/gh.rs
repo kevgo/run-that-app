@@ -28,7 +28,7 @@ impl App for Gh {
             app_name: &name,
             artifact_url: download_url(version, platform),
             file_to_extract: &executable_path(version, platform),
-            filepath_on_disk: yard.app_folder(&name, version).join(self.executable_filepath(platform)),
+            filepath_on_disk: yard.create_app_folder(&name, version)?.join(self.executable_filepath(platform)),
             output,
         })
         // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md

@@ -21,7 +21,7 @@ impl App for Deadcode {
     fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         compile_go(CompileArgs {
             import_path: format!("golang.org/x/tools/cmd/deadcode@v{version}"),
-            target_folder: &yard.app_folder(&self.name(), version),
+            target_folder: &yard.create_app_folder(&self.name(), version)?,
             executable_filepath: self.executable_filepath(platform),
             output,
         })
