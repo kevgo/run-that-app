@@ -26,7 +26,6 @@ use crate::error::UserError;
 use crate::platform::{Os, Platform};
 use crate::subshell::Executable;
 use crate::{install, Output, Result};
-use std::path::Path;
 use std::slice::Iter;
 
 pub trait App {
@@ -42,7 +41,7 @@ pub trait App {
         }
     }
 
-    /// which yard folder this app uses
+    /// which app's yard folder this app uses
     ///
     /// Apps can overwrite this method if they use the yard folder of another app.
     /// An example is npm. It's executable is located inside the yard folder of the Node app.
@@ -50,7 +49,7 @@ pub trait App {
         self.name()
     }
 
-    /// relative paths to the executable within the Yard folder
+    /// possible locations of this app's executable in the Yard folder
     ///
     /// By default, apps use the executable filename.
     /// Apps can override this method to provide additional custom paths.
