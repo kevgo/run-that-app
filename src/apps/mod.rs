@@ -25,8 +25,8 @@ use crate::config::{AppName, Version};
 use crate::error::UserError;
 use crate::platform::{Os, Platform};
 use crate::subshell::Executable;
-use crate::yard::Yard;
 use crate::{Output, Result};
+use std::path::Path;
 use std::slice::Iter;
 
 pub trait App {
@@ -42,22 +42,28 @@ pub trait App {
         }
     }
 
-    /// relative path of the executable that starts this app in the folder the downloaded artifact gets unpacked into
+    /// which yard folder this app uses
+    ///
+    /// Apps can overwrite this method if they use the yard folder of another app.
+    /// An example is npm. It's executable is located inside the yard folder of the Node app.
+    fn yard_app(&self) -> AppName {
+        self.name()
+    }
+
+    /// relative paths to the executable within the Yard folder
     ///
     /// By default, apps use the executable filename.
-    /// Apps can override this method to provide a custom path.
-    fn executable_filepath(&self, platform: Platform) -> String {
-        self.executable_filename(platform)
+    /// Apps can override this method to provide additional custom paths.
+    fn executable_locations(&self, platform: Platform) -> Vec<String> {
+        vec![self.executable_filename(platform)]
     }
 
     /// link to the (human-readable) homepage of the app
     fn homepage(&self) -> &'static str;
 
-    /// installs this app at the given version into the given yard
-    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>>;
-
-    // loads this app from the given yard if it is already installed
-    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable>;
+    /// Tries to install this app at the given version into the given folder.
+    /// Indicates whether a suitable installation method was found.
+    fn install(&self, version: &Version, platform: Platform, folder: &Path, output: &dyn Output) -> Result<bool>;
 
     /// provides the versions of this application that can be installed
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>>;

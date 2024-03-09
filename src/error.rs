@@ -6,6 +6,12 @@ use std::path::PathBuf;
 #[derive(Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions)]
 pub enum UserError {
+    ArchiveCannotExtract {
+        reason: String,
+    },
+    ArchiveNoExecutable {
+        path: PathBuf,
+    },
     CannotAccessConfigFile(String),
     CannotCreateFolder {
         folder: PathBuf,
@@ -34,6 +40,10 @@ pub enum UserError {
         expression: String,
         reason: String,
     },
+    CompilationError {
+        reason: String,
+    },
+    CompilationInterupted,
     ConfigFileAlreadyExists,
     GitHubReleasesApiProblem {
         problem: String,
@@ -80,6 +90,12 @@ impl UserError {
     #[allow(clippy::too_many_lines)]
     pub fn print(self) {
         match self {
+            UserError::ArchiveCannotExtract { reason } => {
+                error(&format!("cannot extract the archive: {reason}"));
+            }
+            UserError::ArchiveNoExecutable { path } => {
+                error(&format!("executable \"{}\" not found in archive", path.to_string_lossy()));
+            }
             UserError::CannotAccessConfigFile(reason) => {
                 error(&format!("cannot read the config file: {reason}"));
                 desc(&format!("please make sure {} is a file and accessible to you", config::FILE_NAME,));
@@ -109,6 +125,12 @@ impl UserError {
             UserError::CannotParseSemverRange { expression, reason } => {
                 error(&format!("semver range \"{expression}\" is incorrect: {reason}"));
                 desc("Please use formats described at https://devhints.io/semver.");
+            }
+            UserError::CompilationError { reason } => {
+                error(&format!("Compilation error: {reason}"));
+            }
+            UserError::CompilationInterupted => {
+                error("Canceling the compilation");
             }
             UserError::ConfigFileAlreadyExists => {
                 error("config file already exists");

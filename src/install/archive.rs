@@ -1,35 +1,31 @@
 use crate::archives;
 use crate::config::AppName;
 use crate::output::Output;
-use crate::subshell::Executable;
 use crate::UserError;
 use crate::{download, Result};
-use colored::Colorize;
 use std::fs;
-use std::path::PathBuf;
+use std::path::Path;
 
 /// downloads and unpacks the content of an archive file
-pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
+pub fn install(args: InstallArgs) -> Result<bool> {
     let Some(artifact) = download::artifact(args.artifact_url, args.app_name, args.output)? else {
-        return Ok(None);
+        return Ok(false);
     };
     fs::create_dir_all(&args.dir_on_disk).map_err(|err| UserError::CannotCreateFolder {
-        folder: args.dir_on_disk.clone(),
+        folder: args.dir_on_disk.to_path_buf(),
         reason: err.to_string(),
     })?;
     let Some(archive) = archives::lookup(&artifact.filename, artifact.data) else {
         return Err(UserError::UnknownArchive(artifact.filename));
     };
-    let executable = archive.extract_all(&args.dir_on_disk, args.strip_path_prefix, args.executable_in_archive, args.output)?;
-    args.output.println(&format!("{}", "ok".green()));
-    Ok(Some(executable))
+    archive.extract_all(&args.dir_on_disk, args.output)?;
+    Ok(true)
 }
 
 pub struct InstallArgs<'a> {
     pub app_name: &'a AppName,
     pub artifact_url: String,
-    pub dir_on_disk: PathBuf,
-    pub strip_path_prefix: &'a str,
-    pub executable_in_archive: &'a str,
+    pub dir_on_disk: &'a Path,
+    pub executable_locations: Vec<String>,
     pub output: &'a dyn Output,
 }

@@ -22,6 +22,10 @@ impl App for ShellCheck {
         "https://www.shellcheck.net"
     }
 
+    fn executable_locations(&self, platform: Platform) -> Vec<String> {
+        vec![format!("{}/{}", self.name().as_str(), self.executable_filename(platform))]
+    }
+
     fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
         let name = self.name();
         archive::install(InstallArgs {
@@ -29,17 +33,12 @@ impl App for ShellCheck {
             artifact_url: download_url(version, platform),
             output,
             dir_on_disk: yard.app_folder(&name, version),
-            strip_path_prefix: &format!("shellcheck-v{version}/"),
-            executable_in_archive: &self.executable_filepath(platform),
+            executable_locations: self.executable_locations(platform),
         })
     }
 
     fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
         github_releases::latest(ORG, REPO, output)
-    }
-
-    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, &self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

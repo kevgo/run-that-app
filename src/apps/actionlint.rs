@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
@@ -6,7 +8,6 @@ use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
-use crate::yard::Yard;
 use crate::{Output, Result};
 use const_format::formatcp;
 
@@ -24,33 +25,27 @@ impl App for ActionLint {
         formatcp!("https://{ORG}.github.io/{REPO}")
     }
 
-    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &Version, platform: Platform, folder: &Path, output: &dyn Output) -> Result<bool> {
         let name = self.name();
-        let result = archive::install(InstallArgs {
+        let installed = archive::install(InstallArgs {
             app_name: &name,
             artifact_url: download_url(version, platform),
             output,
-            dir_on_disk: yard.app_folder(&name, version),
-            strip_path_prefix: "", // TODO: remove this or make it an option rather than relying on the magic empty string
-            executable_in_archive: &self.executable_filepath(platform),
+            dir_on_disk: folder,
+            executable_locations: self.executable_locations(platform),
         })?;
-        if result.is_some() {
-            return Ok(result);
+        if installed {
+            return Ok(true);
         }
         compile_go(CompileArgs {
             import_path: format!("github.com/{ORG}/{REPO}/cmd/actionlint@{version}"),
-            target_folder: &yard.app_folder(&name, version),
-            executable_filepath: self.executable_filepath(platform),
+            target_folder: folder,
             output,
         })
     }
 
     fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
         github_releases::latest(ORG, REPO, output)
-    }
-
-    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, &self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
