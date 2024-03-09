@@ -41,9 +41,7 @@ impl Yard {
     }
 
     pub fn mark_not_installable(&self, app: &AppName, version: &Version) -> Result<()> {
-        // create the app folder
         self.create_app_folder(app, version)?;
-        // create the "not installable" file
         let path = self.not_installable_path(app, version);
         match File::create(&path) {
             Ok(_) => Ok(()),
