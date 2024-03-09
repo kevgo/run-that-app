@@ -32,6 +32,7 @@ impl Archive for TarGz {
                 executable = Some(Executable(filepath_on_disk));
             }
         }
+        // TODO: return proper error here that describes the failure condition
         executable.ok_or_else(|| panic!("file {executable_path_in_archive} not found in archive"))
     }
 }
