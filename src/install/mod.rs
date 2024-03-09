@@ -5,6 +5,10 @@ pub mod compile_go;
 pub mod compile_rust;
 pub mod executable;
 
+use crate::config::Version;
+use crate::output::Output;
+use crate::platform::Platform;
+use crate::Result;
 pub use archive::InstallByArchive;
 pub use compile_go::CompileFromGoSource;
 
@@ -14,4 +18,19 @@ pub enum Method<'a> {
     DownloadExecutable,
     CompileGoSource { app: &'a dyn CompileFromGoSource },
     CompileRustSource,
+}
+
+pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
+    for install_method in install_methods {
+        let result = match install_method {
+            Method::DownloadArchive { app } => archive::install(app, version, platform, output),
+            Method::DownloadExecutable => todo!(),
+            Method::CompileGoSource { app } => compile_go::compile_go(app, version, output),
+            Method::CompileRustSource => todo!(),
+        }?;
+        if result {
+            return Ok(true);
+        }
+    }
+    Ok(false)
 }

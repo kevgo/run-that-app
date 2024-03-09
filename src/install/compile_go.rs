@@ -1,15 +1,15 @@
+use crate::apps::App;
 use crate::config::Version;
 use crate::error::UserError;
 use crate::output::Output;
-use crate::Result;
-use std::any::Any;
+use crate::{yard, Result};
 use std::fs;
 use std::io::ErrorKind;
 use std::path::Path;
 use std::process::Command;
 use which::which;
 
-pub trait CompileFromGoSource {
+pub trait CompileFromGoSource: App {
     fn import_path(&self, version: &Version) -> String;
 }
 
@@ -18,16 +18,17 @@ pub fn compile_go(app: &dyn CompileFromGoSource, version: &Version, output: &dyn
     let Ok(go_path) = which("go") else {
         return Ok(false);
     };
-    let target_folder =  app.type_id()
-    fs::create_dir_all(args.target_folder).map_err(|err| UserError::CannotCreateFolder {
-        folder: args.target_folder.to_path_buf(),
+    let yard = yard::load_or_create(&yard::production_location()?)?;
+    let target_folder = yard.app_folder(&app.yard_app(), version);
+    fs::create_dir_all(target_folder).map_err(|err| UserError::CannotCreateFolder {
+        folder: target_folder,
         reason: err.to_string(),
     })?;
-    let go_args = vec!["install", &args.import_path];
-    args.output.println(&format!("go {}", go_args.join(" ")));
+    let go_args = vec!["install", &app.import_path(version)];
+    output.println(&format!("go {}", go_args.join(" ")));
     let mut cmd = Command::new(go_path);
     cmd.args(go_args);
-    cmd.env("GOBIN", args.target_folder);
+    cmd.env("GOBIN", target_folder);
     let status = match cmd.status() {
         Ok(status) => status,
         Err(err) => match err.kind() {

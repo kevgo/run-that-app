@@ -113,26 +113,11 @@ fn load_or_install_from_yard(app: &dyn App, version: &Version, output: &dyn Outp
         return Ok(None);
     }
     // app not installed and installable --> try to install
-    if install(app.install_methods(), version, platform, output)? {
+    if install::install(app.install_methods(), version, platform, output)? {
         return yard.find_executable(&app_name, &locations);
     }
 
     // app could not be installed -> mark as uninstallable
     yard.mark_not_installable(&app_name, version)?;
     Ok(None)
-}
-
-fn install(install_methods: Vec<install::Method>, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
-    for install_method in install_methods {
-        let result = match install_method {
-            Method::DownloadArchive { app } => install::archive::install(app, version, platform, output),
-            Method::DownloadExecutable => todo!(),
-            Method::CompileGoSource { app } => install::compile_go::compile_go(app, version, output),
-            Method::CompileRustSource => todo!(),
-        }?;
-        if result {
-            return Ok(true);
-        }
-    }
-    Ok(false)
 }
