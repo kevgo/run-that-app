@@ -1,13 +1,10 @@
-use std::path::Path;
-
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::archive::{self, InstallArgs};
-use crate::install::compile_go::{compile_go, CompileArgs};
+use crate::install::Method;
 use crate::platform::{Cpu, Os, Platform};
-use crate::regexp;
 use crate::subshell::Executable;
+use crate::{install, regexp};
 use crate::{Output, Result};
 use const_format::formatcp;
 
@@ -25,27 +22,12 @@ impl App for ActionLint {
         formatcp!("https://{ORG}.github.io/{REPO}")
     }
 
-    fn install(&self, version: &Version, platform: Platform, folder: &Path, output: &dyn Output) -> Result<bool> {
-        let name = self.name();
-        let installed = archive::install(InstallArgs {
-            app_name: &name,
-            artifact_url: download_url(version, platform),
-            output,
-            dir_on_disk: folder,
-            executable_locations: self.executable_locations(platform),
-        })?;
-        if installed {
-            return Ok(true);
-        }
-        compile_go(CompileArgs {
-            import_path: format!("github.com/{ORG}/{REPO}/cmd/actionlint@{version}"),
-            target_folder: folder,
-            output,
-        })
-    }
-
     fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
         github_releases::latest(ORG, REPO, output)
+    }
+
+    fn install_methods(&self) -> Vec<install::Method> {
+        vec![Method::DownloadArchive { app: self }, Method::CompileGoSource { app: self }]
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
@@ -63,20 +45,28 @@ impl App for ActionLint {
     }
 }
 
+impl install::InstallByArchive for ActionLint {
+    fn archive_url(&self, version: &Version, platform: Platform) -> String {
+        format!(
+            "https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}",
+            os = os_text(platform.os),
+            cpu = cpu_text(platform.cpu),
+            ext = ext_text(platform.os)
+        )
+    }
+}
+
+impl install::CompileFromGoSource for ActionLint {
+    fn import_path(&self, version: &Version) -> String {
+        format!("github.com/{ORG}/{REPO}/cmd/actionlint@{version}")
+    }
+}
+
 fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
         Cpu::Arm64 => "arm64",
         Cpu::Intel64 => "amd64",
     }
-}
-
-fn download_url(version: &Version, platform: Platform) -> String {
-    format!(
-        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}",
-        os = os_text(platform.os),
-        cpu = cpu_text(platform.cpu),
-        ext = ext_text(platform.os)
-    )
 }
 
 fn ext_text(os: Os) -> &'static str {
@@ -105,12 +95,14 @@ fn os_text(os: Os) -> &'static str {
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
+    use crate::install::InstallByArchive;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
     fn download_url() {
         let platform = Platform { os: Os::Linux, cpu: Cpu::Arm64 };
-        let have = super::download_url(&Version::from("1.6.26"), platform);
+        let actionlint = super::ActionLint {};
+        let have = actionlint.archive_url(&Version::from("1.6.26"), platform);
         let want = "https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_linux_arm64.tar.gz";
         assert_eq!(have, want);
     }

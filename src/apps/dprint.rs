@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
@@ -23,15 +25,14 @@ impl App for Dprint {
         "https://dprint.dev"
     }
 
-    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &Version, platform: Platform, folder: &Path, output: &dyn Output) -> Result<bool> {
         let name = self.name();
         let result = archive::install(InstallArgs {
             app_name: &name,
             artifact_url: download_url(version, platform),
             output,
-            dir_on_disk: yard.app_folder(&name, version),
-            strip_path_prefix: "",
-            executable_in_archive: &self.executable_filepath(platform),
+            dir_on_disk: folder,
+            executable_locations: self.executable_locations(platform),
         })?;
         if result.is_some() {
             return Ok(result);
@@ -46,10 +47,6 @@ impl App for Dprint {
 
     fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
         github_releases::latest(ORG, REPO, output)
-    }
-
-    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, &self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

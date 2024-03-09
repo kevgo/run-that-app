@@ -1,9 +1,10 @@
+use std::path::Path;
+
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::install::compile_go::{compile_go, CompileArgs};
 use crate::platform::Platform;
 use crate::subshell::Executable;
-use crate::yard::Yard;
 use crate::{Output, Result};
 use const_format::formatcp;
 
@@ -18,11 +19,10 @@ impl App for Deadcode {
         formatcp!("https://pkg.go.dev/golang.org/x/tools/cmd/deadcode")
     }
 
-    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    fn install(&self, version: &Version, platform: Platform, folder: &Path, output: &dyn Output) -> Result<bool> {
         compile_go(CompileArgs {
             import_path: format!("golang.org/x/tools/cmd/deadcode@v{version}"),
-            target_folder: &yard.app_folder(&self.name(), version),
-            executable_filepath: self.executable_filepath(platform),
+            target_folder: folder,
             output,
         })
     }
@@ -30,10 +30,6 @@ impl App for Deadcode {
     fn latest_installable_version(&self, _output: &dyn Output) -> Result<Version> {
         // TODO: remove this file once deadcode is integrated into golangci-lint
         Ok(Version::from("0.16.1"))
-    }
-
-    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, &self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<Version>> {

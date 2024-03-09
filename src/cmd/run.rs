@@ -2,14 +2,16 @@ use crate::apps::{AnalyzeResult, App};
 use crate::config::{AppName, RequestedVersion, RequestedVersions, Version};
 use crate::error::UserError;
 use crate::filesystem::find_global_install;
+use crate::install::{executable, InstallByArchive, Method};
 use crate::platform::{self, Platform};
 use crate::subshell::Executable;
-use crate::yard;
-use crate::Output;
 use crate::Result;
 use crate::{apps, config};
+use crate::{download, Output};
+use crate::{install, yard};
 use crate::{output, subshell};
 use colored::Colorize;
+use std::any::Any;
 use std::process::ExitCode;
 
 pub fn run(args: Args) -> Result<ExitCode> {
@@ -101,15 +103,32 @@ fn load_from_path(app: &dyn App, want_version: &semver::VersionReq, platform: Pl
 fn load_or_install_from_yard(app: &dyn App, version: &Version, output: &dyn Output) -> Result<Option<Executable>> {
     let platform = platform::detect(output)?;
     let yard = yard::load_or_create(&yard::production_location()?)?;
-    if let Some(executable) = app.load(version, platform, &yard) {
+    // try to load the app here
+    let yard_app = app.yard_app();
+    let locations = app.executable_locations(platform);
+    if let Some(executable) = yard.find_executable(&yard_app, &locations)? {
         return Ok(Some(executable));
-    };
+    }
+    // app not installed --> check if uninstallable
     if yard.is_not_installable(&app.name(), version) {
         return Ok(None);
     }
-    if let Some(executable) = app.install(version, platform, &yard, output)? {
-        return Ok(Some(executable));
+
+    // app not installed and installable --> try to install
+    for install_method in app.install_methods() {
+        install(install_method, version, platform, output);
     }
+
+    // app could not be installed -> mark as uninstallable
     yard.mark_not_installable(&app.name(), version)?;
     Ok(None)
+}
+
+fn install(install_method: install::Method, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
+    match install_method {
+        Method::DownloadArchive { app } => install::archive::install(app, version, platform, output),
+        Method::DownloadExecutable => todo!(),
+        Method::CompileGoSource { app } => install::compile_go::compile_go(app, version, output),
+        Method::CompileRustSource => todo!(),
+    }
 }

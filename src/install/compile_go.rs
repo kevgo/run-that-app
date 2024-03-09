@@ -1,17 +1,24 @@
+use crate::config::Version;
 use crate::error::UserError;
 use crate::output::Output;
 use crate::Result;
+use std::any::Any;
 use std::fs;
 use std::io::ErrorKind;
 use std::path::Path;
 use std::process::Command;
 use which::which;
 
+pub trait CompileFromGoSource {
+    fn import_path(&self, version: &Version) -> String;
+}
+
 /// installs the given Go-based application by compiling it from source
-pub fn compile_go(args: CompileArgs) -> Result<bool> {
+pub fn compile_go(app: &dyn CompileFromGoSource, version: &Version, output: &dyn Output) -> Result<bool> {
     let Ok(go_path) = which("go") else {
         return Ok(false);
     };
+    let target_folder =  app.type_id()
     fs::create_dir_all(args.target_folder).map_err(|err| UserError::CannotCreateFolder {
         folder: args.target_folder.to_path_buf(),
         reason: err.to_string(),

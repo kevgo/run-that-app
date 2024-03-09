@@ -1,24 +1,22 @@
 use crate::config::AppName;
 use crate::output::Output;
-use crate::subshell::Executable;
 use crate::{download, filesystem, Result};
 use colored::Colorize;
-use std::path::PathBuf;
+use std::path::Path;
 
 /// downloads an uncompressed precompiled binary
-pub fn install(args: InstallArgs) -> Result<Option<Executable>> {
+pub fn install(args: InstallArgs) -> Result<bool> {
     let Some(artifact) = download::artifact(args.artifact_url, args.app_name, args.output)? else {
-        return Ok(None);
+        return Ok(false);
     };
     filesystem::create_parent(&args.filepath_on_disk)?;
-    let executable = filesystem::save_executable(artifact.data, &args.filepath_on_disk, args.output)?;
     args.output.println(&format!("{}", "ok".green()));
-    Ok(Some(executable))
+    Ok(true)
 }
 
 pub struct InstallArgs<'a> {
     pub app_name: &'a AppName,
     pub artifact_url: String,
-    pub filepath_on_disk: PathBuf,
+    pub filepath_on_disk: &'a Path,
     pub output: &'a dyn Output,
 }

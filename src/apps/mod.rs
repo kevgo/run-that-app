@@ -25,7 +25,7 @@ use crate::config::{AppName, Version};
 use crate::error::UserError;
 use crate::platform::{Os, Platform};
 use crate::subshell::Executable;
-use crate::{Output, Result};
+use crate::{install, Output, Result};
 use std::path::Path;
 use std::slice::Iter;
 
@@ -63,15 +63,15 @@ pub trait App {
 
     /// Tries to install this app at the given version into the given folder.
     /// Indicates whether a suitable installation method was found.
-    fn install(&self, version: &Version, platform: Platform, folder: &Path, output: &dyn Output) -> Result<bool>;
+    fn install_methods(&self) -> Vec<install::Method>;
 
     /// provides the versions of this application that can be installed
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>>;
 
-    /// provides the latest version of this application
+    /// provides the latest version of this application that can be installed
     fn latest_installable_version(&self, output: &dyn Output) -> Result<Version>;
 
-    /// ensures that the given executable belongs to this app and if yes returns the installed version
+    /// ensures that the given executable belongs to this app and if yes returns its version
     fn analyze_executable(&self, path: &Executable) -> AnalyzeResult;
 
     /// Apps can override this method to provide version restrictions
@@ -83,6 +83,7 @@ pub trait App {
     /// which Go version to use to compile this codebase
     /// Similar version restrictions can exist in
     /// "package.json" for `NodeJS` or "Gemfile" for Ruby.
+    // TODO: rename to code_version_restrictions
     fn allowed_versions(&self) -> Result<semver::VersionReq> {
         Ok(semver::VersionReq::STAR)
     }

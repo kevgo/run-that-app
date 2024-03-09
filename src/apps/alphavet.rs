@@ -1,12 +1,9 @@
-use std::path::Path;
-
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::compile_go::{compile_go, CompileArgs};
-use crate::platform::Platform;
+use crate::install::{CompileFromGoSource, Method};
 use crate::subshell::Executable;
-use crate::{Output, Result};
+use crate::{install, Output, Result};
 use const_format::formatcp;
 
 pub struct Alphavet {}
@@ -23,15 +20,6 @@ impl App for Alphavet {
         formatcp!("https://github.com/{ORG}/{REPO}")
     }
 
-    fn install(&self, version: &Version, platform: Platform, folder: &Path, output: &dyn Output) -> Result<bool> {
-        // the precompiled binaries are crashing on Linux
-        compile_go(CompileArgs {
-            import_path: format!("github.com/{ORG}/{REPO}/cmd/alphavet@v{version}"),
-            target_folder: folder,
-            output,
-        })
-    }
-
     fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
         github_releases::latest(ORG, REPO, output)
     }
@@ -46,6 +34,16 @@ impl App for Alphavet {
         }
         // as of 0.1.0 the -V switch of alphavet is broken
         AnalyzeResult::IdentifiedButUnknownVersion
+    }
+
+    fn install_methods(&self) -> Vec<install::Method> {
+        vec![Method::CompileGoSource]
+    }
+}
+
+impl CompileFromGoSource for Alphavet {
+    fn import_path(&self, version: &Version) -> String {
+        format!("github.com/{ORG}/{REPO}/cmd/alphavet@v{version}")
     }
 }
 

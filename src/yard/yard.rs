@@ -16,6 +16,10 @@ impl Yard {
         self.root.join("apps").join(app_name).join(app_version)
     }
 
+    pub fn find_executable(&self, app_name: &AppName, locations: &[String]) -> Result<Option<Executable>> {
+        todo!()
+    }
+
     pub fn is_not_installable(&self, app: &AppName, version: &Version) -> bool {
         self.not_installable_path(app, version).exists()
     }
