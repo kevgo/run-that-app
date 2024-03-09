@@ -30,7 +30,7 @@ impl App for Scc {
             app_name: &name,
             artifact_url: download_url(version, platform),
             file_to_extract: &self.executable_filepath(platform),
-            filepath_on_disk: yard.app_folder(&name, version).join(self.executable_filepath(platform)),
+            filepath_on_disk: yard.app_folder(&name, version)?.join(self.executable_filepath(platform)),
             output,
         })?;
         if result.is_some() {
@@ -38,7 +38,7 @@ impl App for Scc {
         }
         compile_go(CompileArgs {
             import_path: format!("github.com/{ORG}/{REPO}/v3@v{version}"),
-            target_folder: &yard.app_folder(&name, version),
+            target_folder: &yard.app_folder_path(&name, version),
             executable_filepath: self.executable_filepath(platform),
             output,
         })

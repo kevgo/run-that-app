@@ -12,8 +12,18 @@ pub struct Yard {
 /// stores executables of and metadata about applications
 impl Yard {
     /// provides the path to the folder containing the given application
-    pub fn app_folder(&self, app_name: &AppName, app_version: &Version) -> PathBuf {
+    pub fn app_folder_path(&self, app_name: &AppName, app_version: &Version) -> PathBuf {
         self.root.join("apps").join(app_name).join(app_version)
+    }
+
+    /// provides the path to the folder containing the given application
+    pub fn app_folder(&self, app_name: &AppName, app_version: &Version) -> Result<PathBuf> {
+        let folder = self.app_folder_path(app_name, app_version);
+        fs::create_dir_all(&folder).map_err(|err| UserError::CannotCreateFolder {
+            folder: folder.clone(),
+            reason: err.to_string(),
+        })?;
+        Ok(folder)
     }
 
     pub fn is_not_installable(&self, app: &AppName, version: &Version) -> bool {
@@ -22,7 +32,7 @@ impl Yard {
 
     /// provides the path to the executable of the given application
     pub fn load_app(&self, name: &AppName, version: &Version, executable_filepath: &str) -> Option<Executable> {
-        let file_path = self.app_folder(name, version).join(executable_filepath);
+        let file_path = self.app_folder_path(name, version).join(executable_filepath);
         if file_path.exists() {
             Some(Executable(file_path))
         } else {
@@ -31,11 +41,9 @@ impl Yard {
     }
 
     pub fn mark_not_installable(&self, app: &AppName, version: &Version) -> Result<()> {
-        let app_folder = self.app_folder(app, version);
-        fs::create_dir_all(&app_folder).map_err(|err| UserError::YardAccessDenied {
-            msg: err.to_string(),
-            path: app_folder,
-        })?;
+        // create the app folder
+        self.app_folder(app, version)?;
+        // create the "not installable" file
         let path = self.not_installable_path(app, version);
         match File::create(&path) {
             Ok(_) => Ok(()),
@@ -45,15 +53,14 @@ impl Yard {
 
     /// provides the path to the given file that is part of the given application
     fn not_installable_path(&self, app_name: &AppName, app_version: &Version) -> PathBuf {
-        self.app_folder(app_name, app_version).join("not_installable")
+        self.app_folder_path(app_name, app_version).join("not_installable")
     }
 
     /// stores the given application consisting of the given executable file
     #[cfg(test)]
     fn save_app_file(&self, name: &AppName, version: &Version, file_name: &str, file_content: &[u8]) {
         use std::io::Write;
-        fs::create_dir_all(self.app_folder(name, version)).unwrap();
-        let mut file = fs::File::create(self.app_folder(name, version).join(file_name)).unwrap();
+        let mut file = fs::File::create(self.app_folder(name, version).unwrap().join(file_name)).unwrap();
         file.write_all(file_content).unwrap();
     }
 }
@@ -67,7 +74,7 @@ mod tests {
     #[test]
     fn app_file_path() {
         let yard = Yard { root: PathBuf::from("/root") };
-        let have = yard.app_folder(&AppName::from("shellcheck"), &Version::from("0.9.0")).join("shellcheck.exe");
+        let have = yard.app_folder_path(&AppName::from("shellcheck"), &Version::from("0.9.0")).join("shellcheck.exe");
         let want = PathBuf::from("/root/apps/shellcheck/0.9.0/shellcheck.exe");
         assert_eq!(have, want);
     }
@@ -75,7 +82,7 @@ mod tests {
     #[test]
     fn app_folder() {
         let yard = Yard { root: PathBuf::from("/root") };
-        let have = yard.app_folder(&AppName::from("shellcheck"), &Version::from("0.9.0"));
+        let have = yard.app_folder_path(&AppName::from("shellcheck"), &Version::from("0.9.0"));
         let want = PathBuf::from("/root/apps/shellcheck/0.9.0");
         assert_eq!(have, want);
     }

@@ -28,7 +28,7 @@ impl App for ShellCheck {
             app_name: &name,
             artifact_url: download_url(version, platform),
             file_to_extract: &format!("shellcheck-v{version}/{executable}", executable = self.executable_filepath(platform)),
-            filepath_on_disk: yard.app_folder(&name, version).join(self.executable_filepath(platform)),
+            filepath_on_disk: yard.app_folder(&name, version)?.join(self.executable_filepath(platform)),
             output,
         })
     }
