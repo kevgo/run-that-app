@@ -69,7 +69,6 @@ mod tests {
         use crate::output::Output;
         use crate::platform::Platform;
         use crate::subshell::Executable;
-        use crate::yard::Yard;
         use crate::Result;
 
         /// an App instance that allows to mock the system version restrictions
@@ -87,16 +86,7 @@ mod tests {
             fn executable_filename(&self, _platform: Platform) -> String {
                 unimplemented!()
             }
-            fn executable_filepath(&self, _platform: Platform) -> String {
-                unimplemented!()
-            }
             fn homepage(&self) -> &'static str {
-                unimplemented!()
-            }
-            fn install(&self, _version: &Version, _platform: Platform, _yard: &Yard, _output: &dyn Output) -> Result<Option<Executable>> {
-                unimplemented!()
-            }
-            fn load(&self, _version: &Version, _platform: Platform, _yard: &Yard) -> Option<Executable> {
                 unimplemented!()
             }
             fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<Version>> {
@@ -106,6 +96,9 @@ mod tests {
                 unimplemented!()
             }
             fn analyze_executable(&self, _path: &Executable) -> AnalyzeResult {
+                unimplemented!()
+            }
+            fn install_methods(&self) -> Vec<crate::install::Method> {
                 unimplemented!()
             }
         }
