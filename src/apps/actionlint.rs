@@ -27,7 +27,7 @@ impl App for ActionLint {
     }
 
     fn install_methods(&self) -> Vec<install::Method> {
-        vec![Method::DownloadArchive { app: self }, Method::CompileGoSource { app: self }]
+        vec![Method::DownloadArchive(self), Method::CompileGoSource(self)]
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {

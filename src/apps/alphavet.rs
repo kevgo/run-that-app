@@ -37,7 +37,7 @@ impl App for Alphavet {
     }
 
     fn install_methods(&self) -> Vec<install::Method> {
-        vec![Method::CompileGoSource]
+        vec![Method::CompileGoSource(self)]
     }
 }
 

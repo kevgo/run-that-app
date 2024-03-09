@@ -14,18 +14,18 @@ pub use compile_go::CompileFromGoSource;
 
 /// the different methods to install an application
 pub enum Method<'a> {
-    DownloadArchive { app: &'a dyn InstallByArchive },
+    DownloadArchive(&'a dyn InstallByArchive),
     DownloadExecutable,
-    CompileGoSource { app: &'a dyn CompileFromGoSource },
+    CompileGoSource(&'a dyn CompileFromGoSource),
     CompileRustSource,
 }
 
 pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
     for install_method in install_methods {
         let result = match install_method {
-            Method::DownloadArchive { app } => archive::install(app, version, platform, output),
+            Method::DownloadArchive(app) => archive::install(app, version, platform, output),
             Method::DownloadExecutable => todo!(),
-            Method::CompileGoSource { app } => compile_go::compile_go(app, version, output),
+            Method::CompileGoSource(app) => compile_go::compile_go(app, version, output),
             Method::CompileRustSource => todo!(),
         }?;
         if result {
