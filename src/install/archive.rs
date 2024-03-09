@@ -1,9 +1,9 @@
 use crate::apps::App;
-use crate::archives;
 use crate::config::{AppName, Version};
 use crate::output::Output;
 use crate::platform::Platform;
 use crate::UserError;
+use crate::{archives, yard};
 use crate::{download, Result};
 use std::fs;
 use std::path::Path;
@@ -15,17 +15,19 @@ pub trait InstallByArchive: App {
 
 /// downloads and unpacks the content of an archive file
 pub fn install(app: &dyn InstallByArchive, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
-    let Some(artifact) = download::artifact(app.archive_url(platform), &app.name(), output)? else {
+    let Some(artifact) = download::artifact(app.archive_url(version, platform), &app.name(), output)? else {
         return Ok(false);
     };
-    fs::create_dir_all(&app.dir_on_disk).map_err(|err| UserError::CannotCreateFolder {
-        folder: args.dir_on_disk.to_path_buf(),
+    let yard = yard::load_or_create(&yard::production_location()?)?;
+    let app_folder = yard.app_folder(&app.name(), version);
+    fs::create_dir_all(app_folder).map_err(|err| UserError::CannotCreateFolder {
+        folder: app_folder,
         reason: err.to_string(),
     })?;
     let Some(archive) = archives::lookup(&artifact.filename, artifact.data) else {
         return Err(UserError::UnknownArchive(artifact.filename));
     };
-    archive.extract_all(&args.dir_on_disk, args.output)?;
+    archive.extract_all(&app_folder, output)?;
     Ok(true)
 }
 
