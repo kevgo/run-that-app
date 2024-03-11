@@ -11,13 +11,13 @@ pub trait DownloadExecutable: App {
 
 /// downloads an uncompressed precompiled binary
 pub fn install(app: &dyn DownloadExecutable, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
-    let url = app.artifact_url(version, platform);
     let Some(artifact) = download::artifact(app.artifact_url(version, platform), &app.name(), output)? else {
         return Ok(false);
     };
     let yard = yard::load_or_create(&yard::production_location()?)?;
     let filepath_on_disk = yard.app_folder(&app.yard_app(), version).join(app.executable_filename(platform));
     filesystem::create_parent(&filepath_on_disk)?;
+    let executable = filesystem::save_executable(artifact.data, filepath_on_disk, output)?;
     output.println(&format!("{}", "ok".green()));
     Ok(true)
 }
