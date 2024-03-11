@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::Method;
+use crate::install::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
@@ -64,21 +64,21 @@ impl App for Dprint {
     }
 }
 
-impl DownloadArchive
+impl install::InstallByArchive for Dprint {
+    fn archive_url(&self, version: &Version, platform: Platform) -> String {
+        format!(
+            "https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip",
+            os = os_text(platform.os),
+            cpu = cpu_text(platform.cpu)
+        )
+    }
+}
 
 fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
         Cpu::Arm64 => "aarch64",
         Cpu::Intel64 => "x86_64",
     }
-}
-
-fn download_url(version: &Version, platform: Platform) -> String {
-    format!(
-        "https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip",
-        os = os_text(platform.os),
-        cpu = cpu_text(platform.cpu)
-    )
 }
 
 fn extract_version(output: &str) -> Option<&str> {
@@ -99,23 +99,29 @@ fn os_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
-    use crate::config::Version;
-    use crate::platform::{Cpu, Os, Platform};
 
-    #[test]
-    fn mac_arm() {
-        let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
-        let have = super::download_url(&Version::from("0.43.0"), platform);
-        let want = "https://github.com/dprint/dprint/releases/download/0.43.0/dprint-aarch64-apple-darwin.zip";
-        assert_eq!(have, want);
-    }
+    mod archive_url {
+        use crate::config::Version;
+        use crate::install::InstallByArchive;
+        use crate::platform::{Cpu, Os, Platform};
 
-    #[test]
-    fn linux_arm() {
-        let platform = Platform { os: Os::Linux, cpu: Cpu::Arm64 };
-        let have = super::download_url(&Version::from("0.43.1"), platform);
-        let want = "https://github.com/dprint/dprint/releases/download/0.43.1/dprint-aarch64-unknown-linux-gnu.zip";
-        assert_eq!(have, want);
+        #[test]
+        fn mac_arm() {
+            let dprint = super::super::Dprint {};
+            let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
+            let have = dprint.archive_url(&Version::from("0.43.0"), platform);
+            let want = "https://github.com/dprint/dprint/releases/download/0.43.0/dprint-aarch64-apple-darwin.zip";
+            assert_eq!(have, want);
+        }
+
+        #[test]
+        fn linux_arm() {
+            let dprint = super::super::Dprint {};
+            let platform = Platform { os: Os::Linux, cpu: Cpu::Arm64 };
+            let have = dprint.archive_url(&Version::from("0.43.1"), platform);
+            let want = "https://github.com/dprint/dprint/releases/download/0.43.1/dprint-aarch64-unknown-linux-gnu.zip";
+            assert_eq!(have, want);
+        }
     }
 
     #[test]
