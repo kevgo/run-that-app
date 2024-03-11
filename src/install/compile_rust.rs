@@ -1,8 +1,6 @@
 use crate::apps::App;
 use crate::config::Version;
 use crate::error::UserError;
-use crate::platform::Platform;
-use crate::subshell::Executable;
 use crate::{yard, Result};
 use std::process::Command;
 use which::which;
@@ -12,7 +10,7 @@ pub trait CompileFromRustSource: App {
 }
 
 /// installs the given Rust-based application by compiling it from source
-pub fn compile_rust(app: &dyn CompileFromRustSource, version: &Version, platform: Platform) -> Result<bool> {
+pub fn compile_rust(app: &dyn CompileFromRustSource, version: &Version) -> Result<bool> {
     let Ok(cargo_path) = which("cargo") else {
         return Err(UserError::RustNotInstalled);
     };
@@ -36,7 +34,5 @@ pub fn compile_rust(app: &dyn CompileFromRustSource, version: &Version, platform
     if !status.success() {
         return Err(UserError::RustCompilationFailed);
     }
-    let executable_path = target_folder.join(app.executable_filename(platform));
-    Executable(target_folder.join(executable_path));
     Ok(true)
 }
