@@ -13,7 +13,8 @@ pub fn install_other_app(app: &dyn OtherAppFolder, version: &Version, platform: 
     let app_to_install = app.app_to_install();
     let all_apps = apps::all();
     let app = all_apps.lookup(&app_to_install.name())?;
-    // Note: we know it must be the Yard variant here. At this point we are installing the app.
+    // Note: we know it must be the Yard variant here.
+    // At this point we are installing the app.
     // Only Yard variants get installed. The Path variant doesn't get installed.
     load_or_install(app, &RequestedVersion::Yard(version.to_owned()), platform, output)?;
     Ok(true)
