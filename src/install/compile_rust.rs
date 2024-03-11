@@ -1,15 +1,19 @@
+use crate::apps::App;
 use crate::config::Version;
 use crate::error::UserError;
+use crate::platform::Platform;
 use crate::subshell::Executable;
 use crate::{yard, Output, Result};
 use std::path::PathBuf;
 use std::process::Command;
 use which::which;
 
-pub trait CompileFromRustSource {}
+pub trait CompileFromRustSource: App {
+    fn crate_name(&self) -> &'static str;
+}
 
 /// installs the given Rust-based application by compiling it from source
-pub fn compile_rust(app: &dyn CompileFromRustSource, version: &Version, output: &dyn Output) -> Result<bool> {
+pub fn compile_rust(app: &dyn CompileFromRustSource, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
     let Ok(cargo_path) = which("cargo") else {
         return Err(UserError::RustNotInstalled);
     };
@@ -26,15 +30,16 @@ pub fn compile_rust(app: &dyn CompileFromRustSource, version: &Version, output: 
         Err(err) => match err.kind() {
             std::io::ErrorKind::NotFound => return Err(UserError::RustNotInstalled),
             std::io::ErrorKind::PermissionDenied => return Err(UserError::RustNoPermission),
-            std::io::ErrorKind::Interrupted => return Ok(None),
+            std::io::ErrorKind::Interrupted => return Ok(false),
             _ => panic!("{}", err.to_string()),
         },
     };
     if !status.success() {
         return Err(UserError::RustCompilationFailed);
     }
-    let executable = Executable(args.target_folder.join(args.executable_filepath));
-    Ok(Some(executable))
+    let executable_path = target_folder.join(app.executable_filename(platform));
+    let executable = Executable(target_folder.join(executable_path));
+    Ok(true)
 }
 
 pub struct CompileArgs<'a> {

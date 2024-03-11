@@ -1,8 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::executable::DownloadExecutable;
-use crate::install::{CompileFromGoSource, Method};
+use crate::install::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::subshell::Executable;
 use crate::{install, Output, Result};
@@ -43,13 +42,13 @@ impl App for Depth {
     }
 }
 
-impl CompileFromGoSource for Depth {
+impl install::CompileFromGoSource for Depth {
     fn import_path(&self, version: &Version) -> String {
         format!("github.com/{ORG}/{REPO}/cmd/depth@v{version}")
     }
 }
 
-impl DownloadExecutable for Depth {
+impl install::DownloadExecutable for Depth {
     fn artifact_url(&self, version: &Version, platform: Platform) -> String {
         format!(
             "https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}",

@@ -5,14 +5,14 @@ pub mod compile_go;
 pub mod compile_rust;
 pub mod executable;
 
-use self::compile_rust::CompileFromRustSource;
-use self::executable::DownloadExecutable;
 use crate::config::Version;
 use crate::output::Output;
 use crate::platform::Platform;
 use crate::Result;
 pub use archive::InstallByArchive;
 pub use compile_go::CompileFromGoSource;
+pub use compile_rust::CompileFromRustSource;
+pub use executable::DownloadExecutable;
 
 /// the different methods to install an application
 pub enum Method<'a> {
@@ -28,7 +28,7 @@ pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platfo
             Method::DownloadArchive(app) => archive::install(app, version, platform, output),
             Method::DownloadExecutable(app) => todo!(),
             Method::CompileGoSource(app) => compile_go::compile_go(app, version, output),
-            Method::CompileRustSource(app) => compile_rust::compile_rust(app, version, output),
+            Method::CompileRustSource(app) => compile_rust::compile_rust(app, version, platform, output),
         }?;
         if result {
             return Ok(true);

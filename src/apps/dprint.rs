@@ -1,10 +1,6 @@
-use std::path::Path;
-
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::archive::{self};
-use crate::install::compile_rust::{compile_rust, CompileArgs};
 use crate::install::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
@@ -25,25 +21,25 @@ impl App for Dprint {
         "https://dprint.dev"
     }
 
-    fn install(&self, version: &Version, platform: Platform, folder: &Path, output: &dyn Output) -> Result<bool> {
-        let name = self.name();
-        let result = archive::install(InstallArgs {
-            app_name: &name,
-            artifact_url: download_url(version, platform),
-            output,
-            dir_on_disk: folder,
-            executable_locations: self.executable_locations(platform),
-        })?;
-        if result.is_some() {
-            return Ok(result);
-        }
-        compile_rust(CompileArgs {
-            crate_name: "dprint",
-            target_folder: yard.app_folder(&name, version),
-            executable_filepath: self.executable_filepath(platform),
-            output,
-        })
-    }
+    // fn install(&self, version: &Version, platform: Platform, folder: &Path, output: &dyn Output) -> Result<bool> {
+    //     let name = self.name();
+    //     let result = archive::install(InstallArgs {
+    //         app_name: &name,
+    //         artifact_url: download_url(version, platform),
+    //         output,
+    //         dir_on_disk: folder,
+    //         executable_locations: self.executable_locations(platform),
+    //     })?;
+    //     if result.is_some() {
+    //         return Ok(result);
+    //     }
+    //     compile_rust(CompileArgs {
+    //         crate_name: "dprint",
+    //         target_folder: yard.app_folder(&name, version),
+    //         executable_filepath: self.executable_filepath(platform),
+    //         output,
+    //     })
+    // }
 
     fn install_methods(&self) -> Vec<crate::install::Method> {
         vec![Method::DownloadArchive(self), Method::CompileRustSource(self)]
@@ -67,6 +63,8 @@ impl App for Dprint {
         }
     }
 }
+
+impl DownloadArchive
 
 fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
