@@ -2,7 +2,6 @@ use crate::apps::{AnalyzeResult, App};
 use crate::config::{AppName, RequestedVersion, RequestedVersions, Version};
 use crate::error::UserError;
 use crate::filesystem::find_global_install;
-use crate::install::Method;
 use crate::platform::{self, Platform};
 use crate::subshell::Executable;
 use crate::Output;
@@ -103,7 +102,7 @@ fn load_or_install_from_yard(app: &dyn App, version: &Version, output: &dyn Outp
     let platform = platform::detect(output)?;
     let yard = yard::load_or_create(&yard::production_location()?)?;
     // try to load the app here
-    let locations = app.executable_locations(platform);
+    let locations = app.executable_locations(version, platform);
     if let Some(executable) = yard.find_executable(&app.yard_app(), &locations)? {
         return Ok(Some(executable));
     }

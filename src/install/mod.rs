@@ -4,6 +4,7 @@ pub mod archive;
 pub mod compile_go;
 pub mod compile_rust;
 pub mod executable;
+pub mod other_app_folder;
 
 use crate::config::Version;
 use crate::output::Output;
@@ -13,6 +14,7 @@ pub use archive::InstallByArchive;
 pub use compile_go::CompileFromGoSource;
 pub use compile_rust::CompileFromRustSource;
 pub use executable::DownloadExecutable;
+pub use other_app_folder::OtherAppFolder;
 
 /// the different methods to install an application
 pub enum Method<'a> {
@@ -20,6 +22,7 @@ pub enum Method<'a> {
     DownloadExecutable(&'a dyn DownloadExecutable),
     CompileGoSource(&'a dyn CompileFromGoSource),
     CompileRustSource(&'a dyn CompileFromRustSource),
+    InstallAnotherApp(&'a dyn OtherAppFolder),
 }
 
 pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
@@ -29,6 +32,7 @@ pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platfo
             Method::DownloadExecutable(app) => todo!(),
             Method::CompileGoSource(app) => compile_go::compile_go(app, version, output),
             Method::CompileRustSource(app) => compile_rust::compile_rust(app, version, platform, output),
+            Method::InstallAnotherApp(app) => other_app_folder::install_other_app(app, version, platform, output),
         }?;
         if result {
             return Ok(true);

@@ -133,6 +133,7 @@ impl Apps {
     }
 
     /// provides the app with the given name
+    /// TODO: return the actual Box<dyn App> instead of a reference here
     pub fn lookup(&self, name: &AppName) -> Result<&dyn App> {
         for app in &self.0 {
             if app.name() == name {
