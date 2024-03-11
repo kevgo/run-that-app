@@ -1,11 +1,12 @@
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
-use crate::platform::{Os, Platform};
-use crate::regexp;
+use crate::install::Method;
+use crate::platform::Platform;
 use crate::subshell::Executable;
-use crate::yard::Yard;
+use crate::{install, regexp};
 use crate::{Output, Result};
+use std::path;
 
 pub struct Npm {}
 
@@ -14,30 +15,20 @@ impl App for Npm {
         AppName::from("npm")
     }
 
-    fn executable_filepath(&self, platform: Platform) -> String {
-        match platform.os {
-            Os::Linux | Os::MacOS => "bin/npm".into(),
-            Os::Windows => "bin\\npm.exe".into(),
-        }
+    fn executable_locations(&self, version: &Version, platform: Platform) -> Vec<String> {
+        vec![format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))]
     }
 
     fn homepage(&self) -> &'static str {
         "https://www.npmjs.com"
     }
 
-    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        let nodejs = NodeJS {};
-        nodejs.install(version, platform, yard, output)?;
-        let executable_path = yard.create_app_folder(&nodejs.name(), version)?.join(self.executable_filepath(platform));
-        Ok(Some(Executable(executable_path)))
+    fn install_methods(&self) -> Vec<install::Method> {
+        vec![Method::InstallAnotherApp(self)]
     }
 
     fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
         (NodeJS {}).latest_installable_version(output)
-    }
-
-    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&(NodeJS {}).name(), version, &self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
@@ -52,6 +43,12 @@ impl App for Npm {
             Some(version) => AnalyzeResult::IdentifiedWithVersion(version.into()),
             None => AnalyzeResult::IdentifiedButUnknownVersion,
         }
+    }
+}
+
+impl install::OtherAppFolder for Npm {
+    fn app_to_install(&self) -> Box<dyn App> {
+        Box::new(NodeJS {})
     }
 }
 
