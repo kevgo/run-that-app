@@ -16,8 +16,7 @@ pub fn install(app: &dyn DownloadExecutable, version: &Version, platform: Platfo
     };
     let yard = yard::load_or_create(&yard::production_location()?)?;
     let filepath_on_disk = yard.app_folder(&app.yard_app(), version).join(app.executable_filename(platform));
-    filesystem::create_parent(&filepath_on_disk)?;
-    let executable = filesystem::save_executable(artifact.data, filepath_on_disk, output)?;
+    filesystem::save_executable(artifact.data, &filepath_on_disk, output)?;
     output.println(&format!("{}", "ok".green()));
     Ok(true)
 }
