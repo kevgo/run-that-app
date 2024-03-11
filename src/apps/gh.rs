@@ -23,9 +23,11 @@ impl App for Gh {
     }
 
     fn executable_locations(&self, version: &Version, platform: Platform) -> Vec<String> {
+        let filename = self.executable_filename(platform);
+        let sep = path::MAIN_SEPARATOR;
         vec![
-            format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform)),
-            format!("gh_{version}_{os}_{cpu}/bin/gh", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
+            format!("bin{sep}{filename}"),
+            format!("gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
         ]
     }
 
