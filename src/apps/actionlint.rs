@@ -47,12 +47,20 @@ impl App for ActionLint {
 
 impl install::InstallByArchive for ActionLint {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
-        format!(
-            "https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}",
-            os = os_text(platform.os),
-            cpu = cpu_text(platform.cpu),
-            ext = ext_text(platform.os)
-        )
+        let cpu = match platform.cpu {
+            Cpu::Arm64 => "arm64",
+            Cpu::Intel64 => "amd64",
+        };
+        let os = match platform.os {
+            Os::Linux => "linux",
+            Os::MacOS => "darwin",
+            Os::Windows => "windows",
+        };
+        let ext = match platform.os {
+            Os::Linux | Os::MacOS => "tar.gz",
+            Os::Windows => "zip",
+        };
+        format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}",)
     }
 }
 
@@ -62,34 +70,12 @@ impl install::CompileFromGoSource for ActionLint {
     }
 }
 
-fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "arm64",
-        Cpu::Intel64 => "amd64",
-    }
-}
-
-fn ext_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux | Os::MacOS => "tar.gz",
-        Os::Windows => "zip",
-    }
-}
-
 fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
 }
 
 fn identify(output: &str) -> bool {
     output.contains("actionlint is a linter for GitHub Actions workflow files")
-}
-
-fn os_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux => "linux",
-        Os::MacOS => "darwin",
-        Os::Windows => "windows",
-    }
 }
 
 #[cfg(test)]
