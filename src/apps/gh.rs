@@ -121,7 +121,10 @@ mod tests {
             let version = Version::from("1.2.3");
             let platform = Platform { os: Os::Linux, cpu: Cpu::Arm64 };
             let have = gh.executable_locations(&version, platform);
+            #[cfg(unix)]
             let want = vec![S("bin/gh"), S("gh_1.2.3_linux_arm64/bin/gh")];
+            #[cfg(windows)]
+            let want = vec![S("bin\\gh"), S("gh_1.2.3_linux_arm64/bin/gh")];
             assert_eq!(have, want);
         }
     }
