@@ -11,7 +11,7 @@ pub trait OtherAppFolder {
     }
 }
 
-pub fn install_other_app(app: &dyn OtherAppFolder, version: &RequestedVersion, platform: Platform, output: &dyn Output) -> Result<bool> {
+pub fn install_other_app(app: &dyn OtherAppFolder, version: RequestedVersion, platform: Platform, output: &dyn Output) -> Result<bool> {
     let app_name = app.app_to_install();
     let all_apps = apps::all();
     let app = all_apps.lookup(&app_name)?;

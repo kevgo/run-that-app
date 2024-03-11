@@ -20,8 +20,8 @@ impl RequestedVersions {
         }
     }
 
-    pub fn iter(&self) -> std::slice::Iter<'_, RequestedVersion> {
-        self.0.iter()
+    pub fn into_iter(&self) -> std::vec::IntoIter<RequestedVersion> {
+        self.0.into_iter()
     }
 
     pub fn join(&self, sep: &str) -> String {
