@@ -8,12 +8,12 @@ use std::io::ErrorKind;
 use std::process::Command;
 use which::which;
 
-pub trait CompileFromGoSource: App {
+pub trait Data: App {
     fn import_path(&self, version: &Version) -> String;
 }
 
 /// installs the given Go-based application by compiling it from source
-pub fn compile_go(app: &dyn CompileFromGoSource, version: &Version, output: &dyn Output) -> Result<bool> {
+pub fn run(app: &dyn Data, version: &Version, output: &dyn Output) -> Result<bool> {
     let Ok(go_path) = which("go") else {
         // TODO: install Go and use it to compile this app here
         return Ok(false);

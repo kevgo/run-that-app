@@ -65,7 +65,7 @@ impl install::DownloadArchive for MdBook {
     }
 }
 
-impl install::CompileFromRustSource for MdBook {
+impl install::CompileRustSource for MdBook {
     fn crate_name(&self) -> &'static str {
         "mdbook"
     }

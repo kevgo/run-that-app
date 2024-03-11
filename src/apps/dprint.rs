@@ -59,7 +59,7 @@ impl install::DownloadArchive for Dprint {
     }
 }
 
-impl install::CompileFromRustSource for Dprint {
+impl install::CompileRustSource for Dprint {
     fn crate_name(&self) -> &'static str {
         "dprint"
     }

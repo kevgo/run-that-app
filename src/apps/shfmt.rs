@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::Method;
+use crate::install::{compile_go, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::subshell::Executable;
 use crate::{install, regexp, Output, Result};
@@ -82,7 +82,7 @@ impl install::DownloadExecutable for Shfmt {
     }
 }
 
-impl install::CompileFromGoSource for Shfmt {
+impl compile_go::Data for Shfmt {
     fn import_path(&self, version: &Version) -> String {
         format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}")
     }

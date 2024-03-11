@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::{self, Method};
+use crate::install::{self, compile_go, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
@@ -64,7 +64,7 @@ impl install::DownloadArchive for ActionLint {
     }
 }
 
-impl install::CompileFromGoSource for ActionLint {
+impl compile_go::Data for ActionLint {
     fn import_path(&self, version: &Version) -> String {
         format!("github.com/{ORG}/{REPO}/cmd/actionlint@{version}")
     }
