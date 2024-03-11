@@ -1,11 +1,9 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::compile_go::{compile_go, CompileArgs};
-use crate::platform::Platform;
+use crate::install::Method;
 use crate::subshell::Executable;
-use crate::yard::Yard;
-use crate::{Output, Result};
+use crate::{install, Output, Result};
 use const_format::formatcp;
 
 pub struct Goda {}
@@ -22,21 +20,8 @@ impl App for Goda {
         formatcp!("https://github.com/{ORG}/{REPO}")
     }
 
-    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        compile_go(CompileArgs {
-            import_path: format!("github.com/{ORG}/{REPO}@v{version}"),
-            target_folder: &yard.create_app_folder(&self.name(), version)?,
-            executable_filepath: self.executable_filepath(platform),
-            output,
-        })
-    }
-
     fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
         github_releases::latest(ORG, REPO, output)
-    }
-
-    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, &self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
@@ -49,6 +34,16 @@ impl App for Goda {
         }
         // as of 0.5.7 goda has no way to determine the version of the installed executable
         AnalyzeResult::IdentifiedButUnknownVersion
+    }
+
+    fn install_methods(&self) -> Vec<install::Method> {
+        vec![Method::CompileGoSource(self)]
+    }
+}
+
+impl install::CompileFromGoSource for Goda {
+    fn import_path(&self, version: &Version) -> String {
+        format!("github.com/{ORG}/{REPO}@v{version}")
     }
 }
 
