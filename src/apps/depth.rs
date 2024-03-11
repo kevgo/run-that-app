@@ -70,7 +70,7 @@ fn identify(output: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
-    use crate::install::download_executable::DownloadExecutable;
+    use crate::install::DownloadExecutable;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
