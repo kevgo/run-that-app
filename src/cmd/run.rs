@@ -19,7 +19,7 @@ pub fn run(args: Args) -> Result<ExitCode> {
     let platform = platform::detect(&output)?;
     let versions = RequestedVersions::determine(&args.app, args.version, &apps)?;
     for version in versions.into_iter() {
-        if let Some(executable) = load_or_install(app, version, platform, &output)? {
+        if let Some(executable) = load_or_install(app, &version, platform, &output)? {
             if args.error_on_output {
                 return subshell::execute_check_output(&executable, &args.app_args);
             }
@@ -54,7 +54,7 @@ pub struct Args {
     pub log: Option<String>,
 }
 
-pub fn load_or_install(app: &dyn App, version: RequestedVersion, platform: Platform, output: &dyn Output) -> Result<Option<Executable>> {
+pub fn load_or_install(app: &dyn App, version: &RequestedVersion, platform: Platform, output: &dyn Output) -> Result<Option<Executable>> {
     match version {
         RequestedVersion::Path(version) => load_from_path(app, &version, platform, output),
         RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, output),
@@ -98,25 +98,25 @@ fn load_from_path(app: &dyn App, want_version: &semver::VersionReq, platform: Pl
     }
 }
 
-fn load_or_install_from_yard(app: &dyn App, version: Version, output: &dyn Output) -> Result<Option<Executable>> {
+fn load_or_install_from_yard(app: &dyn App, version: &Version, output: &dyn Output) -> Result<Option<Executable>> {
     let platform = platform::detect(output)?;
     let yard = yard::load_or_create(&yard::production_location()?)?;
     // try to load the app here
-    let locations = app.executable_locations(&version, platform);
-    if let Some(executable) = yard.find_executable(&app.yard_app(), &version, &locations)? {
+    let locations = app.executable_locations(version, platform);
+    if let Some(executable) = yard.find_executable(&app.yard_app(), version, &locations)? {
         return Ok(Some(executable));
     }
     // app not installed --> check if uninstallable
     let app_name = app.name();
-    if yard.is_not_installable(&app_name, &version) {
+    if yard.is_not_installable(&app_name, version) {
         return Ok(None);
     }
     // app not installed and installable --> try to install
-    if install::install(app.install_methods(), &version, platform, output)? {
-        return yard.find_executable(&app_name, &version, &locations);
+    if install::install(app.install_methods(), version, platform, output)? {
+        return yard.find_executable(&app_name, version, &locations);
     }
 
     // app could not be installed -> mark as uninstallable
-    yard.mark_not_installable(&app_name, &version)?;
+    yard.mark_not_installable(&app_name, version)?;
     Ok(None)
 }

@@ -15,7 +15,7 @@ pub fn available(app_name: &AppName, version: Option<Version>, log: Option<Strin
     let platform = platform::detect(&output)?;
     let versions = RequestedVersions::determine(app_name, version, &apps)?;
     for version in versions.into_iter() {
-        if load_or_install(app, version, platform, &output)?.is_some() {
+        if load_or_install(app, &version, platform, &output)?.is_some() {
             return Ok(ExitCode::SUCCESS);
         }
     }
