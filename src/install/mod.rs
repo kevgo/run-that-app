@@ -11,6 +11,7 @@ use crate::output::Output;
 use crate::platform::Platform;
 use crate::Result;
 pub use compile_go::CompileGo;
+pub use compile_rust::CompileRust;
 pub use download_archive::DownloadArchive;
 pub use download_executable::DownloadExecutable;
 pub use other_app_folder::OtherAppFolder;
@@ -24,7 +25,7 @@ pub enum Method<'a> {
     /// installs the applications by compiling it from its source written in Go
     CompileGoSource(&'a dyn compile_go::CompileGo),
     /// installs the application by compiling it from its source written in Rust
-    CompileRustSource(&'a dyn compile_rust::Data),
+    CompileRustSource(&'a dyn compile_rust::CompileRust),
     /// this application is shipped as part of the given other application
     InstallAnotherApp(&'a dyn OtherAppFolder),
 }

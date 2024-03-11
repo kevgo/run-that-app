@@ -6,12 +6,12 @@ use std::process::Command;
 use which::which;
 
 /// defines the information needed for RTA to compile a Rust app from source
-pub trait Data: App {
+pub trait CompileRust: App {
     fn crate_name(&self) -> &'static str;
 }
 
 /// installs the given Rust-based application by compiling it from source
-pub fn run(app: &dyn Data, version: &Version) -> Result<bool> {
+pub fn run(app: &dyn CompileRust, version: &Version) -> Result<bool> {
     let Ok(cargo_path) = which("cargo") else {
         return Err(UserError::RustNotInstalled);
     };

@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::{self, compile_rust, Method};
+use crate::install::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
@@ -59,7 +59,7 @@ impl install::DownloadArchive for Dprint {
     }
 }
 
-impl compile_rust::Data for Dprint {
+impl install::CompileRust for Dprint {
     fn crate_name(&self) -> &'static str {
         "dprint"
     }
