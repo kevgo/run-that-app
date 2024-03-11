@@ -1,10 +1,9 @@
 use crate::apps::App;
-use crate::config::{AppName, Version};
+use crate::config::Version;
 use crate::output::Output;
 use crate::platform::Platform;
 use crate::{download, filesystem, yard, Result};
 use colored::Colorize;
-use std::path::Path;
 
 pub trait DownloadExecutable: App {
     fn artifact_url(&self, version: &Version, platform: Platform) -> String;
@@ -21,11 +20,4 @@ pub fn install(app: &dyn DownloadExecutable, version: &Version, platform: Platfo
     filesystem::create_parent(&filepath_on_disk)?;
     output.println(&format!("{}", "ok".green()));
     Ok(true)
-}
-
-pub struct InstallArgs<'a> {
-    pub app_name: &'a AppName,
-    pub artifact_url: String,
-    pub filepath_on_disk: &'a Path,
-    pub output: &'a dyn Output,
 }
