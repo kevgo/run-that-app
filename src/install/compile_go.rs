@@ -5,7 +5,6 @@ use crate::output::Output;
 use crate::{yard, Result};
 use std::fs;
 use std::io::ErrorKind;
-use std::path::Path;
 use std::process::Command;
 use which::which;
 
@@ -21,11 +20,12 @@ pub fn compile_go(app: &dyn CompileFromGoSource, version: &Version, output: &dyn
     };
     let yard = yard::load_or_create(&yard::production_location()?)?;
     let target_folder = yard.app_folder(&app.yard_app(), version);
-    fs::create_dir_all(target_folder).map_err(|err| UserError::CannotCreateFolder {
-        folder: target_folder,
+    fs::create_dir_all(&target_folder).map_err(|err| UserError::CannotCreateFolder {
+        folder: target_folder.clone(),
         reason: err.to_string(),
     })?;
-    let go_args = vec!["install", &app.import_path(version)];
+    let import_path = app.import_path(version);
+    let go_args = vec!["install", &import_path];
     output.println(&format!("go {}", go_args.join(" ")));
     let mut cmd = Command::new(go_path);
     cmd.args(go_args);
@@ -42,11 +42,4 @@ pub fn compile_go(app: &dyn CompileFromGoSource, version: &Version, output: &dyn
         return Err(UserError::GoCompilationFailed);
     }
     Ok(true)
-}
-
-pub struct CompileArgs<'a> {
-    /// the fully qualified Go import path for the package to install
-    pub import_path: String,
-    pub target_folder: &'a Path,
-    pub output: &'a dyn Output,
 }

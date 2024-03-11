@@ -21,7 +21,7 @@ impl App for ShellCheck {
         "https://www.shellcheck.net"
     }
 
-    fn executable_locations(&self, version: &Version, platform: Platform) -> Vec<String> {
+    fn executable_locations(&self, _version: &Version, platform: Platform) -> Vec<String> {
         vec![format!("{}/{}", self.name().as_str(), self.executable_filename(platform))]
     }
 

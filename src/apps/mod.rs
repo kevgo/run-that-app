@@ -53,7 +53,7 @@ pub trait App {
     ///
     /// By default, apps use the executable filename.
     /// Apps can override this method to provide additional custom paths.
-    fn executable_locations(&self, version: &Version, platform: Platform) -> Vec<String> {
+    fn executable_locations(&self, _version: &Version, platform: Platform) -> Vec<String> {
         vec![self.executable_filename(platform)]
     }
 
