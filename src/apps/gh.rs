@@ -1,12 +1,12 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::archive::{self, InstallArgs};
+use crate::install::{self, InstallByArchive, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
-use crate::yard::Yard;
 use crate::{Output, Result};
+use std::path;
 
 pub struct Gh {}
 
@@ -22,29 +22,24 @@ impl App for Gh {
         "https://cli.github.com"
     }
 
-    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        let name = self.name();
-        archive::install(InstallArgs {
-            app_name: &name,
-            artifact_url: download_url(version, platform),
-            output,
-            dir_on_disk: yard.app_folder(&name, version),
-            strip_path_prefix: "",
-            executable_in_archive: &executable_path(version, platform),
-        })
+    fn executable_locations(&self, version: &Version, platform: Platform) -> Vec<String> {
+        vec![
+            format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform)),
+            format!("gh_{version}_{os}_{cpu}/bin/gh", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
+        ]
+    }
+
+    fn install_methods(&self) -> Vec<install::Method> {
+        vec![Method::DownloadArchive(self)]
         // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
-    }
-
-    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
-        github_releases::latest(ORG, REPO, output)
-    }
-
-    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, &self.executable_filepath(platform))
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, output)
+    }
+
+    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
+        github_releases::latest(ORG, REPO, output)
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
@@ -58,26 +53,21 @@ impl App for Gh {
     }
 }
 
+impl InstallByArchive for Gh {
+    fn archive_url(&self, version: &Version, platform: Platform) -> String {
+        format!(
+            "https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}",
+            os = os_text(platform.os),
+            cpu = cpu_text(platform.cpu),
+            ext = ext_text(platform.os)
+        )
+    }
+}
+
 fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
         Cpu::Arm64 => "arm64",
         Cpu::Intel64 => "amd64",
-    }
-}
-
-fn download_url(version: &Version, platform: Platform) -> String {
-    format!(
-        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}",
-        os = os_text(platform.os),
-        cpu = cpu_text(platform.cpu),
-        ext = ext_text(platform.os)
-    )
-}
-
-fn executable_path(version: &Version, platform: Platform) -> String {
-    match platform.os {
-        Os::Windows => "bin/gh.exe".to_string(),
-        Os::Linux | Os::MacOS => format!("gh_{version}_{os}_{cpu}/bin/gh", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
     }
 }
 
@@ -107,14 +97,32 @@ fn os_text(os: Os) -> &'static str {
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
+    use crate::install::InstallByArchive;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
-    fn download_url() {
+    fn archive_url() {
+        let gh = super::Gh {};
         let platform = Platform { os: Os::Linux, cpu: Cpu::Intel64 };
-        let have = super::download_url(&Version::from("2.39.1"), platform);
+        let have = gh.archive_url(&Version::from("2.39.1"), platform);
         let want = "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_amd64.tar.gz";
         assert_eq!(have, want);
+    }
+
+    mod executable_locations {
+        use crate::apps::App;
+        use crate::config::Version;
+        use crate::platform::{Cpu, Os, Platform};
+        use big_s::S;
+
+        #[test]
+        fn executable_locations() {
+            let gh = super::super::Gh {};
+            let version = Version::from("1.2.3");
+            let platform = Platform { os: Os::Linux, cpu: Cpu::Arm64 };
+            let have = gh.executable_locations(&version, platform);
+            let want = vec![S("bin/gh"), S("xxx/gh")];
+        }
     }
 
     mod extract_version {
