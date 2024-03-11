@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::Method;
+use crate::install::{download_archive, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::subshell::Executable;
 use crate::{install, regexp};
@@ -43,7 +43,7 @@ impl App for GolangCiLint {
     }
 }
 
-impl install::DownloadArchive for GolangCiLint {
+impl download_archive::Data for GolangCiLint {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
         let os = match platform.os {
             Os::Linux => "linux",
@@ -69,7 +69,7 @@ fn extract_version(output: &str) -> Option<&str> {
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
-    use crate::install::DownloadArchive;
+    use crate::install::download_archive::Data;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]

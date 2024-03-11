@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::{self, compile_go, Method};
+use crate::install::{self, compile_go, download_archive, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
@@ -45,7 +45,7 @@ impl App for ActionLint {
     }
 }
 
-impl install::DownloadArchive for ActionLint {
+impl download_archive::Data for ActionLint {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
         let cpu = match platform.cpu {
             Cpu::Arm64 => "arm64",
@@ -81,7 +81,7 @@ fn identify(output: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
-    use crate::install::DownloadArchive;
+    use crate::install::download_archive::Data;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
