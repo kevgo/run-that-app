@@ -19,8 +19,8 @@ pub fn install(app: &dyn InstallByArchive, version: &Version, platform: Platform
     };
     let yard = yard::load_or_create(&yard::production_location()?)?;
     let app_folder = yard.app_folder(&app.name(), version);
-    fs::create_dir_all(app_folder).map_err(|err| UserError::CannotCreateFolder {
-        folder: app_folder,
+    fs::create_dir_all(&app_folder).map_err(|err| UserError::CannotCreateFolder {
+        folder: app_folder.clone(),
         reason: err.to_string(),
     })?;
     let Some(archive) = archives::lookup(&artifact.filename, artifact.data) else {

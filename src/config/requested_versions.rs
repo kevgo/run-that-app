@@ -20,7 +20,7 @@ impl RequestedVersions {
         }
     }
 
-    pub fn into_iter(&self) -> std::vec::IntoIter<RequestedVersion> {
+    pub fn into_iter(self) -> std::vec::IntoIter<RequestedVersion> {
         self.0.into_iter()
     }
 
