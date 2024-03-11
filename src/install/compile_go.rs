@@ -35,7 +35,7 @@ pub fn compile_go(app: &dyn CompileFromGoSource, version: &Version, output: &dyn
         Err(err) => match err.kind() {
             ErrorKind::PermissionDenied => return Err(UserError::GoNoPermission),
             ErrorKind::Interrupted => return Err(UserError::CompilationInterupted),
-            other => return Err(UserError::CompilationError { reason: err.to_string() }),
+            _ => return Err(UserError::CompilationError { reason: err.to_string() }),
         },
     };
     if !status.success() {

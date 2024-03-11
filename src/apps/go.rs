@@ -20,7 +20,7 @@ impl App for Go {
         AppName::from("go")
     }
 
-    fn executable_locations(&self, version: &Version, platform: Platform) -> Vec<String> {
+    fn executable_locations(&self, _version: &Version, platform: Platform) -> Vec<String> {
         vec![format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))]
     }
 

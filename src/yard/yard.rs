@@ -17,8 +17,15 @@ impl Yard {
         self.root.join("apps").join(app_name).join(app_version)
     }
 
-    pub fn find_executable(&self, app_name: &AppName, locations: &[String]) -> Result<Option<Executable>> {
-        todo!()
+    pub fn find_executable(&self, app_name: &AppName, version: &Version, locations: &[String]) -> Result<Option<Executable>> {
+        let app_folder = self.app_folder(app_name, version);
+        for location in locations {
+            let full_path = app_folder.join(location);
+            if full_path.exists() {
+                return Ok(Some(Executable(full_path)));
+            }
+        }
+        Ok(None)
     }
 
     /// provides the path to the folder containing the given application, creates the folder if it doesn't exist

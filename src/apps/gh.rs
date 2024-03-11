@@ -122,6 +122,7 @@ mod tests {
             let platform = Platform { os: Os::Linux, cpu: Cpu::Arm64 };
             let have = gh.executable_locations(&version, platform);
             let want = vec![S("bin/gh"), S("xxx/gh")];
+            assert_eq!(have, want);
         }
     }
 

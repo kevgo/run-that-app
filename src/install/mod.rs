@@ -25,13 +25,13 @@ pub enum Method<'a> {
     InstallAnotherApp(&'a dyn OtherAppFolder),
 }
 
-pub fn install(install_methods: Vec<Method>, version: Version, platform: Platform, output: &dyn Output) -> Result<bool> {
+pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
     for install_method in install_methods {
         let result = match install_method {
-            Method::DownloadArchive(app) => archive::install(app, &version, platform, output),
+            Method::DownloadArchive(app) => archive::install(app, version, platform, output),
             Method::DownloadExecutable(app) => todo!(),
-            Method::CompileGoSource(app) => compile_go::compile_go(app, &version, output),
-            Method::CompileRustSource(app) => compile_rust::compile_rust(app, &version, platform, output),
+            Method::CompileGoSource(app) => compile_go::compile_go(app, version, output),
+            Method::CompileRustSource(app) => compile_rust::compile_rust(app, version, platform, output),
             Method::InstallAnotherApp(app) => other_app_folder::install_other_app(app, version, platform, output),
         }?;
         if result {
