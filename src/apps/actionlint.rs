@@ -64,7 +64,7 @@ impl install::DownloadArchive for ActionLint {
     }
 }
 
-impl install::CompileGoSource for ActionLint {
+impl install::CompileGo for ActionLint {
     fn import_path(&self, version: &Version) -> String {
         format!("github.com/{ORG}/{REPO}/cmd/actionlint@{version}")
     }
