@@ -126,7 +126,7 @@ mod tests {
             #[cfg(unix)]
             let want = vec![S("bin/gh"), S("gh_1.2.3_linux_arm64/bin/gh")];
             #[cfg(windows)]
-            let want = vec![S("bin\\gh"), S("gh_1.2.3_linux_arm64/bin/gh")];
+            let want = vec![S("bin\\gh"), S("gh_1.2.3_linux_arm64\\bin\\gh")];
             assert_eq!(have, want);
         }
     }
