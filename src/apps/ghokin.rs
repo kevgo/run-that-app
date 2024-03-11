@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::{compile_go, download_archive, Method};
+use crate::install::{self, compile_go, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::subshell::Executable;
 use crate::{Output, Result};
@@ -42,7 +42,7 @@ impl App for Ghokin {
     }
 }
 
-impl download_archive::Data for Ghokin {
+impl install::DownloadArchive for Ghokin {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
         let cpu = match platform.cpu {
             Cpu::Arm64 => "arm64",
@@ -71,7 +71,7 @@ fn identify(output: &str) -> bool {
 mod tests {
     mod archive_url {
         use crate::config::Version;
-        use crate::install::download_archive::Data;
+        use crate::install::DownloadArchive;
         use crate::platform::{Cpu, Os, Platform};
 
         #[test]

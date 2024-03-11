@@ -10,13 +10,14 @@ use crate::config::Version;
 use crate::output::Output;
 use crate::platform::Platform;
 use crate::Result;
+pub use download_archive::DownloadArchive;
 pub use download_executable::DownloadExecutable;
 pub use other_app_folder::OtherAppFolder;
 
 /// the different methods to install an application
 pub enum Method<'a> {
     /// installs the application by downloading and extracting an archive containing the application executable from the internet
-    DownloadArchive(&'a dyn download_archive::Data),
+    DownloadArchive(&'a dyn download_archive::DownloadArchive),
     /// installs the application by downloading the pre-compiled executable from the internet
     DownloadExecutable(&'a dyn DownloadExecutable),
     /// installs the applications by compiling it from its source written in Go

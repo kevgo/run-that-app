@@ -2,7 +2,7 @@ use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::error::UserError;
 use crate::hosting::github_tags;
-use crate::install::{self, download_archive, Method};
+use crate::install::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::subshell::Executable;
 use crate::{filesystem, regexp};
@@ -73,7 +73,7 @@ impl App for Go {
     }
 }
 
-impl download_archive::Data for Go {
+impl install::DownloadArchive for Go {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
         let os = match platform.os {
             Os::Linux => "linux",
@@ -107,7 +107,7 @@ fn parse_go_mod(text: &str) -> Option<&str> {
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
-    use crate::install::download_archive::Data;
+    use crate::install::DownloadArchive;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]

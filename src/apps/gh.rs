@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::{self, download_archive, Method};
+use crate::install::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
@@ -53,7 +53,7 @@ impl App for Gh {
     }
 }
 
-impl download_archive::Data for Gh {
+impl install::DownloadArchive for Gh {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
         format!(
             "https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}",
@@ -97,7 +97,7 @@ fn os_text(os: Os) -> &'static str {
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
-    use crate::install::download_archive::Data;
+    use crate::install::DownloadArchive;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]

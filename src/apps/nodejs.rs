@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::{download_archive, Method};
+use crate::install::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::subshell::Executable;
 use crate::{install, regexp};
@@ -56,7 +56,7 @@ impl App for NodeJS {
     }
 }
 
-impl download_archive::Data for NodeJS {
+impl install::DownloadArchive for NodeJS {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
         let ext = match platform.os {
             Os::Linux => "tar.xz",
@@ -97,7 +97,7 @@ fn os_text(os: Os) -> &'static str {
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
-    use crate::install::download_archive::Data;
+    use crate::install::DownloadArchive;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]

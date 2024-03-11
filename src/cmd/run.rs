@@ -103,7 +103,6 @@ fn load_or_install_from_yard(app: &dyn App, version: &Version, output: &dyn Outp
     let yard = yard::load_or_create(&yard::production_location()?)?;
     // try to load the app here
     let locations = app.executable_locations(version, platform);
-    println!("11111111111111111");
     if let Some(executable) = yard.find_executable(&app.yard_app(), version, &locations) {
         return Ok(Some(executable));
     }
