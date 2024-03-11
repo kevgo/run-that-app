@@ -1,3 +1,5 @@
+use colored::Colorize;
+
 use crate::apps::App;
 use crate::config::Version;
 use crate::output::Output;
@@ -27,5 +29,6 @@ pub fn install(app: &dyn DownloadArchive, version: &Version, platform: Platform,
         return Err(UserError::UnknownArchive(artifact.filename));
     };
     archive.extract_all(&app_folder, output)?;
+    output.println("ok".green().bold().as_ref());
     Ok(true)
 }
