@@ -44,11 +44,16 @@ impl App for Ghokin {
 
 impl install::InstallByArchive for Ghokin {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
-        format!(
-            "https://github.com/{ORG}/{REPO}/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz",
-            os = os_text(platform.os),
-            cpu = cpu_text(platform.cpu),
-        )
+        let cpu = match platform.cpu {
+            Cpu::Arm64 => "arm64",
+            Cpu::Intel64 => "amd64",
+        };
+        let os = match platform.os {
+            Os::Linux => "linux",
+            Os::MacOS => "darwin",
+            Os::Windows => "windows",
+        };
+        format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz",)
     }
 }
 
@@ -58,23 +63,8 @@ impl install::CompileFromGoSource for Ghokin {
     }
 }
 
-fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "arm64",
-        Cpu::Intel64 => "amd64",
-    }
-}
-
 fn identify(output: &str) -> bool {
     output.contains("Clean and/or apply transformation on gherkin files")
-}
-
-fn os_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux => "linux",
-        Os::MacOS => "darwin",
-        Os::Windows => "windows",
-    }
 }
 
 #[cfg(test)]
