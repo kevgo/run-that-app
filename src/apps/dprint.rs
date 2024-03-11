@@ -46,11 +46,16 @@ impl App for Dprint {
 
 impl install::InstallByArchive for Dprint {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
-        format!(
-            "https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip",
-            os = os_text(platform.os),
-            cpu = cpu_text(platform.cpu)
-        )
+        let cpu = match platform.cpu {
+            Cpu::Arm64 => "aarch64",
+            Cpu::Intel64 => "x86_64",
+        };
+        let os = match platform.os {
+            Os::Linux => "unknown-linux-gnu",
+            Os::MacOS => "apple-darwin",
+            Os::Windows => "pc-windows-msvc",
+        };
+        format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip")
     }
 }
 
@@ -60,27 +65,12 @@ impl install::CompileFromRustSource for Dprint {
     }
 }
 
-fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "aarch64",
-        Cpu::Intel64 => "x86_64",
-    }
-}
-
 fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"dprint (\d+\.\d+\.\d+)")
 }
 
 fn identify(output: &str) -> bool {
     output.contains("Auto-formats source code based on the specified plugins")
-}
-
-fn os_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux => "unknown-linux-gnu",
-        Os::MacOS => "apple-darwin",
-        Os::Windows => "pc-windows-msvc",
-    }
 }
 
 #[cfg(test)]
