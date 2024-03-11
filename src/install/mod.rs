@@ -31,7 +31,7 @@ pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platfo
             Method::DownloadArchive(app) => archive::install(app, version, platform, output),
             Method::DownloadExecutable(app) => executable::install(app, version, platform, output),
             Method::CompileGoSource(app) => compile_go::compile_go(app, version, output),
-            Method::CompileRustSource(app) => compile_rust::compile_rust(app, version, platform, output),
+            Method::CompileRustSource(app) => compile_rust::compile_rust(app, version, platform),
             Method::InstallAnotherApp(app) => other_app_folder::install_other_app(app, version, platform, output),
         }?;
         if result {
