@@ -33,8 +33,6 @@ pub fn install(install_methods: Vec<Method>, version: Version, platform: Platfor
             Method::CompileGoSource(app) => compile_go::compile_go(app, &version, output),
             Method::CompileRustSource(app) => compile_rust::compile_rust(app, &version, platform, output),
             Method::InstallAnotherApp(app) => {
-                // get the requested version from the config file
-                let app_to_install = app.app_to_install();
                 // Note: we know it must be the Yard variant here. At this point we are installing the app.
                 // Only Yard variants get installed. The Path variant doesn't get installed.
                 let requested_version = RequestedVersion::Yard(version);
