@@ -75,26 +75,20 @@ impl App for Go {
 
 impl install::InstallByArchive for Go {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
-        format!(
-            "https://go.dev/dl/go{version}.{os}-{cpu}.{ext}",
-            os = os_text(platform.os),
-            cpu = cpu_text(platform.cpu),
-            ext = ext_text(platform.os)
-        )
-    }
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "arm64",
-        Cpu::Intel64 => "amd64",
-    }
-}
-
-fn ext_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux | Os::MacOS => "tar.gz",
-        Os::Windows => "zip",
+        let os = match platform.os {
+            Os::Linux => "linux",
+            Os::MacOS => "darwin",
+            Os::Windows => "windows",
+        };
+        let cpu = match platform.cpu {
+            Cpu::Arm64 => "arm64",
+            Cpu::Intel64 => "amd64",
+        };
+        let ext = match platform.os {
+            Os::Linux | Os::MacOS => "tar.gz",
+            Os::Windows => "zip",
+        };
+        format!("https://go.dev/dl/go{version}.{os}-{cpu}.{ext}")
     }
 }
 
@@ -106,14 +100,6 @@ fn identify(output: &str) -> bool {
     output.contains("Go is a tool for managing Go source code")
 }
 
-fn os_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux => "linux",
-        Os::MacOS => "darwin",
-        Os::Windows => "windows",
-    }
-}
-
 fn parse_go_mod(text: &str) -> Option<&str> {
     regexp::first_capture(text, r"(?m)^go\s+(\d+\.\d+)\s*$")
 }
@@ -121,12 +107,14 @@ fn parse_go_mod(text: &str) -> Option<&str> {
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
+    use crate::install::InstallByArchive;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
-    fn download_url() {
+    fn archive_url() {
+        let go = super::Go {};
         let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
-        let have = super::download_url(&Version::from("1.21.5"), platform);
+        let have = go.archive_url(&Version::from("1.21.5"), platform);
         let want = "https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz";
         assert_eq!(have, want);
     }
