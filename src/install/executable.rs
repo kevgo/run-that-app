@@ -1,21 +1,25 @@
 use crate::apps::App;
-use crate::config::AppName;
+use crate::config::{AppName, Version};
 use crate::output::Output;
-use crate::{download, filesystem, Result};
+use crate::platform::Platform;
+use crate::{download, filesystem, yard, Result};
 use colored::Colorize;
 use std::path::Path;
 
 pub trait DownloadExecutable: App {
-    fn artifact_url(&self) -> String;
+    fn artifact_url(&self, version: &Version, platform: Platform) -> String;
 }
 
 /// downloads an uncompressed precompiled binary
-pub fn install(app: &dyn DownloadExecutable, output: &dyn Output) -> Result<bool> {
-    let Some(artifact) = download::artifact(app.artifact_url(), &app.name(), output)? else {
+pub fn install(app: &dyn DownloadExecutable, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
+    let url = app.artifact_url(version, platform);
+    let Some(artifact) = download::artifact(app.artifact_url(version, platform), &app.name(), output)? else {
         return Ok(false);
     };
-    filesystem::create_parent(&args.filepath_on_disk)?;
-    args.output.println(&format!("{}", "ok".green()));
+    let yard = yard::load_or_create(&yard::production_location()?)?;
+    let filepath_on_disk = yard.app_folder(&app.yard_app(), version).join(app.executable_filename(platform));
+    filesystem::create_parent(&filepath_on_disk)?;
+    output.println(&format!("{}", "ok".green()));
     Ok(true)
 }
 

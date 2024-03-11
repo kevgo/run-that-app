@@ -3,12 +3,12 @@ use std::path::Path;
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::archive::{self, InstallArgs};
+use crate::install::archive::{self};
 use crate::install::compile_rust::{compile_rust, CompileArgs};
+use crate::install::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
-use crate::yard::Yard;
 use crate::{Output, Result};
 
 pub struct Dprint {}
@@ -43,6 +43,10 @@ impl App for Dprint {
             executable_filepath: self.executable_filepath(platform),
             output,
         })
+    }
+
+    fn install_methods(&self) -> Vec<crate::install::Method> {
+        vec![Method::DownloadArchive(self), Method::CompileRustSource(self)]
     }
 
     fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {

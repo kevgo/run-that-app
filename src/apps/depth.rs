@@ -1,6 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
+use crate::install::executable::DownloadExecutable;
 use crate::install::{CompileFromGoSource, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::subshell::Executable;
@@ -48,19 +49,21 @@ impl CompileFromGoSource for Depth {
     }
 }
 
+impl DownloadExecutable for Depth {
+    fn artifact_url(&self, version: &Version, platform: Platform) -> String {
+        format!(
+            "https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}",
+            os = os_text(platform.os),
+            cpu = cpu_text(platform.cpu)
+        )
+    }
+}
+
 fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
         Cpu::Arm64 => "aarch64", // the "arm" binaries don't run on Apple Silicon
         Cpu::Intel64 => "amd64",
     }
-}
-
-fn download_url(version: &Version, platform: Platform) -> String {
-    format!(
-        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}",
-        os = os_text(platform.os),
-        cpu = cpu_text(platform.cpu)
-    )
 }
 
 fn identify(output: &str) -> bool {

@@ -20,12 +20,16 @@ impl App for Alphavet {
         formatcp!("https://github.com/{ORG}/{REPO}")
     }
 
-    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
-        github_releases::latest(ORG, REPO, output)
+    fn install_methods(&self) -> Vec<install::Method> {
+        vec![Method::CompileGoSource(self)]
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, output)
+    }
+
+    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
+        github_releases::latest(ORG, REPO, output)
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
@@ -34,10 +38,6 @@ impl App for Alphavet {
         }
         // as of 0.1.0 the -V switch of alphavet is broken
         AnalyzeResult::IdentifiedButUnknownVersion
-    }
-
-    fn install_methods(&self) -> Vec<install::Method> {
-        vec![Method::CompileGoSource(self)]
     }
 }
 

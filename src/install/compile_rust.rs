@@ -1,21 +1,26 @@
+use crate::config::Version;
 use crate::error::UserError;
 use crate::subshell::Executable;
-use crate::{Output, Result};
+use crate::{yard, Output, Result};
 use std::path::PathBuf;
 use std::process::Command;
 use which::which;
 
+pub trait CompileFromRustSource {}
+
 /// installs the given Rust-based application by compiling it from source
-pub fn compile_rust(args: CompileArgs) -> Result<Option<Executable>> {
+pub fn compile_rust(app: &dyn CompileFromRustSource, version: &Version, output: &dyn Output) -> Result<bool> {
     let Ok(cargo_path) = which("cargo") else {
         return Err(UserError::RustNotInstalled);
     };
+    let yard = yard::load_or_create(&yard::production_location()?)?;
+    let target_folder = yard.app_folder(&app.yard_app(), version);
     let mut cmd = Command::new(cargo_path);
     cmd.arg("install");
     cmd.arg("--root");
-    cmd.arg(&args.target_folder);
+    cmd.arg(&target_folder);
     cmd.arg("--locked");
-    cmd.arg(args.crate_name);
+    cmd.arg(app.crate_name());
     let status = match cmd.status() {
         Ok(status) => status,
         Err(err) => match err.kind() {
