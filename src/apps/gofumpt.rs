@@ -1,12 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::compile_go::{compile_go, CompileArgs};
-use crate::install::executable::{self, InstallArgs};
+use crate::install::Method;
 use crate::platform::{Cpu, Os, Platform};
-use crate::regexp;
 use crate::subshell::Executable;
-use crate::yard::Yard;
+use crate::{install, regexp};
 use crate::{Output, Result};
 use const_format::formatcp;
 
@@ -28,27 +26,8 @@ impl App for Gofumpt {
         github_releases::latest(ORG, REPO, output)
     }
 
-    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        let name = self.name();
-        let result = executable::install(InstallArgs {
-            app_name: &name,
-            artifact_url: download_url(version, platform),
-            filepath_on_disk: yard.create_app_folder(&name, version)?.join(self.executable_filepath(platform)),
-            output,
-        })?;
-        if result.is_some() {
-            return Ok(result);
-        }
-        compile_go(CompileArgs {
-            import_path: format!("mvdan.cc/gofumpt@{version}"),
-            target_folder: &yard.app_folder(&name, version),
-            executable_filepath: self.executable_filepath(platform),
-            output,
-        })
-    }
-
-    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-        yard.load_app(&self.name(), version, &self.executable_filepath(platform))
+    fn install_methods(&self) -> Vec<install::Method> {
+        vec![Method::DownloadExecutable(self), Method::CompileGoSource(self)]
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
@@ -66,26 +45,28 @@ impl App for Gofumpt {
     }
 }
 
-fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "arm64",
-        Cpu::Intel64 => "amd64",
+impl install::DownloadExecutable for Gofumpt {
+    fn artifact_url(&self, version: &Version, platform: Platform) -> String {
+        let os = match platform.os {
+            Os::Linux => "linux",
+            Os::MacOS => "darwin",
+            Os::Windows => "windows",
+        };
+        let cpu = match platform.cpu {
+            Cpu::Arm64 => "arm64",
+            Cpu::Intel64 => "amd64",
+        };
+        let ext = match platform.os {
+            Os::Windows => ".exe",
+            Os::Linux | Os::MacOS => "",
+        };
+        format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}{ext}")
     }
 }
 
-fn download_url(version: &Version, platform: Platform) -> String {
-    format!(
-        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}{ext}",
-        os = os_text(platform.os),
-        cpu = cpu_text(platform.cpu),
-        ext = ext_text(platform.os)
-    )
-}
-
-fn ext_text(os: Os) -> &'static str {
-    match os {
-        Os::Windows => ".exe",
-        Os::Linux | Os::MacOS => "",
+impl install::CompileFromGoSource for Gofumpt {
+    fn import_path(&self, version: &Version) -> String {
+        format!("mvdan.cc/gofumpt@{version}")
     }
 }
 
@@ -97,35 +78,30 @@ fn identify(output: &str) -> bool {
     output.contains("display diffs instead of rewriting files")
 }
 
-fn os_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux => "linux",
-        Os::MacOS => "darwin",
-        Os::Windows => "windows",
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    mod download_url {
+    mod artifact_url {
         use crate::config::Version;
+        use crate::install::DownloadExecutable;
         use crate::platform::{Cpu, Os, Platform};
 
         #[test]
         fn macos_arm64() {
+            let gofumpt = super::super::Gofumpt {};
             let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
-            let have = super::super::download_url(&Version::from("0.5.0"), platform);
+            let have = gofumpt.artifact_url(&Version::from("0.5.0"), platform);
             let want = "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_darwin_arm64";
             assert_eq!(have, want);
         }
 
         #[test]
         fn windows_intel64() {
+            let gofumpt = super::super::Gofumpt {};
             let platform = Platform {
                 os: Os::Windows,
                 cpu: Cpu::Intel64,
             };
-            let have = super::super::download_url(&Version::from("0.5.0"), platform);
+            let have = gofumpt.artifact_url(&Version::from("0.5.0"), platform);
             let want = "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_windows_amd64.exe";
             assert_eq!(have, want);
         }
