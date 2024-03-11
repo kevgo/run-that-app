@@ -1,10 +1,6 @@
-use std::path::Path;
-
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::compile_go::{compile_go, CompileArgs};
-use crate::install::executable::{self, InstallArgs};
 use crate::install::{CompileFromGoSource, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::subshell::Executable;
@@ -23,19 +19,6 @@ impl App for Depth {
 
     fn homepage(&self) -> &'static str {
         formatcp!("https://github.com/{ORG}/{REPO}")
-    }
-
-    fn install(&self, version: &Version, platform: Platform, folder: &Path, output: &dyn Output) -> Result<bool> {
-        let name = self.name();
-        let installed = executable::install(InstallArgs {
-            app_name: &name,
-            artifact_url: download_url(version, platform),
-            filepath_on_disk: yard.create_app_folder(&name, version)?.join(self.executable_filepath(platform)),
-            output,
-        })?;
-        if installed {
-            return Ok(true);
-        }
     }
 
     fn install_methods(&self) -> Vec<install::Method> {
