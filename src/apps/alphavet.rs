@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::{compile_go, Method};
+use crate::install::Method;
 use crate::subshell::Executable;
 use crate::{install, Output, Result};
 use const_format::formatcp;
@@ -41,7 +41,7 @@ impl App for Alphavet {
     }
 }
 
-impl compile_go::Data for Alphavet {
+impl install::CompileGoSource for Alphavet {
     fn import_path(&self, version: &Version) -> String {
         format!("github.com/{ORG}/{REPO}/cmd/alphavet@v{version}")
     }

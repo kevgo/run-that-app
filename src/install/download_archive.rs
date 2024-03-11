@@ -9,6 +9,7 @@ use crate::{archives, yard};
 use crate::{download, Result};
 use std::fs;
 
+/// defines the information needed for RTA to download and extract an archive containing an app
 pub trait DownloadArchive: App {
     /// provides the URL of the archive to download
     fn archive_url(&self, version: &Version, platform: Platform) -> String;

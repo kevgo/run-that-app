@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::{compile_go, Method};
+use crate::install::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::subshell::Executable;
 use crate::{install, regexp};
@@ -64,7 +64,7 @@ impl install::DownloadArchive for Goreleaser {
     }
 }
 
-impl compile_go::Data for Goreleaser {
+impl install::CompileGoSource for Goreleaser {
     fn import_path(&self, version: &Version) -> String {
         format!("github.com/{ORG}/{REPO}@{version}")
     }

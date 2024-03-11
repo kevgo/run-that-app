@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::{self, compile_go, Method};
+use crate::install::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::subshell::Executable;
 use crate::{Output, Result};
@@ -57,7 +57,7 @@ impl install::DownloadArchive for Ghokin {
     }
 }
 
-impl compile_go::Data for Ghokin {
+impl install::CompileGoSource for Ghokin {
     fn import_path(&self, version: &Version) -> String {
         format!("github.com/{ORG}/{REPO}/v3@v{version}")
     }

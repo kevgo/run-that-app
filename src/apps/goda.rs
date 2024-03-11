@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::{compile_go, Method};
+use crate::install::Method;
 use crate::subshell::Executable;
 use crate::{install, Output, Result};
 use const_format::formatcp;
@@ -41,7 +41,7 @@ impl App for Goda {
     }
 }
 
-impl compile_go::Data for Goda {
+impl install::CompileGoSource for Goda {
     fn import_path(&self, version: &Version) -> String {
         format!("github.com/{ORG}/{REPO}@v{version}")
     }

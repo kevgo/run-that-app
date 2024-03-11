@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
-use crate::install::{self, compile_go, Method};
+use crate::install::{self, Method};
 use crate::subshell::Executable;
 use crate::{Output, Result};
 use const_format::formatcp;
@@ -38,7 +38,7 @@ impl App for Deadcode {
     }
 }
 
-impl compile_go::Data for Deadcode {
+impl install::CompileGoSource for Deadcode {
     fn import_path(&self, version: &Version) -> String {
         format!("golang.org/x/tools/cmd/deadcode@v{version}")
     }

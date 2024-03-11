@@ -5,6 +5,7 @@ use crate::{yard, Result};
 use std::process::Command;
 use which::which;
 
+/// defines the information needed for RTA to compile a Rust app from source
 pub trait Data: App {
     fn crate_name(&self) -> &'static str;
 }
