@@ -1,7 +1,7 @@
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
-use crate::install::Method;
+use crate::install::{Method, OtherAppFolder};
 use crate::platform::Platform;
 use crate::subshell::Executable;
 use crate::{install, regexp};
@@ -19,6 +19,10 @@ impl App for Npm {
         vec![format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))]
     }
 
+    fn yard_app(&self) -> AppName {
+        self.app_to_install().name()
+    }
+
     fn homepage(&self) -> &'static str {
         "https://www.npmjs.com"
     }
@@ -28,11 +32,11 @@ impl App for Npm {
     }
 
     fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
-        (NodeJS {}).latest_installable_version(output)
+        self.app_to_install().latest_installable_version(output)
     }
 
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
-        (NodeJS {}).installable_versions(amount, output)
+        self.app_to_install().installable_versions(amount, output)
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
