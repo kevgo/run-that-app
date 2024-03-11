@@ -50,31 +50,21 @@ impl install::CompileFromGoSource for Depth {
 
 impl install::DownloadExecutable for Depth {
     fn artifact_url(&self, version: &Version, platform: Platform) -> String {
-        format!(
-            "https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}",
-            os = os_text(platform.os),
-            cpu = cpu_text(platform.cpu)
-        )
-    }
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-    match cpu {
-        Cpu::Arm64 => "aarch64", // the "arm" binaries don't run on Apple Silicon
-        Cpu::Intel64 => "amd64",
+        let cpu = match platform.cpu {
+            Cpu::Arm64 => "aarch64", // the "arm" binaries don't run on Apple Silicon
+            Cpu::Intel64 => "amd64",
+        };
+        let os = match platform.os {
+            Os::Linux => "linux",
+            Os::MacOS => "darwin",
+            Os::Windows => "windows",
+        };
+        format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}",)
     }
 }
 
 fn identify(output: &str) -> bool {
     output.contains("resolves dependencies of internal (stdlib) packages.")
-}
-
-fn os_text(os: Os) -> &'static str {
-    match os {
-        Os::Linux => "linux",
-        Os::MacOS => "darwin",
-        Os::Windows => "windows",
-    }
 }
 
 #[cfg(test)]
