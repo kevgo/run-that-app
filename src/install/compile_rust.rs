@@ -3,7 +3,7 @@ use crate::config::Version;
 use crate::error::UserError;
 use crate::platform::Platform;
 use crate::subshell::Executable;
-use crate::{yard, Output, Result};
+use crate::{yard, Result};
 use std::process::Command;
 use which::which;
 
