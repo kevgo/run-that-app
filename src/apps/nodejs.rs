@@ -56,7 +56,7 @@ impl App for NodeJS {
     }
 }
 
-impl install::InstallByArchive for NodeJS {
+impl install::DownloadArchive for NodeJS {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
         let ext = match platform.os {
             Os::Linux => "tar.xz",
@@ -97,7 +97,7 @@ fn os_text(os: Os) -> &'static str {
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
-    use crate::install::InstallByArchive;
+    use crate::install::DownloadArchive;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]

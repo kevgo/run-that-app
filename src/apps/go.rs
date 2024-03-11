@@ -73,7 +73,7 @@ impl App for Go {
     }
 }
 
-impl install::InstallByArchive for Go {
+impl install::DownloadArchive for Go {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
         let os = match platform.os {
             Os::Linux => "linux",
@@ -107,7 +107,7 @@ fn parse_go_mod(text: &str) -> Option<&str> {
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
-    use crate::install::InstallByArchive;
+    use crate::install::DownloadArchive;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]

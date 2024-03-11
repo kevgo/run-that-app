@@ -12,13 +12,13 @@ use crate::platform::Platform;
 use crate::Result;
 pub use compile_go::CompileFromGoSource;
 pub use compile_rust::CompileFromRustSource;
-pub use download_archive::InstallByArchive;
+pub use download_archive::DownloadArchive;
 pub use download_executable::DownloadExecutable;
 pub use other_app_folder::OtherAppFolder;
 
 /// the different methods to install an application
 pub enum Method<'a> {
-    DownloadArchive(&'a dyn InstallByArchive),
+    DownloadArchive(&'a dyn DownloadArchive),
     DownloadExecutable(&'a dyn DownloadExecutable),
     CompileGoSource(&'a dyn CompileFromGoSource),
     CompileRustSource(&'a dyn CompileFromRustSource),

@@ -45,7 +45,7 @@ impl App for Scc {
     }
 }
 
-impl install::InstallByArchive for Scc {
+impl install::DownloadArchive for Scc {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
         let os = match platform.os {
             Os::Linux => "Linux",
@@ -77,7 +77,7 @@ fn identify(output: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
-    use crate::install::InstallByArchive;
+    use crate::install::DownloadArchive;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]

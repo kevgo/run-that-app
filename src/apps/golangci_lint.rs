@@ -43,7 +43,7 @@ impl App for GolangCiLint {
     }
 }
 
-impl install::InstallByArchive for GolangCiLint {
+impl install::DownloadArchive for GolangCiLint {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
         let os = match platform.os {
             Os::Linux => "linux",
@@ -69,7 +69,7 @@ fn extract_version(output: &str) -> Option<&str> {
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
-    use crate::install::InstallByArchive;
+    use crate::install::DownloadArchive;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]

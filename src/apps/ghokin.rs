@@ -42,7 +42,7 @@ impl App for Ghokin {
     }
 }
 
-impl install::InstallByArchive for Ghokin {
+impl install::DownloadArchive for Ghokin {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
         let cpu = match platform.cpu {
             Cpu::Arm64 => "arm64",
@@ -71,7 +71,7 @@ fn identify(output: &str) -> bool {
 mod tests {
     mod archive_url {
         use crate::config::Version;
-        use crate::install::InstallByArchive;
+        use crate::install::DownloadArchive;
         use crate::platform::{Cpu, Os, Platform};
 
         #[test]

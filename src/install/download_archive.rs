@@ -7,13 +7,13 @@ use crate::{archives, yard};
 use crate::{download, Result};
 use std::fs;
 
-pub trait InstallByArchive: App {
+pub trait DownloadArchive: App {
     /// provides the URL of the archive to download
     fn archive_url(&self, version: &Version, platform: Platform) -> String;
 }
 
 /// downloads and unpacks the content of an archive file
-pub fn install(app: &dyn InstallByArchive, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
+pub fn install(app: &dyn DownloadArchive, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
     let Some(artifact) = download::artifact(app.archive_url(version, platform), &app.name(), output)? else {
         return Ok(false);
     };

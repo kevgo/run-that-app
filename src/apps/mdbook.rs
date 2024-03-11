@@ -50,7 +50,7 @@ impl App for MdBook {
     }
 }
 
-impl install::InstallByArchive for MdBook {
+impl install::DownloadArchive for MdBook {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
         let os = match platform.os {
             Os::Linux => "unknown-linux-gnu",
@@ -82,7 +82,7 @@ fn identify(output: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use crate::config::Version;
-    use crate::install::InstallByArchive;
+    use crate::install::DownloadArchive;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
