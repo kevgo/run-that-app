@@ -37,7 +37,6 @@ impl App for Ghokin {
             return AnalyzeResult::NotIdentified;
         }
         // as of 3.4.0 ghokin's "version" command prints nothing
-        // TODO: try to analyze the output of versions before 3.4.0
         AnalyzeResult::IdentifiedButUnknownVersion
     }
 }
