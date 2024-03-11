@@ -1,11 +1,9 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::archive::{self, InstallArgs};
 use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
-use crate::yard::Yard;
 use crate::{Output, Result};
 
 pub struct ShellCheck {}
@@ -22,19 +20,23 @@ impl App for ShellCheck {
         "https://www.shellcheck.net"
     }
 
-    fn executable_locations(&self, platform: Platform) -> Vec<String> {
+    fn executable_locations(&self, version: &Version, platform: Platform) -> Vec<String> {
         vec![format!("{}/{}", self.name().as_str(), self.executable_filename(platform))]
     }
 
-    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-        let name = self.name();
-        archive::install(InstallArgs {
-            app_name: &name,
-            artifact_url: download_url(version, platform),
-            output,
-            dir_on_disk: yard.app_folder(&name, version),
-            executable_locations: self.executable_locations(platform),
-        })
+    // fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    //     let name = self.name();
+    //     archive::install(InstallArgs {
+    //         app_name: &name,
+    //         artifact_url: download_url(version, platform),
+    //         output,
+    //         dir_on_disk: yard.app_folder(&name, version),
+    //         executable_locations: self.executable_locations(platform),
+    //     })
+    // }
+
+    fn install_methods(&self) -> Vec<crate::install::Method> {
+        todo!()
     }
 
     fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
