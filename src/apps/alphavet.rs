@@ -1,9 +1,9 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::Method;
+use crate::install::{self, Method};
 use crate::subshell::Executable;
-use crate::{install, Output, Result};
+use crate::{Output, Result};
 use const_format::formatcp;
 
 pub struct Alphavet {}
