@@ -18,10 +18,15 @@ pub use other_app_folder::OtherAppFolder;
 
 /// the different methods to install an application
 pub enum Method<'a> {
+    /// installs the application by downloading and extracting an archive containing the application executable from the internet
     DownloadArchive(&'a dyn DownloadArchive),
+    /// installs the application by downloading the pre-compiled executable from the internet
     DownloadExecutable(&'a dyn DownloadExecutable),
+    /// installs the applications by compiling it from its source written in Go
     CompileGoSource(&'a dyn CompileFromGoSource),
+    /// installs the application by compiling it from its source written in Rust
     CompileRustSource(&'a dyn CompileFromRustSource),
+    /// this application is shipped as part of the given other application
     InstallAnotherApp(&'a dyn OtherAppFolder),
 }
 
