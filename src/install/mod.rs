@@ -6,7 +6,7 @@ pub mod compile_rust;
 pub mod executable;
 pub mod other_app_folder;
 
-use crate::config::{RequestedVersion, Version};
+use crate::config::Version;
 use crate::output::Output;
 use crate::platform::Platform;
 use crate::Result;
@@ -32,12 +32,7 @@ pub fn install(install_methods: Vec<Method>, version: Version, platform: Platfor
             Method::DownloadExecutable(app) => todo!(),
             Method::CompileGoSource(app) => compile_go::compile_go(app, &version, output),
             Method::CompileRustSource(app) => compile_rust::compile_rust(app, &version, platform, output),
-            Method::InstallAnotherApp(app) => {
-                // Note: we know it must be the Yard variant here. At this point we are installing the app.
-                // Only Yard variants get installed. The Path variant doesn't get installed.
-                let requested_version = RequestedVersion::Yard(version);
-                other_app_folder::install_other_app(app, requested_version, platform, output)
-            }
+            Method::InstallAnotherApp(app) => other_app_folder::install_other_app(app, version, platform, output),
         }?;
         if result {
             return Ok(true);
