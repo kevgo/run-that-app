@@ -9,9 +9,6 @@ pub enum UserError {
     ArchiveCannotExtract {
         reason: String,
     },
-    ArchiveNoExecutable {
-        path: PathBuf,
-    },
     CannotAccessConfigFile(String),
     CannotCreateFolder {
         folder: PathBuf,
@@ -55,7 +52,6 @@ pub enum UserError {
     },
     GoCompilationFailed,
     GoNoPermission,
-    GoNotInstalled,
     InvalidConfigFileFormat {
         line_no: usize,
         text: String,
@@ -92,9 +88,6 @@ impl UserError {
         match self {
             UserError::ArchiveCannotExtract { reason } => {
                 error(&format!("cannot extract the archive: {reason}"));
-            }
-            UserError::ArchiveNoExecutable { path } => {
-                error(&format!("executable \"{}\" not found in archive", path.to_string_lossy()));
             }
             UserError::CannotAccessConfigFile(reason) => {
                 error(&format!("cannot read the config file: {reason}"));
@@ -149,10 +142,6 @@ impl UserError {
                 desc("Please see the error output above and try again with a different version.");
             }
             UserError::GoNoPermission => error("No permission to execute the Go compiler"),
-            UserError::GoNotInstalled => {
-                error("The Go compiler is not installed");
-                desc("Installation instructions: https://go.dev/dl");
-            }
             UserError::InvalidConfigFileFormat { line_no, text } => {
                 error("Invalid config file format");
                 desc(&format!("{}:{line_no}: {text}", config::FILE_NAME));
