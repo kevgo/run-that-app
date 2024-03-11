@@ -21,36 +21,16 @@ impl App for Dprint {
         "https://dprint.dev"
     }
 
-    // fn install(&self, version: &Version, platform: Platform, folder: &Path, output: &dyn Output) -> Result<bool> {
-    //     let name = self.name();
-    //     let result = archive::install(InstallArgs {
-    //         app_name: &name,
-    //         artifact_url: download_url(version, platform),
-    //         output,
-    //         dir_on_disk: folder,
-    //         executable_locations: self.executable_locations(platform),
-    //     })?;
-    //     if result.is_some() {
-    //         return Ok(result);
-    //     }
-    //     compile_rust(CompileArgs {
-    //         crate_name: "dprint",
-    //         target_folder: yard.app_folder(&name, version),
-    //         executable_filepath: self.executable_filepath(platform),
-    //         output,
-    //     })
-    // }
-
     fn install_methods(&self) -> Vec<crate::install::Method> {
         vec![Method::DownloadArchive(self), Method::CompileRustSource(self)]
     }
 
-    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
-        github_releases::latest(ORG, REPO, output)
-    }
-
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, output)
+    }
+
+    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
+        github_releases::latest(ORG, REPO, output)
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
@@ -71,6 +51,12 @@ impl install::InstallByArchive for Dprint {
             os = os_text(platform.os),
             cpu = cpu_text(platform.cpu)
         )
+    }
+}
+
+impl install::CompileFromRustSource for Dprint {
+    fn crate_name(&self) -> &'static str {
+        "dprint"
     }
 }
 
