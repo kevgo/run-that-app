@@ -43,7 +43,6 @@ impl App for Npx {
 }
 
 impl install::OtherAppFolder for Npx {
-    // TODO: change dyn to impl?
     fn app_to_install(&self) -> Box<dyn App> {
         Box::new(NodeJS {})
     }
