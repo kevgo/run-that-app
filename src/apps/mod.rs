@@ -65,7 +65,6 @@ pub trait App {
     /// which Go version to use to compile this codebase
     /// Similar version restrictions can exist in
     /// "package.json" for `NodeJS` or "Gemfile" for Ruby.
-    // TODO: rename to code_version_restrictions
     fn allowed_versions(&self) -> Result<semver::VersionReq> {
         Ok(semver::VersionReq::STAR)
     }
