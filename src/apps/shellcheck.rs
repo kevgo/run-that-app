@@ -1,3 +1,5 @@
+use std::path;
+
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
@@ -64,7 +66,7 @@ impl install::DownloadArchive for ShellCheck {
     }
 
     fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
-        format!("{}/{}", self.name().as_str(), self.executable_filename(platform))
+        format!("{}{}{}", self.name().as_str(), path::MAIN_SEPARATOR, self.executable_filename(platform))
     }
 }
 
