@@ -64,7 +64,7 @@ impl install::DownloadExecutable for Gofumpt {
     }
 }
 
-impl install::CompileGo for Gofumpt {
+impl install::CompileGoSource for Gofumpt {
     fn import_path(&self, version: &Version) -> String {
         format!("mvdan.cc/gofumpt@{version}")
     }

@@ -42,7 +42,7 @@ impl App for Npx {
     }
 }
 
-impl install::InstallAnotherApp for Npx {
+impl install::ViaAnotherApp for Npx {
     fn app_to_install(&self) -> Box<dyn App> {
         Box::new(NodeJS {})
     }

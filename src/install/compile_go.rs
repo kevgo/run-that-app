@@ -8,13 +8,14 @@ use std::process::Command;
 use which::which;
 
 /// defines the information needed to compile a Go app from source
-pub trait CompileGo: App {
+#[allow(clippy::module_name_repetitions)]
+pub trait CompileGoSource: App {
     /// the Go import path of the application to compile from source
     fn import_path(&self, version: &Version) -> String;
 }
 
 /// installs the given Go-based application by compiling it from source
-pub fn run(app: &dyn CompileGo, version: &Version, output: &dyn Output) -> Result<bool> {
+pub fn run(app: &dyn CompileGoSource, version: &Version, output: &dyn Output) -> Result<bool> {
     let Ok(go_path) = which("go") else {
         return Ok(false);
     };

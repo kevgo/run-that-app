@@ -42,7 +42,7 @@ impl App for Depth {
     }
 }
 
-impl install::CompileGo for Depth {
+impl install::CompileGoSource for Depth {
     fn import_path(&self, version: &Version) -> String {
         format!("github.com/{ORG}/{REPO}/cmd/depth@v{version}")
     }

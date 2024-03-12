@@ -6,11 +6,11 @@ pub mod download_archive;
 pub mod download_executable;
 pub mod other_app_folder;
 
-pub use compile_go::CompileGo;
-pub use compile_rust::CompileRust;
+pub use compile_go::CompileGoSource;
+pub use compile_rust::CompileRustSource;
 pub use download_archive::DownloadArchive;
 pub use download_executable::DownloadExecutable;
-pub use other_app_folder::InstallAnotherApp;
+pub use other_app_folder::ViaAnotherApp;
 
 use crate::config::{AppName, Version};
 use crate::output::Output;
@@ -26,11 +26,11 @@ pub enum Method<'a> {
     /// installs the application by downloading the pre-compiled executable from the internet
     DownloadExecutable(&'a dyn DownloadExecutable),
     /// installs the applications by compiling it from its source written in Go
-    CompileGoSource(&'a dyn CompileGo),
+    CompileGoSource(&'a dyn CompileGoSource),
     /// installs the application by compiling it from its source written in Rust
-    CompileRustSource(&'a dyn CompileRust),
+    CompileRustSource(&'a dyn CompileRustSource),
     /// this application is shipped as part of another application
-    InstallAnotherApp(&'a dyn InstallAnotherApp),
+    InstallAnotherApp(&'a dyn ViaAnotherApp),
 }
 
 impl<'a> Method<'a> {

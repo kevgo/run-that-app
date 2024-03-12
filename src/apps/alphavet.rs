@@ -41,7 +41,7 @@ impl App for Alphavet {
     }
 }
 
-impl install::CompileGo for Alphavet {
+impl install::CompileGoSource for Alphavet {
     fn import_path(&self, version: &Version) -> String {
         format!("github.com/{ORG}/{REPO}/cmd/alphavet@v{version}")
     }

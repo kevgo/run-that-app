@@ -6,7 +6,7 @@ use crate::platform::Platform;
 use crate::{apps, Result};
 
 /// defines the information needed for apps whose executable is shipped as part of another app
-pub trait InstallAnotherApp: App {
+pub trait ViaAnotherApp: App {
     /// the application that ships the executable of this app
     fn app_to_install(&self) -> Box<dyn App>;
 
@@ -14,7 +14,7 @@ pub trait InstallAnotherApp: App {
     fn executable_path_in_other_app_yard(&self, version: &Version, platform: Platform) -> String;
 }
 
-pub fn install_other_app(app: &dyn InstallAnotherApp, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
+pub fn install_other_app(app: &dyn ViaAnotherApp, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
     let app_to_install = app.app_to_install();
     let all_apps = apps::all();
     let app = all_apps.lookup(&app_to_install.name())?;

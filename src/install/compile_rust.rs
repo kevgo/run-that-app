@@ -6,13 +6,14 @@ use std::process::Command;
 use which::which;
 
 /// defines the information needed to compile a Rust app from source
-pub trait CompileRust: App {
+#[allow(clippy::module_name_repetitions)]
+pub trait CompileRustSource: App {
     /// the name of the Rust crate containing the source code of the application to compile
     fn crate_name(&self) -> &'static str;
 }
 
 /// installs the given Rust-based application by compiling it from source
-pub fn run(app: &dyn CompileRust, version: &Version) -> Result<bool> {
+pub fn run(app: &dyn CompileRustSource, version: &Version) -> Result<bool> {
     let Ok(cargo_path) = which("cargo") else {
         return Err(UserError::RustNotInstalled);
     };
