@@ -7,6 +7,7 @@ use colored::Colorize;
 
 /// defines the information needed to download a pre-compiled application executable
 pub trait DownloadExecutable: App {
+    /// the URL at which to download the executable
     fn artifact_url(&self, version: &Version, platform: Platform) -> String;
 }
 
