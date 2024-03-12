@@ -10,6 +10,7 @@ use which::which;
 
 /// defines the information needed to compile a Go app from source
 pub trait CompileGo: App {
+    /// the Go import path of the application to compile from source
     fn import_path(&self, version: &Version) -> String;
 }
 
