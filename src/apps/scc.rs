@@ -58,6 +58,10 @@ impl install::DownloadArchive for Scc {
         };
         format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/scc_{version}_{os}_{cpu}.tar.gz")
     }
+
+    fn executable_location(&self, version: &Version, platform: Platform) -> String {
+        self.executable_filename(platform)
+    }
 }
 
 impl install::CompileGo for Scc {
