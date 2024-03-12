@@ -13,7 +13,7 @@ pub trait DownloadArchive: App {
     fn archive_url(&self, version: &Version, platform: Platform) -> String;
 
     /// the location of the executable within the archive
-    fn executable_location_in_archive(&self, version: &Version, platform: Platform) -> String;
+    fn executable_path_in_archive(&self, version: &Version, platform: Platform) -> String;
 }
 
 /// downloads and unpacks the content of an archive file

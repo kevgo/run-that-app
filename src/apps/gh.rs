@@ -56,7 +56,7 @@ impl install::DownloadArchive for Gh {
         )
     }
 
-    fn executable_location_in_archive(&self, version: &Version, platform: Platform) -> String {
+    fn executable_path_in_archive(&self, version: &Version, platform: Platform) -> String {
         format!(
             "gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}",
             os = os_text(platform.os),
@@ -123,7 +123,7 @@ mod tests {
             let gh = super::super::Gh {};
             let version = Version::from("1.2.3");
             let platform = Platform { os: Os::Linux, cpu: Cpu::Arm64 };
-            let have = gh.executable_location_in_archive(&version, platform);
+            let have = gh.executable_path_in_archive(&version, platform);
             #[cfg(unix)]
             let want = S("gh_1.2.3_linux_arm64/bin/gh");
             #[cfg(windows)]
