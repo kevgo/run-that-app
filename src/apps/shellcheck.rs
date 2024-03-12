@@ -1,5 +1,3 @@
-use std::path;
-
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
@@ -8,6 +6,7 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
 use crate::{Output, Result};
+use std::path;
 
 pub struct ShellCheck {}
 
