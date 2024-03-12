@@ -76,7 +76,6 @@ impl RequestedVersions {
 
 impl IntoIterator for RequestedVersions {
     type Item = RequestedVersion;
-
     type IntoIter = std::vec::IntoIter<RequestedVersion>;
 
     fn into_iter(self) -> Self::IntoIter {
