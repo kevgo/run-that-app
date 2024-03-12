@@ -1,7 +1,7 @@
 //! Output to the user
 
-mod console;
+mod event;
 mod output;
 
-pub use console::StdErr;
+pub use event::Event;
 pub use output::Output;
