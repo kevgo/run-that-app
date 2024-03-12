@@ -12,7 +12,7 @@ pub struct TarXz {
 }
 
 impl Archive for TarXz {
-    fn extract_all(&self, target_dir: &Path, output: &dyn Output) -> Result<()> {
+    fn extract_all(&self, target_dir: &Path, output: Output) -> Result<()> {
         print_header(output);
         let decompressor = XzDecoder::new(Cursor::new(&self.data));
         let mut archive = tar::Archive::new(decompressor);
@@ -20,7 +20,7 @@ impl Archive for TarXz {
     }
 }
 
-fn print_header(output: &dyn Output) {
+fn print_header(output: Output) {
     super::print_header(CATEGORY, "tar.xz", output);
 }
 

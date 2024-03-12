@@ -58,7 +58,7 @@ impl<'a> Method<'a> {
 }
 
 /// installs an app using the first of its installation methods that works
-pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
+pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platform, output: Output) -> Result<bool> {
     for install_method in install_methods {
         let result = match install_method {
             Method::DownloadArchive(app) => download_archive::run(app, version, platform, output),

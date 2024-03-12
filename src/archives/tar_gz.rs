@@ -12,7 +12,7 @@ pub struct TarGz {
 }
 
 impl Archive for TarGz {
-    fn extract_all(&self, target_dir: &Path, output: &dyn Output) -> Result<()> {
+    fn extract_all(&self, target_dir: &Path, output: Output) -> Result<()> {
         print_header(output);
         let gz_decoder = GzDecoder::new(io::Cursor::new(&self.data));
         let mut archive = tar::Archive::new(gz_decoder);
@@ -20,7 +20,7 @@ impl Archive for TarGz {
     }
 }
 
-fn print_header(output: &dyn Output) {
+fn print_header(output: Output) {
     super::print_header(CATEGORY, "tar.gz", output);
 }
 

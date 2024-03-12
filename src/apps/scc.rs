@@ -26,11 +26,11 @@ impl App for Scc {
         vec![Method::DownloadArchive(self), Method::CompileGoSource(self)]
     }
 
-    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
+    fn latest_installable_version(&self, output: Output) -> Result<Version> {
         github_releases::latest(ORG, REPO, output)
     }
 
-    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
+    fn installable_versions(&self, amount: usize, output: Output) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, output)
     }
 

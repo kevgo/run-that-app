@@ -7,7 +7,7 @@ use big_s::S;
 use colored::Colorize;
 
 /// provides the latest official version of the given application on GitHub Releases
-pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<Version> {
+pub fn latest(org: &str, repo: &str, output: Output) -> Result<Version> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases/latest");
     output.log("HTTP", &format!("downloading {url}"));
     let get = minreq::get(&url)
@@ -36,7 +36,7 @@ fn parse_latest_response(text: &str) -> Result<Version> {
 }
 
 /// provides the given number of latest versions of the given application on GitHub Releases
-pub fn versions(org: &str, repo: &str, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
+pub fn versions(org: &str, repo: &str, amount: usize, output: Output) -> Result<Vec<Version>> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases?per_page={amount}");
     output.log("HTTP", &format!("downloading {url}"));
     let get = minreq::get(&url)

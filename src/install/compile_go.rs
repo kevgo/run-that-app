@@ -1,7 +1,7 @@
 use crate::apps::App;
 use crate::config::Version;
 use crate::error::UserError;
-use crate::output::Output;
+use crate::output::{Event, Output};
 use crate::{yard, Result};
 use std::io::ErrorKind;
 use std::process::Command;
@@ -15,7 +15,7 @@ pub trait CompileGoSource: App {
 }
 
 /// installs the given Go-based application by compiling it from source
-pub fn run(app: &dyn CompileGoSource, version: &Version, output: &dyn Output) -> Result<bool> {
+pub fn run(app: &dyn CompileGoSource, version: &Version, output: Output) -> Result<bool> {
     let Ok(go_path) = which("go") else {
         return Ok(false);
     };
@@ -23,7 +23,10 @@ pub fn run(app: &dyn CompileGoSource, version: &Version, output: &dyn Output) ->
     let target_folder = yard.create_app_folder(&app.name(), version)?;
     let import_path = app.import_path(version);
     let go_args = vec!["install", &import_path];
-    output.println(&format!("go {}", go_args.join(" ")));
+    output.log(Event::CompileGoStart {
+        go_path: go_path.to_string_lossy(),
+        args: &go_args,
+    });
     let mut cmd = Command::new(go_path);
     cmd.args(go_args);
     cmd.env("GOBIN", target_folder);

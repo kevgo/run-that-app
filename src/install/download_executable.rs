@@ -12,7 +12,7 @@ pub trait DownloadExecutable: App {
 }
 
 /// downloads an uncompressed precompiled binary
-pub fn install(app: &dyn DownloadExecutable, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
+pub fn install(app: &dyn DownloadExecutable, version: &Version, platform: Platform, output: Output) -> Result<bool> {
     let Some(artifact) = download::artifact(app.download_url(version, platform), &app.name(), output)? else {
         return Ok(false);
     };

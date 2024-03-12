@@ -20,12 +20,12 @@ impl App for Deadcode {
         vec![Method::CompileGoSource(self)]
     }
 
-    fn latest_installable_version(&self, _output: &dyn Output) -> Result<Version> {
+    fn latest_installable_version(&self, _output: Output) -> Result<Version> {
         // TODO: remove this file once deadcode is integrated into golangci-lint
         Ok(Version::from("0.16.1"))
     }
 
-    fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<Version>> {
+    fn installable_versions(&self, _amount: usize, _output: Output) -> Result<Vec<Version>> {
         Ok(vec![Version::from("0.16.1")])
     }
 

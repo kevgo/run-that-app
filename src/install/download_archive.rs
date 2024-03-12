@@ -17,7 +17,7 @@ pub trait DownloadArchive: App {
 }
 
 /// downloads and unpacks the content of an archive file
-pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
+pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, output: Output) -> Result<bool> {
     let Some(artifact) = download::artifact(app.archive_url(version, platform), &app.name(), output)? else {
         return Ok(false);
     };

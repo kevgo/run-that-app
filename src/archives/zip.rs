@@ -11,14 +11,14 @@ pub struct Zip {
 }
 
 impl Archive for Zip {
-    fn extract_all(&self, target_dir: &Path, output: &dyn Output) -> Result<()> {
+    fn extract_all(&self, target_dir: &Path, output: Output) -> Result<()> {
         print_header(output);
         let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&self.data)).expect("cannot read zip data");
         zip_archive.extract(target_dir).map_err(|err| UserError::ArchiveCannotExtract { reason: err.to_string() })
     }
 }
 
-fn print_header(output: &dyn Output) {
+fn print_header(output: Output) {
     super::print_header(CATEGORY, "zip", output);
 }
 

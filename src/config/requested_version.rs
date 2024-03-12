@@ -89,10 +89,10 @@ mod tests {
             fn homepage(&self) -> &'static str {
                 unimplemented!()
             }
-            fn installable_versions(&self, _amount: usize, _output: &dyn Output) -> Result<Vec<Version>> {
+            fn installable_versions(&self, _amount: usize, _output: Output) -> Result<Vec<Version>> {
                 unimplemented!()
             }
-            fn latest_installable_version(&self, _output: &dyn Output) -> Result<Version> {
+            fn latest_installable_version(&self, _output: Output) -> Result<Version> {
                 unimplemented!()
             }
             fn analyze_executable(&self, _path: &Executable) -> AnalyzeResult {

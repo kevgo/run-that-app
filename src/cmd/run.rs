@@ -54,7 +54,7 @@ pub struct Args {
     pub log: Option<String>,
 }
 
-pub fn load_or_install(app: &dyn App, version: &RequestedVersion, platform: Platform, output: &dyn Output) -> Result<Option<Executable>> {
+pub fn load_or_install(app: &dyn App, version: &RequestedVersion, platform: Platform, output: Output) -> Result<Option<Executable>> {
     match version {
         RequestedVersion::Path(version) => load_from_path(app, version, platform, output),
         RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, output),
@@ -62,7 +62,7 @@ pub fn load_or_install(app: &dyn App, version: &RequestedVersion, platform: Plat
 }
 
 // checks if the app is in the PATH and has the correct version
-fn load_from_path(app: &dyn App, want_version: &semver::VersionReq, platform: Platform, output: &dyn Output) -> Result<Option<Executable>> {
+fn load_from_path(app: &dyn App, want_version: &semver::VersionReq, platform: Platform, output: Output) -> Result<Option<Executable>> {
     let Some(executable) = find_global_install(&app.executable_filename(platform), output) else {
         return Ok(None);
     };
@@ -98,7 +98,7 @@ fn load_from_path(app: &dyn App, want_version: &semver::VersionReq, platform: Pl
     }
 }
 
-fn load_or_install_from_yard(app: &dyn App, version: &Version, output: &dyn Output) -> Result<Option<Executable>> {
+fn load_or_install_from_yard(app: &dyn App, version: &Version, output: Output) -> Result<Option<Executable>> {
     let platform = platform::detect(output)?;
     let yard = yard::load_or_create(&yard::production_location()?)?;
     // try to load the app

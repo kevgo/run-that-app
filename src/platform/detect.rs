@@ -5,7 +5,7 @@ use crate::Output;
 use crate::Result;
 
 /// detects the platform this binary is running on
-pub fn detect(output: &dyn Output) -> Result<Platform> {
+pub fn detect(output: Output) -> Result<Platform> {
     Ok(Platform {
         os: os::detect(output)?,
         cpu: cpu::determine(output)?,

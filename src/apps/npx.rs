@@ -23,11 +23,11 @@ impl App for Npx {
         vec![Method::InstallAnotherApp(self)]
     }
 
-    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
+    fn latest_installable_version(&self, output: Output) -> Result<Version> {
         (NodeJS {}).latest_installable_version(output)
     }
 
-    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
+    fn installable_versions(&self, amount: usize, output: Output) -> Result<Vec<Version>> {
         (NodeJS {}).installable_versions(amount, output)
     }
 

@@ -28,12 +28,12 @@ impl App for Go {
         vec![Method::DownloadArchive(self)]
     }
 
-    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
+    fn latest_installable_version(&self, output: Output) -> Result<Version> {
         let versions = self.installable_versions(1, output)?;
         Ok(versions.into_iter().next().unwrap())
     }
 
-    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
+    fn installable_versions(&self, amount: usize, output: Output) -> Result<Vec<Version>> {
         let tags = github_tags::all(ORG, REPO, 100, output)?;
         let mut go_tags: Vec<String> = tags.into_iter().filter(|tag| tag.starts_with("go")).filter(|tag| !tag.contains("rc")).collect();
         go_tags.sort_unstable_by(|a, b| human_sort::compare(b, a));

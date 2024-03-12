@@ -24,11 +24,11 @@ impl App for Ghokin {
     fn install_methods(&self) -> Vec<crate::install::Method> {
         vec![Method::DownloadArchive(self), Method::CompileGoSource(self)]
     }
-    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
+    fn installable_versions(&self, amount: usize, output: Output) -> Result<Vec<Version>> {
         github_releases::versions("antham", "ghokin", amount, output)
     }
 
-    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
+    fn latest_installable_version(&self, output: Output) -> Result<Version> {
         github_releases::latest(ORG, REPO, output)
     }
 

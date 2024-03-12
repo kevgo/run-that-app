@@ -1,10 +1,10 @@
-use crate::Output;
+use crate::output::{Event, Output};
 use crate::{Result, UserError};
 use std::env;
 use std::fmt::Display;
 
-pub fn detect(output: &dyn Output) -> Result<Os> {
-    output.log(CATEGORY, &format!("OS id: {}", env::consts::OS));
+pub fn detect(output: Output) -> Result<Os> {
+    output.log(Event::OsIdentified { name: env::consts::OS });
     match env::consts::OS {
         "linux" => Ok(Os::Linux),
         "macos" => Ok(Os::MacOS),

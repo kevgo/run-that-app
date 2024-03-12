@@ -3,7 +3,7 @@ use crate::subshell::Executable;
 use std::path::Path;
 use which::which_global;
 
-pub fn find_global_install(binary_name: &str, output: &dyn Output) -> Option<Executable> {
+pub fn find_global_install(binary_name: &str, output: Output) -> Option<Executable> {
     if let Ok(path) = which_global(binary_name) {
         log(output, &path);
         Some(Executable(path))
@@ -12,7 +12,7 @@ pub fn find_global_install(binary_name: &str, output: &dyn Output) -> Option<Exe
     }
 }
 
-fn log(output: &dyn Output, path: &Path) {
+fn log(output: Output, path: &Path) {
     output.log(CATEGORY, &format!("using globally installed {}", path.to_string_lossy()));
 }
 
