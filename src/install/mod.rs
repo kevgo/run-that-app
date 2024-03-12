@@ -34,6 +34,7 @@ pub enum Method<'a> {
 }
 
 impl<'a> Method<'a> {
+    /// provides the location of this app's executable within its yard
     pub fn executable_location(&self, version: &Version, platform: Platform) -> String {
         match self {
             Method::DownloadArchive(app) => app.executable_path_in_archive(version, platform),
@@ -44,6 +45,7 @@ impl<'a> Method<'a> {
         }
     }
 
+    /// provides the name of the application in whose yard this app is installed
     pub fn yard_app(&self) -> AppName {
         match self {
             Method::DownloadArchive(app) => app.name(),
@@ -55,6 +57,7 @@ impl<'a> Method<'a> {
     }
 }
 
+/// installs an app using the first of its installation methods that works
 pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
     for install_method in install_methods {
         let result = match install_method {
@@ -71,6 +74,7 @@ pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platfo
     Ok(false)
 }
 
+/// assuming one of the given installation methods of an app worked, loads that app's executable
 pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
     for installation_method in install_methods {
         let yard_app_name = installation_method.yard_app();
