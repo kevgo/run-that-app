@@ -1,6 +1,5 @@
 use crate::config::{AppName, Version};
 use crate::error::UserError;
-use crate::subshell::Executable;
 use crate::Result;
 use std::fs::{self, File};
 use std::path::PathBuf;
@@ -15,17 +14,6 @@ impl Yard {
     // TODO: rename to app_folder_path, add app_folder method that creates the folder if needed
     pub fn app_folder(&self, app_name: &AppName, app_version: &Version) -> PathBuf {
         self.root.join("apps").join(app_name).join(app_version)
-    }
-
-    pub fn find_executable(&self, app_name: &AppName, version: &Version, locations: &[String]) -> Option<Executable> {
-        let app_folder = self.app_folder(app_name, version);
-        for location in locations {
-            let full_path = app_folder.join(location);
-            if full_path.exists() {
-                return Some(Executable(full_path));
-            }
-        }
-        None
     }
 
     /// provides the path to the folder containing the given application, creates the folder if it doesn't exist

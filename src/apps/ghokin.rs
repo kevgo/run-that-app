@@ -55,7 +55,7 @@ impl install::DownloadArchive for Ghokin {
         format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz")
     }
 
-    fn executable_location(&self, version: &Version, platform: Platform) -> String {
+    fn executable_location(&self, _version: &Version, platform: Platform) -> String {
         self.executable_filename(platform)
     }
 }

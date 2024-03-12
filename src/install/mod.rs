@@ -10,7 +10,7 @@ use crate::config::{AppName, Version};
 use crate::output::Output;
 use crate::platform::Platform;
 use crate::subshell::Executable;
-use crate::yard::{self, Yard};
+use crate::yard::Yard;
 use crate::Result;
 pub use compile_go::CompileGo;
 pub use compile_rust::CompileRust;
@@ -33,7 +33,7 @@ pub enum Method<'a> {
 }
 
 impl<'a> Method<'a> {
-    pub fn executable_location(&self, version: &Version, platform: Platform, yard: Yard) -> String {
+    pub fn executable_location(&self, version: &Version, platform: Platform) -> String {
         match self {
             Method::DownloadArchive(app) => app.executable_location(version, platform),
             Method::DownloadExecutable(app) => app.executable_filename(platform),
@@ -70,10 +70,10 @@ pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platfo
     Ok(false)
 }
 
-pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: Yard, output: &dyn Output) -> Result<Option<Executable>> {
+pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard) -> Result<Option<Executable>> {
     for installation_method in install_methods {
         let yard_app_name = installation_method.yard_app();
-        let location_in_yard = installation_method.executable_location(version, platform, yard);
+        let location_in_yard = installation_method.executable_location(version, platform);
         let fullpath = yard.app_folder(&yard_app_name, version).join(location_in_yard);
         if fullpath.exists() {
             return Ok(Some(Executable(fullpath)));

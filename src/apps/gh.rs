@@ -113,8 +113,8 @@ mod tests {
     }
 
     mod executable_locations {
-        use crate::apps::App;
         use crate::config::Version;
+        use crate::install::DownloadArchive;
         use crate::platform::{Cpu, Os, Platform};
         use big_s::S;
 
@@ -123,11 +123,11 @@ mod tests {
             let gh = super::super::Gh {};
             let version = Version::from("1.2.3");
             let platform = Platform { os: Os::Linux, cpu: Cpu::Arm64 };
-            let have = gh.executable_locations(&version, platform);
+            let have = gh.executable_location(&version, platform);
             #[cfg(unix)]
-            let want = vec![S("bin/gh"), S("gh_1.2.3_linux_arm64/bin/gh")];
+            let want = S("gh_1.2.3_linux_arm64/bin/gh");
             #[cfg(windows)]
-            let want = vec![S("bin\\gh"), S("gh_1.2.3_linux_arm64\\bin\\gh")];
+            let want = S("gh_1.2.3_linux_arm64\\bin\\gh");
             assert_eq!(have, want);
         }
     }

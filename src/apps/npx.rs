@@ -48,7 +48,7 @@ impl install::OtherAppFolder for Npx {
         Box::new(NodeJS {})
     }
 
-    fn executable_location(&self, version: &Version, platform: Platform) -> String {
+    fn executable_location(&self, _version: &Version, platform: Platform) -> String {
         format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))
     }
 }
