@@ -9,7 +9,7 @@ pub trait OtherAppFolder: App {
     fn app_to_install(&self) -> Box<dyn App>;
 
     /// location of this app's executable within the archive of the other app
-    fn executable_location(&self, version: &Version, platform: Platform) -> String;
+    fn executable_path_in_other_app_yard(&self, version: &Version, platform: Platform) -> String;
 }
 
 pub fn install_other_app(app: &dyn OtherAppFolder, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {

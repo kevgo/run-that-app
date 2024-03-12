@@ -47,7 +47,7 @@ impl install::OtherAppFolder for Npm {
         Box::new(NodeJS {})
     }
 
-    fn executable_location(&self, _version: &Version, platform: Platform) -> String {
+    fn executable_path_in_other_app_yard(&self, _version: &Version, platform: Platform) -> String {
         format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))
     }
 }
