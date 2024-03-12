@@ -1,7 +1,7 @@
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
-use crate::install::{self, Method, OtherAppFolder};
+use crate::install::{self, InstallAnotherApp, Method};
 use crate::platform::Platform;
 use crate::regexp;
 use crate::subshell::Executable;
@@ -42,7 +42,7 @@ impl App for Npm {
     }
 }
 
-impl install::OtherAppFolder for Npm {
+impl install::InstallAnotherApp for Npm {
     fn app_to_install(&self) -> Box<dyn App> {
         Box::new(NodeJS {})
     }

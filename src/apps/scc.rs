@@ -64,7 +64,7 @@ impl install::DownloadArchive for Scc {
     }
 }
 
-impl install::CompileGo for Scc {
+impl install::CompileGoSource for Scc {
     fn import_path(&self, version: &Version) -> String {
         format!("github.com/{ORG}/{REPO}/v3@v{version}")
     }

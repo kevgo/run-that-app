@@ -68,7 +68,7 @@ impl install::DownloadArchive for Goreleaser {
     }
 }
 
-impl install::CompileGo for Goreleaser {
+impl install::CompileGoSource for Goreleaser {
     fn import_path(&self, version: &Version) -> String {
         format!("github.com/{ORG}/{REPO}@{version}")
     }

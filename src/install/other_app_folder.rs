@@ -5,14 +5,14 @@ use crate::output::Output;
 use crate::platform::Platform;
 use crate::{apps, Result};
 
-pub trait OtherAppFolder: App {
+pub trait InstallAnotherApp: App {
     fn app_to_install(&self) -> Box<dyn App>;
 
     /// location of this app's executable within the archive of the other app
     fn executable_path_in_other_app_yard(&self, version: &Version, platform: Platform) -> String;
 }
 
-pub fn install_other_app(app: &dyn OtherAppFolder, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
+pub fn install_other_app(app: &dyn InstallAnotherApp, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
     let app_to_install = app.app_to_install();
     let all_apps = apps::all();
     let app = all_apps.lookup(&app_to_install.name())?;

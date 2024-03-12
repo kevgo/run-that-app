@@ -38,7 +38,7 @@ impl App for Deadcode {
     }
 }
 
-impl install::CompileGo for Deadcode {
+impl install::CompileGoSource for Deadcode {
     fn import_path(&self, version: &Version) -> String {
         format!("golang.org/x/tools/cmd/deadcode@v{version}")
     }

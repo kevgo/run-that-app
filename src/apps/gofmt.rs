@@ -1,7 +1,7 @@
 use super::go::Go;
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
-use crate::install::{Method, OtherAppFolder};
+use crate::install::{InstallAnotherApp, Method};
 use crate::platform::Platform;
 use crate::subshell::Executable;
 use crate::{install, Output, Result};
@@ -39,7 +39,7 @@ impl App for Gofmt {
     }
 }
 
-impl install::OtherAppFolder for Gofmt {
+impl install::InstallAnotherApp for Gofmt {
     fn app_to_install(&self) -> Box<dyn App> {
         Box::new(Go {})
     }
