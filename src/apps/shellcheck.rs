@@ -63,7 +63,7 @@ impl install::DownloadArchive for ShellCheck {
         format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}")
     }
 
-    fn executable_location(&self, _version: &Version, platform: Platform) -> String {
+    fn executable_location_in_archive(&self, _version: &Version, platform: Platform) -> String {
         format!("{}/{}", self.name().as_str(), self.executable_filename(platform))
     }
 }

@@ -59,7 +59,7 @@ impl install::DownloadArchive for NodeJS {
         )
     }
 
-    fn executable_location(&self, version: &Version, platform: Platform) -> String {
+    fn executable_location_in_archive(&self, version: &Version, platform: Platform) -> String {
         format!(
             "node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",
             os = os_text(platform.os),

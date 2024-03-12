@@ -35,7 +35,7 @@ pub enum Method<'a> {
 impl<'a> Method<'a> {
     pub fn executable_location(&self, version: &Version, platform: Platform) -> String {
         match self {
-            Method::DownloadArchive(app) => app.executable_location(version, platform),
+            Method::DownloadArchive(app) => app.executable_location_in_archive(version, platform),
             Method::DownloadExecutable(app) => app.executable_filename(platform),
             Method::CompileGoSource(app) => app.executable_filename(platform),
             Method::CompileRustSource(app) => app.executable_filename(platform),
