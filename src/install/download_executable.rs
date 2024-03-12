@@ -5,7 +5,7 @@ use crate::platform::Platform;
 use crate::{download, filesystem, yard, Result};
 use colored::Colorize;
 
-/// defines the information needed for RTA to download a pre-compiled application executable
+/// defines the information needed to download a pre-compiled application executable
 pub trait DownloadExecutable: App {
     fn artifact_url(&self, version: &Version, platform: Platform) -> String;
 }
