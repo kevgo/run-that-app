@@ -29,7 +29,7 @@ pub enum Method<'a> {
     CompileGoSource(&'a dyn CompileGoSource),
     /// installs the application by compiling it from its source written in Rust
     CompileRustSource(&'a dyn CompileRustSource),
-    /// this application is shipped as part of the given other application
+    /// this application is shipped as part of another application
     InstallAnotherApp(&'a dyn InstallAnotherApp),
 }
 
