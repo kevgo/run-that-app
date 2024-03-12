@@ -49,7 +49,7 @@ impl install::CompileGo for Depth {
 }
 
 impl install::DownloadExecutable for Depth {
-    fn artifact_url(&self, version: &Version, platform: Platform) -> String {
+    fn download_url(&self, version: &Version, platform: Platform) -> String {
         let cpu = match platform.cpu {
             Cpu::Arm64 => "aarch64", // the "arm" binaries don't run on Apple Silicon
             Cpu::Intel64 => "amd64",
@@ -77,7 +77,7 @@ mod tests {
     fn artifact_url() {
         let depth = super::Depth {};
         let platform = Platform { os: Os::Linux, cpu: Cpu::Intel64 };
-        let have = depth.artifact_url(&Version::from("1.2.1"), platform);
+        let have = depth.download_url(&Version::from("1.2.1"), platform);
         let want = "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_linux_amd64";
         assert_eq!(have, want);
     }

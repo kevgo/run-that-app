@@ -45,7 +45,7 @@ impl App for Shfmt {
 }
 
 impl install::DownloadExecutable for Shfmt {
-    fn artifact_url(&self, version: &Version, platform: Platform) -> String {
+    fn download_url(&self, version: &Version, platform: Platform) -> String {
         let os = match platform.os {
             Os::Linux => "linux",
             Os::MacOS => "darwin",
@@ -87,7 +87,7 @@ mod tests {
     fn artifact_url() {
         let shfmt = super::Shfmt {};
         let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
-        let have = shfmt.artifact_url(&Version::from("3.7.0"), platform);
+        let have = shfmt.download_url(&Version::from("3.7.0"), platform);
         let want = "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_arm64";
         assert_eq!(have, want);
     }
