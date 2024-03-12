@@ -44,8 +44,7 @@ pub trait App {
     /// link to the (human-readable) homepage of the app
     fn homepage(&self) -> &'static str;
 
-    /// Tries to install this app at the given version into the given folder.
-    /// Indicates whether a suitable installation method was found.
+    /// Defines the various ways to install this application.
     fn install_methods(&self) -> Vec<install::Method>;
 
     /// provides the versions of this application that can be installed
