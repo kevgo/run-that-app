@@ -69,7 +69,7 @@ mod tests {
         use crate::output::Output;
         use crate::platform::Platform;
         use crate::subshell::Executable;
-        use crate::Result;
+        use crate::{install, Result};
 
         /// an App instance that allows to mock the system version restrictions
         struct TestApp {
@@ -98,7 +98,7 @@ mod tests {
             fn analyze_executable(&self, _path: &Executable) -> AnalyzeResult {
                 unimplemented!()
             }
-            fn install_methods(&self) -> Vec<crate::install::Method> {
+            fn install_methods(&self) -> Vec<install::Method> {
                 unimplemented!()
             }
         }
