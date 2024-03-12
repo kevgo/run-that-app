@@ -7,6 +7,7 @@ use which::which;
 
 /// defines the information needed for RTA to compile a Rust app from source
 pub trait CompileRust: App {
+    /// the name of the Rust crate containing the source code of the application to compile
     fn crate_name(&self) -> &'static str;
 }
 
