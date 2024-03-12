@@ -18,17 +18,6 @@ impl App for NodeJS {
         AppName::from("node")
     }
 
-    // TODO: use MAIN_SEPARATOR here
-    fn executable_locations(&self, version: &Version, platform: Platform) -> Vec<String> {
-        vec![format!(
-            "node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",
-            os = os_text(platform.os),
-            cpu = cpu_text(platform.cpu),
-            sep = path::MAIN_SEPARATOR,
-            executable = self.executable_filename(platform)
-        )]
-    }
-
     fn homepage(&self) -> &'static str {
         "https://nodejs.org"
     }
@@ -67,6 +56,16 @@ impl install::DownloadArchive for NodeJS {
             "https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",
             os = os_text(platform.os),
             cpu = cpu_text(platform.cpu),
+        )
+    }
+
+    fn executable_location(&self, version: &Version, platform: Platform) -> String {
+        format!(
+            "node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",
+            os = os_text(platform.os),
+            cpu = cpu_text(platform.cpu),
+            sep = path::MAIN_SEPARATOR,
+            executable = self.executable_filename(platform)
         )
     }
 }

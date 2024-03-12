@@ -41,14 +41,6 @@ pub trait App {
         }
     }
 
-    /// possible locations of this app's executable in the Yard folder
-    ///
-    /// By default, apps use the executable filename.
-    /// Apps can override this method to provide additional custom paths.
-    fn executable_locations(&self, _version: &Version, platform: Platform) -> Vec<String> {
-        vec![self.executable_filename(platform)]
-    }
-
     /// link to the (human-readable) homepage of the app
     fn homepage(&self) -> &'static str;
 

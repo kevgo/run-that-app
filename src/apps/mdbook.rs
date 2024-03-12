@@ -19,10 +19,6 @@ impl App for MdBook {
         AppName::from("mdbook")
     }
 
-    fn executable_locations(&self, _version: &Version, platform: Platform) -> Vec<String> {
-        vec![format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))]
-    }
-
     fn homepage(&self) -> &'static str {
         formatcp!("https://github.com/{ORG}/{REPO}")
     }
@@ -62,6 +58,10 @@ impl install::DownloadArchive for MdBook {
             Cpu::Intel64 => "x86_64",
         };
         format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-v{version}-{cpu}-{os}.tar.gz")
+    }
+
+    fn executable_location(&self, version: &Version, platform: Platform) -> String {
+        format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))
     }
 }
 

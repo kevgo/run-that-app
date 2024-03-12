@@ -15,16 +15,6 @@ impl App for Npm {
         AppName::from("npm")
     }
 
-    // This currently mixes different installation locations of different installation methods.
-    // Technically each installation method has its own executable location.
-    // Why not move this method to each installation method?
-    //
-    // When trying to load an app, go through each of the app's installation methods
-    // and see if there is an executable in the location for this method.
-    fn executable_locations(&self, _version: &Version, platform: Platform) -> Vec<String> {
-        vec![format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))]
-    }
-
     fn homepage(&self) -> &'static str {
         "https://www.npmjs.com"
     }
@@ -55,6 +45,10 @@ impl App for Npm {
 impl install::OtherAppFolder for Npm {
     fn app_to_install(&self) -> Box<dyn App> {
         Box::new(NodeJS {})
+    }
+
+    fn executable_location(&self, version: &Version, platform: Platform) -> String {
+        format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))
     }
 }
 

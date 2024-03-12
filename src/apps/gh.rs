@@ -22,12 +22,6 @@ impl App for Gh {
         "https://cli.github.com"
     }
 
-    fn executable_locations(&self, version: &Version, platform: Platform) -> Vec<String> {
-        let filename = self.executable_filename(platform);
-        let sep = path::MAIN_SEPARATOR;
-        vec![format!("bin{sep}{filename}")]
-    }
-
     fn install_methods(&self) -> Vec<install::Method> {
         vec![Method::DownloadArchive(self)]
         // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md

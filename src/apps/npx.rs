@@ -15,10 +15,6 @@ impl App for Npx {
         AppName::from("npx")
     }
 
-    fn executable_locations(&self, _version: &Version, platform: Platform) -> Vec<String> {
-        vec![format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))]
-    }
-
     fn homepage(&self) -> &'static str {
         "https://www.npmjs.com"
     }
@@ -50,6 +46,10 @@ impl install::OtherAppFolder for Npx {
     // TODO: change dyn to impl?
     fn app_to_install(&self) -> Box<dyn App> {
         Box::new(NodeJS {})
+    }
+
+    fn executable_location(&self, version: &Version, platform: Platform) -> String {
+        format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))
     }
 }
 
