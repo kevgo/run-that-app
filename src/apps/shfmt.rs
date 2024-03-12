@@ -21,25 +21,6 @@ impl App for Shfmt {
         formatcp!("https://github.com/{ORG}/{REPO}")
     }
 
-    // fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>> {
-    //     let name = self.name();
-    //     let result = executable::install(InstallArgs {
-    //         app_name: &name,
-    //         artifact_url: download_url(version, platform),
-    //         filepath_on_disk: yard.create_app_folder(&name, version)?.join(self.executable_filepath(platform)),
-    //         output,
-    //     })?;
-    //     if result.is_some() {
-    //         return Ok(result);
-    //     }
-    //     compile_go(CompileArgs {
-    //         import_path: ,
-    //         target_folder: &yard.app_folder(&name, version),
-    //         executable_filepath: self.executable_filepath(platform),
-    //         output,
-    //     })
-    // }
-
     fn install_methods(&self) -> Vec<install::Method> {
         vec![Method::DownloadExecutable(self), Method::CompileGoSource(self)]
     }
