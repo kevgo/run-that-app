@@ -57,6 +57,10 @@ impl install::DownloadArchive for Dprint {
         };
         format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip")
     }
+
+    fn executable_location(&self, version: &Version, platform: Platform) -> String {
+        self.executable_filename(platform)
+    }
 }
 
 impl install::CompileRust for Dprint {

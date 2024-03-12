@@ -1,17 +1,15 @@
-use std::path::PathBuf;
-
 use crate::apps::App;
 use crate::cmd::run::load_or_install;
 use crate::config::{RequestedVersion, Version};
 use crate::output::Output;
 use crate::platform::Platform;
-use crate::yard::Yard;
 use crate::{apps, Result};
 
 pub trait OtherAppFolder: App {
     fn app_to_install(&self) -> Box<dyn App>;
 
-    fn executable_location(&self, version: &Version, platform: Platform, yard: Yard) -> PathBuf;
+    /// location of this app's executable within the archive of the other app
+    fn executable_location(&self, version: &Version, platform: Platform) -> String;
 }
 
 pub fn install_other_app(app: &dyn OtherAppFolder, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {

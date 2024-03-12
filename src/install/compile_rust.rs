@@ -1,20 +1,13 @@
 use crate::apps::App;
 use crate::config::Version;
 use crate::error::UserError;
-use crate::platform::Platform;
-use crate::yard::Yard;
 use crate::{yard, Result};
-use std::path::PathBuf;
 use std::process::Command;
 use which::which;
 
 /// defines the information needed for RTA to compile a Rust app from source
 pub trait CompileRust: App {
     fn crate_name(&self) -> &'static str;
-
-    fn executable_location(&self, version: &Version, platform: Platform, yard: Yard) -> PathBuf {
-        yard.app_folder(&self.name(), version).join(self.executable_filename(platform))
-    }
 }
 
 /// installs the given Rust-based application by compiling it from source

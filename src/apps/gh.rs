@@ -25,10 +25,7 @@ impl App for Gh {
     fn executable_locations(&self, version: &Version, platform: Platform) -> Vec<String> {
         let filename = self.executable_filename(platform);
         let sep = path::MAIN_SEPARATOR;
-        vec![
-            format!("bin{sep}{filename}"),
-            format!("gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}", os = os_text(platform.os), cpu = cpu_text(platform.cpu)),
-        ]
+        vec![format!("bin{sep}{filename}")]
     }
 
     fn install_methods(&self) -> Vec<install::Method> {
@@ -62,6 +59,16 @@ impl install::DownloadArchive for Gh {
             os = os_text(platform.os),
             cpu = cpu_text(platform.cpu),
             ext = ext_text(platform.os)
+        )
+    }
+
+    fn executable_location(&self, version: &Version, platform: Platform) -> String {
+        format!(
+            "gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}",
+            os = os_text(platform.os),
+            cpu = cpu_text(platform.cpu),
+            sep = path::MAIN_SEPARATOR,
+            filename = self.executable_filename(platform)
         )
     }
 }

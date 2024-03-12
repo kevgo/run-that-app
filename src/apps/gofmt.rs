@@ -47,6 +47,10 @@ impl install::OtherAppFolder for Gofmt {
     fn app_to_install(&self) -> Box<dyn App> {
         Box::new(Go {})
     }
+
+    fn executable_location(&self, version: &Version, platform: Platform, yard: crate::yard::Yard) -> path::PathBuf {
+        todo!()
+    }
 }
 
 fn identify(output: &str) -> bool {

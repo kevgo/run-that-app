@@ -1,20 +1,13 @@
-use std::path::PathBuf;
-
 use crate::apps::App;
 use crate::config::Version;
 use crate::output::Output;
 use crate::platform::Platform;
-use crate::yard::Yard;
 use crate::{download, filesystem, yard, Result};
 use colored::Colorize;
 
 /// defines the information needed for RTA to download a pre-compiled application executable
 pub trait DownloadExecutable: App {
     fn artifact_url(&self, version: &Version, platform: Platform) -> String;
-
-    fn executable_location(&self, version: &Version, platform: Platform, yard: Yard) -> PathBuf {
-        yard.app_folder(&self.name(), version).join(self.executable_filename(platform))
-    }
 }
 
 /// downloads an uncompressed precompiled binary

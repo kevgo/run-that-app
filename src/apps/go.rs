@@ -20,10 +20,6 @@ impl App for Go {
         AppName::from("go")
     }
 
-    fn executable_locations(&self, _version: &Version, platform: Platform) -> Vec<String> {
-        vec![format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))]
-    }
-
     fn homepage(&self) -> &'static str {
         "https://go.dev"
     }
@@ -89,6 +85,10 @@ impl install::DownloadArchive for Go {
             Os::Windows => "zip",
         };
         format!("https://go.dev/dl/go{version}.{os}-{cpu}.{ext}")
+    }
+
+    fn executable_location(&self, version: &Version, platform: Platform) -> String {
+        format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))
     }
 }
 

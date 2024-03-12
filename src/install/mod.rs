@@ -6,18 +6,17 @@ pub mod download_archive;
 pub mod download_executable;
 pub mod other_app_folder;
 
-use crate::config::Version;
+use crate::config::{AppName, Version};
 use crate::output::Output;
 use crate::platform::Platform;
 use crate::subshell::Executable;
-use crate::yard::Yard;
+use crate::yard::{self, Yard};
 use crate::Result;
 pub use compile_go::CompileGo;
 pub use compile_rust::CompileRust;
 pub use download_archive::DownloadArchive;
 pub use download_executable::DownloadExecutable;
 pub use other_app_folder::OtherAppFolder;
-use std::path::PathBuf;
 
 /// the different methods to install an application
 pub enum Method<'a> {
@@ -34,13 +33,23 @@ pub enum Method<'a> {
 }
 
 impl<'a> Method<'a> {
-    pub fn executable_location(&self, version: &Version, platform: Platform, yard: Yard) -> PathBuf {
+    pub fn executable_location(&self, version: &Version, platform: Platform, yard: Yard) -> String {
         match self {
-            Method::DownloadArchive(app) => app.executable_location(version, platform, yard),
-            Method::DownloadExecutable(app) => app.executable_location(version, platform, yard),
-            Method::CompileGoSource(app) => app.executable_location(version, platform, yard),
-            Method::CompileRustSource(app) => app.executable_location(version, platform, yard),
-            Method::InstallAnotherApp(app) => app.executable_location(version, platform, yard),
+            Method::DownloadArchive(app) => app.executable_location(version, platform),
+            Method::DownloadExecutable(app) => app.executable_filename(platform),
+            Method::CompileGoSource(app) => app.executable_filename(platform),
+            Method::CompileRustSource(app) => app.executable_filename(platform),
+            Method::InstallAnotherApp(app) => app.executable_location(version, platform),
+        }
+    }
+
+    pub fn yard_app(&self) -> AppName {
+        match self {
+            Method::DownloadArchive(app) => app.name(),
+            Method::DownloadExecutable(app) => app.name(),
+            Method::CompileGoSource(app) => app.name(),
+            Method::CompileRustSource(app) => app.name(),
+            Method::InstallAnotherApp(app) => app.app_to_install().name(),
         }
     }
 }
@@ -63,9 +72,11 @@ pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platfo
 
 pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: Yard, output: &dyn Output) -> Result<Option<Executable>> {
     for installation_method in install_methods {
-        let location = installation_method.executable_location(version, platform, yard);
-        if location.exists() {
-            return Ok(Some(Executable(location)));
+        let yard_app_name = installation_method.yard_app();
+        let location_in_yard = installation_method.executable_location(version, platform, yard);
+        let fullpath = yard.app_folder(&yard_app_name, version).join(location_in_yard);
+        if fullpath.exists() {
+            return Ok(Some(Executable(fullpath)));
         }
     }
     Ok(None)

@@ -2,22 +2,15 @@ use crate::apps::App;
 use crate::config::Version;
 use crate::error::UserError;
 use crate::output::Output;
-use crate::platform::Platform;
-use crate::yard::Yard;
 use crate::{yard, Result};
 use std::fs;
 use std::io::ErrorKind;
-use std::path::PathBuf;
 use std::process::Command;
 use which::which;
 
 /// defines the information needed for RTA to compile a Go app from source
 pub trait CompileGo: App {
     fn import_path(&self, version: &Version) -> String;
-
-    fn executable_location(&self, version: &Version, platform: Platform, yard: Yard) -> PathBuf {
-        yard.app_folder(&self.name(), version).join(self.executable_filename(platform))
-    }
 }
 
 /// installs the given Go-based application by compiling it from source

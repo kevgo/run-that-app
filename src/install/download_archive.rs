@@ -2,19 +2,18 @@ use crate::apps::App;
 use crate::config::Version;
 use crate::output::Output;
 use crate::platform::Platform;
-use crate::yard::Yard;
 use crate::UserError;
 use crate::{archives, yard};
 use crate::{download, Result};
 use colored::Colorize;
-use std::path::PathBuf;
 
 /// defines the information needed for RTA to download and extract an archive containing an app
 pub trait DownloadArchive: App {
     /// provides the URL of the archive to download
     fn archive_url(&self, version: &Version, platform: Platform) -> String;
 
-    fn executable_location(&self, version: &Version, platform: Platform, yard: Yard) -> PathBuf;
+    /// the location of the executable within the archive
+    fn executable_location(&self, version: &Version, platform: Platform) -> String;
 }
 
 /// downloads and unpacks the content of an archive file

@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
-use crate::install::{self, InstallationMethod, Method};
+use crate::install::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
@@ -63,8 +63,8 @@ impl install::DownloadArchive for ActionLint {
         format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}",)
     }
 
-    fn executable_location(&self, version: &Version, platform: Platform, yard: crate::yard::Yard) -> std::path::PathBuf {
-        todo!()
+    fn executable_location(&self, version: &Version, platform: Platform) -> String {
+        self.executable_filename(platform)
     }
 }
 
