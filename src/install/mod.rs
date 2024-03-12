@@ -70,14 +70,14 @@ pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platfo
     Ok(false)
 }
 
-pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard) -> Result<Option<Executable>> {
+pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
     for installation_method in install_methods {
         let yard_app_name = installation_method.yard_app();
         let location_in_yard = installation_method.executable_location(version, platform);
         let fullpath = yard.app_folder(&yard_app_name, version).join(location_in_yard);
         if fullpath.exists() {
-            return Ok(Some(Executable(fullpath)));
+            return Some(Executable(fullpath));
         }
     }
-    Ok(None)
+    None
 }
