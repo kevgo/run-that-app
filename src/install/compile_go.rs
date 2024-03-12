@@ -8,7 +8,7 @@ use std::io::ErrorKind;
 use std::process::Command;
 use which::which;
 
-/// defines the information needed for RTA to compile a Go app from source
+/// defines the information needed to compile a Go app from source
 pub trait CompileGo: App {
     fn import_path(&self, version: &Version) -> String;
 }
