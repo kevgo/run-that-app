@@ -6,17 +6,18 @@ pub mod download_archive;
 pub mod download_executable;
 pub mod other_app_folder;
 
+pub use compile_go::CompileGo;
+pub use compile_rust::CompileRust;
+pub use download_archive::DownloadArchive;
+pub use download_executable::DownloadExecutable;
+pub use other_app_folder::OtherAppFolder;
+
 use crate::config::{AppName, Version};
 use crate::output::Output;
 use crate::platform::Platform;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::Result;
-pub use compile_go::CompileGo;
-pub use compile_rust::CompileRust;
-pub use download_archive::DownloadArchive;
-pub use download_executable::DownloadExecutable;
-pub use other_app_folder::OtherAppFolder;
 
 /// the different methods to install an application
 pub enum Method<'a> {
