@@ -1,10 +1,10 @@
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
-use crate::install::{Method, OtherAppFolder};
+use crate::install::{self, Method, OtherAppFolder};
 use crate::platform::Platform;
+use crate::regexp;
 use crate::subshell::Executable;
-use crate::{install, regexp};
 use crate::{Output, Result};
 use std::path;
 
