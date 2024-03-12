@@ -7,7 +7,7 @@ use crate::{archives, yard};
 use crate::{download, Result};
 use colored::Colorize;
 
-/// defines the information needed for RTA to download and extract an archive containing an app
+/// defines the information needed to download and extract an archive containing an app
 pub trait DownloadArchive: App {
     /// provides the URL of the archive to download
     fn archive_url(&self, version: &Version, platform: Platform) -> String;
