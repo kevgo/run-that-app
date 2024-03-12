@@ -22,13 +22,13 @@ use crate::Result;
 /// the different methods to install an application
 pub enum Method<'a> {
     /// installs the application by downloading and extracting an archive containing the application executable from the internet
-    DownloadArchive(&'a dyn download_archive::DownloadArchive),
+    DownloadArchive(&'a dyn DownloadArchive),
     /// installs the application by downloading the pre-compiled executable from the internet
     DownloadExecutable(&'a dyn DownloadExecutable),
     /// installs the applications by compiling it from its source written in Go
-    CompileGoSource(&'a dyn compile_go::CompileGo),
+    CompileGoSource(&'a dyn CompileGo),
     /// installs the application by compiling it from its source written in Rust
-    CompileRustSource(&'a dyn compile_rust::CompileRust),
+    CompileRustSource(&'a dyn CompileRust),
     /// this application is shipped as part of the given other application
     InstallAnotherApp(&'a dyn OtherAppFolder),
 }
