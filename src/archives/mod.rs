@@ -24,14 +24,6 @@ pub fn lookup(filepath: &str, data: Vec<u8>) -> Option<Box<dyn Archive>> {
     }
 }
 
-fn print_header(category: &str, archive_type: &str, output: Output) {
-    if output.is_active(category) {
-        output.print(&format!("extracting {archive_type} ..."));
-    } else {
-        output.print("extracting ... ");
-    }
-}
-
 #[cfg(test)]
 mod tests {
 

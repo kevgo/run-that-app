@@ -1,23 +1,26 @@
+use crate::apps;
 use crate::config::Config;
-use crate::output::Output;
+use crate::output::{Event, Output};
 use crate::Result;
-use crate::{apps, output};
-use colored::Colorize;
 use std::process::ExitCode;
 
-pub fn update(log: Option<String>) -> Result<ExitCode> {
+pub fn update(verbose: bool) -> Result<ExitCode> {
     let all_apps = apps::all();
     let mut config = Config::load(&all_apps)?;
-    let output = output::StdErr { category: log };
+    let output = Output { verbose };
     for old_app in &mut config.apps {
         let app = all_apps.lookup(&old_app.app)?;
-        output.print(&format!("updating {} ... ", &old_app.app));
-        let latest = app.latest_installable_version(&output)?;
+        output.log(Event::UpdateBegin { app: &old_app.app });
+        let latest = app.latest_installable_version(output)?;
         let latest_str = latest.to_string();
         if let Some(previous) = &old_app.versions.update_largest_with(&latest) {
-            output.println(&format!("{} -> {}", previous.as_str().cyan(), latest_str.cyan()));
+            output.log(Event::UpdateNewVersion {
+                app: &old_app.app,
+                old_version: previous,
+                new_versin: &latest,
+            });
         } else {
-            output.println(&format!("{}", "current".green()));
+            output.log(Event::UpdateAlreadyNewest { app: &old_app.app });
         }
     }
     config.save()?;

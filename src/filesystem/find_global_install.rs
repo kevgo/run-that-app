@@ -1,19 +1,14 @@
-use crate::output::Output;
+use crate::output::{Event, Output};
 use crate::subshell::Executable;
-use std::path::Path;
 use which::which_global;
 
 pub fn find_global_install(binary_name: &str, output: Output) -> Option<Executable> {
+    output.log(Event::GlobalInstallSearch { binary: binary_name });
     if let Ok(path) = which_global(binary_name) {
-        log(output, &path);
+        output.log(Event::GlobalInstallFound { path: &path });
         Some(Executable(path))
     } else {
+        output.log(Event::GlobalInstallNotFound);
         None
     }
 }
-
-fn log(output: Output, path: &Path) {
-    output.log(CATEGORY, &format!("using globally installed {}", path.to_string_lossy()));
-}
-
-const CATEGORY: &str = "detect/executable";

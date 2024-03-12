@@ -5,7 +5,6 @@ use crate::platform::Platform;
 use crate::UserError;
 use crate::{archives, yard};
 use crate::{download, Result};
-use colored::Colorize;
 
 /// defines the information needed to download and extract an archive containing an app
 pub trait DownloadArchive: App {
@@ -27,6 +26,5 @@ pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, out
         return Err(UserError::UnknownArchive(artifact.filename));
     };
     archive.extract_all(&app_folder, output)?;
-    output.println("ok".green().bold().as_ref());
     Ok(true)
 }

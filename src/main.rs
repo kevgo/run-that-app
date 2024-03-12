@@ -47,7 +47,7 @@ fn inner() -> Result<ExitCode> {
             app_args,
             error_on_output,
             optional,
-            log,
+            verbose: log,
         }),
         Command::DisplayHelp => Ok(cmd::help()),
         Command::Setup => cmd::setup(),

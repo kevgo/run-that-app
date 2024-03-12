@@ -3,7 +3,6 @@ use crate::config::Version;
 use crate::output::Output;
 use crate::platform::Platform;
 use crate::{download, filesystem, yard, Result};
-use colored::Colorize;
 
 /// defines the information needed to download a pre-compiled application executable
 pub trait DownloadExecutable: App {
@@ -13,12 +12,12 @@ pub trait DownloadExecutable: App {
 
 /// downloads an uncompressed precompiled binary
 pub fn install(app: &dyn DownloadExecutable, version: &Version, platform: Platform, output: Output) -> Result<bool> {
-    let Some(artifact) = download::artifact(app.download_url(version, platform), &app.name(), output)? else {
+    let url = app.download_url(version, platform);
+    let Some(artifact) = download::artifact(url, &app.name(), output)? else {
         return Ok(false);
     };
     let yard = yard::load_or_create(&yard::production_location()?)?;
     let filepath_on_disk = yard.create_app_folder(&app.name(), version)?.join(app.executable_filename(platform));
     filesystem::save_executable(artifact.data, &filepath_on_disk, output)?;
-    output.println(&format!("{}", "ok".green()));
     Ok(true)
 }
