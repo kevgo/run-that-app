@@ -9,7 +9,7 @@ use colored::Colorize;
 
 /// defines the information needed to download and extract an archive containing an app
 pub trait DownloadArchive: App {
-    /// provides the URL of the archive to download
+    /// the URL of the archive to download
     fn archive_url(&self, version: &Version, platform: Platform) -> String;
 
     /// the location of the executable within the archive
