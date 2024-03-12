@@ -5,6 +5,7 @@ use crate::output::Output;
 use crate::platform::Platform;
 use crate::{apps, Result};
 
+/// defines the information needed for apps whose executable is shipped as part of another app
 pub trait InstallAnotherApp: App {
     fn app_to_install(&self) -> Box<dyn App>;
 
