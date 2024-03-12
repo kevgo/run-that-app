@@ -12,8 +12,8 @@ pub fn which(app_name: &AppName, version: Option<Version>, log: Option<String>) 
     let output = output::StdErr { category: log };
     let platform = platform::detect(&output)?;
     let versions = RequestedVersions::determine(app_name, version, &apps)?;
-    for version in versions.iter() {
-        if let Some(executable) = load_or_install(app, version, platform, &output)? {
+    for version in versions {
+        if let Some(executable) = load_or_install(app, &version, platform, &output)? {
             println!("{}", executable.0.to_string_lossy());
             return Ok(ExitCode::SUCCESS);
         }

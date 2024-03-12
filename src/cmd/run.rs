@@ -4,10 +4,10 @@ use crate::error::UserError;
 use crate::filesystem::find_global_install;
 use crate::platform::{self, Platform};
 use crate::subshell::Executable;
-use crate::yard;
 use crate::Output;
 use crate::Result;
 use crate::{apps, config};
+use crate::{install, yard};
 use crate::{output, subshell};
 use colored::Colorize;
 use std::process::ExitCode;
@@ -18,8 +18,8 @@ pub fn run(args: Args) -> Result<ExitCode> {
     let output = output::StdErr { category: args.log };
     let platform = platform::detect(&output)?;
     let versions = RequestedVersions::determine(&args.app, args.version, &apps)?;
-    for version in versions.iter() {
-        if let Some(executable) = load_or_install(app, version, platform, &output)? {
+    for version in versions {
+        if let Some(executable) = load_or_install(app, &version, platform, &output)? {
             if args.error_on_output {
                 return subshell::execute_check_output(&executable, &args.app_args);
             }
@@ -101,15 +101,20 @@ fn load_from_path(app: &dyn App, want_version: &semver::VersionReq, platform: Pl
 fn load_or_install_from_yard(app: &dyn App, version: &Version, output: &dyn Output) -> Result<Option<Executable>> {
     let platform = platform::detect(output)?;
     let yard = yard::load_or_create(&yard::production_location()?)?;
-    if let Some(executable) = app.load(version, platform, &yard) {
+    // try to load the app
+    if let Some(executable) = install::load(app.install_methods(), version, platform, &yard) {
         return Ok(Some(executable));
-    };
+    }
+    // app not installed --> check if uninstallable
     if yard.is_not_installable(&app.name(), version) {
         return Ok(None);
     }
-    if let Some(executable) = app.install(version, platform, &yard, output)? {
-        return Ok(Some(executable));
+    // app not installed and installable --> try to install
+    if install::install(app.install_methods(), version, platform, output)? {
+        return Ok(install::load(app.install_methods(), version, platform, &yard));
     }
+
+    // app could not be installed -> mark as uninstallable
     yard.mark_not_installable(&app.name(), version)?;
     Ok(None)
 }

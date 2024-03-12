@@ -6,8 +6,8 @@ use std::path::PathBuf;
 #[derive(Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions)]
 pub enum UserError {
-    ArchiveFileNotFound {
-        filepath: String,
+    ArchiveCannotExtract {
+        reason: String,
     },
     CannotAccessConfigFile(String),
     CannotCreateFolder {
@@ -37,6 +37,10 @@ pub enum UserError {
         expression: String,
         reason: String,
     },
+    CompilationError {
+        reason: String,
+    },
+    CompilationInterupted,
     ConfigFileAlreadyExists,
     GitHubReleasesApiProblem {
         problem: String,
@@ -48,7 +52,6 @@ pub enum UserError {
     },
     GoCompilationFailed,
     GoNoPermission,
-    GoNotInstalled,
     InvalidConfigFileFormat {
         line_no: usize,
         text: String,
@@ -83,8 +86,8 @@ impl UserError {
     #[allow(clippy::too_many_lines)]
     pub fn print(self) {
         match self {
-            UserError::ArchiveFileNotFound { filepath } => {
-                error(&format!("filepath \"{filepath}\" not found in archive"));
+            UserError::ArchiveCannotExtract { reason } => {
+                error(&format!("cannot extract the archive: {reason}"));
             }
             UserError::CannotAccessConfigFile(reason) => {
                 error(&format!("cannot read the config file: {reason}"));
@@ -116,6 +119,12 @@ impl UserError {
                 error(&format!("semver range \"{expression}\" is incorrect: {reason}"));
                 desc("Please use formats described at https://devhints.io/semver.");
             }
+            UserError::CompilationError { reason } => {
+                error(&format!("Compilation error: {reason}"));
+            }
+            UserError::CompilationInterupted => {
+                error("Canceling the compilation");
+            }
             UserError::ConfigFileAlreadyExists => {
                 error("config file already exists");
                 desc(&format!("The file {FILE_NAME} already exists, no changes have been made to it."));
@@ -133,10 +142,6 @@ impl UserError {
                 desc("Please see the error output above and try again with a different version.");
             }
             UserError::GoNoPermission => error("No permission to execute the Go compiler"),
-            UserError::GoNotInstalled => {
-                error("The Go compiler is not installed");
-                desc("Installation instructions: https://go.dev/dl");
-            }
             UserError::InvalidConfigFileFormat { line_no, text } => {
                 error("Invalid config file format");
                 desc(&format!("{}:{line_no}: {text}", config::FILE_NAME));

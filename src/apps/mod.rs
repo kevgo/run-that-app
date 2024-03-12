@@ -25,8 +25,7 @@ use crate::config::{AppName, Version};
 use crate::error::UserError;
 use crate::platform::{Os, Platform};
 use crate::subshell::Executable;
-use crate::yard::Yard;
-use crate::{Output, Result};
+use crate::{install, Output, Result};
 use std::slice::Iter;
 
 pub trait App {
@@ -42,30 +41,19 @@ pub trait App {
         }
     }
 
-    /// relative path of the executable that starts this app in the folder the downloaded artifact gets unpacked into
-    ///
-    /// By default, apps use the executable filename.
-    /// Apps can override this method to provide a custom path.
-    fn executable_filepath(&self, platform: Platform) -> String {
-        self.executable_filename(platform)
-    }
-
     /// link to the (human-readable) homepage of the app
     fn homepage(&self) -> &'static str;
 
-    /// installs this app at the given version into the given yard
-    fn install(&self, version: &Version, platform: Platform, yard: &Yard, output: &dyn Output) -> Result<Option<Executable>>;
-
-    // loads this app from the given yard if it is already installed
-    fn load(&self, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable>;
+    /// the various ways to install this application
+    fn install_methods(&self) -> Vec<install::Method>;
 
     /// provides the versions of this application that can be installed
     fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>>;
 
-    /// provides the latest version of this application
+    /// provides the latest version of this application that can be installed
     fn latest_installable_version(&self, output: &dyn Output) -> Result<Version>;
 
-    /// ensures that the given executable belongs to this app and if yes returns the installed version
+    /// ensures that the given executable belongs to this app and if yes returns its version
     fn analyze_executable(&self, path: &Executable) -> AnalyzeResult;
 
     /// Apps can override this method to provide version restrictions
@@ -127,6 +115,7 @@ impl Apps {
     }
 
     /// provides the app with the given name
+    /// TODO: return the actual Box<dyn App> instead of a reference here
     pub fn lookup(&self, name: &AppName) -> Result<&dyn App> {
         for app in &self.0 {
             if app.name() == name {

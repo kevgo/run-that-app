@@ -5,17 +5,13 @@ mod zip;
 use self::tar_gz::TarGz;
 use self::tar_xz::TarXz;
 use self::zip::Zip;
-use crate::subshell::Executable;
 use crate::{filesystem, Output, Result};
 use std::path::Path;
 
 /// An archive is a compressed file containing an application.
 pub trait Archive {
     /// extracts all files from the given archive data to the given location on disk
-    fn extract_all(&self, target_dir: &Path, strip_prefix: &str, executable_path_in_archive: &str, output: &dyn Output) -> Result<Executable>;
-
-    /// extracts the given file from the given archive data to the given location on disk
-    fn extract_file(&self, filepath_in_archive: &str, folder_on_disk: &Path, output: &dyn Output) -> Result<Executable>;
+    fn extract_all(&self, target_dir: &Path, output: &dyn Output) -> Result<()>;
 }
 
 /// provides the archive that can extract the given file path
@@ -33,12 +29,6 @@ fn print_header(category: &str, archive_type: &str, output: &dyn Output) {
         output.print(&format!("extracting {archive_type} ..."));
     } else {
         output.print("extracting ... ");
-    }
-}
-
-fn log_archive_file(category: &str, filepath: &str, output: &dyn Output) {
-    if output.is_active(category) {
-        output.println(&format!("- {filepath}"));
     }
 }
 

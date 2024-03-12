@@ -20,10 +20,6 @@ impl RequestedVersions {
         }
     }
 
-    pub fn iter(&self) -> std::slice::Iter<'_, RequestedVersion> {
-        self.0.iter()
-    }
-
     pub fn join(&self, sep: &str) -> String {
         let strings: Vec<String> = self.0.iter().map(RequestedVersion::to_string).collect();
         strings.join(sep)
@@ -75,6 +71,15 @@ impl RequestedVersions {
             }
         }
         updated
+    }
+}
+
+impl IntoIterator for RequestedVersions {
+    type Item = RequestedVersion;
+    type IntoIter = std::vec::IntoIter<RequestedVersion>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
     }
 }
 
