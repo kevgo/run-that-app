@@ -41,14 +41,6 @@ pub trait App {
         }
     }
 
-    /// which app's yard folder this app uses
-    ///
-    /// Apps can overwrite this method if they use the yard folder of another app.
-    /// An example is npm. It's executable is located inside the yard folder of the Node app.
-    fn yard_app(&self) -> AppName {
-        self.name()
-    }
-
     /// possible locations of this app's executable in the Yard folder
     ///
     /// By default, apps use the executable filename.

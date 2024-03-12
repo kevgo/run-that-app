@@ -9,12 +9,15 @@ pub mod other_app_folder;
 use crate::config::Version;
 use crate::output::Output;
 use crate::platform::Platform;
+use crate::subshell::Executable;
+use crate::yard::Yard;
 use crate::Result;
 pub use compile_go::CompileGo;
 pub use compile_rust::CompileRust;
 pub use download_archive::DownloadArchive;
 pub use download_executable::DownloadExecutable;
 pub use other_app_folder::OtherAppFolder;
+use std::path::PathBuf;
 
 /// the different methods to install an application
 pub enum Method<'a> {
@@ -28,6 +31,18 @@ pub enum Method<'a> {
     CompileRustSource(&'a dyn compile_rust::CompileRust),
     /// this application is shipped as part of the given other application
     InstallAnotherApp(&'a dyn OtherAppFolder),
+}
+
+impl<'a> Method<'a> {
+    pub fn executable_location(&self, version: &Version, platform: Platform, yard: Yard) -> PathBuf {
+        match self {
+            Method::DownloadArchive(app) => app.executable_location(version, platform, yard),
+            Method::DownloadExecutable(app) => app.executable_location(version, platform, yard),
+            Method::CompileGoSource(app) => app.executable_location(version, platform, yard),
+            Method::CompileRustSource(app) => app.executable_location(version, platform, yard),
+            Method::InstallAnotherApp(app) => app.executable_location(version, platform, yard),
+        }
+    }
 }
 
 pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
@@ -44,4 +59,14 @@ pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platfo
         }
     }
     Ok(false)
+}
+
+pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: Yard, output: &dyn Output) -> Result<Option<Executable>> {
+    for installation_method in install_methods {
+        let location = installation_method.executable_location(version, platform, yard);
+        if location.exists() {
+            return Ok(Some(Executable(location)));
+        }
+    }
+    Ok(None)
 }

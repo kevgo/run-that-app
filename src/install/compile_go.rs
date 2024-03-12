@@ -2,15 +2,22 @@ use crate::apps::App;
 use crate::config::Version;
 use crate::error::UserError;
 use crate::output::Output;
+use crate::platform::Platform;
+use crate::yard::Yard;
 use crate::{yard, Result};
 use std::fs;
 use std::io::ErrorKind;
+use std::path::PathBuf;
 use std::process::Command;
 use which::which;
 
 /// defines the information needed for RTA to compile a Go app from source
 pub trait CompileGo: App {
     fn import_path(&self, version: &Version) -> String;
+
+    fn executable_location(&self, version: &Version, platform: Platform, yard: Yard) -> PathBuf {
+        yard.app_folder(&self.name(), version).join(self.executable_filename(platform))
+    }
 }
 
 /// installs the given Go-based application by compiling it from source
@@ -20,7 +27,7 @@ pub fn run(app: &dyn CompileGo, version: &Version, output: &dyn Output) -> Resul
         return Ok(false);
     };
     let yard = yard::load_or_create(&yard::production_location()?)?;
-    let target_folder = yard.app_folder(&app.yard_app(), version);
+    let target_folder = yard.app_folder(&app.name(), version);
     fs::create_dir_all(&target_folder).map_err(|err| UserError::CannotCreateFolder {
         folder: target_folder.clone(),
         reason: err.to_string(),

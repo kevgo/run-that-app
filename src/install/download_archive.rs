@@ -1,18 +1,20 @@
-use colored::Colorize;
-
 use crate::apps::App;
 use crate::config::Version;
 use crate::output::Output;
 use crate::platform::Platform;
+use crate::yard::Yard;
 use crate::UserError;
 use crate::{archives, yard};
 use crate::{download, Result};
-use std::fs;
+use colored::Colorize;
+use std::path::PathBuf;
 
 /// defines the information needed for RTA to download and extract an archive containing an app
 pub trait DownloadArchive: App {
     /// provides the URL of the archive to download
     fn archive_url(&self, version: &Version, platform: Platform) -> String;
+
+    fn executable_location(&self, version: &Version, platform: Platform, yard: Yard) -> PathBuf;
 }
 
 /// downloads and unpacks the content of an archive file
@@ -21,11 +23,7 @@ pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, out
         return Ok(false);
     };
     let yard = yard::load_or_create(&yard::production_location()?)?;
-    let app_folder = yard.app_folder(&app.name(), version);
-    fs::create_dir_all(&app_folder).map_err(|err| UserError::CannotCreateFolder {
-        folder: app_folder.clone(),
-        reason: err.to_string(),
-    })?;
+    let app_folder = yard.create_app_folder(&app.name(), version)?;
     let Some(archive) = archives::lookup(&artifact.filename, artifact.data) else {
         return Err(UserError::UnknownArchive(artifact.filename));
     };

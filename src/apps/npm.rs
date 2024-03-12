@@ -15,12 +15,14 @@ impl App for Npm {
         AppName::from("npm")
     }
 
+    // This currently mixes different installation locations of different installation methods.
+    // Technically each installation method has its own executable location.
+    // Why not move this method to each installation method?
+    //
+    // When trying to load an app, go through each of the app's installation methods
+    // and see if there is an executable in the location for this method.
     fn executable_locations(&self, _version: &Version, platform: Platform) -> Vec<String> {
         vec![format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))]
-    }
-
-    fn yard_app(&self) -> AppName {
-        self.app_to_install().name()
     }
 
     fn homepage(&self) -> &'static str {
