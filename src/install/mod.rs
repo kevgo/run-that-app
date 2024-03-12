@@ -6,8 +6,8 @@ pub mod download_archive;
 pub mod download_executable;
 pub mod other_app_folder;
 
-pub use compile_go::CompileGoSource;
-pub use compile_rust::CompileRustSource;
+pub use compile_go::CompileGo;
+pub use compile_rust::CompileRust;
 pub use download_archive::DownloadArchive;
 pub use download_executable::DownloadExecutable;
 pub use other_app_folder::InstallAnotherApp;
@@ -26,9 +26,9 @@ pub enum Method<'a> {
     /// installs the application by downloading the pre-compiled executable from the internet
     DownloadExecutable(&'a dyn DownloadExecutable),
     /// installs the applications by compiling it from its source written in Go
-    CompileGoSource(&'a dyn CompileGoSource),
+    CompileGoSource(&'a dyn CompileGo),
     /// installs the application by compiling it from its source written in Rust
-    CompileRustSource(&'a dyn CompileRustSource),
+    CompileRustSource(&'a dyn CompileRust),
     /// this application is shipped as part of another application
     InstallAnotherApp(&'a dyn InstallAnotherApp),
 }

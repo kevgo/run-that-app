@@ -63,7 +63,7 @@ impl install::DownloadExecutable for Shfmt {
     }
 }
 
-impl install::CompileGoSource for Shfmt {
+impl install::CompileGo for Shfmt {
     fn import_path(&self, version: &Version) -> String {
         format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}")
     }

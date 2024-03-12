@@ -41,7 +41,7 @@ impl App for Goda {
     }
 }
 
-impl install::CompileGoSource for Goda {
+impl install::CompileGo for Goda {
     fn import_path(&self, version: &Version) -> String {
         format!("github.com/{ORG}/{REPO}@v{version}")
     }
