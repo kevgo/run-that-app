@@ -3,7 +3,6 @@ use crate::config::Version;
 use crate::error::UserError;
 use crate::output::Output;
 use crate::{yard, Result};
-use std::fs;
 use std::io::ErrorKind;
 use std::process::Command;
 use which::which;
@@ -20,11 +19,7 @@ pub fn run(app: &dyn CompileGo, version: &Version, output: &dyn Output) -> Resul
         return Ok(false);
     };
     let yard = yard::load_or_create(&yard::production_location()?)?;
-    let target_folder = yard.app_folder(&app.name(), version);
-    fs::create_dir_all(&target_folder).map_err(|err| UserError::CannotCreateFolder {
-        folder: target_folder.clone(),
-        reason: err.to_string(),
-    })?;
+    let target_folder = yard.create_app_folder(&app.name(), version)?;
     let import_path = app.import_path(version);
     let go_args = vec!["install", &import_path];
     output.println(&format!("go {}", go_args.join(" ")));
