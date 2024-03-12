@@ -17,7 +17,6 @@ pub trait CompileGo: App {
 /// installs the given Go-based application by compiling it from source
 pub fn run(app: &dyn CompileGo, version: &Version, output: &dyn Output) -> Result<bool> {
     let Ok(go_path) = which("go") else {
-        // TODO: install Go and use it to compile this app here
         return Ok(false);
     };
     let yard = yard::load_or_create(&yard::production_location()?)?;
