@@ -51,7 +51,7 @@ fn inner() -> Result<ExitCode> {
         }),
         Command::DisplayHelp => Ok(cmd::help()),
         Command::Setup => cmd::setup(),
-        Command::Test { verbose } => cmd::test(verbose),
+        Command::Test { app, verbose } => cmd::test(&app, verbose),
         Command::Which { app, version, verbose } => cmd::which(&app, version, verbose),
         Command::Update { verbose } => cmd::update(verbose),
         Command::Version => Ok(cmd::version()),

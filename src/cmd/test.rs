@@ -1,17 +1,23 @@
 use crate::apps::AnalyzeResult;
+use crate::config::AppName;
 use crate::install;
 use crate::subshell::Executable;
 use crate::{apps, logger, platform, yard, Result};
 use colored::Colorize;
 use std::process::ExitCode;
 
-pub fn test(verbose: bool) -> Result<ExitCode> {
+pub fn test(want_app: &Option<AppName>, verbose: bool) -> Result<ExitCode> {
     let apps = apps::all();
     let log = logger::new(verbose);
     let platform = platform::detect(log)?;
     let temp_folder = tempfile::tempdir().expect("cannot create temp dir");
     let yard = yard::load_or_create(temp_folder.path())?;
     for app in apps {
+        if let Some(want_app) = want_app {
+            if app.name() != want_app {
+                continue;
+            }
+        }
         println!("\n\nTESTING {}", app.name().as_str().cyan());
         let latest_version = app.latest_installable_version(log)?;
         for install_method in app.install_methods() {
