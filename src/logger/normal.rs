@@ -2,7 +2,7 @@ use super::Event;
 use colored::Colorize;
 use std::io::{self, Write};
 
-/// a logger that outputs concise information in normal production use
+/// a logger with concise output, for normal production use
 pub fn log(event: Event) {
     #[allow(clippy::match_same_arms)]
     match event {

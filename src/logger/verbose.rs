@@ -2,7 +2,7 @@ use super::Event;
 use colored::Colorize;
 use std::io::{self, Write};
 
-/// a logger that outputs verbose information, useful for debugging
+/// a logger with verbose output, for debugging
 pub fn log(event: Event) {
     #[allow(clippy::match_same_arms)]
     match event {
