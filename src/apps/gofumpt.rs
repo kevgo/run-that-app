@@ -34,14 +34,14 @@ impl App for Gofumpt {
         github_releases::versions(ORG, REPO, amount, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        let output = executable.run_output("-h");
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        let output = executable.run_output("-h", log)?;
         if !identify(&output) {
-            return AnalyzeResult::NotIdentified { output };
+            return Ok(AnalyzeResult::NotIdentified { output });
         }
-        match extract_version(&executable.run_output("--version")) {
-            Some(version) => AnalyzeResult::IdentifiedWithVersion(version.into()),
-            None => AnalyzeResult::IdentifiedButUnknownVersion,
+        match extract_version(&executable.run_output("--version", log)?) {
+            Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+            None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
         }
     }
 }

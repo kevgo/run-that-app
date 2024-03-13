@@ -43,15 +43,15 @@ impl App for Go {
         Ok(go_tags.into_iter().map(Version::from).collect())
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if let Some(version) = extract_version(&executable.run_output("version")) {
-            return AnalyzeResult::IdentifiedWithVersion(version.into());
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        if let Some(version) = extract_version(&executable.run_output("version", log)?) {
+            return Ok(AnalyzeResult::IdentifiedWithVersion(version.into()));
         }
-        let output = executable.run_output("-h");
+        let output = executable.run_output("-h", log)?;
         if identify(&output) {
-            AnalyzeResult::IdentifiedButUnknownVersion
+            Ok(AnalyzeResult::IdentifiedButUnknownVersion)
         } else {
-            AnalyzeResult::NotIdentified { output }
+            Ok(AnalyzeResult::NotIdentified { output })
         }
     }
 

@@ -1,9 +1,13 @@
+use crate::error::UserError;
+use crate::logger::{Event, Log};
+use crate::Result;
+use std::borrow::Cow;
 use std::ffi::OsStr;
 use std::path::PathBuf;
 use std::process::Command;
 
 /// an application that is stored in the yard and can be executed
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Executable(pub PathBuf);
 
 impl AsRef<OsStr> for Executable {
@@ -13,23 +17,45 @@ impl AsRef<OsStr> for Executable {
 }
 
 impl Executable {
-    /// runs this executable with the given args and returns the output it produced
-    pub fn run_output(&self, arg: &str) -> String {
-        let mut cmd = Command::new(self);
-        cmd.arg(arg);
-        let Ok(output) = cmd.output() else {
-            return String::new();
-        };
-        String::from_utf8(output.stdout).unwrap_or_default()
+    pub fn as_str(&self) -> Cow<'_, str> {
+        self.0.to_string_lossy()
     }
 
     /// runs this executable with the given args and returns the output it produced
-    pub fn run_output_args(&self, args: &[&str]) -> String {
+    pub fn run_output(&self, arg: &str, log: Log) -> Result<String> {
+        let mut cmd = Command::new(self);
+        cmd.arg(arg);
+        log(Event::AnalyzeExecutableQuery {
+            cmd: &self.as_str(),
+            args: &[arg],
+        });
+        let output = match cmd.output() {
+            Ok(output) => output,
+            Err(err) => {
+                log(Event::AnalyzeExecutableError { err: err.to_string() });
+                return Err(UserError::ExecutableCannotExecute {
+                    executable: self.clone(),
+                    err: err.to_string(),
+                });
+            }
+        };
+        Ok(String::from_utf8(output.stdout).unwrap_or_default())
+    }
+
+    /// runs this executable with the given args and returns the output it produced
+    pub fn run_output_args(&self, args: &[&str], log: Log) -> Result<String> {
         let mut cmd = Command::new(self);
         cmd.args(args);
-        let Ok(output) = cmd.output() else {
-            return String::new();
+        let output = match cmd.output() {
+            Ok(output) => output,
+            Err(err) => {
+                log(Event::AnalyzeExecutableError { err: err.to_string() });
+                return Err(UserError::ExecutableCannotExecute {
+                    executable: self.clone(),
+                    err: err.to_string(),
+                });
+            }
         };
-        String::from_utf8(output.stdout).unwrap_or_default()
+        Ok(String::from_utf8(output.stdout).unwrap_or_default())
     }
 }

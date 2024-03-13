@@ -35,10 +35,10 @@ impl App for GolangCiLint {
         github_releases::versions(ORG, REPO, amount, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        match extract_version(&executable.run_output("--version")) {
-            Some(version) => AnalyzeResult::IdentifiedWithVersion(version.into()),
-            None => AnalyzeResult::IdentifiedButUnknownVersion,
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        match extract_version(&executable.run_output("--version", log)?) {
+            Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+            None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
         }
     }
 }

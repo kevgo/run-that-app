@@ -1,4 +1,5 @@
 use crate::config::{self, FILE_NAME};
+use crate::subshell::Executable;
 use colored::Colorize;
 use std::path::PathBuf;
 
@@ -42,6 +43,10 @@ pub enum UserError {
     },
     CompilationInterupted,
     ConfigFileAlreadyExists,
+    ExecutableCannotExecute {
+        executable: Executable,
+        err: String,
+    },
     GitHubReleasesApiProblem {
         problem: String,
         payload: String,
@@ -128,6 +133,9 @@ impl UserError {
             UserError::ConfigFileAlreadyExists => {
                 error("config file already exists");
                 desc(&format!("The file {FILE_NAME} already exists, no changes have been made to it."));
+            }
+            UserError::ExecutableCannotExecute { executable, err } => {
+                error(&format!("cannot execute {}: {}", executable.as_str(), err.to_string()));
             }
             UserError::GitHubReleasesApiProblem { problem, payload } => {
                 error(&format!("Problem with the GitHub Releases API: {problem}"));

@@ -32,13 +32,13 @@ impl App for Ghokin {
         github_releases::latest(ORG, REPO, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        let output = executable.run_output("-h");
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        let output = executable.run_output("-h", log)?;
         if !identify(&output) {
-            return AnalyzeResult::NotIdentified { output };
+            return Ok(AnalyzeResult::NotIdentified { output });
         }
         // as of 3.4.0 ghokin's "version" command prints nothing
-        AnalyzeResult::IdentifiedButUnknownVersion
+        Ok(AnalyzeResult::IdentifiedButUnknownVersion)
     }
 }
 

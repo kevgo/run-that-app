@@ -34,7 +34,7 @@ impl App for Scc {
         github_releases::versions(ORG, REPO, amount, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
         let output = executable.run_output("-h");
         if !identify(&output) {
             return AnalyzeResult::NotIdentified { output };

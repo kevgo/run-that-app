@@ -30,13 +30,13 @@ impl App for Gofmt {
         self.app_to_install().installable_versions(amount, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        let output = executable.run_output("-h");
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        let output = executable.run_output("-h", log)?;
         if !identify(&output) {
-            return AnalyzeResult::NotIdentified { output };
+            return Ok(AnalyzeResult::NotIdentified { output });
         }
         // TODO: return the version of Go here
-        AnalyzeResult::IdentifiedButUnknownVersion
+        Ok(AnalyzeResult::IdentifiedButUnknownVersion)
     }
 }
 

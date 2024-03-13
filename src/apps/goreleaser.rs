@@ -33,14 +33,14 @@ impl App for Goreleaser {
         github_releases::versions(ORG, REPO, amount, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        let output = executable.run_output("-V");
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        let output = executable.run_output("-V", log)?;
         if !identify(&output) {
-            return AnalyzeResult::NotIdentified { output };
+            return Ok(AnalyzeResult::NotIdentified { output });
         }
         match extract_version(&output) {
-            Some(version) => AnalyzeResult::IdentifiedWithVersion(version.into()),
-            None => AnalyzeResult::IdentifiedButUnknownVersion,
+            Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+            None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
         }
     }
 }
