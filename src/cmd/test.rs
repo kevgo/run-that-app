@@ -26,7 +26,7 @@ pub fn test(verbose: bool) -> Result<ExitCode> {
                 return Ok(ExitCode::FAILURE);
             }
             let executable = Executable(executable_path.clone());
-            match app.analyze_executable(&executable) {
+            match app.analyze_executable(&executable, log)? {
                 AnalyzeResult::NotIdentified { output } => {
                     println!(
                         "executable {} not identified based on this output:\n\"{output}\"\nOUTPUT END",

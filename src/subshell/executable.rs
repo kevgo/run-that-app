@@ -39,7 +39,9 @@ impl Executable {
                 });
             }
         };
-        Ok(String::from_utf8(output.stdout).unwrap_or_default())
+        let stdout = String::from_utf8(output.stdout).expect("command printed non unicode output");
+        log(Event::AnalyzeExecutableOutput { output: &stdout });
+        Ok(stdout)
     }
 
     /// runs this executable with the given args and returns the output it produced

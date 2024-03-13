@@ -6,6 +6,10 @@ use std::io::{self, Write};
 pub fn log(event: Event) {
     #[allow(clippy::match_same_arms)]
     match event {
+        Event::AnalyzeExecutableQuery { cmd, args } => eprintln!("{}", format!("{cmd} {}", args.join(" ")).bold()),
+        Event::AnalyzeExecutableOutput { output } => eprintln!("{}", output),
+        Event::AnalyzeExecutableError { err } => eprintln!("{}", err.red()),
+
         Event::ArchiveExtractBegin { archive_type } => eprintf!("extracting {} ... ", archive_type.cyan()),
         Event::ArchiveExtractSuccess => eprintln!("{}", "ok".green()),
         Event::ArchiveExtractFailed { err } => eprintln!("{}", err.red()),
