@@ -1,4 +1,3 @@
-use crate::apps::AnalyzeResult;
 use crate::config::{AppName, Version};
 use crate::subshell::Executable;
 use std::borrow::Cow;
@@ -56,11 +55,6 @@ pub enum Event<'a> {
     ExecutableInstallSave,
     ExecutableInstallSaveSuccess,
     ExecutableInstallSaveFail,
-    ExtractBegin {
-        archive_type: String,
-    },
-    ExtractSuccess,
-    ExtractFail,
     CompileGoStart {
         go_path: Cow<'a, str>,
         args: &'a [&'a str],
