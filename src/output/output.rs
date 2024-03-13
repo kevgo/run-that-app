@@ -11,9 +11,9 @@ pub struct Output {
 impl Output {
     pub fn log(&self, event: Event) {
         if self.verbose {
-            display_verbose(event)
+            display_verbose(event);
         } else {
-            display_normal(event)
+            display_normal(event);
         }
     }
 }
@@ -26,6 +26,7 @@ macro_rules! fprint {
 }
 
 fn display_verbose(event: Event) {
+    #[allow(clippy::match_same_arms)]
     match event {
         Event::ArchiveExtractBegin { archive_type } => fprint!("extracting {} ... ", archive_type.cyan().bold()),
         Event::ArchiveExtractSuccess => eprintln!("{}", "ok".green().bold()),
@@ -101,6 +102,7 @@ fn display_verbose(event: Event) {
 }
 
 fn display_normal(event: Event) {
+    #[allow(clippy::match_same_arms)]
     match event {
         Event::ArchiveExtractBegin { archive_type: _ } => fprint!("extracting ... "),
         Event::ArchiveExtractSuccess => eprintln!("{}", "ok".green().bold()),
