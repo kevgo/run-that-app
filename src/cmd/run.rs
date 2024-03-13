@@ -1,3 +1,4 @@
+use crate::apps;
 use crate::apps::{AnalyzeResult, App};
 use crate::config::{AppName, RequestedVersion, RequestedVersions, Version};
 use crate::error::UserError;
@@ -8,9 +9,7 @@ use crate::subshell;
 use crate::subshell::Executable;
 use crate::Output;
 use crate::Result;
-use crate::{apps, config};
 use crate::{install, yard};
-use colored::Colorize;
 use std::process::ExitCode;
 
 pub fn run(args: Args) -> Result<ExitCode> {

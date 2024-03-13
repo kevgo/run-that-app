@@ -5,7 +5,6 @@ use crate::Output;
 use crate::Result;
 use crate::UserError;
 use big_s::S;
-use colored::Colorize;
 
 /// provides the latest official version of the given application on GitHub Releases
 pub fn latest(org: &str, repo: &str, output: Output) -> Result<Version> {
@@ -16,11 +15,14 @@ pub fn latest(org: &str, repo: &str, output: Output) -> Result<Version> {
         .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
         .with_header("X-GitHub-Api-Version", "2022-11-28");
     let Ok(response) = get.send() else {
-        output.log(Event::GitHubApiRequestNotOnline);
+        output.log(Event::NotOnline);
         return Err(UserError::NotOnline);
     };
     let response_text = match response.as_str() {
-        Ok(text) => text,
+        Ok(text) => {
+            output.log(Event::GitHubApiRequestSuccess);
+            text
+        }
         Err(err) => {
             output.log(Event::GitHubApiRequestFail { err: err.to_string() });
             return Err(UserError::GitHubTagsApiProblem {
@@ -50,7 +52,7 @@ pub fn versions(org: &str, repo: &str, amount: usize, output: Output) -> Result<
         .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
         .with_header("X-GitHub-Api-Version", "2022-11-28");
     let Ok(response) = get.send() else {
-        output.log(Event::GitHubApiRequestNotOnline);
+        output.log(Event::NotOnline);
         return Err(UserError::NotOnline);
     };
     parse_versions_response(response.as_str().unwrap())

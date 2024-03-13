@@ -1,11 +1,8 @@
-use std::borrow::Cow;
-use std::path::Path;
-
-use semver::VersionReq;
-
 use crate::apps::AnalyzeResult;
 use crate::config::{AppName, Version};
 use crate::subshell::Executable;
+use std::borrow::Cow;
+use std::path::Path;
 
 /// the different events that can result in CLI output
 pub enum Event<'a> {
@@ -52,12 +49,6 @@ pub enum Event<'a> {
     GlobalInstallNotIdentified {
         executable: &'a Executable,
     },
-    GlobalInstallAnalyzed {
-        executable: &'a Executable,
-        app_name: &'a AppName,
-        result: &'a AnalyzeResult,
-    },
-    GitHubApiRequestNotOnline,
     DownloadNotFound,
     DownloadFail {
         code: i32,
@@ -80,6 +71,7 @@ pub enum Event<'a> {
         args: &'a [&'a str],
     },
     CompileRustSuccess,
+    NotOnline,
     UpdateBegin {
         app: &'a AppName,
     },

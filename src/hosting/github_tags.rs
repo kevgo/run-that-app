@@ -11,7 +11,7 @@ pub fn all(org: &str, repo: &str, amount: usize, output: Output) -> Result<Vec<S
         .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
         .with_header("X-GitHub-Api-Version", "2022-11-28");
     let Ok(response) = get.send() else {
-        output.log(Event::GitHubApiRequestNotOnline);
+        output.log(Event::NotOnline);
         return Err(UserError::NotOnline);
     };
     let response_text = match response.as_str() {
@@ -32,6 +32,7 @@ pub fn all(org: &str, repo: &str, amount: usize, output: Output) -> Result<Vec<S
             payload: S(""),
         });
     }
+    output.log(Event::GitHubApiRequestSuccess);
     Ok(tags)
 }
 

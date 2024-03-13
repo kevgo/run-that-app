@@ -12,7 +12,6 @@ pub fn update(verbose: bool) -> Result<ExitCode> {
         let app = all_apps.lookup(&old_app.app)?;
         output.log(Event::UpdateBegin { app: &old_app.app });
         let latest = app.latest_installable_version(output)?;
-        let latest_str = latest.to_string();
         if let Some(previous) = &old_app.versions.update_largest_with(&latest) {
             output.log(Event::UpdateNewVersion {
                 app: &old_app.app,

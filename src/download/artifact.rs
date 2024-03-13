@@ -6,7 +6,7 @@ use crate::{Result, UserError};
 pub fn artifact(url: String, app: &AppName, output: Output) -> Result<Option<Artifact>> {
     output.log(Event::DownloadBegin { app, url: &url });
     let Ok(response) = minreq::get(&url).send() else {
-        output.log(Event::GitHubApiRequestNotOnline);
+        output.log(Event::NotOnline);
         return Err(UserError::NotOnline);
     };
     if response.status_code == 404 {
@@ -20,6 +20,7 @@ pub fn artifact(url: String, app: &AppName, output: Output) -> Result<Option<Art
             url: url.to_string(),
         });
     }
+    output.log(Event::DownloadSuccess);
     Ok(Some(Artifact {
         filename: url,
         data: response.into_bytes(),
