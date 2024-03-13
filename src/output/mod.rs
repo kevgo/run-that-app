@@ -1,7 +1,7 @@
 //! Output to the user
 
 mod event;
-mod output;
+mod log;
 
 pub use event::Event;
-pub use output::{new, Log};
+pub use log::{new, Log};
