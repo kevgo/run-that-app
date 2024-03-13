@@ -38,6 +38,7 @@ pub fn run(app: &dyn CompileRustSource, version: &Version, output: Output) -> Re
         },
     };
     if !status.success() {
+        output.log(Event::CompileRustFailed);
         return Err(UserError::RustCompilationFailed);
     }
     output.log(Event::CompileRustSuccess);

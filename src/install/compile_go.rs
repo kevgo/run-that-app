@@ -39,6 +39,7 @@ pub fn run(app: &dyn CompileGoSource, version: &Version, output: Output) -> Resu
         },
     };
     if !status.success() {
+        output.log(Event::CompileGoFailed);
         return Err(UserError::GoCompilationFailed);
     }
     output.log(Event::CompileGoSuccess);

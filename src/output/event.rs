@@ -10,9 +10,11 @@ pub enum Event<'a> {
 
     CompileGoBegin { go_path: Cow<'a, str>, args: &'a [&'a str] },
     CompileGoSuccess,
+    CompileGoFailed,
 
     CompileRustStart { cargo_path: &'a Path, args: &'a [&'a str] },
     CompileRustSuccess,
+    CompileRustFailed,
 
     DownloadBegin { app: &'a AppName, url: &'a str },
     DownloadSuccess,

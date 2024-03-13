@@ -33,10 +33,12 @@ fn display_verbose(event: Event) {
         Event::ArchiveExtractFailed { err } => eprintln!("{}", err.red()),
 
         Event::CompileGoBegin { go_path, args } => eprintln!("{go_path} {}", args.join(" ")),
-        Event::CompileGoSuccess => eprintln!("Go compilation successful"),
+        Event::CompileGoSuccess => eprintln!("{}", "Go compilation successful".green()),
+        Event::CompileGoFailed => eprintln!("{}", "Go compilation failed".red()),
 
         Event::CompileRustStart { cargo_path, args } => eprintln!("{} {}", cargo_path.to_string_lossy(), args.join(" ")),
-        Event::CompileRustSuccess => eprintln!("Rust compilation successful"),
+        Event::CompileRustSuccess => eprintln!("{}", "Rust compilation successful".green()),
+        Event::CompileRustFailed => eprintln!("{}", "Rust compilation failed".red()),
 
         Event::DownloadBegin { app: _, url } => fprint!("downloading {} ... ", url.cyan()),
         Event::DownloadSuccess => eprintln!("{}", "ok".green()),
@@ -93,9 +95,11 @@ fn display_normal(event: Event) {
 
         Event::CompileGoBegin { go_path: _, args } => eprintln!("go {}", args.join(" ")),
         Event::CompileGoSuccess => {}
+        Event::CompileGoFailed => eprintln!("{}", "Go compilation failed".red()),
 
         Event::CompileRustStart { cargo_path: _, args } => eprintln!("cargo {}", args.join(" ")),
         Event::CompileRustSuccess => {}
+        Event::CompileRustFailed => eprintln!("{}", "Rust compilation failed".red()),
 
         Event::DownloadBegin { app, url: _ } => fprint!("downloading {} ... ", app.as_str().cyan()),
         Event::DownloadSuccess => {}
