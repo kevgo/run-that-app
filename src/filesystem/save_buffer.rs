@@ -6,7 +6,7 @@ use std::path::Path;
 
 /// saves the given file data as an executable file
 pub fn save_executable(data: Vec<u8>, path_on_disk: &Path, output: Output) -> Result<Executable> {
-    output.log(Event::ExecutableInstallSave);
+    output.log(Event::ExecutableInstallSaveBegin);
     match fs::write(path_on_disk, data) {
         Ok(()) => output.log(Event::ExecutableInstallSaveSuccess),
         Err(err) => output.log(Event::ExecutableInstallSaveFail { err: err.to_string() }),

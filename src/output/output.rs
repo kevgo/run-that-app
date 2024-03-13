@@ -46,7 +46,7 @@ fn display_verbose(event: Event) {
         Event::CompileRustStart { cargo_path, args } => eprintln!("{} {}", cargo_path.to_string_lossy(), args.join(" ")),
         Event::CompileRustSuccess => eprintln!("Rust compilation successful"),
 
-        Event::ExecutableInstallSave => fprint!("saving ... "),
+        Event::ExecutableInstallSaveBegin => fprint!("saving ... "),
         Event::ExecutableInstallSaveSuccess => eprintln!("{}", "ok".green()),
         Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.red()),
 
@@ -116,7 +116,7 @@ fn display_normal(event: Event) {
         Event::GlobalInstallMismatchingVersion { range: _, version: _ } => {}
         Event::GlobalInstallNotIdentified => {}
 
-        Event::ExecutableInstallSave => fprint!("saving ... "),
+        Event::ExecutableInstallSaveBegin => fprint!("saving ... "),
         Event::ExecutableInstallSaveSuccess => eprintln!("{}", "ok".green()),
         Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.red()),
 

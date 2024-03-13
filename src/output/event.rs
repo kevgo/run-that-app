@@ -22,7 +22,7 @@ pub enum Event<'a> {
     GlobalInstallNotIdentified,
     DownloadNotFound,
     DownloadFail { code: i32 },
-    ExecutableInstallSave,
+    ExecutableInstallSaveBegin,
     ExecutableInstallSaveSuccess,
     ExecutableInstallSaveFail { err: String },
     CompileGoStart { go_path: Cow<'a, str>, args: &'a [&'a str] },
