@@ -27,7 +27,7 @@ pub fn log(event: Event) {
         Event::ExecutableInstallSaveSuccess => eprintln!("{}", "ok".green()),
         Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.red()),
 
-        Event::GitHubApiRequestBegin { url } => eprintln!("Talking to GitHub API: {url} ... "),
+        Event::GitHubApiRequestBegin { url } => eprintf!("Talking to GitHub API ({url}) ... "),
         Event::GitHubApiRequestSuccess => eprintln!("{}", "ok".green()),
         Event::GitHubApiRequestFail { err } => eprintln!("{}", err.red()),
 
