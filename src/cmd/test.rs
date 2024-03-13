@@ -12,7 +12,7 @@ pub fn test(verbose: bool) -> Result<ExitCode> {
     let temp_folder = tempfile::tempdir().expect("cannot create temp dir");
     let yard = yard::load_or_create(temp_folder.path())?;
     for app in apps {
-        println!("\n\nTESTING {}\n", app.name().as_str().cyan());
+        println!("\n\nTESTING {}", app.name().as_str().cyan());
         let latest_version = app.latest_installable_version(log)?;
         for install_method in app.install_methods() {
             println!("\n{}", install_method.to_string().bold());
