@@ -96,7 +96,7 @@ fn display_verbose(event: Event) {
 
         Event::UpdateBegin { app } => eprintln!("updating {} ...", app.as_str().cyan().bold()),
         Event::UpdateNewVersion { old_version, new_version } => eprintln!("{} -> {}", old_version.as_str().green().bold(), new_version.as_str().green().bold()),
-        Event::UpdateAlreadyNewest { app } => eprintln!("{}", "up to date".green().bold()),
+        Event::UpdateAlreadyNewest { app: _ } => eprintln!("{}", "up to date".green().bold()),
     }
 }
 
@@ -106,48 +106,45 @@ fn display_normal(event: Event) {
         Event::ArchiveExtractSuccess => eprintln!("{}", "ok".green().bold()),
         Event::ArchiveExtractFailed { err } => eprintln!("{}", err.red().bold()),
 
-        Event::CpuIdentified { architecture } => {}
-        Event::OsIdentified { name } => {}
+        Event::CpuIdentified { architecture: _ } => {}
+        Event::OsIdentified { name: _ } => {}
 
-        Event::DownloadBegin { app, url } => fprint!("downloading {} ... ", app.as_str().cyan().bold()),
+        Event::DownloadBegin { app, url: _ } => fprint!("downloading {} ... ", app.as_str().cyan().bold()),
         Event::DownloadSuccess => {}
-        Event::DownloadFail { code } => println!("{}", code.to_string().red().bold()),
-        Event::DownloadNotFound => todo!(),
+        Event::DownloadFail { code } => eprintln!("{}", code.to_string().red().bold()),
+        Event::DownloadNotFound => eprintln!("{}", "not found".red().bold()),
 
-        Event::CompileGoStart { go_path, args } => todo!(),
-        Event::CompileGoSuccess => todo!(),
+        Event::CompileGoStart { go_path: _, args } => eprintln!("go {}", args.join(" ")),
+        Event::CompileGoSuccess => {}
 
-        Event::CompileRustStart { cargo_path, args } => todo!(),
-        Event::CompileRustSuccess => todo!(),
+        Event::CompileRustStart { cargo_path: _, args } => eprintln!("cargo {}", args.join(" ")),
+        Event::CompileRustSuccess => {}
 
-        Event::GitHubApiRequestBegin { url } => todo!(),
-        Event::GitHubApiRequestFail { err } => todo!(),
-        Event::GitHubApiRequestSuccess => todo!(),
+        Event::GitHubApiRequestBegin { url: _ } => {}
+        Event::GitHubApiRequestFail { err } => eprintln!("GitHub API request failed: {}", err.red().bold()),
+        Event::GitHubApiRequestSuccess => {}
 
-        Event::GlobalInstallSearch { binary } => todo!(),
-        Event::GlobalInstallFound { path } => todo!(),
-        Event::GlobalInstallNotFound => todo!(),
+        Event::GlobalInstallSearch { binary: _ } => {}
+        Event::GlobalInstallFound { path: _ } => {}
+        Event::GlobalInstallNotFound => {}
         Event::GlobalInstallMatchingVersion {
-            version_restriction,
-            actual_version,
-        } => todo!(),
+            version_restriction: _,
+            actual_version: _,
+        } => {}
         Event::GlobalInstallMismatchingVersion {
-            version_restriction,
-            actual_version,
-        } => todo!(),
-        Event::GlobalInstallNotIdentified => todo!(),
+            version_restriction: _,
+            actual_version: _,
+        } => {}
+        Event::GlobalInstallNotIdentified => {}
 
-        Event::ExecutableInstallSave => todo!(),
-        Event::ExecutableInstallSaveSuccess => todo!(),
-        Event::ExecutableInstallSaveFail { err } => todo!(),
+        Event::ExecutableInstallSave => fprint!("saving ... "),
+        Event::ExecutableInstallSaveSuccess => eprintln!("{}", "ok".green().bold()),
+        Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.red().bold()),
 
-        Event::NotOnline => todo!(),
+        Event::NotOnline => eprintln!("{}", "not online".red().bold()),
 
-        Event::UpdateBegin { app } => todo!(),
-        Event::UpdateNewVersion {
-            old_version,
-            new_version: new_versin,
-        } => todo!(),
-        Event::UpdateAlreadyNewest { app } => todo!(),
+        Event::UpdateBegin { app: _ } => {}
+        Event::UpdateNewVersion { old_version, new_version } => eprintln!("{} -> {}", old_version.as_str().green().bold(), new_version.as_str().green().bold()),
+        Event::UpdateAlreadyNewest { app: _ } => eprintln!("{}", "up to date".green().bold()),
     }
 }
