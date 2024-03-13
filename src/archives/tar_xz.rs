@@ -13,16 +13,16 @@ pub struct TarXz {
 
 impl Archive for TarXz {
     fn extract_all(&self, target_dir: &Path, output: Output) -> Result<()> {
-        output.log(Event::ArchiveExtractBegin { archive_type: "tar.xz" });
+        output(Event::ArchiveExtractBegin { archive_type: "tar.xz" });
         let decompressor = XzDecoder::new(Cursor::new(&self.data));
         let mut archive = tar::Archive::new(decompressor);
         match archive.unpack(target_dir) {
             Ok(()) => {
-                output.log(Event::ArchiveExtractSuccess);
+                output(Event::ArchiveExtractSuccess);
                 Ok(())
             }
             Err(err) => {
-                output.log(Event::ArchiveExtractFailed { err: err.to_string() });
+                output(Event::ArchiveExtractFailed { err: err.to_string() });
                 Err(UserError::ArchiveCannotExtract { reason: err.to_string() })
             }
         }

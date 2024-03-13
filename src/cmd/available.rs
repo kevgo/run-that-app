@@ -3,15 +3,15 @@ use crate::apps;
 use crate::config::AppName;
 use crate::config::RequestedVersions;
 use crate::config::Version;
+use crate::output;
 use crate::platform;
-use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
 
 pub fn available(app_name: &AppName, version: Option<Version>, verbose: bool) -> Result<ExitCode> {
     let apps = apps::all();
     let app = apps.lookup(app_name)?;
-    let output = Output { verbose };
+    let output = output::new(verbose);
     let platform = platform::detect(output)?;
     let versions = RequestedVersions::determine(app_name, version, &apps)?;
     for version in versions {

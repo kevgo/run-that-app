@@ -1,21 +1,14 @@
+use super::Event;
 use colored::Colorize;
 use std::io::{self, Write};
 
-use super::Event;
+pub type Output = fn(Event);
 
-/// implements flexible output to the CLI
-#[derive(Copy, Clone)]
-pub struct Output {
-    pub verbose: bool,
-}
-
-impl Output {
-    pub fn log(self, event: Event) {
-        if self.verbose {
-            display_verbose(event);
-        } else {
-            display_normal(event);
-        }
+pub fn new(verbose: bool) -> Output {
+    if verbose {
+        display_verbose
+    } else {
+        display_normal
     }
 }
 

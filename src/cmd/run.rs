@@ -3,7 +3,7 @@ use crate::apps::{AnalyzeResult, App};
 use crate::config::{AppName, RequestedVersion, RequestedVersions, Version};
 use crate::error::UserError;
 use crate::filesystem::find_global_install;
-use crate::output::{Event, Output};
+use crate::output::{self, Event, Output};
 use crate::platform::{self, Platform};
 use crate::subshell::{self, Executable};
 use crate::Result;
@@ -13,7 +13,7 @@ use std::process::ExitCode;
 pub fn run(args: Args) -> Result<ExitCode> {
     let apps = apps::all();
     let app = apps.lookup(&args.app)?;
-    let output = Output { verbose: args.verbose };
+    let output = output::new(args.verbose);
     let platform = platform::detect(output)?;
     let versions = RequestedVersions::determine(&args.app, args.version, &apps)?;
     for version in versions {
@@ -62,28 +62,28 @@ pub fn load_or_install(app: &dyn App, version: &RequestedVersion, platform: Plat
 // checks if the app is in the PATH and has the correct version
 fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform, output: Output) -> Result<Option<Executable>> {
     let Some(executable) = find_global_install(&app.executable_filename(platform), output) else {
-        output.log(Event::GlobalInstallNotFound);
+        output(Event::GlobalInstallNotFound);
         return Ok(None);
     };
     match app.analyze_executable(&executable) {
         AnalyzeResult::NotIdentified => {
-            output.log(Event::GlobalInstallNotIdentified);
+            output(Event::GlobalInstallNotIdentified);
             Ok(None)
         }
         AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
-            output.log(Event::GlobalInstallMatchingVersion { range, version: None });
+            output(Event::GlobalInstallMatchingVersion { range, version: None });
             Ok(Some(executable))
         }
         AnalyzeResult::IdentifiedButUnknownVersion => {
-            output.log(Event::GlobalInstallMismatchingVersion { range, version: None });
+            output(Event::GlobalInstallMismatchingVersion { range, version: None });
             Ok(None)
         }
         AnalyzeResult::IdentifiedWithVersion(version) if range.matches(&version.semver()?) => {
-            output.log(Event::GlobalInstallMatchingVersion { range, version: Some(&version) });
+            output(Event::GlobalInstallMatchingVersion { range, version: Some(&version) });
             Ok(Some(executable))
         }
         AnalyzeResult::IdentifiedWithVersion(version) => {
-            output.log(Event::GlobalInstallMismatchingVersion { range, version: Some(&version) });
+            output(Event::GlobalInstallMismatchingVersion { range, version: Some(&version) });
             Ok(None)
         }
     }

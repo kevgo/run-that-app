@@ -9,22 +9,22 @@ use big_s::S;
 /// provides the latest official version of the given application on GitHub Releases
 pub fn latest(org: &str, repo: &str, output: Output) -> Result<Version> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases/latest");
-    output.log(Event::GitHubApiRequestBegin { url: &url });
+    output(Event::GitHubApiRequestBegin { url: &url });
     let get = minreq::get(&url)
         .with_header("Accept", "application/vnd.github+json")
         .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
         .with_header("X-GitHub-Api-Version", "2022-11-28");
     let Ok(response) = get.send() else {
-        output.log(Event::NotOnline);
+        output(Event::NotOnline);
         return Err(UserError::NotOnline);
     };
     let response_text = match response.as_str() {
         Ok(text) => {
-            output.log(Event::GitHubApiRequestSuccess);
+            output(Event::GitHubApiRequestSuccess);
             text
         }
         Err(err) => {
-            output.log(Event::GitHubApiRequestFail { err: err.to_string() });
+            output(Event::GitHubApiRequestFail { err: err.to_string() });
             return Err(UserError::GitHubTagsApiProblem {
                 problem: S("Cannot get response payload"),
                 payload: S(""),
@@ -45,14 +45,14 @@ fn parse_latest_response(text: &str) -> Result<Version> {
 /// provides the given number of latest versions of the given application on GitHub Releases
 pub fn versions(org: &str, repo: &str, amount: usize, output: Output) -> Result<Vec<Version>> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases?per_page={amount}");
-    output.log(Event::GitHubApiRequestBegin { url: &url });
+    output(Event::GitHubApiRequestBegin { url: &url });
     let get = minreq::get(&url)
         .with_param("per_page", amount.to_string())
         .with_header("Accept", "application/vnd.github+json")
         .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
         .with_header("X-GitHub-Api-Version", "2022-11-28");
     let Ok(response) = get.send() else {
-        output.log(Event::NotOnline);
+        output(Event::NotOnline);
         return Err(UserError::NotOnline);
     };
     parse_versions_response(response.as_str().unwrap())

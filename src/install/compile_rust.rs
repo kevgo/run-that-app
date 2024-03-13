@@ -23,7 +23,7 @@ pub fn run(app: &dyn CompileRustSource, version: &Version, output: Output) -> Re
     let mut cmd = Command::new(&cargo_path);
     let target_folder_str = &target_folder.to_string_lossy();
     let args = vec!["install", "--root", &target_folder_str, "--locked", app.crate_name()];
-    output.log(Event::CompileRustStart {
+    output(Event::CompileRustStart {
         cargo_path: &cargo_path,
         args: &args,
     });
@@ -38,9 +38,9 @@ pub fn run(app: &dyn CompileRustSource, version: &Version, output: Output) -> Re
         },
     };
     if !status.success() {
-        output.log(Event::CompileRustFailed);
+        output(Event::CompileRustFailed);
         return Err(UserError::RustCompilationFailed);
     }
-    output.log(Event::CompileRustSuccess);
+    output(Event::CompileRustSuccess);
     Ok(true)
 }
