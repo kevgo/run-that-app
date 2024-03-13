@@ -1,26 +1,26 @@
 use crate::config::AppName;
-use crate::output::{Event, Output};
+use crate::output::{Event, Log};
 use crate::{Result, UserError};
 
 /// downloads the artifact at the given URL
-pub fn artifact(url: String, app: &AppName, output: Output) -> Result<Option<Artifact>> {
-    output(Event::DownloadBegin { app, url: &url });
+pub fn artifact(url: String, app: &AppName, log: Log) -> Result<Option<Artifact>> {
+    log(Event::DownloadBegin { app, url: &url });
     let Ok(response) = minreq::get(&url).send() else {
-        output(Event::NotOnline);
+        log(Event::NotOnline);
         return Err(UserError::NotOnline);
     };
     if response.status_code == 404 {
-        output(Event::DownloadNotFound);
+        log(Event::DownloadNotFound);
         return Ok(None);
     }
     if response.status_code != 200 {
-        output(Event::DownloadFail { code: response.status_code });
+        log(Event::DownloadFail { code: response.status_code });
         return Err(UserError::CannotDownload {
             reason: response.reason_phrase,
             url: url.to_string(),
         });
     }
-    output(Event::DownloadSuccess);
+    log(Event::DownloadSuccess);
     Ok(Some(Artifact {
         filename: url,
         data: response.into_bytes(),

@@ -1,13 +1,13 @@
 use super::cpu;
 use super::os;
 use super::Platform;
-use crate::Output;
+use crate::Log;
 use crate::Result;
 
 /// detects the platform this binary is running on
-pub fn detect(output: Output) -> Result<Platform> {
+pub fn detect(log: Log) -> Result<Platform> {
     Ok(Platform {
-        os: os::detect(output)?,
-        cpu: cpu::determine(output)?,
+        os: os::detect(log)?,
+        cpu: cpu::determine(log)?,
     })
 }

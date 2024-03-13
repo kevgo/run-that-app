@@ -1,23 +1,23 @@
 use crate::output::Event;
-use crate::{Output, Result, UserError};
+use crate::{Log, Result, UserError};
 use big_s::S;
 
-pub fn all(org: &str, repo: &str, amount: usize, output: Output) -> Result<Vec<String>> {
+pub fn all(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<String>> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/git/refs/tags");
-    output(Event::GitHubApiRequestBegin { url: &url });
+    log(Event::GitHubApiRequestBegin { url: &url });
     let get = minreq::get(&url)
         .with_param("per_page", amount.to_string())
         .with_header("Accept", "application/vnd.github+json")
         .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
         .with_header("X-GitHub-Api-Version", "2022-11-28");
     let Ok(response) = get.send() else {
-        output(Event::NotOnline);
+        log(Event::NotOnline);
         return Err(UserError::NotOnline);
     };
     let response_text = match response.as_str() {
         Ok(text) => text,
         Err(err) => {
-            output(Event::GitHubApiRequestFail { err: err.to_string() });
+            log(Event::GitHubApiRequestFail { err: err.to_string() });
             return Err(UserError::GitHubTagsApiProblem {
                 problem: S("Cannot get response payload"),
                 payload: S(""),
@@ -26,13 +26,13 @@ pub fn all(org: &str, repo: &str, amount: usize, output: Output) -> Result<Vec<S
     };
     let tags = parse_response(response_text)?;
     if tags.is_empty() {
-        output(Event::GitHubApiRequestFail { err: "no tags found".into() });
+        log(Event::GitHubApiRequestFail { err: "no tags found".into() });
         return Err(UserError::GitHubTagsApiProblem {
             problem: S("no tags found"),
             payload: S(""),
         });
     }
-    output(Event::GitHubApiRequestSuccess);
+    log(Event::GitHubApiRequestSuccess);
     Ok(tags)
 }
 

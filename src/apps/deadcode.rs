@@ -2,7 +2,7 @@ use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::install::{self, Method};
 use crate::subshell::Executable;
-use crate::{Output, Result};
+use crate::{Log, Result};
 use const_format::formatcp;
 
 pub struct Deadcode {}
@@ -20,12 +20,12 @@ impl App for Deadcode {
         vec![Method::CompileGoSource(self)]
     }
 
-    fn latest_installable_version(&self, _output: Output) -> Result<Version> {
+    fn latest_installable_version(&self, _log: Log) -> Result<Version> {
         // TODO: remove this file once deadcode is integrated into golangci-lint
         Ok(Version::from("0.16.1"))
     }
 
-    fn installable_versions(&self, _amount: usize, _output: Output) -> Result<Vec<Version>> {
+    fn installable_versions(&self, _amount: usize, _log: Log) -> Result<Vec<Version>> {
         Ok(vec![Version::from("0.16.1")])
     }
 

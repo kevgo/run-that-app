@@ -5,7 +5,7 @@ use crate::install::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
-use crate::{Output, Result};
+use crate::{Log, Result};
 use const_format::formatcp;
 use std::path;
 
@@ -27,12 +27,12 @@ impl App for MdBook {
         vec![Method::DownloadArchive(self), Method::CompileRustSource(self)]
     }
 
-    fn latest_installable_version(&self, output: Output) -> Result<Version> {
-        github_releases::latest(ORG, REPO, output)
+    fn latest_installable_version(&self, log: Log) -> Result<Version> {
+        github_releases::latest(ORG, REPO, log)
     }
 
-    fn installable_versions(&self, amount: usize, output: Output) -> Result<Vec<Version>> {
-        github_releases::versions(ORG, REPO, amount, output)
+    fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
+        github_releases::versions(ORG, REPO, amount, log)
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {

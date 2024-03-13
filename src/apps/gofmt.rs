@@ -4,7 +4,7 @@ use crate::config::{AppName, Version};
 use crate::install::{Method, ViaAnotherApp};
 use crate::platform::Platform;
 use crate::subshell::Executable;
-use crate::{install, Output, Result};
+use crate::{install, Log, Result};
 use std::path;
 
 pub struct Gofmt {}
@@ -22,12 +22,12 @@ impl App for Gofmt {
         vec![Method::InstallAnotherApp(self)]
     }
 
-    fn latest_installable_version(&self, output: Output) -> Result<Version> {
-        self.app_to_install().latest_installable_version(output)
+    fn latest_installable_version(&self, log: Log) -> Result<Version> {
+        self.app_to_install().latest_installable_version(log)
     }
 
-    fn installable_versions(&self, amount: usize, output: Output) -> Result<Vec<Version>> {
-        self.app_to_install().installable_versions(amount, output)
+    fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
+        self.app_to_install().installable_versions(amount, log)
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {

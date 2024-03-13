@@ -4,4 +4,4 @@ mod event;
 mod output;
 
 pub use event::Event;
-pub use output::{new, Output};
+pub use output::{new, Log};

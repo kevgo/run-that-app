@@ -1,6 +1,6 @@
 use crate::apps::App;
 use crate::config::Version;
-use crate::output::Output;
+use crate::output::Log;
 use crate::platform::Platform;
 use crate::UserError;
 use crate::{archives, yard};
@@ -16,8 +16,8 @@ pub trait DownloadArchive: App {
 }
 
 /// downloads and unpacks the content of an archive file
-pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, output: Output) -> Result<bool> {
-    let Some(artifact) = download::artifact(app.archive_url(version, platform), &app.name(), output)? else {
+pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, log: Log) -> Result<bool> {
+    let Some(artifact) = download::artifact(app.archive_url(version, platform), &app.name(), log)? else {
         return Ok(false);
     };
     let yard = yard::load_or_create(&yard::production_location()?)?;
@@ -25,6 +25,6 @@ pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, out
     let Some(archive) = archives::lookup(&artifact.filename, artifact.data) else {
         return Err(UserError::UnknownArchive(artifact.filename));
     };
-    archive.extract_all(&app_folder, output)?;
+    archive.extract_all(&app_folder, log)?;
     Ok(true)
 }

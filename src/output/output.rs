@@ -2,9 +2,9 @@ use super::Event;
 use colored::Colorize;
 use std::io::{self, Write};
 
-pub type Output = fn(Event);
+pub type Log = fn(Event);
 
-pub fn new(verbose: bool) -> Output {
+pub fn new(verbose: bool) -> Log {
     if verbose {
         display_verbose
     } else {
