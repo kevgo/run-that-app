@@ -54,7 +54,9 @@ pub enum Event<'a> {
     },
     ExecutableInstallSave,
     ExecutableInstallSaveSuccess,
-    ExecutableInstallSaveFail,
+    ExecutableInstallSaveFail {
+        err: String,
+    },
     CompileGoStart {
         go_path: Cow<'a, str>,
         args: &'a [&'a str],

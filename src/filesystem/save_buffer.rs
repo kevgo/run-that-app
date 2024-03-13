@@ -9,7 +9,7 @@ pub fn save_executable(data: Vec<u8>, path_on_disk: &Path, output: Output) -> Re
     output.log(Event::ExecutableInstallSave);
     match fs::write(path_on_disk, data) {
         Ok(_) => output.log(Event::ExecutableInstallSaveSuccess),
-        Err(_) => output.log(Event::ExecutableInstallSaveFail),
+        Err(err) => output.log(Event::ExecutableInstallSaveFail { err: err.to_string() }),
     }
     super::make_file_executable(path_on_disk)?;
     Ok(Executable(path_on_disk.to_path_buf()))

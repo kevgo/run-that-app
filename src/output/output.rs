@@ -27,30 +27,31 @@ macro_rules! fprint {
 
 fn display_verbose(event: Event) {
     match event {
-        Event::ArchiveExtractBegin { archive_type } => todo!(),
-        Event::ArchiveExtractSuccess => todo!(),
-        Event::ArchiveExtractFailed { err } => todo!(),
+        Event::ArchiveExtractBegin { archive_type } => fprint!("extracting {} ... ", archive_type.cyan().bold()),
+        Event::ArchiveExtractSuccess => eprintln!("{}", "ok".green().bold()),
+        Event::ArchiveExtractFailed { err } => eprintln!("{}", err.red().bold()),
 
-        Event::CpuIdentified { architecture } => eprintln!("CPU id: {architecture}"),
-        Event::OsIdentified { name } => eprintln!("OS id: {name}"),
+        Event::CpuIdentified { architecture } => eprintln!("CPU id: {}", architecture.cyan().bold()),
+        Event::OsIdentified { name } => eprintln!("OS id: {}", name.cyan().bold()),
 
-        Event::DownloadBegin { app, url } => eprintln!("download {} from {}", app, url.cyan().bold()),
-        Event::DownloadSuccess => eprintln!("finished download"),
-        Event::DownloadFail { code } => eprintln!("download failed: {}", code.to_string().red().bold()),
-        Event::DownloadNotFound => eprintln!("not found"),
+        Event::DownloadBegin { app, url } => eprintln!("download {} from {}", app.as_str().cyan().bold(), url.cyan()),
+        Event::DownloadSuccess => eprintln!("{}", "ok".green().bold()),
+        Event::DownloadFail { code } => eprintln!("{}", code.to_string().red().bold()),
+        Event::DownloadNotFound => eprintln!("{}", "not found".red().bold()),
 
         Event::CompileGoStart { go_path, args } => eprintln!("{go_path} {}", args.join(" ")),
         Event::CompileGoSuccess => eprintln!("Go compilation successful"),
+
         Event::CompileRustStart { cargo_path, args } => eprintln!("{} {}", cargo_path.to_string_lossy(), args.join(" ")),
         Event::CompileRustSuccess => eprintln!("Rust compilation successful"),
 
         Event::ExecutableInstallSave => fprint!("saving ... "),
         Event::ExecutableInstallSaveSuccess => eprintln!("{}", "ok".green().bold()),
-        Event::ExecutableInstallSaveFail => eprintln!("{}", "failed".red().bold()),
+        Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.red().bold()),
 
-        Event::GitHubApiRequestBegin { url } => eprintln!("Talking to GitHub API: {url}"),
-        Event::GitHubApiRequestSuccess => eprintln!("GitHub API request success"),
-        Event::GitHubApiRequestFail { err } => eprintln!("GitHub API request failed: {err}"),
+        Event::GitHubApiRequestBegin { url } => eprintln!("Talking to GitHub API: {url} ... "),
+        Event::GitHubApiRequestSuccess => eprintln!("{}", "ok".green().bold()),
+        Event::GitHubApiRequestFail { err } => eprintln!("{}", err.red().bold()),
 
         Event::GlobalInstallSearch { binary } => fprint!("Looking for {} in the PATH ... ", binary.cyan().bold()),
         Event::GlobalInstallFound { path } => eprintln!("{}", path.to_string_lossy().green().bold()),
