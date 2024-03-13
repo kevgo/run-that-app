@@ -75,8 +75,8 @@ fn load_from_path(app: &dyn App, want_version: &semver::VersionReq, platform: Pl
         }
         AnalyzeResult::IdentifiedButUnknownVersion if want_version.to_string() == "*" => {
             output.log(Event::GlobalInstallMatchingVersion {
-                version_restriction: want_version,
-                actual_version: None,
+                version_range: want_version,
+                version: None,
             });
             Ok(Some(executable))
         }
@@ -89,8 +89,8 @@ fn load_from_path(app: &dyn App, want_version: &semver::VersionReq, platform: Pl
         }
         AnalyzeResult::IdentifiedWithVersion(version) if want_version.matches(&version.semver()?) => {
             output.log(Event::GlobalInstallMatchingVersion {
-                version_restriction: want_version,
-                actual_version: Some(&version),
+                version_range: want_version,
+                version: Some(&version),
             });
             Ok(Some(executable))
         }

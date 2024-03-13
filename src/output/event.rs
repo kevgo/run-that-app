@@ -36,8 +36,8 @@ pub enum Event<'a> {
         path: &'a Path,
     },
     GlobalInstallMatchingVersion {
-        version_restriction: &'a semver::VersionReq,
-        actual_version: Option<&'a Version>,
+        version_range: &'a semver::VersionReq,
+        version: Option<&'a Version>,
     },
     GlobalInstallMismatchingVersion {
         version_restriction: &'a semver::VersionReq,
