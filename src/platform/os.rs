@@ -4,7 +4,7 @@ use std::env;
 use std::fmt::Display;
 
 pub fn detect(output: Output) -> Result<Os> {
-    output.log(Event::OsIdentified { name: env::consts::OS });
+    output.log(Event::IdentifiedOs { name: env::consts::OS });
     match env::consts::OS {
         "linux" => Ok(Os::Linux),
         "macos" => Ok(Os::MacOS),

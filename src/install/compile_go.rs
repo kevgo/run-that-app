@@ -23,7 +23,7 @@ pub fn run(app: &dyn CompileGoSource, version: &Version, output: Output) -> Resu
     let target_folder = yard.create_app_folder(&app.name(), version)?;
     let import_path = app.import_path(version);
     let go_args = vec!["install", &import_path];
-    output.log(Event::CompileGoStart {
+    output.log(Event::CompileGoBegin {
         go_path: go_path.to_string_lossy(),
         args: &go_args,
     });
