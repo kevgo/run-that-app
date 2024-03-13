@@ -8,7 +8,7 @@ mod error;
 mod filesystem;
 mod hosting;
 mod install;
-mod output;
+mod logger;
 mod platform;
 mod regexp;
 mod subshell;
@@ -17,7 +17,7 @@ mod yard;
 use cli::Command;
 use cmd::run;
 use error::{Result, UserError};
-use output::Log;
+use logger::Log;
 use std::process::ExitCode;
 
 fn main() -> ExitCode {

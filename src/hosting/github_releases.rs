@@ -1,6 +1,6 @@
 use super::strip_leading_v;
 use crate::config::Version;
-use crate::output::Event;
+use crate::logger::Event;
 use crate::Log;
 use crate::Result;
 use crate::UserError;

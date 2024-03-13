@@ -1,4 +1,4 @@
-use crate::output::{Event, Log};
+use crate::logger::{Event, Log};
 use crate::subshell::Executable;
 use which::which_global;
 

@@ -1,4 +1,4 @@
-use crate::output::{Event, Log};
+use crate::logger::{Event, Log};
 use crate::{Result, UserError};
 use std::env;
 use std::fmt::Display;

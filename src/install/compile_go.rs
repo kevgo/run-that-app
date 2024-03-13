@@ -1,7 +1,7 @@
 use crate::apps::App;
 use crate::config::Version;
 use crate::error::UserError;
-use crate::output::{Event, Log};
+use crate::logger::{Event, Log};
 use crate::{yard, Result};
 use std::io::ErrorKind;
 use std::process::Command;

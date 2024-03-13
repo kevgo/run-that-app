@@ -1,4 +1,4 @@
-use crate::output::Event;
+use crate::logger::Event;
 use crate::{Log, Result, UserError};
 use big_s::S;
 

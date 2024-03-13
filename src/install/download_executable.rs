@@ -1,6 +1,6 @@
 use crate::apps::App;
 use crate::config::Version;
-use crate::output::Log;
+use crate::logger::Log;
 use crate::platform::Platform;
 use crate::{download, filesystem, yard, Result};
 

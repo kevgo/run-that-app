@@ -2,8 +2,11 @@ use super::Event;
 use colored::Colorize;
 use std::io::{self, Write};
 
+/// A function that logs the given event to the CLI.
+/// There are several types of loggers at different verbosity levels.
 pub type Log = fn(Event);
 
+/// provides a logger function at the given verbosity level
 pub fn new(verbose: bool) -> Log {
     if verbose {
         display_verbose
@@ -12,7 +15,7 @@ pub fn new(verbose: bool) -> Log {
     }
 }
 
-/// prints the given text to STDERR and flushes the output
+/// helper macro that prints the given text to STDERR and flushes the output
 macro_rules! fprint {
     ($($arg:tt)*) => {{
         eprint!($($arg)*);
@@ -20,6 +23,7 @@ macro_rules! fprint {
     }};
 }
 
+/// a logger that outputs verbose information, useful for debugging
 fn display_verbose(event: Event) {
     #[allow(clippy::match_same_arms)]
     match event {
@@ -81,6 +85,7 @@ fn display_verbose(event: Event) {
     }
 }
 
+/// a logger that outputs concise information in normal production use
 fn display_normal(event: Event) {
     #[allow(clippy::match_same_arms)]
     match event {

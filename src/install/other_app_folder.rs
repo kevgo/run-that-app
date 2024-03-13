@@ -1,7 +1,7 @@
 use crate::apps::App;
 use crate::cmd::run::load_or_install;
 use crate::config::{RequestedVersion, Version};
-use crate::output::Log;
+use crate::logger::Log;
 use crate::platform::Platform;
 use crate::{apps, Result};
 

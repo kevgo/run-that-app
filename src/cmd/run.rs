@@ -3,7 +3,7 @@ use crate::apps::{AnalyzeResult, App};
 use crate::config::{AppName, RequestedVersion, RequestedVersions, Version};
 use crate::error::UserError;
 use crate::filesystem::find_global_install;
-use crate::output::{self, Event, Log};
+use crate::logger::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::subshell::{self, Executable};
 use crate::Result;
@@ -13,7 +13,7 @@ use std::process::ExitCode;
 pub fn run(args: Args) -> Result<ExitCode> {
     let apps = apps::all();
     let app = apps.lookup(&args.app)?;
-    let log = output::new(args.verbose);
+    let log = logger::new(args.verbose);
     let platform = platform::detect(log)?;
     let versions = RequestedVersions::determine(&args.app, args.version, &apps)?;
     for version in versions {

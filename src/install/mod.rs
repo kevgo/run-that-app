@@ -13,7 +13,7 @@ pub use download_executable::DownloadExecutable;
 pub use other_app_folder::ViaAnotherApp;
 
 use crate::config::{AppName, Version};
-use crate::output::Log;
+use crate::logger::Log;
 use crate::platform::Platform;
 use crate::subshell::Executable;
 use crate::yard::Yard;

@@ -1,5 +1,5 @@
 use crate::config::AppName;
-use crate::output::{Event, Log};
+use crate::logger::{Event, Log};
 use crate::{Result, UserError};
 
 /// downloads the artifact at the given URL
