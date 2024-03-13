@@ -5,7 +5,7 @@ use crate::install::{self, Method, ViaAnotherApp};
 use crate::platform::Platform;
 use crate::regexp;
 use crate::subshell::Executable;
-use crate::{Output, Result};
+use crate::{Log, Result};
 use std::path;
 
 pub struct Npm {}
@@ -23,12 +23,12 @@ impl App for Npm {
         vec![Method::InstallAnotherApp(self)]
     }
 
-    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
-        self.app_to_install().latest_installable_version(output)
+    fn latest_installable_version(&self, log: Log) -> Result<Version> {
+        self.app_to_install().latest_installable_version(log)
     }
 
-    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
-        self.app_to_install().installable_versions(amount, output)
+    fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
+        self.app_to_install().installable_versions(amount, log)
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {

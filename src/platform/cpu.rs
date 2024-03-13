@@ -1,10 +1,10 @@
-use crate::Output;
+use crate::logger::{Event, Log};
 use crate::{Result, UserError};
 use std::env;
 use std::fmt::Display;
 
-pub fn determine(output: &dyn Output) -> Result<Cpu> {
-    output.log(CATEGORY, &format!("CPU id: {}", env::consts::ARCH));
+pub fn determine(log: Log) -> Result<Cpu> {
+    log(Event::IdentifiedCpu { architecture: env::consts::ARCH });
     match env::consts::ARCH {
         "x86_64" => Ok(Cpu::Intel64),
         "aarch64" => Ok(Cpu::Arm64),
@@ -27,5 +27,3 @@ impl Display for Cpu {
         f.write_str(text)
     }
 }
-
-const CATEGORY: &str = "detect/cpu";

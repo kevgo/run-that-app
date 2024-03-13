@@ -8,7 +8,7 @@ mod error;
 mod filesystem;
 mod hosting;
 mod install;
-mod output;
+mod logger;
 mod platform;
 mod regexp;
 mod subshell;
@@ -17,7 +17,7 @@ mod yard;
 use cli::Command;
 use cmd::run;
 use error::{Result, UserError};
-use output::Output;
+use logger::Log;
 use std::process::ExitCode;
 
 fn main() -> ExitCode {
@@ -33,9 +33,9 @@ fn main() -> ExitCode {
 fn inner() -> Result<ExitCode> {
     let cli_args = cli::parse(std::env::args())?;
     match cli_args.command {
-        Command::Available { app, version, log } => cmd::available(&app, version, log),
+        Command::Available { app, version, verbose } => cmd::available(&app, version, verbose),
         Command::RunApp {
-            log,
+            verbose,
             app,
             version,
             app_args,
@@ -47,13 +47,13 @@ fn inner() -> Result<ExitCode> {
             app_args,
             error_on_output,
             optional,
-            log,
+            verbose,
         }),
         Command::DisplayHelp => Ok(cmd::help()),
         Command::Setup => cmd::setup(),
-        Command::Which { app, version, log } => cmd::which(&app, version, log),
-        Command::Update { log } => cmd::update(log),
+        Command::Which { app, version, verbose } => cmd::which(&app, version, verbose),
+        Command::Update { verbose } => cmd::update(verbose),
         Command::Version => Ok(cmd::version()),
-        Command::Versions { app, amount, log } => cmd::versions(&app, amount, log),
+        Command::Versions { app, amount, verbose } => cmd::versions(&app, amount, verbose),
     }
 }

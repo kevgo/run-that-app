@@ -1,28 +1,35 @@
 use super::strip_leading_v;
 use crate::config::Version;
-use crate::Output;
+use crate::logger::Event;
+use crate::Log;
 use crate::Result;
 use crate::UserError;
 use big_s::S;
-use colored::Colorize;
 
 /// provides the latest official version of the given application on GitHub Releases
-pub fn latest(org: &str, repo: &str, output: &dyn Output) -> Result<Version> {
+pub fn latest(org: &str, repo: &str, log: Log) -> Result<Version> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases/latest");
-    output.log("HTTP", &format!("downloading {url}"));
+    log(Event::GitHubApiRequestBegin { url: &url });
     let get = minreq::get(&url)
         .with_header("Accept", "application/vnd.github+json")
         .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
         .with_header("X-GitHub-Api-Version", "2022-11-28");
     let Ok(response) = get.send() else {
-        output.println(&format!("{}", "not online".red()));
+        log(Event::NotOnline);
         return Err(UserError::NotOnline);
     };
-    let Ok(response_text) = response.as_str() else {
-        return Err(UserError::GitHubReleasesApiProblem {
-            problem: S("API response contains no body"),
-            payload: S(""),
-        });
+    let response_text = match response.as_str() {
+        Ok(text) => {
+            log(Event::GitHubApiRequestSuccess);
+            text
+        }
+        Err(err) => {
+            log(Event::GitHubApiRequestFail { err: err.to_string() });
+            return Err(UserError::GitHubTagsApiProblem {
+                problem: S("Cannot get response payload"),
+                payload: S(""),
+            });
+        }
     };
     parse_latest_response(response_text)
 }
@@ -36,16 +43,16 @@ fn parse_latest_response(text: &str) -> Result<Version> {
 }
 
 /// provides the given number of latest versions of the given application on GitHub Releases
-pub fn versions(org: &str, repo: &str, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
+pub fn versions(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<Version>> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/releases?per_page={amount}");
-    output.log("HTTP", &format!("downloading {url}"));
+    log(Event::GitHubApiRequestBegin { url: &url });
     let get = minreq::get(&url)
         .with_param("per_page", amount.to_string())
         .with_header("Accept", "application/vnd.github+json")
         .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
         .with_header("X-GitHub-Api-Version", "2022-11-28");
     let Ok(response) = get.send() else {
-        output.println(&format!("{}", "not online".red()));
+        log(Event::NotOnline);
         return Err(UserError::NotOnline);
     };
     parse_versions_response(response.as_str().unwrap())

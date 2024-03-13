@@ -13,7 +13,7 @@ pub use download_executable::DownloadExecutable;
 pub use other_app_folder::ViaAnotherApp;
 
 use crate::config::{AppName, Version};
-use crate::output::Output;
+use crate::logger::Log;
 use crate::platform::Platform;
 use crate::subshell::Executable;
 use crate::yard::Yard;
@@ -58,14 +58,14 @@ impl<'a> Method<'a> {
 }
 
 /// installs an app using the first of its installation methods that works
-pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platform, output: &dyn Output) -> Result<bool> {
+pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platform, log: Log) -> Result<bool> {
     for install_method in install_methods {
         let result = match install_method {
-            Method::DownloadArchive(app) => download_archive::run(app, version, platform, output),
-            Method::DownloadExecutable(app) => download_executable::install(app, version, platform, output),
-            Method::CompileGoSource(app) => compile_go::run(app, version, output),
-            Method::CompileRustSource(app) => compile_rust::run(app, version),
-            Method::InstallAnotherApp(app) => other_app_folder::install_other_app(app, version, platform, output),
+            Method::DownloadArchive(app) => download_archive::run(app, version, platform, log),
+            Method::DownloadExecutable(app) => download_executable::install(app, version, platform, log),
+            Method::CompileGoSource(app) => compile_go::run(app, version, log),
+            Method::CompileRustSource(app) => compile_rust::run(app, version, log),
+            Method::InstallAnotherApp(app) => other_app_folder::install_other_app(app, version, platform, log),
         }?;
         if result {
             return Ok(true);

@@ -4,7 +4,7 @@ use crate::hosting::github_releases;
 use crate::install::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::subshell::Executable;
-use crate::{Output, Result};
+use crate::{Log, Result};
 use const_format::formatcp;
 
 pub struct Depth {}
@@ -25,12 +25,12 @@ impl App for Depth {
         vec![Method::DownloadExecutable(self), Method::CompileGoSource(self)]
     }
 
-    fn latest_installable_version(&self, output: &dyn Output) -> Result<Version> {
-        github_releases::latest(ORG, REPO, output)
+    fn latest_installable_version(&self, log: Log) -> Result<Version> {
+        github_releases::latest(ORG, REPO, log)
     }
 
-    fn installable_versions(&self, amount: usize, output: &dyn Output) -> Result<Vec<Version>> {
-        github_releases::versions(ORG, REPO, amount, output)
+    fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
+        github_releases::versions(ORG, REPO, amount, log)
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
