@@ -73,12 +73,12 @@ impl<'a> Display for Method<'a> {
             Method::CompileGoSource(app) => {
                 f.write_str("compile ")?;
                 f.write_str(app.name().as_str())?;
-                f.write_str(" from its Go source code")
+                f.write_str(" from source")
             }
             Method::CompileRustSource(app) => {
                 f.write_str("compile ")?;
                 f.write_str(app.name().as_str())?;
-                f.write_str(" from its Rust source code")
+                f.write_str(" from source")
             }
             Method::InstallAnotherApp(app) => {
                 f.write_str("install ")?;
