@@ -1,7 +1,7 @@
 use crate::apps;
 use crate::config::{AppName, RequestedVersions, Version};
-use crate::output::Output;
 use crate::platform;
+use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
 

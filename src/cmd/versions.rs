@@ -1,6 +1,6 @@
 use crate::apps;
 use crate::config::AppName;
-use crate::output::Output;
+use crate::Output;
 use crate::Result;
 use std::process::ExitCode;
 
