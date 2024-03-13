@@ -102,9 +102,9 @@ fn display_verbose(event: Event) {
 
 fn display_normal(event: Event) {
     match event {
-        Event::ArchiveExtractBegin { archive_type } => todo!(),
-        Event::ArchiveExtractSuccess => todo!(),
-        Event::ArchiveExtractFailed { err } => todo!(),
+        Event::ArchiveExtractBegin { archive_type: _ } => fprint!("extracting ... "),
+        Event::ArchiveExtractSuccess => eprintln!("{}", "ok".green().bold()),
+        Event::ArchiveExtractFailed { err } => eprintln!("{}", err.red().bold()),
 
         Event::CpuIdentified { architecture } => {}
         Event::OsIdentified { name } => {}
