@@ -35,7 +35,12 @@ impl App for Go {
 
     fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
         let tags = github_tags::all(ORG, REPO, 100, log)?;
-        let mut go_tags: Vec<String> = tags.into_iter().filter(|tag| tag.starts_with("go")).filter(|tag| !tag.contains("rc")).collect();
+        let mut go_tags: Vec<String> = tags
+            .into_iter()
+            .filter(|tag| tag.starts_with("go"))
+            .filter(|tag| !tag.contains("rc"))
+            .map(|tag| tag.trim_start_matches("go").to_string())
+            .collect();
         go_tags.sort_unstable_by(|a, b| human_sort::compare(b, a));
         if go_tags.len() > amount {
             go_tags.resize(amount, S(""));
@@ -72,6 +77,7 @@ impl App for Go {
 
 impl install::DownloadArchive for Go {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
+        let version_str = version.as_str().trim_start_matches("go");
         let os = match platform.os {
             Os::Linux => "linux",
             Os::MacOS => "darwin",
@@ -85,7 +91,7 @@ impl install::DownloadArchive for Go {
             Os::Linux | Os::MacOS => "tar.gz",
             Os::Windows => "zip",
         };
-        format!("https://go.dev/dl/go{version}.{os}-{cpu}.{ext}")
+        format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}")
     }
 
     fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
