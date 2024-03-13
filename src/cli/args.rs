@@ -172,7 +172,7 @@ mod tests {
 
                 #[test]
                 fn with_all_options() {
-                    let have = parse_args(vec!["rta", "--available", "--log=detect", "shellcheck"]);
+                    let have = parse_args(vec!["rta", "--available", "--verbose", "shellcheck"]);
                     let want = Ok(Args {
                         command: Command::Available {
                             app: AppName::from("shellcheck"),
@@ -240,15 +240,15 @@ mod tests {
                 }
             }
 
-            mod log {
+            mod verbose {
                 use super::super::parse_args;
                 use crate::cli::{Args, Command};
                 use crate::config::{AppName, Version};
                 use crate::error::UserError;
 
                 #[test]
-                fn everything() {
-                    let have = parse_args(vec!["rta", "--log", "app@2"]);
+                fn long() {
+                    let have = parse_args(vec!["rta", "--verbose", "app@2"]);
                     let want = Ok(Args {
                         command: Command::RunApp {
                             app: AppName::from("app"),
@@ -263,8 +263,8 @@ mod tests {
                 }
 
                 #[test]
-                fn limited() {
-                    let have = parse_args(vec!["rta", "--log=scope", "app@2"]);
+                fn short() {
+                    let have = parse_args(vec!["rta", "-v", "app@2"]);
                     let want = Ok(Args {
                         command: Command::RunApp {
                             app: AppName::from("app"),
@@ -280,7 +280,7 @@ mod tests {
 
                 #[test]
                 fn missing_app() {
-                    let have = parse_args(vec!["rta", "--log"]);
+                    let have = parse_args(vec!["rta", "--verbose"]);
                     let want = Err(UserError::MissingApplication);
                     pretty::assert_eq!(have, want);
                 }
@@ -390,7 +390,7 @@ mod tests {
 
                 #[test]
                 fn with_all_options() {
-                    let have = parse_args(vec!["rta", "--which", "--log=detect", "shellcheck"]);
+                    let have = parse_args(vec!["rta", "--which", "--verbose", "shellcheck"]);
                     let want = Ok(Args {
                         command: Command::Which {
                             app: AppName::from("shellcheck"),
@@ -458,7 +458,7 @@ mod tests {
 
             #[test]
             fn rta_and_app_arguments() {
-                let have = parse_args(vec!["rta", "--log=l1", "app@2", "--arg1", "arg2"]);
+                let have = parse_args(vec!["rta", "--verbose", "app@2", "--arg1", "arg2"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
                         app: AppName::from("app"),
@@ -474,12 +474,12 @@ mod tests {
 
             #[test]
             fn same_arguments_as_run_that_app() {
-                let have = parse_args(vec!["rta", "app@2", "--log=app", "--version"]);
+                let have = parse_args(vec!["rta", "app@2", "--verbose", "--version"]);
                 let want = Ok(Args {
                     command: Command::RunApp {
                         app: AppName::from("app"),
                         version: Some(Version::from("2")),
-                        app_args: vec![S("--log=app"), S("--version")],
+                        app_args: vec![S("--verbose"), S("--version")],
                         error_on_output: false,
                         optional: false,
                         verbose: false,
