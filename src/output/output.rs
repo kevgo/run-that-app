@@ -3,6 +3,7 @@ use std::io::{self, Write};
 
 use super::Event;
 
+/// implements flexible output to the CLI
 #[derive(Copy, Clone)]
 pub struct Output {
     pub verbose: bool,
