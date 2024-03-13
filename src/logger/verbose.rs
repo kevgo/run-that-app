@@ -3,7 +3,7 @@ use colored::Colorize;
 use std::io::{self, Write};
 
 /// a logger that outputs verbose information, useful for debugging
-pub fn display(event: Event) {
+pub fn log(event: Event) {
     #[allow(clippy::match_same_arms)]
     match event {
         Event::ArchiveExtractBegin { archive_type } => fprint!("extracting {} ... ", archive_type.cyan()),
