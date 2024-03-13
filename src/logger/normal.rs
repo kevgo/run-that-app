@@ -6,7 +6,7 @@ use std::io::{self, Write};
 pub fn log(event: Event) {
     #[allow(clippy::match_same_arms)]
     match event {
-        Event::ArchiveExtractBegin { archive_type: _ } => fprint!("extracting ... "),
+        Event::ArchiveExtractBegin { archive_type: _ } => eprintf!("extracting ... "),
         Event::ArchiveExtractSuccess => eprintln!("{}", "ok".green()),
         Event::ArchiveExtractFailed { err } => eprintln!("{}", err.red()),
 
@@ -18,12 +18,12 @@ pub fn log(event: Event) {
         Event::CompileRustSuccess => {}
         Event::CompileRustFailed => eprintln!("{}", "Rust compilation failed".red()),
 
-        Event::DownloadBegin { app, url: _ } => fprint!("downloading {} ... ", app.as_str().cyan()),
+        Event::DownloadBegin { app, url: _ } => eprintf!("downloading {} ... ", app.as_str().cyan()),
         Event::DownloadSuccess => {}
         Event::DownloadFail { code } => eprintln!("{}", code.to_string().red()),
         Event::DownloadNotFound => eprintln!("{}", "not found".red()),
 
-        Event::ExecutableInstallSaveBegin => fprint!("saving ... "),
+        Event::ExecutableInstallSaveBegin => eprintf!("saving ... "),
         Event::ExecutableInstallSaveSuccess => eprintln!("{}", "ok".green()),
         Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.red()),
 

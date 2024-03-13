@@ -6,7 +6,7 @@ use std::io::{self, Write};
 pub fn log(event: Event) {
     #[allow(clippy::match_same_arms)]
     match event {
-        Event::ArchiveExtractBegin { archive_type } => fprint!("extracting {} ... ", archive_type.cyan()),
+        Event::ArchiveExtractBegin { archive_type } => eprintf!("extracting {} ... ", archive_type.cyan()),
         Event::ArchiveExtractSuccess => eprintln!("{}", "ok".green()),
         Event::ArchiveExtractFailed { err } => eprintln!("{}", err.red()),
 
@@ -18,12 +18,12 @@ pub fn log(event: Event) {
         Event::CompileRustSuccess => eprintln!("{}", "Rust compilation successful".green()),
         Event::CompileRustFailed => eprintln!("{}", "Rust compilation failed".red()),
 
-        Event::DownloadBegin { app: _, url } => fprint!("downloading {} ... ", url.cyan()),
+        Event::DownloadBegin { app: _, url } => eprintf!("downloading {} ... ", url.cyan()),
         Event::DownloadSuccess => eprintln!("{}", "ok".green()),
         Event::DownloadFail { code } => eprintln!("{}", code.to_string().red()),
         Event::DownloadNotFound => eprintln!("{}", "not found".red()),
 
-        Event::ExecutableInstallSaveBegin => fprint!("saving ... "),
+        Event::ExecutableInstallSaveBegin => eprintf!("saving ... "),
         Event::ExecutableInstallSaveSuccess => eprintln!("{}", "ok".green()),
         Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.red()),
 
@@ -31,7 +31,7 @@ pub fn log(event: Event) {
         Event::GitHubApiRequestSuccess => eprintln!("{}", "ok".green()),
         Event::GitHubApiRequestFail { err } => eprintln!("{}", err.red()),
 
-        Event::GlobalInstallSearch { binary } => fprint!("Looking for {} in the PATH ... ", binary.cyan()),
+        Event::GlobalInstallSearch { binary } => eprintf!("Looking for {} in the PATH ... ", binary.cyan()),
         Event::GlobalInstallFound { path } => eprintln!("{}", path.to_string_lossy().green()),
         Event::GlobalInstallMatchingVersion { range: version_range, version } => {
             if let Some(version) = version {

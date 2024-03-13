@@ -2,7 +2,7 @@
 
 mod event;
 #[macro_use]
-mod fprint;
+mod eprintf;
 mod log;
 mod normal;
 mod verbose;
