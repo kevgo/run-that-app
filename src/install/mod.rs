@@ -58,20 +58,23 @@ impl<'a> Method<'a> {
 }
 
 /// installs an app using the first of its installation methods that works
-pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platform, log: Log) -> Result<bool> {
+pub fn install_any(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<bool> {
     for install_method in install_methods {
-        let result = match install_method {
-            Method::DownloadArchive(app) => download_archive::run(app, version, platform, log),
-            Method::DownloadExecutable(app) => download_executable::install(app, version, platform, log),
-            Method::CompileGoSource(app) => compile_go::run(app, version, log),
-            Method::CompileRustSource(app) => compile_rust::run(app, version, log),
-            Method::InstallAnotherApp(app) => other_app_folder::install_other_app(app, version, platform, log),
-        }?;
-        if result {
+        if install(install_method, version, platform, yard, log)? {
             return Ok(true);
         }
     }
     Ok(false)
+}
+
+pub fn install(install_method: Method, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<bool> {
+    match install_method {
+        Method::DownloadArchive(app) => download_archive::run(app, version, platform, yard, log),
+        Method::DownloadExecutable(app) => download_executable::install(app, version, platform, yard, log),
+        Method::CompileGoSource(app) => compile_go::run(app, version, yard, log),
+        Method::CompileRustSource(app) => compile_rust::run(app, version, yard, log),
+        Method::InstallAnotherApp(app) => other_app_folder::install_other_app(app, version, platform, log),
+    }
 }
 
 /// assuming one of the given installation methods of an app worked, loads that app's executable
