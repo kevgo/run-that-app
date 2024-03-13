@@ -58,22 +58,22 @@ impl<'a> Method<'a> {
 }
 
 /// installs an app using the first of its installation methods that works
-pub fn install_any(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<bool> {
+pub fn any(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<bool> {
     for install_method in install_methods {
-        if install(install_method, version, platform, yard, log)? {
+        if install(&install_method, version, platform, yard, log)? {
             return Ok(true);
         }
     }
     Ok(false)
 }
 
-pub fn install(install_method: Method, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<bool> {
+pub fn install(install_method: &Method, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<bool> {
     match install_method {
-        Method::DownloadArchive(app) => download_archive::run(app, version, platform, yard, log),
-        Method::DownloadExecutable(app) => download_executable::install(app, version, platform, yard, log),
-        Method::CompileGoSource(app) => compile_go::run(app, version, yard, log),
-        Method::CompileRustSource(app) => compile_rust::run(app, version, yard, log),
-        Method::InstallAnotherApp(app) => other_app_folder::install_other_app(app, version, platform, log),
+        Method::DownloadArchive(app) => download_archive::run(*app, version, platform, yard, log),
+        Method::DownloadExecutable(app) => download_executable::install(*app, version, platform, yard, log),
+        Method::CompileGoSource(app) => compile_go::run(*app, version, yard, log),
+        Method::CompileRustSource(app) => compile_rust::run(*app, version, yard, log),
+        Method::InstallAnotherApp(app) => other_app_folder::install_other_app(*app, version, platform, log),
     }
 }
 

@@ -11,7 +11,7 @@ pub fn test(verbose: bool) -> Result<ExitCode> {
     for app in apps {
         let latest_version = app.latest_installable_version(log)?;
         for install_method in app.install_methods() {
-            install::install(install_method, &latest_version, platform, &yard, log)?;
+            install::install(&install_method, &latest_version, platform, &yard, log)?;
         }
     }
     Ok(ExitCode::SUCCESS)
