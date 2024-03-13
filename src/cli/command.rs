@@ -6,7 +6,7 @@ pub enum Command {
     Available {
         app: AppName,
         version: Option<Version>,
-        log: Option<String>,
+        verbose: bool,
     },
     RunApp {
         app: AppName,
@@ -14,22 +14,22 @@ pub enum Command {
         app_args: Vec<String>,
         error_on_output: bool,
         optional: bool,
-        log: Option<String>,
+        verbose: bool,
     },
     DisplayHelp,
     Setup,
     Which {
         app: AppName,
         version: Option<Version>,
-        log: Option<String>,
+        verbose: bool,
     },
     Update {
-        log: Option<String>,
+        verbose: bool,
     },
     Version,
     Versions {
         app: AppName,
         amount: usize,
-        log: Option<String>,
+        verbose: bool,
     },
 }

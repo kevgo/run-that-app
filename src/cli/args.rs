@@ -12,7 +12,7 @@ pub struct Args {
 pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let _skipped_binary_name = cli_args.next();
     let mut app_version: Option<AppVersion> = None;
-    let mut log: Option<String> = None;
+    let mut verbose = false;
     let mut app_args: Vec<String> = vec![];
     let mut error_on_output = false;
     let mut which = false;
@@ -59,8 +59,8 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             }
             if arg.starts_with('-') {
                 let (key, value) = arg.split_once('=').unwrap_or((&arg, ""));
-                if key == "--log" || key == "-l" {
-                    log = Some(value.to_string());
+                if key == "--verbose" || key == "-v" {
+                    verbose = true;
                     continue;
                 }
                 if key == "--versions" {
@@ -81,20 +81,22 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     } else if setup {
         return Ok(Args { command: Command::Setup });
     } else if update {
-        return Ok(Args { command: Command::Update { log } });
+        return Ok(Args {
+            command: Command::Update { verbose },
+        });
     }
     if let Some(AppVersion { app, version }) = app_version {
         if indicate_available {
             Ok(Args {
-                command: Command::Available { app, version, log },
+                command: Command::Available { app, version, verbose },
             })
         } else if which {
             Ok(Args {
-                command: Command::Which { app, version, log },
+                command: Command::Which { app, version, verbose },
             })
         } else if let Some(amount) = versions {
             Ok(Args {
-                command: Command::Versions { app, amount, log },
+                command: Command::Versions { app, amount, verbose },
             })
         } else {
             Ok(Args {
@@ -104,11 +106,11 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
                     app_args,
                     error_on_output,
                     optional,
-                    log,
+                    verbose,
                 },
             })
         }
-    } else if error_on_output || optional || log.is_some() || which || indicate_available {
+    } else if error_on_output || optional || verbose || which || indicate_available {
         Err(UserError::MissingApplication)
     } else {
         Ok(Args { command: Command::DisplayHelp })
@@ -154,7 +156,6 @@ mod tests {
                 use crate::cli::{Args, Command};
                 use crate::config::AppName;
                 use crate::error::UserError;
-                use big_s::S;
 
                 #[test]
                 fn with_app() {
@@ -163,7 +164,7 @@ mod tests {
                         command: Command::Available {
                             app: AppName::from("shellcheck"),
                             version: None,
-                            log: None,
+                            verbose: false,
                         },
                     });
                     pretty::assert_eq!(have, want);
@@ -176,7 +177,7 @@ mod tests {
                         command: Command::Available {
                             app: AppName::from("shellcheck"),
                             version: None,
-                            log: Some(S("detect")),
+                            verbose: true,
                         },
                     });
                     pretty::assert_eq!(have, want);
@@ -206,7 +207,7 @@ mod tests {
                             app_args: vec![],
                             error_on_output: true,
                             optional: false,
-                            log: None,
+                            verbose: false,
                         },
                     });
                     pretty::assert_eq!(have, want);
@@ -244,7 +245,6 @@ mod tests {
                 use crate::cli::{Args, Command};
                 use crate::config::{AppName, Version};
                 use crate::error::UserError;
-                use big_s::S;
 
                 #[test]
                 fn everything() {
@@ -256,7 +256,7 @@ mod tests {
                             app_args: vec![],
                             error_on_output: false,
                             optional: false,
-                            log: Some(S("")),
+                            verbose: true,
                         },
                     });
                     pretty::assert_eq!(have, want);
@@ -272,7 +272,7 @@ mod tests {
                             app_args: vec![],
                             error_on_output: false,
                             optional: false,
-                            log: Some(S("scope")),
+                            verbose: true,
                         },
                     });
                     pretty::assert_eq!(have, want);
@@ -303,7 +303,7 @@ mod tests {
                         app_args: vec![S("arg1")],
                         error_on_output: false,
                         optional: true,
-                        log: None,
+                        verbose: false,
                     },
                 });
                 pretty::assert_eq!(have, want);
@@ -342,7 +342,7 @@ mod tests {
                         command: Command::Versions {
                             app: AppName::from("actionlint"),
                             amount: 10,
-                            log: None,
+                            verbose: false,
                         },
                     });
                     pretty::assert_eq!(have, want);
@@ -355,7 +355,7 @@ mod tests {
                         command: Command::Versions {
                             app: AppName::from("actionlint"),
                             amount: 20,
-                            log: None,
+                            verbose: false,
                         },
                     });
                     pretty::assert_eq!(have, want);
@@ -374,7 +374,6 @@ mod tests {
                 use crate::cli::{Args, Command};
                 use crate::config::AppName;
                 use crate::UserError;
-                use big_s::S;
 
                 #[test]
                 fn with_app() {
@@ -383,7 +382,7 @@ mod tests {
                         command: Command::Which {
                             app: AppName::from("shellcheck"),
                             version: None,
-                            log: None,
+                            verbose: false,
                         },
                     });
                     pretty::assert_eq!(have, want);
@@ -396,7 +395,7 @@ mod tests {
                         command: Command::Which {
                             app: AppName::from("shellcheck"),
                             version: None,
-                            log: Some(S("detect")),
+                            verbose: true,
                         },
                     });
                     pretty::assert_eq!(have, want);
@@ -428,7 +427,7 @@ mod tests {
                         app_args: vec![],
                         error_on_output: false,
                         optional: false,
-                        log: None,
+                        verbose: false,
                     },
                 });
                 pretty::assert_eq!(have, want);
@@ -444,7 +443,7 @@ mod tests {
                         app_args: vec![S("--arg1"), S("arg2")],
                         error_on_output: false,
                         optional: false,
-                        log: None,
+                        verbose: false,
                     },
                 });
                 pretty::assert_eq!(have, want);
@@ -467,7 +466,7 @@ mod tests {
                         app_args: vec![S("--arg1"), S("arg2")],
                         error_on_output: false,
                         optional: false,
-                        log: Some(S("l1")),
+                        verbose: true,
                     },
                 });
                 pretty::assert_eq!(have, want);
@@ -483,7 +482,7 @@ mod tests {
                         app_args: vec![S("--log=app"), S("--version")],
                         error_on_output: false,
                         optional: false,
-                        log: None,
+                        verbose: false,
                     },
                 });
                 pretty::assert_eq!(have, want);
