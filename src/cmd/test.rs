@@ -12,6 +12,7 @@ pub fn test(verbose: bool) -> Result<ExitCode> {
     let temp_folder = tempfile::tempdir().expect("cannot create temp dir");
     let yard = yard::load_or_create(temp_folder.path())?;
     for app in apps {
+        println!("\n\nTESTING {}\n", app.name().as_str().cyan());
         let latest_version = app.latest_installable_version(log)?;
         for install_method in app.install_methods() {
             println!("\n{}", install_method.to_string().bold());
@@ -34,7 +35,7 @@ pub fn test(verbose: bool) -> Result<ExitCode> {
                     );
                     return Ok(ExitCode::FAILURE);
                 }
-                AnalyzeResult::IdentifiedButUnknownVersion => println!("executable identified"),
+                AnalyzeResult::IdentifiedButUnknownVersion => println!("{}", "executable identified".green()),
                 AnalyzeResult::IdentifiedWithVersion(executable_version) if executable_version == latest_version => println!("{}", "executable has the correct version".green()),
                 AnalyzeResult::IdentifiedWithVersion(executable_version) => {
                     println!("executable has version {executable_version} but we installed version {latest_version}");
