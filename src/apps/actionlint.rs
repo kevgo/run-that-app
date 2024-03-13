@@ -72,7 +72,7 @@ impl install::DownloadArchive for ActionLint {
 
 impl install::CompileGoSource for ActionLint {
     fn import_path(&self, version: &Version) -> String {
-        format!("github.com/{ORG}/{REPO}/cmd/actionlint@{version}")
+        format!("github.com/{ORG}/{REPO}/cmd/actionlint@v{version}")
     }
 }
 
