@@ -18,7 +18,7 @@ impl Archive for TarGz {
         let gz_decoder = GzDecoder::new(io::Cursor::new(&self.data));
         let mut archive = tar::Archive::new(gz_decoder);
         match archive.unpack(target_dir) {
-            Ok(_) => {
+            Ok(()) => {
                 output.log(Event::ArchiveExtractSuccess);
                 Ok(())
             }

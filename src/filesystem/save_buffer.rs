@@ -8,7 +8,7 @@ use std::path::Path;
 pub fn save_executable(data: Vec<u8>, path_on_disk: &Path, output: Output) -> Result<Executable> {
     output.log(Event::ExecutableInstallSave);
     match fs::write(path_on_disk, data) {
-        Ok(_) => output.log(Event::ExecutableInstallSaveSuccess),
+        Ok(()) => output.log(Event::ExecutableInstallSaveSuccess),
         Err(err) => output.log(Event::ExecutableInstallSaveFail { err: err.to_string() }),
     }
     super::make_file_executable(path_on_disk)?;

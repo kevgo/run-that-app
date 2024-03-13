@@ -15,7 +15,7 @@ impl Archive for Zip {
         output.log(Event::ArchiveExtractBegin { archive_type: "zip" });
         let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&self.data)).expect("cannot read zip data");
         match zip_archive.extract(target_dir) {
-            Ok(_) => {
+            Ok(()) => {
                 output.log(Event::ArchiveExtractSuccess);
                 Ok(())
             }

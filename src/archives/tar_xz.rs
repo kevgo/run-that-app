@@ -18,7 +18,7 @@ impl Archive for TarXz {
         let decompressor = XzDecoder::new(Cursor::new(&self.data));
         let mut archive = tar::Archive::new(decompressor);
         match archive.unpack(target_dir) {
-            Ok(_) => {
+            Ok(()) => {
                 output.log(Event::ArchiveExtractSuccess);
                 Ok(())
             }

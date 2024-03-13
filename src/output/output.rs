@@ -9,7 +9,7 @@ pub struct Output {
 }
 
 impl Output {
-    pub fn log(&self, event: Event) {
+    pub fn log(self, event: Event) {
         if self.verbose {
             display_verbose(event);
         } else {
