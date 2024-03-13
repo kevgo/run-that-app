@@ -35,7 +35,7 @@ fn display_verbose(event: Event) {
         Event::CpuIdentified { architecture } => eprintln!("CPU id: {}", architecture.cyan()),
         Event::OsIdentified { name } => eprintln!("OS id: {}", name.cyan()),
 
-        Event::DownloadBegin { app: _, url } => fprint!("download {} ... ", url.cyan()),
+        Event::DownloadBegin { app: _, url } => fprint!("downloading {} ... ", url.cyan()),
         Event::DownloadSuccess => eprintln!("{}", "ok".green()),
         Event::DownloadFail { code } => eprintln!("{}", code.to_string().red()),
         Event::DownloadNotFound => eprintln!("{}", "not found".red()),
