@@ -35,12 +35,14 @@ impl App for ActionLint {
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !identify(&executable.run_output("-h")) {
-            return AnalyzeResult::NotIdentified;
+        let output = executable.run_output("-h");
+        if !identify(&output) {
+            return AnalyzeResult::NotIdentified { output };
         }
-        match extract_version(&executable.run_output("--version")) {
+        let output = executable.run_output("--version");
+        match extract_version(&output) {
             Some(version) => AnalyzeResult::IdentifiedWithVersion(version.into()),
-            None => AnalyzeResult::NotIdentified,
+            None => AnalyzeResult::NotIdentified { output },
         }
     }
 }

@@ -25,10 +25,10 @@ pub fn test(verbose: bool) -> Result<ExitCode> {
                 println!("executable {} not found", executable_path.to_string_lossy());
                 return Ok(ExitCode::FAILURE);
             }
-            let executable = Executable(executable_path);
+            let executable = Executable(executable_path.clone());
             match app.analyze_executable(&executable) {
-                AnalyzeResult::NotIdentified => {
-                    println!("executable not identified");
+                AnalyzeResult::NotIdentified { output } => {
+                    println!("executable {} not identified based on this output:\n{output}", executable_path.to_string_lossy());
                     return Ok(ExitCode::FAILURE);
                 }
                 AnalyzeResult::IdentifiedButUnknownVersion => println!("executable identified"),

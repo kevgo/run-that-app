@@ -30,8 +30,9 @@ impl App for Deadcode {
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !executable.run_output("-h").contains("The deadcode command reports unreachable functions in Go programs") {
-            return AnalyzeResult::NotIdentified;
+        let output = executable.run_output("-h");
+        if !output.contains("The deadcode command reports unreachable functions in Go programs") {
+            return AnalyzeResult::NotIdentified { output };
         }
         // as of 0.16.1 deadcode does not display the version of the installed executable
         AnalyzeResult::IdentifiedButUnknownVersion

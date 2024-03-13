@@ -34,8 +34,9 @@ impl App for Depth {
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !identify(&executable.run_output("-h")) {
-            return AnalyzeResult::NotIdentified;
+        let output = executable.run_output("-h");
+        if !identify(&output) {
+            return AnalyzeResult::NotIdentified { output };
         }
         // as of 1.2.1 depth doesn't display the version of the installed executable
         AnalyzeResult::IdentifiedButUnknownVersion

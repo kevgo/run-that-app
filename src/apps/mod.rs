@@ -72,7 +72,7 @@ pub trait App {
 
 pub enum AnalyzeResult {
     /// the given executable does not belong to this app
-    NotIdentified,
+    NotIdentified { output: String },
 
     /// the given executable belongs to this app but doesn't allow determining the version
     IdentifiedButUnknownVersion,

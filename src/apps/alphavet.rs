@@ -33,8 +33,9 @@ impl App for Alphavet {
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !identify(&executable.run_output("-h")) {
-            return AnalyzeResult::NotIdentified;
+        let output = executable.run_output("-h");
+        if !identify(&output) {
+            return AnalyzeResult::NotIdentified { output };
         }
         // as of 0.1.0 the -V switch of alphavet is broken
         AnalyzeResult::IdentifiedButUnknownVersion

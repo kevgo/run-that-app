@@ -47,10 +47,11 @@ impl App for Go {
         if let Some(version) = extract_version(&executable.run_output("version")) {
             return AnalyzeResult::IdentifiedWithVersion(version.into());
         }
-        if identify(&executable.run_output("-h")) {
+        let output = executable.run_output("-h");
+        if identify(&output) {
             AnalyzeResult::IdentifiedButUnknownVersion
         } else {
-            AnalyzeResult::NotIdentified
+            AnalyzeResult::NotIdentified { output }
         }
     }
 

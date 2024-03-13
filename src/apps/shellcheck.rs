@@ -37,7 +37,7 @@ impl App for ShellCheck {
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
         let output = executable.run_output("--version");
         if !identify(&output) {
-            return AnalyzeResult::NotIdentified;
+            return AnalyzeResult::NotIdentified { output };
         }
         match extract_version(&output) {
             Some(version) => AnalyzeResult::IdentifiedWithVersion(version.into()),

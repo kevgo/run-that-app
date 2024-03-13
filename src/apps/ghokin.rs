@@ -33,8 +33,9 @@ impl App for Ghokin {
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !identify(&executable.run_output("-h")) {
-            return AnalyzeResult::NotIdentified;
+        let output = executable.run_output("-h");
+        if !identify(&output) {
+            return AnalyzeResult::NotIdentified { output };
         }
         // as of 3.4.0 ghokin's "version" command prints nothing
         AnalyzeResult::IdentifiedButUnknownVersion

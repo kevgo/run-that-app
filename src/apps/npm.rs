@@ -32,8 +32,9 @@ impl App for Npm {
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !identify(&executable.run_output_args(&["help", "npm"])) {
-            return AnalyzeResult::NotIdentified;
+        let output = executable.run_output_args(&["help", "npm"]);
+        if !identify(&output) {
+            return AnalyzeResult::NotIdentified { output };
         }
         match extract_version(&executable.run_output("--version")) {
             Some(version) => AnalyzeResult::IdentifiedWithVersion(version.into()),

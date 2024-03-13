@@ -31,8 +31,9 @@ impl App for Gofmt {
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !identify(&executable.run_output("-h")) {
-            return AnalyzeResult::NotIdentified;
+        let output = executable.run_output("-h");
+        if !identify(&output) {
+            return AnalyzeResult::NotIdentified { output };
         }
         // TODO: return the version of Go here
         AnalyzeResult::IdentifiedButUnknownVersion

@@ -29,8 +29,9 @@ impl App for Goda {
     }
 
     fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !identify(&executable.run_output("help")) {
-            return AnalyzeResult::NotIdentified;
+        let output = executable.run_output("help");
+        if !identify(&output) {
+            return AnalyzeResult::NotIdentified { output };
         }
         // as of 0.5.7 goda has no way to determine the version of the installed executable
         AnalyzeResult::IdentifiedButUnknownVersion
