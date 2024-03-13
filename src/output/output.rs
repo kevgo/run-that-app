@@ -1,6 +1,8 @@
 use colored::Colorize;
 use std::io::{self, Write};
 
+use crate::apps::AnalyzeResult;
+
 use super::Event;
 
 #[derive(Copy, Clone)]
@@ -54,6 +56,9 @@ fn display_verbose(event: Event) {
         Event::UpdateBegin { app } => todo!(),
         Event::UpdateNewVersion { app, old_version, new_versin } => todo!(),
         Event::UpdateAlreadyNewest { app } => todo!(),
+        Event::ArchiveExtractBegin { archive_type } => todo!(),
+        Event::ArchiveExtractSuccess => todo!(),
+        Event::ArchiveExtractFailed { err } => todo!(),
     }
 }
 
@@ -82,22 +87,12 @@ fn display_normal(event: Event) {
         Event::ExecutableInstallSaveSuccess => todo!(),
         Event::ExecutableInstallSaveFail => todo!(),
         Event::GitHubApiRequestSuccess => todo!(),
-        Event::GlobalInstallAnalyzed { result, executable, app_name } => {
-            println!(
-                "{} is an {} executable but I'm unable to determine its version.",
-                executable.as_str().cyan().bold(),
-                app_name.as_str().cyan().bold(),
-            );
-            println!(
-                "\n{} is version {} but {} requires {}",
-                executable.as_str().green().bold(),
-                version.as_str().cyan().bold(),
-                config::FILE_NAME.green().bold(),
-                want_version.to_string().cyan().bold(),
-            );
-        }
+        Event::GlobalInstallAnalyzed { result, executable, app_name } => todo!(),
         Event::UpdateBegin { app } => todo!(),
         Event::UpdateNewVersion { app, old_version, new_versin } => todo!(),
         Event::UpdateAlreadyNewest { app } => todo!(),
+        Event::ArchiveExtractBegin { archive_type } => todo!(),
+        Event::ArchiveExtractSuccess => todo!(),
+        Event::ArchiveExtractFailed { err } => todo!(),
     }
 }

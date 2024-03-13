@@ -1,6 +1,8 @@
 use std::borrow::Cow;
 use std::path::Path;
 
+use semver::VersionReq;
+
 use crate::apps::AnalyzeResult;
 use crate::config::{AppName, Version};
 use crate::subshell::Executable;
@@ -38,7 +40,18 @@ pub enum Event<'a> {
     GlobalInstallFound {
         path: &'a Path,
     },
+    GlobalInstallMatchingVersion {
+        version_restriction: &'a semver::VersionReq,
+        actual_version: Option<&'a Version>,
+    },
+    GlobalInstallMismatchingVersion {
+        version_restriction: &'a semver::VersionReq,
+        actual_version: Option<&'a Version>,
+    },
     GlobalInstallNotFound,
+    GlobalInstallNotIdentified {
+        executable: &'a Executable,
+    },
     GlobalInstallAnalyzed {
         executable: &'a Executable,
         app_name: &'a AppName,
