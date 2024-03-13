@@ -57,7 +57,7 @@ pub struct Args {
 pub fn load_or_install(app: &dyn App, version: &RequestedVersion, platform: Platform, output: Output) -> Result<Option<Executable>> {
     match version {
         RequestedVersion::Path(version) => load_from_path(app, version, platform, output),
-        RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, output),
+        RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, platform, output),
     }
 }
 
@@ -104,8 +104,7 @@ fn load_from_path(app: &dyn App, want_version: &semver::VersionReq, platform: Pl
     }
 }
 
-fn load_or_install_from_yard(app: &dyn App, version: &Version, output: Output) -> Result<Option<Executable>> {
-    let platform = platform::detect(output)?;
+fn load_or_install_from_yard(app: &dyn App, version: &Version, platform: Platform, output: Output) -> Result<Option<Executable>> {
     let yard = yard::load_or_create(&yard::production_location()?)?;
     // try to load the app
     if let Some(executable) = install::load(app.install_methods(), version, platform, &yard) {
