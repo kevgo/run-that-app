@@ -35,7 +35,7 @@ pub fn test(verbose: bool) -> Result<ExitCode> {
                     return Ok(ExitCode::FAILURE);
                 }
                 AnalyzeResult::IdentifiedButUnknownVersion => println!("executable identified"),
-                AnalyzeResult::IdentifiedWithVersion(executable_version) if executable_version == latest_version => println!("executable has the correct version"),
+                AnalyzeResult::IdentifiedWithVersion(executable_version) if executable_version == latest_version => println!("{}", "executable has the correct version".green()),
                 AnalyzeResult::IdentifiedWithVersion(executable_version) => {
                     println!("executable has version {executable_version} but we installed version {latest_version}");
                     return Ok(ExitCode::FAILURE);

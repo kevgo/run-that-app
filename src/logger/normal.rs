@@ -7,7 +7,6 @@ pub fn log(event: Event) {
     #[allow(clippy::match_same_arms)]
     match event {
         Event::AnalyzeExecutableQuery { cmd: _, args: _ } => {}
-        Event::AnalyzeExecutableOutput { output: _ } => {}
         Event::AnalyzeExecutableError { err: _ } => {}
 
         Event::ArchiveExtractBegin { archive_type: _ } => eprintf!("extracting ... "),

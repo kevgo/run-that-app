@@ -5,7 +5,6 @@ use std::path::Path;
 /// the different events that can result in CLI output
 pub enum Event<'a> {
     AnalyzeExecutableQuery { cmd: &'a str, args: &'a [&'a str] },
-    AnalyzeExecutableOutput { output: &'a str },
     AnalyzeExecutableError { err: String },
 
     ArchiveExtractBegin { archive_type: &'a str },
