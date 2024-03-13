@@ -17,6 +17,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut error_on_output = false;
     let mut which = false;
     let mut setup = false;
+    let mut test = false;
     let mut indicate_available = false;
     let mut update = false;
     let mut optional = false;
@@ -40,6 +41,10 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             }
             if &arg == "--setup" {
                 setup = true;
+                continue;
+            }
+            if &arg == "--test" {
+                test = true;
                 continue;
             }
             if &arg == "--update" {
@@ -76,10 +81,14 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             app_args.push(arg);
         }
     }
-    if multiple_true(&[which, indicate_available, setup, update, versions.is_some()]) {
+    if multiple_true(&[which, indicate_available, setup, test, update, versions.is_some()]) {
         return Err(UserError::MultipleCommandsGiven);
     } else if setup {
         return Ok(Args { command: Command::Setup });
+    } else if test {
+        return Ok(Args {
+            command: Command::Test { verbose },
+        });
     } else if update {
         return Ok(Args {
             command: Command::Update { verbose },

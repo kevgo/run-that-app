@@ -18,6 +18,9 @@ pub enum Command {
     },
     DisplayHelp,
     Setup,
+    Test {
+        verbose: bool,
+    },
     Which {
         app: AppName,
         version: Option<Version>,
