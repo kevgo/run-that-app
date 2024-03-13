@@ -102,35 +102,31 @@ fn display_verbose(event: Event) {
 
 fn display_normal(event: Event) {
     match event {
-        Event::CpuIdentified { architecture } => {}
-        Event::OsIdentified { name } => {}
-        Event::DownloadBegin { app, url } => fprint!("downloading {} ... ", app.as_str().cyan().bold()),
-        Event::DownloadSuccess => {}
-        Event::DownloadFail { code } => println!("{}", code.to_string().red().bold()),
-        Event::NotOnline => todo!(),
-        Event::DownloadNotFound => todo!(),
-        Event::CompileGoStart { go_path, args } => todo!(),
-        Event::CompileGoSuccess => todo!(),
-        Event::CompileRustStart { cargo_path, args } => todo!(),
-        Event::CompileRustSuccess => todo!(),
-        Event::GitHubApiRequestBegin { url } => todo!(),
-        Event::GitHubApiRequestFail { err } => todo!(),
-        Event::GlobalInstallSearch { binary } => todo!(),
-        Event::GlobalInstallFound { path } => todo!(),
-        Event::GlobalInstallNotFound => todo!(),
-        Event::ExecutableInstallSave => todo!(),
-        Event::ExecutableInstallSaveSuccess => todo!(),
-        Event::ExecutableInstallSaveFail { err } => todo!(),
-        Event::GitHubApiRequestSuccess => todo!(),
-        Event::UpdateBegin { app } => todo!(),
-        Event::UpdateNewVersion {
-            old_version,
-            new_version: new_versin,
-        } => todo!(),
-        Event::UpdateAlreadyNewest { app } => todo!(),
         Event::ArchiveExtractBegin { archive_type } => todo!(),
         Event::ArchiveExtractSuccess => todo!(),
         Event::ArchiveExtractFailed { err } => todo!(),
+
+        Event::CpuIdentified { architecture } => {}
+        Event::OsIdentified { name } => {}
+
+        Event::DownloadBegin { app, url } => fprint!("downloading {} ... ", app.as_str().cyan().bold()),
+        Event::DownloadSuccess => {}
+        Event::DownloadFail { code } => println!("{}", code.to_string().red().bold()),
+        Event::DownloadNotFound => todo!(),
+
+        Event::CompileGoStart { go_path, args } => todo!(),
+        Event::CompileGoSuccess => todo!(),
+
+        Event::CompileRustStart { cargo_path, args } => todo!(),
+        Event::CompileRustSuccess => todo!(),
+
+        Event::GitHubApiRequestBegin { url } => todo!(),
+        Event::GitHubApiRequestFail { err } => todo!(),
+        Event::GitHubApiRequestSuccess => todo!(),
+
+        Event::GlobalInstallSearch { binary } => todo!(),
+        Event::GlobalInstallFound { path } => todo!(),
+        Event::GlobalInstallNotFound => todo!(),
         Event::GlobalInstallMatchingVersion {
             version_restriction,
             actual_version,
@@ -140,5 +136,18 @@ fn display_normal(event: Event) {
             actual_version,
         } => todo!(),
         Event::GlobalInstallNotIdentified => todo!(),
+
+        Event::ExecutableInstallSave => todo!(),
+        Event::ExecutableInstallSaveSuccess => todo!(),
+        Event::ExecutableInstallSaveFail { err } => todo!(),
+
+        Event::NotOnline => todo!(),
+
+        Event::UpdateBegin { app } => todo!(),
+        Event::UpdateNewVersion {
+            old_version,
+            new_version: new_versin,
+        } => todo!(),
+        Event::UpdateAlreadyNewest { app } => todo!(),
     }
 }
