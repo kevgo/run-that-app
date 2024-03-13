@@ -56,7 +56,7 @@ fn display_verbose(event: Event) {
 
         Event::GlobalInstallSearch { binary } => fprint!("Looking for {} in the PATH ... ", binary.cyan()),
         Event::GlobalInstallFound { path } => eprintln!("{}", path.to_string_lossy().green()),
-        Event::GlobalInstallMatchingVersion { version_range, version } => {
+        Event::GlobalInstallMatchingVersion { range: version_range, version } => {
             if let Some(version) = version {
                 eprintln!("found version {} matching {}", version.as_str().green(), version_range.to_string().cyan());
             } else {
@@ -64,8 +64,8 @@ fn display_verbose(event: Event) {
             }
         }
         Event::GlobalInstallMismatchingVersion {
-            version_restriction,
-            actual_version,
+            range: version_restriction,
+            version: actual_version,
         } => {
             if let Some(version) = actual_version {
                 eprintln!("found version {} that does not match {}", version.as_str().red(), version_restriction.to_string().cyan());
@@ -112,11 +112,8 @@ fn display_normal(event: Event) {
         Event::GlobalInstallSearch { binary: _ } => {}
         Event::GlobalInstallFound { path: _ } => {}
         Event::GlobalInstallNotFound => {}
-        Event::GlobalInstallMatchingVersion { version_range: _, version: _ } => {}
-        Event::GlobalInstallMismatchingVersion {
-            version_restriction: _,
-            actual_version: _,
-        } => {}
+        Event::GlobalInstallMatchingVersion { range: _, version: _ } => {}
+        Event::GlobalInstallMismatchingVersion { range: _, version: _ } => {}
         Event::GlobalInstallNotIdentified => {}
 
         Event::ExecutableInstallSave => fprint!("saving ... "),

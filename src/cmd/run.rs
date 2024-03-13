@@ -60,7 +60,7 @@ pub fn load_or_install(app: &dyn App, version: &RequestedVersion, platform: Plat
 }
 
 // checks if the app is in the PATH and has the correct version
-fn load_from_path(app: &dyn App, want_version: &semver::VersionReq, platform: Platform, output: Output) -> Result<Option<Executable>> {
+fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform, output: Output) -> Result<Option<Executable>> {
     let Some(executable) = find_global_install(&app.executable_filename(platform), output) else {
         output.log(Event::GlobalInstallNotFound);
         return Ok(None);
@@ -70,32 +70,20 @@ fn load_from_path(app: &dyn App, want_version: &semver::VersionReq, platform: Pl
             output.log(Event::GlobalInstallNotIdentified);
             Ok(None)
         }
-        AnalyzeResult::IdentifiedButUnknownVersion if want_version.to_string() == "*" => {
-            output.log(Event::GlobalInstallMatchingVersion {
-                version_range: want_version,
-                version: None,
-            });
+        AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
+            output.log(Event::GlobalInstallMatchingVersion { range, version: None });
             Ok(Some(executable))
         }
         AnalyzeResult::IdentifiedButUnknownVersion => {
-            output.log(Event::GlobalInstallMismatchingVersion {
-                version_restriction: want_version,
-                actual_version: None,
-            });
+            output.log(Event::GlobalInstallMismatchingVersion { range, version: None });
             Ok(None)
         }
-        AnalyzeResult::IdentifiedWithVersion(version) if want_version.matches(&version.semver()?) => {
-            output.log(Event::GlobalInstallMatchingVersion {
-                version_range: want_version,
-                version: Some(&version),
-            });
+        AnalyzeResult::IdentifiedWithVersion(version) if range.matches(&version.semver()?) => {
+            output.log(Event::GlobalInstallMatchingVersion { range, version: Some(&version) });
             Ok(Some(executable))
         }
         AnalyzeResult::IdentifiedWithVersion(version) => {
-            output.log(Event::GlobalInstallMismatchingVersion {
-                version_restriction: want_version,
-                actual_version: Some(&version),
-            });
+            output.log(Event::GlobalInstallMismatchingVersion { range, version: Some(&version) });
             Ok(None)
         }
     }
