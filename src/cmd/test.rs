@@ -32,7 +32,7 @@ pub fn test(mut start_at_app: Option<AppName>, verbose: bool) -> Result<ExitCode
             let executable_location = install_method.executable_location(&latest_version, platform);
             let executable_path = yard.app_folder(&install_method.yard_app(), &latest_version).join(executable_location);
             if !executable_path.exists() {
-                println!("executable {} not found, press ENTER to continue", executable_path.to_string_lossy());
+                println!("executable {} not found, press ENTER after inspecting the yard", executable_path.to_string_lossy());
                 let mut buffer = String::new();
                 io::stdin().read_line(&mut buffer).unwrap();
                 return Ok(ExitCode::FAILURE);
