@@ -53,7 +53,7 @@ impl install::DownloadArchive for Ghokin {
             Os::MacOS => "darwin",
             Os::Windows => "windows",
         };
-        format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz")
+        format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/ghokin_{version}_{os}_{cpu}.tar.gz")
     }
 
     fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
@@ -63,7 +63,7 @@ impl install::DownloadArchive for Ghokin {
 
 impl install::CompileGoSource for Ghokin {
     fn import_path(&self, version: &Version) -> String {
-        format!("github.com/{ORG}/{REPO}/v3@v{version}")
+        format!("github.com/{ORG}/{REPO}/v3@{version}")
     }
 }
 
