@@ -18,6 +18,7 @@ impl Output {
     }
 }
 
+/// prints the given text to STDERR and flushes the output
 macro_rules! fprint {
     ($($arg:tt)*) => {{
         eprint!($($arg)*);
