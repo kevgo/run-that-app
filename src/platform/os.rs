@@ -30,5 +30,3 @@ impl Display for Os {
         f.write_str(text)
     }
 }
-
-const CATEGORY: &str = "detect/os";

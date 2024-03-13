@@ -27,5 +27,3 @@ impl Display for Cpu {
         f.write_str(text)
     }
 }
-
-const CATEGORY: &str = "detect/cpu";

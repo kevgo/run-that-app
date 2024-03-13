@@ -1,5 +1,4 @@
 use crate::config::{AppName, Version};
-use crate::subshell::Executable;
 use std::borrow::Cow;
 use std::path::Path;
 
