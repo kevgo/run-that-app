@@ -3,6 +3,7 @@ use crate::logger::{Event, Log};
 use crate::Result;
 use std::borrow::Cow;
 use std::ffi::OsStr;
+use std::fmt::Display;
 use std::path::PathBuf;
 use std::process::Command;
 
@@ -59,5 +60,11 @@ impl Executable {
             }
         };
         Ok(String::from_utf8(output.stdout).unwrap_or_default())
+    }
+}
+
+impl Display for Executable {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.0.to_string_lossy())
     }
 }

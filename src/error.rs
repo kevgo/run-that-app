@@ -135,7 +135,7 @@ impl UserError {
                 desc(&format!("The file {FILE_NAME} already exists, no changes have been made to it."));
             }
             UserError::ExecutableCannotExecute { executable, err } => {
-                error(&format!("cannot execute {}: {}", executable.as_str(), err.to_string()));
+                error(&format!("cannot execute {executable}: {err}"));
             }
             UserError::GitHubReleasesApiProblem { problem, payload } => {
                 error(&format!("Problem with the GitHub Releases API: {problem}"));
