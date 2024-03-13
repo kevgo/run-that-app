@@ -1,8 +1,6 @@
 use colored::Colorize;
 use std::io::{self, Write};
 
-use crate::apps::AnalyzeResult;
-
 use super::Event;
 
 #[derive(Copy, Clone)]
@@ -59,6 +57,15 @@ fn display_verbose(event: Event) {
         Event::ArchiveExtractBegin { archive_type } => todo!(),
         Event::ArchiveExtractSuccess => todo!(),
         Event::ArchiveExtractFailed { err } => todo!(),
+        Event::GlobalInstallMatchingVersion {
+            version_restriction,
+            actual_version,
+        } => todo!(),
+        Event::GlobalInstallMismatchingVersion {
+            version_restriction,
+            actual_version,
+        } => todo!(),
+        Event::GlobalInstallNotIdentified { executable } => todo!(),
     }
 }
 
@@ -94,5 +101,14 @@ fn display_normal(event: Event) {
         Event::ArchiveExtractBegin { archive_type } => todo!(),
         Event::ArchiveExtractSuccess => todo!(),
         Event::ArchiveExtractFailed { err } => todo!(),
+        Event::GlobalInstallMatchingVersion {
+            version_restriction,
+            actual_version,
+        } => todo!(),
+        Event::GlobalInstallMismatchingVersion {
+            version_restriction,
+            actual_version,
+        } => todo!(),
+        Event::GlobalInstallNotIdentified { executable } => todo!(),
     }
 }
