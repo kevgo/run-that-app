@@ -65,8 +65,7 @@ fn load_from_path(app: &dyn App, want_version: &semver::VersionReq, platform: Pl
         output.log(Event::GlobalInstallNotFound);
         return Ok(None);
     };
-    let analyze_result = app.analyze_executable(&executable);
-    match analyze_result {
+    match app.analyze_executable(&executable) {
         AnalyzeResult::NotIdentified => {
             output.log(Event::GlobalInstallNotIdentified);
             Ok(None)
