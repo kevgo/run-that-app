@@ -58,19 +58,45 @@ fn display_verbose(event: Event) {
         Event::GlobalInstallMatchingVersion {
             version_restriction,
             actual_version,
-        } => todo!(),
+        } => {
+            if let Some(version) = actual_version {
+                eprintln!(
+                    "found version {} matching {}",
+                    version.as_str().green().bold(),
+                    version_restriction.to_string().cyan().bold()
+                );
+            } else {
+                eprintln!(
+                    "found an installation with unknown version but it matches {}",
+                    version_restriction.to_string().cyan().bold()
+                );
+            }
+        }
         Event::GlobalInstallMismatchingVersion {
             version_restriction,
             actual_version,
-        } => todo!(),
+        } => {
+            if let Some(version) = actual_version {
+                eprintln!(
+                    "found version {} that does not match {}",
+                    version.as_str().red().bold(),
+                    version_restriction.to_string().cyan().bold()
+                );
+            } else {
+                eprintln!(
+                    "found an installation with unknown version and it doesn't match {}",
+                    version_restriction.to_string().cyan().bold()
+                );
+            }
+        }
         Event::GlobalInstallNotFound => eprintln!("{}", "not found".red().bold()),
-        Event::GlobalInstallNotIdentified { executable } => todo!(),
+        Event::GlobalInstallNotIdentified => eprintln!("not found "),
 
         Event::NotOnline => eprintln!("{}", "not online".red().bold()),
 
-        Event::UpdateBegin { app } => todo!(),
-        Event::UpdateNewVersion { app, old_version, new_versin } => todo!(),
-        Event::UpdateAlreadyNewest { app } => todo!(),
+        Event::UpdateBegin { app } => eprintln!("updating {} ...", app.as_str().cyan().bold()),
+        Event::UpdateNewVersion { old_version, new_version } => eprintln!("{} -> {}", old_version.as_str().green().bold(), new_version.as_str().green().bold()),
+        Event::UpdateAlreadyNewest { app } => eprintln!("{}", "up to date".green().bold()),
     }
 }
 
@@ -94,10 +120,13 @@ fn display_normal(event: Event) {
         Event::GlobalInstallNotFound => todo!(),
         Event::ExecutableInstallSave => todo!(),
         Event::ExecutableInstallSaveSuccess => todo!(),
-        Event::ExecutableInstallSaveFail => todo!(),
+        Event::ExecutableInstallSaveFail { err } => todo!(),
         Event::GitHubApiRequestSuccess => todo!(),
         Event::UpdateBegin { app } => todo!(),
-        Event::UpdateNewVersion { app, old_version, new_versin } => todo!(),
+        Event::UpdateNewVersion {
+            old_version,
+            new_version: new_versin,
+        } => todo!(),
         Event::UpdateAlreadyNewest { app } => todo!(),
         Event::ArchiveExtractBegin { archive_type } => todo!(),
         Event::ArchiveExtractSuccess => todo!(),
@@ -110,6 +139,6 @@ fn display_normal(event: Event) {
             version_restriction,
             actual_version,
         } => todo!(),
-        Event::GlobalInstallNotIdentified { executable } => todo!(),
+        Event::GlobalInstallNotIdentified => todo!(),
     }
 }

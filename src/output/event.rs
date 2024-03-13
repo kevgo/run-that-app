@@ -45,9 +45,7 @@ pub enum Event<'a> {
         actual_version: Option<&'a Version>,
     },
     GlobalInstallNotFound,
-    GlobalInstallNotIdentified {
-        executable: &'a Executable,
-    },
+    GlobalInstallNotIdentified,
     DownloadNotFound,
     DownloadFail {
         code: i32,
@@ -72,9 +70,8 @@ pub enum Event<'a> {
         app: &'a AppName,
     },
     UpdateNewVersion {
-        app: &'a AppName,
         old_version: &'a Version,
-        new_versin: &'a Version,
+        new_version: &'a Version,
     },
     UpdateAlreadyNewest {
         app: &'a AppName,

@@ -70,7 +70,7 @@ fn load_from_path(app: &dyn App, want_version: &semver::VersionReq, platform: Pl
     let analyze_result = app.analyze_executable(&executable);
     match analyze_result {
         AnalyzeResult::NotIdentified => {
-            output.log(Event::GlobalInstallNotIdentified { executable: &executable });
+            output.log(Event::GlobalInstallNotIdentified);
             Ok(None)
         }
         AnalyzeResult::IdentifiedButUnknownVersion if want_version.to_string() == "*" => {

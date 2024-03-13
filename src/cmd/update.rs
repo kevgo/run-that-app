@@ -16,7 +16,7 @@ pub fn update(verbose: bool) -> Result<ExitCode> {
             output.log(Event::UpdateNewVersion {
                 app: &old_app.app,
                 old_version: previous,
-                new_versin: &latest,
+                new_version: &latest,
             });
         } else {
             output.log(Event::UpdateAlreadyNewest { app: &old_app.app });
