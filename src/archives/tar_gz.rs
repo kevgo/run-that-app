@@ -1,7 +1,6 @@
 use super::Archive;
 use crate::error::UserError;
-use crate::output::Event;
-use crate::Output;
+use crate::output::{Event, Output};
 use crate::Result;
 use flate2::read::GzDecoder;
 use std::io;
