@@ -6,6 +6,8 @@ pub mod download_archive;
 pub mod download_executable;
 pub mod other_app_folder;
 
+use std::fmt::Display;
+
 pub use compile_go::CompileGoSource;
 pub use compile_rust::CompileRustSource;
 pub use download_archive::DownloadArchive;
@@ -53,6 +55,37 @@ impl<'a> Method<'a> {
             Method::CompileGoSource(app) => app.name(),
             Method::CompileRustSource(app) => app.name(),
             Method::InstallAnotherApp(app) => app.app_to_install().name(),
+        }
+    }
+}
+
+impl<'a> Display for Method<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Method::DownloadArchive(app) => {
+                f.write_str("download archive for ")?;
+                f.write_str(app.name().as_str())
+            }
+            Method::DownloadExecutable(app) => {
+                f.write_str("download executable for ")?;
+                f.write_str(app.name().as_str())
+            }
+            Method::CompileGoSource(app) => {
+                f.write_str("compile ")?;
+                f.write_str(app.name().as_str())?;
+                f.write_str(" from its Go source code")
+            }
+            Method::CompileRustSource(app) => {
+                f.write_str("compile ")?;
+                f.write_str(app.name().as_str())?;
+                f.write_str(" from its Rust source code")
+            }
+            Method::InstallAnotherApp(app) => {
+                f.write_str("install ")?;
+                f.write_str(app.name().as_str())?;
+                f.write_str(" through ")?;
+                f.write_str(app.app_to_install().name().as_str())
+            }
         }
     }
 }

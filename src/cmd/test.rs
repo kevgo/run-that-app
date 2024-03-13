@@ -1,5 +1,6 @@
 use crate::install;
 use crate::{apps, logger, platform, yard, Result};
+use colored::Colorize;
 use std::process::ExitCode;
 
 pub fn test(verbose: bool) -> Result<ExitCode> {
@@ -11,6 +12,7 @@ pub fn test(verbose: bool) -> Result<ExitCode> {
     for app in apps {
         let latest_version = app.latest_installable_version(log)?;
         for install_method in app.install_methods() {
+            println!("{}", install_method.to_string().bold());
             install::install(&install_method, &latest_version, platform, &yard, log)?;
         }
     }
