@@ -61,7 +61,7 @@ pub enum Event<'a> {
     },
     CompileGoSuccess,
     CompileRustStart {
-        cargo_path: Cow<'a, str>,
+        cargo_path: &'a Path,
         args: &'a [&'a str],
     },
     CompileRustSuccess,

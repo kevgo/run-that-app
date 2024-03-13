@@ -1,6 +1,7 @@
 use crate::apps::App;
 use crate::config::Version;
 use crate::error::UserError;
+use crate::output::{Event, Output};
 use crate::{yard, Result};
 use std::process::Command;
 use which::which;
@@ -13,18 +14,20 @@ pub trait CompileRustSource: App {
 }
 
 /// installs the given Rust-based application by compiling it from source
-pub fn run(app: &dyn CompileRustSource, version: &Version) -> Result<bool> {
+pub fn run(app: &dyn CompileRustSource, version: &Version, output: Output) -> Result<bool> {
     let Ok(cargo_path) = which("cargo") else {
         return Err(UserError::RustNotInstalled);
     };
     let yard = yard::load_or_create(&yard::production_location()?)?;
     let target_folder = yard.create_app_folder(&app.name(), version)?;
-    let mut cmd = Command::new(cargo_path);
-    cmd.arg("install");
-    cmd.arg("--root");
-    cmd.arg(&target_folder);
-    cmd.arg("--locked");
-    cmd.arg(app.crate_name());
+    let mut cmd = Command::new(&cargo_path);
+    let target_folder_str = &target_folder.to_string_lossy();
+    let args = vec!["install", "--root", &target_folder_str, "--locked", app.crate_name()];
+    output.log(Event::CompileRustStart {
+        cargo_path: &cargo_path,
+        args: &args,
+    });
+    cmd.args(args);
     let status = match cmd.status() {
         Ok(status) => status,
         Err(err) => match err.kind() {
@@ -37,5 +40,6 @@ pub fn run(app: &dyn CompileRustSource, version: &Version) -> Result<bool> {
     if !status.success() {
         return Err(UserError::RustCompilationFailed);
     }
+    output.log(Event::CompileRustSuccess);
     Ok(true)
 }
