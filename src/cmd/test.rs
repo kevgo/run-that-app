@@ -20,9 +20,9 @@ pub fn test(mut start_at_app: Option<AppName>, verbose: bool) -> Result<ExitCode
             }
             start_at_app = None;
         }
-        println!("\n\nTESTING {}", app.name().as_str().cyan());
+        println!("\n\nTESTING {}\n", app.name().as_str().cyan());
         let latest_version = app.latest_installable_version(log)?;
-        println!("\nLatest version: {}", latest_version.as_str().cyan());
+        println!("Latest version: {}", latest_version.as_str().cyan());
         for install_method in app.install_methods() {
             println!("\n{}", install_method.to_string().bold());
             let installed = install::install(&install_method, &latest_version, platform, &yard, log)?;
