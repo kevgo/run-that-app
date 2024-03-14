@@ -81,17 +81,20 @@ fn identify(output: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use crate::config::Version;
-    use crate::install::DownloadArchive;
-    use crate::platform::{Cpu, Os, Platform};
 
-    #[test]
-    fn archive_url() {
-        let scc = super::Scc {};
-        let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
-        let have = scc.archive_url(&Version::from("3.1.0"), platform);
-        let want = "https://github.com/boyter/scc/releases/download/v3.1.0/scc_3.1.0_Darwin_arm64.tar.gz";
-        assert_eq!(have, want);
+    mod archive_url {
+        use crate::config::Version;
+        use crate::install::DownloadArchive;
+        use crate::platform::{Cpu, Os, Platform};
+
+        #[test]
+        fn linux_arm() {
+            let scc = super::super::Scc {};
+            let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
+            let have = scc.archive_url(&Version::from("3.1.0"), platform);
+            let want = "https://github.com/boyter/scc/releases/download/v3.1.0/scc_3.1.0_Darwin_arm64.tar.gz";
+            assert_eq!(have, want);
+        }
     }
 
     #[test]
