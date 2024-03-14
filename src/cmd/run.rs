@@ -92,7 +92,7 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
 fn load_or_install_from_yard(app: &dyn App, version: &Version, platform: Platform, log: Log) -> Result<Option<Executable>> {
     let yard = yard::load_or_create(&yard::production_location()?)?;
     // try to load the app
-    if let Some(executable) = install::load(app.install_methods(), version, platform, &yard) {
+    if let Some(executable) = install::load(app.install_methods(), version, platform, &yard, log) {
         return Ok(Some(executable));
     }
     // app not installed --> check if uninstallable
@@ -101,7 +101,7 @@ fn load_or_install_from_yard(app: &dyn App, version: &Version, platform: Platfor
     }
     // app not installed and installable --> try to install
     if install::any(app.install_methods(), version, platform, &yard, log)? {
-        return Ok(install::load(app.install_methods(), version, platform, &yard));
+        return Ok(install::load(app.install_methods(), version, platform, &yard, log));
     }
 
     // app could not be installed -> mark as uninstallable

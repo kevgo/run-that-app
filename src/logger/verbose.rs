@@ -64,5 +64,7 @@ pub fn log(event: Event) {
         Event::UpdateBegin { app } => eprintln!("updating {} ...", app.as_str().cyan()),
         Event::UpdateNewVersion { old_version, new_version } => eprintln!("{} -> {}", old_version.as_str().green(), new_version.as_str().green()),
         Event::UpdateAlreadyNewest { app: _ } => eprintln!("{}", "up to date".green()),
+
+        Event::YardCheckForExistingApp { path } => eprintf!("Checking for existing app {}", path.to_string_lossy()),
     }
 }

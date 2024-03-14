@@ -47,4 +47,6 @@ pub enum Event<'a> {
     UpdateBegin { app: &'a AppName },
     UpdateNewVersion { old_version: &'a Version, new_version: &'a Version },
     UpdateAlreadyNewest { app: &'a AppName },
+
+    YardCheckForExistingApp { path: &'a Path },
 }

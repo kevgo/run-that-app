@@ -15,7 +15,7 @@ pub use download_executable::DownloadExecutable;
 pub use other_app_folder::ViaAnotherApp;
 
 use crate::config::{AppName, Version};
-use crate::logger::Log;
+use crate::logger::{Event, Log};
 use crate::platform::Platform;
 use crate::subshell::Executable;
 use crate::yard::Yard;
@@ -111,11 +111,12 @@ pub fn install(install_method: &Method, version: &Version, platform: Platform, y
 }
 
 /// assuming one of the given installation methods of an app worked, loads that app's executable
-pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
+pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Option<Executable> {
     for installation_method in install_methods {
         let yard_app_name = installation_method.yard_app();
         let location_in_yard = installation_method.executable_location(version, platform);
         let fullpath = yard.app_folder(&yard_app_name, version).join(location_in_yard);
+        log(Event::YardCheckForExistingApp { path: &fullpath });
         if fullpath.exists() {
             return Some(Executable(fullpath));
         }
