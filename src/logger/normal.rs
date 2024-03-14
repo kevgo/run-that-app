@@ -44,6 +44,9 @@ pub fn log(event: Event) {
         Event::IdentifiedCpu { architecture: _ } => {}
         Event::IdentifiedOs { name: _ } => {}
 
+        Event::IntegrationTestNewApp { app: _ } => {}
+        Event::IntegrationTestDeterminedVersion { app: _, version: _ } => {}
+
         Event::NotOnline => eprintln!("{}", "not online".red()),
 
         Event::UpdateBegin { app: _ } => {}

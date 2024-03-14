@@ -59,6 +59,9 @@ pub fn log(event: Event) {
         Event::IdentifiedCpu { architecture } => eprintln!("CPU: {}", architecture.cyan()),
         Event::IdentifiedOs { name } => eprintln!("OS: {}", name.cyan()),
 
+        Event::IntegrationTestNewApp { app } => eprintln!("TESTING {app}\n"),
+        Event::IntegrationTestDeterminedVersion { app: _, version } => eprintln!("Latest version: {}", version.as_str().cyan()),
+
         Event::NotOnline => eprintln!("{}", "not online".red()),
 
         Event::UpdateBegin { app } => eprintln!("updating {} ...", app.as_str().cyan()),

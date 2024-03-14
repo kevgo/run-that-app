@@ -42,6 +42,9 @@ pub enum Event<'a> {
     IdentifiedCpu { architecture: &'static str },
     IdentifiedOs { name: &'static str },
 
+    IntegrationTestNewApp { app: &'a AppName },
+    IntegrationTestDeterminedVersion { app: &'a AppName, version: &'a Version },
+
     NotOnline,
 
     UpdateBegin { app: &'a AppName },
