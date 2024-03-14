@@ -56,8 +56,8 @@ pub fn log(event: Event) {
         Event::GlobalInstallNotFound => eprintln!("{}", "not found".red()),
         Event::GlobalInstallNotIdentified => eprintln!("not found "),
 
-        Event::IdentifiedCpu { architecture } => eprintln!("CPU id: {}", architecture.cyan()),
-        Event::IdentifiedOs { name } => eprintln!("OS id: {}", name.cyan()),
+        Event::IdentifiedCpu { architecture } => eprintln!("CPU: {}", architecture.cyan()),
+        Event::IdentifiedOs { name } => eprintln!("OS: {}", name.cyan()),
 
         Event::NotOnline => eprintln!("{}", "not online".red()),
 
@@ -65,7 +65,7 @@ pub fn log(event: Event) {
         Event::UpdateNewVersion { old_version, new_version } => eprintln!("{} -> {}", old_version.as_str().green(), new_version.as_str().green()),
         Event::UpdateAlreadyNewest { app: _ } => eprintln!("{}", "up to date".green()),
 
-        Event::YardExistingAppCheckBegin { path } => eprintf!("Checking for existing app {}", path.to_string_lossy()),
+        Event::YardExistingAppCheckBegin { path } => eprintf!("Checking for existing app {} ... ", path.to_string_lossy()),
         Event::YardExistingAppCheckFound => eprintln!("{}", "exists".green()),
         Event::YardExistingAppCheckNotFound => eprintln!("{}", "not found".red()),
     }
