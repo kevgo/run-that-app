@@ -190,6 +190,11 @@ This installs Go 1.21.6 and calls the gofmt contained in this installation.
 
 ### Q&A
 
+#### Run-that-app does not support an application I need
+
+It's super easy to add a new application to _run-that-app_! See `DEVELOPMENT.md`
+for details.
+
 #### Why not use the package manager of my system to install third-party applications?
 
 If it works then do it. We have found many challenges with using executables
