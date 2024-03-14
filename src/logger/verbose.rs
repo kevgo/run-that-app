@@ -6,7 +6,7 @@ use std::io::{self, Write};
 pub fn log(event: Event) {
     #[allow(clippy::match_same_arms)]
     match event {
-        Event::AnalyzeExecutableQuery { cmd, args } => eprintln!("{}", format!("{cmd} {}", args.join(" ")).bold()),
+        Event::AnalyzeExecutableCall { cmd, args } => eprintln!("{}", format!("{cmd} {}", args.join(" ")).bold()),
         Event::AnalyzeExecutableError { err } => eprintln!("{}", err.red()),
 
         Event::ArchiveExtractBegin { archive_type } => eprintf!("extracting {} ... ", archive_type.cyan()),
