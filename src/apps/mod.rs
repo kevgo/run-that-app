@@ -133,7 +133,6 @@ impl Apps {
 
 impl IntoIterator for Apps {
     type Item = Box<dyn App>;
-
     type IntoIter = std::vec::IntoIter<Box<dyn App>>;
 
     fn into_iter(self) -> Self::IntoIter {
