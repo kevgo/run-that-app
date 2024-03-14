@@ -28,7 +28,10 @@ pub fn test(mut start_at_app: Option<AppName>, verbose: bool) -> Result<ExitCode
             version: &latest_version,
         });
         for install_method in app.install_methods() {
-            println!("\n{}", install_method.to_string().bold());
+            log(Event::IntegrationTestNewInstallMethod {
+                version: &latest_version,
+                method: &install_method,
+            });
             let installed = install::install(&install_method, &latest_version, platform, &yard, log)?;
             if !installed {
                 continue;
