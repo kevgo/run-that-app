@@ -106,7 +106,7 @@ pub fn install(install_method: &Method, version: &Version, platform: Platform, y
         Method::DownloadExecutable(app) => download_executable::install(*app, version, platform, yard, log),
         Method::CompileGoSource(app) => compile_go::run(*app, version, yard, log),
         Method::CompileRustSource(app) => compile_rust::run(*app, version, yard, log),
-        Method::InstallAnotherApp(app) => other_app_folder::install_other_app(*app, version, platform, log),
+        Method::InstallAnotherApp(app) => other_app_folder::install_other_app(*app, version, platform, yard, log),
     }
 }
 
