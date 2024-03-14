@@ -4,7 +4,7 @@ use std::path::Path;
 
 /// the different events that can result in CLI output
 pub enum Event<'a> {
-    AnalyzeExecutableCall { cmd: &'a str, args: &'a [&'a str] },
+    AnalyzeExecutableBegin { cmd: &'a str, args: &'a [&'a str] },
     AnalyzeExecutableError { err: String },
 
     ArchiveExtractBegin { archive_type: &'a str },
