@@ -7,7 +7,6 @@ use crate::regexp;
 use crate::subshell::Executable;
 use crate::{Log, Result};
 use const_format::formatcp;
-use std::path;
 
 pub struct MdBook {}
 
@@ -35,13 +34,14 @@ impl App for MdBook {
         github_releases::versions(ORG, REPO, amount, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !identify(&executable.run_output("-h")) {
-            return AnalyzeResult::NotIdentified;
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        let output = executable.run_output("-h", log)?;
+        if !identify(&output) {
+            return Ok(AnalyzeResult::NotIdentified { output });
         }
-        match extract_version(&executable.run_output("-V")) {
-            Some(version) => AnalyzeResult::IdentifiedWithVersion(version.into()),
-            None => AnalyzeResult::IdentifiedButUnknownVersion,
+        match extract_version(&executable.run_output("-V", log)?) {
+            Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+            None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
         }
     }
 }
@@ -61,7 +61,7 @@ impl install::DownloadArchive for MdBook {
     }
 
     fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
-        format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))
+        self.executable_filename(platform)
     }
 }
 

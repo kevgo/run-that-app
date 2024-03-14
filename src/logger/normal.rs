@@ -6,6 +6,9 @@ use std::io::{self, Write};
 pub fn log(event: Event) {
     #[allow(clippy::match_same_arms)]
     match event {
+        Event::AnalyzeExecutableBegin { cmd: _, args: _ } => {}
+        Event::AnalyzeExecutableError { err: _ } => {}
+
         Event::ArchiveExtractBegin { archive_type: _ } => eprintf!("extracting ... "),
         Event::ArchiveExtractSuccess => eprintln!("{}", "ok".green()),
         Event::ArchiveExtractFailed { err } => eprintln!("{}", err.red()),
@@ -46,5 +49,9 @@ pub fn log(event: Event) {
         Event::UpdateBegin { app: _ } => {}
         Event::UpdateNewVersion { old_version, new_version } => eprintln!("{} -> {}", old_version.as_str().green(), new_version.as_str().green()),
         Event::UpdateAlreadyNewest { app: _ } => eprintln!("{}", "up to date".green()),
+
+        Event::YardCheckExistingAppBegin { path: _ } => {}
+        Event::YardCheckExistingAppFound => {}
+        Event::YardCheckExistingAppNotFound => {}
     }
 }

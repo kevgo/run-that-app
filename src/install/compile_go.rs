@@ -2,7 +2,8 @@ use crate::apps::App;
 use crate::config::Version;
 use crate::error::UserError;
 use crate::logger::{Event, Log};
-use crate::{yard, Result};
+use crate::yard::Yard;
+use crate::Result;
 use std::io::ErrorKind;
 use std::process::Command;
 use which::which;
@@ -15,11 +16,10 @@ pub trait CompileGoSource: App {
 }
 
 /// installs the given Go-based application by compiling it from source
-pub fn run(app: &dyn CompileGoSource, version: &Version, log: Log) -> Result<bool> {
+pub fn run(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) -> Result<bool> {
     let Ok(go_path) = which("go") else {
         return Ok(false);
     };
-    let yard = yard::load_or_create(&yard::production_location()?)?;
     let target_folder = yard.create_app_folder(&app.name(), version)?;
     let import_path = app.import_path(version);
     let go_args = vec!["install", &import_path];

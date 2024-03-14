@@ -33,12 +33,13 @@ impl App for Depth {
         github_releases::versions(ORG, REPO, amount, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !identify(&executable.run_output("-h")) {
-            return AnalyzeResult::NotIdentified;
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        let output = executable.run_output("-h", log)?;
+        if !identify(&output) {
+            return Ok(AnalyzeResult::NotIdentified { output });
         }
         // as of 1.2.1 depth doesn't display the version of the installed executable
-        AnalyzeResult::IdentifiedButUnknownVersion
+        Ok(AnalyzeResult::IdentifiedButUnknownVersion)
     }
 }
 

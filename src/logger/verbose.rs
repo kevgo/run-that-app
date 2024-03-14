@@ -6,6 +6,9 @@ use std::io::{self, Write};
 pub fn log(event: Event) {
     #[allow(clippy::match_same_arms)]
     match event {
+        Event::AnalyzeExecutableBegin { cmd, args } => eprintln!("{}", format!("{cmd} {}", args.join(" ")).bold()),
+        Event::AnalyzeExecutableError { err } => eprintln!("{}", err.red()),
+
         Event::ArchiveExtractBegin { archive_type } => eprintf!("extracting {} ... ", archive_type.cyan()),
         Event::ArchiveExtractSuccess => eprintln!("{}", "ok".green()),
         Event::ArchiveExtractFailed { err } => eprintln!("{}", err.red()),
@@ -27,7 +30,7 @@ pub fn log(event: Event) {
         Event::ExecutableInstallSaveSuccess => eprintln!("{}", "ok".green()),
         Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.red()),
 
-        Event::GitHubApiRequestBegin { url } => eprintln!("Talking to GitHub API: {url} ... "),
+        Event::GitHubApiRequestBegin { url } => eprintf!("Talking to GitHub API ({url}) ... "),
         Event::GitHubApiRequestSuccess => eprintln!("{}", "ok".green()),
         Event::GitHubApiRequestFail { err } => eprintln!("{}", err.red()),
 
@@ -53,13 +56,17 @@ pub fn log(event: Event) {
         Event::GlobalInstallNotFound => eprintln!("{}", "not found".red()),
         Event::GlobalInstallNotIdentified => eprintln!("not found "),
 
-        Event::IdentifiedCpu { architecture } => eprintln!("CPU id: {}", architecture.cyan()),
-        Event::IdentifiedOs { name } => eprintln!("OS id: {}", name.cyan()),
+        Event::IdentifiedCpu { architecture } => eprintln!("CPU: {}", architecture.cyan()),
+        Event::IdentifiedOs { name } => eprintln!("OS: {}", name.cyan()),
 
         Event::NotOnline => eprintln!("{}", "not online".red()),
 
         Event::UpdateBegin { app } => eprintln!("updating {} ...", app.as_str().cyan()),
         Event::UpdateNewVersion { old_version, new_version } => eprintln!("{} -> {}", old_version.as_str().green(), new_version.as_str().green()),
         Event::UpdateAlreadyNewest { app: _ } => eprintln!("{}", "up to date".green()),
+
+        Event::YardCheckExistingAppBegin { path } => eprintf!("Checking for existing app {} ... ", path.to_string_lossy()),
+        Event::YardCheckExistingAppFound => eprintln!("{}", "exists".green()),
+        Event::YardCheckExistingAppNotFound => eprintln!("{}", "not found".red()),
     }
 }

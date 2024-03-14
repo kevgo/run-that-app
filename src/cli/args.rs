@@ -17,6 +17,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     let mut error_on_output = false;
     let mut which = false;
     let mut setup = false;
+    let mut test = false;
     let mut indicate_available = false;
     let mut update = false;
     let mut optional = false;
@@ -40,6 +41,10 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             }
             if &arg == "--setup" {
                 setup = true;
+                continue;
+            }
+            if &arg == "--test" {
+                test = true;
                 continue;
             }
             if &arg == "--update" {
@@ -76,13 +81,21 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
             app_args.push(arg);
         }
     }
-    if multiple_true(&[which, indicate_available, setup, update, versions.is_some()]) {
+    if multiple_true(&[which, indicate_available, setup, test, update, versions.is_some()]) {
         return Err(UserError::MultipleCommandsGiven);
     } else if setup {
         return Ok(Args { command: Command::Setup });
     } else if update {
         return Ok(Args {
             command: Command::Update { verbose },
+        });
+    }
+    if test {
+        return Ok(Args {
+            command: Command::Test {
+                app: app_version.map(|av| av.app),
+                verbose,
+            },
         });
     }
     if let Some(AppVersion { app, version }) = app_version {
@@ -217,6 +230,54 @@ mod tests {
                 fn missing_app() {
                     let have = parse_args(vec!["rta", "--error-on-output"]);
                     let want = Err(UserError::MissingApplication);
+                    pretty::assert_eq!(have, want);
+                }
+            }
+
+            mod test {
+                use super::super::parse_args;
+                use crate::cli::{Args, Command};
+                use crate::config::AppName;
+
+                #[test]
+                fn no_app_no_verbose() {
+                    let have = parse_args(vec!["rta", "--test"]);
+                    let want = Ok(Args {
+                        command: Command::Test { app: None, verbose: false },
+                    });
+                    pretty::assert_eq!(have, want);
+                }
+
+                #[test]
+                fn no_app_verbose() {
+                    let have = parse_args(vec!["rta", "--test", "--verbose"]);
+                    let want = Ok(Args {
+                        command: Command::Test { app: None, verbose: true },
+                    });
+                    pretty::assert_eq!(have, want);
+                }
+
+                #[test]
+                fn app_no_verbose() {
+                    let have = parse_args(vec!["rta", "--test", "actionlint"]);
+                    let want = Ok(Args {
+                        command: Command::Test {
+                            app: Some(AppName::from("actionlint")),
+                            verbose: false,
+                        },
+                    });
+                    pretty::assert_eq!(have, want);
+                }
+
+                #[test]
+                fn app_verbose() {
+                    let have = parse_args(vec!["rta", "--test", "--verbose", "actionlint"]);
+                    let want = Ok(Args {
+                        command: Command::Test {
+                            app: Some(AppName::from("actionlint")),
+                            verbose: true,
+                        },
+                    });
                     pretty::assert_eq!(have, want);
                 }
             }

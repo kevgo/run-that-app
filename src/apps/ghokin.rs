@@ -32,12 +32,13 @@ impl App for Ghokin {
         github_releases::latest(ORG, REPO, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !identify(&executable.run_output("-h")) {
-            return AnalyzeResult::NotIdentified;
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        let output = executable.run_output("-h", log)?;
+        if !identify(&output) {
+            return Ok(AnalyzeResult::NotIdentified { output });
         }
         // as of 3.4.0 ghokin's "version" command prints nothing
-        AnalyzeResult::IdentifiedButUnknownVersion
+        Ok(AnalyzeResult::IdentifiedButUnknownVersion)
     }
 }
 
@@ -52,7 +53,7 @@ impl install::DownloadArchive for Ghokin {
             Os::MacOS => "darwin",
             Os::Windows => "windows",
         };
-        format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz")
+        format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/ghokin_{version}_{os}_{cpu}.tar.gz")
     }
 
     fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
@@ -62,7 +63,7 @@ impl install::DownloadArchive for Ghokin {
 
 impl install::CompileGoSource for Ghokin {
     fn import_path(&self, version: &Version) -> String {
-        format!("github.com/{ORG}/{REPO}/v3@v{version}")
+        format!("github.com/{ORG}/{REPO}/v3@{version}")
     }
 }
 
@@ -82,7 +83,7 @@ mod tests {
             let ghokin = super::super::Ghokin {};
             let platform = Platform { os: Os::MacOS, cpu: Cpu::Intel64 };
             let have = ghokin.archive_url(&Version::from("3.4.1"), platform);
-            let want = "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_amd64.tar.gz";
+            let want = "https://github.com/antham/ghokin/releases/download/3.4.1/ghokin_3.4.1_darwin_amd64.tar.gz";
             assert_eq!(have, want);
         }
 
@@ -94,7 +95,7 @@ mod tests {
                 cpu: Cpu::Intel64,
             };
             let have = ghokin.archive_url(&Version::from("3.4.1"), platform);
-            let want = "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_windows_amd64.tar.gz";
+            let want = "https://github.com/antham/ghokin/releases/download/3.4.1/ghokin_3.4.1_windows_amd64.tar.gz";
             assert_eq!(have, want);
         }
     }

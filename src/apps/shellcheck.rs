@@ -6,7 +6,6 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
 use crate::{Log, Result};
-use std::path;
 
 pub struct ShellCheck {}
 
@@ -34,14 +33,14 @@ impl App for ShellCheck {
         github_releases::versions(ORG, REPO, amount, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        let output = executable.run_output("--version");
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        let output = executable.run_output("--version", log)?;
         if !identify(&output) {
-            return AnalyzeResult::NotIdentified;
+            return Ok(AnalyzeResult::NotIdentified { output });
         }
         match extract_version(&output) {
-            Some(version) => AnalyzeResult::IdentifiedWithVersion(version.into()),
-            None => AnalyzeResult::IdentifiedButUnknownVersion,
+            Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+            None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
         }
     }
 }
@@ -64,8 +63,12 @@ impl install::DownloadArchive for ShellCheck {
         format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}")
     }
 
-    fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
-        format!("{}{}{}", self.name().as_str(), path::MAIN_SEPARATOR, self.executable_filename(platform))
+    fn executable_path_in_archive(&self, version: &Version, platform: Platform) -> String {
+        format!(
+            "shellcheck-v{version}{sep}{executable}",
+            sep = std::path::MAIN_SEPARATOR,
+            executable = self.executable_filename(platform)
+        )
     }
 }
 

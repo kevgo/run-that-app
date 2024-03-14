@@ -34,13 +34,15 @@ impl App for ActionLint {
         github_releases::versions(ORG, REPO, amount, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !identify(&executable.run_output("-h")) {
-            return AnalyzeResult::NotIdentified;
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        let output = executable.run_output("-h", log)?;
+        if !identify(&output) {
+            return Ok(AnalyzeResult::NotIdentified { output });
         }
-        match extract_version(&executable.run_output("--version")) {
-            Some(version) => AnalyzeResult::IdentifiedWithVersion(version.into()),
-            None => AnalyzeResult::NotIdentified,
+        let output = executable.run_output("--version", log)?;
+        match extract_version(&output) {
+            Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+            None => Ok(AnalyzeResult::NotIdentified { output }),
         }
     }
 }
@@ -70,7 +72,7 @@ impl install::DownloadArchive for ActionLint {
 
 impl install::CompileGoSource for ActionLint {
     fn import_path(&self, version: &Version) -> String {
-        format!("github.com/{ORG}/{REPO}/cmd/actionlint@{version}")
+        format!("github.com/{ORG}/{REPO}/cmd/actionlint@v{version}")
     }
 }
 

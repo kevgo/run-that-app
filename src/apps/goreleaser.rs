@@ -33,14 +33,14 @@ impl App for Goreleaser {
         github_releases::versions(ORG, REPO, amount, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        let output = &executable.run_output("-V");
-        if !identify(output) {
-            return AnalyzeResult::NotIdentified;
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        let output = executable.run_output("-v", log)?;
+        if !identify(&output) {
+            return Ok(AnalyzeResult::NotIdentified { output });
         }
-        match extract_version(output) {
-            Some(version) => AnalyzeResult::IdentifiedWithVersion(version.into()),
-            None => AnalyzeResult::IdentifiedButUnknownVersion,
+        match extract_version(&output) {
+            Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+            None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
         }
     }
 }
@@ -70,7 +70,7 @@ impl install::DownloadArchive for Goreleaser {
 
 impl install::CompileGoSource for Goreleaser {
     fn import_path(&self, version: &Version) -> String {
-        format!("github.com/{ORG}/{REPO}@{version}")
+        format!("github.com/{ORG}/{REPO}@v{version}")
     }
 }
 

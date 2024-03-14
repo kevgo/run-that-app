@@ -4,6 +4,9 @@ use std::path::Path;
 
 /// the different events that can result in CLI output
 pub enum Event<'a> {
+    AnalyzeExecutableBegin { cmd: &'a str, args: &'a [&'a str] },
+    AnalyzeExecutableError { err: String },
+
     ArchiveExtractBegin { archive_type: &'a str },
     ArchiveExtractSuccess,
     ArchiveExtractFailed { err: String },
@@ -44,4 +47,8 @@ pub enum Event<'a> {
     UpdateBegin { app: &'a AppName },
     UpdateNewVersion { old_version: &'a Version, new_version: &'a Version },
     UpdateAlreadyNewest { app: &'a AppName },
+
+    YardCheckExistingAppBegin { path: &'a Path },
+    YardCheckExistingAppFound,
+    YardCheckExistingAppNotFound,
 }

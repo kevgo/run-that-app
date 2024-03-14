@@ -3,7 +3,6 @@ use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::install::{self, Method, ViaAnotherApp};
 use crate::platform::Platform;
-use crate::regexp;
 use crate::subshell::Executable;
 use crate::{Log, Result};
 use std::path;
@@ -31,14 +30,13 @@ impl App for Npm {
         self.app_to_install().installable_versions(amount, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !identify(&executable.run_output_args(&["help", "npm"])) {
-            return AnalyzeResult::NotIdentified;
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        let output = executable.run_output_args(&["help", "npm"], log)?;
+        if !identify(&output) {
+            return Ok(AnalyzeResult::NotIdentified { output });
         }
-        match extract_version(&executable.run_output("--version")) {
-            Some(version) => AnalyzeResult::IdentifiedWithVersion(version.into()),
-            None => AnalyzeResult::IdentifiedButUnknownVersion,
-        }
+        // Npm is versioned together with NodeJS. The actual version of npm is therefore not relevant here.
+        Ok(AnalyzeResult::IdentifiedButUnknownVersion)
     }
 }
 
@@ -47,25 +45,17 @@ impl install::ViaAnotherApp for Npm {
         Box::new(NodeJS {})
     }
 
-    fn executable_path_in_other_app_yard(&self, _version: &Version, platform: Platform) -> String {
-        format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))
+    fn executable_path_in_other_app_yard(&self, version: &Version, platform: Platform) -> String {
+        format!(
+            "node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",
+            os = super::nodejs::os_text(platform.os),
+            cpu = super::nodejs::cpu_text(platform.cpu),
+            sep = path::MAIN_SEPARATOR,
+            executable = self.executable_filename(platform)
+        )
     }
-}
-
-fn extract_version(output: &str) -> Option<&str> {
-    regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
 }
 
 fn identify(output: &str) -> bool {
     output.contains("javascript package manager")
-}
-
-#[cfg(test)]
-mod tests {
-
-    #[test]
-    fn extract_version() {
-        assert_eq!(super::extract_version("10.2.4"), Some("10.2.4"));
-        assert_eq!(super::extract_version("other"), None);
-    }
 }

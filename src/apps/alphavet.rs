@@ -32,12 +32,13 @@ impl App for Alphavet {
         github_releases::latest(ORG, REPO, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !identify(&executable.run_output("-h")) {
-            return AnalyzeResult::NotIdentified;
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        let output = executable.run_output("-h", log)?;
+        if !identify(&output) {
+            return Ok(AnalyzeResult::NotIdentified { output });
         }
         // as of 0.1.0 the -V switch of alphavet is broken
-        AnalyzeResult::IdentifiedButUnknownVersion
+        Ok(AnalyzeResult::IdentifiedButUnknownVersion)
     }
 }
 

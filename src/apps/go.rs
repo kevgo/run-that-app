@@ -35,7 +35,12 @@ impl App for Go {
 
     fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
         let tags = github_tags::all(ORG, REPO, 100, log)?;
-        let mut go_tags: Vec<String> = tags.into_iter().filter(|tag| tag.starts_with("go")).filter(|tag| !tag.contains("rc")).collect();
+        let mut go_tags: Vec<String> = tags
+            .into_iter()
+            .filter(|tag| tag.starts_with("go"))
+            .filter(|tag| !tag.contains("rc"))
+            .map(|tag| tag.trim_start_matches("go").to_string())
+            .collect();
         go_tags.sort_unstable_by(|a, b| human_sort::compare(b, a));
         if go_tags.len() > amount {
             go_tags.resize(amount, S(""));
@@ -43,14 +48,15 @@ impl App for Go {
         Ok(go_tags.into_iter().map(Version::from).collect())
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if let Some(version) = extract_version(&executable.run_output("version")) {
-            return AnalyzeResult::IdentifiedWithVersion(version.into());
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        if let Some(version) = extract_version(&executable.run_output("version", log)?) {
+            return Ok(AnalyzeResult::IdentifiedWithVersion(version.into()));
         }
-        if identify(&executable.run_output("-h")) {
-            AnalyzeResult::IdentifiedButUnknownVersion
+        let output = executable.run_output("-h", log)?;
+        if identify(&output) {
+            Ok(AnalyzeResult::IdentifiedButUnknownVersion)
         } else {
-            AnalyzeResult::NotIdentified
+            Ok(AnalyzeResult::NotIdentified { output })
         }
     }
 
@@ -71,6 +77,7 @@ impl App for Go {
 
 impl install::DownloadArchive for Go {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
+        let version_str = version.as_str().trim_start_matches("go");
         let os = match platform.os {
             Os::Linux => "linux",
             Os::MacOS => "darwin",
@@ -84,11 +91,11 @@ impl install::DownloadArchive for Go {
             Os::Linux | Os::MacOS => "tar.gz",
             Os::Windows => "zip",
         };
-        format!("https://go.dev/dl/go{version}.{os}-{cpu}.{ext}")
+        format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}")
     }
 
     fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
-        format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))
+        format!("go{sep}bin{sep}{executable}", sep = path::MAIN_SEPARATOR, executable = self.executable_filename(platform))
     }
 }
 

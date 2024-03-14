@@ -54,7 +54,7 @@ pub trait App {
     fn latest_installable_version(&self, log: Log) -> Result<Version>;
 
     /// ensures that the given executable belongs to this app and if yes returns its version
-    fn analyze_executable(&self, path: &Executable) -> AnalyzeResult;
+    fn analyze_executable(&self, path: &Executable, log: Log) -> Result<AnalyzeResult>;
 
     /// Apps can override this method to provide version restrictions
     /// defined by config files in the working directory.
@@ -72,7 +72,7 @@ pub trait App {
 
 pub enum AnalyzeResult {
     /// the given executable does not belong to this app
-    NotIdentified,
+    NotIdentified { output: String },
 
     /// the given executable belongs to this app but doesn't allow determining the version
     IdentifiedButUnknownVersion,
@@ -128,6 +128,15 @@ impl Apps {
     /// provides the length of the name of the app with the longest name
     pub fn longest_name_length(&self) -> usize {
         self.iter().map(|app| app.name().as_str().len()).max().unwrap()
+    }
+}
+
+impl IntoIterator for Apps {
+    type Item = Box<dyn App>;
+    type IntoIter = std::vec::IntoIter<Box<dyn App>>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
     }
 }
 

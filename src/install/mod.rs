@@ -13,11 +13,12 @@ pub use download_executable::DownloadExecutable;
 pub use other_app_folder::ViaAnotherApp;
 
 use crate::config::{AppName, Version};
-use crate::logger::Log;
+use crate::logger::{Event, Log};
 use crate::platform::Platform;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::Result;
+use std::fmt::Display;
 
 /// the different methods to install an application
 pub enum Method<'a> {
@@ -57,32 +58,69 @@ impl<'a> Method<'a> {
     }
 }
 
+impl<'a> Display for Method<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Method::DownloadArchive(app) => {
+                f.write_str("download archive for ")?;
+                f.write_str(app.name().as_str())
+            }
+            Method::DownloadExecutable(app) => {
+                f.write_str("download executable for ")?;
+                f.write_str(app.name().as_str())
+            }
+            Method::CompileGoSource(app) => {
+                f.write_str("compile ")?;
+                f.write_str(app.name().as_str())?;
+                f.write_str(" from source")
+            }
+            Method::CompileRustSource(app) => {
+                f.write_str("compile ")?;
+                f.write_str(app.name().as_str())?;
+                f.write_str(" from source")
+            }
+            Method::InstallAnotherApp(app) => {
+                f.write_str("install ")?;
+                f.write_str(app.name().as_str())?;
+                f.write_str(" through ")?;
+                f.write_str(app.app_to_install().name().as_str())
+            }
+        }
+    }
+}
+
 /// installs an app using the first of its installation methods that works
-pub fn install(install_methods: Vec<Method>, version: &Version, platform: Platform, log: Log) -> Result<bool> {
+pub fn any(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<bool> {
     for install_method in install_methods {
-        let result = match install_method {
-            Method::DownloadArchive(app) => download_archive::run(app, version, platform, log),
-            Method::DownloadExecutable(app) => download_executable::install(app, version, platform, log),
-            Method::CompileGoSource(app) => compile_go::run(app, version, log),
-            Method::CompileRustSource(app) => compile_rust::run(app, version, log),
-            Method::InstallAnotherApp(app) => other_app_folder::install_other_app(app, version, platform, log),
-        }?;
-        if result {
+        if install(&install_method, version, platform, yard, log)? {
             return Ok(true);
         }
     }
     Ok(false)
 }
 
+pub fn install(install_method: &Method, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<bool> {
+    match install_method {
+        Method::DownloadArchive(app) => download_archive::run(*app, version, platform, yard, log),
+        Method::DownloadExecutable(app) => download_executable::install(*app, version, platform, yard, log),
+        Method::CompileGoSource(app) => compile_go::run(*app, version, yard, log),
+        Method::CompileRustSource(app) => compile_rust::run(*app, version, yard, log),
+        Method::InstallAnotherApp(app) => other_app_folder::install_other_app(*app, version, platform, yard, log),
+    }
+}
+
 /// assuming one of the given installation methods of an app worked, loads that app's executable
-pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
+pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Option<Executable> {
     for installation_method in install_methods {
         let yard_app_name = installation_method.yard_app();
         let location_in_yard = installation_method.executable_location(version, platform);
         let fullpath = yard.app_folder(&yard_app_name, version).join(location_in_yard);
+        log(Event::YardCheckExistingAppBegin { path: &fullpath });
         if fullpath.exists() {
+            log(Event::YardCheckExistingAppFound);
             return Some(Executable(fullpath));
         }
     }
+    log(Event::YardCheckExistingAppNotFound);
     None
 }

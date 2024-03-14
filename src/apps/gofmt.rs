@@ -30,12 +30,13 @@ impl App for Gofmt {
         self.app_to_install().installable_versions(amount, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !identify(&executable.run_output("-h")) {
-            return AnalyzeResult::NotIdentified;
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        let output = executable.run_output("-h", log)?;
+        if !identify(&output) {
+            return Ok(AnalyzeResult::NotIdentified { output });
         }
         // TODO: return the version of Go here
-        AnalyzeResult::IdentifiedButUnknownVersion
+        Ok(AnalyzeResult::IdentifiedButUnknownVersion)
     }
 }
 
@@ -45,7 +46,7 @@ impl install::ViaAnotherApp for Gofmt {
     }
 
     fn executable_path_in_other_app_yard(&self, _version: &Version, platform: Platform) -> String {
-        format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))
+        format!("go{sep}bin{sep}{executable}", sep = path::MAIN_SEPARATOR, executable = self.executable_filename(platform))
     }
 }
 

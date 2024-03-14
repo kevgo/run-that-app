@@ -95,7 +95,7 @@ mod tests {
             fn latest_installable_version(&self, _log: Log) -> Result<Version> {
                 unimplemented!()
             }
-            fn analyze_executable(&self, _path: &Executable) -> AnalyzeResult {
+            fn analyze_executable(&self, _path: &Executable, _log: Log) -> Result<AnalyzeResult> {
                 unimplemented!()
             }
             fn install_methods(&self) -> Vec<install::Method> {

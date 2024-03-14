@@ -34,13 +34,14 @@ impl App for Scc {
         github_releases::versions(ORG, REPO, amount, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable) -> AnalyzeResult {
-        if !identify(&executable.run_output("-h")) {
-            return AnalyzeResult::NotIdentified;
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+        let output = executable.run_output("-h", log)?;
+        if !identify(&output) {
+            return Ok(AnalyzeResult::NotIdentified { output });
         }
-        match extract_version(&executable.run_output("--version")) {
-            Some(version) => AnalyzeResult::IdentifiedWithVersion(version.into()),
-            None => AnalyzeResult::IdentifiedButUnknownVersion,
+        match extract_version(&executable.run_output("--version", log)?) {
+            Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+            None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
         }
     }
 }
@@ -56,7 +57,7 @@ impl install::DownloadArchive for Scc {
             Cpu::Arm64 => "arm64",
             Cpu::Intel64 => "x86_64",
         };
-        format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/scc_{version}_{os}_{cpu}.tar.gz")
+        format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/scc_{os}_{cpu}.tar.gz")
     }
 
     fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
@@ -80,17 +81,29 @@ fn identify(output: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use crate::config::Version;
-    use crate::install::DownloadArchive;
-    use crate::platform::{Cpu, Os, Platform};
 
-    #[test]
-    fn archive_url() {
-        let scc = super::Scc {};
-        let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
-        let have = scc.archive_url(&Version::from("3.1.0"), platform);
-        let want = "https://github.com/boyter/scc/releases/download/v3.1.0/scc_3.1.0_Darwin_arm64.tar.gz";
-        assert_eq!(have, want);
+    mod archive_url {
+        use crate::config::Version;
+        use crate::install::DownloadArchive;
+        use crate::platform::{Cpu, Os, Platform};
+
+        #[test]
+        fn linux_arm() {
+            let scc = super::super::Scc {};
+            let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
+            let have = scc.archive_url(&Version::from("3.2.0"), platform);
+            let want = "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Darwin_arm64.tar.gz";
+            assert_eq!(have, want);
+        }
+
+        #[test]
+        fn linux_intel() {
+            let scc = super::super::Scc {};
+            let platform = Platform { os: Os::Linux, cpu: Cpu::Intel64 };
+            let have = scc.archive_url(&Version::from("3.2.0"), platform);
+            let want = "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Linux_x86_64.tar.gz";
+            assert_eq!(have, want);
+        }
     }
 
     #[test]
