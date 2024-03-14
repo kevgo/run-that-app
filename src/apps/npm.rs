@@ -48,8 +48,11 @@ impl install::ViaAnotherApp for Npm {
         Box::new(NodeJS {})
     }
 
-    fn executable_path_in_other_app_yard(&self, _version: &Version, platform: Platform) -> String {
-        format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))
+    fn executable_path_in_other_app_yard(&self, version: &Version, platform: Platform) -> String {
+        let os = super::nodejs::os_text(platform.os);
+        let cpu = super::nodejs::cpu_text(platform.cpu);
+        let sep = path::MAIN_SEPARATOR;
+        format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{}", self.executable_filename(platform))
     }
 }
 

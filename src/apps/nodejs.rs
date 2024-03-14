@@ -71,7 +71,7 @@ impl install::DownloadArchive for NodeJS {
     }
 }
 
-fn cpu_text(cpu: Cpu) -> &'static str {
+pub fn cpu_text(cpu: Cpu) -> &'static str {
     match cpu {
         Cpu::Arm64 => "arm64",
         Cpu::Intel64 => "x64",
@@ -86,7 +86,7 @@ fn identify(output: &str) -> bool {
     output.contains("Documentation can be found at https://nodejs.org")
 }
 
-fn os_text(os: Os) -> &'static str {
+pub fn os_text(os: Os) -> &'static str {
     match os {
         Os::Linux => "linux",
         Os::MacOS => "darwin",
