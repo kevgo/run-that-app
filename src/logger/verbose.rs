@@ -65,8 +65,8 @@ pub fn log(event: Event) {
         Event::UpdateNewVersion { old_version, new_version } => eprintln!("{} -> {}", old_version.as_str().green(), new_version.as_str().green()),
         Event::UpdateAlreadyNewest { app: _ } => eprintln!("{}", "up to date".green()),
 
-        Event::YardExistingAppCheckBegin { path } => eprintf!("Checking for existing app {} ... ", path.to_string_lossy()),
-        Event::YardExistingAppCheckFound => eprintln!("{}", "exists".green()),
-        Event::YardExistingAppCheckNotFound => eprintln!("{}", "not found".red()),
+        Event::YardCheckExistingAppBegin { path } => eprintf!("Checking for existing app {} ... ", path.to_string_lossy()),
+        Event::YardCheckExistingAppFound => eprintln!("{}", "exists".green()),
+        Event::YardCheckExistingAppNotFound => eprintln!("{}", "not found".red()),
     }
 }

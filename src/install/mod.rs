@@ -115,12 +115,12 @@ pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform,
         let yard_app_name = installation_method.yard_app();
         let location_in_yard = installation_method.executable_location(version, platform);
         let fullpath = yard.app_folder(&yard_app_name, version).join(location_in_yard);
-        log(Event::YardExistingAppCheckBegin { path: &fullpath });
+        log(Event::YardCheckExistingAppBegin { path: &fullpath });
         if fullpath.exists() {
-            log(Event::YardExistingAppCheckFound);
+            log(Event::YardCheckExistingAppFound);
             return Some(Executable(fullpath));
         }
     }
-    log(Event::YardExistingAppCheckNotFound);
+    log(Event::YardCheckExistingAppNotFound);
     None
 }

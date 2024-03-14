@@ -50,8 +50,8 @@ pub fn log(event: Event) {
         Event::UpdateNewVersion { old_version, new_version } => eprintln!("{} -> {}", old_version.as_str().green(), new_version.as_str().green()),
         Event::UpdateAlreadyNewest { app: _ } => eprintln!("{}", "up to date".green()),
 
-        Event::YardExistingAppCheckBegin { path: _ } => {}
-        Event::YardExistingAppCheckFound => {}
-        Event::YardExistingAppCheckNotFound => {}
+        Event::YardCheckExistingAppBegin { path: _ } => {}
+        Event::YardCheckExistingAppFound => {}
+        Event::YardCheckExistingAppNotFound => {}
     }
 }
