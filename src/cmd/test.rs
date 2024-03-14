@@ -1,6 +1,7 @@
 use crate::apps::AnalyzeResult;
 use crate::config::AppName;
 use crate::install;
+use crate::logger::Event;
 use crate::subshell::Executable;
 use crate::{apps, logger, platform, yard, Result};
 use colored::Colorize;
@@ -20,11 +21,17 @@ pub fn test(mut start_at_app: Option<AppName>, verbose: bool) -> Result<ExitCode
             }
             start_at_app = None;
         }
-        println!("\n\nTESTING {}\n", app.name().as_str().cyan());
+        log(Event::IntegrationTestNewApp { app: &app.name() });
         let latest_version = app.latest_installable_version(log)?;
-        println!("Latest version: {}", latest_version.as_str().cyan());
+        log(Event::IntegrationTestDeterminedVersion {
+            app: &app.name(),
+            version: &latest_version,
+        });
         for install_method in app.install_methods() {
-            println!("\n{}", install_method.to_string().bold());
+            log(Event::IntegrationTestNewInstallMethod {
+                version: &latest_version,
+                method: &install_method,
+            });
             let installed = install::install(&install_method, &latest_version, platform, &yard, log)?;
             if !installed {
                 continue;

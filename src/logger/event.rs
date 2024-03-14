@@ -1,4 +1,5 @@
 use crate::config::{AppName, Version};
+use crate::install::Method;
 use std::borrow::Cow;
 use std::path::Path;
 
@@ -41,6 +42,10 @@ pub enum Event<'a> {
 
     IdentifiedCpu { architecture: &'static str },
     IdentifiedOs { name: &'static str },
+
+    IntegrationTestNewApp { app: &'a AppName },
+    IntegrationTestDeterminedVersion { app: &'a AppName, version: &'a Version },
+    IntegrationTestNewInstallMethod { method: &'a Method<'a>, version: &'a Version },
 
     NotOnline,
 

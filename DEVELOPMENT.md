@@ -16,7 +16,7 @@ The end-to-end tests verify that all installation methods of all apps work with
 the latest version of their app.
 
 ```fish
-target/debug/rta --test [--verbose] [app name]
+cargo run -- --test [--verbose] [app name]
 ```
 
 The end-to-end test installs into a temporary location and deletes the

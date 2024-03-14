@@ -18,7 +18,6 @@ use crate::platform::Platform;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::Result;
-use std::fmt::Display;
 
 /// the different methods to install an application
 pub enum Method<'a> {
@@ -56,35 +55,14 @@ impl<'a> Method<'a> {
             Method::InstallAnotherApp(app) => app.app_to_install().name(),
         }
     }
-}
 
-impl<'a> Display for Method<'a> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    pub fn name(&self, version: &Version) -> String {
         match self {
-            Method::DownloadArchive(app) => {
-                f.write_str("download archive for ")?;
-                f.write_str(app.name().as_str())
-            }
-            Method::DownloadExecutable(app) => {
-                f.write_str("download executable for ")?;
-                f.write_str(app.name().as_str())
-            }
-            Method::CompileGoSource(app) => {
-                f.write_str("compile ")?;
-                f.write_str(app.name().as_str())?;
-                f.write_str(" from source")
-            }
-            Method::CompileRustSource(app) => {
-                f.write_str("compile ")?;
-                f.write_str(app.name().as_str())?;
-                f.write_str(" from source")
-            }
-            Method::InstallAnotherApp(app) => {
-                f.write_str("install ")?;
-                f.write_str(app.name().as_str())?;
-                f.write_str(" through ")?;
-                f.write_str(app.app_to_install().name().as_str())
-            }
+            Method::DownloadArchive(app) => format!("download archive for {app}@{version}", app = app.name()),
+            Method::DownloadExecutable(app) => format!("download executable for {app}@{version}", app = app.name()),
+            Method::CompileGoSource(app) => format!("compile {app}@{version} from source", app = app.name()),
+            Method::CompileRustSource(app) => format!("compile {app}@{version} from source", app = app.name()),
+            Method::InstallAnotherApp(app) => format!("install {app}@{version} through {carrier}", app = app.name(), carrier = app.app_to_install().name()),
         }
     }
 }
