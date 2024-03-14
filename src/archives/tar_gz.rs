@@ -1,6 +1,6 @@
 use super::Archive;
 use crate::error::UserError;
-use crate::logger::{Event, Log};
+use crate::logger::{Event, LogFn};
 use crate::Result;
 use flate2::read::GzDecoder;
 use std::io;
@@ -12,7 +12,7 @@ pub struct TarGz {
 }
 
 impl Archive for TarGz {
-    fn extract_all(&self, target_dir: &Path, log: Log) -> Result<()> {
+    fn extract_all(&self, target_dir: &Path, log: LogFn) -> Result<()> {
         log(Event::ArchiveExtractBegin { archive_type: "tar.gz" });
         let gz_decoder = GzDecoder::new(io::Cursor::new(&self.data));
         let mut archive = tar::Archive::new(gz_decoder);

@@ -25,7 +25,7 @@ use crate::config::{AppName, Version};
 use crate::error::UserError;
 use crate::platform::{Os, Platform};
 use crate::subshell::Executable;
-use crate::{install, Log, Result};
+use crate::{install, LogFn, Result};
 use std::slice::Iter;
 
 pub trait App {
@@ -48,13 +48,13 @@ pub trait App {
     fn install_methods(&self) -> Vec<install::Method>;
 
     /// provides the versions of this application that can be installed
-    fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>>;
+    fn installable_versions(&self, amount: usize, log: LogFn) -> Result<Vec<Version>>;
 
     /// provides the latest version of this application that can be installed
-    fn latest_installable_version(&self, log: Log) -> Result<Version>;
+    fn latest_installable_version(&self, log: LogFn) -> Result<Version>;
 
     /// ensures that the given executable belongs to this app and if yes returns its version
-    fn analyze_executable(&self, path: &Executable, log: Log) -> Result<AnalyzeResult>;
+    fn analyze_executable(&self, path: &Executable, log: LogFn) -> Result<AnalyzeResult>;
 
     /// Apps can override this method to provide version restrictions
     /// defined by config files in the working directory.

@@ -6,7 +6,7 @@ use crate::install::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::subshell::Executable;
 use crate::{filesystem, regexp};
-use crate::{Log, Result};
+use crate::{LogFn, Result};
 use big_s::S;
 use std::path;
 
@@ -28,12 +28,12 @@ impl App for Go {
         vec![Method::DownloadArchive(self)]
     }
 
-    fn latest_installable_version(&self, log: Log) -> Result<Version> {
+    fn latest_installable_version(&self, log: LogFn) -> Result<Version> {
         let versions = self.installable_versions(1, log)?;
         Ok(versions.into_iter().next().unwrap())
     }
 
-    fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
+    fn installable_versions(&self, amount: usize, log: LogFn) -> Result<Vec<Version>> {
         let tags = github_tags::all(ORG, REPO, 100, log)?;
         let mut go_tags: Vec<String> = tags
             .into_iter()
@@ -48,7 +48,7 @@ impl App for Go {
         Ok(go_tags.into_iter().map(Version::from).collect())
     }
 
-    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+    fn analyze_executable(&self, executable: &Executable, log: LogFn) -> Result<AnalyzeResult> {
         if let Some(version) = extract_version(&executable.run_output("version", log)?) {
             return Ok(AnalyzeResult::IdentifiedWithVersion(version.into()));
         }

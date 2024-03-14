@@ -4,7 +4,7 @@ use crate::config::{AppName, Version};
 use crate::install::{self, Method};
 use crate::platform::Platform;
 use crate::subshell::Executable;
-use crate::{Log, Result};
+use crate::{LogFn, Result};
 use std::path;
 
 pub struct Npx {}
@@ -22,15 +22,15 @@ impl App for Npx {
         vec![Method::InstallAnotherApp(self)]
     }
 
-    fn latest_installable_version(&self, log: Log) -> Result<Version> {
+    fn latest_installable_version(&self, log: LogFn) -> Result<Version> {
         (NodeJS {}).latest_installable_version(log)
     }
 
-    fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
+    fn installable_versions(&self, amount: usize, log: LogFn) -> Result<Vec<Version>> {
         (NodeJS {}).installable_versions(amount, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+    fn analyze_executable(&self, executable: &Executable, log: LogFn) -> Result<AnalyzeResult> {
         let output = executable.run_output("-h", log)?;
         if !identify(&output) {
             return Ok(AnalyzeResult::NotIdentified { output });

@@ -1,7 +1,7 @@
 use crate::apps::App;
 use crate::archives;
 use crate::config::Version;
-use crate::logger::Log;
+use crate::logger::LogFn;
 use crate::platform::Platform;
 use crate::yard::Yard;
 use crate::UserError;
@@ -17,7 +17,7 @@ pub trait DownloadArchive: App {
 }
 
 /// downloads and unpacks the content of an archive file
-pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<bool> {
+pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, yard: &Yard, log: LogFn) -> Result<bool> {
     let Some(artifact) = download::artifact(app.archive_url(version, platform), &app.name(), log)? else {
         return Ok(false);
     };

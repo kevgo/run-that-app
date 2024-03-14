@@ -5,7 +5,7 @@ use crate::install::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
-use crate::{Log, Result};
+use crate::{LogFn, Result};
 
 pub struct Goreleaser {}
 
@@ -25,15 +25,15 @@ impl App for Goreleaser {
         vec![Method::DownloadArchive(self), Method::CompileGoSource(self)]
     }
 
-    fn latest_installable_version(&self, log: Log) -> Result<Version> {
+    fn latest_installable_version(&self, log: LogFn) -> Result<Version> {
         github_releases::latest(ORG, REPO, log)
     }
 
-    fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
+    fn installable_versions(&self, amount: usize, log: LogFn) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+    fn analyze_executable(&self, executable: &Executable, log: LogFn) -> Result<AnalyzeResult> {
         let output = executable.run_output("-v", log)?;
         if !identify(&output) {
             return Ok(AnalyzeResult::NotIdentified { output });

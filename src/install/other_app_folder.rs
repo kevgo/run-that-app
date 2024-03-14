@@ -1,7 +1,7 @@
 use crate::apps::App;
 use crate::cmd::run::load_or_install;
 use crate::config::{RequestedVersion, Version};
-use crate::logger::Log;
+use crate::logger::LogFn;
 use crate::platform::Platform;
 use crate::yard::Yard;
 use crate::{apps, Result};
@@ -15,7 +15,7 @@ pub trait ViaAnotherApp: App {
     fn executable_path_in_other_app_yard(&self, version: &Version, platform: Platform) -> String;
 }
 
-pub fn install_other_app(app: &dyn ViaAnotherApp, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<bool> {
+pub fn install_other_app(app: &dyn ViaAnotherApp, version: &Version, platform: Platform, yard: &Yard, log: LogFn) -> Result<bool> {
     let app_to_install = app.app_to_install();
     let all_apps = apps::all();
     let app = all_apps.lookup(&app_to_install.name())?;

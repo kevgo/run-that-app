@@ -66,7 +66,7 @@ mod tests {
     mod parse {
         use crate::apps::{AnalyzeResult, App};
         use crate::config::Version;
-        use crate::logger::Log;
+        use crate::logger::LogFn;
         use crate::platform::Platform;
         use crate::subshell::Executable;
         use crate::{install, Result};
@@ -89,13 +89,13 @@ mod tests {
             fn homepage(&self) -> &'static str {
                 unimplemented!()
             }
-            fn installable_versions(&self, _amount: usize, _log: Log) -> Result<Vec<Version>> {
+            fn installable_versions(&self, _amount: usize, _log: LogFn) -> Result<Vec<Version>> {
                 unimplemented!()
             }
-            fn latest_installable_version(&self, _log: Log) -> Result<Version> {
+            fn latest_installable_version(&self, _log: LogFn) -> Result<Version> {
                 unimplemented!()
             }
-            fn analyze_executable(&self, _path: &Executable, _log: Log) -> Result<AnalyzeResult> {
+            fn analyze_executable(&self, _path: &Executable, _log: LogFn) -> Result<AnalyzeResult> {
                 unimplemented!()
             }
             fn install_methods(&self) -> Vec<install::Method> {

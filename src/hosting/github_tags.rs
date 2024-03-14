@@ -1,8 +1,8 @@
 use crate::logger::Event;
-use crate::{Log, Result, UserError};
+use crate::{LogFn, Result, UserError};
 use big_s::S;
 
-pub fn all(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<String>> {
+pub fn all(org: &str, repo: &str, amount: usize, log: LogFn) -> Result<Vec<String>> {
     let url = format!("https://api.github.com/repos/{org}/{repo}/git/refs/tags");
     log(Event::GitHubApiRequestBegin { url: &url });
     let get = minreq::get(&url)

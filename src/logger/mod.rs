@@ -8,4 +8,4 @@ mod normal;
 mod verbose;
 
 pub use event::Event;
-pub use log::{new, Log};
+pub use log::{new, LogFn};

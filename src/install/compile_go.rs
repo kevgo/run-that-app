@@ -1,7 +1,7 @@
 use crate::apps::App;
 use crate::config::Version;
 use crate::error::UserError;
-use crate::logger::{Event, Log};
+use crate::logger::{Event, LogFn};
 use crate::yard::Yard;
 use crate::Result;
 use std::io::ErrorKind;
@@ -16,7 +16,7 @@ pub trait CompileGoSource: App {
 }
 
 /// installs the given Go-based application by compiling it from source
-pub fn run(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) -> Result<bool> {
+pub fn run(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: LogFn) -> Result<bool> {
     let Ok(go_path) = which("go") else {
         return Ok(false);
     };
