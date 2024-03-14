@@ -96,7 +96,7 @@ impl install::DownloadArchive for Go {
 
     fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
         let sep = path::MAIN_SEPARATOR;
-        format!("go{sep}bin{sep}{}", self.executable_filename(platform))
+        format!("go{sep}bin{sep}{executable}", executable = self.executable_filename(platform))
     }
 }
 

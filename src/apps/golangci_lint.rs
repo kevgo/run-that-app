@@ -55,7 +55,7 @@ impl install::DownloadArchive for GolangCiLint {
         let os = os_text(platform.os);
         let cpu = cpu_text(platform.cpu);
         let sep = std::path::MAIN_SEPARATOR;
-        format!("golangci-lint-{version}-{os}-{cpu}{sep}{}", self.executable_filename(platform))
+        format!("golangci-lint-{version}-{os}-{cpu}{sep}{executable}", executable = self.executable_filename(platform))
     }
 }
 

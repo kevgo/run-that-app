@@ -49,7 +49,7 @@ impl install::ViaAnotherApp for Npx {
         let os = super::nodejs::os_text(platform.os);
         let cpu = super::nodejs::cpu_text(platform.cpu);
         let sep = path::MAIN_SEPARATOR;
-        format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{}", self.executable_filename(platform))
+        format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}", executable = self.executable_filename(platform))
     }
 }
 
