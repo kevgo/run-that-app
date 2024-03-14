@@ -3,7 +3,6 @@ use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::install::{self, Method, ViaAnotherApp};
 use crate::platform::Platform;
-use crate::regexp;
 use crate::subshell::Executable;
 use crate::{Log, Result};
 use std::path;
@@ -36,10 +35,8 @@ impl App for Npm {
         if !identify(&output) {
             return Ok(AnalyzeResult::NotIdentified { output });
         }
-        match extract_version(&executable.run_output("--version", log)?) {
-            Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
-            None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
-        }
+        // npm is versioned together with NodeJS, the actual version of npm is therefore not relevant here.
+        Ok(AnalyzeResult::IdentifiedButUnknownVersion)
     }
 }
 
@@ -54,10 +51,6 @@ impl install::ViaAnotherApp for Npm {
         let sep = path::MAIN_SEPARATOR;
         format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{}", self.executable_filename(platform))
     }
-}
-
-fn extract_version(output: &str) -> Option<&str> {
-    regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
 }
 
 fn identify(output: &str) -> bool {
