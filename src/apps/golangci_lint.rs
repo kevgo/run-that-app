@@ -45,17 +45,22 @@ impl App for GolangCiLint {
 
 impl install::DownloadArchive for GolangCiLint {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
-        let os = os_text(platform.os);
-        let cpu = cpu_text(platform.cpu);
-        let ext = ext_text(platform.os);
-        format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}")
+        format!(
+            "https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}",
+            os = os_text(platform.os),
+            cpu = cpu_text(platform.cpu),
+            ext = ext_text(platform.os)
+        )
     }
 
     fn executable_path_in_archive(&self, version: &Version, platform: Platform) -> String {
-        let os = os_text(platform.os);
-        let cpu = cpu_text(platform.cpu);
-        let sep = std::path::MAIN_SEPARATOR;
-        format!("golangci-lint-{version}-{os}-{cpu}{sep}{executable}", executable = self.executable_filename(platform))
+        format!(
+            "golangci-lint-{version}-{os}-{cpu}{sep}{executable}",
+            executable = self.executable_filename(platform),
+            os = os_text(platform.os),
+            cpu = cpu_text(platform.cpu),
+            sep = std::path::MAIN_SEPARATOR
+        )
     }
 }
 
