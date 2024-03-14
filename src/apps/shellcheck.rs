@@ -6,7 +6,6 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
 use crate::{Log, Result};
-use std::path;
 
 pub struct ShellCheck {}
 
@@ -64,8 +63,12 @@ impl install::DownloadArchive for ShellCheck {
         format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}")
     }
 
-    fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
-        format!("{}{}{}", self.name().as_str(), path::MAIN_SEPARATOR, self.executable_filename(platform))
+    fn executable_path_in_archive(&self, version: &Version, platform: Platform) -> String {
+        format!(
+            "shellcheck-v{version}{sep}{executable}",
+            sep = std::path::MAIN_SEPARATOR,
+            executable = self.executable_filename(platform)
+        )
     }
 }
 
