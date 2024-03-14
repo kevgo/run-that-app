@@ -35,7 +35,7 @@ impl App for Npm {
         if !identify(&output) {
             return Ok(AnalyzeResult::NotIdentified { output });
         }
-        // npm is versioned together with NodeJS, the actual version of npm is therefore not relevant here.
+        // Npm is versioned together with NodeJS. The actual version of npm is therefore not relevant here.
         Ok(AnalyzeResult::IdentifiedButUnknownVersion)
     }
 }

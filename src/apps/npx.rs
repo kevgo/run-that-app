@@ -3,7 +3,6 @@ use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::install::{self, Method};
 use crate::platform::Platform;
-use crate::regexp;
 use crate::subshell::Executable;
 use crate::{Log, Result};
 use std::path;
@@ -36,10 +35,8 @@ impl App for Npx {
         if !identify(&output) {
             return Ok(AnalyzeResult::NotIdentified { output });
         }
-        match extract_version(&executable.run_output("--version", log)?) {
-            Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
-            None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
-        }
+        // Npx is versioned together with NodeJS. The actual version of npm is therefore not relevant here.
+        Ok(AnalyzeResult::IdentifiedButUnknownVersion)
     }
 }
 
@@ -56,20 +53,6 @@ impl install::ViaAnotherApp for Npx {
     }
 }
 
-fn extract_version(output: &str) -> Option<&str> {
-    regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
-}
-
 fn identify(output: &str) -> bool {
     output.contains("Run a command from a local or remote npm package")
-}
-
-#[cfg(test)]
-mod tests {
-
-    #[test]
-    fn extract_version() {
-        assert_eq!(super::extract_version("10.2.4"), Some("10.2.4"));
-        assert_eq!(super::extract_version("other"), None);
-    }
 }
