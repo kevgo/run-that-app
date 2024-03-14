@@ -6,8 +6,6 @@ pub mod download_archive;
 pub mod download_executable;
 pub mod other_app_folder;
 
-use std::fmt::Display;
-
 pub use compile_go::CompileGoSource;
 pub use compile_rust::CompileRustSource;
 pub use download_archive::DownloadArchive;
@@ -20,6 +18,7 @@ use crate::platform::Platform;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::Result;
+use std::fmt::Display;
 
 /// the different methods to install an application
 pub enum Method<'a> {
