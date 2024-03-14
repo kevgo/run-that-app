@@ -1,5 +1,5 @@
 use crate::error::UserError;
-use crate::logger::{Event, LogFn};
+use crate::logger::{Event, Log};
 use crate::Result;
 use std::borrow::Cow;
 use std::ffi::OsStr;
@@ -23,7 +23,7 @@ impl Executable {
     }
 
     /// runs this executable with the given args and returns the output it produced
-    pub fn run_output(&self, arg: &str, log: LogFn) -> Result<String> {
+    pub fn run_output(&self, arg: &str, log: Log) -> Result<String> {
         let mut cmd = Command::new(self);
         cmd.arg(arg);
         log(Event::AnalyzeExecutableQuery {
@@ -47,7 +47,7 @@ impl Executable {
     }
 
     /// runs this executable with the given args and returns the output it produced
-    pub fn run_output_args(&self, args: &[&str], log: LogFn) -> Result<String> {
+    pub fn run_output_args(&self, args: &[&str], log: Log) -> Result<String> {
         let mut cmd = Command::new(self);
         cmd.args(args);
         let output = match cmd.output() {

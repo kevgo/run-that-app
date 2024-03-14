@@ -1,9 +1,9 @@
-use crate::logger::{Event, LogFn};
+use crate::logger::{Event, Log};
 use crate::{Result, UserError};
 use std::env;
 use std::fmt::Display;
 
-pub fn detect(log: LogFn) -> Result<Os> {
+pub fn detect(log: Log) -> Result<Os> {
     log(Event::IdentifiedOs { name: env::consts::OS });
     match env::consts::OS {
         "linux" => Ok(Os::Linux),

@@ -15,7 +15,7 @@ pub use download_executable::DownloadExecutable;
 pub use other_app_folder::ViaAnotherApp;
 
 use crate::config::{AppName, Version};
-use crate::logger::{Event, LogFn};
+use crate::logger::{Event, Log};
 use crate::platform::Platform;
 use crate::subshell::Executable;
 use crate::yard::Yard;
@@ -91,7 +91,7 @@ impl<'a> Display for Method<'a> {
 }
 
 /// installs an app using the first of its installation methods that works
-pub fn any(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, log: LogFn) -> Result<bool> {
+pub fn any(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<bool> {
     for install_method in install_methods {
         if install(&install_method, version, platform, yard, log)? {
             return Ok(true);
@@ -100,7 +100,7 @@ pub fn any(install_methods: Vec<Method>, version: &Version, platform: Platform, 
     Ok(false)
 }
 
-pub fn install(install_method: &Method, version: &Version, platform: Platform, yard: &Yard, log: LogFn) -> Result<bool> {
+pub fn install(install_method: &Method, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<bool> {
     match install_method {
         Method::DownloadArchive(app) => download_archive::run(*app, version, platform, yard, log),
         Method::DownloadExecutable(app) => download_executable::install(*app, version, platform, yard, log),
@@ -111,7 +111,7 @@ pub fn install(install_method: &Method, version: &Version, platform: Platform, y
 }
 
 /// assuming one of the given installation methods of an app worked, loads that app's executable
-pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, log: LogFn) -> Option<Executable> {
+pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Option<Executable> {
     for installation_method in install_methods {
         let yard_app_name = installation_method.yard_app();
         let location_in_yard = installation_method.executable_location(version, platform);

@@ -5,7 +5,7 @@ use crate::install::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::regexp;
 use crate::subshell::Executable;
-use crate::{LogFn, Result};
+use crate::{Log, Result};
 use const_format::formatcp;
 
 pub struct GolangCiLint {}
@@ -27,15 +27,15 @@ impl App for GolangCiLint {
         vec![Method::DownloadArchive(self)]
     }
 
-    fn latest_installable_version(&self, log: LogFn) -> Result<Version> {
+    fn latest_installable_version(&self, log: Log) -> Result<Version> {
         github_releases::latest(ORG, REPO, log)
     }
 
-    fn installable_versions(&self, amount: usize, log: LogFn) -> Result<Vec<Version>> {
+    fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
         github_releases::versions(ORG, REPO, amount, log)
     }
 
-    fn analyze_executable(&self, executable: &Executable, log: LogFn) -> Result<AnalyzeResult> {
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
         match extract_version(&executable.run_output("--version", log)?) {
             Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
             None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),

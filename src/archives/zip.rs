@@ -1,6 +1,6 @@
 use super::Archive;
 use crate::error::UserError;
-use crate::logger::{Event, LogFn};
+use crate::logger::{Event, Log};
 use crate::Result;
 use std::io;
 use std::path::Path;
@@ -11,7 +11,7 @@ pub struct Zip {
 }
 
 impl Archive for Zip {
-    fn extract_all(&self, target_dir: &Path, log: LogFn) -> Result<()> {
+    fn extract_all(&self, target_dir: &Path, log: Log) -> Result<()> {
         log(Event::ArchiveExtractBegin { archive_type: "zip" });
         let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&self.data)).expect("cannot read zip data");
         match zip_archive.extract(target_dir) {

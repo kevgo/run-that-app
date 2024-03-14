@@ -17,7 +17,7 @@ mod yard;
 use cli::Command;
 use cmd::run;
 use error::{Result, UserError};
-use logger::LogFn;
+use logger::Log;
 use std::process::ExitCode;
 
 fn main() -> ExitCode {

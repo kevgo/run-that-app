@@ -1,9 +1,9 @@
-use crate::logger::{Event, LogFn};
+use crate::logger::{Event, Log};
 use crate::{Result, UserError};
 use std::env;
 use std::fmt::Display;
 
-pub fn determine(log: LogFn) -> Result<Cpu> {
+pub fn determine(log: Log) -> Result<Cpu> {
     log(Event::IdentifiedCpu { architecture: env::consts::ARCH });
     match env::consts::ARCH {
         "x86_64" => Ok(Cpu::Intel64),

@@ -1,7 +1,7 @@
 use crate::apps::App;
 use crate::config::Version;
 use crate::error::UserError;
-use crate::logger::{Event, LogFn};
+use crate::logger::{Event, Log};
 use crate::yard::Yard;
 use crate::Result;
 use std::process::Command;
@@ -15,7 +15,7 @@ pub trait CompileRustSource: App {
 }
 
 /// installs the given Rust-based application by compiling it from source
-pub fn run(app: &dyn CompileRustSource, version: &Version, yard: &Yard, log: LogFn) -> Result<bool> {
+pub fn run(app: &dyn CompileRustSource, version: &Version, yard: &Yard, log: Log) -> Result<bool> {
     let Ok(cargo_path) = which("cargo") else {
         return Err(UserError::RustNotInstalled);
     };

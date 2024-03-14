@@ -1,9 +1,9 @@
 use crate::config::AppName;
-use crate::logger::{Event, LogFn};
+use crate::logger::{Event, Log};
 use crate::{Result, UserError};
 
 /// downloads the artifact at the given URL
-pub fn artifact(url: String, app: &AppName, log: LogFn) -> Result<Option<Artifact>> {
+pub fn artifact(url: String, app: &AppName, log: Log) -> Result<Option<Artifact>> {
     log(Event::DownloadBegin { app, url: &url });
     let Ok(response) = minreq::get(&url).send() else {
         log(Event::NotOnline);

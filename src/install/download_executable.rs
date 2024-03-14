@@ -1,6 +1,6 @@
 use crate::apps::App;
 use crate::config::Version;
-use crate::logger::LogFn;
+use crate::logger::Log;
 use crate::platform::Platform;
 use crate::yard::Yard;
 use crate::{download, filesystem, Result};
@@ -12,7 +12,7 @@ pub trait DownloadExecutable: App {
 }
 
 /// downloads an uncompressed precompiled binary
-pub fn install(app: &dyn DownloadExecutable, version: &Version, platform: Platform, yard: &Yard, log: LogFn) -> Result<bool> {
+pub fn install(app: &dyn DownloadExecutable, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<bool> {
     let url = app.download_url(version, platform);
     let Some(artifact) = download::artifact(url, &app.name(), log)? else {
         return Ok(false);

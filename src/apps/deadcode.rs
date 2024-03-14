@@ -2,7 +2,7 @@ use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::install::{self, Method};
 use crate::subshell::Executable;
-use crate::{LogFn, Result};
+use crate::{Log, Result};
 use const_format::formatcp;
 
 pub struct Deadcode {}
@@ -20,16 +20,16 @@ impl App for Deadcode {
         vec![Method::CompileGoSource(self)]
     }
 
-    fn latest_installable_version(&self, _log: LogFn) -> Result<Version> {
+    fn latest_installable_version(&self, _log: Log) -> Result<Version> {
         // TODO: remove this file once deadcode is integrated into golangci-lint
         Ok(Version::from("0.16.1"))
     }
 
-    fn installable_versions(&self, _amount: usize, _log: LogFn) -> Result<Vec<Version>> {
+    fn installable_versions(&self, _amount: usize, _log: Log) -> Result<Vec<Version>> {
         Ok(vec![Version::from("0.16.1")])
     }
 
-    fn analyze_executable(&self, executable: &Executable, log: LogFn) -> Result<AnalyzeResult> {
+    fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
         let output = executable.run_output("-h", log)?;
         if !output.contains("The deadcode command reports unreachable functions in Go programs") {
             return Ok(AnalyzeResult::NotIdentified { output });
