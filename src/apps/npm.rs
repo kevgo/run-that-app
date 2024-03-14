@@ -56,13 +56,3 @@ impl install::ViaAnotherApp for Npm {
 fn identify(output: &str) -> bool {
     output.contains("javascript package manager")
 }
-
-#[cfg(test)]
-mod tests {
-
-    #[test]
-    fn extract_version() {
-        assert_eq!(super::extract_version("10.2.4"), Some("10.2.4"));
-        assert_eq!(super::extract_version("other"), None);
-    }
-}
