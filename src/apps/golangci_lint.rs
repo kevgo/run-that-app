@@ -45,29 +45,44 @@ impl App for GolangCiLint {
 
 impl install::DownloadArchive for GolangCiLint {
     fn archive_url(&self, version: &Version, platform: Platform) -> String {
-        let os = match platform.os {
-            Os::Linux => "linux",
-            Os::MacOS => "darwin",
-            Os::Windows => "windows",
-        };
-        let cpu = match platform.cpu {
-            Cpu::Arm64 => "arm64",
-            Cpu::Intel64 => "amd64",
-        };
-        let ext = match platform.os {
-            Os::Linux | Os::MacOS => "tar.gz",
-            Os::Windows => "zip",
-        };
+        let os = os_text(platform.os);
+        let cpu = cpu_text(platform.cpu);
+        let ext = ext_text(platform.os);
         format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}")
     }
 
-    fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
-        self.executable_filename(platform)
+    fn executable_path_in_archive(&self, version: &Version, platform: Platform) -> String {
+        let os = os_text(platform.os);
+        let cpu = cpu_text(platform.cpu);
+        let sep = std::path::MAIN_SEPARATOR;
+        format!("golangci-lint-{version}-{os}-{cpu}{sep}{}", self.executable_filename(platform))
+    }
+}
+
+fn cpu_text(cpu: Cpu) -> &'static str {
+    match cpu {
+        Cpu::Arm64 => "arm64",
+        Cpu::Intel64 => "amd64",
+    }
+}
+
+fn ext_text(os: Os) -> &'static str {
+    match os {
+        Os::Linux | Os::MacOS => "tar.gz",
+        Os::Windows => "zip",
     }
 }
 
 fn extract_version(output: &str) -> Option<&str> {
     regexp::first_capture(output, r"golangci-lint has version (\d+\.\d+\.\d+) built with")
+}
+
+fn os_text(os: Os) -> &'static str {
+    match os {
+        Os::Linux => "linux",
+        Os::MacOS => "darwin",
+        Os::Windows => "windows",
+    }
 }
 
 #[cfg(test)]
