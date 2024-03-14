@@ -34,7 +34,7 @@ impl App for Goreleaser {
     }
 
     fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-        let output = executable.run_output("-V", log)?;
+        let output = executable.run_output("-v", log)?;
         if !identify(&output) {
             return Ok(AnalyzeResult::NotIdentified { output });
         }
@@ -70,7 +70,7 @@ impl install::DownloadArchive for Goreleaser {
 
 impl install::CompileGoSource for Goreleaser {
     fn import_path(&self, version: &Version) -> String {
-        format!("github.com/{ORG}/{REPO}@{version}")
+        format!("github.com/{ORG}/{REPO}@v{version}")
     }
 }
 

@@ -7,7 +7,6 @@ use crate::regexp;
 use crate::subshell::Executable;
 use crate::{Log, Result};
 use const_format::formatcp;
-use std::path;
 
 pub struct MdBook {}
 
@@ -62,7 +61,7 @@ impl install::DownloadArchive for MdBook {
     }
 
     fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
-        format!("bin{}{}", path::MAIN_SEPARATOR, self.executable_filename(platform))
+        self.executable_filename(platform)
     }
 }
 
