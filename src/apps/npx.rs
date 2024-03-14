@@ -46,10 +46,13 @@ impl install::ViaAnotherApp for Npx {
     }
 
     fn executable_path_in_other_app_yard(&self, version: &Version, platform: Platform) -> String {
-        let os = super::nodejs::os_text(platform.os);
-        let cpu = super::nodejs::cpu_text(platform.cpu);
-        let sep = path::MAIN_SEPARATOR;
-        format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}", executable = self.executable_filename(platform))
+        format!(
+            "node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",
+            os = super::nodejs::os_text(platform.os),
+            cpu = super::nodejs::cpu_text(platform.cpu),
+            sep = path::MAIN_SEPARATOR,
+            executable = self.executable_filename(platform)
+        )
     }
 }
 
