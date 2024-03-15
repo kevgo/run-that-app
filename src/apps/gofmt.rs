@@ -46,7 +46,11 @@ impl install::ViaAnotherApp for Gofmt {
     }
 
     fn executable_path_in_other_app_yard(&self, _version: &Version, platform: Platform) -> String {
-        format!("go{sep}bin{sep}{executable}", sep = path::MAIN_SEPARATOR, executable = self.executable_filename(platform))
+        format!(
+            "go{sep}bin{sep}{executable}",
+            sep = path::MAIN_SEPARATOR,
+            executable = self.executable_filename(platform)
+        )
     }
 }
 

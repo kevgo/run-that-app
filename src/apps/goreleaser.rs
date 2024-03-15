@@ -91,7 +91,10 @@ mod tests {
     #[test]
     fn archive_url() {
         let goreleaser = super::Goreleaser {};
-        let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
+        let platform = Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Arm64,
+        };
         let have = goreleaser.archive_url(&Version::from("1.22.1"), platform);
         let want = "https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz";
         assert_eq!(have, want);
