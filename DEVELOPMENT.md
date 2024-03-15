@@ -13,16 +13,23 @@ test for your app (see below).
 ### End-to-end tests
 
 The end-to-end tests verify that all installation methods of all apps work with
-the latest version of their app.
+the latest version of their app. They run via an undocumented command of the RTA
+executable.
+
+````fish
+rta --test [--verbose] [app name]
+```
+
+or while developing on app definitions:
 
 ```fish
 cargo run -- --test [--verbose] [app name]
-```
+````
 
-The end-to-end test installs into a temporary location and deletes the
-installation when done, so re-running it re-downloads all apps again.
+The end-to-end test creates a Yard in a temporary location and deletes the
+installation when done. Re-running the tests re-downloads all apps again.
 
-The `--verbose` switch outputs all individual activities.
+The `--verbose` switch outputs more details around individual activities.
 
 If you provide an application name, the end-to-end test only tests this
-application.
+application, otherwise tests all apps.
