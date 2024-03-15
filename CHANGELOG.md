@@ -1,5 +1,13 @@
 # run-that-app changelog
 
+### 0.5 (2024-03-14)
+
+#### New Features
+
+End-to-end tests: run `rta --test` to verify that all installation methods of all apps work for the latest app version. See `DEVELOPMENT.md` for details.
+
+When running externally installed apps, automatically determines whether their version fits version restrictions declared by your code base. As an example, assuming your `.tool-versions`  if your codebase has a `go.mod` file containing `go 1.21` and your computer has Go 1.18 installed globally, _run-that-app_ would
+
 ### 0.4.1 (2024-02-29)
 
 #### Bug Fixes

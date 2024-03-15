@@ -119,6 +119,22 @@ Runs [ShellCheck](https://shellcheck.net) version 0.9.0 with the arguments
 rta shellcheck@0.9.0 --color=always myscript.sh
 ```
 
+#### Use globally installed applications
+
+If your system already has certain apps installed, _run-that-app_ can use them.
+Consider this `.tool-versions` file:
+
+```
+go system 1.21.3
+```
+
+If your computer has Go installed, _run-that-app_ would try to run it. Only if
+that fails would it install and run Go version 1.21.3.
+
+Restrictions in the code base apply. If your codebase has a file `go.mod`
+containing `go 1.21` and the externally installed Go version is older,
+_run-that-app_ would not use the external version.
+
 #### Ignore unavailable applications
 
 ShellCheck is just a linter. If it isn't available on a particular platform, the
