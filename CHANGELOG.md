@@ -4,9 +4,15 @@
 
 #### New Features
 
-End-to-end tests: run `rta --test` to verify that all installation methods of all apps work for the latest app version. See `DEVELOPMENT.md` for details.
+The `.tool-versions` file can now define multiple versions. RTA tries versions from left to right until it finds one that it can run on your hardware.
 
-When running externally installed apps, automatically determines whether their version fits version restrictions declared by your code base. As an example, assuming your `.tool-versions`  if your codebase has a `go.mod` file containing `go 1.21` and your computer has Go 1.18 installed globally, _run-that-app_ would
+The `--which` command now returns a non-zero exit code if the given app isn't available on your machine.
+
+All apps now have all-lowercase names. The `mdBook` app is now `mdbook`.
+
+When running externally installed apps, automatically determines whether their version fits version restrictions declared by your code base. As an example, assuming your `.tool-versions` if your codebase has a `go.mod` file containing `go 1.21` and your computer has Go 1.18 installed globally, _run-that-app_ would
+
+End-to-end tests: run `cargo run -- --test` to verify that all installation methods of all apps work for the latest app version. See `DEVELOPMENT.md` for details.
 
 ### 0.4.1 (2024-02-29)
 
@@ -18,8 +24,7 @@ When running externally installed apps, automatically determines whether their v
 
 #### New Features
 
-- can now execute in subfolders of the folder that contains the
-  `.tools-versions` file
+- can now execute in subfolders of the folder that contains the `.tools-versions` file
 - `--error-on-output` option
 - print available versions using `--versions` and `--versions=<amount>`
 - apps: go, goda, gofmt, npx, mdBook
@@ -56,13 +61,10 @@ When running externally installed apps, automatically determines whether their v
 
 #### New Features
 
-- `--available` command indicates via the exit code whether an application is
-  available
-- `--show-path` command displays the path of the executable instead of running
-  it
+- `--available` command indicates via the exit code whether an application is available
+- `--show-path` command displays the path of the executable instead of running it
 - `--optional` parameter makes the app do nothing if the app isn't available
-- `--include-global` parameter runs a globally installed app if the app cannot
-  be installed
+- `--include-global` parameter runs a globally installed app if the app cannot be installed
 - config file (.tool-versions) for defining the versions of tools to run
 
 #### Bug Fixes
@@ -91,7 +93,6 @@ When running externally installed apps, automatically determines whether their v
 ### 0.0.1 (2023-11-14)
 
 - installation methods: downloading binaries, compile from source
-- apps: alphavet, depth, dprint, gh, gofumpt, golangci-lint, scc, shellcheck,
-  shfmt
+- apps: alphavet, depth, dprint, gh, gofumpt, golangci-lint, scc, shellcheck, shfmt
 - logging with namespaces for downloading and extracting
 - shell output
