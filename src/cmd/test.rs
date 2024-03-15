@@ -58,7 +58,7 @@ pub fn test(mut start_at_app: Option<AppName>, verbose: bool) -> Result<ExitCode
                 }
                 AnalyzeResult::IdentifiedButUnknownVersion => println!("{}", "executable identified".green()),
                 AnalyzeResult::IdentifiedWithVersion(executable_version) if executable_version == latest_version => {
-                    println!("{}", "executable has the correct version".green())
+                    println!("{}", "executable has the correct version".green());
                 }
                 AnalyzeResult::IdentifiedWithVersion(executable_version) => {
                     println!("executable has version {executable_version} but we installed version {latest_version}");
