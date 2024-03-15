@@ -10,7 +10,8 @@ The `--which` command now returns a non-zero exit code if the given app isn't av
 
 All apps now have all-lowercase names. The `mdBook` app is now `mdbook`.
 
-When running externally installed apps, automatically determines whether their version fits version restrictions declared by your code base. As an example, assuming your `.tool-versions` if your codebase has a `go.mod` file containing `go 1.21` and your computer has Go 1.18 installed globally, _run-that-app_ would
+When running externally installed apps, _run-that-app_ now verifies that the executable it found is actually is the app. It also
+determines whether the version of the globally installed application matches version restrictions declared by your code base.
 
 End-to-end tests: run `cargo run -- --test` to verify that all installation methods of all apps work for the latest app version. See `DEVELOPMENT.md` for details.
 

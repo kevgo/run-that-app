@@ -131,9 +131,9 @@ go system 1.21.3
 If your computer has Go installed, _run-that-app_ would try to run it. Only if
 that fails would it install and run Go version 1.21.3.
 
-Restrictions in the code base apply. If your codebase has a file `go.mod`
-containing `go 1.21` and the externally installed Go version is older,
-_run-that-app_ would not use the external version.
+_Run-that-app_ considers restrictions declared by your code base. If your
+codebase has a file `go.mod` containing `go 1.21` and the externally installed
+Go version is older, _run-that-app_ would not use the external version.
 
 #### Ignore unavailable applications
 
