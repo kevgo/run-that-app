@@ -77,7 +77,10 @@ mod tests {
     #[test]
     fn artifact_url() {
         let depth = super::Depth {};
-        let platform = Platform { os: Os::Linux, cpu: Cpu::Intel64 };
+        let platform = Platform {
+            os: Os::Linux,
+            cpu: Cpu::Intel64,
+        };
         let have = depth.download_url(&Version::from("1.2.1"), platform);
         let want = "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_linux_amd64";
         assert_eq!(have, want);

@@ -4,7 +4,9 @@ use std::env;
 use std::fmt::Display;
 
 pub fn determine(log: Log) -> Result<Cpu> {
-    log(Event::IdentifiedCpu { architecture: env::consts::ARCH });
+    log(Event::IdentifiedCpu {
+        architecture: env::consts::ARCH,
+    });
     match env::consts::ARCH {
         "x86_64" => Ok(Cpu::Intel64),
         "aarch64" => Ok(Cpu::Arm64),

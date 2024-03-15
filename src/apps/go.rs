@@ -95,7 +95,11 @@ impl install::DownloadArchive for Go {
     }
 
     fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
-        format!("go{sep}bin{sep}{executable}", sep = path::MAIN_SEPARATOR, executable = self.executable_filename(platform))
+        format!(
+            "go{sep}bin{sep}{executable}",
+            sep = path::MAIN_SEPARATOR,
+            executable = self.executable_filename(platform)
+        )
     }
 }
 
@@ -120,7 +124,10 @@ mod tests {
     #[test]
     fn archive_url() {
         let go = super::Go {};
-        let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
+        let platform = Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Arm64,
+        };
         let have = go.archive_url(&Version::from("1.21.5"), platform);
         let want = "https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz";
         assert_eq!(have, want);

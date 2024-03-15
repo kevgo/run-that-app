@@ -92,7 +92,10 @@ mod tests {
 
     #[test]
     fn download_url() {
-        let platform = Platform { os: Os::Linux, cpu: Cpu::Arm64 };
+        let platform = Platform {
+            os: Os::Linux,
+            cpu: Cpu::Arm64,
+        };
         let actionlint = super::ActionLint {};
         let have = actionlint.archive_url(&Version::from("1.6.26"), platform);
         let want = "https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_linux_arm64.tar.gz";

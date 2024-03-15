@@ -27,7 +27,8 @@ impl Config {
 # actionlint 1.2.26
 # gh 2.39.1
 ";
-        file.write_all(content.as_bytes()).map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
+        file.write_all(content.as_bytes())
+            .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
     }
 
     pub fn load(apps: &Apps) -> Result<Config> {

@@ -107,7 +107,10 @@ mod tests {
     #[test]
     fn archive_url() {
         let gh = super::Gh {};
-        let platform = Platform { os: Os::Linux, cpu: Cpu::Intel64 };
+        let platform = Platform {
+            os: Os::Linux,
+            cpu: Cpu::Intel64,
+        };
         let have = gh.archive_url(&Version::from("2.39.1"), platform);
         let want = "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_amd64.tar.gz";
         assert_eq!(have, want);
@@ -123,7 +126,10 @@ mod tests {
         fn executable_locations() {
             let gh = super::super::Gh {};
             let version = Version::from("1.2.3");
-            let platform = Platform { os: Os::Linux, cpu: Cpu::Arm64 };
+            let platform = Platform {
+                os: Os::Linux,
+                cpu: Cpu::Arm64,
+            };
             let have = gh.executable_path_in_archive(&version, platform);
             #[cfg(unix)]
             let want = S("gh_1.2.3_linux_arm64/bin/gh");
