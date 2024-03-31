@@ -15,7 +15,7 @@ mod regexp;
 mod subshell;
 mod yard;
 
-use crate::prelude::*;
+// use crate::prelude::*;
 use cli::Command;
 use cmd::run;
 use logger::Log;
@@ -31,7 +31,7 @@ fn main() -> ExitCode {
     }
 }
 
-fn inner() -> Result<ExitCode> {
+fn inner() -> prelude::Result<ExitCode> {
     let cli_args = cli::parse(std::env::args())?;
     match cli_args.command {
         Command::Available { app, version, verbose } => cmd::available(&app, version, verbose),

@@ -1,5 +1,5 @@
 use crate::config::{Config, FILE_NAME};
-use crate::Result;
+use crate::prelude::*;
 use std::process::ExitCode;
 
 pub fn setup() -> Result<ExitCode> {

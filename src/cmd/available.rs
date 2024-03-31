@@ -5,8 +5,8 @@ use crate::config::RequestedVersions;
 use crate::config::Version;
 use crate::logger;
 use crate::platform;
+use crate::prelude::*;
 use crate::yard;
-use crate::Result;
 use std::process::ExitCode;
 
 pub fn available(app_name: &AppName, version: Option<Version>, verbose: bool) -> Result<ExitCode> {

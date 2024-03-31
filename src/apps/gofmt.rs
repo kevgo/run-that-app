@@ -3,8 +3,9 @@ use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::install::{Method, ViaAnotherApp};
 use crate::platform::Platform;
+use crate::prelude::*;
 use crate::subshell::Executable;
-use crate::{install, Log, Result};
+use crate::{install, Log};
 use std::path;
 
 pub struct Gofmt {}
