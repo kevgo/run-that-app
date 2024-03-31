@@ -15,7 +15,6 @@ mod regexp;
 mod subshell;
 mod yard;
 
-// use crate::prelude::*;
 use cli::Command;
 use cmd::run;
 use logger::Log;
