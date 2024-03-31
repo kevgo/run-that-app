@@ -1,4 +1,4 @@
-//! stuff that is used throughout the crate
+//! stuff that is used in pretty much every file of this crate
 
 pub use crate::error::UserError;
 
