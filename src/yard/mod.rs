@@ -7,8 +7,7 @@ mod load_or_create;
 #[allow(clippy::module_inception)] // I can't come up with a better name for this
 mod yard;
 
-use crate::error::UserError;
-use crate::Result;
+use crate::prelude::*;
 pub use create::create;
 pub use load::load;
 pub use load_or_create::load_or_create;

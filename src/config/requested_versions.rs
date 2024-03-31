@@ -1,7 +1,6 @@
 use super::{AppName, Config, RequestedVersion, Version};
 use crate::apps::Apps;
-use crate::error::UserError;
-use crate::Result;
+use crate::prelude::*;
 
 /// a collection of Version instances
 #[derive(Debug, PartialEq)]

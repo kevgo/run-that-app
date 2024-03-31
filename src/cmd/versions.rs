@@ -1,7 +1,7 @@
 use crate::apps;
 use crate::config::AppName;
 use crate::logger;
-use crate::Result;
+use crate::prelude::*;
 use std::process::ExitCode;
 
 pub fn versions(app_name: &AppName, amount: usize, verbose: bool) -> Result<ExitCode> {

@@ -1,7 +1,7 @@
 use super::{AppName, AppVersions, RequestedVersion, RequestedVersions, FILE_NAME};
 use crate::apps::Apps;
-use crate::error::UserError;
-use crate::{filesystem, Result};
+use crate::filesystem;
+use crate::prelude::*;
 use std::fmt::Display;
 use std::fs::OpenOptions;
 use std::io::{ErrorKind, Write};

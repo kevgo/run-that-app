@@ -3,8 +3,9 @@ use crate::config::{AppName, Version};
 use crate::hosting::github_releases;
 use crate::install::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
+use crate::prelude::*;
 use crate::subshell::Executable;
-use crate::{Log, Result};
+use crate::Log;
 use const_format::formatcp;
 
 pub struct Depth {}

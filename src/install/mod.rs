@@ -15,9 +15,9 @@ pub use other_app_folder::ViaAnotherApp;
 use crate::config::{AppName, Version};
 use crate::logger::{Event, Log};
 use crate::platform::Platform;
+use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::yard::Yard;
-use crate::Result;
 
 /// the different methods to install an application
 pub enum Method<'a> {

@@ -10,13 +10,13 @@ mod hosting;
 mod install;
 mod logger;
 mod platform;
+mod prelude;
 mod regexp;
 mod subshell;
 mod yard;
 
 use cli::Command;
 use cmd::run;
-use error::{Result, UserError};
 use logger::Log;
 use std::process::ExitCode;
 
@@ -30,7 +30,7 @@ fn main() -> ExitCode {
     }
 }
 
-fn inner() -> Result<ExitCode> {
+fn inner() -> prelude::Result<ExitCode> {
     let cli_args = cli::parse(std::env::args())?;
     match cli_args.command {
         Command::Available { app, version, verbose } => cmd::available(&app, version, verbose),

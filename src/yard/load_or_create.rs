@@ -1,5 +1,5 @@
 use super::{create, load, Yard};
-use crate::Result;
+use crate::prelude::*;
 use std::path::Path;
 
 pub fn load_or_create(containing_folder: &Path) -> Result<Yard> {

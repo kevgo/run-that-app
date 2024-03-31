@@ -1,7 +1,6 @@
 use super::Version;
 use crate::apps::App;
-use crate::error::UserError;
-use crate::Result;
+use crate::prelude::*;
 use std::fmt::Display;
 
 /// an application version requested by the user
@@ -66,10 +65,11 @@ mod tests {
     mod parse {
         use crate::apps::{AnalyzeResult, App};
         use crate::config::Version;
+        use crate::install;
         use crate::logger::Log;
         use crate::platform::Platform;
+        use crate::prelude::*;
         use crate::subshell::Executable;
-        use crate::{install, Result};
 
         /// an App instance that allows to mock the system version restrictions
         struct TestApp {

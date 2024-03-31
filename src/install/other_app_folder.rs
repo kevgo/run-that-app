@@ -1,10 +1,11 @@
+use crate::apps;
 use crate::apps::App;
 use crate::cmd::run::load_or_install;
 use crate::config::{RequestedVersion, Version};
 use crate::logger::Log;
 use crate::platform::Platform;
+use crate::prelude::*;
 use crate::yard::Yard;
-use crate::{apps, Result};
 
 /// defines the information needed for apps whose executable is shipped as part of another app
 pub trait ViaAnotherApp: App {

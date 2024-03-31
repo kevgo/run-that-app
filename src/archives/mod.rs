@@ -5,7 +5,8 @@ mod zip;
 use self::tar_gz::TarGz;
 use self::tar_xz::TarXz;
 use self::zip::Zip;
-use crate::{filesystem, Log, Result};
+use crate::prelude::*;
+use crate::{filesystem, Log};
 use std::path::Path;
 
 /// An archive is a compressed file containing an application.

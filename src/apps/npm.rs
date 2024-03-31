@@ -3,8 +3,9 @@ use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::install::{self, Method, ViaAnotherApp};
 use crate::platform::Platform;
+use crate::prelude::*;
 use crate::subshell::Executable;
-use crate::{Log, Result};
+use crate::Log;
 use std::path;
 
 pub struct Npm {}
