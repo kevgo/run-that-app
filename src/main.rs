@@ -10,13 +10,14 @@ mod hosting;
 mod install;
 mod logger;
 mod platform;
+mod prelude;
 mod regexp;
 mod subshell;
 mod yard;
 
+use crate::prelude::*;
 use cli::Command;
 use cmd::run;
-use error::{Result, UserError};
 use logger::Log;
 use std::process::ExitCode;
 

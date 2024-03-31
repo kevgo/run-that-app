@@ -1,9 +1,8 @@
 use crate::apps::App;
 use crate::config::Version;
-use crate::error::UserError;
 use crate::logger::{Event, Log};
+use crate::prelude::*;
 use crate::yard::Yard;
-use crate::Result;
 use std::process::Command;
 use which::which;
 

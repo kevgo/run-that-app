@@ -1,6 +1,6 @@
 use crate::config::AppName;
 use crate::logger::{Event, Log};
-use crate::{Result, UserError};
+use crate::prelude::*;
 
 /// downloads the artifact at the given URL
 pub fn artifact(url: String, app: &AppName, log: Log) -> Result<Option<Artifact>> {

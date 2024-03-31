@@ -22,10 +22,10 @@ mod shellcheck;
 mod shfmt;
 
 use crate::config::{AppName, Version};
-use crate::error::UserError;
 use crate::platform::{Os, Platform};
+use crate::prelude::*;
 use crate::subshell::Executable;
-use crate::{install, Log, Result};
+use crate::{install, Log};
 use std::slice::Iter;
 
 pub trait App {
@@ -159,7 +159,7 @@ mod tests {
         mod lookup {
             use crate::apps::{dprint, shellcheck, Apps};
             use crate::config::AppName;
-            use crate::UserError;
+            use crate::prelude::*;
             use big_s::S;
 
             #[test]

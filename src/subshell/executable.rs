@@ -1,6 +1,5 @@
-use crate::error::UserError;
 use crate::logger::{Event, Log};
-use crate::Result;
+use crate::prelude::*;
 use std::borrow::Cow;
 use std::ffi::OsStr;
 use std::fmt::Display;

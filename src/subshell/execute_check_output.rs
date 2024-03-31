@@ -1,7 +1,6 @@
 use super::{call_signature, exit_status_to_code};
-use crate::error::UserError;
+use crate::prelude::*;
 use crate::subshell::Executable;
-use crate::Result;
 use std::io::{self, BufRead, BufReader, Read, Write};
 use std::process::{self, Child, Command, ExitCode, Stdio};
 use std::sync::mpsc;

@@ -1,6 +1,5 @@
 use crate::config::{AppName, Version};
-use crate::error::UserError;
-use crate::Result;
+use crate::prelude::*;
 use std::fs::{self, File};
 use std::path::PathBuf;
 

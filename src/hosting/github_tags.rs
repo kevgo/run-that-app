@@ -1,5 +1,6 @@
 use crate::logger::Event;
-use crate::{Log, Result, UserError};
+use crate::prelude::*;
+use crate::Log;
 use big_s::S;
 
 pub fn all(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<String>> {

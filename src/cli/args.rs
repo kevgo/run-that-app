@@ -1,6 +1,6 @@
 use super::AppVersion;
 use super::Command;
-use crate::{Result, UserError};
+use crate::prelude::*;
 
 /// all arguments that can be provided via the CLI
 #[derive(Debug, PartialEq)]
@@ -162,13 +162,13 @@ mod tests {
             use super::parse_args;
             use crate::cli::{Args, Command};
             use crate::config::{AppName, Version};
-            use crate::error::UserError;
+            use crate::UserError;
 
             mod available {
                 use super::super::parse_args;
                 use crate::cli::{Args, Command};
                 use crate::config::AppName;
-                use crate::error::UserError;
+                use crate::UserError;
 
                 #[test]
                 fn with_app() {
@@ -208,7 +208,7 @@ mod tests {
                 use super::super::parse_args;
                 use crate::cli::{Args, Command};
                 use crate::config::AppName;
-                use crate::error::UserError;
+                use crate::UserError;
 
                 #[test]
                 fn normal() {
@@ -305,7 +305,7 @@ mod tests {
                 use super::super::parse_args;
                 use crate::cli::{Args, Command};
                 use crate::config::{AppName, Version};
-                use crate::error::UserError;
+                use crate::UserError;
 
                 #[test]
                 fn long() {

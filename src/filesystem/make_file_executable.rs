@@ -1,9 +1,8 @@
-use crate::Result;
+use crate::prelude::*;
 use std::path::Path;
 
 #[cfg(unix)]
 pub fn make_file_executable(file: &Path) -> Result<()> {
-    use crate::error::UserError;
     use std::fs;
     use std::os::unix::prelude::PermissionsExt;
     fs::set_permissions(file, fs::Permissions::from_mode(0o744)).map_err(|err| UserError::CannotMakeFileExecutable {

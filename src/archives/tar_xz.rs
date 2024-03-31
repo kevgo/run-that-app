@@ -1,6 +1,6 @@
 use super::Archive;
-use crate::error::UserError;
 use crate::logger::{Event, Log};
+use crate::prelude::*;
 use crate::Result;
 use std::io::Cursor;
 use std::path::Path;

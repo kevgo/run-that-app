@@ -1,7 +1,6 @@
 use super::Version;
 use crate::apps::App;
-use crate::error::UserError;
-use crate::Result;
+use crate::prelude::*;
 use std::fmt::Display;
 
 /// an application version requested by the user
