@@ -1,9 +1,8 @@
+use super::run::load_or_install;
 use crate::config::{AppName, RequestedVersions, Version};
 use crate::prelude::*;
 use crate::{apps, logger, platform, yard};
 use std::process::ExitCode;
-
-use super::run::load_or_install;
 
 pub fn which(app_name: &AppName, version: Option<Version>, verbose: bool) -> Result<ExitCode> {
   let apps = apps::all();

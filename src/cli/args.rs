@@ -156,12 +156,11 @@ mod tests {
     }
 
     mod rta_arguments {
-      use big_s::S;
-
       use super::parse_args;
       use crate::cli::{Args, Command};
       use crate::config::{AppName, Version};
       use crate::prelude::*;
+      use big_s::S;
 
       mod available {
         use super::super::parse_args;
