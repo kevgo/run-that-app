@@ -2,20 +2,20 @@ use crate::apps;
 use std::process::ExitCode;
 
 pub fn help() -> ExitCode {
-    print_usage();
-    print_options();
-    print_examples();
-    print_installable_apps();
-    ExitCode::SUCCESS
+  print_usage();
+  print_options();
+  print_examples();
+  print_installable_apps();
+  ExitCode::SUCCESS
 }
 
 fn print_usage() {
-    println!("Usage: rta install [options] application@version\n");
+  println!("Usage: rta install [options] application@version\n");
 }
 
 pub fn print_options() {
-    println!(
-        "
+  println!(
+    "
 Options:
 --available                      indicates via the exit code whether the given application is available on this platform
 --error-on-output                treat all output of the executed app as an error
@@ -29,20 +29,20 @@ Options:
 --versions                       displays the 10 most recent available versions of the given app
 --versions=<number>              displays the given number of most recent available versions of the given app
 ",
-    );
+  );
 }
 
 fn print_examples() {
-    println!("Examples:");
-    println!("\"rta gh@2.34.0\" runs https://github.com/cli/cli at version 2.34.0\n");
+  println!("Examples:");
+  println!("\"rta gh@2.34.0\" runs https://github.com/cli/cli at version 2.34.0\n");
 }
 
 pub fn print_installable_apps() {
-    println!("\nInstallable applications:");
-    let apps = apps::all();
-    let max_width = apps.longest_name_length() + 1;
-    for app in apps.iter() {
-        println!("{:max_width$} {}", app.name(), app.homepage());
-    }
-    println!("\nRequest additional apps at https://github.com/kevgo/run-that-app/issues.");
+  println!("\nInstallable applications:");
+  let apps = apps::all();
+  let max_width = apps.longest_name_length() + 1;
+  for app in apps.iter() {
+    println!("{:max_width$} {}", app.name(), app.homepage());
+  }
+  println!("\nRequest additional apps at https://github.com/kevgo/run-that-app/issues.");
 }

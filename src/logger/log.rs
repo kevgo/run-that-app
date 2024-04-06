@@ -7,9 +7,9 @@ pub type Log = fn(Event);
 
 /// provides a logger function at the given verbosity level
 pub fn new(verbose: bool) -> Log {
-    if verbose {
-        verbose::log
-    } else {
-        normal::log
-    }
+  if verbose {
+    verbose::log
+  } else {
+    normal::log
+  }
 }
