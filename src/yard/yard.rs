@@ -66,10 +66,8 @@ mod tests {
   }
 
   mod is_not_installable {
-    use crate::config::AppName;
-    use crate::config::Version;
-    use crate::yard::create;
-    use crate::yard::Yard;
+    use crate::config::{AppName, Version};
+    use crate::yard::{create, Yard};
     use std::path::PathBuf;
 
     #[test]

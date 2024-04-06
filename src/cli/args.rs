@@ -1,5 +1,4 @@
-use super::AppVersion;
-use super::Command;
+use super::{AppVersion, Command};
 use crate::prelude::*;
 
 /// all arguments that can be provided via the CLI
