@@ -2,9 +2,9 @@ build:  # compiles this app in debug mode
 	cargo build
 
 fix: build  # auto-corrects issues
-	cargo fix --allow-dirty
+	cargo +nightly fix --allow-dirty
 	cargo clippy --fix --allow-dirty
-	cargo fmt
+	cargo +nightly fmt
 	target/debug/rta dprint fmt
 	target/debug/rta shfmt -f . | xargs target/debug/rta shfmt -w
 
@@ -20,6 +20,10 @@ lint: build  # runs all linters
 	target/debug/rta actionlint
 	# target/debug/rta dprint check  # this breaks the Windows CI due to linebreak errors
 	target/debug/rta --optional shellcheck download.sh
+
+setup:
+	rustup toolchain add nightly
+	rustup component add rustfmt --toolchain nightly
 
 test: unit lint  # runs all tests
 
