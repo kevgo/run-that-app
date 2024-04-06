@@ -31,9 +31,8 @@ unit:  # runs the unit tests
 	cargo test
 
 update:  # updates the dependencies
-	cargo install cargo-machete
+	cargo install cargo-edit cargo-machete
 	cargo machete
-	cargo install cargo-edit
 	cargo upgrade
 
 
