@@ -1,5 +1,4 @@
-use super::Event;
-use super::{normal, verbose};
+use super::{normal, verbose, Event};
 
 /// A function that logs the given event to the CLI.
 /// There are several types of loggers at different verbosity levels.

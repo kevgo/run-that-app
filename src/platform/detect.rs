@@ -1,6 +1,4 @@
-use super::cpu;
-use super::os;
-use super::Platform;
+use super::{cpu, os, Platform};
 use crate::prelude::*;
 use crate::Log;
 

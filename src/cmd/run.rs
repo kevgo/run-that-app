@@ -1,4 +1,3 @@
-use crate::apps;
 use crate::apps::{AnalyzeResult, App};
 use crate::config::{AppName, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
@@ -7,7 +6,7 @@ use crate::platform::{self, Platform};
 use crate::prelude::*;
 use crate::subshell::{self, Executable};
 use crate::yard::Yard;
-use crate::{install, yard};
+use crate::{apps, install, yard};
 use std::process::ExitCode;
 
 pub fn run(args: Args) -> Result<ExitCode> {

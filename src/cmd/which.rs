@@ -1,8 +1,6 @@
 use crate::config::{AppName, RequestedVersions, Version};
-use crate::logger;
-use crate::platform;
 use crate::prelude::*;
-use crate::{apps, yard};
+use crate::{apps, logger, platform, yard};
 use std::process::ExitCode;
 
 use super::run::load_or_install;

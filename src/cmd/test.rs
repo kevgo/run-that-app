@@ -1,10 +1,9 @@
 use crate::apps::AnalyzeResult;
 use crate::config::AppName;
-use crate::install;
 use crate::logger::Event;
 use crate::prelude::*;
 use crate::subshell::Executable;
-use crate::{apps, logger, platform, yard};
+use crate::{apps, install, logger, platform, yard};
 use colored::Colorize;
 use std::io;
 use std::process::ExitCode;

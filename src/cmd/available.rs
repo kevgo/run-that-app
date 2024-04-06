@@ -1,12 +1,7 @@
 use super::run::load_or_install;
-use crate::apps;
-use crate::config::AppName;
-use crate::config::RequestedVersions;
-use crate::config::Version;
-use crate::logger;
-use crate::platform;
+use crate::config::{AppName, RequestedVersions, Version};
 use crate::prelude::*;
-use crate::yard;
+use crate::{apps, logger, platform, yard};
 use std::process::ExitCode;
 
 pub fn available(app_name: &AppName, version: Option<Version>, verbose: bool) -> Result<ExitCode> {
