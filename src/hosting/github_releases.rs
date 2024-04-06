@@ -7,84 +7,74 @@ use big_s::S;
 
 /// provides the latest official version of the given application on GitHub Releases
 pub fn latest(org: &str, repo: &str, log: Log) -> Result<Version> {
-    let url = format!("https://api.github.com/repos/{org}/{repo}/releases/latest");
-    log(Event::GitHubApiRequestBegin { url: &url });
-    let get = minreq::get(&url)
-        .with_header("Accept", "application/vnd.github+json")
-        .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
-        .with_header("X-GitHub-Api-Version", "2022-11-28");
-    let Ok(response) = get.send() else {
-        log(Event::NotOnline);
-        return Err(UserError::NotOnline);
-    };
-    let response_text = match response.as_str() {
-        Ok(text) => {
-            log(Event::GitHubApiRequestSuccess);
-            text
-        }
-        Err(err) => {
-            log(Event::GitHubApiRequestFail { err: err.to_string() });
-            return Err(UserError::GitHubTagsApiProblem {
-                problem: S("Cannot get response payload"),
-                payload: S(""),
-            });
-        }
-    };
-    parse_latest_response(response_text)
+  let url = format!("https://api.github.com/repos/{org}/{repo}/releases/latest");
+  log(Event::GitHubApiRequestBegin { url: &url });
+  let get = minreq::get(&url)
+    .with_header("Accept", "application/vnd.github+json")
+    .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
+    .with_header("X-GitHub-Api-Version", "2022-11-28");
+  let Ok(response) = get.send() else {
+    log(Event::NotOnline);
+    return Err(UserError::NotOnline);
+  };
+  let response_text = match response.as_str() {
+    Ok(text) => {
+      log(Event::GitHubApiRequestSuccess);
+      text
+    }
+    Err(err) => {
+      log(Event::GitHubApiRequestFail { err: err.to_string() });
+      return Err(UserError::GitHubTagsApiProblem { problem: S("Cannot get response payload"), payload: S("") });
+    }
+  };
+  parse_latest_response(response_text)
 }
 
 fn parse_latest_response(text: &str) -> Result<Version> {
-    let release: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::GitHubReleasesApiProblem {
-        problem: err.to_string(),
-        payload: text.to_string(),
-    })?;
-    Ok(strip_leading_v(release["tag_name"].as_str().unwrap()).into())
+  let release: serde_json::Value =
+    serde_json::from_str(text).map_err(|err| UserError::GitHubReleasesApiProblem { problem: err.to_string(), payload: text.to_string() })?;
+  Ok(strip_leading_v(release["tag_name"].as_str().unwrap()).into())
 }
 
 /// provides the given number of latest versions of the given application on GitHub Releases
 pub fn versions(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<Version>> {
-    let url = format!("https://api.github.com/repos/{org}/{repo}/releases?per_page={amount}");
-    log(Event::GitHubApiRequestBegin { url: &url });
-    let get = minreq::get(&url)
-        .with_param("per_page", amount.to_string())
-        .with_header("Accept", "application/vnd.github+json")
-        .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
-        .with_header("X-GitHub-Api-Version", "2022-11-28");
-    let Ok(response) = get.send() else {
-        log(Event::NotOnline);
-        return Err(UserError::NotOnline);
-    };
-    parse_versions_response(response.as_str().unwrap())
+  let url = format!("https://api.github.com/repos/{org}/{repo}/releases?per_page={amount}");
+  log(Event::GitHubApiRequestBegin { url: &url });
+  let get = minreq::get(&url)
+    .with_param("per_page", amount.to_string())
+    .with_header("Accept", "application/vnd.github+json")
+    .with_header("User-Agent", format!("run-that-app-{}", env!("CARGO_PKG_VERSION")))
+    .with_header("X-GitHub-Api-Version", "2022-11-28");
+  let Ok(response) = get.send() else {
+    log(Event::NotOnline);
+    return Err(UserError::NotOnline);
+  };
+  parse_versions_response(response.as_str().unwrap())
 }
 
 fn parse_versions_response(text: &str) -> Result<Vec<Version>> {
-    let releases: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::GitHubReleasesApiProblem {
-        problem: err.to_string(),
-        payload: text.to_string(),
-    })?;
-    let serde_json::Value::Array(releases) = releases else {
-        return Err(UserError::GitHubReleasesApiProblem {
-            problem: S("unknown API response: does not contain a list of releases"),
-            payload: text.to_string(),
-        });
+  let releases: serde_json::Value =
+    serde_json::from_str(text).map_err(|err| UserError::GitHubReleasesApiProblem { problem: err.to_string(), payload: text.to_string() })?;
+  let serde_json::Value::Array(releases) = releases else {
+    return Err(UserError::GitHubReleasesApiProblem { problem: S("unknown API response: does not contain a list of releases"), payload: text.to_string() });
+  };
+  let mut result: Vec<Version> = Vec::with_capacity(releases.len());
+  for release in releases {
+    if let Some(release_tag) = release["tag_name"].as_str() {
+      result.push(strip_leading_v(release_tag).into());
     };
-    let mut result: Vec<Version> = Vec::with_capacity(releases.len());
-    for release in releases {
-        if let Some(release_tag) = release["tag_name"].as_str() {
-            result.push(strip_leading_v(release_tag).into());
-        };
-    }
-    Ok(result)
+  }
+  Ok(result)
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::config::Version;
+  use crate::config::Version;
 
-    #[test]
-    #[allow(clippy::too_many_lines)]
-    fn parse_versions_response() {
-        let response = r#"
+  #[test]
+  #[allow(clippy::too_many_lines)]
+  fn parse_versions_response() {
+    let response = r#"
 [
   {
     "url": "https://api.github.com/repos/rhysd/actionlint/releases/121542388",
@@ -548,14 +538,14 @@ mod tests {
     "mentions_count": 5
   }
 ]"#;
-        let have = super::parse_versions_response(response).unwrap();
-        let want = vec![Version::from("1.6.26")];
-        assert_eq!(have, want);
-    }
+    let have = super::parse_versions_response(response).unwrap();
+    let want = vec![Version::from("1.6.26")];
+    assert_eq!(have, want);
+  }
 
-    #[test]
-    fn parse_latest_response() {
-        let response = r#"{
+  #[test]
+  fn parse_latest_response() {
+    let response = r#"{
   "url": "https://api.github.com/repos/octocat/Hello-World/releases/1",
   "html_url": "https://github.com/octocat/Hello-World/releases/v1.0.0",
   "assets_url": "https://api.github.com/repos/octocat/Hello-World/releases/1/assets",
@@ -630,8 +620,8 @@ mod tests {
     }
   ]
 }"#;
-        let have = super::parse_latest_response(response).unwrap();
-        let want = Version::from("1.0.0");
-        assert_eq!(have, want);
-    }
+    let have = super::parse_latest_response(response).unwrap();
+    let want = Version::from("1.0.0");
+    assert_eq!(have, want);
+  }
 }
