@@ -20,10 +20,12 @@ lint: build  # runs all linters
 	target/debug/rta actionlint
 	# target/debug/rta dprint check  # this breaks the Windows CI due to linebreak errors
 	target/debug/rta --optional shellcheck download.sh
+	cargo +nightly udeps
 
 setup:  # install development dependencies on this computer
 	rustup toolchain add nightly
 	rustup component add rustfmt --toolchain nightly
+	cargo install cargo-udeps --locked
 
 test: unit lint  # runs all tests
 
