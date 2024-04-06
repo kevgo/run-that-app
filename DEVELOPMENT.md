@@ -3,6 +3,11 @@
 The `Makefile` contains all development tasks. Run `make` to see a list of them
 including descriptions of what they do.
 
+### Set up your development machine
+
+- install the latest stable Rust toolchain through [Rustup](https://rustup.rs)
+- run `make setup`
+
 ### Add a new applications
 
 Apps are in the [src/apps](src/apps) folder. Copy the definition of an existing
