@@ -27,7 +27,9 @@ impl Config {
 # actionlint 1.2.26
 # gh 2.39.1
 ";
-    file.write_all(content.as_bytes()).map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
+    file
+      .write_all(content.as_bytes())
+      .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
   }
 
   pub fn load(apps: &Apps) -> Result<Config> {
@@ -42,8 +44,14 @@ impl Config {
   }
 
   pub fn save(&self) -> Result<()> {
-    let mut file = OpenOptions::new().write(true).truncate(true).open(FILE_NAME).map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))?;
-    file.write_all(self.to_string().as_bytes()).map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))?;
+    let mut file = OpenOptions::new()
+      .write(true)
+      .truncate(true)
+      .open(FILE_NAME)
+      .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))?;
+    file
+      .write_all(self.to_string().as_bytes())
+      .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))?;
     Ok(())
   }
 }
@@ -80,7 +88,10 @@ fn parse_line(line_text: &str, line_no: usize, apps: &Apps) -> Result<Option<App
   let app = apps.lookup(&name.into())?;
   let Some(version) = parts.next() else {
     // line has only one element --> invalid
-    return Err(UserError::InvalidConfigFileFormat { line_no, text: line_text.to_string() });
+    return Err(UserError::InvalidConfigFileFormat {
+      line_no,
+      text: line_text.to_string(),
+    });
   };
   let mut versions = RequestedVersions::new(vec![RequestedVersion::parse(version, app)?]);
   for part in parts {
@@ -96,7 +107,9 @@ struct LinePartsIterator<'a> {
 
 impl<'a> From<&'a str> for LinePartsIterator<'a> {
   fn from(line: &'a str) -> Self {
-    LinePartsIterator { parts: line.split_ascii_whitespace() }
+    LinePartsIterator {
+      parts: line.split_ascii_whitespace(),
+    }
   }
 }
 
@@ -131,15 +144,24 @@ mod tests {
       let have = parse(give, &apps::all()).unwrap();
       let want = Config {
         apps: vec![
-          AppVersions { app: "actionlint".into(), versions: RequestedVersions::new(vec![RequestedVersion::Yard("1.2.3".into())]) },
-          AppVersions { app: AppName::from("dprint"), versions: RequestedVersions::new(vec![RequestedVersion::Yard("2.3.4".into())]) },
+          AppVersions {
+            app: "actionlint".into(),
+            versions: RequestedVersions::new(vec![RequestedVersion::Yard("1.2.3".into())]),
+          },
+          AppVersions {
+            app: AppName::from("dprint"),
+            versions: RequestedVersions::new(vec![RequestedVersion::Yard("2.3.4".into())]),
+          },
           AppVersions {
             app: AppName::from("mdbook"),
             versions: RequestedVersions::new(vec![RequestedVersion::Yard("3.4.5".into()), RequestedVersion::Yard("6.7.8".into())]),
           },
           AppVersions {
             app: AppName::from("go"),
-            versions: RequestedVersions::new(vec![RequestedVersion::Path(semver::VersionReq::parse("1.21").unwrap()), RequestedVersion::Yard("1.22.1".into())]),
+            versions: RequestedVersions::new(vec![
+              RequestedVersion::Path(semver::VersionReq::parse("1.21").unwrap()),
+              RequestedVersion::Yard("1.22.1".into()),
+            ]),
           },
         ],
       };
@@ -166,7 +188,10 @@ mod tests {
     fn normal() {
       let give = "shellcheck 0.9.0";
       let have = parse_line(give, 1, &apps::all()).unwrap();
-      let want = Some(AppVersions { app: AppName::from("shellcheck"), versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]) });
+      let want = Some(AppVersions {
+        app: AppName::from("shellcheck"),
+        versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]),
+      });
       pretty::assert_eq!(have, want);
     }
 
@@ -185,7 +210,10 @@ mod tests {
     fn normal_with_multiple_spaces() {
       let give = "     shellcheck            0.9.0      ";
       let have = parse_line(give, 1, &apps::all()).unwrap();
-      let want = Some(AppVersions { app: AppName::from("shellcheck"), versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]) });
+      let want = Some(AppVersions {
+        app: AppName::from("shellcheck"),
+        versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]),
+      });
       pretty::assert_eq!(have, want);
     }
 
@@ -193,7 +221,10 @@ mod tests {
     fn normal_with_tabs() {
       let give = "shellcheck\t0.9.0";
       let have = parse_line(give, 1, &apps::all()).unwrap();
-      let want = Some(AppVersions { app: AppName::from("shellcheck"), versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]) });
+      let want = Some(AppVersions {
+        app: AppName::from("shellcheck"),
+        versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]),
+      });
       pretty::assert_eq!(have, want);
     }
 
@@ -201,7 +232,10 @@ mod tests {
     fn missing_version() {
       let give = "shellcheck ";
       let have = parse_line(give, 1, &apps::all());
-      let want = Err(UserError::InvalidConfigFileFormat { line_no: 1, text: S("shellcheck") });
+      let want = Err(UserError::InvalidConfigFileFormat {
+        line_no: 1,
+        text: S("shellcheck"),
+      });
       pretty::assert_eq!(have, want);
     }
 
@@ -230,7 +264,10 @@ mod tests {
     fn valid_with_comment_at_end() {
       let give = "shellcheck 0.9.0  # comment";
       let have = parse_line(give, 1, &apps::all()).unwrap();
-      let want = Some(AppVersions { app: AppName::from("shellcheck"), versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]) });
+      let want = Some(AppVersions {
+        app: AppName::from("shellcheck"),
+        versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]),
+      });
       pretty::assert_eq!(have, want);
     }
   }

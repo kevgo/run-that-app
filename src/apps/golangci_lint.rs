@@ -100,7 +100,10 @@ mod tests {
   #[test]
   fn archive_url() {
     let golangci_lint = super::GolangCiLint {};
-    let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
+    let platform = Platform {
+      os: Os::MacOS,
+      cpu: Cpu::Arm64,
+    };
     let have = golangci_lint.archive_url(&Version::from("1.55.2"), platform);
     let want = "https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-darwin-arm64.tar.gz";
     assert_eq!(have, want);
@@ -108,7 +111,10 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("golangci-lint has version 1.56.2 built with go1.22.0 from 58a724a0 on 2024-02-15T18:01:51Z"), Some("1.56.2"));
+    assert_eq!(
+      super::extract_version("golangci-lint has version 1.56.2 built with go1.22.0 from 58a724a0 on 2024-02-15T18:01:51Z"),
+      Some("1.56.2")
+    );
     assert_eq!(super::extract_version("other"), None);
   }
 }

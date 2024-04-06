@@ -24,15 +24,20 @@ pub fn latest(org: &str, repo: &str, log: Log) -> Result<Version> {
     }
     Err(err) => {
       log(Event::GitHubApiRequestFail { err: err.to_string() });
-      return Err(UserError::GitHubTagsApiProblem { problem: S("Cannot get response payload"), payload: S("") });
+      return Err(UserError::GitHubTagsApiProblem {
+        problem: S("Cannot get response payload"),
+        payload: S(""),
+      });
     }
   };
   parse_latest_response(response_text)
 }
 
 fn parse_latest_response(text: &str) -> Result<Version> {
-  let release: serde_json::Value =
-    serde_json::from_str(text).map_err(|err| UserError::GitHubReleasesApiProblem { problem: err.to_string(), payload: text.to_string() })?;
+  let release: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::GitHubReleasesApiProblem {
+    problem: err.to_string(),
+    payload: text.to_string(),
+  })?;
   Ok(strip_leading_v(release["tag_name"].as_str().unwrap()).into())
 }
 
@@ -53,10 +58,15 @@ pub fn versions(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<Ve
 }
 
 fn parse_versions_response(text: &str) -> Result<Vec<Version>> {
-  let releases: serde_json::Value =
-    serde_json::from_str(text).map_err(|err| UserError::GitHubReleasesApiProblem { problem: err.to_string(), payload: text.to_string() })?;
+  let releases: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::GitHubReleasesApiProblem {
+    problem: err.to_string(),
+    payload: text.to_string(),
+  })?;
   let serde_json::Value::Array(releases) = releases else {
-    return Err(UserError::GitHubReleasesApiProblem { problem: S("unknown API response: does not contain a list of releases"), payload: text.to_string() });
+    return Err(UserError::GitHubReleasesApiProblem {
+      problem: S("unknown API response: does not contain a list of releases"),
+      payload: text.to_string(),
+    });
   };
   let mut result: Vec<Version> = Vec::with_capacity(releases.len());
   for release in releases {

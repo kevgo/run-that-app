@@ -31,7 +31,10 @@ pub fn execute_check_output(executable: &Executable, args: &[String]) -> Result<
   cmd.args(args);
   cmd.stdout(Stdio::piped());
   cmd.stderr(Stdio::piped());
-  let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary { call: call_signature(executable, args), reason: err.to_string() })?;
+  let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
+    call: call_signature(executable, args),
+    reason: err.to_string(),
+  })?;
   monitor_output(process.stdout.take().unwrap(), sender.clone());
   monitor_output(process.stderr.take().unwrap(), sender.clone());
   monitor_exit(process, sender);

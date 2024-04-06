@@ -35,8 +35,12 @@ impl App for Go {
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
     let tags = github_tags::all(ORG, REPO, 100, log)?;
-    let mut go_tags: Vec<String> =
-      tags.into_iter().filter(|tag| tag.starts_with("go")).filter(|tag| !tag.contains("rc")).map(|tag| tag.trim_start_matches("go").to_string()).collect();
+    let mut go_tags: Vec<String> = tags
+      .into_iter()
+      .filter(|tag| tag.starts_with("go"))
+      .filter(|tag| !tag.contains("rc"))
+      .map(|tag| tag.trim_start_matches("go").to_string())
+      .collect();
     go_tags.sort_unstable_by(|a, b| human_sort::compare(b, a));
     if go_tags.len() > amount {
       go_tags.resize(amount, S(""));
@@ -63,8 +67,10 @@ impl App for Go {
     let Some(go_version_req) = parse_go_mod(&go_mod_content) else {
       return Ok(semver::VersionReq::STAR);
     };
-    let version_req = semver::VersionReq::parse(go_version_req)
-      .map_err(|err| UserError::CannotParseSemverRange { expression: go_version_req.to_string(), reason: err.to_string() })?;
+    let version_req = semver::VersionReq::parse(go_version_req).map_err(|err| UserError::CannotParseSemverRange {
+      expression: go_version_req.to_string(),
+      reason: err.to_string(),
+    })?;
     Ok(version_req)
   }
 }
@@ -89,7 +95,11 @@ impl install::DownloadArchive for Go {
   }
 
   fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
-    format!("go{sep}bin{sep}{executable}", sep = path::MAIN_SEPARATOR, executable = self.executable_filename(platform))
+    format!(
+      "go{sep}bin{sep}{executable}",
+      sep = path::MAIN_SEPARATOR,
+      executable = self.executable_filename(platform)
+    )
   }
 }
 
@@ -114,7 +124,10 @@ mod tests {
   #[test]
   fn archive_url() {
     let go = super::Go {};
-    let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
+    let platform = Platform {
+      os: Os::MacOS,
+      cpu: Cpu::Arm64,
+    };
     let have = go.archive_url(&Version::from("1.21.5"), platform);
     let want = "https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz";
     assert_eq!(have, want);

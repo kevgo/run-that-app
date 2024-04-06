@@ -5,55 +5,112 @@ use std::path::Path;
 
 /// the different events that can result in CLI output
 pub enum Event<'a> {
-  AnalyzeExecutableBegin { cmd: &'a str, args: &'a [&'a str] },
-  AnalyzeExecutableError { err: String },
+  AnalyzeExecutableBegin {
+    cmd: &'a str,
+    args: &'a [&'a str],
+  },
+  AnalyzeExecutableError {
+    err: String,
+  },
 
-  ArchiveExtractBegin { archive_type: &'a str },
+  ArchiveExtractBegin {
+    archive_type: &'a str,
+  },
   ArchiveExtractSuccess,
-  ArchiveExtractFailed { err: String },
+  ArchiveExtractFailed {
+    err: String,
+  },
 
-  CompileGoBegin { go_path: Cow<'a, str>, args: &'a [&'a str] },
+  CompileGoBegin {
+    go_path: Cow<'a, str>,
+    args: &'a [&'a str],
+  },
   CompileGoSuccess,
   CompileGoFailed,
 
-  CompileRustStart { cargo_path: &'a Path, args: &'a [&'a str] },
+  CompileRustStart {
+    cargo_path: &'a Path,
+    args: &'a [&'a str],
+  },
   CompileRustSuccess,
   CompileRustFailed,
 
-  DownloadBegin { app: &'a AppName, url: &'a str },
+  DownloadBegin {
+    app: &'a AppName,
+    url: &'a str,
+  },
   DownloadSuccess,
   DownloadNotFound,
-  DownloadFail { code: i32 },
+  DownloadFail {
+    code: i32,
+  },
 
   ExecutableInstallSaveBegin,
   ExecutableInstallSaveSuccess,
-  ExecutableInstallSaveFail { err: String },
+  ExecutableInstallSaveFail {
+    err: String,
+  },
 
-  GitHubApiRequestBegin { url: &'a str },
-  GitHubApiRequestFail { err: String },
+  GitHubApiRequestBegin {
+    url: &'a str,
+  },
+  GitHubApiRequestFail {
+    err: String,
+  },
   GitHubApiRequestSuccess,
 
-  GlobalInstallSearch { binary: &'a str },
-  GlobalInstallFound { path: &'a Path },
-  GlobalInstallMatchingVersion { range: &'a semver::VersionReq, version: Option<&'a Version> },
-  GlobalInstallMismatchingVersion { range: &'a semver::VersionReq, version: Option<&'a Version> },
+  GlobalInstallSearch {
+    binary: &'a str,
+  },
+  GlobalInstallFound {
+    path: &'a Path,
+  },
+  GlobalInstallMatchingVersion {
+    range: &'a semver::VersionReq,
+    version: Option<&'a Version>,
+  },
+  GlobalInstallMismatchingVersion {
+    range: &'a semver::VersionReq,
+    version: Option<&'a Version>,
+  },
   GlobalInstallNotFound,
   GlobalInstallNotIdentified,
 
-  IdentifiedCpu { architecture: &'static str },
-  IdentifiedOs { name: &'static str },
+  IdentifiedCpu {
+    architecture: &'static str,
+  },
+  IdentifiedOs {
+    name: &'static str,
+  },
 
-  IntegrationTestNewApp { app: &'a AppName },
-  IntegrationTestDeterminedVersion { app: &'a AppName, version: &'a Version },
-  IntegrationTestNewInstallMethod { method: &'a Method<'a>, version: &'a Version },
+  IntegrationTestNewApp {
+    app: &'a AppName,
+  },
+  IntegrationTestDeterminedVersion {
+    app: &'a AppName,
+    version: &'a Version,
+  },
+  IntegrationTestNewInstallMethod {
+    method: &'a Method<'a>,
+    version: &'a Version,
+  },
 
   NotOnline,
 
-  UpdateBegin { app: &'a AppName },
-  UpdateNewVersion { old_version: &'a Version, new_version: &'a Version },
-  UpdateAlreadyNewest { app: &'a AppName },
+  UpdateBegin {
+    app: &'a AppName,
+  },
+  UpdateNewVersion {
+    old_version: &'a Version,
+    new_version: &'a Version,
+  },
+  UpdateAlreadyNewest {
+    app: &'a AppName,
+  },
 
-  YardCheckExistingAppBegin { path: &'a Path },
+  YardCheckExistingAppBegin {
+    path: &'a Path,
+  },
   YardCheckExistingAppFound,
   YardCheckExistingAppNotFound,
 }

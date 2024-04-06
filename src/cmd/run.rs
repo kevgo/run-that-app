@@ -80,11 +80,17 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
       Ok(None)
     }
     AnalyzeResult::IdentifiedWithVersion(version) if range.matches(&version.semver()?) => {
-      log(Event::GlobalInstallMatchingVersion { range, version: Some(&version) });
+      log(Event::GlobalInstallMatchingVersion {
+        range,
+        version: Some(&version),
+      });
       Ok(Some(executable))
     }
     AnalyzeResult::IdentifiedWithVersion(version) => {
-      log(Event::GlobalInstallMismatchingVersion { range, version: Some(&version) });
+      log(Event::GlobalInstallMismatchingVersion {
+        range,
+        version: Some(&version),
+      });
       Ok(None)
     }
   }

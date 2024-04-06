@@ -18,8 +18,10 @@ impl RequestedVersion {
       if system_version == "auto" {
         return Ok(RequestedVersion::Path(app.allowed_versions()?));
       }
-      let version_req = semver::VersionReq::parse(&system_version)
-        .map_err(|err| UserError::CannotParseSemverRange { expression: system_version.to_string(), reason: err.to_string() })?;
+      let version_req = semver::VersionReq::parse(&system_version).map_err(|err| UserError::CannotParseSemverRange {
+        expression: system_version.to_string(),
+        reason: err.to_string(),
+      })?;
       return Ok(RequestedVersion::Path(version_req));
     }
     Ok(RequestedVersion::Yard(version.into()))
@@ -106,7 +108,9 @@ mod tests {
 
       #[test]
       fn system_request_with_version() {
-        let app = super::TestApp { allowed_versions: semver::VersionReq::STAR };
+        let app = super::TestApp {
+          allowed_versions: semver::VersionReq::STAR,
+        };
         let have = RequestedVersion::parse("system@1.2", &app).unwrap();
         let want = RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap());
         assert_eq!(have, want);
@@ -114,7 +118,9 @@ mod tests {
 
       #[test]
       fn system_request_auto_version() {
-        let app = super::TestApp { allowed_versions: semver::VersionReq::STAR };
+        let app = super::TestApp {
+          allowed_versions: semver::VersionReq::STAR,
+        };
         let have = RequestedVersion::parse("system@auto", &app).unwrap();
         let want = RequestedVersion::Path(semver::VersionReq::STAR);
         assert_eq!(have, want);
@@ -126,7 +132,9 @@ mod tests {
 
       #[test]
       fn system_request_with_version() {
-        let app = super::TestApp { allowed_versions: semver::VersionReq::parse("1.21").unwrap() };
+        let app = super::TestApp {
+          allowed_versions: semver::VersionReq::parse("1.21").unwrap(),
+        };
         let have = RequestedVersion::parse("system@1.5", &app).unwrap();
         let want = RequestedVersion::Path(semver::VersionReq::parse("1.5").unwrap());
         assert_eq!(have, want);
@@ -134,7 +142,9 @@ mod tests {
 
       #[test]
       fn system_request_auto_version() {
-        let app = super::TestApp { allowed_versions: semver::VersionReq::parse("1.21").unwrap() };
+        let app = super::TestApp {
+          allowed_versions: semver::VersionReq::parse("1.21").unwrap(),
+        };
         let have = RequestedVersion::parse("system@auto", &app).unwrap();
         let want = RequestedVersion::Path(semver::VersionReq::parse("1.21").unwrap());
         assert_eq!(have, want);

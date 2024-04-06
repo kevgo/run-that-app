@@ -15,10 +15,16 @@ pub fn artifact(url: String, app: &AppName, log: Log) -> Result<Option<Artifact>
   }
   if response.status_code != 200 {
     log(Event::DownloadFail { code: response.status_code });
-    return Err(UserError::CannotDownload { reason: response.reason_phrase, url: url.to_string() });
+    return Err(UserError::CannotDownload {
+      reason: response.reason_phrase,
+      url: url.to_string(),
+    });
   }
   log(Event::DownloadSuccess);
-  Ok(Some(Artifact { filename: url, data: response.into_bytes() }))
+  Ok(Some(Artifact {
+    filename: url,
+    data: response.into_bytes(),
+  }))
 }
 
 /// An artifacts is a file containing an application, downloaded from the internet.

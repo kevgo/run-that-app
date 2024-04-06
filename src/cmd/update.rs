@@ -13,7 +13,10 @@ pub fn update(verbose: bool) -> Result<ExitCode> {
     log(Event::UpdateBegin { app: &old_app.app });
     let latest = app.latest_installable_version(log)?;
     if let Some(previous) = &old_app.versions.update_largest_with(&latest) {
-      log(Event::UpdateNewVersion { old_version: previous, new_version: &latest });
+      log(Event::UpdateNewVersion {
+        old_version: previous,
+        new_version: &latest,
+      });
     } else {
       log(Event::UpdateAlreadyNewest { app: &old_app.app });
     }

@@ -65,7 +65,11 @@ impl install::DownloadArchive for ShellCheck {
   }
 
   fn executable_path_in_archive(&self, version: &Version, platform: Platform) -> String {
-    format!("shellcheck-v{version}{sep}{executable}", sep = std::path::MAIN_SEPARATOR, executable = self.executable_filename(platform))
+    format!(
+      "shellcheck-v{version}{sep}{executable}",
+      sep = std::path::MAIN_SEPARATOR,
+      executable = self.executable_filename(platform)
+    )
   }
 }
 
@@ -86,7 +90,10 @@ mod tests {
   #[test]
   fn archive_url() {
     let shellcheck = super::ShellCheck {};
-    let platform = Platform { os: Os::Linux, cpu: Cpu::Intel64 };
+    let platform = Platform {
+      os: Os::Linux,
+      cpu: Cpu::Intel64,
+    };
     let have = shellcheck.archive_url(&Version::from("0.9.0"), platform);
     let want = "https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.linux.x86_64.tar.xz";
     assert_eq!(have, want);

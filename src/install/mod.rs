@@ -62,7 +62,11 @@ impl<'a> Method<'a> {
       Method::DownloadExecutable(app) => format!("download executable for {app}@{version}", app = app.name()),
       Method::CompileGoSource(app) => format!("compile {app}@{version} from source", app = app.name()),
       Method::CompileRustSource(app) => format!("compile {app}@{version} from source", app = app.name()),
-      Method::InstallAnotherApp(app) => format!("install {app}@{version} through {carrier}", app = app.name(), carrier = app.app_to_install().name()),
+      Method::InstallAnotherApp(app) => format!(
+        "install {app}@{version} through {carrier}",
+        app = app.name(),
+        carrier = app.app_to_install().name()
+      ),
     }
   }
 }

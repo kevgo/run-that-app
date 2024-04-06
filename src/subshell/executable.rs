@@ -25,12 +25,18 @@ impl Executable {
   pub fn run_output(&self, arg: &str, log: Log) -> Result<String> {
     let mut cmd = Command::new(self);
     cmd.arg(arg);
-    log(Event::AnalyzeExecutableBegin { cmd: &self.as_str(), args: &[arg] });
+    log(Event::AnalyzeExecutableBegin {
+      cmd: &self.as_str(),
+      args: &[arg],
+    });
     let output = match cmd.output() {
       Ok(output) => output,
       Err(err) => {
         log(Event::AnalyzeExecutableError { err: err.to_string() });
-        return Err(UserError::ExecutableCannotExecute { executable: self.clone(), err: err.to_string() });
+        return Err(UserError::ExecutableCannotExecute {
+          executable: self.clone(),
+          err: err.to_string(),
+        });
       }
     };
     let stdout = String::from_utf8(output.stdout).expect("command printed non unicode stdout");
@@ -47,7 +53,10 @@ impl Executable {
       Ok(output) => output,
       Err(err) => {
         log(Event::AnalyzeExecutableError { err: err.to_string() });
-        return Err(UserError::ExecutableCannotExecute { executable: self.clone(), err: err.to_string() });
+        return Err(UserError::ExecutableCannotExecute {
+          executable: self.clone(),
+          err: err.to_string(),
+        });
       }
     };
     let stdout = String::from_utf8(output.stdout).expect("command printed non unicode stdout");

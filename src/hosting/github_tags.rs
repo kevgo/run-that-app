@@ -19,28 +19,42 @@ pub fn all(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<String>
     Ok(text) => text,
     Err(err) => {
       log(Event::GitHubApiRequestFail { err: err.to_string() });
-      return Err(UserError::GitHubTagsApiProblem { problem: S("Cannot get response payload"), payload: S("") });
+      return Err(UserError::GitHubTagsApiProblem {
+        problem: S("Cannot get response payload"),
+        payload: S(""),
+      });
     }
   };
   let tags = parse_response(response_text)?;
   if tags.is_empty() {
     log(Event::GitHubApiRequestFail { err: "no tags found".into() });
-    return Err(UserError::GitHubTagsApiProblem { problem: S("no tags found"), payload: S("") });
+    return Err(UserError::GitHubTagsApiProblem {
+      problem: S("no tags found"),
+      payload: S(""),
+    });
   }
   log(Event::GitHubApiRequestSuccess);
   Ok(tags)
 }
 
 fn parse_response(text: &str) -> Result<Vec<String>> {
-  let value: serde_json::Value =
-    serde_json::from_str(text).map_err(|err| UserError::GitHubTagsApiProblem { problem: err.to_string(), payload: text.to_string() })?;
+  let value: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::GitHubTagsApiProblem {
+    problem: err.to_string(),
+    payload: text.to_string(),
+  })?;
   let serde_json::Value::Array(entries) = value else {
-    return Err(UserError::GitHubTagsApiProblem { problem: S("response does not contain an Array"), payload: text.to_string() });
+    return Err(UserError::GitHubTagsApiProblem {
+      problem: S("response does not contain an Array"),
+      payload: text.to_string(),
+    });
   };
   let mut result: Vec<String> = Vec::with_capacity(entries.len());
   for entry in entries {
     let Some(entry_ref) = entry["ref"].as_str() else {
-      return Err(UserError::GitHubTagsApiProblem { problem: S("entry does not contain a ref field"), payload: entry.to_string() });
+      return Err(UserError::GitHubTagsApiProblem {
+        problem: S("entry does not contain a ref field"),
+        payload: entry.to_string(),
+      });
     };
     if let Some(stripped) = entry_ref.strip_prefix("refs/tags/") {
       result.push(stripped.to_string());

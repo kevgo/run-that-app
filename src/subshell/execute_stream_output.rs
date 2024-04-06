@@ -8,7 +8,10 @@ use std::process::{Command, ExitCode};
 pub fn execute_stream_output(executable: &Executable, args: &[String]) -> Result<ExitCode> {
   let mut cmd = Command::new(executable);
   cmd.args(args);
-  let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary { call: call_signature(executable, args), reason: err.to_string() })?;
+  let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
+    call: call_signature(executable, args),
+    reason: err.to_string(),
+  })?;
   Ok(exit_status_to_code(exit_status))
 }
 

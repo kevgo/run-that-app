@@ -24,9 +24,15 @@ pub fn test(mut start_at_app: Option<AppName>, verbose: bool) -> Result<ExitCode
     }
     log(Event::IntegrationTestNewApp { app: &app.name() });
     let latest_version = app.latest_installable_version(log)?;
-    log(Event::IntegrationTestDeterminedVersion { app: &app.name(), version: &latest_version });
+    log(Event::IntegrationTestDeterminedVersion {
+      app: &app.name(),
+      version: &latest_version,
+    });
     for install_method in app.install_methods() {
-      log(Event::IntegrationTestNewInstallMethod { version: &latest_version, method: &install_method });
+      log(Event::IntegrationTestNewInstallMethod {
+        version: &latest_version,
+        method: &install_method,
+      });
       let installed = install::install(&install_method, &latest_version, platform, &yard, log)?;
       if !installed {
         continue;
@@ -34,7 +40,10 @@ pub fn test(mut start_at_app: Option<AppName>, verbose: bool) -> Result<ExitCode
       let executable_location = install_method.executable_location(&latest_version, platform);
       let executable_path = yard.app_folder(&install_method.yard_app(), &latest_version).join(executable_location);
       if !executable_path.exists() {
-        println!("executable {} not found, press ENTER after inspecting the yard", executable_path.to_string_lossy());
+        println!(
+          "executable {} not found, press ENTER after inspecting the yard",
+          executable_path.to_string_lossy()
+        );
         let mut buffer = String::new();
         io::stdin().read_line(&mut buffer).unwrap();
         return Ok(ExitCode::FAILURE);
@@ -42,7 +51,10 @@ pub fn test(mut start_at_app: Option<AppName>, verbose: bool) -> Result<ExitCode
       let executable = Executable(executable_path.clone());
       match app.analyze_executable(&executable, log)? {
         AnalyzeResult::NotIdentified { output } => {
-          println!("executable {} not identified based on this output:\n\"{output}\"\nOUTPUT END", executable_path.to_string_lossy());
+          println!(
+            "executable {} not identified based on this output:\n\"{output}\"\nOUTPUT END",
+            executable_path.to_string_lossy()
+          );
           return Ok(ExitCode::FAILURE);
         }
         AnalyzeResult::IdentifiedButUnknownVersion => println!("{}", "executable identified".green()),

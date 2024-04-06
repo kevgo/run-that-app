@@ -17,7 +17,10 @@ impl Yard {
   /// provides the path to the folder containing the given application, creates the folder if it doesn't exist
   pub fn create_app_folder(&self, app_name: &AppName, app_version: &Version) -> Result<PathBuf> {
     let folder = self.app_folder(app_name, app_version);
-    fs::create_dir_all(&folder).map_err(|err| UserError::CannotCreateFolder { folder: folder.clone(), reason: err.to_string() })?;
+    fs::create_dir_all(&folder).map_err(|err| UserError::CannotCreateFolder {
+      folder: folder.clone(),
+      reason: err.to_string(),
+    })?;
     Ok(folder)
   }
 

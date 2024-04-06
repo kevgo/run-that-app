@@ -25,7 +25,10 @@ mod tests {
     fn name_and_version() {
       let give = "shellcheck@0.9.0";
       let have = AppVersion::new(give);
-      let want = AppVersion { app: AppName::from("shellcheck"), version: Some(Version::from("0.9.0")) };
+      let want = AppVersion {
+        app: AppName::from("shellcheck"),
+        version: Some(Version::from("0.9.0")),
+      };
       pretty::assert_eq!(have, want);
     }
 
@@ -33,7 +36,10 @@ mod tests {
     fn name_only() {
       let give = "shellcheck";
       let have = AppVersion::new(give);
-      let want = AppVersion { app: AppName::from("shellcheck"), version: None };
+      let want = AppVersion {
+        app: AppName::from("shellcheck"),
+        version: None,
+      };
       pretty::assert_eq!(have, want);
     }
 
@@ -41,7 +47,10 @@ mod tests {
     fn empty_version() {
       let give = "shellcheck@";
       let have = AppVersion::new(give);
-      let want = AppVersion { app: AppName::from("shellcheck"), version: None };
+      let want = AppVersion {
+        app: AppName::from("shellcheck"),
+        version: None,
+      };
       pretty::assert_eq!(have, want);
     }
   }
