@@ -18,7 +18,7 @@ pub fn update(verbose: bool) -> Result<ExitCode> {
         new_version: &latest,
       });
     } else {
-      log(Event::UpdateAlreadyNewest { app: &old_app.app });
+      log(Event::UpdateAlreadyNewest);
     }
   }
   config.save()?;
