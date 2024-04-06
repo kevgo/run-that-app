@@ -45,14 +45,14 @@ pub fn log(event: Event) {
     Event::IdentifiedOs { name: _ } => {}
 
     Event::IntegrationTestNewApp { app: _ } => {}
-    Event::IntegrationTestDeterminedVersion { app: _, version: _ } => {}
+    Event::IntegrationTestDeterminedVersion { version: _ } => {}
     Event::IntegrationTestNewInstallMethod { method, version } => eprintln!("\n{}", method.name(version).bold()),
 
     Event::NotOnline => eprintln!("{}", "not online".red()),
 
     Event::UpdateBegin { app: _ } => {}
     Event::UpdateNewVersion { old_version, new_version } => eprintln!("{} -> {}", old_version.as_str().green(), new_version.as_str().green()),
-    Event::UpdateAlreadyNewest { app: _ } => eprintln!("{}", "up to date".green()),
+    Event::UpdateAlreadyNewest => eprintln!("{}", "up to date".green()),
 
     Event::YardCheckExistingAppBegin { path: _ } => {}
     Event::YardCheckExistingAppFound => {}

@@ -87,7 +87,6 @@ pub enum Event<'a> {
     app: &'a AppName,
   },
   IntegrationTestDeterminedVersion {
-    app: &'a AppName,
     version: &'a Version,
   },
   IntegrationTestNewInstallMethod {
@@ -104,9 +103,7 @@ pub enum Event<'a> {
     old_version: &'a Version,
     new_version: &'a Version,
   },
-  UpdateAlreadyNewest {
-    app: &'a AppName,
-  },
+  UpdateAlreadyNewest,
 
   YardCheckExistingAppBegin {
     path: &'a Path,
