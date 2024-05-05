@@ -85,10 +85,6 @@ fn ext_text(os: Os) -> &'static str {
   }
 }
 
-fn extract_version(output: &str) -> Option<&str> {
-  regexp::first_capture(output, r"gh version (\d+\.\d+\.\d+)")
-}
-
 fn identify(output: &str) -> bool {
   output.contains("ireturn: Accept Interfaces, Return Concrete Types")
 }
@@ -114,8 +110,8 @@ mod tests {
       os: Os::Linux,
       cpu: Cpu::Intel64,
     };
-    let have = ireturn.archive_url(&Version::from("2.39.1"), platform);
-    let want = "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_amd64.tar.gz";
+    let have = ireturn.archive_url(&Version::from("0.3.0"), platform);
+    let want = "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_linux_x86_64.tar.gz";
     assert_eq!(have, want);
   }
 
@@ -135,28 +131,9 @@ mod tests {
       };
       let have = ireturn.executable_path_in_archive(&version, platform);
       #[cfg(unix)]
-      let want = S("gh_1.2.3_linux_arm64/bin/gh");
+      let want = S("gh_1.2.3_linux_arm64/bin/ireturn");
       #[cfg(windows)]
-      let want = S("gh_1.2.3_linux_arm64\\bin\\gh");
+      let want = S("gh_1.2.3_linux_arm64\\bin\\ireturn");
       assert_eq!(have, want);
     }
   }
-
-  mod extract_version {
-    use super::super::extract_version;
-
-    #[test]
-    fn success() {
-      let output = "
-gh version 2.45.0 (2024-03-04)
-https://github.com/cli/cli/releases/tag/v2.45.0
-";
-      assert_eq!(extract_version(output), Some("2.45.0"));
-    }
-
-    #[test]
-    fn other() {
-      assert_eq!(extract_version("other"), None);
-    }
-  }
-}
