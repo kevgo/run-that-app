@@ -5,7 +5,7 @@ use crate::install::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::subshell::Executable;
-use crate::{regexp, Log};
+use crate::Log;
 use const_format::formatcp;
 use std::path;
 
