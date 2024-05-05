@@ -40,10 +40,7 @@ impl App for Ireturn {
     if !identify(&output) {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output("--version", log)?) {
-      Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
-      None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
-    }
+    Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 }
 
