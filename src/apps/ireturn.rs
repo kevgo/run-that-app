@@ -93,7 +93,7 @@ fn extract_version(output: &str) -> Option<&str> {
 }
 
 fn identify(output: &str) -> bool {
-  output.contains("Work seamlessly with GitHub from the command line")
+  output.contains("ireturn: Accept Interfaces, Return Concrete Types")
 }
 
 fn os_text(os: Os) -> &'static str {
