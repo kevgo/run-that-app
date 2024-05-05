@@ -4,7 +4,7 @@ use crate::hosting::github_releases;
 use crate::install::{self, Method};
 use crate::prelude::*;
 use crate::subshell::Executable;
-use crate::{regexp, Log};
+use crate::Log;
 use const_format::formatcp;
 
 pub struct Exhaustruct {}
@@ -38,11 +38,7 @@ impl App for Exhaustruct {
     if !identify(&output) {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    let output = executable.run_output("--version", log)?;
-    match extract_version(&output) {
-      Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
-      None => Ok(AnalyzeResult::NotIdentified { output }),
-    }
+    Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 }
 
@@ -52,20 +48,6 @@ impl install::CompileGoSource for Exhaustruct {
   }
 }
 
-fn extract_version(output: &str) -> Option<&str> {
-  regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
-}
-
 fn identify(output: &str) -> bool {
   output.contains("golang analyzer that finds structures with uninitialized fields")
-}
-
-#[cfg(test)]
-mod tests {
-
-  #[test]
-  fn extract_version() {
-    assert_eq!(super::extract_version("1.6.27"), Some("1.6.27"));
-    assert_eq!(super::extract_version("other"), None);
-  }
 }
