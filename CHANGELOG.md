@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+### 0.6.0 (2024-05-5)
+
+#### New Features
+
+- apps: exhaustruct, ireturn
+
 ### 0.5.0 (2024-03-14)
 
 #### New Features
