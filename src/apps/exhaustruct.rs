@@ -35,7 +35,7 @@ impl App for Exhaustruct {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
-    if !identify(&output) {
+    if !output.contains("exhaustruct: Checks if all structure fields are initialized") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
@@ -46,8 +46,4 @@ impl install::CompileGoSource for Exhaustruct {
   fn import_path(&self, version: &Version) -> String {
     format!("github.com/{ORG}/{REPO}/v3/cmd/exhaustruct@v{version}")
   }
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("golang analyzer that finds structures with uninitialized fields")
 }
