@@ -49,7 +49,9 @@ pub fn execute_check_output(executable: &Executable, args: &[String]) -> Result<
         colored_line.extend(BASH_RED);
         colored_line.extend(&line);
         colored_line.extend(BASH_CLEAR);
-        stdout.write_all(&colored_line).unwrap();
+        if let Err(err) = stdout.write_all(&colored_line) {
+          eprintln!("Error: {}", err);
+        }
       }
       Event::UnterminatedLine(line) => {
         encountered_output = true;
@@ -58,7 +60,9 @@ pub fn execute_check_output(executable: &Executable, args: &[String]) -> Result<
         colored_line.extend(&line);
         colored_line.extend(BASH_CLEAR);
         colored_line.push(b'\n');
-        stdout.write_all(&colored_line).unwrap();
+        if let Err(err) = stdout.write_all(&colored_line) {
+          eprintln!("Error: {err}")
+        }
       }
       Event::Ended { exit_status } => {
         exit_code = exit_status_to_code(exit_status);
