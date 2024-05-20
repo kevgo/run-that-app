@@ -1,6 +1,6 @@
 use super::{call_signature, exit_status_to_code};
-use crate::prelude::*;
 use crate::subshell::Executable;
+use crate::{cli, prelude::*};
 use std::io::{self, BufRead, BufReader, Read, Write};
 use std::process::{self, Child, Command, ExitCode, Stdio};
 use std::sync::mpsc;
@@ -75,10 +75,10 @@ pub fn execute_check_output(executable: &Executable, args: &[String]) -> Result<
 }
 
 /// starts a thread that monitors the given STDOUT or STDERR stream
-fn monitor_output<R: 'static + Read + Send>(stream: R, sender: mpsc::Sender<Event>) {
+fn monitor_output<R: 'static + Read + Send>(stream: R, sender: mpsc::Sender<Event>) -> Result<()> {
   let mut reader = BufReader::new(stream);
   thread::spawn(move || loop {
-    let buffer = reader.fill_buf().unwrap();
+    let buffer = reader.fill_buf().map_err(op)?;
     if buffer.is_empty() {
       break;
     }
@@ -97,14 +97,18 @@ fn monitor_output<R: 'static + Read + Send>(stream: R, sender: mpsc::Sender<Even
       Some(b'\x0D') => Event::TempLine(line),
       _ => Event::UnterminatedLine(line),
     };
-    sender.send(event).unwrap();
+    if let Err(err) = sender.send(event) {
+      eprintln!("cannot send via internal pipe: {err}")
+    }
   });
 }
 
 /// starts the thread that monitors for process exit
 fn monitor_exit(mut process: Child, sender: mpsc::Sender<Event>) {
   thread::spawn(move || {
-    let exit_status = process.wait().unwrap();
-    sender.send(Event::Ended { exit_status }).unwrap();
+    let exit_status = process.wait().unwrap_or_default();
+    if let Err(err) = sender.send(Event::Ended { exit_status }) {
+      cli::exit(&err.to_string());
+    }
   });
 }
