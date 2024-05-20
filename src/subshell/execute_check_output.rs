@@ -75,10 +75,13 @@ pub fn execute_check_output(executable: &Executable, args: &[String]) -> Result<
 }
 
 /// starts a thread that monitors the given STDOUT or STDERR stream
-fn monitor_output<R: 'static + Read + Send>(stream: R, sender: mpsc::Sender<Event>) -> Result<()> {
+fn monitor_output<R: 'static + Read + Send>(stream: R, sender: mpsc::Sender<Event>) {
   let mut reader = BufReader::new(stream);
   thread::spawn(move || loop {
-    let buffer = reader.fill_buf().map_err(op)?;
+    let buffer = match reader.fill_buf() {
+      Ok(buffer) => buffer,
+      Err(err) => cli::exit(err),
+    };
     if buffer.is_empty() {
       break;
     }
