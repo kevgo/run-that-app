@@ -15,7 +15,7 @@
           "filter": "\\b(\\w+)\\.rs$"
         }
       ],
-      "run": "cargo test {{file_without_ext}}"
+      "run": "cargo test {{ file_without_ext }}"
     },
 
     {
@@ -28,7 +28,7 @@
           "filter": "\\bfn (\\w+)\\("
         }
       ],
-      "run": "cargo test {{test_name}}"
+      "run": "cargo test {{ test_name }}"
     }
   ],
   "options": {
