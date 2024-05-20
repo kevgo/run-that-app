@@ -1,0 +1,46 @@
+{
+  "actions": [
+    {
+      "type": "testAll",
+      "run": "make test"
+    },
+
+    {
+      "type": "testFile",
+      "files": "**/*.rs",
+      "vars": [
+        {
+          "name": "file_without_ext",
+          "source": "file",
+          "filter": "\\b(\\w+)\\.rs$"
+        }
+      ],
+      "run": "cargo test {{ file_without_ext }}"
+    },
+
+    {
+      "type": "testFileLine",
+      "files": "**/*.rs",
+      "vars": [
+        {
+          "name": "test_name",
+          "source": "currentOrAboveLineContent",
+          "filter": "\\bfn (\\w+)\\("
+        }
+      ],
+      "run": "cargo test {{ test_name }}"
+    }
+  ],
+  "options": {
+    "beforeRun": {
+      "clearScreen": true,
+      "newlines": 0
+    },
+    "afterRun": {
+      "newlines": 1,
+      "indicatorLines": 2,
+      "indicatorBackground": true,
+      "printResult": false
+    }
+  }
+}
