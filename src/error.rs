@@ -65,6 +65,9 @@ pub enum UserError {
   MissingApplication,
   MultipleCommandsGiven,
   NotOnline,
+  NoVersionsFound {
+    app: String,
+  },
   ProcessEmittedOutput {
     cmd: String,
   },
@@ -166,6 +169,7 @@ impl UserError {
         desc("Please provide either --which or --available or nothing to run the app, but not both");
       }
       UserError::NotOnline => error("not online"),
+      UserError::NoVersionsFound { app } => error(&format!(r#"cannot determine versions for application "{app}""#)),
       UserError::ProcessEmittedOutput { cmd } => {
         error(&format!("process \"{cmd}\" emitted unexpected output"));
       }

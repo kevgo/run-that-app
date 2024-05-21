@@ -29,7 +29,10 @@ impl App for Go {
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
     let versions = self.installable_versions(1, log)?;
-    Ok(versions.into_iter().next().unwrap())
+    let Some(version) = versions.into_iter().next() else {
+      return Err(UserError::NoVersionsFound { app: self.name().to_string() });
+    };
+    Ok(version)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
