@@ -131,7 +131,7 @@ impl Apps {
 
   /// provides the length of the name of the app with the longest name
   pub fn longest_name_length(&self) -> usize {
-    self.iter().map(|app| app.name().as_str().len()).max().unwrap()
+    self.iter().map(|app| app.name().as_str().len()).max().unwrap_or_default()
   }
 }
 

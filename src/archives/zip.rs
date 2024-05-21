@@ -12,7 +12,7 @@ pub struct Zip {
 impl Archive for Zip {
   fn extract_all(&self, target_dir: &Path, log: Log) -> Result<()> {
     log(Event::ArchiveExtractBegin { archive_type: "zip" });
-    let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&self.data)).expect("cannot read zip data");
+    let mut zip_archive = zip::ZipArchive::new(io::Cursor::new(&self.data)).map_err(|err| UserError::CannotReadZipFile { err: err.to_string() })?;
     match zip_archive.extract(target_dir) {
       Ok(()) => {
         log(Event::ArchiveExtractSuccess);

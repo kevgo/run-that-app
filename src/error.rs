@@ -38,6 +38,9 @@ pub enum UserError {
     expression: String,
     reason: String,
   },
+  CannotReadZipFile {
+    err: String,
+  },
   CompilationError {
     reason: String,
   },
@@ -127,6 +130,7 @@ impl UserError {
         error(&format!("semver range \"{expression}\" is incorrect: {reason}"));
         desc("Please use formats described at https://devhints.io/semver.");
       }
+      UserError::CannotReadZipFile { err } => error(&format!("cannot read ZIP file: {err}")),
       UserError::CompilationError { reason } => {
         error(&format!("Compilation error: {reason}"));
       }
