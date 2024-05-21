@@ -31,7 +31,7 @@ mod tests {
 
   #[test]
   fn no_match() {
-    let text = "Foo bar";
+    let text = "word1 word2";
     let have = first_capture(text, r"(\d+\.\d+)");
     let want = Err(UserError::RegexDoesntMatch);
     assert_eq!(have, want);
@@ -39,9 +39,9 @@ mod tests {
 
   #[test]
   fn no_capture() {
-    let text = "Foo bar";
-    let have = first_capture(text, r"no capture");
-    let want = Err(UserError::RegexDoesntMatch);
+    let text = "word1 word2";
+    let have = first_capture(text, r"word1 word2");
+    let want = Err(UserError::RegexHasNoCaptures);
     assert_eq!(have, want);
   }
 }
