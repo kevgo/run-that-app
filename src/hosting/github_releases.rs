@@ -39,7 +39,9 @@ fn parse_latest_response(text: &str) -> Result<Version> {
     payload: text.to_string(),
   })?;
   let Some(tag) = release["tag_name"].as_str() else {
-    return Err(UserError::InvalidGitHubAPIResponse);
+    return Err(UserError::InvalidGitHubAPIResponse {
+      err: String::from("missing 'tag_name' field"),
+    });
   };
   Ok(Version::from(strip_leading_v(tag)))
 }

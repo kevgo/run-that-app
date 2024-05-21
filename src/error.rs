@@ -72,7 +72,9 @@ pub enum UserError {
     text: String,
   },
   InvalidNumber,
-  InvalidGitHubAPIResponse,
+  InvalidGitHubAPIResponse {
+    err: String,
+  },
   MissingApplication,
   MultipleCommandsGiven,
   NotOnline,
@@ -171,7 +173,7 @@ impl UserError {
         error("Invalid config file format");
         desc(&format!("{}:{line_no}: {text}", config::FILE_NAME));
       }
-      UserError::InvalidGitHubAPIResponse => error("invalid GitHub API response"),
+      UserError::InvalidGitHubAPIResponse { err } => error(&format!("invalid GitHub API response: {err}")),
       UserError::InvalidNumber => {
         error("Invalid number given");
       }
