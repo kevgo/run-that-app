@@ -90,7 +90,6 @@ mod tests {
   use crate::config::Version;
   use crate::install::DownloadArchive;
   use crate::platform::{Cpu, Os, Platform};
-  use big_s::S;
 
   #[test]
   fn download_url() {
@@ -107,9 +106,6 @@ mod tests {
   #[test]
   fn extract_version() {
     assert_eq!(super::extract_version("1.6.27"), Ok("1.6.27"));
-    assert_eq!(
-      super::extract_version("other"),
-      Err(UserError::RegexHasNoCaptures { regex: S(r"(\d+\.\d+\.\d+)") })
-    );
+    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }

@@ -85,7 +85,6 @@ mod tests {
   use crate::config::Version;
   use crate::install::DownloadExecutable;
   use crate::platform::{Cpu, Os, Platform};
-  use big_s::S;
 
   #[test]
   fn artifact_url() {
@@ -102,17 +101,7 @@ mod tests {
   #[test]
   fn extract_version() {
     assert_eq!(super::extract_version("v3.7.0"), Ok("3.7.0"));
-    assert_eq!(
-      super::extract_version("3.7.0"),
-      Err(UserError::RegexHasNoCaptures {
-        regex: S(r"^v(\d+\.\d+\.\d+)$")
-      })
-    );
-    assert_eq!(
-      super::extract_version("other"),
-      Err(UserError::RegexHasNoCaptures {
-        regex: S(r"^v(\d+\.\d+\.\d+)$")
-      })
-    );
+    assert_eq!(super::extract_version("3.7.0"), Err(UserError::RegexDoesntMatch));
+    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }

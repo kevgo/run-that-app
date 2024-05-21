@@ -82,7 +82,6 @@ fn identify(output: &str) -> bool {
 #[cfg(test)]
 mod tests {
   use crate::apps::UserError;
-  use big_s::S;
 
   mod artifact_url {
     use crate::config::Version;
@@ -117,11 +116,6 @@ mod tests {
   #[test]
   fn extract_version() {
     assert_eq!(super::extract_version("v0.6.0 (go1.21.6)"), Ok("0.6.0"));
-    assert_eq!(
-      super::extract_version("other"),
-      Err(UserError::RegexHasNoCaptures {
-        regex: S(r"v(\d+\.\d+\.\d+) \(go")
-      })
-    );
+    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }

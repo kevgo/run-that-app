@@ -103,7 +103,6 @@ mod tests {
   mod extract_version {
     use super::super::extract_version;
     use crate::apps::UserError;
-    use big_s::S;
 
     #[test]
     fn success() {
@@ -131,12 +130,7 @@ Platform:      linux/arm64
 
     #[test]
     fn other() {
-      assert_eq!(
-        extract_version("other"),
-        Err(UserError::RegexHasNoCaptures {
-          regex: S(r"GitVersion:\s*(\d+\.\d+\.\d+)")
-        })
-      );
+      assert_eq!(extract_version("other"), Err(UserError::RegexDoesntMatch));
     }
   }
 }

@@ -8,10 +8,10 @@ pub fn first_capture<'a>(text: &'a str, regex: &str) -> Result<&'a str> {
     err: err.to_string(),
   })?;
   let Some(captures) = regex.captures(text) else {
-    return Err(UserError::RegexHasNoCaptures { regex: regex.to_string() });
+    return Err(UserError::RegexDoesntMatch);
   };
   let Some(first_capture) = captures.get(1) else {
-    return Err(UserError::RegexHasNoCaptures { regex: regex.to_string() });
+    return Err(UserError::RegexHasNoCaptures);
   };
   Ok(first_capture.as_str())
 }
@@ -20,7 +20,6 @@ pub fn first_capture<'a>(text: &'a str, regex: &str) -> Result<&'a str> {
 mod tests {
   use super::first_capture;
   use crate::regexp::first_capture::UserError;
-  use big_s::S;
 
   #[test]
   fn multiple_matches() {
@@ -33,9 +32,8 @@ mod tests {
   #[test]
   fn no_match() {
     let text = "Foo bar";
-    let re = r"(\d+\.\d+)";
-    let have = first_capture(text, re);
-    let want = Err(UserError::RegexHasNoCaptures { regex: S(re) });
+    let have = first_capture(text, r"(\d+\.\d+)");
+    let want = Err(UserError::RegexDoesntMatch);
     assert_eq!(have, want);
   }
 
@@ -43,7 +41,7 @@ mod tests {
   fn no_capture() {
     let text = "Foo bar";
     let have = first_capture(text, r"no capture");
-    let want = Err(UserError::RegexHasNoCaptures { regex: S("no capture") });
+    let want = Err(UserError::RegexDoesntMatch);
     assert_eq!(have, want);
   }
 }

@@ -101,7 +101,6 @@ mod tests {
   mod extract_version {
     use super::super::extract_version;
     use crate::apps::UserError;
-    use big_s::S;
 
     #[test]
     fn success() {
@@ -115,12 +114,7 @@ website: https://www.shellcheck.net";
 
     #[test]
     fn other() {
-      assert_eq!(
-        extract_version("other"),
-        Err(UserError::RegexHasNoCaptures {
-          regex: S(r"version: (\d+\.\d+\.\d+)")
-        })
-      );
+      assert_eq!(extract_version("other"), Err(UserError::RegexDoesntMatch));
     }
   }
 }

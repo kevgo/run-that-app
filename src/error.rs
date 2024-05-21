@@ -92,9 +92,8 @@ pub enum UserError {
   ProcessEmittedOutput {
     cmd: String,
   },
-  RegexHasNoCaptures {
-    regex: String,
-  },
+  RegexDoesntMatch,
+  RegexHasNoCaptures,
   RunRequestMissingVersion,
   RustCompilationFailed,
   RustNotInstalled,
@@ -204,7 +203,8 @@ impl UserError {
       UserError::ProcessEmittedOutput { cmd } => {
         error(&format!("process \"{cmd}\" emitted unexpected output"));
       }
-      UserError::RegexHasNoCaptures { regex } => error(&format!("regex '{regex}' has no captures")),
+      UserError::RegexDoesntMatch => error("this regex doesn't match"),
+      UserError::RegexHasNoCaptures => error("regex has no captures"),
       UserError::RunRequestMissingVersion => {
         error("missing application version");
         desc("Please provide the exact version of the app you want to execute in this format: app@1.2.3");

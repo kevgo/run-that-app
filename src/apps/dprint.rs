@@ -81,7 +81,6 @@ fn identify(output: &str) -> bool {
 #[cfg(test)]
 mod tests {
   use crate::apps::UserError;
-  use big_s::S;
 
   mod archive_url {
     use crate::config::Version;
@@ -116,11 +115,6 @@ mod tests {
   #[test]
   fn extract_version() {
     assert_eq!(super::extract_version("dprint 0.45.0"), Ok("0.45.0"));
-    assert_eq!(
-      super::extract_version("other"),
-      Err(UserError::RegexHasNoCaptures {
-        regex: S(r"dprint (\d+\.\d+\.\d+)")
-      })
-    );
+    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
