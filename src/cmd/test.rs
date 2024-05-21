@@ -12,7 +12,7 @@ pub fn test(mut start_at_app: Option<AppName>, verbose: bool) -> Result<ExitCode
   let apps = apps::all();
   let log = logger::new(verbose);
   let platform = platform::detect(log)?;
-  let temp_folder = tempfile::tempdir().expect("cannot create temp dir");
+  let temp_folder = tempfile::tempdir().map_err(|err| UserError::CannotCreateTempDir { err: err.to_string() })?;
   let yard = yard::load_or_create(temp_folder.path())?;
   for app in apps {
     if let Some(start_app_name) = &start_at_app {

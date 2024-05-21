@@ -15,6 +15,9 @@ pub enum UserError {
     folder: PathBuf,
     reason: String,
   },
+  CannotCreateTempDir {
+    err: String,
+  },
   CannotDetermineCurrentDirectory(String),
   CannotDetermineHomeDirectory,
   CannotDownload {
@@ -109,6 +112,7 @@ impl UserError {
         error(&format!("cannot create folder {folder}: {reason}", folder = folder.to_string_lossy()));
         desc("Please check access permissions and try again.");
       }
+      UserError::CannotCreateTempDir { err } => error(&format!("cannot create temporary directory: {err}")),
       UserError::CannotDetermineHomeDirectory => error("cannot determine home directory"),
       UserError::CannotDownload { url, reason } => {
         error(&format!("cannot download URL {url}: {reason}"));
