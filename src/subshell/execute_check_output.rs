@@ -91,7 +91,7 @@ fn monitor_output<R: 'static + Read + Send>(stream: R, sender: mpsc::Sender<Even
   thread::spawn(move || loop {
     let buffer = match reader.fill_buf() {
       Ok(buffer) => buffer,
-      Err(err) => cli::exit(format!("cannot read subshell output buffer: {err}")),
+      Err(err) => cli::exit(format!("cannot write subshell output into buffer: {err}")),
     };
     if buffer.is_empty() {
       break;
