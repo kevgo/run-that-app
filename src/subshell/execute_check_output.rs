@@ -112,7 +112,7 @@ fn monitor_output<R: 'static + Read + Send>(stream: R, sender: mpsc::Sender<Even
       _ => Event::UnterminatedLine(line),
     };
     if let Err(err) = sender.send(event) {
-      eprintln!("cannot send via internal pipe: {err}");
+      eprintln!("cannot send subshell output through internal pipe: {err}");
     }
   });
 }
@@ -122,7 +122,7 @@ fn monitor_exit(mut process: Child, sender: mpsc::Sender<Event>) {
   thread::spawn(move || {
     let exit_status = process.wait().unwrap_or_default();
     if let Err(err) = sender.send(Event::Ended { exit_status }) {
-      cli::exit(err);
+      cli::exit(format!("cannot send exit signal through internal pipe: {err}"));
     }
   });
 }
