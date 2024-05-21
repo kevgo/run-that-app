@@ -11,6 +11,9 @@ pub enum UserError {
     reason: String,
   },
   CannotAccessConfigFile(String),
+  CannotCompileRustSource {
+    err: String,
+  },
   CannotCreateFile {
     filename: &'static str,
     err: String,
@@ -114,6 +117,7 @@ impl UserError {
         error(&format!("cannot read the config file: {reason}"));
         desc(&format!("please make sure {} is a file and accessible to you", config::FILE_NAME,));
       }
+      UserError::CannotCompileRustSource { err } => error(&format!("cannot compile Rust source: {err}")),
       UserError::CannotDetermineCurrentDirectory(reason) => error(&format!("cannot determine the current directory: {reason}")),
       UserError::CannotCreateFile { filename, err } => error(&format!("cannot create file {filename}: {err}")),
       UserError::CannotCreateFolder { folder, reason } => {
