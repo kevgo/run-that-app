@@ -35,8 +35,14 @@ pub fn execute_check_output(executable: &Executable, args: &[String]) -> Result<
     call: call_signature(executable, args),
     reason: err.to_string(),
   })?;
-  monitor_output(process.stdout.take().unwrap(), sender.clone());
-  monitor_output(process.stderr.take().unwrap(), sender.clone());
+  let Some(stdout) = process.stdout.take() else {
+    return Err(UserError::CannotOpenSubshellStream);
+  };
+  monitor_output(stdout, sender.clone());
+  let Some(stderr) = process.stderr.take() else {
+    return Err(UserError::CannotOpenSubshellStream);
+  };
+  monitor_output(stderr, sender.clone());
   monitor_exit(process, sender);
   let mut encountered_output = false;
   let mut exit_code = ExitCode::SUCCESS;

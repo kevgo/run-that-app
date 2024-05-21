@@ -40,6 +40,7 @@ pub enum UserError {
     file: String,
     reason: String,
   },
+  CannotOpenSubshellStream,
   CannotParseSemverVersion {
     expression: String,
     reason: String,
@@ -145,6 +146,7 @@ impl UserError {
         error(&format!("Cannot make file {file} executable: {reason}"));
         desc("Please check access permissions and try again.");
       }
+      UserError::CannotOpenSubshellStream => error("cannot open subshell stream"),
       UserError::CannotParseSemverVersion { expression, reason } => {
         error(&format!("semver version \"{expression}\" is incorrect: {reason}"));
         desc("Please use exactly three numbers separated by dots, e.g. 1.2.3");
