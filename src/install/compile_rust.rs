@@ -3,6 +3,7 @@ use crate::config::Version;
 use crate::logger::{Event, Log};
 use crate::prelude::*;
 use crate::yard::Yard;
+use std::io::ErrorKind;
 use std::process::Command;
 use which::which;
 
@@ -30,10 +31,10 @@ pub fn run(app: &dyn CompileRustSource, version: &Version, yard: &Yard, log: Log
   let status = match cmd.status() {
     Ok(status) => status,
     Err(err) => match err.kind() {
-      std::io::ErrorKind::NotFound => return Err(UserError::RustNotInstalled),
-      std::io::ErrorKind::PermissionDenied => return Err(UserError::RustNoPermission),
-      std::io::ErrorKind::Interrupted => return Ok(false),
-      _ => panic!("{}", err.to_string()),
+      ErrorKind::NotFound => return Err(UserError::RustNotInstalled),
+      ErrorKind::PermissionDenied => return Err(UserError::RustNoPermission),
+      ErrorKind::Interrupted => return Ok(false),
+      _ => return Err(UserError::CannotCompileRustSource { err: err.to_string() }),
     },
   };
   if !status.success() {

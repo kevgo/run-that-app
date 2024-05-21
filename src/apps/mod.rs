@@ -131,7 +131,7 @@ impl Apps {
 
   /// provides the length of the name of the app with the longest name
   pub fn longest_name_length(&self) -> usize {
-    self.iter().map(|app| app.name().as_str().len()).max().unwrap()
+    self.iter().map(|app| app.name().as_str().len()).max().unwrap_or_default()
   }
 }
 
@@ -175,6 +175,7 @@ mod tests {
       }
 
       #[test]
+      #[allow(clippy::panic)]
       fn unknown_app() {
         let apps = Apps(vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})]);
         let Err(err) = apps.lookup(&AppName::from("zonk")) else {

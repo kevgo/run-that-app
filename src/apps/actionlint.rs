@@ -41,8 +41,8 @@ impl App for ActionLint {
     }
     let output = executable.run_output("--version", log)?;
     match extract_version(&output) {
-      Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
-      None => Ok(AnalyzeResult::NotIdentified { output }),
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::NotIdentified { output }),
     }
   }
 }
@@ -76,7 +76,7 @@ impl install::CompileGoSource for ActionLint {
   }
 }
 
-fn extract_version(output: &str) -> Option<&str> {
+fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
 }
 
@@ -86,6 +86,7 @@ fn identify(output: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
+  use crate::apps::UserError;
   use crate::config::Version;
   use crate::install::DownloadArchive;
   use crate::platform::{Cpu, Os, Platform};
@@ -104,7 +105,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("1.6.27"), Some("1.6.27"));
-    assert_eq!(super::extract_version("other"), None);
+    assert_eq!(super::extract_version("1.6.27"), Ok("1.6.27"));
+    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }

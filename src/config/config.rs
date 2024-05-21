@@ -20,7 +20,10 @@ impl Config {
         if err.kind() == ErrorKind::AlreadyExists {
           return Err(UserError::ConfigFileAlreadyExists);
         }
-        panic!("{}", err);
+        return Err(UserError::CannotCreateFile {
+          filename: FILE_NAME,
+          err: err.to_string(),
+        });
       }
     };
     let content = "\

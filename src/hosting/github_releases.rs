@@ -38,7 +38,12 @@ fn parse_latest_response(text: &str) -> Result<Version> {
     problem: err.to_string(),
     payload: text.to_string(),
   })?;
-  Ok(strip_leading_v(release["tag_name"].as_str().unwrap()).into())
+  let Some(tag) = release["tag_name"].as_str() else {
+    return Err(UserError::InvalidGitHubAPIResponse {
+      err: String::from("missing 'tag_name' field"),
+    });
+  };
+  Ok(Version::from(strip_leading_v(tag)))
 }
 
 /// provides the given number of latest versions of the given application on GitHub Releases
@@ -54,7 +59,8 @@ pub fn versions(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<Ve
     log(Event::NotOnline);
     return Err(UserError::NotOnline);
   };
-  parse_versions_response(response.as_str().unwrap())
+  let response_text = response.as_str().map_err(|err| UserError::InvalidGitHubAPIResponse { err: err.to_string() })?;
+  parse_versions_response(response_text)
 }
 
 fn parse_versions_response(text: &str) -> Result<Vec<Version>> {

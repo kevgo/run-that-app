@@ -11,9 +11,19 @@ pub enum UserError {
     reason: String,
   },
   CannotAccessConfigFile(String),
+  CannotCompileRustSource {
+    err: String,
+  },
+  CannotCreateFile {
+    filename: &'static str,
+    err: String,
+  },
   CannotCreateFolder {
     folder: PathBuf,
     reason: String,
+  },
+  CannotCreateTempDir {
+    err: String,
   },
   CannotDetermineCurrentDirectory(String),
   CannotDetermineHomeDirectory,
@@ -30,6 +40,7 @@ pub enum UserError {
     file: String,
     reason: String,
   },
+  CannotOpenSubshellStream,
   CannotParseSemverVersion {
     expression: String,
     reason: String,
@@ -37,6 +48,9 @@ pub enum UserError {
   CannotParseSemverRange {
     expression: String,
     reason: String,
+  },
+  CannotReadZipFile {
+    err: String,
   },
   CompilationError {
     reason: String,
@@ -62,12 +76,24 @@ pub enum UserError {
     text: String,
   },
   InvalidNumber,
+  InvalidGitHubAPIResponse {
+    err: String,
+  },
+  InvalidRegex {
+    regex: String,
+    err: String,
+  },
   MissingApplication,
   MultipleCommandsGiven,
   NotOnline,
+  NoVersionsFound {
+    app: String,
+  },
   ProcessEmittedOutput {
     cmd: String,
   },
+  RegexDoesntMatch,
+  RegexHasNoCaptures,
   RunRequestMissingVersion,
   RustCompilationFailed,
   RustNotInstalled,
@@ -98,11 +124,14 @@ impl UserError {
         error(&format!("cannot read the config file: {reason}"));
         desc(&format!("please make sure {} is a file and accessible to you", config::FILE_NAME,));
       }
+      UserError::CannotCompileRustSource { err } => error(&format!("cannot compile Rust source: {err}")),
       UserError::CannotDetermineCurrentDirectory(reason) => error(&format!("cannot determine the current directory: {reason}")),
+      UserError::CannotCreateFile { filename, err } => error(&format!("cannot create file {filename}: {err}")),
       UserError::CannotCreateFolder { folder, reason } => {
         error(&format!("cannot create folder {folder}: {reason}", folder = folder.to_string_lossy()));
         desc("Please check access permissions and try again.");
       }
+      UserError::CannotCreateTempDir { err } => error(&format!("cannot create temporary directory: {err}")),
       UserError::CannotDetermineHomeDirectory => error("cannot determine home directory"),
       UserError::CannotDownload { url, reason } => {
         error(&format!("cannot download URL {url}: {reason}"));
@@ -116,6 +145,7 @@ impl UserError {
         error(&format!("Cannot make file {file} executable: {reason}"));
         desc("Please check access permissions and try again.");
       }
+      UserError::CannotOpenSubshellStream => error("cannot open subshell stream"),
       UserError::CannotParseSemverVersion { expression, reason } => {
         error(&format!("semver version \"{expression}\" is incorrect: {reason}"));
         desc("Please use exactly three numbers separated by dots, e.g. 1.2.3");
@@ -124,6 +154,7 @@ impl UserError {
         error(&format!("semver range \"{expression}\" is incorrect: {reason}"));
         desc("Please use formats described at https://devhints.io/semver.");
       }
+      UserError::CannotReadZipFile { err } => error(&format!("cannot read ZIP file: {err}")),
       UserError::CompilationError { reason } => {
         error(&format!("Compilation error: {reason}"));
       }
@@ -154,9 +185,11 @@ impl UserError {
         error("Invalid config file format");
         desc(&format!("{}:{line_no}: {text}", config::FILE_NAME));
       }
+      UserError::InvalidGitHubAPIResponse { err } => error(&format!("invalid GitHub API response: {err}")),
       UserError::InvalidNumber => {
         error("Invalid number given");
       }
+      UserError::InvalidRegex { regex, err } => error(&format!("invalid regex '{regex}': {err}")),
       UserError::MissingApplication => {
         error("missing application");
         desc("Please provide the application to execute");
@@ -166,9 +199,12 @@ impl UserError {
         desc("Please provide either --which or --available or nothing to run the app, but not both");
       }
       UserError::NotOnline => error("not online"),
+      UserError::NoVersionsFound { app } => error(&format!(r#"cannot determine versions for application "{app}""#)),
       UserError::ProcessEmittedOutput { cmd } => {
         error(&format!("process \"{cmd}\" emitted unexpected output"));
       }
+      UserError::RegexDoesntMatch => error("this regex doesn't match"),
+      UserError::RegexHasNoCaptures => error("regex has no captures"),
       UserError::RunRequestMissingVersion => {
         error("missing application version");
         desc("Please provide the exact version of the app you want to execute in this format: app@1.2.3");

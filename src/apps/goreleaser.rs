@@ -39,8 +39,8 @@ impl App for Goreleaser {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&output) {
-      Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
-      None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
 }
@@ -74,7 +74,7 @@ impl install::CompileGoSource for Goreleaser {
   }
 }
 
-fn extract_version(output: &str) -> Option<&str> {
+fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"GitVersion:\s*(\d+\.\d+\.\d+)")
 }
 
@@ -102,6 +102,7 @@ mod tests {
 
   mod extract_version {
     use super::super::extract_version;
+    use crate::apps::UserError;
 
     #[test]
     fn success() {
@@ -124,12 +125,12 @@ Compiler:      gc
 ModuleSum:     h1:jsoS5T2CvPKOyECPATAo8hCvUaX8ok4iAq9m5Zyl1L0=
 Platform:      linux/arm64
 ";
-      assert_eq!(extract_version(output), Some("1.24.0"));
+      assert_eq!(extract_version(output), Ok("1.24.0"));
     }
 
     #[test]
     fn other() {
-      assert_eq!(extract_version("other"), None);
+      assert_eq!(extract_version("other"), Err(UserError::RegexDoesntMatch));
     }
   }
 }

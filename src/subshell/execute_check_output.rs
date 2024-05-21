@@ -1,4 +1,5 @@
 use super::{call_signature, exit_status_to_code};
+use crate::cli;
 use crate::prelude::*;
 use crate::subshell::Executable;
 use std::io::{self, BufRead, BufReader, Read, Write};
@@ -35,8 +36,14 @@ pub fn execute_check_output(executable: &Executable, args: &[String]) -> Result<
     call: call_signature(executable, args),
     reason: err.to_string(),
   })?;
-  monitor_output(process.stdout.take().unwrap(), sender.clone());
-  monitor_output(process.stderr.take().unwrap(), sender.clone());
+  let Some(stdout) = process.stdout.take() else {
+    return Err(UserError::CannotOpenSubshellStream);
+  };
+  monitor_output(stdout, sender.clone());
+  let Some(stderr) = process.stderr.take() else {
+    return Err(UserError::CannotOpenSubshellStream);
+  };
+  monitor_output(stderr, sender.clone());
   monitor_exit(process, sender);
   let mut encountered_output = false;
   let mut exit_code = ExitCode::SUCCESS;
@@ -49,7 +56,9 @@ pub fn execute_check_output(executable: &Executable, args: &[String]) -> Result<
         colored_line.extend(BASH_RED);
         colored_line.extend(&line);
         colored_line.extend(BASH_CLEAR);
-        stdout.write_all(&colored_line).unwrap();
+        if let Err(err) = stdout.write_all(&colored_line) {
+          eprintln!("Cannot print colored text: {err}");
+        }
       }
       Event::UnterminatedLine(line) => {
         encountered_output = true;
@@ -58,7 +67,9 @@ pub fn execute_check_output(executable: &Executable, args: &[String]) -> Result<
         colored_line.extend(&line);
         colored_line.extend(BASH_CLEAR);
         colored_line.push(b'\n');
-        stdout.write_all(&colored_line).unwrap();
+        if let Err(err) = stdout.write_all(&colored_line) {
+          eprintln!("Cannot print colored text: {err}");
+        }
       }
       Event::Ended { exit_status } => {
         exit_code = exit_status_to_code(exit_status);
@@ -78,7 +89,10 @@ pub fn execute_check_output(executable: &Executable, args: &[String]) -> Result<
 fn monitor_output<R: 'static + Read + Send>(stream: R, sender: mpsc::Sender<Event>) {
   let mut reader = BufReader::new(stream);
   thread::spawn(move || loop {
-    let buffer = reader.fill_buf().unwrap();
+    let buffer = match reader.fill_buf() {
+      Ok(buffer) => buffer,
+      Err(err) => cli::exit(format!("cannot write subshell output into buffer: {err}")),
+    };
     if buffer.is_empty() {
       break;
     }
@@ -97,14 +111,18 @@ fn monitor_output<R: 'static + Read + Send>(stream: R, sender: mpsc::Sender<Even
       Some(b'\x0D') => Event::TempLine(line),
       _ => Event::UnterminatedLine(line),
     };
-    sender.send(event).unwrap();
+    if let Err(err) = sender.send(event) {
+      eprintln!("cannot send subshell output through internal pipe: {err}");
+    }
   });
 }
 
 /// starts the thread that monitors for process exit
 fn monitor_exit(mut process: Child, sender: mpsc::Sender<Event>) {
   thread::spawn(move || {
-    let exit_status = process.wait().unwrap();
-    sender.send(Event::Ended { exit_status }).unwrap();
+    let exit_status = process.wait().unwrap_or_default();
+    if let Err(err) = sender.send(Event::Ended { exit_status }) {
+      cli::exit(format!("cannot send exit signal through internal pipe: {err}"));
+    }
   });
 }

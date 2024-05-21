@@ -12,7 +12,7 @@ pub fn test(mut start_at_app: Option<AppName>, verbose: bool) -> Result<ExitCode
   let apps = apps::all();
   let log = logger::new(verbose);
   let platform = platform::detect(log)?;
-  let temp_folder = tempfile::tempdir().expect("cannot create temp dir");
+  let temp_folder = tempfile::tempdir().map_err(|err| UserError::CannotCreateTempDir { err: err.to_string() })?;
   let yard = yard::load_or_create(temp_folder.path())?;
   for app in apps {
     if let Some(start_app_name) = &start_at_app {
@@ -41,7 +41,9 @@ pub fn test(mut start_at_app: Option<AppName>, verbose: bool) -> Result<ExitCode
           executable_path.to_string_lossy()
         );
         let mut buffer = String::new();
-        io::stdin().read_line(&mut buffer).unwrap();
+        if let Err(err) = io::stdin().read_line(&mut buffer) {
+          eprintln!("Error: {err}");
+        }
         return Ok(ExitCode::FAILURE);
       }
       let executable = Executable(executable_path.clone());

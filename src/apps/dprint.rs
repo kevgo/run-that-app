@@ -39,8 +39,8 @@ impl App for Dprint {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output("--version", log)?) {
-      Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
-      None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
 }
@@ -70,7 +70,7 @@ impl install::CompileRustSource for Dprint {
   }
 }
 
-fn extract_version(output: &str) -> Option<&str> {
+fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"dprint (\d+\.\d+\.\d+)")
 }
 
@@ -80,6 +80,7 @@ fn identify(output: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
+  use crate::apps::UserError;
 
   mod archive_url {
     use crate::config::Version;
@@ -113,7 +114,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("dprint 0.45.0"), Some("0.45.0"));
-    assert_eq!(super::extract_version("other"), None);
+    assert_eq!(super::extract_version("dprint 0.45.0"), Ok("0.45.0"));
+    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }

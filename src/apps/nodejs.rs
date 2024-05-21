@@ -40,8 +40,8 @@ impl App for NodeJS {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output("--version", log)?) {
-      Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
-      None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
 }
@@ -78,7 +78,7 @@ pub fn cpu_text(cpu: Cpu) -> &'static str {
   }
 }
 
-fn extract_version(output: &str) -> Option<&str> {
+fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"v(\d+\.\d+\.\d+)")
 }
 
@@ -96,6 +96,7 @@ pub fn os_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
+  use crate::apps::UserError;
   use crate::config::Version;
   use crate::install::DownloadArchive;
   use crate::platform::{Cpu, Os, Platform};
@@ -114,7 +115,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("v10.2.4"), Some("10.2.4"));
-    assert_eq!(super::extract_version("other"), None);
+    assert_eq!(super::extract_version("v10.2.4"), Ok("10.2.4"));
+    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }

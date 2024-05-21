@@ -40,8 +40,8 @@ impl App for MdBook {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output("-V", log)?) {
-      Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
-      None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
 }
@@ -71,7 +71,7 @@ impl install::CompileRustSource for MdBook {
   }
 }
 
-fn extract_version(output: &str) -> Option<&str> {
+fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"mdbook v(\d+\.\d+\.\d+)")
 }
 
@@ -81,6 +81,7 @@ fn identify(output: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
+  use crate::apps::UserError;
   use crate::config::Version;
   use crate::install::DownloadArchive;
   use crate::platform::{Cpu, Os, Platform};
@@ -99,7 +100,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("mdbook v0.4.37"), Some("0.4.37"));
-    assert_eq!(super::extract_version("other"), None);
+    assert_eq!(super::extract_version("mdbook v0.4.37"), Ok("0.4.37"));
+    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
