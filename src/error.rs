@@ -11,6 +11,10 @@ pub enum UserError {
     reason: String,
   },
   CannotAccessConfigFile(String),
+  CannotCreateFile {
+    filename: &'static str,
+    err: String,
+  },
   CannotCreateFolder {
     folder: PathBuf,
     reason: String,
@@ -108,6 +112,7 @@ impl UserError {
         desc(&format!("please make sure {} is a file and accessible to you", config::FILE_NAME,));
       }
       UserError::CannotDetermineCurrentDirectory(reason) => error(&format!("cannot determine the current directory: {reason}")),
+      UserError::CannotCreateFile { filename, err } => error(&format!("cannot create file {filename}: {err}")),
       UserError::CannotCreateFolder { folder, reason } => {
         error(&format!("cannot create folder {folder}: {reason}", folder = folder.to_string_lossy()));
         desc("Please check access permissions and try again.");
