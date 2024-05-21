@@ -57,7 +57,7 @@ pub fn execute_check_output(executable: &Executable, args: &[String]) -> Result<
         colored_line.extend(&line);
         colored_line.extend(BASH_CLEAR);
         if let Err(err) = stdout.write_all(&colored_line) {
-          eprintln!("Error: {err}");
+          eprintln!("Cannot print colored text: {err}");
         }
       }
       Event::UnterminatedLine(line) => {
