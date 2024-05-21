@@ -175,6 +175,7 @@ mod tests {
       }
 
       #[test]
+      #[allow(clippy::panic)]
       fn unknown_app() {
         let apps = Apps(vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})]);
         let Err(err) = apps.lookup(&AppName::from("zonk")) else {
