@@ -117,6 +117,11 @@ mod tests {
   #[test]
   fn extract_version() {
     assert_eq!(super::extract_version("v0.6.0 (go1.21.6)"), Ok("0.6.0"));
-    assert_eq!(super::extract_version("other"), Err(UserError::RegexHasNoCaptures { regex: S("") }));
+    assert_eq!(
+      super::extract_version("other"),
+      Err(UserError::RegexHasNoCaptures {
+        regex: S(r"v(\d+\.\d+\.\d+) \(go")
+      })
+    );
   }
 }

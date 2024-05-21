@@ -107,6 +107,9 @@ mod tests {
   #[test]
   fn extract_version() {
     assert_eq!(super::extract_version("1.6.27"), Ok("1.6.27"));
-    assert_eq!(super::extract_version("other"), Err(UserError::RegexHasNoCaptures { regex: S("") }));
+    assert_eq!(
+      super::extract_version("other"),
+      Err(UserError::RegexHasNoCaptures { regex: S(r"(\d+\.\d+\.\d+)") })
+    );
   }
 }

@@ -116,6 +116,11 @@ mod tests {
   #[test]
   fn extract_version() {
     assert_eq!(super::extract_version("dprint 0.45.0"), Ok("0.45.0"));
-    assert_eq!(super::extract_version("other"), Err(UserError::RegexHasNoCaptures { regex: S("") }));
+    assert_eq!(
+      super::extract_version("other"),
+      Err(UserError::RegexHasNoCaptures {
+        regex: S(r"dprint (\d+\.\d+\.\d+)")
+      })
+    );
   }
 }

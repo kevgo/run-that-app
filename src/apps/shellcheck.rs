@@ -117,7 +117,12 @@ website: https://www.shellcheck.net";
 
     #[test]
     fn other() {
-      assert_eq!(extract_version("other"), Err(UserError::RegexHasNoCaptures { regex: S("") }));
+      assert_eq!(
+        extract_version("other"),
+        Err(UserError::RegexHasNoCaptures {
+          regex: S(r"version: (\d+\.\d+\.\d+)")
+        })
+      );
     }
   }
 }

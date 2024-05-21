@@ -133,7 +133,12 @@ Platform:      linux/arm64
 
     #[test]
     fn other() {
-      assert_eq!(extract_version("other"), Err(UserError::RegexHasNoCaptures { regex: S("") }));
+      assert_eq!(
+        extract_version("other"),
+        Err(UserError::RegexHasNoCaptures {
+          regex: S(r"GitVersion:\s*(\d+\.\d+\.\d+)")
+        })
+      );
     }
   }
 }

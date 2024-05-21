@@ -177,13 +177,23 @@ require (
 	github.com/charmbracelet/bubbles v0.18.0
 	github.com/charmbracelet/bubbletea v0.25.0
 )";
-      assert_eq!(parse_go_mod(go_mod), Err(UserError::RegexHasNoCaptures { regex: S("") }));
+      assert_eq!(
+        parse_go_mod(go_mod),
+        Err(UserError::RegexHasNoCaptures {
+          regex: S(r"(?m)^go\s+(\d+\.\d+)\s*$")
+        })
+      );
     }
 
     #[test]
     fn unrelated_file() {
       let go_mod = "content from file coincidentally also named go.mod";
-      assert_eq!(parse_go_mod(go_mod), Err(UserError::RegexHasNoCaptures { regex: S("") }));
+      assert_eq!(
+        parse_go_mod(go_mod),
+        Err(UserError::RegexHasNoCaptures {
+          regex: S(r"(?m)^go\s+(\d+\.\d+)\s*$")
+        })
+      );
     }
   }
 }

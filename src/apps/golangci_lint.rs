@@ -117,6 +117,11 @@ mod tests {
       super::extract_version("golangci-lint has version 1.56.2 built with go1.22.0 from 58a724a0 on 2024-02-15T18:01:51Z"),
       Ok("1.56.2")
     );
-    assert_eq!(super::extract_version("other"), Err(UserError::RegexHasNoCaptures { regex: S("") }));
+    assert_eq!(
+      super::extract_version("other"),
+      Err(UserError::RegexHasNoCaptures {
+        regex: S(r"golangci-lint has version (\d+\.\d+\.\d+) built with")
+      })
+    );
   }
 }

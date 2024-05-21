@@ -155,7 +155,12 @@ https://github.com/cli/cli/releases/tag/v2.45.0
 
     #[test]
     fn other() {
-      assert_eq!(extract_version("other"), Err(UserError::RegexHasNoCaptures { regex: S("") }));
+      assert_eq!(
+        extract_version("other"),
+        Err(UserError::RegexHasNoCaptures {
+          regex: S(r"gh version (\d+\.\d+\.\d+)")
+        })
+      );
     }
   }
 }
