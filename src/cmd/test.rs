@@ -41,7 +41,9 @@ pub fn test(mut start_at_app: Option<AppName>, verbose: bool) -> Result<ExitCode
           executable_path.to_string_lossy()
         );
         let mut buffer = String::new();
-        io::stdin().read_line(&mut buffer).unwrap();
+        if let Err(err) = io::stdin().read_line(&mut buffer) {
+          eprintln!("Error: {err}");
+        }
         return Ok(ExitCode::FAILURE);
       }
       let executable = Executable(executable_path.clone());
