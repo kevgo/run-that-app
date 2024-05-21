@@ -38,7 +38,10 @@ fn parse_latest_response(text: &str) -> Result<Version> {
     problem: err.to_string(),
     payload: text.to_string(),
   })?;
-  Ok(strip_leading_v(release["tag_name"].as_str().unwrap()).into())
+  let Some(tag) = release["tag_name"].as_str() else {
+    return Err(UserError::InvalidGitHubAPIResponse);
+  };
+  Ok(Version::from(strip_leading_v(tag)))
 }
 
 /// provides the given number of latest versions of the given application on GitHub Releases
