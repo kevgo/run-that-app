@@ -33,7 +33,7 @@ mod tests {
   #[test]
   fn no_match() {
     let text = "Foo bar";
-    let re = r"(\d+\.\d+";
+    let re = r"(\d+\.\d+)";
     let have = first_capture(text, re);
     let want = Err(UserError::RegexHasNoCaptures { regex: S(re) });
     assert_eq!(have, want);

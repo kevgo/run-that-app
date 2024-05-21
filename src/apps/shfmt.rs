@@ -39,9 +39,9 @@ impl App for Shfmt {
     if !identify(&output) {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output("--version", log)?)? {
-      Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
-      None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
+    match extract_version(&executable.run_output("--version", log)?) {
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
 }
@@ -71,7 +71,7 @@ impl install::CompileGoSource for Shfmt {
   }
 }
 
-fn extract_version(output: &str) -> Result<Option<&str>> {
+fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"^v(\d+\.\d+\.\d+)$")
 }
 
@@ -81,6 +81,9 @@ fn identify(output: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
+  use big_s::S;
+
+  use crate::apps::UserError;
   use crate::config::Version;
   use crate::install::DownloadExecutable;
   use crate::platform::{Cpu, Os, Platform};
@@ -99,8 +102,18 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("v3.7.0"), Ok(Some("3.7.0")));
-    assert_eq!(super::extract_version("3.7.0"), Ok(None));
-    assert_eq!(super::extract_version("other"), Ok(None));
+    assert_eq!(super::extract_version("v3.7.0"), Ok("3.7.0"));
+    assert_eq!(
+      super::extract_version("3.7.0"),
+      Err(UserError::RegexHasNoCaptures {
+        regex: S(r"^v(\d+\.\d+\.\d+)$")
+      })
+    );
+    assert_eq!(
+      super::extract_version("other"),
+      Err(UserError::RegexHasNoCaptures {
+        regex: S(r"^v(\d+\.\d+\.\d+)$")
+      })
+    );
   }
 }

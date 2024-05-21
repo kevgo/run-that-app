@@ -38,9 +38,9 @@ impl App for ShellCheck {
     if !identify(&output) {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&output)? {
-      Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
-      None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
+    match extract_version(&output) {
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
 }
@@ -72,7 +72,7 @@ impl install::DownloadArchive for ShellCheck {
   }
 }
 
-fn extract_version(output: &str) -> Result<Option<&str>> {
+fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"version: (\d+\.\d+\.\d+)")
 }
 
@@ -99,6 +99,10 @@ mod tests {
   }
 
   mod extract_version {
+    use big_s::S;
+
+    use crate::apps::UserError;
+
     use super::super::extract_version;
 
     #[test]
@@ -108,12 +112,12 @@ ShellCheck - shell script analysis tool
 version: 0.9.0
 license: GNU General Public License, version 3
 website: https://www.shellcheck.net";
-      assert_eq!(extract_version(give), Ok(Some("0.9.0")));
+      assert_eq!(extract_version(give), Ok("0.9.0"));
     }
 
     #[test]
     fn other() {
-      assert_eq!(extract_version("other"), Ok(None));
+      assert_eq!(extract_version("other"), Err(UserError::RegexHasNoCaptures { regex: S("") }));
     }
   }
 }
