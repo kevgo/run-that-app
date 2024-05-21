@@ -51,7 +51,7 @@ impl App for Go {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    if let Some(version) = extract_version(&executable.run_output("version", log)?) {
+    if let Ok(version) = extract_version(&executable.run_output("version", log)?) {
       return Ok(AnalyzeResult::IdentifiedWithVersion(version.into()));
     }
     let output = executable.run_output("-h", log)?;
@@ -66,7 +66,7 @@ impl App for Go {
     let Some(go_mod_content) = filesystem::read_file("go.mod")? else {
       return Ok(semver::VersionReq::STAR);
     };
-    let Some(go_version_req) = parse_go_mod(&go_mod_content) else {
+    let Ok(go_version_req) = parse_go_mod(&go_mod_content) else {
       return Ok(semver::VersionReq::STAR);
     };
     let version_req = semver::VersionReq::parse(go_version_req).map_err(|err| UserError::CannotParseSemverRange {
@@ -105,7 +105,7 @@ impl install::DownloadArchive for Go {
   }
 }
 
-fn extract_version(output: &str) -> Option<&str> {
+fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"go version go(\d+\.\d+\.\d+)")
 }
 
@@ -113,7 +113,7 @@ fn identify(output: &str) -> bool {
   output.contains("Go is a tool for managing Go source code")
 }
 
-fn parse_go_mod(text: &str) -> Option<&str> {
+fn parse_go_mod(text: &str) -> Result<&str> {
   regexp::first_capture(text, r"(?m)^go\s+(\d+\.\d+)\s*$")
 }
 
@@ -139,12 +139,14 @@ mod tests {
   fn extract_version() {
     let give = "go version go1.21.7 linux/arm64";
     let have = super::extract_version(give);
-    let want = Some("1.21.7");
+    let want = Ok("1.21.7");
     assert_eq!(have, want);
   }
 
   mod parse_go_mod {
     use crate::apps::go::parse_go_mod;
+    use crate::apps::UserError;
+    use big_s::S;
 
     #[test]
     fn with_version() {
@@ -160,7 +162,7 @@ require (
 	github.com/charmbracelet/bubbles v0.18.0
 	github.com/charmbracelet/bubbletea v0.25.0
 )";
-      assert_eq!(parse_go_mod(go_mod), Some("1.21"));
+      assert_eq!(parse_go_mod(go_mod), Ok("1.21"));
     }
 
     #[test]
@@ -175,13 +177,13 @@ require (
 	github.com/charmbracelet/bubbles v0.18.0
 	github.com/charmbracelet/bubbletea v0.25.0
 )";
-      assert_eq!(parse_go_mod(go_mod), None);
+      assert_eq!(parse_go_mod(go_mod), Err(UserError::RegexHasNoCaptures { regex: S("") }));
     }
 
     #[test]
     fn unrelated_file() {
       let go_mod = "content from file coincidentally also named go.mod";
-      assert_eq!(parse_go_mod(go_mod), None);
+      assert_eq!(parse_go_mod(go_mod), Err(UserError::RegexHasNoCaptures { regex: S("") }));
     }
   }
 }

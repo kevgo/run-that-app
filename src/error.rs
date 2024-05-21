@@ -78,6 +78,10 @@ pub enum UserError {
   InvalidGitHubAPIResponse {
     err: String,
   },
+  InvalidRegex {
+    regex: String,
+    err: String,
+  },
   MissingApplication,
   MultipleCommandsGiven,
   NotOnline,
@@ -86,6 +90,9 @@ pub enum UserError {
   },
   ProcessEmittedOutput {
     cmd: String,
+  },
+  RegexHasNoCaptures {
+    regex: String,
   },
   RunRequestMissingVersion,
   RustCompilationFailed,
@@ -181,6 +188,7 @@ impl UserError {
       UserError::InvalidNumber => {
         error("Invalid number given");
       }
+      UserError::InvalidRegex { regex, err } => error(&format!("invalid regex '{regex}': {err}")),
       UserError::MissingApplication => {
         error("missing application");
         desc("Please provide the application to execute");
@@ -194,6 +202,7 @@ impl UserError {
       UserError::ProcessEmittedOutput { cmd } => {
         error(&format!("process \"{cmd}\" emitted unexpected output"));
       }
+      UserError::RegexHasNoCaptures { regex } => error(&format!("regex '{regex}' has no captures")),
       UserError::RunRequestMissingVersion => {
         error("missing application version");
         desc("Please provide the exact version of the app you want to execute in this format: app@1.2.3");

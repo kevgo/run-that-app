@@ -41,8 +41,8 @@ impl App for Gh {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output("--version", log)?) {
-      Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
-      None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
 }
@@ -82,7 +82,7 @@ fn ext_text(os: Os) -> &'static str {
   }
 }
 
-fn extract_version(output: &str) -> Option<&str> {
+fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"gh version (\d+\.\d+\.\d+)")
 }
 
@@ -141,6 +141,8 @@ mod tests {
 
   mod extract_version {
     use super::super::extract_version;
+    use crate::apps::UserError;
+    use big_s::S;
 
     #[test]
     fn success() {
@@ -148,12 +150,12 @@ mod tests {
 gh version 2.45.0 (2024-03-04)
 https://github.com/cli/cli/releases/tag/v2.45.0
 ";
-      assert_eq!(extract_version(output), Some("2.45.0"));
+      assert_eq!(extract_version(output), Ok("2.45.0"));
     }
 
     #[test]
     fn other() {
-      assert_eq!(extract_version("other"), None);
+      assert_eq!(extract_version("other"), Err(UserError::RegexHasNoCaptures { regex: S("") }));
     }
   }
 }

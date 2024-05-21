@@ -40,8 +40,8 @@ impl App for Gofumpt {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output("--version", log)?) {
-      Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
-      None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
 }
@@ -71,7 +71,7 @@ impl install::CompileGoSource for Gofumpt {
   }
 }
 
-fn extract_version(output: &str) -> Option<&str> {
+fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"v(\d+\.\d+\.\d+) \(go")
 }
 
@@ -81,6 +81,9 @@ fn identify(output: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
+  use crate::apps::UserError;
+  use big_s::S;
+
   mod artifact_url {
     use crate::config::Version;
     use crate::install::DownloadExecutable;
@@ -113,7 +116,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("v0.6.0 (go1.21.6)"), Some("0.6.0"));
-    assert_eq!(super::extract_version("other"), None);
+    assert_eq!(super::extract_version("v0.6.0 (go1.21.6)"), Ok("0.6.0"));
+    assert_eq!(super::extract_version("other"), Err(UserError::RegexHasNoCaptures { regex: S("") }));
   }
 }

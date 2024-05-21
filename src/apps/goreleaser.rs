@@ -38,7 +38,7 @@ impl App for Goreleaser {
     if !identify(&output) {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&output) {
+    match extract_version(&output)? {
       Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -74,7 +74,7 @@ impl install::CompileGoSource for Goreleaser {
   }
 }
 
-fn extract_version(output: &str) -> Option<&str> {
+fn extract_version(output: &str) -> Result<Option<&str>> {
   regexp::first_capture(output, r"GitVersion:\s*(\d+\.\d+\.\d+)")
 }
 
@@ -124,12 +124,12 @@ Compiler:      gc
 ModuleSum:     h1:jsoS5T2CvPKOyECPATAo8hCvUaX8ok4iAq9m5Zyl1L0=
 Platform:      linux/arm64
 ";
-      assert_eq!(extract_version(output), Some("1.24.0"));
+      assert_eq!(extract_version(output), Ok(Some("1.24.0")));
     }
 
     #[test]
     fn other() {
-      assert_eq!(extract_version("other"), None);
+      assert_eq!(extract_version("other"), Ok(None));
     }
   }
 }

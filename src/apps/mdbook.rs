@@ -39,7 +39,7 @@ impl App for MdBook {
     if !identify(&output) {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output("-V", log)?) {
+    match extract_version(&executable.run_output("-V", log)?)? {
       Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -71,7 +71,7 @@ impl install::CompileRustSource for MdBook {
   }
 }
 
-fn extract_version(output: &str) -> Option<&str> {
+fn extract_version(output: &str) -> Result<Option<&str>> {
   regexp::first_capture(output, r"mdbook v(\d+\.\d+\.\d+)")
 }
 
@@ -99,7 +99,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("mdbook v0.4.37"), Some("0.4.37"));
-    assert_eq!(super::extract_version("other"), None);
+    assert_eq!(super::extract_version("mdbook v0.4.37"), Ok(Some("0.4.37")));
+    assert_eq!(super::extract_version("other"), Ok(None));
   }
 }

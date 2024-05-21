@@ -37,8 +37,8 @@ impl App for GolangCiLint {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     match extract_version(&executable.run_output("--version", log)?) {
-      Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
-      None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
 }
@@ -78,7 +78,7 @@ fn ext_text(os: Os) -> &'static str {
   }
 }
 
-fn extract_version(output: &str) -> Option<&str> {
+fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"golangci-lint has version (\d+\.\d+\.\d+) built with")
 }
 
@@ -92,6 +92,9 @@ fn os_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
+  use big_s::S;
+
+  use crate::apps::UserError;
   use crate::config::Version;
   use crate::install::DownloadArchive;
   use crate::platform::{Cpu, Os, Platform};
@@ -112,8 +115,8 @@ mod tests {
   fn extract_version() {
     assert_eq!(
       super::extract_version("golangci-lint has version 1.56.2 built with go1.22.0 from 58a724a0 on 2024-02-15T18:01:51Z"),
-      Some("1.56.2")
+      Ok("1.56.2")
     );
-    assert_eq!(super::extract_version("other"), None);
+    assert_eq!(super::extract_version("other"), Err(UserError::RegexHasNoCaptures { regex: S("") }));
   }
 }

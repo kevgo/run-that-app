@@ -39,7 +39,7 @@ impl App for Scc {
     if !identify(&output) {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output("--version", log)?) {
+    match extract_version(&executable.run_output("--version", log)?)? {
       Some(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       None => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -71,7 +71,7 @@ impl install::CompileGoSource for Scc {
   }
 }
 
-fn extract_version(output: &str) -> Option<&str> {
+fn extract_version(output: &str) -> Result<Option<&str>> {
   regexp::first_capture(output, r"scc version (\d+\.\d+\.\d+)")
 }
 
@@ -114,7 +114,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("scc version 3.2.0"), Some("3.2.0"));
-    assert_eq!(super::extract_version("other"), None);
+    assert_eq!(super::extract_version("scc version 3.2.0"), Ok(Some("3.2.0")));
+    assert_eq!(super::extract_version("other"), Ok(None));
   }
 }
