@@ -92,12 +92,11 @@ fn os_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
-  use big_s::S;
-
   use crate::apps::UserError;
   use crate::config::Version;
   use crate::install::DownloadArchive;
   use crate::platform::{Cpu, Os, Platform};
+  use big_s::S;
 
   #[test]
   fn archive_url() {

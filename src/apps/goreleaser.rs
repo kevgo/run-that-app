@@ -101,11 +101,9 @@ mod tests {
   }
 
   mod extract_version {
-    use big_s::S;
-
-    use crate::apps::UserError;
-
     use super::super::extract_version;
+    use crate::apps::UserError;
+    use big_s::S;
 
     #[test]
     fn success() {

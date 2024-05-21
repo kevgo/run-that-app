@@ -81,9 +81,8 @@ fn identify(output: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-  use big_s::S;
-
   use crate::apps::UserError;
+  use big_s::S;
 
   mod archive_url {
     use crate::config::Version;
