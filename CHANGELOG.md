@@ -1,6 +1,12 @@
 # run-that-app changelog
 
-### 0.6.0 (2024-05-5)
+### 0.6.1 (2024-05-31)
+
+- fix bug when compiling ghokin from source
+- improve CLI output format
+- massively more robust code without possibilities for crashes and panics
+
+### 0.6.0 (2024-05-05)
 
 #### New Features
 
