@@ -1,7 +1,7 @@
 # Making a release
 
 - in a branch:
-  - update [CHANGELOG.md](CHANGELOG.md)
+  - update [CHANGELOG.md](../CHANGELOG.md)
   - update all occurrences of `0.6.0`
   - ship into `main`
 - create a new tag:
