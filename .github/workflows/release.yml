@@ -38,9 +38,6 @@ jobs:
           - filename: run_that_app_macos_intel_64
             target: x86_64-apple-darwin
             os: macos-latest
-          - filename: run_that_app_macos_universal
-            target: universal-apple-darwin
-            os: macos-latest
           - filename: run_that_app_windows_intel_64
             target: x86_64-pc-windows-msvc
             os: windows-latest
