@@ -10,10 +10,10 @@ including descriptions of what they do.
 
 ### Add a new applications
 
-Apps are in the [src/apps](src/apps) folder. Copy the definition of an existing
-application that is close to the one you want to add and adjust the data and
-installation methods. You can test your installation methods by the end-to-end
-test for your app (see below).
+Apps are in the [src/apps](../src/apps) folder. Copy the definition of an
+existing application that is close to the one you want to add and adjust the
+data and installation methods. You can test your installation methods by the
+end-to-end test for your app (see below).
 
 ### End-to-end tests
 
