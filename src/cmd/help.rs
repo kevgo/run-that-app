@@ -16,7 +16,8 @@ fn print_usage() {
 pub fn print_options() {
   println!(
     "
-Options:
+OPTIONS:
+
 --available                      indicates via the exit code whether the given application is available on this platform
 --error-on-output                treat all output of the executed app as an error
 --help, -h                       display this help screen
@@ -33,12 +34,12 @@ Options:
 }
 
 fn print_examples() {
-  println!("Examples:");
+  println!("EXAMPLES:\n");
   println!("\"rta gh@2.34.0\" runs https://github.com/cli/cli at version 2.34.0\n");
 }
 
 pub fn print_installable_apps() {
-  println!("\nInstallable applications:");
+  println!("\nINSTALLABLE APPLICATIONS:\n");
   let apps = apps::all();
   let max_width = apps.longest_name_length() + 1;
   for app in apps.iter() {
