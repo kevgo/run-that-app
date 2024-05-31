@@ -15,8 +15,7 @@ fn print_usage() {
 
 pub fn print_options() {
   println!(
-    "
-OPTIONS:
+    "OPTIONS:
 
 --available                      indicates via the exit code whether the given application is available on this platform
 --error-on-output                treat all output of the executed app as an error
@@ -41,9 +40,9 @@ fn print_examples() {
 pub fn print_installable_apps() {
   println!("\nINSTALLABLE APPLICATIONS:\n");
   let apps = apps::all();
-  let max_width = apps.longest_name_length() + 1;
+  let width = apps.longest_name_length() + 1;
   for app in apps.iter() {
-    println!("{:max_width$} {}", app.name(), app.homepage());
+    println!("{:<width$} {}", app.name().as_str(), app.homepage());
   }
   println!("\nRequest additional apps at https://github.com/kevgo/run-that-app/issues.");
 }
