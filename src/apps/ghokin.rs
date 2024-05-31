@@ -64,7 +64,7 @@ impl install::DownloadArchive for Ghokin {
 
 impl install::CompileGoSource for Ghokin {
   fn import_path(&self, version: &Version) -> String {
-    format!("github.com/{ORG}/{REPO}/v3@{version}")
+    format!("github.com/{ORG}/{REPO}/v3@v{version}")
   }
 }
 
