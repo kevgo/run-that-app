@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+### 0.7.0 (2024-09-15)
+
+#### New Features
+
+- apps: govulncheck, staticcheck
+
 ### 0.6.1 (2024-05-31)
 
 - fix bug when compiling ghokin from source
