@@ -5,15 +5,15 @@ use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::Log;
 
-pub struct Deadcode {}
+pub struct Govulncheck {}
 
-impl App for Deadcode {
+impl App for Govulncheck {
   fn name(&self) -> AppName {
-    AppName::from("deadcode")
+    AppName::from("govulncheck")
   }
 
   fn homepage(&self) -> &'static str {
-    "https://pkg.go.dev/golang.org/x/tools/cmd/deadcode"
+    "https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck"
   }
 
   fn install_methods(&self) -> Vec<install::Method> {
@@ -22,11 +22,11 @@ impl App for Deadcode {
 
   fn latest_installable_version(&self, _log: Log) -> Result<Version> {
     // TODO: remove this file once deadcode is integrated into golangci-lint
-    Ok(Version::from("0.16.1"))
+    Ok(Version::from("1.1.3"))
   }
 
   fn installable_versions(&self, _amount: usize, _log: Log) -> Result<Vec<Version>> {
-    Ok(vec![Version::from("0.16.1")])
+    Ok(vec![Version::from("1.1.3")])
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -39,8 +39,8 @@ impl App for Deadcode {
   }
 }
 
-impl install::CompileGoSource for Deadcode {
+impl install::CompileGoSource for Govulncheck {
   fn import_path(&self, version: &Version) -> String {
-    format!("golang.org/x/tools/cmd/deadcode@v{version}")
+    format!("golang.org/x/vuln/cmd/govulncheck@v{version}")
   }
 }
