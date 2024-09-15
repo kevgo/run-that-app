@@ -7,10 +7,10 @@ use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::{install, Log};
 
-pub struct StaticCheck {}
-
 const ORG: &str = "dominikh";
 const REPO: &str = "go-tools";
+
+pub struct StaticCheck {}
 
 impl App for StaticCheck {
   fn name(&self) -> AppName {
