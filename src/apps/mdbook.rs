@@ -71,7 +71,7 @@ impl install::CompileRustSource for MdBook {
   }
 
   fn executable_path_in_folder(&self, platform: Platform) -> String {
-    format!("bin/{}", platform.os.executable_extension())
+    format!("bin/{}{}", self.executable_filename(platform), platform.os.executable_extension())
   }
 }
 
