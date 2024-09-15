@@ -4,7 +4,6 @@ use crate::install::{self, Method};
 use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::Log;
-use const_format::formatcp;
 
 pub struct Govulncheck {}
 
@@ -14,7 +13,7 @@ impl App for Govulncheck {
   }
 
   fn homepage(&self) -> &'static str {
-    formatcp!("https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck")
+    "https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck"
   }
 
   fn install_methods(&self) -> Vec<install::Method> {
