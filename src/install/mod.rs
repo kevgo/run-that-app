@@ -39,7 +39,7 @@ impl<'a> Method<'a> {
       Method::DownloadArchive(app) => app.executable_path_in_archive(version, platform),
       Method::DownloadExecutable(app) => app.executable_filename(platform),
       Method::CompileGoSource(app) => app.executable_filename(platform),
-      Method::CompileRustSource(app) => app.executable_filename(platform),
+      Method::CompileRustSource(app) => app.executable_path_in_folder(platform),
       Method::InstallAnotherApp(app) => app.executable_path_in_other_app_yard(version, platform),
     }
   }

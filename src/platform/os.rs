@@ -20,6 +20,14 @@ pub enum Os {
   MacOS,
 }
 
+impl Os {
+  pub fn executable_extension(&self) -> &str {
+    match self {
+      Os::Windows => ".exe",
+      Os::Linux | Os::MacOS => "",
+    }
+  }
+}
 impl Display for Os {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     let text = match self {
