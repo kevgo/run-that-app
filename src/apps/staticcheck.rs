@@ -68,5 +68,5 @@ impl install::CompileGoSource for StaticCheck {
 }
 
 fn identify(output: &str) -> bool {
-  output.contains("report all errors (not just the first 10 on different lines)")
+  output.contains("Usage: staticcheck [flags] [packages]")
 }
