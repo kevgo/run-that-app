@@ -22,6 +22,7 @@ mod npx;
 mod scc;
 mod shellcheck;
 mod shfmt;
+mod staticcheck;
 
 use crate::config::{AppName, Version};
 use crate::platform::{Os, Platform};
@@ -107,6 +108,7 @@ pub fn all() -> Apps {
     Box::new(scc::Scc {}),
     Box::new(shellcheck::ShellCheck {}),
     Box::new(shfmt::Shfmt {}),
+    Box::new(staticcheck::StaticCheck {}),
   ])
 }
 
