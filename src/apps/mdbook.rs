@@ -69,6 +69,10 @@ impl install::CompileRustSource for MdBook {
   fn crate_name(&self) -> &'static str {
     "mdbook"
   }
+
+  fn executable_path_in_folder(&self, platform: Platform) -> String {
+    format!("bin/{}", platform.os.executable_extension())
+  }
 }
 
 fn extract_version(output: &str) -> Result<&str> {

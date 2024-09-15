@@ -26,7 +26,7 @@ mod shfmt;
 mod staticcheck;
 
 use crate::config::{AppName, Version};
-use crate::platform::{Os, Platform};
+use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::{install, Log};
@@ -39,10 +39,7 @@ pub trait App {
   /// the filename of the executable that starts this app
   fn executable_filename(&self, platform: Platform) -> String {
     let bare = self.name().to_string();
-    match platform.os {
-      Os::Linux | Os::MacOS => bare,
-      Os::Windows => format!("{bare}.exe"),
-    }
+    format!("{bare}{ext}", ext = platform.os.executable_extension())
   }
 
   /// link to the (human-readable) homepage of the app

@@ -1,6 +1,7 @@
 use crate::apps::App;
 use crate::config::Version;
 use crate::logger::{Event, Log};
+use crate::platform::Platform;
 use crate::prelude::*;
 use crate::yard::Yard;
 use std::io::ErrorKind;
@@ -12,6 +13,9 @@ use which::which;
 pub trait CompileRustSource: App {
   /// the name of the Rust crate containing the source code of the application to compile
   fn crate_name(&self) -> &'static str;
+
+  /// the location of the executable within the archive
+  fn executable_path_in_folder(&self, platform: Platform) -> String;
 }
 
 /// installs the given Rust-based application by compiling it from source

@@ -68,6 +68,10 @@ impl install::CompileRustSource for Dprint {
   fn crate_name(&self) -> &'static str {
     "dprint"
   }
+
+  fn executable_path_in_folder(&self, platform: Platform) -> String {
+    self.executable_filename(platform)
+  }
 }
 
 fn extract_version(output: &str) -> Result<&str> {
