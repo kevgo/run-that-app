@@ -14,6 +14,7 @@ mod gofmt;
 mod gofumpt;
 mod golangci_lint;
 mod goreleaser;
+mod govulnchec;
 mod ireturn;
 mod mdbook;
 mod nodejs;
@@ -100,6 +101,7 @@ pub fn all() -> Apps {
     Box::new(gofumpt::Gofumpt {}),
     Box::new(golangci_lint::GolangCiLint {}),
     Box::new(goreleaser::Goreleaser {}),
+    Box::new(govulnchec::Govulncheck {}),
     Box::new(ireturn::Ireturn {}),
     Box::new(mdbook::MdBook {}),
     Box::new(nodejs::NodeJS {}),
