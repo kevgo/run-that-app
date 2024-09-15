@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+### 0.7.1 (2024-09-15)
+
+#### Bug Fixes
+
+- finds the mdbook executable in a subfolder after installation from source
+
 ### 0.7.0 (2024-09-15)
 
 #### New Features
