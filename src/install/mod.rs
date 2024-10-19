@@ -5,6 +5,7 @@ pub mod compile_rust;
 pub mod download_archive;
 pub mod download_executable;
 pub mod other_app_folder;
+pub mod run_other_app;
 
 use crate::config::{AppName, Version};
 use crate::logger::{Event, Log};
@@ -17,6 +18,7 @@ pub use compile_rust::CompileRustSource;
 pub use download_archive::DownloadArchive;
 pub use download_executable::DownloadExecutable;
 pub use other_app_folder::ViaAnotherApp;
+pub use run_other_app::RunOtherApp;
 
 /// the different methods to install an application
 pub enum Method<'a> {
@@ -30,6 +32,7 @@ pub enum Method<'a> {
   CompileRustSource(&'a dyn CompileRustSource),
   /// this application is shipped as part of another application
   InstallAnotherApp(&'a dyn ViaAnotherApp),
+  RunOtherApp(&'a dyn RunOtherApp),
 }
 
 impl<'a> Method<'a> {
