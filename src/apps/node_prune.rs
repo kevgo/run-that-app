@@ -5,7 +5,7 @@ use crate::install::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::subshell::Executable;
-use crate::{regexp, Log};
+use crate::Log;
 use const_format::formatcp;
 
 pub struct NodePrune {}
@@ -39,10 +39,7 @@ impl App for NodePrune {
     if !identify(&output) {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output("--version", log)?) {
-      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
-      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
-    }
+    Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 }
 
@@ -67,17 +64,12 @@ impl install::CompileGoSource for NodePrune {
   }
 }
 
-fn extract_version(output: &str) -> Result<&str> {
-  regexp::first_capture(output, r"v(\d+\.\d+\.\d+) \(go")
-}
-
 fn identify(output: &str) -> bool {
-  output.contains("display diffs instead of rewriting files")
+  output.contains("Glob of files that should not be pruned")
 }
 
 #[cfg(test)]
 mod tests {
-  use crate::apps::UserError;
 
   mod artifact_url {
     use crate::config::Version;
@@ -95,11 +87,5 @@ mod tests {
       let want = "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_linux_amd64.tar.gz";
       assert_eq!(have, want);
     }
-  }
-
-  #[test]
-  fn extract_version() {
-    assert_eq!(super::extract_version("v0.6.0 (go1.21.6)"), Ok("0.6.0"));
-    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
