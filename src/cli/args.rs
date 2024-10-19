@@ -23,8 +23,11 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
   let mut versions: Option<usize> = None;
   for arg in cli_args {
     if app_version.is_none() {
-      if &arg == "--apps" || &arg == "-a" {
-        return Ok(Args { command: Command::Apps });
+      if &arg == "--apps" {
+        return Ok(Args { command: Command::AppsLong });
+      }
+      if &arg == "-a" {
+        return Ok(Args { command: Command::AppsShort });
       }
       if &arg == "--available" {
         indicate_available = true;

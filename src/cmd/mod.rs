@@ -1,4 +1,4 @@
-mod apps;
+pub mod apps;
 mod available;
 mod help;
 pub mod run;
@@ -9,7 +9,6 @@ mod version;
 mod versions;
 mod which;
 
-pub use apps::apps;
 pub use available::available;
 pub use help::help;
 pub use run::run;
