@@ -2,6 +2,7 @@
 
 ### 0.8.0 (2024-10-19)
 
+- list of apps is now displayed via the `--apps` (for a complete list) or `-a` (for the app names only) switch
 - apps: tikibase
 
 ### 0.7.1 (2024-09-15)
