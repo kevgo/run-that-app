@@ -9,4 +9,4 @@
   ```bash
   git tag v0.8.0 && git push --tags
   ```
-- the CI server creates a draft release - review and publish it
+- the CI server creates the release fully automatically
