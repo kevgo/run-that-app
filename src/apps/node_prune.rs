@@ -63,7 +63,7 @@ impl install::DownloadExecutable for NodePrune {
 
 impl install::CompileGoSource for NodePrune {
   fn import_path(&self, version: &Version) -> String {
-    format!("github.com/tj/node-prune@v{version}")
+    format!("github.com/tj/node-prune@{version}")
   }
 }
 
