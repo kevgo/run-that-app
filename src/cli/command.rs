@@ -3,6 +3,7 @@ use crate::config::{AppName, Version};
 /// the main commands that run-this-app can execute
 #[derive(Debug, PartialEq)]
 pub enum Command {
+  Apps,
   Available {
     app: AppName,
     version: Option<Version>,
