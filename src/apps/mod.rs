@@ -20,6 +20,7 @@ mod mdbook;
 mod nodejs;
 mod npm;
 mod npx;
+mod prettier;
 mod scc;
 mod shellcheck;
 mod shfmt;
