@@ -24,6 +24,7 @@ mod scc;
 mod shellcheck;
 mod shfmt;
 mod staticcheck;
+mod tikibase;
 
 use crate::config::{AppName, Version};
 use crate::platform::Platform;
