@@ -1,3 +1,4 @@
+pub mod apps;
 mod available;
 mod help;
 pub mod run;
