@@ -109,6 +109,7 @@ pub fn all() -> Apps {
     Box::new(shellcheck::ShellCheck {}),
     Box::new(shfmt::Shfmt {}),
     Box::new(staticcheck::StaticCheck {}),
+    Box::new(tikibase::Tikibase {}),
   ])
 }
 
