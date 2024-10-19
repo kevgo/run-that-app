@@ -89,6 +89,7 @@ CLI arguments after the application name are passed to the application.
 
 Run-that-app Arguments:
 
+- `--apps` or `-a`: display all installable applications
 - `--available`: signal via exit code whether an app is available on the local
   platform
 - `--error-on-output`: treat all output of the executed application as an error

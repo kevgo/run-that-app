@@ -1,11 +1,9 @@
-use crate::apps;
 use std::process::ExitCode;
 
 pub fn help() -> ExitCode {
   print_usage();
   print_options();
   print_examples();
-  print_installable_apps();
   ExitCode::SUCCESS
 }
 
@@ -17,6 +15,7 @@ pub fn print_options() {
   println!(
     "OPTIONS:
 
+--apps, -a                       display all installable applications
 --available                      indicates via the exit code whether the given application is available on this platform
 --error-on-output                treat all output of the executed app as an error
 --help, -h                       display this help screen
@@ -35,14 +34,4 @@ pub fn print_options() {
 fn print_examples() {
   println!("EXAMPLES:\n");
   println!("\"rta gh@2.34.0\" runs https://github.com/cli/cli at version 2.34.0\n");
-}
-
-pub fn print_installable_apps() {
-  println!("\nINSTALLABLE APPLICATIONS:\n");
-  let apps = apps::all();
-  let width = apps.longest_name_length() + 1;
-  for app in apps.iter() {
-    println!("{:<width$} {}", app.name().as_str(), app.homepage());
-  }
-  println!("\nRequest additional apps at https://github.com/kevgo/run-that-app/issues.");
 }
