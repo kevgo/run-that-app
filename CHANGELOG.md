@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.8.0 (2024-10-19)
+
+- apps: tikibase
+
 ### 0.7.1 (2024-09-15)
 
 #### Bug Fixes
