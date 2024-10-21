@@ -1,3 +1,4 @@
+use super::Outcome;
 use crate::apps::App;
 use crate::config::Version;
 use crate::logger::{Event, Log};
@@ -7,8 +8,6 @@ use crate::yard::Yard;
 use std::io::ErrorKind;
 use std::process::Command;
 use which::which;
-
-use super::Outcome;
 
 /// defines the information needed to compile a Rust app from source
 #[allow(clippy::module_name_repetitions)]

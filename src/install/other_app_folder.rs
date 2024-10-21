@@ -1,3 +1,4 @@
+use super::Outcome;
 use crate::apps;
 use crate::apps::App;
 use crate::cmd::run::load_or_install;
@@ -6,8 +7,6 @@ use crate::logger::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::yard::Yard;
-
-use super::Outcome;
 
 /// defines the information needed for apps whose executable is shipped as part of another app
 pub trait ViaAnotherApp: App {

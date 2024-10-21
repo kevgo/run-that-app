@@ -1,3 +1,4 @@
+use super::Outcome;
 use crate::apps::App;
 use crate::config::Version;
 use crate::logger::Log;
@@ -5,8 +6,6 @@ use crate::platform::Platform;
 use crate::prelude::*;
 use crate::yard::Yard;
 use crate::{archives, download};
-
-use super::Outcome;
 
 /// defines the information needed to download and extract an archive containing an app
 pub trait DownloadArchive: App {
