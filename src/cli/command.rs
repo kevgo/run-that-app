@@ -7,7 +7,7 @@ pub enum Command {
   AppsLong,
   AppsShort,
   Available { app: AppName, version: Option<Version>, verbose: bool },
-  RunApp { run_args: run::Args },
+  RunApp(run::Args),
   DisplayHelp,
   Setup,
   Test { app: Option<AppName>, verbose: bool },
