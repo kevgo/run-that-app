@@ -1,5 +1,5 @@
 use crate::apps::{AnalyzeResult, App};
-use crate::config::{AppName, RequestedVersion, RequestedVersions, Version};
+use crate::config::{self, AppName, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
 use crate::logger::{self, Event, Log};
 use crate::platform::{self, Platform};
@@ -15,7 +15,8 @@ pub fn run(args: Args) -> Result<ExitCode> {
   let log = logger::new(args.verbose);
   let platform = platform::detect(log)?;
   let yard = yard::load_or_create(&yard::production_location()?)?;
-  let versions = RequestedVersions::determine(&args.app_name, args.version, &apps)?;
+  let config_file = config::File::load(&apps)?;
+  let versions = RequestedVersions::determine(&args.app_name, args.version, config_file)?;
   for version in versions {
     if let Some(executable) = load_or_install(app, &version, platform, &yard, log)? {
       if args.error_on_output {
