@@ -22,7 +22,7 @@ pub fn run(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) 
   if let Ok(system_go_path) = which("go") {
     compile_using_system_go(system_go_path, app, version, yard, log)
   } else {
-    compile_using_rta_go(app, version, yard, log)
+    compile_using_rta_go(app, version)
   }
 }
 
@@ -53,7 +53,7 @@ fn compile_using_system_go(go_path: PathBuf, app: &dyn CompileGoSource, version:
   Ok(true)
 }
 
-fn compile_using_rta_go(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) -> Result<bool> {
+fn compile_using_rta_go(app: &dyn CompileGoSource, version: &Version) -> Result<bool> {
   let go = apps::go::Go {};
   let import_path = app.import_path(version);
   cmd::run(cmd::run::Args {
@@ -63,9 +63,7 @@ fn compile_using_rta_go(app: &dyn CompileGoSource, version: &Version, yard: &Yar
     error_on_output: false,
     optional: false,
     verbose: false,
-  });
-  // install RTA Go if it doesn't exist
-  // get RTA Go executable path
-  // run "go install" using the RTA Go
+  })
+  .unwrap();
   Ok(false)
 }
