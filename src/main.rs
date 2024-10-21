@@ -34,14 +34,14 @@ fn inner() -> prelude::Result<ExitCode> {
   match cli_args.command {
     Command::AppsLong => Ok(cmd::apps::long()),
     Command::AppsShort => Ok(cmd::apps::short()),
-    Command::Available { app, version, verbose } => cmd::available(&app, version, verbose),
+    Command::Available(args) => cmd::available(args),
     Command::RunApp(args) => cmd::run(args),
     Command::DisplayHelp => Ok(cmd::help()),
     Command::Setup => cmd::setup(),
-    Command::Test { app, verbose } => cmd::test(app, verbose),
-    Command::Which { app, version, verbose } => cmd::which(&app, version, verbose),
-    Command::Update { verbose } => cmd::update(verbose),
+    Command::Test(mut args) => cmd::test(&mut args),
+    Command::Which(args) => cmd::which(args),
+    Command::Update(args) => cmd::update(&args),
     Command::Version => Ok(cmd::version()),
-    Command::Versions { app, amount, verbose } => cmd::versions(&app, amount, verbose),
+    Command::Versions(args) => cmd::versions(&args),
   }
 }
