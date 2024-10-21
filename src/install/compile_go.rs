@@ -2,6 +2,7 @@ use crate::apps::{self, App};
 use crate::cmd;
 use crate::config::Version;
 use crate::logger::{Event, Log};
+use crate::platform::Platform;
 use crate::prelude::*;
 use crate::yard::Yard;
 use big_s::S;
@@ -18,11 +19,11 @@ pub trait CompileGoSource: App {
 }
 
 /// installs the given Go-based application by compiling it from source
-pub fn run(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) -> Result<bool> {
+pub fn run(app: &dyn CompileGoSource, platform: Platform, version: &Version, yard: &Yard, log: Log) -> Result<bool> {
   if let Ok(system_go_path) = which("go") {
     compile_using_system_go(system_go_path, app, version, yard, log)
   } else {
-    compile_using_rta_go(app, version)
+    compile_using_rta_go(app, platform, version, yard, log)
   }
 }
 
@@ -53,9 +54,13 @@ fn compile_using_system_go(go_path: PathBuf, app: &dyn CompileGoSource, version:
   Ok(true)
 }
 
-fn compile_using_rta_go(app: &dyn CompileGoSource, version: &Version) -> Result<bool> {
+fn compile_using_rta_go(app: &dyn CompileGoSource, platform: Platform, app_version: &Version, yard: &Yard, log: Log) -> Result<bool> {
+  // install RTA Go if needed
   let go = apps::go::Go {};
-  let import_path = app.import_path(version);
+  let go_version = &crate::config::RequestedVersion::Yard(3);
+  cmd::run::load_or_install(&go, go_version, platform, yard, log);
+  let import_path = app.import_path(app_version);
+  // TODO: run with env variable GOBIN=(yard.create_app_folder(&app.name(), version)?)
   let _ = cmd::run(cmd::run::Args {
     app: go.name(),
     version: None,
