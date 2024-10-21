@@ -1,5 +1,4 @@
 use super::{AppName, File, RequestedVersion, Version};
-use crate::apps::Apps;
 use crate::prelude::*;
 
 /// a collection of Version instances
@@ -9,11 +8,11 @@ pub struct RequestedVersions(Vec<RequestedVersion>);
 impl RequestedVersions {
   /// Provides the version to use: if the user provided a version to use via CLI, use it.
   /// Otherwise provide the versions from the config file.
-  pub fn determine(app: &AppName, cli_version: Option<Version>, apps: &Apps) -> Result<RequestedVersions> {
+  pub fn determine(app: &AppName, cli_version: Option<Version>, config_file: File) -> Result<RequestedVersions> {
     if let Some(version) = cli_version {
       return Ok(RequestedVersions::from(version));
     }
-    match File::load(apps)?.lookup(app) {
+    match config_file.lookup(app) {
       Some(versions) => Ok(versions),
       None => Err(UserError::RunRequestMissingVersion),
     }
