@@ -51,4 +51,6 @@ fn compile_using_system_go(go_path: PathBuf, app: &dyn CompileGoSource, version:
   Ok(true)
 }
 
-fn compile_using_rta_go() -> Result<bool> {}
+fn compile_using_rta_go() -> Result<bool> {
+  Ok(false)
+}
