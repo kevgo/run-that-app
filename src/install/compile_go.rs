@@ -7,6 +7,8 @@ use std::io::ErrorKind;
 use std::process::Command;
 use which::which;
 
+use super::Outcome;
+
 /// defines the information needed to compile a Go app from source
 #[allow(clippy::module_name_repetitions)]
 pub trait CompileGoSource: App {
@@ -15,9 +17,9 @@ pub trait CompileGoSource: App {
 }
 
 /// installs the given Go-based application by compiling it from source
-pub fn run(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) -> Result<bool> {
+pub fn run(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
   let Ok(go_path) = which("go") else {
-    return Ok(false);
+    return Ok(Outcome::NotInstalled);
   };
   let target_folder = yard.create_app_folder(&app.name(), version)?;
   let import_path = app.import_path(version);
@@ -42,5 +44,5 @@ pub fn run(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) 
     return Err(UserError::GoCompilationFailed);
   }
   log(Event::CompileGoSuccess);
-  Ok(true)
+  Ok(Outcome::Installed)
 }

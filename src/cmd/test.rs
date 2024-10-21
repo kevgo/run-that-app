@@ -29,8 +29,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
         version: &latest_version,
         method: &install_method,
       });
-      let installed = install::install(&install_method, &latest_version, platform, &yard, log)?;
-      if !installed {
+      if !install::install(&install_method, &latest_version, platform, &yard, log)?.installed() {
         continue;
       }
       let executable_location = install_method.executable_location(&latest_version, platform);

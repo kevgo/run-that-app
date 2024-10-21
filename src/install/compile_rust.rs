@@ -8,6 +8,8 @@ use std::io::ErrorKind;
 use std::process::Command;
 use which::which;
 
+use super::Outcome;
+
 /// defines the information needed to compile a Rust app from source
 #[allow(clippy::module_name_repetitions)]
 pub trait CompileRustSource: App {
@@ -19,7 +21,7 @@ pub trait CompileRustSource: App {
 }
 
 /// installs the given Rust-based application by compiling it from source
-pub fn run(app: &dyn CompileRustSource, version: &Version, yard: &Yard, log: Log) -> Result<bool> {
+pub fn run(app: &dyn CompileRustSource, version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
   let Ok(cargo_path) = which("cargo") else {
     return Err(UserError::RustNotInstalled);
   };
@@ -37,7 +39,7 @@ pub fn run(app: &dyn CompileRustSource, version: &Version, yard: &Yard, log: Log
     Err(err) => match err.kind() {
       ErrorKind::NotFound => return Err(UserError::RustNotInstalled),
       ErrorKind::PermissionDenied => return Err(UserError::RustNoPermission),
-      ErrorKind::Interrupted => return Ok(false),
+      ErrorKind::Interrupted => return Ok(Outcome::NotInstalled),
       _ => return Err(UserError::CannotCompileRustSource { err: err.to_string() }),
     },
   };
@@ -46,5 +48,5 @@ pub fn run(app: &dyn CompileRustSource, version: &Version, yard: &Yard, log: Log
     return Err(UserError::RustCompilationFailed);
   }
   log(Event::CompileRustSuccess);
-  Ok(true)
+  Ok(Outcome::Installed)
 }
