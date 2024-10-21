@@ -1,5 +1,5 @@
 pub mod apps;
-mod available;
+pub mod available;
 mod help;
 pub mod run;
 mod setup;

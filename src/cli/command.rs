@@ -1,4 +1,4 @@
-use crate::cmd::run;
+use crate::cmd::{available, run};
 use crate::config::{AppName, Version};
 
 /// the main commands that run-this-app can execute
@@ -6,7 +6,7 @@ use crate::config::{AppName, Version};
 pub enum Command {
   AppsLong,
   AppsShort,
-  Available { app: AppName, version: Option<Version>, verbose: bool },
+  Available(available::Args),
   RunApp(run::Args),
   DisplayHelp,
   Setup,

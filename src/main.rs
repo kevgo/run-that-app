@@ -34,7 +34,7 @@ fn inner() -> prelude::Result<ExitCode> {
   match cli_args.command {
     Command::AppsLong => Ok(cmd::apps::long()),
     Command::AppsShort => Ok(cmd::apps::short()),
-    Command::Available { app, version, verbose } => cmd::available(&app, version, verbose),
+    Command::Available(args) => cmd::available(args),
     Command::RunApp(args) => cmd::run(args),
     Command::DisplayHelp => Ok(cmd::help()),
     Command::Setup => cmd::setup(),
