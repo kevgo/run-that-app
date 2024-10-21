@@ -99,40 +99,28 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
   if test {
     return Ok(Args {
       command: Command::Test(test::Args {
-        start_at_app: app_version.map(|av| av.app),
+        start_at_app: app_version.map(|av| av.app_name),
         verbose,
       }),
     });
   }
-  if let Some(AppVersion { app, version }) = app_version {
+  if let Some(AppVersion { app_name, version }) = app_version {
     if indicate_available {
       Ok(Args {
-        command: Command::Available(available::Args {
-          app_name: app,
-          version,
-          verbose,
-        }),
+        command: Command::Available(available::Args { app_name, version, verbose }),
       })
     } else if which {
       Ok(Args {
-        command: Command::Which(cmd::which::Args {
-          app_name: app,
-          version,
-          verbose,
-        }),
+        command: Command::Which(cmd::which::Args { app_name, version, verbose }),
       })
     } else if let Some(amount) = versions {
       Ok(Args {
-        command: Command::Versions(versions::Args {
-          app_name: app,
-          amount,
-          verbose,
-        }),
+        command: Command::Versions(versions::Args { app_name, amount, verbose }),
       })
     } else {
       Ok(Args {
         command: Command::RunApp(run::Args {
-          app,
+          app_name,
           version,
           app_args,
           error_on_output,
@@ -235,7 +223,7 @@ mod tests {
           let have = parse_args(vec!["rta", "--error-on-output", "app"]);
           let want = Ok(Args {
             command: Command::RunApp(run::Args {
-              app: AppName::from("app"),
+              app_name: AppName::from("app"),
               version: None,
               app_args: vec![],
               error_on_output: true,
@@ -340,7 +328,7 @@ mod tests {
           let have = parse_args(vec!["rta", "--verbose", "app@2"]);
           let want = Ok(Args {
             command: Command::RunApp(run::Args {
-              app: AppName::from("app"),
+              app_name: AppName::from("app"),
               version: Some(Version::from("2")),
               app_args: vec![],
               error_on_output: false,
@@ -356,7 +344,7 @@ mod tests {
           let have = parse_args(vec!["rta", "-v", "app@2"]);
           let want = Ok(Args {
             command: Command::RunApp(run::Args {
-              app: AppName::from("app"),
+              app_name: AppName::from("app"),
               version: Some(Version::from("2")),
               app_args: vec![],
               error_on_output: false,
@@ -387,7 +375,7 @@ mod tests {
         let have = parse_args(vec!["rta", "--optional", "app@2", "arg1"]);
         let want = Ok(Args {
           command: Command::RunApp(run::Args {
-            app: AppName::from("app"),
+            app_name: AppName::from("app"),
             version: Some(Version::from("2")),
             app_args: vec![S("arg1")],
             error_on_output: false,
@@ -513,7 +501,7 @@ mod tests {
         let have = parse_args(vec!["rta", "app@2"]);
         let want = Ok(Args {
           command: Command::RunApp(run::Args {
-            app: AppName::from("app"),
+            app_name: AppName::from("app"),
             version: Some(Version::from("2")),
             app_args: vec![],
             error_on_output: false,
@@ -529,7 +517,7 @@ mod tests {
         let have = parse_args(vec!["rta", "app@2", "--arg1", "arg2"]);
         let want = Ok(Args {
           command: Command::RunApp(run::Args {
-            app: AppName::from("app"),
+            app_name: AppName::from("app"),
             version: Some(Version::from("2")),
             app_args: vec![S("--arg1"), S("arg2")],
             error_on_output: false,
@@ -553,7 +541,7 @@ mod tests {
         let have = parse_args(vec!["rta", "--verbose", "app@2", "--arg1", "arg2"]);
         let want = Ok(Args {
           command: Command::RunApp(run::Args {
-            app: AppName::from("app"),
+            app_name: AppName::from("app"),
             version: Some(Version::from("2")),
             app_args: vec![S("--arg1"), S("arg2")],
             error_on_output: false,
@@ -569,7 +557,7 @@ mod tests {
         let have = parse_args(vec!["rta", "app@2", "--verbose", "--version"]);
         let want = Ok(Args {
           command: Command::RunApp(run::Args {
-            app: AppName::from("app"),
+            app_name: AppName::from("app"),
             version: Some(Version::from("2")),
             app_args: vec![S("--verbose"), S("--version")],
             error_on_output: false,

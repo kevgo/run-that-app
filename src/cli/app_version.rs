@@ -3,7 +3,7 @@ use crate::config::{AppName, Version};
 /// a request from the user to run a particular app
 #[derive(Debug, PartialEq)]
 pub struct AppVersion {
-  pub app: AppName,
+  pub app_name: AppName,
   pub version: Option<Version>,
 }
 
@@ -11,7 +11,10 @@ impl AppVersion {
   pub fn new<S: AsRef<str>>(token: S) -> Self {
     let (app_name, version) = token.as_ref().split_once('@').unwrap_or((token.as_ref(), ""));
     let version = if version.is_empty() { None } else { Some(Version::from(version)) };
-    AppVersion { app: app_name.into(), version }
+    AppVersion {
+      app_name: app_name.into(),
+      version,
+    }
   }
 }
 
@@ -26,7 +29,7 @@ mod tests {
       let give = "shellcheck@0.9.0";
       let have = AppVersion::new(give);
       let want = AppVersion {
-        app: AppName::from("shellcheck"),
+        app_name: AppName::from("shellcheck"),
         version: Some(Version::from("0.9.0")),
       };
       pretty::assert_eq!(have, want);
@@ -37,7 +40,7 @@ mod tests {
       let give = "shellcheck";
       let have = AppVersion::new(give);
       let want = AppVersion {
-        app: AppName::from("shellcheck"),
+        app_name: AppName::from("shellcheck"),
         version: None,
       };
       pretty::assert_eq!(have, want);
@@ -48,7 +51,7 @@ mod tests {
       let give = "shellcheck@";
       let have = AppVersion::new(give);
       let want = AppVersion {
-        app: AppName::from("shellcheck"),
+        app_name: AppName::from("shellcheck"),
         version: None,
       };
       pretty::assert_eq!(have, want);
