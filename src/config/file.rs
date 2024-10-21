@@ -8,11 +8,11 @@ use std::io::{ErrorKind, Write};
 use std::str::SplitAsciiWhitespace;
 
 #[derive(Debug, Default, PartialEq)]
-pub struct Config {
+pub struct File {
   pub apps: Vec<AppVersions>,
 }
 
-impl Config {
+impl File {
   pub fn create() -> Result<()> {
     let mut file = match OpenOptions::new().write(true).create_new(true).open(FILE_NAME) {
       Ok(file) => file,
@@ -35,10 +35,10 @@ impl Config {
       .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
   }
 
-  pub fn load(apps: &Apps) -> Result<Config> {
+  pub fn load(apps: &Apps) -> Result<File> {
     match filesystem::read_file(FILE_NAME)? {
       Some(text) => parse(&text, apps),
-      None => Ok(Config::default()),
+      None => Ok(File::default()),
     }
   }
 
@@ -63,7 +63,7 @@ impl Config {
   }
 }
 
-impl Display for Config {
+impl Display for File {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     for AppVersions { app_name, versions } in &self.apps {
       f.write_str(app_name.as_str())?;
@@ -75,14 +75,14 @@ impl Display for Config {
   }
 }
 
-fn parse(text: &str, all_apps: &Apps) -> Result<Config> {
+fn parse(text: &str, all_apps: &Apps) -> Result<File> {
   let mut apps = vec![];
   for (i, line) in text.lines().enumerate() {
     if let Some(app_version) = parse_line(line, i, all_apps)? {
       apps.push(app_version);
     }
   }
-  Ok(Config { apps })
+  Ok(File { apps })
 }
 
 fn parse_line(line_text: &str, line_no: usize, apps: &Apps) -> Result<Option<AppVersions>> {
@@ -141,7 +141,7 @@ mod tests {
   mod parse {
     use super::super::parse;
     use crate::apps;
-    use crate::config::{AppName, AppVersions, Config, RequestedVersion, RequestedVersions};
+    use crate::config::{self, AppName, AppVersions, RequestedVersion, RequestedVersions};
 
     #[test]
     fn normal() {
@@ -150,7 +150,7 @@ mod tests {
                         mdbook 3.4.5 6.7.8\n\
                         go system@1.21 1.22.1";
       let have = parse(give, &apps::all()).unwrap();
-      let want = Config {
+      let want = config::File {
         apps: vec![
           AppVersions {
             app_name: "actionlint".into(),
@@ -180,7 +180,7 @@ mod tests {
     fn empty() {
       let give = "";
       let have = parse(give, &apps::all()).unwrap();
-      let want = Config { apps: vec![] };
+      let want = config::File { apps: vec![] };
       pretty::assert_eq!(have, want);
     }
   }
