@@ -73,7 +73,7 @@ impl<'a> Method<'a> {
 /// installs an app using the first of its installation methods that works
 pub fn any(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<Outcome> {
   for install_method in install_methods {
-    if install(&install_method, version, platform, yard, log)?.installed() {
+    if install(&install_method, version, platform, yard, log)?.success() {
       return Ok(Outcome::Installed);
     }
   }
@@ -113,7 +113,7 @@ pub enum Outcome {
 }
 
 impl Outcome {
-  pub fn installed(&self) -> bool {
+  pub fn success(&self) -> bool {
     match self {
       Outcome::Installed => true,
       Outcome::NotInstalled => false,

@@ -107,7 +107,7 @@ fn load_or_install_from_yard(app: &dyn App, version: &Version, platform: Platfor
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  if install::any(app.install_methods(), version, platform, yard, log)?.installed() {
+  if install::any(app.install_methods(), version, platform, yard, log)?.success() {
     return Ok(install::load(app.install_methods(), version, platform, yard, log));
   }
 
