@@ -1,4 +1,5 @@
 use super::{AppVersion, Command};
+use crate::cmd::run;
 use crate::prelude::*;
 
 /// all arguments that can be provided via the CLI
@@ -118,14 +119,14 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
       })
     } else {
       Ok(Args {
-        command: Command::RunApp {
+        command: Command::RunApp(run::Args {
           app,
           version,
           app_args,
           error_on_output,
           optional,
           verbose,
-        },
+        }),
       })
     }
   } else if error_on_output || optional || verbose || which || indicate_available {
@@ -164,6 +165,7 @@ mod tests {
     mod rta_arguments {
       use super::parse_args;
       use crate::cli::{Args, Command};
+      use crate::cmd::run;
       use crate::config::{AppName, Version};
       use crate::prelude::*;
       use big_s::S;
@@ -211,6 +213,7 @@ mod tests {
       mod error_on_output {
         use super::super::parse_args;
         use crate::cli::{Args, Command};
+        use crate::cmd::run;
         use crate::config::AppName;
         use crate::prelude::*;
 
@@ -218,14 +221,14 @@ mod tests {
         fn normal() {
           let have = parse_args(vec!["rta", "--error-on-output", "app"]);
           let want = Ok(Args {
-            command: Command::RunApp {
+            command: Command::RunApp(run::Args {
               app: AppName::from("app"),
               version: None,
               app_args: vec![],
               error_on_output: true,
               optional: false,
               verbose: false,
-            },
+            }),
           });
           pretty::assert_eq!(have, want);
         }
@@ -308,6 +311,7 @@ mod tests {
       mod verbose {
         use super::super::parse_args;
         use crate::cli::{Args, Command};
+        use crate::cmd::run;
         use crate::config::{AppName, Version};
         use crate::prelude::*;
 
@@ -315,14 +319,14 @@ mod tests {
         fn long() {
           let have = parse_args(vec!["rta", "--verbose", "app@2"]);
           let want = Ok(Args {
-            command: Command::RunApp {
+            command: Command::RunApp(run::Args {
               app: AppName::from("app"),
               version: Some(Version::from("2")),
               app_args: vec![],
               error_on_output: false,
               optional: false,
               verbose: true,
-            },
+            }),
           });
           pretty::assert_eq!(have, want);
         }
@@ -331,14 +335,14 @@ mod tests {
         fn short() {
           let have = parse_args(vec!["rta", "-v", "app@2"]);
           let want = Ok(Args {
-            command: Command::RunApp {
+            command: Command::RunApp(run::Args {
               app: AppName::from("app"),
               version: Some(Version::from("2")),
               app_args: vec![],
               error_on_output: false,
               optional: false,
               verbose: true,
-            },
+            }),
           });
           pretty::assert_eq!(have, want);
         }
@@ -362,14 +366,14 @@ mod tests {
       fn optional() {
         let have = parse_args(vec!["rta", "--optional", "app@2", "arg1"]);
         let want = Ok(Args {
-          command: Command::RunApp {
+          command: Command::RunApp(run::Args {
             app: AppName::from("app"),
             version: Some(Version::from("2")),
             app_args: vec![S("arg1")],
             error_on_output: false,
             optional: true,
             verbose: false,
-          },
+          }),
         });
         pretty::assert_eq!(have, want);
       }
@@ -478,6 +482,7 @@ mod tests {
     mod application_arguments {
       use super::parse_args;
       use crate::cli::{args, Command};
+      use crate::cmd::run;
       use crate::config::{AppName, Version};
       use args::Args;
       use big_s::S;
@@ -486,14 +491,14 @@ mod tests {
       fn no_arguments() {
         let have = parse_args(vec!["rta", "app@2"]);
         let want = Ok(Args {
-          command: Command::RunApp {
+          command: Command::RunApp(run::Args {
             app: AppName::from("app"),
             version: Some(Version::from("2")),
             app_args: vec![],
             error_on_output: false,
             optional: false,
             verbose: false,
-          },
+          }),
         });
         pretty::assert_eq!(have, want);
       }
@@ -502,14 +507,14 @@ mod tests {
       fn some_arguments() {
         let have = parse_args(vec!["rta", "app@2", "--arg1", "arg2"]);
         let want = Ok(Args {
-          command: Command::RunApp {
+          command: Command::RunApp(run::Args {
             app: AppName::from("app"),
             version: Some(Version::from("2")),
             app_args: vec![S("--arg1"), S("arg2")],
             error_on_output: false,
             optional: false,
             verbose: false,
-          },
+          }),
         });
         pretty::assert_eq!(have, want);
       }
@@ -518,6 +523,7 @@ mod tests {
     mod rta_and_app_arguments {
       use super::parse_args;
       use crate::cli::{Args, Command};
+      use crate::cmd::run;
       use crate::config::{AppName, Version};
       use big_s::S;
 
@@ -525,14 +531,14 @@ mod tests {
       fn rta_and_app_arguments() {
         let have = parse_args(vec!["rta", "--verbose", "app@2", "--arg1", "arg2"]);
         let want = Ok(Args {
-          command: Command::RunApp {
+          command: Command::RunApp(run::Args {
             app: AppName::from("app"),
             version: Some(Version::from("2")),
             app_args: vec![S("--arg1"), S("arg2")],
             error_on_output: false,
             optional: false,
             verbose: true,
-          },
+          }),
         });
         pretty::assert_eq!(have, want);
       }
@@ -541,14 +547,14 @@ mod tests {
       fn same_arguments_as_run_that_app() {
         let have = parse_args(vec!["rta", "app@2", "--verbose", "--version"]);
         let want = Ok(Args {
-          command: Command::RunApp {
+          command: Command::RunApp(run::Args {
             app: AppName::from("app"),
             version: Some(Version::from("2")),
             app_args: vec![S("--verbose"), S("--version")],
             error_on_output: false,
             optional: false,
             verbose: false,
-          },
+          }),
         });
         pretty::assert_eq!(have, want);
       }
