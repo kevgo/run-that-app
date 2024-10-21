@@ -1,5 +1,5 @@
 use super::run::load_or_install;
-use crate::config::{AppName, RequestedVersions, Version};
+use crate::config::{self, AppName, RequestedVersions, Version};
 use crate::prelude::*;
 use crate::{apps, logger, platform, yard};
 use std::process::ExitCode;
@@ -10,7 +10,8 @@ pub fn which(args: Args) -> Result<ExitCode> {
   let log = logger::new(args.verbose);
   let yard = yard::load_or_create(&yard::production_location()?)?;
   let platform = platform::detect(log)?;
-  let versions = RequestedVersions::determine(&args.app_name, args.version, &apps)?;
+  let config_file = config::File::load(&apps)?;
+  let versions = RequestedVersions::determine(&args.app_name, args.version, config_file)?;
   for version in versions {
     if let Some(executable) = load_or_install(app, &version, platform, &yard, log)? {
       println!("{}", executable.0.to_string_lossy());
