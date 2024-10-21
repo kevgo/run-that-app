@@ -2,14 +2,14 @@
 
 mod app_name;
 mod app_versions;
-mod config;
+mod file;
 mod requested_version;
 mod requested_versions;
 mod version;
 
 pub use app_name::AppName;
 pub use app_versions::AppVersions;
-pub use config::File;
+pub use file::File;
 pub use requested_version::RequestedVersion;
 pub use requested_versions::RequestedVersions;
 pub use version::Version;

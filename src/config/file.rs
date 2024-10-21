@@ -141,7 +141,7 @@ mod tests {
   mod parse {
     use super::super::parse;
     use crate::apps;
-    use crate::config::{AppName, AppVersions, File, RequestedVersion, RequestedVersions};
+    use crate::config::{self, AppName, AppVersions, RequestedVersion, RequestedVersions};
 
     #[test]
     fn normal() {
@@ -150,7 +150,7 @@ mod tests {
                         mdbook 3.4.5 6.7.8\n\
                         go system@1.21 1.22.1";
       let have = parse(give, &apps::all()).unwrap();
-      let want = File {
+      let want = config::File {
         apps: vec![
           AppVersions {
             app_name: "actionlint".into(),
@@ -180,7 +180,7 @@ mod tests {
     fn empty() {
       let give = "";
       let have = parse(give, &apps::all()).unwrap();
-      let want = File { apps: vec![] };
+      let want = config::File { apps: vec![] };
       pretty::assert_eq!(have, want);
     }
   }
