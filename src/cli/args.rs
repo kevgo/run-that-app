@@ -450,8 +450,9 @@ mod tests {
       mod which {
         use super::super::parse_args;
         use crate::cli::{Args, Command};
+        use crate::cmd;
         use crate::config::AppName;
-        use crate::{cmd, prelude::*};
+        use crate::prelude::*;
 
         #[test]
         fn with_app() {
