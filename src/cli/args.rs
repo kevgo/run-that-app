@@ -1,5 +1,5 @@
 use super::{AppVersion, Command};
-use crate::cmd::{available, run, test};
+use crate::cmd::{self, available, run, test};
 use crate::prelude::*;
 
 /// all arguments that can be provided via the CLI
@@ -115,7 +115,11 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
       })
     } else if which {
       Ok(Args {
-        command: Command::Which { app, version, verbose },
+        command: Command::Which(cmd::which::Args {
+          app_name: app,
+          version,
+          verbose,
+        }),
       })
     } else if let Some(amount) = versions {
       Ok(Args {
@@ -454,17 +458,17 @@ mod tests {
         use super::super::parse_args;
         use crate::cli::{Args, Command};
         use crate::config::AppName;
-        use crate::prelude::*;
+        use crate::{cmd, prelude::*};
 
         #[test]
         fn with_app() {
           let have = parse_args(vec!["rta", "--which", "shellcheck"]);
           let want = Ok(Args {
-            command: Command::Which {
-              app: AppName::from("shellcheck"),
+            command: Command::Which(cmd::which::Args {
+              app_name: AppName::from("shellcheck"),
               version: None,
               verbose: false,
-            },
+            }),
           });
           pretty::assert_eq!(have, want);
         }
@@ -473,11 +477,11 @@ mod tests {
         fn with_all_options() {
           let have = parse_args(vec!["rta", "--which", "--verbose", "shellcheck"]);
           let want = Ok(Args {
-            command: Command::Which {
-              app: AppName::from("shellcheck"),
+            command: Command::Which(cmd::which::Args {
+              app_name: AppName::from("shellcheck"),
               version: None,
               verbose: true,
-            },
+            }),
           });
           pretty::assert_eq!(have, want);
         }

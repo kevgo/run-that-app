@@ -7,7 +7,7 @@ pub mod test;
 mod update;
 mod version;
 mod versions;
-mod which;
+pub mod which;
 
 pub use available::available;
 pub use help::help;

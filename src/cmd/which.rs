@@ -4,13 +4,13 @@ use crate::prelude::*;
 use crate::{apps, logger, platform, yard};
 use std::process::ExitCode;
 
-pub fn which(app_name: &AppName, version: Option<Version>, verbose: bool) -> Result<ExitCode> {
+pub fn which(args: Args) -> Result<ExitCode> {
   let apps = apps::all();
-  let app = apps.lookup(app_name)?;
-  let log = logger::new(verbose);
+  let app = apps.lookup(&args.app_name)?;
+  let log = logger::new(args.verbose);
   let yard = yard::load_or_create(&yard::production_location()?)?;
   let platform = platform::detect(log)?;
-  let versions = RequestedVersions::determine(app_name, version, &apps)?;
+  let versions = RequestedVersions::determine(&args.app_name, args.version, &apps)?;
   for version in versions {
     if let Some(executable) = load_or_install(app, &version, platform, &yard, log)? {
       println!("{}", executable.0.to_string_lossy());
@@ -18,4 +18,11 @@ pub fn which(app_name: &AppName, version: Option<Version>, verbose: bool) -> Res
     }
   }
   Ok(ExitCode::FAILURE)
+}
+
+#[derive(Debug, PartialEq)]
+pub struct Args {
+  pub app_name: AppName,
+  pub version: Option<Version>,
+  pub verbose: bool,
 }

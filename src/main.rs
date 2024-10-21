@@ -39,7 +39,7 @@ fn inner() -> prelude::Result<ExitCode> {
     Command::DisplayHelp => Ok(cmd::help()),
     Command::Setup => cmd::setup(),
     Command::Test(mut args) => cmd::test(&mut args),
-    Command::Which { app, version, verbose } => cmd::which(&app, version, verbose),
+    Command::Which(args) => cmd::which(args),
     Command::Update { verbose } => cmd::update(verbose),
     Command::Version => Ok(cmd::version()),
     Command::Versions { app, amount, verbose } => cmd::versions(&app, amount, verbose),
