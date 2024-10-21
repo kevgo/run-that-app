@@ -1,3 +1,4 @@
+use super::Outcome;
 use crate::apps::App;
 use crate::config::Version;
 use crate::logger::{Event, Log};
@@ -15,9 +16,9 @@ pub trait CompileGoSource: App {
 }
 
 /// installs the given Go-based application by compiling it from source
-pub fn run(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) -> Result<bool> {
+pub fn run(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
   let Ok(go_path) = which("go") else {
-    return Ok(false);
+    return Ok(Outcome::NotInstalled);
   };
   let target_folder = yard.create_app_folder(&app.name(), version)?;
   let import_path = app.import_path(version);
@@ -42,5 +43,5 @@ pub fn run(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) 
     return Err(UserError::GoCompilationFailed);
   }
   log(Event::CompileGoSuccess);
-  Ok(true)
+  Ok(Outcome::Installed)
 }
