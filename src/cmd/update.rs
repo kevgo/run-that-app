@@ -1,12 +1,12 @@
 use crate::apps;
-use crate::config::Config;
+use crate::config::File;
 use crate::logger::{self, Event};
 use crate::prelude::*;
 use std::process::ExitCode;
 
 pub fn update(args: &Args) -> Result<ExitCode> {
   let all_apps = apps::all();
-  let mut config = Config::load(&all_apps)?;
+  let mut config = File::load(&all_apps)?;
   let log = logger::new(args.verbose);
   for old_app in &mut config.apps {
     let app = all_apps.lookup(&old_app.app_name)?;
