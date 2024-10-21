@@ -8,7 +8,7 @@ mod dprint;
 mod exhaustruct;
 mod gh;
 mod ghokin;
-mod go;
+pub mod go;
 mod goda;
 mod gofmt;
 mod gofumpt;

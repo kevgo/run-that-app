@@ -1,8 +1,10 @@
-use crate::apps::App;
+use crate::apps::{self, App};
+use crate::cmd;
 use crate::config::Version;
 use crate::logger::{Event, Log};
 use crate::prelude::*;
 use crate::yard::Yard;
+use big_s::S;
 use std::io::ErrorKind;
 use std::path::PathBuf;
 use std::process::Command;
@@ -20,7 +22,7 @@ pub fn run(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) 
   if let Ok(system_go_path) = which("go") {
     compile_using_system_go(system_go_path, app, version, yard, log)
   } else {
-    compile_using_rta_go()
+    compile_using_rta_go(app, version, yard, log)
   }
 }
 
@@ -51,7 +53,17 @@ fn compile_using_system_go(go_path: PathBuf, app: &dyn CompileGoSource, version:
   Ok(true)
 }
 
-fn compile_using_rta_go() -> Result<bool> {
+fn compile_using_rta_go(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) -> Result<bool> {
+  let go = apps::go::Go {};
+  let import_path = app.import_path(version);
+  cmd::run(cmd::run::Args {
+    app: go.name(),
+    version: None,
+    app_args: vec![S("install"), import_path],
+    error_on_output: false,
+    optional: false,
+    verbose: false,
+  });
   // install RTA Go if it doesn't exist
   // get RTA Go executable path
   // run "go install" using the RTA Go
