@@ -1,13 +1,13 @@
 pub mod apps;
-mod available;
+pub mod available;
 mod help;
 pub mod run;
 mod setup;
-mod test;
-mod update;
+pub mod test;
+pub mod update;
 mod version;
-mod versions;
-mod which;
+pub mod versions;
+pub mod which;
 
 pub use available::available;
 pub use help::help;

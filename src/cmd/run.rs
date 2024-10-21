@@ -11,11 +11,11 @@ use std::process::ExitCode;
 
 pub fn run(args: Args) -> Result<ExitCode> {
   let apps = apps::all();
-  let app = apps.lookup(&args.app)?;
+  let app = apps.lookup(&args.app_name)?;
   let log = logger::new(args.verbose);
   let platform = platform::detect(log)?;
   let yard = yard::load_or_create(&yard::production_location()?)?;
-  let versions = RequestedVersions::determine(&args.app, args.version, &apps)?;
+  let versions = RequestedVersions::determine(&args.app_name, args.version, &apps)?;
   for version in versions {
     if let Some(executable) = load_or_install(app, &version, platform, &yard, log)? {
       if args.error_on_output {
@@ -35,7 +35,7 @@ pub fn run(args: Args) -> Result<ExitCode> {
 #[derive(Debug, PartialEq)]
 pub struct Args {
   /// name of the app to execute
-  pub app: AppName,
+  pub app_name: AppName,
 
   /// possible versions of the app to execute
   pub version: Option<Version>,

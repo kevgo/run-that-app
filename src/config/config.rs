@@ -43,7 +43,11 @@ impl Config {
   }
 
   pub fn lookup(self, app_name: &AppName) -> Option<RequestedVersions> {
-    self.apps.into_iter().find(|app| app.app == app_name).map(|app_version| app_version.versions)
+    self
+      .apps
+      .into_iter()
+      .find(|app| app.app_name == app_name)
+      .map(|app_version| app_version.versions)
   }
 
   pub fn save(&self) -> Result<()> {
@@ -61,8 +65,8 @@ impl Config {
 
 impl Display for Config {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    for AppVersions { app, versions } in &self.apps {
-      f.write_str(app.as_str())?;
+    for AppVersions { app_name, versions } in &self.apps {
+      f.write_str(app_name.as_str())?;
       f.write_str(" ")?;
       f.write_str(&versions.join(", "))?;
       f.write_str("\n")?;
@@ -100,7 +104,10 @@ fn parse_line(line_text: &str, line_no: usize, apps: &Apps) -> Result<Option<App
   for part in parts {
     versions.push(RequestedVersion::parse(part, app)?);
   }
-  Ok(Some(AppVersions { app: name.into(), versions }))
+  Ok(Some(AppVersions {
+    app_name: name.into(),
+    versions,
+  }))
 }
 
 /// provides active (non-comment) words in the given line
@@ -146,19 +153,19 @@ mod tests {
       let want = Config {
         apps: vec![
           AppVersions {
-            app: "actionlint".into(),
+            app_name: "actionlint".into(),
             versions: RequestedVersions::new(vec![RequestedVersion::Yard("1.2.3".into())]),
           },
           AppVersions {
-            app: AppName::from("dprint"),
+            app_name: AppName::from("dprint"),
             versions: RequestedVersions::new(vec![RequestedVersion::Yard("2.3.4".into())]),
           },
           AppVersions {
-            app: AppName::from("mdbook"),
+            app_name: AppName::from("mdbook"),
             versions: RequestedVersions::new(vec![RequestedVersion::Yard("3.4.5".into()), RequestedVersion::Yard("6.7.8".into())]),
           },
           AppVersions {
-            app: AppName::from("go"),
+            app_name: AppName::from("go"),
             versions: RequestedVersions::new(vec![
               RequestedVersion::Path(semver::VersionReq::parse("1.21").unwrap()),
               RequestedVersion::Yard("1.22.1".into()),
@@ -190,7 +197,7 @@ mod tests {
       let give = "shellcheck 0.9.0";
       let have = parse_line(give, 1, &apps::all()).unwrap();
       let want = Some(AppVersions {
-        app: AppName::from("shellcheck"),
+        app_name: AppName::from("shellcheck"),
         versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]),
       });
       pretty::assert_eq!(have, want);
@@ -201,7 +208,7 @@ mod tests {
       let give = "shellcheck 0.9.0 0.6.0";
       let have = parse_line(give, 1, &apps::all()).unwrap();
       let want = Some(AppVersions {
-        app: AppName::from("shellcheck"),
+        app_name: AppName::from("shellcheck"),
         versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into()), RequestedVersion::Yard("0.6.0".into())]),
       });
       pretty::assert_eq!(have, want);
@@ -212,7 +219,7 @@ mod tests {
       let give = "     shellcheck            0.9.0      ";
       let have = parse_line(give, 1, &apps::all()).unwrap();
       let want = Some(AppVersions {
-        app: AppName::from("shellcheck"),
+        app_name: AppName::from("shellcheck"),
         versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]),
       });
       pretty::assert_eq!(have, want);
@@ -223,7 +230,7 @@ mod tests {
       let give = "shellcheck\t0.9.0";
       let have = parse_line(give, 1, &apps::all()).unwrap();
       let want = Some(AppVersions {
-        app: AppName::from("shellcheck"),
+        app_name: AppName::from("shellcheck"),
         versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]),
       });
       pretty::assert_eq!(have, want);
@@ -266,7 +273,7 @@ mod tests {
       let give = "shellcheck 0.9.0  # comment";
       let have = parse_line(give, 1, &apps::all()).unwrap();
       let want = Some(AppVersions {
-        app: AppName::from("shellcheck"),
+        app_name: AppName::from("shellcheck"),
         versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]),
       });
       pretty::assert_eq!(have, want);

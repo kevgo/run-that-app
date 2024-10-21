@@ -3,14 +3,21 @@ use crate::prelude::*;
 use crate::{apps, logger};
 use std::process::ExitCode;
 
-pub fn versions(app_name: &AppName, amount: usize, verbose: bool) -> Result<ExitCode> {
+pub fn versions(args: &Args) -> Result<ExitCode> {
   let apps = &apps::all();
-  let app = apps.lookup(app_name)?;
-  let log = logger::new(verbose);
-  let versions = app.installable_versions(amount, log)?;
-  println!("{app_name} is available in these versions:");
+  let app = apps.lookup(&args.app_name)?;
+  let log = logger::new(args.verbose);
+  let versions = app.installable_versions(args.amount, log)?;
+  println!("{} is available in these versions:", args.app_name);
   for version in versions {
     println!("- {version}");
   }
   Ok(ExitCode::SUCCESS)
+}
+
+#[derive(Debug, PartialEq)]
+pub struct Args {
+  pub app_name: AppName,
+  pub amount: usize,
+  pub verbose: bool,
 }
