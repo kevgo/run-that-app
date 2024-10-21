@@ -1,5 +1,5 @@
 use crate::apps::AnalyzeResult;
-use crate::config::AppName;
+use crate::config::{self, AppName};
 use crate::logger::Event;
 use crate::prelude::*;
 use crate::subshell::Executable;
@@ -14,6 +14,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
   let platform = platform::detect(log)?;
   let temp_folder = tempfile::tempdir().map_err(|err| UserError::CannotCreateTempDir { err: err.to_string() })?;
   let yard = yard::load_or_create(temp_folder.path())?;
+  let config_file = config::File::load(&apps)?;
   for app in apps {
     if let Some(start_app_name) = &args.start_at_app {
       if app.name() != start_app_name {
@@ -29,7 +30,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
         version: &latest_version,
         method: &install_method,
       });
-      if !install::install(&install_method, &latest_version, platform, &yard, log)?.success() {
+      if !install::install(&install_method, &latest_version, platform, &yard, config_file.clone(), log)?.success() {
         continue;
       }
       let executable_location = install_method.executable_location(&latest_version, platform);

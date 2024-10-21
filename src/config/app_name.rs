@@ -1,7 +1,7 @@
 use std::fmt::Display;
 use std::path::Path;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct AppName(String);
 
 impl AppName {

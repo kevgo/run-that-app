@@ -1,14 +1,13 @@
 use super::Outcome;
 use crate::apps::go::Go;
 use crate::apps::{self, App};
-use crate::config::{AppName, RequestedVersion, RequestedVersions, Version};
+use crate::config::{RequestedVersion, RequestedVersions, Version};
 use crate::logger::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{cmd, config};
-use big_s::S;
 use std::io::ErrorKind;
 use std::path::PathBuf;
 use std::process::Command;
@@ -22,11 +21,11 @@ pub trait CompileGoSource: App {
 }
 
 /// installs the given Go-based application by compiling it from source
-pub fn run(app: &dyn CompileGoSource, platform: Platform, version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
+pub fn run(app: &dyn CompileGoSource, platform: Platform, version: &Version, config_file: config::File, yard: &Yard, log: Log) -> Result<Outcome> {
   if let Ok(system_go_path) = which("go") {
     compile_using_system_go(system_go_path, app, version, yard, log)
   } else {
-    compile_using_rta_go(app, platform, version, yard, log)
+    compile_using_rta_go(app, platform, version, config_file, yard, log)
   }
 }
 
@@ -57,11 +56,18 @@ fn compile_using_system_go(go_path: PathBuf, app: &dyn CompileGoSource, version:
   Ok(Outcome::Installed)
 }
 
-fn compile_using_rta_go(app: &dyn CompileGoSource, platform: Platform, app_version: &Version, config: config::File, yard: &Yard, log: Log) -> Result<Outcome> {
+fn compile_using_rta_go(
+  app: &dyn CompileGoSource,
+  platform: Platform,
+  app_version: &Version,
+  config_file: config::File,
+  yard: &Yard,
+  log: Log,
+) -> Result<Outcome> {
   let target_folder = yard.create_app_folder(&app.name(), app_version)?;
   // get the Go version to use
   let go = apps::go::Go {};
-  let requested_go_versions = match config.lookup(&go.name()) {
+  let requested_go_versions = match config_file.clone().lookup(&go.name()) {
     Some(versions) => versions,
     None => {
       let versions = go.installable_versions(5, log)?;
@@ -69,7 +75,7 @@ fn compile_using_rta_go(app: &dyn CompileGoSource, platform: Platform, app_versi
     }
   };
   // get the executable, install Go if needed
-  let Some(go_executable) = load_or_install_go(&go, requested_go_versions, platform, yard, log)? else {
+  let Some(go_executable) = load_or_install_go(&go, requested_go_versions, platform, yard, config_file, log)? else {
     return Ok(Outcome::NotInstalled);
   };
   let import_path = app.import_path(app_version);
@@ -93,9 +99,16 @@ fn compile_using_rta_go(app: &dyn CompileGoSource, platform: Platform, app_versi
   Ok(Outcome::Installed)
 }
 
-fn load_or_install_go(go: &Go, requested_go_versions: RequestedVersions, platform: Platform, yard: &Yard, log: Log) -> Result<Option<Executable>> {
+fn load_or_install_go(
+  go: &Go,
+  requested_go_versions: RequestedVersions,
+  platform: Platform,
+  yard: &Yard,
+  config_file: config::File,
+  log: Log,
+) -> Result<Option<Executable>> {
   for requested_go_version in requested_go_versions {
-    if let Some(executable) = cmd::run::load_or_install(go, &requested_go_version, platform, yard, log)? {
+    if let Some(executable) = cmd::run::load_or_install(go, &requested_go_version, platform, yard, config_file.clone(), log)? {
       return Ok(Some(executable));
     }
   }

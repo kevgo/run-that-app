@@ -11,9 +11,9 @@ pub fn which(args: Args) -> Result<ExitCode> {
   let yard = yard::load_or_create(&yard::production_location()?)?;
   let platform = platform::detect(log)?;
   let config_file = config::File::load(&apps)?;
-  let versions = RequestedVersions::determine(&args.app_name, args.version, config_file)?;
+  let versions = RequestedVersions::determine(&args.app_name, args.version, config_file.clone())?;
   for version in versions {
-    if let Some(executable) = load_or_install(app, &version, platform, &yard, log)? {
+    if let Some(executable) = load_or_install(app, &version, platform, &yard, config_file.clone(), log)? {
       println!("{}", executable.0.to_string_lossy());
       return Ok(ExitCode::SUCCESS);
     }
