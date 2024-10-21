@@ -32,6 +32,7 @@ pub fn run(args: Args) -> Result<ExitCode> {
 }
 
 /// data needed to run an executable
+#[derive(Debug, PartialEq)]
 pub struct Args {
   /// name of the app to execute
   pub app: AppName,
