@@ -44,3 +44,7 @@ pub fn run(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) 
   log(Event::CompileGoSuccess);
   Ok(true)
 }
+
+fn compile_using_system_go() -> Result<bool> {}
+
+fn compile_using_rta_go() -> Result<bool> {}
