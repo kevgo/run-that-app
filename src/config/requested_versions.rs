@@ -1,4 +1,4 @@
-use super::{AppName, Config, RequestedVersion, Version};
+use super::{AppName, File, RequestedVersion, Version};
 use crate::apps::Apps;
 use crate::prelude::*;
 
@@ -13,7 +13,7 @@ impl RequestedVersions {
     if let Some(version) = cli_version {
       return Ok(RequestedVersions::from(version));
     }
-    match Config::load(apps)?.lookup(app) {
+    match File::load(apps)?.lookup(app) {
       Some(versions) => Ok(versions),
       None => Err(UserError::RunRequestMissingVersion),
     }

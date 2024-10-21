@@ -9,7 +9,7 @@ mod version;
 
 pub use app_name::AppName;
 pub use app_versions::AppVersions;
-pub use config::Config;
+pub use config::File;
 pub use requested_version::RequestedVersion;
 pub use requested_versions::RequestedVersions;
 pub use version::Version;
