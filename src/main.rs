@@ -40,7 +40,7 @@ fn inner() -> prelude::Result<ExitCode> {
     Command::Setup => cmd::setup(),
     Command::Test(mut args) => cmd::test(&mut args),
     Command::Which(args) => cmd::which(args),
-    Command::Update { verbose } => cmd::update(verbose),
+    Command::Update(args) => cmd::update(&args),
     Command::Version => Ok(cmd::version()),
     Command::Versions(args) => cmd::versions(&args),
   }

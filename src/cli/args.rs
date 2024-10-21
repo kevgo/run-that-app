@@ -1,5 +1,5 @@
 use super::{AppVersion, Command};
-use crate::cmd::{self, available, run, test, versions};
+use crate::cmd::{self, available, run, test, update, versions};
 use crate::prelude::*;
 
 /// all arguments that can be provided via the CLI
@@ -93,7 +93,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
     return Ok(Args { command: Command::Setup });
   } else if update {
     return Ok(Args {
-      command: Command::Update { verbose },
+      command: Command::Update(update::Args { verbose }),
     });
   }
   if test {

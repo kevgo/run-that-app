@@ -4,10 +4,10 @@ use crate::logger::{self, Event};
 use crate::prelude::*;
 use std::process::ExitCode;
 
-pub fn update(verbose: bool) -> Result<ExitCode> {
+pub fn update(args: &Args) -> Result<ExitCode> {
   let all_apps = apps::all();
   let mut config = Config::load(&all_apps)?;
-  let log = logger::new(verbose);
+  let log = logger::new(args.verbose);
   for old_app in &mut config.apps {
     let app = all_apps.lookup(&old_app.app)?;
     log(Event::UpdateBegin { app: &old_app.app });
@@ -23,4 +23,9 @@ pub fn update(verbose: bool) -> Result<ExitCode> {
   }
   config.save()?;
   Ok(ExitCode::SUCCESS)
+}
+
+#[derive(Debug, PartialEq)]
+pub struct Args {
+  pub verbose: bool,
 }

@@ -4,7 +4,7 @@ mod help;
 pub mod run;
 mod setup;
 pub mod test;
-mod update;
+pub mod update;
 mod version;
 pub mod versions;
 pub mod which;
