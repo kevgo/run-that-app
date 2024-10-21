@@ -52,5 +52,8 @@ fn compile_using_system_go(go_path: PathBuf, app: &dyn CompileGoSource, version:
 }
 
 fn compile_using_rta_go() -> Result<bool> {
+  // install RTA Go if it doesn't exist
+  // get RTA Go executable path
+  // run "go install" using the RTA Go
   Ok(false)
 }
