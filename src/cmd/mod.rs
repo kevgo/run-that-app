@@ -6,7 +6,7 @@ mod setup;
 pub mod test;
 mod update;
 mod version;
-mod versions;
+pub mod versions;
 pub mod which;
 
 pub use available::available;

@@ -1,5 +1,4 @@
-use crate::cmd::{self, available, run, test};
-use crate::config::AppName;
+use crate::cmd::{self, available, run, test, versions};
 
 /// the main commands that run-this-app can execute
 #[derive(Debug, PartialEq)]
@@ -14,5 +13,5 @@ pub enum Command {
   Which(cmd::which::Args),
   Update { verbose: bool },
   Version,
-  Versions { app: AppName, amount: usize, verbose: bool },
+  Versions(versions::Args),
 }

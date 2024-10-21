@@ -42,6 +42,6 @@ fn inner() -> prelude::Result<ExitCode> {
     Command::Which(args) => cmd::which(args),
     Command::Update { verbose } => cmd::update(verbose),
     Command::Version => Ok(cmd::version()),
-    Command::Versions { app, amount, verbose } => cmd::versions(&app, amount, verbose),
+    Command::Versions(args) => cmd::versions(&args),
   }
 }

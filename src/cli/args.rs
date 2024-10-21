@@ -1,5 +1,5 @@
 use super::{AppVersion, Command};
-use crate::cmd::{self, available, run, test};
+use crate::cmd::{self, available, run, test, versions};
 use crate::prelude::*;
 
 /// all arguments that can be provided via the CLI
@@ -123,7 +123,11 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
       })
     } else if let Some(amount) = versions {
       Ok(Args {
-        command: Command::Versions { app, amount, verbose },
+        command: Command::Versions(versions::Args {
+          app_name: app,
+          amount,
+          verbose,
+        }),
       })
     } else {
       Ok(Args {
@@ -417,6 +421,7 @@ mod tests {
       mod versions {
         use super::parse_args;
         use crate::cli::{args, Command};
+        use crate::cmd::versions;
         use crate::config::AppName;
         use args::Args;
 
@@ -424,11 +429,11 @@ mod tests {
         fn correct_usage() {
           let have = parse_args(vec!["rta", "--versions", "actionlint"]);
           let want = Ok(Args {
-            command: Command::Versions {
-              app: AppName::from("actionlint"),
+            command: Command::Versions(versions::Args {
+              app_name: AppName::from("actionlint"),
               amount: 10,
               verbose: false,
-            },
+            }),
           });
           pretty::assert_eq!(have, want);
         }
@@ -437,11 +442,11 @@ mod tests {
         fn custom_amount() {
           let have = parse_args(vec!["rta", "--versions=20", "actionlint"]);
           let want = Ok(Args {
-            command: Command::Versions {
-              app: AppName::from("actionlint"),
+            command: Command::Versions(versions::Args {
+              app_name: AppName::from("actionlint"),
               amount: 20,
               verbose: false,
-            },
+            }),
           });
           pretty::assert_eq!(have, want);
         }
