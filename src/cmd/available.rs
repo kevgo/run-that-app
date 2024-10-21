@@ -21,7 +21,7 @@ pub fn available(args: Args) -> Result<ExitCode> {
 
 #[derive(Debug, PartialEq)]
 pub struct Args {
-  app_name: AppName,
-  version: Option<Version>,
-  verbose: bool,
+  pub app_name: AppName,
+  pub version: Option<Version>,
+  pub verbose: bool,
 }

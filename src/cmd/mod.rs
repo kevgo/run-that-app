@@ -3,7 +3,7 @@ pub mod available;
 mod help;
 pub mod run;
 mod setup;
-mod test;
+pub mod test;
 mod update;
 mod version;
 mod versions;

@@ -1,5 +1,5 @@
 use super::{AppVersion, Command};
-use crate::cmd::run;
+use crate::cmd::{available, run, test};
 use crate::prelude::*;
 
 /// all arguments that can be provided via the CLI
@@ -98,16 +98,20 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
   }
   if test {
     return Ok(Args {
-      command: Command::Test {
-        app: app_version.map(|av| av.app),
+      command: Command::Test(test::Args {
+        start_at_app: app_version.map(|av| av.app),
         verbose,
-      },
+      }),
     });
   }
   if let Some(AppVersion { app, version }) = app_version {
     if indicate_available {
       Ok(Args {
-        command: Command::Available { app, version, verbose },
+        command: Command::Available(available::Args {
+          app_name: app,
+          version,
+          verbose,
+        }),
       })
     } else if which {
       Ok(Args {
@@ -173,6 +177,7 @@ mod tests {
       mod available {
         use super::super::parse_args;
         use crate::cli::{Args, Command};
+        use crate::cmd::available;
         use crate::config::AppName;
         use crate::prelude::*;
 
@@ -180,11 +185,11 @@ mod tests {
         fn with_app() {
           let have = parse_args(vec!["rta", "--available", "shellcheck"]);
           let want = Ok(Args {
-            command: Command::Available {
-              app: AppName::from("shellcheck"),
+            command: Command::Available(available::Args {
+              app_name: AppName::from("shellcheck"),
               version: None,
               verbose: false,
-            },
+            }),
           });
           pretty::assert_eq!(have, want);
         }
@@ -193,11 +198,11 @@ mod tests {
         fn with_all_options() {
           let have = parse_args(vec!["rta", "--available", "--verbose", "shellcheck"]);
           let want = Ok(Args {
-            command: Command::Available {
-              app: AppName::from("shellcheck"),
+            command: Command::Available(available::Args {
+              app_name: AppName::from("shellcheck"),
               version: None,
               verbose: true,
-            },
+            }),
           });
           pretty::assert_eq!(have, want);
         }
@@ -244,13 +249,17 @@ mod tests {
       mod test {
         use super::super::parse_args;
         use crate::cli::{Args, Command};
+        use crate::cmd::test;
         use crate::config::AppName;
 
         #[test]
         fn no_app_no_verbose() {
           let have = parse_args(vec!["rta", "--test"]);
           let want = Ok(Args {
-            command: Command::Test { app: None, verbose: false },
+            command: Command::Test(test::Args {
+              start_at_app: None,
+              verbose: false,
+            }),
           });
           pretty::assert_eq!(have, want);
         }
@@ -259,7 +268,10 @@ mod tests {
         fn no_app_verbose() {
           let have = parse_args(vec!["rta", "--test", "--verbose"]);
           let want = Ok(Args {
-            command: Command::Test { app: None, verbose: true },
+            command: Command::Test(test::Args {
+              start_at_app: None,
+              verbose: true,
+            }),
           });
           pretty::assert_eq!(have, want);
         }
@@ -268,10 +280,10 @@ mod tests {
         fn app_no_verbose() {
           let have = parse_args(vec!["rta", "--test", "actionlint"]);
           let want = Ok(Args {
-            command: Command::Test {
-              app: Some(AppName::from("actionlint")),
+            command: Command::Test(test::Args {
+              start_at_app: Some(AppName::from("actionlint")),
               verbose: false,
-            },
+            }),
           });
           pretty::assert_eq!(have, want);
         }
@@ -280,10 +292,10 @@ mod tests {
         fn app_verbose() {
           let have = parse_args(vec!["rta", "--test", "--verbose", "actionlint"]);
           let want = Ok(Args {
-            command: Command::Test {
-              app: Some(AppName::from("actionlint")),
+            command: Command::Test(test::Args {
+              start_at_app: Some(AppName::from("actionlint")),
               verbose: true,
-            },
+            }),
           });
           pretty::assert_eq!(have, want);
         }
