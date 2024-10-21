@@ -1,3 +1,5 @@
+use super::Outcome;
+use crate::apps::App;
 use crate::apps::{self, App};
 use crate::cmd;
 use crate::config::Version;
@@ -19,7 +21,7 @@ pub trait CompileGoSource: App {
 }
 
 /// installs the given Go-based application by compiling it from source
-pub fn run(app: &dyn CompileGoSource, platform: Platform, version: &Version, yard: &Yard, log: Log) -> Result<bool> {
+pub fn run(app: &dyn CompileGoSource, platform: Platform, version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
   if let Ok(system_go_path) = which("go") {
     compile_using_system_go(system_go_path, app, version, yard, log)
   } else {
@@ -27,7 +29,7 @@ pub fn run(app: &dyn CompileGoSource, platform: Platform, version: &Version, yar
   }
 }
 
-fn compile_using_system_go(go_path: PathBuf, app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) -> Result<bool> {
+fn compile_using_system_go(go_path: PathBuf, app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
   let target_folder = yard.create_app_folder(&app.name(), version)?;
   let import_path = app.import_path(version);
   let go_args = vec!["install", &import_path];
@@ -51,7 +53,7 @@ fn compile_using_system_go(go_path: PathBuf, app: &dyn CompileGoSource, version:
     return Err(UserError::GoCompilationFailed);
   }
   log(Event::CompileGoSuccess);
-  Ok(true)
+  Ok(Outcome::Installed)
 }
 
 fn compile_using_rta_go(app: &dyn CompileGoSource, platform: Platform, app_version: &Version, yard: &Yard, log: Log) -> Result<bool> {

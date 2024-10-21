@@ -71,16 +71,16 @@ impl<'a> Method<'a> {
 }
 
 /// installs an app using the first of its installation methods that works
-pub fn any(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<bool> {
+pub fn any(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<Outcome> {
   for install_method in install_methods {
-    if install(&install_method, version, platform, yard, log)? {
-      return Ok(true);
+    if install(&install_method, version, platform, yard, log)?.success() {
+      return Ok(Outcome::Installed);
     }
   }
-  Ok(false)
+  Ok(Outcome::NotInstalled)
 }
 
-pub fn install(install_method: &Method, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<bool> {
+pub fn install(install_method: &Method, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<Outcome> {
   match install_method {
     Method::DownloadArchive(app) => download_archive::run(*app, version, platform, yard, log),
     Method::DownloadExecutable(app) => download_executable::install(*app, version, platform, yard, log),
@@ -104,4 +104,19 @@ pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform,
   }
   log(Event::YardCheckExistingAppNotFound);
   None
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Outcome {
+  Installed,
+  NotInstalled,
+}
+
+impl Outcome {
+  pub fn success(&self) -> bool {
+    match self {
+      Outcome::Installed => true,
+      Outcome::NotInstalled => false,
+    }
+  }
 }

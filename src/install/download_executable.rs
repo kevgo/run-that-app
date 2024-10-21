@@ -1,3 +1,4 @@
+use super::Outcome;
 use crate::apps::App;
 use crate::config::Version;
 use crate::logger::Log;
@@ -13,12 +14,12 @@ pub trait DownloadExecutable: App {
 }
 
 /// downloads an uncompressed precompiled binary
-pub fn install(app: &dyn DownloadExecutable, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<bool> {
+pub fn install(app: &dyn DownloadExecutable, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<Outcome> {
   let url = app.download_url(version, platform);
   let Some(artifact) = download::artifact(url, &app.name(), log)? else {
-    return Ok(false);
+    return Ok(Outcome::NotInstalled);
   };
   let filepath_on_disk = yard.create_app_folder(&app.name(), version)?.join(app.executable_filename(platform));
   filesystem::save_executable(artifact.data, &filepath_on_disk, log)?;
-  Ok(true)
+  Ok(Outcome::Installed)
 }
