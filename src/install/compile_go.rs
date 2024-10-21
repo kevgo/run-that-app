@@ -1,5 +1,4 @@
 use super::Outcome;
-use crate::apps::App;
 use crate::apps::{self, App};
 use crate::cmd;
 use crate::config::Version;
@@ -56,7 +55,7 @@ fn compile_using_system_go(go_path: PathBuf, app: &dyn CompileGoSource, version:
   Ok(Outcome::Installed)
 }
 
-fn compile_using_rta_go(app: &dyn CompileGoSource, platform: Platform, app_version: &Version, yard: &Yard, log: Log) -> Result<bool> {
+fn compile_using_rta_go(app: &dyn CompileGoSource, platform: Platform, app_version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
   // install RTA Go if needed
   let go = apps::go::Go {};
   let go_version = &crate::config::RequestedVersion::Yard(3);
@@ -64,12 +63,12 @@ fn compile_using_rta_go(app: &dyn CompileGoSource, platform: Platform, app_versi
   let import_path = app.import_path(app_version);
   // TODO: run with env variable GOBIN=(yard.create_app_folder(&app.name(), version)?)
   let _ = cmd::run(cmd::run::Args {
-    app: go.name(),
+    app_name: go.name(),
     version: None,
     app_args: vec![S("install"), import_path],
     error_on_output: false,
     optional: false,
     verbose: false,
   })?;
-  Ok(false)
+  Ok(Outcome::NotInstalled)
 }
