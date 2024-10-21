@@ -84,7 +84,7 @@ pub fn install(install_method: &Method, version: &Version, platform: Platform, y
   match install_method {
     Method::DownloadArchive(app) => download_archive::run(*app, version, platform, yard, log),
     Method::DownloadExecutable(app) => download_executable::install(*app, version, platform, yard, log),
-    Method::CompileGoSource(app) => compile_go::run(*app, version, yard, log),
+    Method::CompileGoSource(app) => compile_go::run(*app, platform, version, yard, log),
     Method::CompileRustSource(app) => compile_rust::run(*app, version, yard, log),
     Method::InstallAnotherApp(app) => other_app_folder::install_other_app(*app, version, platform, yard, log),
   }
