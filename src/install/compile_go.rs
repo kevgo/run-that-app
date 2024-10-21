@@ -56,14 +56,13 @@ fn compile_using_system_go(go_path: PathBuf, app: &dyn CompileGoSource, version:
 fn compile_using_rta_go(app: &dyn CompileGoSource, version: &Version) -> Result<bool> {
   let go = apps::go::Go {};
   let import_path = app.import_path(version);
-  cmd::run(cmd::run::Args {
+  let _ = cmd::run(cmd::run::Args {
     app: go.name(),
     version: None,
     app_args: vec![S("install"), import_path],
     error_on_output: false,
     optional: false,
     verbose: false,
-  })
-  .unwrap();
+  })?;
   Ok(false)
 }
