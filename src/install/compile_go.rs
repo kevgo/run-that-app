@@ -67,8 +67,7 @@ fn compile_using_rta_go(
   let target_folder = yard.create_app_folder(&app.name(), app_version)?;
   // get the Go version to use
   let go = apps::go::Go {};
-  let binding = config_file.clone();
-  let requested_go_versions = if let Some(versions) = binding.lookup(&go.name()) {
+  let requested_go_versions = if let Some(versions) = config_file.lookup(&go.name()) {
     versions
   } else {
     let versions = go.installable_versions(5, log)?;

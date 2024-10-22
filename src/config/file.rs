@@ -7,7 +7,7 @@ use std::fs::OpenOptions;
 use std::io::{ErrorKind, Write};
 use std::str::SplitAsciiWhitespace;
 
-#[derive(Clone, Debug, Default, PartialEq)]
+#[derive(Debug, Default, PartialEq)]
 pub struct File {
   pub apps: Vec<AppVersions>,
 }
