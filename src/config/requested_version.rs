@@ -46,6 +46,12 @@ impl From<Version> for RequestedVersion {
   }
 }
 
+impl From<&Version> for RequestedVersion {
+  fn from(value: &Version) -> Self {
+    RequestedVersion::Yard(value.to_owned())
+  }
+}
+
 /// Indicates whether the given version string requests an executable in the PATH or in the yard.
 /// Also provides the sanitized version string without the "system" prefix.
 fn is_system(value: &str) -> Option<String> {
