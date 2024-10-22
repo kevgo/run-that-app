@@ -108,7 +108,7 @@ fn load_or_install_go(
   log: Log,
 ) -> Result<Option<Executable>> {
   for requested_go_version in &requested_go_versions.0 {
-    if let Some(executable) = cmd::run::load_or_install(go, &requested_go_version, platform, yard, config_file, log)? {
+    if let Some(executable) = cmd::run::load_or_install(go, requested_go_version, platform, yard, config_file, log)? {
       return Ok(Some(executable));
     }
   }
