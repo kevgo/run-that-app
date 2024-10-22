@@ -2,7 +2,7 @@ use super::{AppName, File, RequestedVersion, Version};
 use crate::prelude::*;
 
 /// a collection of Version instances
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct RequestedVersions(pub Vec<RequestedVersion>);
 
 impl RequestedVersions {
