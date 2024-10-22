@@ -26,7 +26,7 @@ pub fn run(app: &dyn CompileGoSource, platform: Platform, version: &Version, con
   let go_path = if let Ok(system_go_path) = which("go") {
     system_go_path
   } else {
-    let Some(rta_path) = load_system_go(platform, config_file, yard, log)? else {
+    let Some(rta_path) = load_rta_go(platform, config_file, yard, log)? else {
       return Ok(Outcome::NotInstalled);
     };
     rta_path
@@ -54,7 +54,7 @@ pub fn run(app: &dyn CompileGoSource, platform: Platform, version: &Version, con
   Ok(Outcome::Installed)
 }
 
-fn load_system_go(platform: Platform, config_file: &config::File, yard: &Yard, log: Log) -> Result<Option<PathBuf>> {
+fn load_rta_go(platform: Platform, config_file: &config::File, yard: &Yard, log: Log) -> Result<Option<PathBuf>> {
   let go = apps::go::Go {};
   let requested_go_versions = if let Some(versions) = config_file.lookup(&go.name()) {
     versions
