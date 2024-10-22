@@ -62,7 +62,6 @@ fn load_rta_go(platform: Platform, config_file: &config::File, yard: &Yard, log:
     let versions = go.installable_versions(3, log)?;
     &RequestedVersions::new(versions.into_iter().map(RequestedVersion::from).collect())
   };
-  // get the executable, install Go if needed
   for requested_go_version in &requested_go_versions.0 {
     if let Some(executable) = cmd::run::load_or_install(&go, requested_go_version, platform, yard, config_file, log)? {
       return Ok(Some(executable.0));
