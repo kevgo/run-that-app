@@ -13,7 +13,7 @@ pub fn available(args: &Args) -> Result<ExitCode> {
   let config_file = config::File::load(&apps)?;
   let versions = RequestedVersions::determine(&args.app_name, &args.version, &config_file)?;
   for version in versions {
-    if load_or_install(app, &version, platform, &yard, config_file.clone(), log)?.is_some() {
+    if load_or_install(app, &version, platform, &yard, &config_file, log)?.is_some() {
       return Ok(ExitCode::SUCCESS);
     }
   }

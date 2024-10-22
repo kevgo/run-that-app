@@ -71,22 +71,22 @@ impl<'a> Method<'a> {
 }
 
 /// installs an app using the first of its installation methods that works
-pub fn any(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, config_file: config::File, log: Log) -> Result<Outcome> {
+pub fn any(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, config_file: &config::File, log: Log) -> Result<Outcome> {
   for install_method in install_methods {
-    if install(&install_method, version, platform, yard, config_file.clone(), log)?.success() {
+    if install(&install_method, version, platform, yard, config_file, log)?.success() {
       return Ok(Outcome::Installed);
     }
   }
   Ok(Outcome::NotInstalled)
 }
 
-pub fn install(install_method: &Method, version: &Version, platform: Platform, yard: &Yard, config_file: config::File, log: Log) -> Result<Outcome> {
+pub fn install(install_method: &Method, version: &Version, platform: Platform, yard: &Yard, config_file: &config::File, log: Log) -> Result<Outcome> {
   match install_method {
     Method::DownloadArchive(app) => download_archive::run(*app, version, platform, yard, log),
     Method::DownloadExecutable(app) => download_executable::install(*app, version, platform, yard, log),
     Method::CompileGoSource(app) => compile_go::run(*app, platform, version, config_file, yard, log),
     Method::CompileRustSource(app) => compile_rust::run(*app, version, yard, log),
-    Method::InstallAnotherApp(app) => other_app_folder::install_other_app(*app, version, platform, yard, log),
+    Method::InstallAnotherApp(app) => other_app_folder::install_other_app(*app, version, platform, yard, config_file, log),
   }
 }
 

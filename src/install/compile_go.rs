@@ -21,7 +21,7 @@ pub trait CompileGoSource: App {
 }
 
 /// installs the given Go-based application by compiling it from source
-pub fn run(app: &dyn CompileGoSource, platform: Platform, version: &Version, config_file: config::File, yard: &Yard, log: Log) -> Result<Outcome> {
+pub fn run(app: &dyn CompileGoSource, platform: Platform, version: &Version, config_file: &config::File, yard: &Yard, log: Log) -> Result<Outcome> {
   if let Ok(system_go_path) = which("go") {
     compile_using_system_go(system_go_path, app, version, yard, log)
   } else {
@@ -60,7 +60,7 @@ fn compile_using_rta_go(
   app: &dyn CompileGoSource,
   platform: Platform,
   app_version: &Version,
-  config_file: config::File,
+  config_file: &config::File,
   yard: &Yard,
   log: Log,
 ) -> Result<Outcome> {
@@ -104,11 +104,11 @@ fn load_or_install_go(
   requested_go_versions: RequestedVersions,
   platform: Platform,
   yard: &Yard,
-  config_file: config::File,
+  config_file: &config::File,
   log: Log,
 ) -> Result<Option<Executable>> {
   for requested_go_version in requested_go_versions {
-    if let Some(executable) = cmd::run::load_or_install(go, &requested_go_version, platform, yard, config_file.clone(), log)? {
+    if let Some(executable) = cmd::run::load_or_install(go, &requested_go_version, platform, yard, config_file, log)? {
       return Ok(Some(executable));
     }
   }

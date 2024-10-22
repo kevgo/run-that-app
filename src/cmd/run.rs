@@ -18,7 +18,7 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   let config_file = config::File::load(&apps)?;
   let versions = RequestedVersions::determine(&args.app_name, &args.version, &config_file)?;
   for version in versions {
-    if let Some(executable) = load_or_install(app, &version, platform, &yard, config_file.clone(), log)? {
+    if let Some(executable) = load_or_install(app, &version, platform, &yard, &config_file, log)? {
       if args.error_on_output {
         return subshell::execute_check_output(&executable, &args.app_args);
       }
@@ -59,7 +59,7 @@ pub fn load_or_install(
   version: &RequestedVersion,
   platform: Platform,
   yard: &Yard,
-  config_file: config::File,
+  config_file: &config::File,
   log: Log,
 ) -> Result<Option<Executable>> {
   match version {
@@ -109,7 +109,7 @@ fn load_or_install_from_yard(
   version: &Version,
   platform: Platform,
   yard: &Yard,
-  config_file: config::File,
+  config_file: &config::File,
   log: Log,
 ) -> Result<Option<Executable>> {
   // try to load the app
