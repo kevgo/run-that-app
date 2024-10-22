@@ -9,14 +9,14 @@ use crate::yard::Yard;
 use crate::{apps, install, yard};
 use std::process::ExitCode;
 
-pub fn run(args: Args) -> Result<ExitCode> {
+pub fn run(args: &Args) -> Result<ExitCode> {
   let apps = apps::all();
   let app = apps.lookup(&args.app_name)?;
   let log = logger::new(args.verbose);
   let platform = platform::detect(log)?;
   let yard = yard::load_or_create(&yard::production_location()?)?;
   let config_file = config::File::load(&apps)?;
-  let versions = RequestedVersions::determine(&args.app_name, args.version, config_file)?;
+  let versions = RequestedVersions::determine(&args.app_name, &args.version, &config_file)?;
   for version in versions {
     if let Some(executable) = load_or_install(app, &version, platform, &yard, log)? {
       if args.error_on_output {

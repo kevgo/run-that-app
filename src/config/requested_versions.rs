@@ -8,12 +8,12 @@ pub struct RequestedVersions(Vec<RequestedVersion>);
 impl RequestedVersions {
   /// Provides the version to use: if the user provided a version to use via CLI, use it.
   /// Otherwise provide the versions from the config file.
-  pub fn determine(app: &AppName, cli_version: Option<Version>, config_file: File) -> Result<RequestedVersions> {
+  pub fn determine(app: &AppName, cli_version: &Option<Version>, config_file: &File) -> Result<RequestedVersions> {
     if let Some(version) = cli_version {
       return Ok(RequestedVersions::from(version));
     }
     match config_file.lookup(app) {
-      Some(versions) => Ok(versions),
+      Some(versions) => Ok(RequestedVersions(versions.0.clone())),
       None => Err(UserError::RunRequestMissingVersion),
     }
   }
@@ -87,6 +87,12 @@ impl From<RequestedVersion> for RequestedVersions {
 
 impl From<Version> for RequestedVersions {
   fn from(version: Version) -> Self {
+    RequestedVersions(vec![RequestedVersion::from(version)])
+  }
+}
+
+impl From<&Version> for RequestedVersions {
+  fn from(version: &Version) -> Self {
     RequestedVersions(vec![RequestedVersion::from(version)])
   }
 }
