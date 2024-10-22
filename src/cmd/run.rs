@@ -16,7 +16,7 @@ pub fn run(args: Args) -> Result<ExitCode> {
   let platform = platform::detect(log)?;
   let yard = yard::load_or_create(&yard::production_location()?)?;
   let config_file = config::File::load(&apps)?;
-  let versions = RequestedVersions::determine(&args.app_name, args.version, config_file)?;
+  let versions = RequestedVersions::determine(&args.app_name, &args.version, &config_file)?;
   for version in versions {
     if let Some(executable) = load_or_install(app, &version, platform, &yard, log)? {
       if args.error_on_output {
