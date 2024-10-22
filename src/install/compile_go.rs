@@ -23,7 +23,7 @@ pub fn run(app: &dyn CompileGoSource, platform: Platform, version: &Version, con
   let target_folder = yard.create_app_folder(&app.name(), version)?;
   let import_path = app.import_path(version);
   let go_args = vec!["install", &import_path];
-  let executable = if let Ok(system_go_path) = which("go") {
+  let go_path = if let Ok(system_go_path) = which("go") {
     system_go_path
   } else {
     let Some(rta_path) = load_system_go(platform, config_file, yard, log)? else {
@@ -32,10 +32,10 @@ pub fn run(app: &dyn CompileGoSource, platform: Platform, version: &Version, con
     rta_path
   };
   log(Event::CompileGoBegin {
-    go_path: executable.to_string_lossy(),
+    go_path: go_path.to_string_lossy(),
     args: &go_args,
   });
-  let mut cmd = Command::new(executable);
+  let mut cmd = Command::new(go_path);
   cmd.args(go_args);
   cmd.env("GOBIN", target_folder);
   let status = match cmd.status() {
