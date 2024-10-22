@@ -14,7 +14,7 @@ impl RequestedVersions {
     }
     match config_file.lookup(app) {
       Some(versions) => {
-        let v = RequestedVersions(versions.0.to_owned());
+        let v = RequestedVersions(versions.0.clone());
         Ok(v)
       }
       None => Err(UserError::RunRequestMissingVersion),

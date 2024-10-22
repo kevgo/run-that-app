@@ -9,7 +9,7 @@ use crate::yard::Yard;
 use crate::{apps, install, yard};
 use std::process::ExitCode;
 
-pub fn run(args: Args) -> Result<ExitCode> {
+pub fn run(args: &Args) -> Result<ExitCode> {
   let apps = apps::all();
   let app = apps.lookup(&args.app_name)?;
   let log = logger::new(args.verbose);

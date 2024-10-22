@@ -4,7 +4,7 @@ use crate::prelude::*;
 use crate::{apps, logger, platform, yard};
 use std::process::ExitCode;
 
-pub fn which(args: Args) -> Result<ExitCode> {
+pub fn which(args: &Args) -> Result<ExitCode> {
   let apps = apps::all();
   let app = apps.lookup(&args.app_name)?;
   let log = logger::new(args.verbose);
