@@ -59,7 +59,7 @@ fn load_rta_go(platform: Platform, config_file: &config::File, yard: &Yard, log:
   let requested_go_versions = if let Some(versions) = config_file.lookup(&go.name()) {
     versions
   } else {
-    let versions = go.installable_versions(5, log)?;
+    let versions = go.installable_versions(3, log)?;
     &RequestedVersions::new(versions.into_iter().map(RequestedVersion::from).collect())
   };
   // get the executable, install Go if needed
