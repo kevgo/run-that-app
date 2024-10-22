@@ -42,12 +42,8 @@ impl File {
     }
   }
 
-  pub fn lookup(self, app_name: &AppName) -> Option<RequestedVersions> {
-    self
-      .apps
-      .into_iter()
-      .find(|app| app.app_name == app_name)
-      .map(|app_version| app_version.versions)
+  pub fn lookup(&self, app_name: &AppName) -> Option<&RequestedVersions> {
+    self.apps.iter().find(|app| app.app_name == app_name).map(|app_version| &app_version.versions)
   }
 
   pub fn save(&self) -> Result<()> {
