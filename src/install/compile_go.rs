@@ -26,10 +26,10 @@ pub fn run(app: &dyn CompileGoSource, platform: Platform, version: &Version, con
   let executable = if let Ok(system_go_path) = which("go") {
     system_go_path
   } else {
-    match load_system_go(platform, config_file, yard, log)? {
-      Some(path) => path,
-      None => return Ok(Outcome::NotInstalled),
-    }
+    let Some(rta_path) = load_system_go(platform, config_file, yard, log)? else {
+      return Ok(Outcome::NotInstalled);
+    };
+    rta_path
   };
   log(Event::CompileGoBegin {
     go_path: executable.to_string_lossy(),
