@@ -18,7 +18,7 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   let config_file = config::File::load(&apps)?;
   let versions = RequestedVersions::determine(&args.app_name, &args.version, &config_file)?;
   for version in versions {
-    if let Some(executable) = load_or_install(app, &version, platform, &yard, log)? {
+    if let Some(executable) = load_or_install(app, &version, platform, &yard, &config_file, log)? {
       if args.error_on_output {
         return subshell::execute_check_output(&executable, &args.app_args);
       }
@@ -54,10 +54,17 @@ pub struct Args {
   pub verbose: bool,
 }
 
-pub fn load_or_install(app: &dyn App, version: &RequestedVersion, platform: Platform, yard: &Yard, log: Log) -> Result<Option<Executable>> {
+pub fn load_or_install(
+  app: &dyn App,
+  version: &RequestedVersion,
+  platform: Platform,
+  yard: &Yard,
+  config_file: &config::File,
+  log: Log,
+) -> Result<Option<Executable>> {
   match version {
     RequestedVersion::Path(version) => load_from_path(app, version, platform, log),
-    RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, platform, yard, log),
+    RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, platform, yard, config_file, log),
   }
 }
 
@@ -97,7 +104,14 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
   }
 }
 
-fn load_or_install_from_yard(app: &dyn App, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<Option<Executable>> {
+fn load_or_install_from_yard(
+  app: &dyn App,
+  version: &Version,
+  platform: Platform,
+  yard: &Yard,
+  config_file: &config::File,
+  log: Log,
+) -> Result<Option<Executable>> {
   // try to load the app
   if let Some(executable) = install::load(app.install_methods(), version, platform, yard, log) {
     return Ok(Some(executable));
@@ -107,7 +121,7 @@ fn load_or_install_from_yard(app: &dyn App, version: &Version, platform: Platfor
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  if install::any(app.install_methods(), version, platform, yard, log)?.success() {
+  if install::any(app.install_methods(), version, platform, yard, config_file, log)?.success() {
     return Ok(install::load(app.install_methods(), version, platform, yard, log));
   }
 

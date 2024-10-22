@@ -1,10 +1,13 @@
 use super::Outcome;
-use crate::apps::App;
-use crate::config::Version;
+use crate::apps::{self, App};
+use crate::config::{RequestedVersion, RequestedVersions, Version};
 use crate::logger::{Event, Log};
+use crate::platform::Platform;
 use crate::prelude::*;
 use crate::yard::Yard;
+use crate::{cmd, config};
 use std::io::ErrorKind;
+use std::path::PathBuf;
 use std::process::Command;
 use which::which;
 
@@ -16,13 +19,18 @@ pub trait CompileGoSource: App {
 }
 
 /// installs the given Go-based application by compiling it from source
-pub fn run(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
-  let Ok(go_path) = which("go") else {
-    return Ok(Outcome::NotInstalled);
-  };
+pub fn run(app: &dyn CompileGoSource, platform: Platform, version: &Version, config_file: &config::File, yard: &Yard, log: Log) -> Result<Outcome> {
   let target_folder = yard.create_app_folder(&app.name(), version)?;
   let import_path = app.import_path(version);
   let go_args = vec!["install", &import_path];
+  let go_path = if let Ok(system_go_path) = which("go") {
+    system_go_path
+  } else {
+    let Some(rta_path) = load_rta_go(platform, config_file, yard, log)? else {
+      return Ok(Outcome::NotInstalled);
+    };
+    rta_path
+  };
   log(Event::CompileGoBegin {
     go_path: go_path.to_string_lossy(),
     args: &go_args,
@@ -44,4 +52,20 @@ pub fn run(app: &dyn CompileGoSource, version: &Version, yard: &Yard, log: Log) 
   }
   log(Event::CompileGoSuccess);
   Ok(Outcome::Installed)
+}
+
+fn load_rta_go(platform: Platform, config_file: &config::File, yard: &Yard, log: Log) -> Result<Option<PathBuf>> {
+  let go = apps::go::Go {};
+  let requested_go_versions = if let Some(versions) = config_file.lookup(&go.name()) {
+    versions
+  } else {
+    let versions = go.installable_versions(3, log)?;
+    &RequestedVersions::new(versions.into_iter().map(RequestedVersion::from).collect())
+  };
+  for requested_go_version in &requested_go_versions.0 {
+    if let Some(executable) = cmd::run::load_or_install(&go, requested_go_version, platform, yard, config_file, log)? {
+      return Ok(Some(executable.0));
+    }
+  }
+  Ok(None)
 }
