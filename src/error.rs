@@ -1,4 +1,4 @@
-use crate::config::{self, AppName, FILE_NAME};
+use crate::config::{self, FILE_NAME};
 use crate::subshell::Executable;
 use colored::Colorize;
 use std::path::PathBuf;
@@ -71,9 +71,6 @@ pub enum UserError {
   },
   GoCompilationFailed,
   GoNoPermission,
-  GoVersionNotSpecified {
-    app_name: AppName,
-  },
   InvalidConfigFileFormat {
     line_no: usize,
     text: String,
@@ -184,9 +181,6 @@ impl UserError {
         desc("Please see the error output above and try again with a different version.");
       }
       UserError::GoNoPermission => error("No permission to execute the Go compiler"),
-      UserError::GoVersionNotSpecified { app_name } => {
-        error("Go version not specified");
-      }
       UserError::InvalidConfigFileFormat { line_no, text } => {
         error("Invalid config file format");
         desc(&format!("{}:{line_no}: {text}", config::FILE_NAME));

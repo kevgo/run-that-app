@@ -3,7 +3,7 @@ use crate::prelude::*;
 
 /// a collection of Version instances
 #[derive(Clone, Debug, PartialEq)]
-pub struct RequestedVersions(Vec<RequestedVersion>);
+pub struct RequestedVersions(pub Vec<RequestedVersion>);
 
 impl RequestedVersions {
   /// Provides the version to use: if the user provided a version to use via CLI, use it.

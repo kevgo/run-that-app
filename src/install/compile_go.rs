@@ -67,11 +67,12 @@ fn compile_using_rta_go(
   let target_folder = yard.create_app_folder(&app.name(), app_version)?;
   // get the Go version to use
   let go = apps::go::Go {};
-  let requested_go_versions = match config_file.clone().lookup(&go.name()) {
+  let binding = config_file.clone();
+  let requested_go_versions = match binding.lookup(&go.name()) {
     Some(versions) => versions,
     None => {
       let versions = go.installable_versions(5, log)?;
-      RequestedVersions::new(versions.into_iter().map(RequestedVersion::from).collect())
+      &RequestedVersions::new(versions.into_iter().map(RequestedVersion::from).collect())
     }
   };
   // get the executable, install Go if needed
@@ -101,13 +102,13 @@ fn compile_using_rta_go(
 
 fn load_or_install_go(
   go: &Go,
-  requested_go_versions: RequestedVersions,
+  requested_go_versions: &RequestedVersions,
   platform: Platform,
   yard: &Yard,
   config_file: &config::File,
   log: Log,
 ) -> Result<Option<Executable>> {
-  for requested_go_version in requested_go_versions {
+  for requested_go_version in &requested_go_versions.0 {
     if let Some(executable) = cmd::run::load_or_install(go, &requested_go_version, platform, yard, config_file, log)? {
       return Ok(Some(executable));
     }
