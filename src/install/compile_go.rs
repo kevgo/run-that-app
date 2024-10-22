@@ -68,12 +68,11 @@ fn compile_using_rta_go(
   // get the Go version to use
   let go = apps::go::Go {};
   let binding = config_file.clone();
-  let requested_go_versions = match binding.lookup(&go.name()) {
-    Some(versions) => versions,
-    None => {
-      let versions = go.installable_versions(5, log)?;
-      &RequestedVersions::new(versions.into_iter().map(RequestedVersion::from).collect())
-    }
+  let requested_go_versions = if let Some(versions) = binding.lookup(&go.name()) {
+    versions
+  } else {
+    let versions = go.installable_versions(5, log)?;
+    &RequestedVersions::new(versions.into_iter().map(RequestedVersion::from).collect())
   };
   // get the executable, install Go if needed
   let Some(go_executable) = load_or_install_go(&go, requested_go_versions, platform, yard, config_file, log)? else {
