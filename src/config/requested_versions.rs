@@ -13,10 +13,7 @@ impl RequestedVersions {
       return Ok(RequestedVersions::from(version));
     }
     match config_file.lookup(app) {
-      Some(versions) => {
-        let v = RequestedVersions(versions.0.clone());
-        Ok(v)
-      }
+      Some(versions) => Ok(RequestedVersions(versions.0.clone())),
       None => Err(UserError::RunRequestMissingVersion),
     }
   }
