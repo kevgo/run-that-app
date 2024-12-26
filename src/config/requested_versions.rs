@@ -8,7 +8,7 @@ pub struct RequestedVersions(pub Vec<RequestedVersion>);
 impl RequestedVersions {
   /// Provides the version to use: if the user provided a version to use via CLI, use it.
   /// Otherwise provide the versions from the config file.
-  pub fn determine(app: &AppName, cli_version: &Option<Version>, config_file: &File) -> Result<RequestedVersions> {
+  pub fn determine(app: &AppName, cli_version: Option<&Version>, config_file: &File) -> Result<RequestedVersions> {
     if let Some(version) = cli_version {
       return Ok(RequestedVersions::from(version));
     }
