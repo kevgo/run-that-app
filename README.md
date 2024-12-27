@@ -99,7 +99,8 @@ Run-that-app Arguments:
 - `--log=domain`: enable logging for the given domain
   - see the available domains by running with all logging enabled
 - `--optional`: if there is no pre-compiled binary for your platform, do
-  nothing. This is useful for non-essential applications that shouldn't break
+  nothing. This is useful if non-essential applications shouldn't break test
+  scripts.
 - `--update`: updates the versions in `.tool-versions` automation if they are
   not available.
 - `--which`: displays the path to the installed executable of the given
