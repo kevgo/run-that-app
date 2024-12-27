@@ -35,7 +35,7 @@ impl App for Alphavet {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
-    if !identify(&output) {
+    if !output.contains("Checks that functions are ordered alphabetically within packages") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     // as of 0.1.0 the -V switch of alphavet is broken
@@ -47,8 +47,4 @@ impl install::CompileGoSource for Alphavet {
   fn import_path(&self, version: &Version) -> String {
     format!("github.com/{ORG}/{REPO}/cmd/alphavet@v{version}")
   }
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("Checks that functions are ordered alphabetically within packages")
 }

@@ -36,7 +36,7 @@ impl App for ActionLint {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
-    if !identify(&output) {
+    if !output.contains("actionlint is a linter for GitHub Actions workflow files") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     let output = executable.run_output("--version", log)?;
@@ -78,10 +78,6 @@ impl install::CompileGoSource for ActionLint {
 
 fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("actionlint is a linter for GitHub Actions workflow files")
 }
 
 #[cfg(test)]

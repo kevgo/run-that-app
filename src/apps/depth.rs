@@ -36,7 +36,7 @@ impl App for Depth {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
-    if !identify(&output) {
+    if !output.contains("resolves dependencies of internal (stdlib) packages.") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     // as of 1.2.1 depth doesn't display the version of the installed executable
@@ -63,10 +63,6 @@ impl install::DownloadExecutable for Depth {
     };
     format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}",)
   }
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("resolves dependencies of internal (stdlib) packages.")
 }
 
 #[cfg(test)]
