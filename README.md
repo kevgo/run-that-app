@@ -109,7 +109,8 @@ Run-that-app Arguments:
   the given app
 
 The app version override should consist of just the version number, i.e.
-`1.6.26` and not `v1.6.26`.
+`1.6.26` and not `v1.6.26`. Run-that-app formats the version to match Git tags
+as needed.
 
 ### examples
 
@@ -147,8 +148,8 @@ rta --optional shellcheck@0.9.0 --color=always myscript.sh
 
 #### Access the installed executables
 
-This example calls `go vet` with `alphavet` as a custom vet tool. But only if
-`alphavet` is available for the current platform.
+This example calls `go vet` with `alphavet` as a custom vet tool. If `alphavet`
+is unavailable for the current platform, run-that-app would do nothing.
 
 ```bash
 rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
