@@ -55,7 +55,7 @@ impl App for Go {
       return Ok(AnalyzeResult::IdentifiedWithVersion(version.into()));
     }
     let output = executable.run_output("-h", log)?;
-    if identify(&output) {
+    if output.contains("Go is a tool for managing Go source code") {
       Ok(AnalyzeResult::IdentifiedButUnknownVersion)
     } else {
       Ok(AnalyzeResult::NotIdentified { output })
@@ -107,10 +107,6 @@ impl install::DownloadArchive for Go {
 
 fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"go version go(\d+\.\d+\.\d+)")
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("Go is a tool for managing Go source code")
 }
 
 fn parse_go_mod(text: &str) -> Result<&str> {

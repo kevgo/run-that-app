@@ -35,7 +35,7 @@ impl App for Ghokin {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
-    if !identify(&output) {
+    if !output.contains("Clean and/or apply transformation on gherkin files") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     // as of 3.4.0 ghokin's "version" command prints nothing
@@ -66,10 +66,6 @@ impl install::CompileGoSource for Ghokin {
   fn import_path(&self, version: &Version) -> String {
     format!("github.com/{ORG}/{REPO}/v3@v{version}")
   }
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("Clean and/or apply transformation on gherkin files")
 }
 
 #[cfg(test)]
