@@ -32,7 +32,7 @@ pub enum Method<'a> {
   InstallAnotherApp(&'a dyn ViaAnotherApp),
 }
 
-impl<'a> Method<'a> {
+impl Method<'_> {
   /// provides the location of this app's executable within its yard
   pub fn executable_location(&self, version: &Version, platform: Platform) -> String {
     match self {
