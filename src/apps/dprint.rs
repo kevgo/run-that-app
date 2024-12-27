@@ -35,7 +35,7 @@ impl App for Dprint {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
-    if !identify(&output) {
+    if !output.contains("Auto-formats source code based on the specified plugins") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output("--version", log)?) {
@@ -76,10 +76,6 @@ impl install::CompileRustSource for Dprint {
 
 fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"dprint (\d+\.\d+\.\d+)")
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("Auto-formats source code based on the specified plugins")
 }
 
 #[cfg(test)]
