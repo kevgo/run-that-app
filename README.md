@@ -93,7 +93,7 @@ Run-that-app Arguments:
 - `--available`: signal via exit code whether an app is available on the local
   platform
 - `--error-on-output`: treat all output of the executed application as an error
-  condidion
+  condition
 - `--help` or `-h`: show help screen
 - `--log`: enable all logging
 - `--log=domain`: enable logging for the given domain
