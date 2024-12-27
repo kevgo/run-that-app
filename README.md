@@ -148,8 +148,9 @@ rta --optional shellcheck@0.9.0 --color=always myscript.sh
 
 #### Access the installed executables
 
-This example calls `go vet` with `alphavet` as a custom vet tool. If `alphavet`
-is unavailable for the current platform, run-that-app would do nothing.
+This example calls `go vet` with `alphavet` as a custom vet tool. Also, if
+`alphavet` is unavailable for the current platform, run-that-app is instructed
+to do nothing.
 
 ```bash
 rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
