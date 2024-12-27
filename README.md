@@ -104,8 +104,8 @@ Run-that-app Arguments:
 - `--update`: updates the versions in `.tool-versions`
 - `--which`: displays the path to the installed executable of the given
   application
-- `--version` or `-V`: displays the version of run-that-app
-- `--versions=<number>`: displays the given amount of most recent versions of
+- `--version` or `-V`: displays the installed version of run-that-app
+- `--versions=<number>`: displays the given amount of installable versions of
   the given app
 
 The app version override should consist of just the version number, i.e.
