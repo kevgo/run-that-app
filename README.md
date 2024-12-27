@@ -292,7 +292,7 @@ installed somewhere in your PATH, _run-that-app_ would execute it.
 
 Use the package managers of those frameworks to run that app!
 
-#### What if my app has dependencies that run-that-app doesn't support?
+#### What if my app has more complex dependencies that run-that-app cannot support?
 
 Use Docker or WASI.
 
