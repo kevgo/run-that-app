@@ -8,16 +8,18 @@
 _Run-that-app_ executes native CLI applications on Linux, Windows, macOS, and
 BSD without the need to install them first. Installation across all possible
 operating systems is a complex and nuanced problem without a good solution.
-Run-that-app bypasses this problem.
+Run-that-app bypasses this problem. You don't really want to install
+applications, what you really want is running them. By integrating installation
+and execution, run-that-app can drastically simplify many technical aspects.
 
 Run-that-app is minimalistic and completely non-invasive. It ships as a single
 stand-alone binary. Run-that-app uses no magic, no configuration changes, no
 environment variables, no application shims or stubs, no shell integrations, no
 dependencies, no plugins, no need to package applications to install in a
-special way, no application repository, no Docker, no system daemons, no sudo,
-no emulation, no WASM, no bloat. Applications download in 1-2 seconds, and store
-very little (just the executables) on your hard drive. Applications execute at
-100% native speed.
+special way, no application repository, no Docker, no WASM, no system daemons,
+no sudo, no emulation, no IDE plugins, no bloat. Applications download in 1-2
+seconds, and store very little (just the executables) on your hard drive.
+Applications execute at 100% native speed.
 
 ### quickstart
 
@@ -93,23 +95,24 @@ Run-that-app Arguments:
 - `--available`: signal via exit code whether an app is available on the local
   platform
 - `--error-on-output`: treat all output of the executed application as an error
-  condidion
+  condition
 - `--help` or `-h`: show help screen
 - `--log`: enable all logging
 - `--log=domain`: enable logging for the given domain
   - see the available domains by running with all logging enabled
 - `--optional`: if there is no pre-compiled binary for your platform, do
-  nothing. This is useful for non-essential applications that shouldn't break
-- `--update`: updates the versions in `.tool-versions` automation if they are
-  not available.
+  nothing. This is useful if non-essential applications shouldn't break
+  automation if they are not available.
+- `--update`: updates the versions in `.tool-versions`
 - `--which`: displays the path to the installed executable of the given
   application
-- `--version` or `-V`: displays the version of run-that-app
-- `--versions=<number>`: displays the given amount of most recent versions of
+- `--version` or `-V`: displays the installed version of run-that-app
+- `--versions=<number>`: displays the given amount of installable versions of
   the given app
 
 The app version override should consist of just the version number, i.e.
-`1.6.26` and not `v1.6.26`.
+`1.6.26` and not `v1.6.26`. Run-that-app formats the version to match Git tags
+as needed.
 
 ### examples
 
@@ -147,8 +150,9 @@ rta --optional shellcheck@0.9.0 --color=always myscript.sh
 
 #### Access the installed executables
 
-This example calls `go vet` with `alphavet` as a custom vet tool. But only if
-`alphavet` is available for the current platform.
+This example calls `go vet` with `alphavet` as a custom vet tool. Also, if
+`alphavet` is unavailable for the current platform, run-that-app is instructed
+to do nothing.
 
 ```bash
 rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
@@ -237,7 +241,8 @@ Docker is overkill for running simple applications that don't need a custom
 Linux environment. Docker isn't available natively on macOS and Windows. Docker
 often uses Gigabytes of hard drive space. Docker doesn't help with different CPU
 architectures (Intel, ARM, Risc-V). Using Docker on CI can cause the
-Docker-in-Docker problem.
+Docker-in-Docker problem. Docker doesn't help you install random executables
+from GitHub Releases.
 
 #### Why not quickly write a small Bash script that downloads the executable?
 
@@ -289,25 +294,22 @@ installed somewhere in your PATH, _run-that-app_ would execute it.
 
 Use the package managers of those frameworks to run that app!
 
-#### What if my app has dependencies that run-that-app doesn't support?
+#### What if my app has more complex dependencies that run-that-app cannot support?
 
 Use Docker or WASI.
 
 #### Why does run-that-app not have a marketplace that I can submit my application to?
 
-_Run-that-app_ has such a marketplace, it is embedded into its executable. This
-has several advantages.
+That marketplace is _run-that-app's_ source code on GitHub. This has several
+advantages.
 
-1. It's much better to use a proper programming language rather than some data
-   format like JSON or YML to define applications that _run-that-app_ is aware
-   of. You get really strong type checking (not just basic JSON-Schema linting),
-   intelligent auto-completion, much more flexibility in how you implement
-   downloading and unpacking archives or installing an application in other
-   ways, and the ability to run automated tests.
-
-   Defining a new app in means copy-and-pasting the definition of an existing
-   app and replacing a few strings. This can be done equally easily in JSON or a
-   programming language.
+1. You don't need to articulate complex installation and execution requirements
+   and dependencies in some data format like JSON or YML, but can use a proper
+   programming language. This gives you really strong type checking (not just
+   basic JSON-Schema linting), intelligent auto-completion, much more
+   flexibility in how you implement downloading and unpacking archives or
+   installing an application in other ways, and the ability to verify the
+   installation using automated tests.
 
 2. Having a separate marketplace would result in two separate codebases that are
    versioned independently of each other: the version of _run-that-app_ and the
@@ -315,15 +317,15 @@ has several advantages.
    an older versions of _run-that-app_ not able to work with newer versions of
    the marketplace. This severely limits how the data format of the marketplace
    can evolve. An embedded marketplace does not have this problem.
-   _Run-that-app_ can make breaking changes to the marketplace data without that
-   resulting in a breaking change to the solution itself.
+   _Run-that-app_ can make as many breaking changes to the marketplace data as
+   it wants, older versions of it will keep working because they have their own
+   marketplace embedded.
 
-3. If _run-that-app_ would use an external marketplace, it have to check the
-   version of the local replica of that marketplace at each invocation, and
-   determine if it needs to download updates for the marketplace. And then
-   sometimes download updates. This introduces delays that might be acceptable
-   for package managers that get called once to install an app, but not for an
-   app runner that gets called a lot to execute the apps directly.
+3. If _run-that-app_ would use an external marketplace, it needs to sync its
+   local replica of that marketplace at each invocation, and sometimes download
+   updates. This introduces delays that might be acceptable for package managers
+   that get called once to install an app, but not for an app runner that gets
+   called a lot to execute the apps directly.
 
 4. Even with an external marketplace, you would still need to update the
    _run-that-app_ executable regularly. So why not just do that and save
@@ -350,20 +352,20 @@ language that eliminates most runtime errors, and is faster.
 #### mise
 
 [Mise](https://github.com/jdx/mise) is a rewrite of asdf in Rust. It allows
-installing applications, sets up shims and shell integration.
+installing applications, sets up shims and shell integration. It also runs tasks
+and manages your environment variables.
 
-Compared to rtx, run-that-app also supports Windows, offers conditional
-execution, and allows writing application installation logic in a robust
-programming language that eliminates most runtime errors.
+Compared to mise, run-that-app is much simpler and focused on doing one thing
+well.
 
 #### pkgx
 
 [Pkgx](https://pkgx.sh) is a more full-fledged alternative to run-that-app with
 more bells and whistles, a better user experience, better shell integration, and
 more polished design. It comes with its own [app store](https://tea.xyz) that
-apps need to be listed in to be installable. These is (or at least used to be) a
+apps need to be listed in to be installable. There is (or at least used to be) a
 blockchain component to this.
 
-Compared to pkgx, run-that-app is leaner, supports more platforms (Windows), and
-offers additional features like the ability to compile from source, optional
-execution, and checking whether an application is available for your platform.
+Compared to pkgx, run-that-app is focused on doing one thing well, offers
+additional features like the ability to compile from source, optional execution,
+and checking whether an application is available for your platform.
