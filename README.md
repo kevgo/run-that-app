@@ -352,11 +352,11 @@ language that eliminates most runtime errors, and is faster.
 #### mise
 
 [Mise](https://github.com/jdx/mise) is a rewrite of asdf in Rust. It allows
-installing applications, sets up shims and shell integration.
+installing applications, sets up shims and shell integration. It also runs tasks
+and manages your environment variables.
 
-Compared to rtx, run-that-app also supports Windows, offers conditional
-execution, and allows writing application installation logic in a robust
-programming language that eliminates most runtime errors.
+Compared to mise, run-that-app is much simpler and focused on doing one thing
+well.
 
 #### pkgx
 
