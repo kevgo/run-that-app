@@ -36,7 +36,7 @@ impl App for Tikibase {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
-    if !identify(&output) {
+    if !output.contains("Linter for Markdown-based knowledge databases") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output("--version", log)?) {
@@ -71,10 +71,6 @@ impl install::DownloadArchive for Tikibase {
 
 fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"tikibase (\d+\.\d+\.\d+)")
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("Linter for Markdown-based knowledge databases")
 }
 
 #[cfg(test)]

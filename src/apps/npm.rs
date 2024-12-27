@@ -33,7 +33,7 @@ impl App for Npm {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output_args(&["help", "npm"], log)?;
-    if !identify(&output) {
+    if !output.contains("javascript package manager") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     // Npm is versioned together with NodeJS. The actual version of npm is therefore not relevant here.
@@ -55,8 +55,4 @@ impl install::ViaAnotherApp for Npm {
       executable = self.executable_filename(platform)
     )
   }
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("javascript package manager")
 }

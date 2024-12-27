@@ -35,7 +35,7 @@ impl App for Goreleaser {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-v", log)?;
-    if !identify(&output) {
+    if !output.contains("Deliver Go Binaries as fast and easily as possible") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&output) {
@@ -76,10 +76,6 @@ impl install::CompileGoSource for Goreleaser {
 
 fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"GitVersion:\s*(\d+\.\d+\.\d+)")
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("Deliver Go Binaries as fast and easily as possible")
 }
 
 #[cfg(test)]

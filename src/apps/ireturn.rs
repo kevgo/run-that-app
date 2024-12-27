@@ -37,7 +37,7 @@ impl App for Ireturn {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
-    if !identify(&output) {
+    if !output.contains("ireturn: Accept Interfaces, Return Concrete Types") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
@@ -83,10 +83,6 @@ fn ext_text(os: Os) -> &'static str {
     Os::Linux | Os::MacOS => "tar.gz",
     Os::Windows => "zip",
   }
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("ireturn: Accept Interfaces, Return Concrete Types")
 }
 
 fn os_text(os: Os) -> &'static str {

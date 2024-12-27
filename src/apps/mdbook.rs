@@ -36,7 +36,7 @@ impl App for MdBook {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
-    if !identify(&output) {
+    if !output.contains("Creates a book from markdown files") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output("-V", log)?) {
@@ -77,10 +77,6 @@ impl install::CompileRustSource for MdBook {
 
 fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"mdbook v(\d+\.\d+\.\d+)")
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("Creates a book from markdown files")
 }
 
 #[cfg(test)]

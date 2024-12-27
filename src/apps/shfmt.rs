@@ -36,7 +36,7 @@ impl App for Shfmt {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
-    if !identify(&output) {
+    if !output.contains("shfmt formats shell programs") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output("--version", log)?) {
@@ -73,10 +73,6 @@ impl install::CompileGoSource for Shfmt {
 
 fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"^v(\d+\.\d+\.\d+)$")
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("shfmt formats shell programs")
 }
 
 #[cfg(test)]

@@ -36,7 +36,7 @@ impl App for NodePrune {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
-    if !identify(&output) {
+    if !output.contains("Glob of files that should not be pruned") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
@@ -62,10 +62,6 @@ impl install::CompileGoSource for NodePrune {
   fn import_path(&self, version: &Version) -> String {
     format!("github.com/tj/node-prune@{version}")
   }
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("Glob of files that should not be pruned")
 }
 
 #[cfg(test)]
