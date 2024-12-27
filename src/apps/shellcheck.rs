@@ -35,7 +35,7 @@ impl App for ShellCheck {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("--version", log)?;
-    if !identify(&output) {
+    if !output.contains("ShellCheck - shell script analysis tool") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&output) {
@@ -74,10 +74,6 @@ impl install::DownloadArchive for ShellCheck {
 
 fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"version: (\d+\.\d+\.\d+)")
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("ShellCheck - shell script analysis tool")
 }
 
 #[cfg(test)]

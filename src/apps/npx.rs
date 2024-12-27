@@ -33,7 +33,7 @@ impl App for Npx {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
-    if !identify(&output) {
+    if !output.contains("Run a command from a local or remote npm package") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     // Npx is versioned together with NodeJS. The actual version of npm is therefore not relevant here.
@@ -55,8 +55,4 @@ impl install::ViaAnotherApp for Npx {
       executable = self.executable_filename(platform)
     )
   }
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("Run a command from a local or remote npm package")
 }
