@@ -31,7 +31,7 @@ impl App for Goda {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("help", log)?;
-    if !identify(&output) {
+    if !output.contains("Print dependency graph") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     // as of 0.5.7 goda has no way to determine the version of the installed executable
@@ -47,8 +47,4 @@ impl install::CompileGoSource for Goda {
   fn import_path(&self, version: &Version) -> String {
     format!("github.com/{ORG}/{REPO}@v{version}")
   }
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("Print dependency graph")
 }

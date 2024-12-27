@@ -33,7 +33,7 @@ impl App for Gofmt {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
-    if !identify(&output) {
+    if !output.contains("report all errors (not just the first 10 on different lines)") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     // TODO: return the version of Go here
@@ -53,8 +53,4 @@ impl install::ViaAnotherApp for Gofmt {
       executable = self.executable_filename(platform)
     )
   }
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("report all errors (not just the first 10 on different lines)")
 }
