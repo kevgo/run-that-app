@@ -9,8 +9,8 @@ _Run-that-app_ executes native CLI applications on Linux, Windows, macOS, and
 BSD without the need to install them first. Installation across all possible
 operating systems is a complex and nuanced problem without a good solution.
 Run-that-app bypasses this problem. You don't really want to install
-applications, you want to run them. By integrating installation and execution,
-run-that-app can drastically simplify many aspecs.
+applications, what you really want is running them. By integrating installation
+and execution, run-that-app can drastically simplify many technical aspects.
 
 Run-that-app is minimalistic and completely non-invasive. It ships as a single
 stand-alone binary. Run-that-app uses no magic, no configuration changes, no
