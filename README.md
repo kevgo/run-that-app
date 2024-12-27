@@ -363,9 +363,9 @@ well.
 [Pkgx](https://pkgx.sh) is a more full-fledged alternative to run-that-app with
 more bells and whistles, a better user experience, better shell integration, and
 more polished design. It comes with its own [app store](https://tea.xyz) that
-apps need to be listed in to be installable. These is (or at least used to be) a
+apps need to be listed in to be installable. There is (or at least used to be) a
 blockchain component to this.
 
-Compared to pkgx, run-that-app is leaner, supports more platforms (Windows), and
-offers additional features like the ability to compile from source, optional
-execution, and checking whether an application is available for your platform.
+Compared to pkgx, run-that-app is focused on doing one thing well, offers
+additional features like the ability to compile from source, optional execution,
+and checking whether an application is available for your platform.
