@@ -36,7 +36,7 @@ impl App for Gofumpt {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
-    if !identify(&output) {
+    if !output.contains("display diffs instead of rewriting files") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output("--version", log)?) {
@@ -73,10 +73,6 @@ impl install::CompileGoSource for Gofumpt {
 
 fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"v(\d+\.\d+\.\d+) \(go")
-}
-
-fn identify(output: &str) -> bool {
-  output.contains("display diffs instead of rewriting files")
 }
 
 #[cfg(test)]
