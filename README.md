@@ -239,7 +239,8 @@ Docker is overkill for running simple applications that don't need a custom
 Linux environment. Docker isn't available natively on macOS and Windows. Docker
 often uses Gigabytes of hard drive space. Docker doesn't help with different CPU
 architectures (Intel, ARM, Risc-V). Using Docker on CI can cause the
-Docker-in-Docker problem.
+Docker-in-Docker problem. Docker doesn't help you install random executables
+from GitHub Releases.
 
 #### Why not quickly write a small Bash script that downloads the executable?
 
