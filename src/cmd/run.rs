@@ -124,7 +124,6 @@ fn load_or_install_from_yard(
   if install::any(app.install_methods(), version, platform, yard, config_file, log)?.success() {
     return Ok(install::load(app.install_methods(), version, platform, yard, log));
   }
-
   // app could not be installed -> mark as uninstallable
   yard.mark_not_installable(&app.name(), version)?;
   Ok(None)
