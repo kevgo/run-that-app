@@ -1,13 +1,26 @@
 use super::{call_signature, exit_status_to_code};
 use crate::prelude::*;
 use crate::subshell::Executable;
+use std::env;
+use std::ffi::OsString;
 use std::process::{Command, ExitCode};
 
 /// Runs the given executable with the given arguments.
 /// Streams output to the user's terminal.
+#[allow(clippy::unwrap_used)]
 pub fn execute_stream_output(executable: &Executable, args: &[String]) -> Result<ExitCode> {
   let mut cmd = Command::new(executable);
   cmd.args(args);
+  cmd.envs(env::vars_os());
+  let parent = executable.0.parent().unwrap(); // there is always a parent here since this is a location inside the yard
+  let new_path = if let Some(mut path) = env::var_os("PATH") {
+    path.push(":");
+    path.push(parent.as_os_str());
+    path
+  } else {
+    OsString::from(parent)
+  };
+  cmd.env("PATH", new_path);
   let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
     call: call_signature(executable, args),
     reason: err.to_string(),
