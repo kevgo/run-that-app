@@ -2,6 +2,7 @@ use super::{call_signature, exit_status_to_code};
 use crate::prelude::*;
 use crate::subshell::Executable;
 use std::env;
+use std::ffi::OsString;
 use std::process::{Command, ExitCode};
 
 /// Runs the given executable with the given arguments.
@@ -9,18 +10,16 @@ use std::process::{Command, ExitCode};
 pub fn execute_stream_output(executable: &Executable, args: &[String]) -> Result<ExitCode> {
   let mut cmd = Command::new(executable);
   cmd.args(args);
+  cmd.envs(env::vars_os());
   let parent = executable.0.parent().unwrap(); // there is always a parent here
-  env::vars_os().for_each(|(key, mut value)| {
-    let value = if key == "PATH" {
-      value.push(":");
-      value.push(parent.as_os_str());
-      value
-    } else {
-      value
-    };
-    cmd.env(&key, value);
-  });
-
+  let new_path = if let Some(mut path) = env::var_os("PATH") {
+    path.push(":");
+    path.push(parent.as_os_str());
+    path
+  } else {
+    OsString::from(parent)
+  };
+  cmd.env("PATH", new_path);
   let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
     call: call_signature(executable, args),
     reason: err.to_string(),
