@@ -11,7 +11,7 @@ pub fn execute_stream_output(executable: &Executable, args: &[String]) -> Result
   let mut cmd = Command::new(executable);
   cmd.args(args);
   cmd.envs(env::vars_os());
-  let parent = executable.0.parent().unwrap(); // there is always a parent here
+  let parent = executable.0.parent().unwrap(); // there is always a parent here since this is a location inside the yard
   let new_path = if let Some(mut path) = env::var_os("PATH") {
     path.push(":");
     path.push(parent.as_os_str());
