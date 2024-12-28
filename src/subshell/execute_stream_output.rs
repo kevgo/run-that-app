@@ -7,6 +7,7 @@ use std::process::{Command, ExitCode};
 
 /// Runs the given executable with the given arguments.
 /// Streams output to the user's terminal.
+#[allow(clippy::unwrap_used)]
 pub fn execute_stream_output(executable: &Executable, args: &[String]) -> Result<ExitCode> {
   let mut cmd = Command::new(executable);
   cmd.args(args);
