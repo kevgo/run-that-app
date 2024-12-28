@@ -1,5 +1,15 @@
 # run-that-app changelog
 
+### 0.9.0 (2024-12-28)
+
+#### New Features
+
+- Can now compile Go-based tools using an RTA-installed Go toolchain ([#237](https://github.com/kevgo/run-that-app/issues/237)).
+
+#### Bug Fixes
+
+- Adds executables of the application to run to the PATH of the subshell ([#298](https://github.com/kevgo/run-that-app/issues/298)).
+
 ### 0.8.1 (2024-10-19)
 
 - apps: node-prune
