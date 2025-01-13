@@ -10,6 +10,7 @@ pub enum UserError {
   ArchiveCannotExtract {
     reason: String,
   },
+  #[cfg(unix)]
   ArchiveDoesNotContainExecutable {
     expected: String,
   },
@@ -52,12 +53,14 @@ pub enum UserError {
     expression: String,
     reason: String,
   },
+  #[cfg(unix)]
   CannotReadFileMetadata {
     err: String,
   },
   CannotReadZipFile {
     err: String,
   },
+  #[cfg(unix)]
   CannotSetFilePermissions {
     path: String,
     err: String,
@@ -130,6 +133,7 @@ impl UserError {
       UserError::ArchiveCannotExtract { reason } => {
         error(&format!("cannot extract the archive: {reason}"));
       }
+      #[cfg(unix)]
       UserError::ArchiveDoesNotContainExecutable { expected } => {
         error(&format!("archive does not contain the expected executable: {expected}"));
       }
@@ -167,6 +171,7 @@ impl UserError {
         error(&format!("semver range \"{expression}\" is incorrect: {reason}"));
         desc("Please use formats described at https://devhints.io/semver.");
       }
+      #[cfg(unix)]
       UserError::CannotReadFileMetadata { err } => {
         error(&format!("cannot read file metadata: {err}"));
         desc(
@@ -174,6 +179,7 @@ impl UserError {
         );
       }
       UserError::CannotReadZipFile { err } => error(&format!("cannot read ZIP file: {err}")),
+      #[cfg(unix)]
       UserError::CannotSetFilePermissions { path, err } => {
         error(&format!("cannot write permissions for file {path}: {err}"));
         desc("This is an issue with your operating system permissions. Please allow the current user to change permissions for the given path and try again.");
