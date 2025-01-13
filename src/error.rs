@@ -126,6 +126,9 @@ impl UserError {
       UserError::ArchiveCannotExtract { reason } => {
         error(&format!("cannot extract the archive: {reason}"));
       }
+      UserError::ArchiveDoesNotContainExecutable { expected } => {
+        error(&format!("archive does not contain the expected executable: {expected}"));
+      }
       UserError::CannotAccessConfigFile(reason) => {
         error(&format!("cannot read the config file: {reason}"));
         desc(&format!("please make sure {} is a file and accessible to you", config::FILE_NAME,));
@@ -160,6 +163,7 @@ impl UserError {
         error(&format!("semver range \"{expression}\" is incorrect: {reason}"));
         desc("Please use formats described at https://devhints.io/semver.");
       }
+      UserError::CannotReadFileMetadata { err } => error(&format!("cannot read file metadata: {err}")),
       UserError::CannotReadZipFile { err } => error(&format!("cannot read ZIP file: {err}")),
       UserError::CompilationError { reason } => {
         error(&format!("Compilation error: {reason}"));
