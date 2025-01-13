@@ -167,9 +167,17 @@ impl UserError {
         error(&format!("semver range \"{expression}\" is incorrect: {reason}"));
         desc("Please use formats described at https://devhints.io/semver.");
       }
-      UserError::CannotReadFileMetadata { err } => error(&format!("cannot read file metadata: {err}")),
+      UserError::CannotReadFileMetadata { err } => {
+        error(&format!("cannot read file metadata: {err}"));
+        desc(
+          "This is an issue with your operating system permissions. Please allow the current user to read file permissions for the given path and try again.",
+        );
+      }
       UserError::CannotReadZipFile { err } => error(&format!("cannot read ZIP file: {err}")),
-      UserError::CannotSetFilePermissions { path, err } => error(&format!("cannot write permissions for file {path}: {err}")),
+      UserError::CannotSetFilePermissions { path, err } => {
+        error(&format!("cannot write permissions for file {path}: {err}"));
+        desc("This is an issue with your operating system permissions. Please allow the current user to change permissions for the given path and try again.");
+      }
       UserError::CompilationError { reason } => {
         error(&format!("Compilation error: {reason}"));
       }
