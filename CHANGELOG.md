@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+### 0.10.0 (2025-01-13
+
+#### New Features
+
+- apps: mdbook-linkcheck
+
 ### 0.9.0 (2024-12-28)
 
 #### New Features
