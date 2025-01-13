@@ -57,7 +57,11 @@ impl install::DownloadArchive for MdBook {
       Cpu::Arm64 => "aarch64",
       Cpu::Intel64 => "x86_64",
     };
-    format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-v{version}-{cpu}-{os}.tar.gz")
+    let ext = match platform.os {
+      Os::Windows => "zip",
+      Os::Linux | Os::MacOS => "tar.gz",
+    };
+    format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-v{version}-{cpu}-{os}.{ext}")
   }
 
   fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
