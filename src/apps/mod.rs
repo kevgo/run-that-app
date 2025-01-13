@@ -17,6 +17,7 @@ mod goreleaser;
 mod govulnchec;
 mod ireturn;
 mod mdbook;
+mod mdbook_linkcheck;
 mod node_prune;
 mod nodejs;
 mod npm;
@@ -103,6 +104,7 @@ pub fn all() -> Apps {
     Box::new(govulnchec::Govulncheck {}),
     Box::new(ireturn::Ireturn {}),
     Box::new(mdbook::MdBook {}),
+    Box::new(mdbook_linkcheck::MdBookLinkCheck {}),
     Box::new(nodejs::NodeJS {}),
     Box::new(node_prune::NodePrune {}),
     Box::new(npm::Npm {}),
