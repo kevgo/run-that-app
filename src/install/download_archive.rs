@@ -9,6 +9,8 @@ use crate::{archives, download};
 use std::fs;
 #[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
+#[cfg(unix)]
+use std::path::Path;
 
 /// defines the information needed to download and extract an archive containing an app
 pub trait DownloadArchive: App {
@@ -31,9 +33,16 @@ pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, yar
   archive.extract_all(&app_folder, log)?;
   let executable_path_relative = app.executable_path_in_archive(version, platform);
   let executable_path_absolute = app_folder.join(executable_path_relative);
-  let Ok(executable_file) = fs::File::open(&executable_path_absolute) else {
+  #[cfg(unix)]
+  make_executable_unix(&executable_path_absolute)?;
+  Ok(Outcome::Installed)
+}
+
+#[cfg(unix)]
+fn make_executable_unix(filepath: &Path) -> Result<()> {
+  let Ok(executable_file) = fs::File::open(filepath) else {
     return Err(UserError::ArchiveDoesNotContainExecutable {
-      expected: executable_path_absolute.to_string_lossy().to_string(),
+      expected: filepath.to_string_lossy().to_string(),
     });
   };
   let metadata = match executable_file.metadata() {
@@ -42,18 +51,15 @@ pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, yar
       return Err(UserError::CannotReadFileMetadata { err: err.to_string() });
     }
   };
-  #[cfg(windows)]
-  return Ok(Outcome::Installed);
-  // here we are on Unix --> verify file permissions
   let mut permissions = metadata.permissions();
   if permissions.mode() & 0o100 == 0 {
     permissions.set_mode(0o744);
-    if let Err(err) = fs::set_permissions(&executable_path_absolute, permissions) {
+    if let Err(err) = fs::set_permissions(filepath, permissions) {
       return Err(UserError::CannotSetFilePermissions {
-        path: executable_path_absolute.to_string_lossy().to_string(),
+        path: filepath.to_string_lossy().to_string(),
         err: err.to_string(),
       });
     }
   }
-  Ok(Outcome::Installed)
+  Ok(())
 }
