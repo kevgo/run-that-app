@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+### 0.10.3 (2025-01-13)
+
+#### Bug Fixes
+
+- fix the filepath of the Windows archive for mdbook
+
 ### 0.10.2 (2025-01-13)
 
 #### Bug Fixes
