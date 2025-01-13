@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+### 0.10.1 (2025-01-13)
+
+#### Bug Fixes
+
+- fixes the path to the mdbook-linkcheck executable when installing from source
+
 ### 0.10.0 (2025-01-13
 
 #### New Features
