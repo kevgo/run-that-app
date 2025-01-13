@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+### 0.10.2 (2025-01-13)
+
+#### Bug Fixes
+
+- makes the executable file of an application executable if needed after extracting from archive
+
 ### 0.10.1 (2025-01-13)
 
 #### Bug Fixes
