@@ -36,14 +36,13 @@ pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, yar
   #[cfg(unix)]
   make_executable_unix(&executable_path_absolute)?;
   #[cfg(windows)]
-  make_executable_windows(&executable_path_absolute)?;
+  make_executable_windows(&executable_path_absolute);
   Ok(Outcome::Installed)
 }
 
 #[cfg(windows)]
-fn make_executable_windows(_filepath: &Path) -> Result<()> {
+fn make_executable_windows(_filepath: &Path) {
   // Windows does not have file permissions --> nothing to do here
-  Ok(())
 }
 
 #[cfg(unix)]
