@@ -10,6 +10,9 @@ pub enum UserError {
   ArchiveCannotExtract {
     reason: String,
   },
+  ArchiveDoesNotContainExecutable {
+    expected: String,
+  },
   CannotAccessConfigFile(String),
   CannotCompileRustSource {
     err: String,
@@ -48,6 +51,9 @@ pub enum UserError {
   CannotParseSemverRange {
     expression: String,
     reason: String,
+  },
+  CannotReadFileMetadata {
+    err: String,
   },
   CannotReadZipFile {
     err: String,

@@ -6,6 +6,10 @@ use crate::platform::Platform;
 use crate::prelude::*;
 use crate::yard::Yard;
 use crate::{archives, download};
+use std::fs::File;
+
+#[cfg(unix)]
+use std::os::unix::fs::PermissionsExt;
 
 /// defines the information needed to download and extract an archive containing an app
 pub trait DownloadArchive: App {
@@ -26,5 +30,16 @@ pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, yar
     return Err(UserError::UnknownArchive(artifact.filename));
   };
   archive.extract_all(&app_folder, log)?;
+  let executable_path = app.executable_path_in_archive(version, platform);
+  let Ok(executable_file) = File::open("foo.txt") else {
+    return Err(UserError::ArchiveDoesNotContainExecutable { expected: executable_path });
+  };
+  let metadata = match executable_file.metadata() {
+    Ok(metadata) => metadata,
+    Err(err) => return Err(UserError::CannotReadFileMetadata { err: err.to_string() }),
+  };
+  let mut permissions = metadata.permissions();
+  #[cfg(unix)]
+  permissions.set_mode(0o744);
   Ok(Outcome::Installed)
 }
