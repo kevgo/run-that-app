@@ -7,7 +7,6 @@ use crate::prelude::*;
 use crate::yard::Yard;
 use crate::{archives, download};
 use std::fs;
-
 #[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
 
