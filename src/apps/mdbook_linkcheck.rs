@@ -71,7 +71,7 @@ impl install::CompileRustSource for MdBookLinkCheck {
   }
 
   fn executable_path_in_folder(&self, platform: Platform) -> String {
-    self.executable_filename(platform)
+    format!("bin/{}", self.executable_filename(platform))
   }
 }
 
