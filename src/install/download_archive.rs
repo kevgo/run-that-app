@@ -30,9 +30,12 @@ pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, yar
     return Err(UserError::UnknownArchive(artifact.filename));
   };
   archive.extract_all(&app_folder, log)?;
-  let executable_path = app.executable_path_in_archive(version, platform);
-  let Ok(executable_file) = File::open("foo.txt") else {
-    return Err(UserError::ArchiveDoesNotContainExecutable { expected: executable_path });
+  let executable_path_in_archive = app.executable_path_in_archive(version, platform);
+  let executable_path = app_folder.join(executable_path_in_archive);
+  let Ok(executable_file) = File::open(&executable_path) else {
+    return Err(UserError::ArchiveDoesNotContainExecutable {
+      expected: executable_path.to_string_lossy().to_string(),
+    });
   };
   let metadata = match executable_file.metadata() {
     Ok(metadata) => metadata,
