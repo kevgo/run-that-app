@@ -58,8 +58,8 @@ impl install::DownloadArchive for MdBook {
       Cpu::Intel64 => "x86_64",
     };
     let ext = match platform.os {
-      Os::Windows => "zip",
       Os::Linux | Os::MacOS => "tar.gz",
+      Os::Windows => "zip",
     };
     format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-v{version}-{cpu}-{os}.{ext}")
   }
