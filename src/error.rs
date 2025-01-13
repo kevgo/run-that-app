@@ -58,6 +58,10 @@ pub enum UserError {
   CannotReadZipFile {
     err: String,
   },
+  CannotSetFilePermissions {
+    path: String,
+    err: String,
+  },
   CompilationError {
     reason: String,
   },
@@ -165,6 +169,7 @@ impl UserError {
       }
       UserError::CannotReadFileMetadata { err } => error(&format!("cannot read file metadata: {err}")),
       UserError::CannotReadZipFile { err } => error(&format!("cannot read ZIP file: {err}")),
+      UserError::CannotSetFilePermissions { path, err } => error(&format!("cannot write permissions for file {path}: {err}")),
       UserError::CompilationError { reason } => {
         error(&format!("Compilation error: {reason}"));
       }

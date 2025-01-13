@@ -6,7 +6,7 @@ use crate::platform::Platform;
 use crate::prelude::*;
 use crate::yard::Yard;
 use crate::{archives, download};
-use std::fs::File;
+use std::fs;
 
 #[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
@@ -30,19 +30,27 @@ pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, yar
     return Err(UserError::UnknownArchive(artifact.filename));
   };
   archive.extract_all(&app_folder, log)?;
-  let executable_path_in_archive = app.executable_path_in_archive(version, platform);
-  let executable_path = app_folder.join(executable_path_in_archive);
-  let Ok(executable_file) = File::open(&executable_path) else {
+  let executable_path_relative = app.executable_path_in_archive(version, platform);
+  let executable_path_absolute = app_folder.join(executable_path_relative);
+  let Ok(executable_file) = fs::File::open(&executable_path_absolute) else {
     return Err(UserError::ArchiveDoesNotContainExecutable {
-      expected: executable_path.to_string_lossy().to_string(),
+      expected: executable_path_absolute.to_string_lossy().to_string(),
     });
   };
   let metadata = match executable_file.metadata() {
     Ok(metadata) => metadata,
-    Err(err) => return Err(UserError::CannotReadFileMetadata { err: err.to_string() }),
+    Err(err) => {
+      return Err(UserError::CannotReadFileMetadata { err: err.to_string() });
+    }
   };
   let mut permissions = metadata.permissions();
   #[cfg(unix)]
   permissions.set_mode(0o744);
+  if let Err(err) = fs::set_permissions(&executable_path_absolute, permissions) {
+    return Err(UserError::CannotSetFilePermissions {
+      path: executable_path_absolute.to_string_lossy().to_string(),
+      err: err.to_string(),
+    });
+  }
   Ok(Outcome::Installed)
 }
