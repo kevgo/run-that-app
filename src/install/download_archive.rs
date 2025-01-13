@@ -43,14 +43,18 @@ pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, yar
       return Err(UserError::CannotReadFileMetadata { err: err.to_string() });
     }
   };
+  #[cfg(windows)]
+  return Ok(Outcome::Installed);
+  // here we are on Unix --> verify file permissions
   let mut permissions = metadata.permissions();
-  #[cfg(unix)]
-  permissions.set_mode(0o744);
-  if let Err(err) = fs::set_permissions(&executable_path_absolute, permissions) {
-    return Err(UserError::CannotSetFilePermissions {
-      path: executable_path_absolute.to_string_lossy().to_string(),
-      err: err.to_string(),
-    });
+  if permissions.mode() & 0o100 == 0 {
+    permissions.set_mode(0o744);
+    if let Err(err) = fs::set_permissions(&executable_path_absolute, permissions) {
+      return Err(UserError::CannotSetFilePermissions {
+        path: executable_path_absolute.to_string_lossy().to_string(),
+        err: err.to_string(),
+      });
+    }
   }
   Ok(Outcome::Installed)
 }
