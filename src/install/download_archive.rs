@@ -6,10 +6,10 @@ use crate::platform::Platform;
 use crate::prelude::*;
 use crate::yard::Yard;
 use crate::{archives, download};
+#[cfg(unix)]
 use std::fs;
 #[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
-#[cfg(unix)]
 use std::path::Path;
 
 /// defines the information needed to download and extract an archive containing an app
@@ -35,7 +35,15 @@ pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, yar
   let executable_path_absolute = app_folder.join(executable_path_relative);
   #[cfg(unix)]
   make_executable_unix(&executable_path_absolute)?;
+  #[cfg(windows)]
+  make_executable_windows(&executable_path_absolute)?;
   Ok(Outcome::Installed)
+}
+
+#[cfg(windows)]
+fn make_executable_windows(_filepath: &Path) -> Result<()> {
+  // Windows does not have file permissions --> nothing to do here
+  Ok(())
 }
 
 #[cfg(unix)]
