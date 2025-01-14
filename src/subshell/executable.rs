@@ -6,7 +6,7 @@ use std::fmt::Display;
 use std::path::PathBuf;
 use std::process::Command;
 
-/// an application that is stored in the yard and can be executed
+/// an application that can be executed
 #[derive(Clone, Debug, PartialEq)]
 pub struct Executable(pub PathBuf);
 
