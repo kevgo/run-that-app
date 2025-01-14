@@ -26,13 +26,17 @@ pub fn all(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<String>
       });
     }
   };
-  let tags = parse_response(response_text)?;
+  let mut tags = parse_response(response_text)?;
   if tags.is_empty() {
     log(Event::GitHubApiRequestFail { err: "no tags found".into() });
     return Err(UserError::GitHubTagsApiProblem {
       problem: S("no tags found"),
       payload: S(""),
     });
+  }
+  tags.sort_unstable_by(|a, b| human_sort::compare(b, a));
+  if tags.len() > amount {
+    tags.resize(amount, S(""));
   }
   log(Event::GitHubApiRequestSuccess);
   Ok(tags)
