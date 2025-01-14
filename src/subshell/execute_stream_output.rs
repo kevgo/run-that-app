@@ -1,4 +1,4 @@
-use super::{call_signature, exit_status_to_code};
+use super::{exit_status_to_code, format_call};
 use crate::prelude::*;
 use crate::subshell::Executable;
 use std::env;
@@ -22,7 +22,7 @@ pub fn execute_stream_output(executable: &Executable, args: &[String]) -> Result
   };
   cmd.env("PATH", new_path);
   let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
-    call: call_signature(executable, args),
+    call: format_call(executable, args),
     reason: err.to_string(),
   })?;
   Ok(exit_status_to_code(exit_status))
