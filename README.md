@@ -92,27 +92,25 @@ CLI arguments after the application name are passed to the application.
 Run-that-app Arguments:
 
 - `--apps` or `-a`: display all installable applications
-- `--available`: signal via exit code whether an app is available on the local
-  platform
+- `--available <app>`: signal via exit code whether an app is available on the
+  local platform
 - `--error-on-output`: treat all output of the executed application as an error
   condition
 - `--help` or `-h`: show help screen
-- `--log`: enable all logging
-- `--log=domain`: enable logging for the given domain
-  - see the available domains by running with all logging enabled
-- `--optional`: if there is no pre-compiled binary for your platform, do
-  nothing. This is useful if non-essential applications shouldn't break
-  automation if they are not available.
+- `--optional`: if an app is not available for the current platform, do nothing
+- `--setup`: scaffold a config file to specify app versions
 - `--update`: updates the versions in `.tool-versions`
-- `--which`: displays the path to the installed executable of the given
+- `--which <app>`: displays the path to the installed executable of the given
   application
+- `--verbose` or `-v`: display more details
 - `--version` or `-V`: displays the installed version of run-that-app
-- `--versions=<number>`: displays the given amount of installable versions of
-  the given app
+- `--versions <app>`: displays the 10 most recent available versions of the
+  given app
+- `--versions=<number> <app>`: displays the given amount of installable versions
+  of the given app
 
 The app version override should consist of just the version number, i.e.
-`1.6.26` and not `v1.6.26`. Run-that-app formats the version to match Git tags
-as needed.
+`1.6.26`. Even if the Git tag is `v1.6.26`.
 
 ### examples
 

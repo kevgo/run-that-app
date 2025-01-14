@@ -1,4 +1,4 @@
-use super::{call_signature, exit_status_to_code};
+use super::{exit_status_to_code, format_call};
 use crate::cli;
 use crate::prelude::*;
 use crate::subshell::Executable;
@@ -33,7 +33,7 @@ pub fn execute_check_output(executable: &Executable, args: &[String]) -> Result<
   cmd.stdout(Stdio::piped());
   cmd.stderr(Stdio::piped());
   let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
-    call: call_signature(executable, args),
+    call: format_call(executable, args),
     reason: err.to_string(),
   })?;
   let Some(stdout) = process.stdout.take() else {
