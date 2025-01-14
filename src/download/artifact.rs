@@ -3,14 +3,14 @@ use crate::logger::{Event, Log};
 use crate::prelude::*;
 
 /// downloads the artifact at the given URL
-pub fn artifact(url: String, app: &AppName, log: Log) -> Result<Option<Artifact>> {
+pub fn artifact(url: String, app: &AppName, optional: bool, log: Log) -> Result<Option<Artifact>> {
   log(Event::DownloadBegin { app, url: &url });
   let Ok(response) = minreq::get(&url).send() else {
     log(Event::NotOnline);
     return Err(UserError::NotOnline);
   };
   if response.status_code == 404 {
-    log(Event::DownloadNotFound);
+    log(Event::DownloadNotFound { is_optional: optional });
     return Ok(None);
   }
   if response.status_code != 200 {

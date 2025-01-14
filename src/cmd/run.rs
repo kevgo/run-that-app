@@ -18,7 +18,7 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   let config_file = config::File::load(&apps)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   for requested_version in requested_versions {
-    if let Some(executable) = load_or_install(app, &requested_version, platform, &yard, &config_file, log)? {
+    if let Some(executable) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
       if args.error_on_output {
         return subshell::execute_check_output(&executable, &args.app_args);
       }
@@ -58,13 +58,14 @@ pub fn load_or_install(
   app: &dyn App,
   version: &RequestedVersion,
   platform: Platform,
+  optional: bool,
   yard: &Yard,
   config_file: &config::File,
   log: Log,
 ) -> Result<Option<Executable>> {
   match version {
     RequestedVersion::Path(version) => load_from_path(app, version, platform, log),
-    RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, platform, yard, config_file, log),
+    RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, platform, optional, yard, config_file, log),
   }
 }
 
@@ -108,6 +109,7 @@ fn load_or_install_from_yard(
   app: &dyn App,
   version: &Version,
   platform: Platform,
+  optional: bool,
   yard: &Yard,
   config_file: &config::File,
   log: Log,
@@ -121,7 +123,7 @@ fn load_or_install_from_yard(
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  if install::any(app.install_methods(), version, platform, yard, config_file, log)?.success() {
+  if install::any(app.install_methods(), version, platform, optional, yard, config_file, log)?.success() {
     return Ok(install::load(app.install_methods(), version, platform, yard, log));
   }
   // app could not be installed -> mark as uninstallable
