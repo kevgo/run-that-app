@@ -23,7 +23,7 @@ impl App for NodePrune {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    let tags = github_tags::all(ORG, REPO, 100, log)?;
+    let tags = github_tags::all(ORG, REPO, 1, log)?;
     match tags.into_iter().nth(0) {
       Some(first) => Ok(Version::from(first)),
       None => Err(UserError::NoVersionsFound { app: self.name().to_string() }),
@@ -35,10 +35,7 @@ impl App for NodePrune {
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    let mut tags = github_tags::all(ORG, REPO, 100, log)?;
-    if tags.len() > amount {
-      tags.resize(amount, String::new());
-    }
+    let tags = github_tags::all(ORG, REPO, amount, log)?;
     Ok(tags.into_iter().map(Version::from).collect())
   }
 
