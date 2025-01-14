@@ -1,9 +1,8 @@
+use super::strip_leading_v;
 use crate::logger::Event;
 use crate::prelude::*;
 use crate::Log;
 use big_s::S;
-
-use super::strip_leading_v;
 
 pub fn all(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<String>> {
   let url = format!("https://api.github.com/repos/{org}/{repo}/git/refs/tags");
