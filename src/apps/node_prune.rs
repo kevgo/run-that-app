@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
-use crate::hosting::github_releases;
+use crate::hosting::github_tags;
 use crate::install::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
@@ -23,7 +23,11 @@ impl App for NodePrune {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, log)
+    let tags = github_tags::all(ORG, REPO, 1, log)?;
+    match tags.into_iter().nth(0) {
+      Some(first) => Ok(Version::from(first)),
+      None => Err(UserError::NoVersionsFound { app: self.name().to_string() }),
+    }
   }
 
   fn install_methods(&self) -> Vec<install::Method> {
@@ -31,7 +35,8 @@ impl App for NodePrune {
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, log)
+    let tags = github_tags::all(ORG, REPO, amount, log)?;
+    Ok(tags.into_iter().map(Version::from).collect())
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -60,7 +65,7 @@ impl install::DownloadExecutable for NodePrune {
 
 impl install::CompileGoSource for NodePrune {
   fn import_path(&self, version: &Version) -> String {
-    format!("github.com/tj/node-prune@{version}")
+    format!("github.com/tj/node-prune@v{version}")
   }
 }
 
