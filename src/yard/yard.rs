@@ -24,6 +24,15 @@ impl Yard {
     Ok(folder)
   }
 
+  pub fn delete_app_folder(&self, app_name: &AppName) -> Result<()> {
+    let folder_path = self.root.join("apps").join(app_name);
+    fs::remove_dir_all(&folder_path).map_err(|err| UserError::CannotDeleteFolder {
+      folder: folder_path.to_string_lossy().to_string(),
+      err: err.to_string(),
+    })?;
+    Ok(())
+  }
+
   pub fn is_not_installable(&self, app: &AppName, version: &Version) -> bool {
     self.not_installable_path(app, version).exists()
   }
