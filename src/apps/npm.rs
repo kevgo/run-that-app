@@ -4,7 +4,7 @@ use crate::config::{AppName, Version};
 use crate::install::{self, Method, ViaAnotherApp};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::subshell::Executable;
+use crate::subshell::{CallSignature, Executable};
 use crate::Log;
 use std::path;
 
@@ -46,7 +46,7 @@ impl install::ViaAnotherApp for Npm {
     Box::new(NodeJS {})
   }
 
-  fn executable_path_in_other_app_yard(&self, version: &Version, platform: Platform) -> String {
+  fn call_signature_for_other_app(&self, version: &Version, platform: Platform) -> CallSignature {
     format!(
       "node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",
       os = super::nodejs::os_text(platform.os),

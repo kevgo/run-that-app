@@ -31,7 +31,7 @@ mod tikibase;
 use crate::config::{AppName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::subshell::Executable;
+use crate::subshell::{CallSignature, Executable};
 use crate::{install, Log};
 use std::slice::Iter;
 
@@ -39,10 +39,14 @@ pub trait App {
   /// the name by which the user can select this application at the run-that-app CLI
   fn name(&self) -> AppName;
 
-  /// the filename of the executable that starts this app
-  fn executable_filename(&self, platform: Platform) -> String {
+  fn call_signature(&self, platform: Platform) -> CallSignature {
     let bare = self.name().to_string();
-    format!("{bare}{ext}", ext = platform.os.executable_extension())
+    let executable_name = format!("{bare}{ext}", ext = platform.os.executable_extension());
+    CallSignature {
+      executable_name,
+      arguments: vec![],
+      path: vec![],
+    }
   }
 
   /// link to the (human-readable) homepage of the app
