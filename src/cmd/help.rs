@@ -15,18 +15,18 @@ pub fn print_options() {
   println!(
     "OPTIONS:
 
---apps, -a                       display all installable applications
---available                      indicates via the exit code whether the given application is available on this platform
---error-on-output                treat all output of the executed app as an error
---help, -h                       display this help screen
---optional                       if an app is not available for the current platform, create a stub that does nothing
---setup                          scaffold a config file to specify app versions
---update                         updates the versions in .tool-versions to the latest available
---which                          displays the path to the installed executable of the given application
---verbose, -v                    display more details
---version, -V                    displays the version of run-that-app
---versions                       displays the 10 most recent available versions of the given app
---versions=<number>              displays the given number of most recent available versions of the given app
+--apps, -a                  display all installable applications
+--available <app>           indicates via the exit code whether the given application is available on this platform
+--error-on-output           treat all output of the executed app as an error
+--help, -h                  display this help screen
+--optional                  if an app is not available for the current platform, do nothing
+--setup                     scaffold a config file to specify app versions
+--update                    updates the versions in .tool-versions to the latest available
+--which <app>               displays the path to the installed executable of the given application
+--verbose, -v               display more details
+--version, -V               displays the version of run-that-app
+--versions <app>            displays the 10 most recent available versions of the given app
+--versions=<number> <app>   displays the given number of most recent available versions of the given app
 ",
   );
 }
