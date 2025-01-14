@@ -36,7 +36,7 @@ impl App for Go {
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    let tags = github_tags::all(ORG, REPO, 100, log)?;
+    let tags = github_tags::all(ORG, REPO, 400, log)?;
     let mut go_tags: Vec<String> = tags
       .into_iter()
       .filter(|tag| tag.starts_with("go"))
