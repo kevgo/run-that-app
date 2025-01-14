@@ -54,7 +54,7 @@ impl install::DownloadArchive for Ghokin {
       Os::MacOS => "darwin",
       Os::Windows => "windows",
     };
-    format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/ghokin_{version}_{os}_{cpu}.tar.gz")
+    format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz")
   }
 
   fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
@@ -83,7 +83,7 @@ mod tests {
         cpu: Cpu::Intel64,
       };
       let have = ghokin.archive_url(&Version::from("3.4.1"), platform);
-      let want = "https://github.com/antham/ghokin/releases/download/3.4.1/ghokin_3.4.1_darwin_amd64.tar.gz";
+      let want = "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_amd64.tar.gz";
       assert_eq!(have, want);
     }
 
@@ -94,8 +94,8 @@ mod tests {
         os: Os::Windows,
         cpu: Cpu::Intel64,
       };
-      let have = ghokin.archive_url(&Version::from("3.4.1"), platform);
-      let want = "https://github.com/antham/ghokin/releases/download/3.4.1/ghokin_3.4.1_windows_amd64.tar.gz";
+      let have = ghokin.archive_url(&Version::from("3.7.0"), platform);
+      let want = "https://github.com/antham/ghokin/releases/download/v3.7.0/ghokin_3.7.0_windows_amd64.tar.gz";
       assert_eq!(have, want);
     }
   }
