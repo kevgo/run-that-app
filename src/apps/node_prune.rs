@@ -6,7 +6,6 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::Log;
-use big_s::S;
 use const_format::formatcp;
 
 pub struct NodePrune {}
@@ -38,7 +37,7 @@ impl App for NodePrune {
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
     let mut tags = github_tags::all(ORG, REPO, 100, log)?;
     if tags.len() > amount {
-      tags.resize(amount, S(""));
+      tags.resize(amount, String::new());
     }
     Ok(tags.into_iter().map(Version::from).collect())
   }
