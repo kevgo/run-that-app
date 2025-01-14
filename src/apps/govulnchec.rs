@@ -31,7 +31,7 @@ impl App for Govulncheck {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
-    if !output.contains("The deadcode command reports unreachable functions in Go programs") {
+    if !output.contains("Govulncheck reports known vulnerabilities in dependencies") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     // as of 0.16.1 deadcode does not display the version of the installed executable
