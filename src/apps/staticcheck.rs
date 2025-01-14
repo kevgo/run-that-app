@@ -63,6 +63,6 @@ impl install::DownloadArchive for StaticCheck {
 
 impl install::CompileGoSource for StaticCheck {
   fn import_path(&self, version: &Version) -> String {
-    format!("github.com/{ORG}/{REPO}/@{version}")
+    format!("honnef.co/go/tools/cmd/staticcheck@{version}")
   }
 }
