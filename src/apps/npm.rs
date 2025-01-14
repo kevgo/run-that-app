@@ -2,10 +2,11 @@ use super::nodejs::NodeJS;
 use super::{AnalyzeResult, App};
 use crate::config::{AppName, Version};
 use crate::install::{self, Method, ViaAnotherApp};
-use crate::platform::Platform;
+use crate::platform::{Os, Platform};
 use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::Log;
+use big_s::S;
 use std::path;
 
 pub struct Npm {}
@@ -15,6 +16,10 @@ impl App for Npm {
     AppName::from("npm")
   }
 
+  fn executable_filename(&self, _platform: Platform) -> String {
+    // on windows: run "node node_modules\npm\bin\npm-cli.js"
+    S("npm")
+  }
   fn homepage(&self) -> &'static str {
     "https://www.npmjs.com"
   }
@@ -47,12 +52,13 @@ impl install::ViaAnotherApp for Npm {
   }
 
   fn executable_path_in_other_app_yard(&self, version: &Version, platform: Platform) -> String {
-    format!(
-      "node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",
-      os = super::nodejs::os_text(platform.os),
-      cpu = super::nodejs::cpu_text(platform.cpu),
-      sep = path::MAIN_SEPARATOR,
-      executable = self.executable_filename(platform)
-    )
+    let os = super::nodejs::os_text(platform.os);
+    let cpu = super::nodejs::cpu_text(platform.cpu);
+    let sep = path::MAIN_SEPARATOR;
+    let executable = self.executable_filename(platform);
+    match platform.os {
+      Os::Windows => format!("node-v{version}-{os}-{cpu}{sep}{executable}"),
+      Os::Linux | Os::MacOS => format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}"),
+    }
   }
 }
