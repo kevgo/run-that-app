@@ -25,7 +25,7 @@ setup:  # install development dependencies on this computer
 	rustup toolchain add nightly
 	rustup component add rustfmt --toolchain nightly
 
-test: unit lint  # runs all tests
+test: fix unit lint  # runs all tests
 
 unit:  # runs the unit tests
 	cargo test
