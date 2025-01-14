@@ -28,7 +28,7 @@ pub fn log(event: Event) {
       if is_optional {
         eprintln!("{}", "not found, skipping".yellow());
       } else {
-        eprintln!("{}", "not found".red());
+        eprintln!("{}", "not found".yellow());
       }
     }
 
