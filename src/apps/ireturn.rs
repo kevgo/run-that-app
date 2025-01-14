@@ -7,7 +7,6 @@ use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::Log;
 use const_format::formatcp;
-use std::path;
 
 pub struct Ireturn {}
 
@@ -54,14 +53,8 @@ impl install::DownloadArchive for Ireturn {
     )
   }
 
-  fn executable_path_in_archive(&self, version: &Version, platform: Platform) -> String {
-    format!(
-      "gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}",
-      os = os_text(platform.os),
-      cpu = cpu_text(platform.cpu),
-      sep = path::MAIN_SEPARATOR,
-      filename = self.executable_filename(platform)
-    )
+  fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
+    self.executable_filename(platform)
   }
 }
 
