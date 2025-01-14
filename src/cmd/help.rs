@@ -19,11 +19,11 @@ pub fn print_options() {
 --available                      indicates via the exit code whether the given application is available on this platform
 --error-on-output                treat all output of the executed app as an error
 --help, -h                       display this help screen
---log, -l                        enable logging of all categories
---log=<category>, -l=<category>  enable logging for the given category
 --optional                       if an app is not available for the current platform, create a stub that does nothing
+--setup                          scaffold a config file to specify app versions
 --update                         updates the versions in .tool-versions to the latest available
 --which                          displays the path to the installed executable of the given application
+--verbose, -v                    display more details
 --version, -V                    displays the version of run-that-app
 --versions                       displays the 10 most recent available versions of the given app
 --versions=<number>              displays the given number of most recent available versions of the given app
