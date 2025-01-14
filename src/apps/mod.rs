@@ -32,6 +32,7 @@ use crate::config::{AppName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::{CallSignature, Executable};
+use crate::yard::Yard;
 use crate::{install, Log};
 use std::slice::Iter;
 
@@ -39,13 +40,13 @@ pub trait App {
   /// the name by which the user can select this application at the run-that-app CLI
   fn name(&self) -> AppName;
 
-  fn call_signature(&self, platform: Platform) -> CallSignature {
+  fn call_signature(&self, platform: Platform, version: Version, yard: &Yard) -> CallSignature {
     let bare = self.name().to_string();
     let executable_name = format!("{bare}{ext}", ext = platform.os.executable_extension());
     CallSignature {
       executable_name,
       arguments: vec![],
-      path: vec![],
+      path: vec![yard.app_folder(&self.name(), &version)],
     }
   }
 

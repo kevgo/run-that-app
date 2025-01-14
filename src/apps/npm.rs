@@ -5,7 +5,9 @@ use crate::install::{self, Method, ViaAnotherApp};
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::{CallSignature, Executable};
+use crate::yard::Yard;
 use crate::Log;
+use big_s::S;
 use std::path;
 
 pub struct Npm {}
@@ -13,6 +15,15 @@ pub struct Npm {}
 impl App for Npm {
   fn name(&self) -> AppName {
     AppName::from("npm")
+  }
+
+  fn call_signature(&self, platform: Platform, version: Version, yard: &Yard) -> CallSignature {
+    let node = NodeJS {};
+    let node_call_signature = node.call_signature(platform, version, yard);
+    CallSignature {
+      executable_name: node_call_signature.executable_name,
+      arguments: vec![S("node_modules/npm/bin/npm.js")],
+    }
   }
 
   fn homepage(&self) -> &'static str {
@@ -47,12 +58,10 @@ impl install::ViaAnotherApp for Npm {
   }
 
   fn call_signature_for_other_app(&self, version: &Version, platform: Platform) -> CallSignature {
-    format!(
-      "node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",
-      os = super::nodejs::os_text(platform.os),
-      cpu = super::nodejs::cpu_text(platform.cpu),
-      sep = path::MAIN_SEPARATOR,
-      executable = self.executable_filename(platform)
-    )
+    let os = super::nodejs::os_text(platform.os);
+    let cpu = super::nodejs::cpu_text(platform.cpu);
+    let sep = path::MAIN_SEPARATOR;
+    let executable = self.executable_filename(platform);
+    format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",)
   }
 }

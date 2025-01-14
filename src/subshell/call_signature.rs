@@ -7,8 +7,6 @@ pub struct CallSignature {
   pub executable_name: String,
   /// arguments for the executable
   pub arguments: Vec<String>,
-  /// directories to add to the path
-  pub path: Vec<String>,
 }
 
 impl Display for CallSignature {
