@@ -70,7 +70,11 @@ impl install::DownloadArchive for Goreleaser {
 
 impl install::CompileGoSource for Goreleaser {
   fn import_path(&self, version: &Version) -> String {
-    format!("github.com/{ORG}/{REPO}@v{version}")
+    if version.as_str().starts_with("1") {
+      return format!("github.com/{ORG}/{REPO}@v{version}");
+    }
+    let major_version = version.as_str().chars().nth(0).unwrap_or_default();
+    return format!("github.com/{ORG}/{REPO}/v{major_version}@v{version}");
   }
 }
 
