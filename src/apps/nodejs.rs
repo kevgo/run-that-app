@@ -61,13 +61,14 @@ impl install::DownloadArchive for NodeJS {
   }
 
   fn executable_path_in_archive(&self, version: &Version, platform: Platform) -> String {
-    format!(
-      "node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",
-      os = os_text(platform.os),
-      cpu = cpu_text(platform.cpu),
-      sep = path::MAIN_SEPARATOR,
-      executable = self.executable_filename(platform)
-    )
+    let os = os_text(platform.os);
+    let cpu = cpu_text(platform.cpu);
+    let sep = path::MAIN_SEPARATOR;
+    let executable = self.executable_filename(platform);
+    match platform.os {
+      Os::Windows => format!("node-v{version}-{os}-{cpu}{sep}{executable}"),
+      Os::Linux | Os::MacOS => format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}"),
+    }
   }
 }
 
