@@ -64,7 +64,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
           return Ok(ExitCode::FAILURE);
         }
       }
-      yard.delete_app_folder(&app.name())?;
+      let _ = yard.delete_app_folder(&app.name());
     }
   }
   Ok(ExitCode::SUCCESS)
