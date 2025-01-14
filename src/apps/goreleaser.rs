@@ -22,7 +22,7 @@ impl App for Goreleaser {
   }
 
   fn install_methods(&self) -> Vec<install::Method> {
-    vec![Method::DownloadArchive(self), Method::CompileGoSource(self)]
+    vec![Method::DownloadArchive(self)]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
