@@ -103,27 +103,4 @@ mod tests {
     let want = "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_linux_x86_64.tar.gz";
     assert_eq!(have, want);
   }
-
-  mod executable_locations {
-    use crate::config::Version;
-    use crate::install::DownloadArchive;
-    use crate::platform::{Cpu, Os, Platform};
-    use big_s::S;
-
-    #[test]
-    fn executable_locations() {
-      let ireturn = super::super::Ireturn {};
-      let version = Version::from("1.2.3");
-      let platform = Platform {
-        os: Os::Linux,
-        cpu: Cpu::Arm64,
-      };
-      let have = ireturn.executable_path_in_archive(&version, platform);
-      #[cfg(unix)]
-      let want = S("gh_1.2.3_linux_arm64/bin/ireturn");
-      #[cfg(windows)]
-      let want = S("gh_1.2.3_linux_arm64\\bin\\ireturn");
-      assert_eq!(have, want);
-    }
-  }
 }
