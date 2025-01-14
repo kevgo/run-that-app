@@ -99,6 +99,7 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
   if test {
     return Ok(Args {
       command: Command::Test(test::Args {
+        optional,
         start_at_app: app_version.map(|av| av.app_name),
         verbose,
       }),
@@ -107,11 +108,21 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Args> {
   if let Some(AppVersion { app_name, version }) = app_version {
     if indicate_available {
       Ok(Args {
-        command: Command::Available(available::Args { app_name, version, verbose }),
+        command: Command::Available(available::Args {
+          app_name,
+          optional,
+          version,
+          verbose,
+        }),
       })
     } else if which {
       Ok(Args {
-        command: Command::Which(cmd::which::Args { app_name, version, verbose }),
+        command: Command::Which(cmd::which::Args {
+          app_name,
+          optional,
+          version,
+          verbose,
+        }),
       })
     } else if let Some(amount) = versions {
       Ok(Args {
@@ -183,6 +194,7 @@ mod tests {
           let want = Ok(Args {
             command: Command::Available(available::Args {
               app_name: AppName::from("shellcheck"),
+              optional: false,
               version: None,
               verbose: false,
             }),
@@ -196,6 +208,7 @@ mod tests {
           let want = Ok(Args {
             command: Command::Available(available::Args {
               app_name: AppName::from("shellcheck"),
+              optional: false,
               version: None,
               verbose: true,
             }),
@@ -253,6 +266,7 @@ mod tests {
           let have = parse_args(vec!["rta", "--test"]);
           let want = Ok(Args {
             command: Command::Test(test::Args {
+              optional: false,
               start_at_app: None,
               verbose: false,
             }),
@@ -265,6 +279,7 @@ mod tests {
           let have = parse_args(vec!["rta", "--test", "--verbose"]);
           let want = Ok(Args {
             command: Command::Test(test::Args {
+              optional: false,
               start_at_app: None,
               verbose: true,
             }),
@@ -277,6 +292,7 @@ mod tests {
           let have = parse_args(vec!["rta", "--test", "actionlint"]);
           let want = Ok(Args {
             command: Command::Test(test::Args {
+              optional: false,
               start_at_app: Some(AppName::from("actionlint")),
               verbose: false,
             }),
@@ -289,6 +305,7 @@ mod tests {
           let have = parse_args(vec!["rta", "--test", "--verbose", "actionlint"]);
           let want = Ok(Args {
             command: Command::Test(test::Args {
+              optional: false,
               start_at_app: Some(AppName::from("actionlint")),
               verbose: true,
             }),
@@ -460,6 +477,7 @@ mod tests {
           let want = Ok(Args {
             command: Command::Which(cmd::which::Args {
               app_name: AppName::from("shellcheck"),
+              optional: false,
               version: None,
               verbose: false,
             }),
@@ -473,6 +491,7 @@ mod tests {
           let want = Ok(Args {
             command: Command::Which(cmd::which::Args {
               app_name: AppName::from("shellcheck"),
+              optional: false,
               version: None,
               verbose: true,
             }),

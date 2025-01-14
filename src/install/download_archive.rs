@@ -22,8 +22,8 @@ pub trait DownloadArchive: App {
 }
 
 /// downloads and unpacks the content of an archive file
-pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<Outcome> {
-  let Some(artifact) = download::artifact(app.archive_url(version, platform), &app.name(), log)? else {
+pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, optional: bool, yard: &Yard, log: Log) -> Result<Outcome> {
+  let Some(artifact) = download::artifact(app.archive_url(version, platform), &app.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
   let app_folder = yard.create_app_folder(&app.name(), version)?;

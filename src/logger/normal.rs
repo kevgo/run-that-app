@@ -24,7 +24,13 @@ pub fn log(event: Event) {
     Event::DownloadBegin { app, url: _ } => eprintf!("downloading {} ... ", app.as_str().cyan()),
     Event::DownloadSuccess => {}
     Event::DownloadFail { code } => eprintln!("{}", code.to_string().red()),
-    Event::DownloadNotFound => eprintln!("{}", "not found".red()),
+    Event::DownloadNotFound { is_optional } => {
+      if is_optional {
+        eprintln!("{}", "not found, skipping".yellow());
+      } else {
+        eprintln!("{}", "not found".red());
+      }
+    }
 
     Event::ExecutableInstallSaveBegin => eprintf!("saving ... "),
     Event::ExecutableInstallSaveSuccess => eprintln!("{}", "ok".green()),

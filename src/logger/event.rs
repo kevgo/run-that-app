@@ -40,7 +40,9 @@ pub enum Event<'a> {
     url: &'a str,
   },
   DownloadSuccess,
-  DownloadNotFound,
+  DownloadNotFound {
+    is_optional: bool,
+  },
   DownloadFail {
     code: i32,
   },

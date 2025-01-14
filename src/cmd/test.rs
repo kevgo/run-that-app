@@ -30,7 +30,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
         version: &latest_version,
         method: &install_method,
       });
-      if !install::install(&install_method, &latest_version, platform, &yard, &config_file, log)?.success() {
+      if !install::install(&install_method, &latest_version, platform, args.optional, &yard, &config_file, log)?.success() {
         continue;
       }
       let executable_location = install_method.executable_location(&latest_version, platform);
@@ -71,6 +71,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
 
 #[derive(Debug, PartialEq)]
 pub struct Args {
+  pub optional: bool,
   pub start_at_app: Option<AppName>,
   pub verbose: bool,
 }

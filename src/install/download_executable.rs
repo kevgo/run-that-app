@@ -14,9 +14,9 @@ pub trait DownloadExecutable: App {
 }
 
 /// downloads an uncompressed precompiled binary
-pub fn install(app: &dyn DownloadExecutable, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Result<Outcome> {
+pub fn install(app: &dyn DownloadExecutable, version: &Version, platform: Platform, optional: bool, yard: &Yard, log: Log) -> Result<Outcome> {
   let url = app.download_url(version, platform);
-  let Some(artifact) = download::artifact(url, &app.name(), log)? else {
+  let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
   let filepath_on_disk = yard.create_app_folder(&app.name(), version)?.join(app.executable_filename(platform));
