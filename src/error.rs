@@ -29,6 +29,10 @@ pub enum UserError {
   CannotCreateTempDir {
     err: String,
   },
+  CannotDeleteFolder {
+    folder: String,
+    err: String,
+  },
   CannotDetermineCurrentDirectory(String),
   CannotDetermineHomeDirectory,
   CannotDownload {
@@ -142,6 +146,7 @@ impl UserError {
         desc(&format!("please make sure {} is a file and accessible to you", config::FILE_NAME,));
       }
       UserError::CannotCompileRustSource { err } => error(&format!("cannot compile Rust source: {err}")),
+      UserError::CannotDeleteFolder { folder, err } => error(&format!("cannot delete folder {folder}: {err}")),
       UserError::CannotDetermineCurrentDirectory(reason) => error(&format!("cannot determine the current directory: {reason}")),
       UserError::CannotCreateFile { filename, err } => error(&format!("cannot create file {filename}: {err}")),
       UserError::CannotCreateFolder { folder, reason } => {
