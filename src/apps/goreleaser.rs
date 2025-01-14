@@ -22,7 +22,7 @@ impl App for Goreleaser {
   }
 
   fn install_methods(&self) -> Vec<install::Method> {
-    vec![Method::DownloadArchive(self), Method::CompileGoSource(self)]
+    vec![Method::DownloadArchive(self)]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -65,12 +65,6 @@ impl install::DownloadArchive for Goreleaser {
 
   fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
     self.executable_filename(platform)
-  }
-}
-
-impl install::CompileGoSource for Goreleaser {
-  fn import_path(&self, version: &Version) -> String {
-    format!("github.com/{ORG}/{REPO}@v{version}")
   }
 }
 
