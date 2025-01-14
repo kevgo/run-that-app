@@ -61,25 +61,44 @@ impl install::DownloadExecutable for Depth {
       Os::MacOS => "darwin",
       Os::Windows => "windows",
     };
-    format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}",)
+    let ext = match platform.os {
+      Os::Windows => ".exe",
+      Os::Linux | Os::MacOS => "",
+    };
+    format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}{ext}",)
   }
 }
 
 #[cfg(test)]
 mod tests {
-  use crate::config::Version;
-  use crate::install::DownloadExecutable;
-  use crate::platform::{Cpu, Os, Platform};
 
-  #[test]
-  fn artifact_url() {
-    let depth = super::Depth {};
-    let platform = Platform {
-      os: Os::Linux,
-      cpu: Cpu::Intel64,
-    };
-    let have = depth.download_url(&Version::from("1.2.1"), platform);
-    let want = "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_linux_amd64";
-    assert_eq!(have, want);
+  mod artifact_url {
+    use crate::config::Version;
+    use crate::install::DownloadExecutable;
+    use crate::platform::{Cpu, Os, Platform};
+
+    #[test]
+    fn linux() {
+      let depth = super::super::Depth {};
+      let platform = Platform {
+        os: Os::Linux,
+        cpu: Cpu::Intel64,
+      };
+      let have = depth.download_url(&Version::from("1.2.1"), platform);
+      let want = "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_linux_amd64";
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows() {
+      let depth = super::super::Depth {};
+      let platform = Platform {
+        os: Os::Windows,
+        cpu: Cpu::Intel64,
+      };
+      let have = depth.download_url(&Version::from("1.2.1"), platform);
+      let want = "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_windows_amd64.exe";
+      assert_eq!(have, want);
+    }
   }
 }
