@@ -1,4 +1,4 @@
-use super::{format_call, exit_status_to_code};
+use super::{exit_status_to_code, format_call};
 use crate::prelude::*;
 use crate::subshell::Executable;
 use std::env;
