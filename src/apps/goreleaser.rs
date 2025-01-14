@@ -35,7 +35,7 @@ impl App for Goreleaser {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-v", log)?;
-    if !output.contains("Deliver Go Binaries as fast and easily as possible") {
+    if !output.contains("https://goreleaser.com") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&output) {
@@ -101,7 +101,7 @@ mod tests {
     use crate::apps::UserError;
 
     #[test]
-    fn success() {
+    fn version_1() {
       let output = r"
   ____       ____      _
  / ___| ___ |  _ \ ___| | ___  __ _ ___  ___ _ __
