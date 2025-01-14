@@ -1,3 +1,4 @@
+use super::strip_leading_v;
 use crate::logger::Event;
 use crate::prelude::*;
 use crate::Log;
@@ -57,7 +58,7 @@ fn parse_response(text: &str) -> Result<Vec<String>> {
       });
     };
     if let Some(stripped) = entry_ref.strip_prefix("refs/tags/") {
-      result.push(stripped.to_string());
+      result.push(strip_leading_v(stripped).to_string());
     }
   }
   Ok(result)
@@ -97,7 +98,7 @@ mod tests {
 
             "#;
       let have: Vec<String> = super::super::parse_response(response).unwrap();
-      let want = vec![S("v1.0.1"), S("v1.0.2")];
+      let want = vec![S("1.0.1"), S("1.0.2")];
       pretty::assert_eq!(have, want);
     }
   }
