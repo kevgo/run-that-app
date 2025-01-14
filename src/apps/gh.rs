@@ -58,13 +58,14 @@ impl install::DownloadArchive for Gh {
   }
 
   fn executable_path_in_archive(&self, version: &Version, platform: Platform) -> String {
-    format!(
-      "gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}",
-      os = os_text(platform.os),
-      cpu = cpu_text(platform.cpu),
-      sep = path::MAIN_SEPARATOR,
-      filename = self.executable_filename(platform)
-    )
+    let os = os_text(platform.os);
+    let cpu = cpu_text(platform.cpu);
+    let sep = path::MAIN_SEPARATOR;
+    let filename = self.executable_filename(platform);
+    match platform.os {
+      Os::Windows => format!("bin{sep}{filename}"),
+      Os::Linux | Os::MacOS => format!("gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}",),
+    }
   }
 }
 
