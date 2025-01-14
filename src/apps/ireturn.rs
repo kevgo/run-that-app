@@ -60,7 +60,7 @@ impl install::DownloadArchive for Ireturn {
 
 impl install::CompileGoSource for Ireturn {
   fn import_path(&self, version: &Version) -> String {
-    format!("github.com/{ORG}/{REPO}/cmd/ireturn@{version}")
+    format!("github.com/{ORG}/{REPO}/cmd/ireturn@v{version}")
   }
 }
 
