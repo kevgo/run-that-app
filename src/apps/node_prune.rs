@@ -24,10 +24,10 @@ impl App for NodePrune {
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
     let tags = github_tags::all(ORG, REPO, 1, log)?;
-    match tags.into_iter().nth(0) {
-      Some(first) => Ok(Version::from(first)),
-      None => Err(UserError::NoVersionsFound { app: self.name().to_string() }),
-    }
+    let Some(tag) = tags.into_iter().nth(0) else {
+      return Err(UserError::NoVersionsFound { app: self.name().to_string() });
+    };
+    Ok(Version::from(tag))
   }
 
   fn install_methods(&self) -> Vec<install::Method> {

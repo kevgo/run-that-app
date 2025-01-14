@@ -3,6 +3,8 @@ use crate::prelude::*;
 use crate::Log;
 use big_s::S;
 
+use super::strip_leading_v;
+
 pub fn all(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<String>> {
   let url = format!("https://api.github.com/repos/{org}/{repo}/git/refs/tags");
   log(Event::GitHubApiRequestBegin { url: &url });
@@ -57,7 +59,7 @@ fn parse_response(text: &str) -> Result<Vec<String>> {
       });
     };
     if let Some(stripped) = entry_ref.strip_prefix("refs/tags/") {
-      result.push(stripped.to_string());
+      result.push(strip_leading_v(stripped).to_string());
     }
   }
   Ok(result)
