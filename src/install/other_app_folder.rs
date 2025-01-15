@@ -5,6 +5,7 @@ use crate::config::{RequestedVersion, Version};
 use crate::logger::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
+use crate::subshell::CallSignature;
 use crate::yard::Yard;
 use crate::{apps, config};
 
@@ -12,6 +13,9 @@ use crate::{apps, config};
 pub trait ViaAnotherApp: App {
   /// the application that ships the executable of this app
   fn app_to_install(&self) -> Box<dyn App>;
+
+  /// location of this app's executable within the archive of the other app
+  fn call_signature_for_other_app(&self, platform: Platform) -> CallSignature;
 }
 
 pub fn install_other_app(

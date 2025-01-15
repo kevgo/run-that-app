@@ -4,7 +4,7 @@ use crate::config::{AppName, Version};
 use crate::install::{Method, ViaAnotherApp};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::subshell::Executable;
+use crate::subshell::{CallSignature, Executable};
 use crate::{install, Log};
 use std::path;
 
@@ -46,11 +46,12 @@ impl install::ViaAnotherApp for Gofmt {
     Box::new(Go {})
   }
 
-  fn executable_path_in_other_app_yard(&self, _version: &Version, platform: Platform) -> String {
-    format!(
-      "go{sep}bin{sep}{executable}",
-      sep = path::MAIN_SEPARATOR,
-      executable = self.executable_filename(platform)
-    )
+  fn call_signature_for_other_app(&self, platform: Platform) -> crate::subshell::CallSignature {
+    let sep = path::MAIN_SEPARATOR;
+    let executable = self.executable_filename(platform);
+    CallSignature {
+      executable_name: format!("go{sep}bin{sep}{executable}"),
+      arguments: vec![],
+    }
   }
 }
