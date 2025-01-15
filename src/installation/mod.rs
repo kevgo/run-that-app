@@ -16,7 +16,7 @@ pub use compile_go::CompileGoSource;
 pub use compile_rust::CompileRustSource;
 pub use download_archive::DownloadArchive;
 pub use download_executable::DownloadExecutable;
-pub use other_app_folder::PartOfAnotherApp;
+pub use other_app_folder::ExecutableInAnotherApp;
 
 /// the different methods to install an application
 pub enum Method<'a> {
@@ -29,7 +29,7 @@ pub enum Method<'a> {
   /// installs the application by compiling it from its source written in Rust
   CompileRustSource(&'a dyn CompileRustSource),
   /// this application is shipped as part of another application
-  InstallAnotherApp(&'a dyn PartOfAnotherApp),
+  ExecutableInAnotherApp(&'a dyn ExecutableInAnotherApp),
 }
 
 impl Method<'_> {
@@ -40,7 +40,7 @@ impl Method<'_> {
       Method::DownloadExecutable(app) => app.executable_filename(platform),
       Method::CompileGoSource(app) => app.executable_filename(platform),
       Method::CompileRustSource(app) => app.executable_path_in_folder(platform),
-      Method::InstallAnotherApp(app) => app.executable_path_in_other_app_yard(version, platform),
+      Method::ExecutableInAnotherApp(app) => app.executable_path_in_other_app_yard(version, platform),
     }
   }
 
@@ -51,7 +51,7 @@ impl Method<'_> {
       Method::DownloadExecutable(app) => app.name(),
       Method::CompileGoSource(app) => app.name(),
       Method::CompileRustSource(app) => app.name(),
-      Method::InstallAnotherApp(app) => app.app_to_install().name(),
+      Method::ExecutableInAnotherApp(app) => app.app_to_install().name(),
     }
   }
 
@@ -61,7 +61,7 @@ impl Method<'_> {
       Method::DownloadExecutable(app) => format!("download executable for {app}@{version}", app = app.name()),
       Method::CompileGoSource(app) => format!("compile {app}@{version} from source", app = app.name()),
       Method::CompileRustSource(app) => format!("compile {app}@{version} from source", app = app.name()),
-      Method::InstallAnotherApp(app) => format!(
+      Method::ExecutableInAnotherApp(app) => format!(
         "install {app}@{version} through {carrier}",
         app = app.name(),
         carrier = app.app_to_install().name()
@@ -102,7 +102,7 @@ pub fn install(
     Method::DownloadExecutable(app) => download_executable::install(*app, version, platform, optional, yard, log),
     Method::CompileGoSource(app) => compile_go::run(*app, platform, version, optional, config_file, yard, log),
     Method::CompileRustSource(app) => compile_rust::run(*app, version, yard, log),
-    Method::InstallAnotherApp(app) => other_app_folder::install_other_app(*app, version, platform, optional, yard, config_file, log),
+    Method::ExecutableInAnotherApp(app) => other_app_folder::install_other_app(*app, version, platform, optional, yard, config_file, log),
   }
 }
 
