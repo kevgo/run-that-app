@@ -1,8 +1,7 @@
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::installation::CallSignature;
-use crate::installation::{self, Method, RunOtherExecutable};
+use crate::installation::{self, CallSignature, Method, RunOtherExecutable};
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;

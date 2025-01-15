@@ -1,8 +1,7 @@
 use crate::applications::{AnalyzeResult, App};
 use crate::configuration::{self, ApplicationName, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
-use crate::installation::CallSignature;
-use crate::installation::Method;
+use crate::installation::{CallSignature, Method};
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
