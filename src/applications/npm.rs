@@ -8,8 +8,7 @@ use crate::installation::{self, Method};
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
-use crate::{applications, Log};
-use std::path;
+use crate::Log;
 
 pub struct Npm {}
 
@@ -54,5 +53,10 @@ impl installation::RunOtherExecutable for Npm {
       executable,
       args: vec![S("node_modules/npm/bin/npm-cli.js")],
     }
+  }
+
+  fn executable_to_call(&self, platform: Platform) -> String {
+    let node = NodeJS {};
+    node.executable_filename(platform)
   }
 }

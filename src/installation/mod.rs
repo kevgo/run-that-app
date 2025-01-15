@@ -46,7 +46,7 @@ impl Method<'_> {
       Method::CompileGoSource(app) => app.executable_filename(platform),
       Method::CompileRustSource(app) => app.executable_path_in_folder(platform),
       Method::ExecutableInAnotherApp(app) => app.executable_path_in_other_app_yard(version, platform),
-      Method::RunOtherExecutable(app) => app.call_signature(version, platform).executable,
+      Method::RunOtherExecutable(app) => app.executable_filename(version, platform).executable,
     }
   }
 
@@ -58,6 +58,7 @@ impl Method<'_> {
       Method::CompileGoSource(app) => app.name(),
       Method::CompileRustSource(app) => app.name(),
       Method::ExecutableInAnotherApp(app) => app.app_to_install().name(),
+      Method::RunOtherExecutable(app) => app.app_to_install().name(),
     }
   }
 
