@@ -46,11 +46,6 @@ impl installation::RunOtherExecutable for Npm {
     Box::new(NodeJS {})
   }
 
-  fn executable_to_call(&self, platform: Platform) -> String {
-    let node = NodeJS {};
-    node.executable_filename(platform)
-  }
-
   fn call_signature(&self, executable: Executable) -> installation::CallSignature {
     CallSignature {
       executable,

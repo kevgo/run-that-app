@@ -14,6 +14,7 @@ use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::yard::Yard;
+use big_s::S;
 pub use compile_go::CompileGoSource;
 pub use compile_rust::CompileRustSource;
 pub use download_archive::DownloadArchive;
@@ -46,7 +47,14 @@ impl Method<'_> {
       Method::CompileGoSource(app) => app.executable_filename(platform),
       Method::CompileRustSource(app) => app.executable_path_in_folder(platform),
       Method::ExecutableInAnotherApp(app) => app.executable_path_in_other_app_yard(version, platform),
-      Method::RunOtherExecutable(app) => app.executable_filename(platform),
+      Method::RunOtherExecutable(_) => S(""), //{
+                                              //     let app_to_call = app.app_to_execute();
+                                              //     for install_method in app_to_call.install_methods() {
+                                              //       if let Some(executable) = load_or_install(&app_to_call, requested_version, platform, optional, yard, config_file, log)? {
+                                              //         return executable;
+                                              //       }
+                                              //     }
+                                              //   }
     }
   }
 
