@@ -8,7 +8,7 @@ use std::process::{Command, ExitCode};
 /// Runs the given executable with the given arguments.
 /// Streams output to the user's terminal.
 #[allow(clippy::unwrap_used)]
-pub fn execute_stream_output(call_signature: CallSignature, args: &[String]) -> Result<ExitCode> {
+pub fn execute_stream_output(call_signature: &CallSignature, args: &[String]) -> Result<ExitCode> {
   let mut cmd = Command::new(&call_signature.executable);
   cmd.args(&call_signature.args);
   cmd.args(args);
@@ -54,7 +54,7 @@ mod tests {
         executable: Executable(executable_path),
         args: vec![],
       };
-      let have = execute_stream_output(call_signature, &[]).unwrap();
+      let have = execute_stream_output(&call_signature, &[]).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(0))"));
     }
@@ -75,7 +75,7 @@ mod tests {
         executable: Executable(executable_path),
         args: vec![],
       };
-      let have = execute_stream_output(call_signature, &[]).unwrap();
+      let have = execute_stream_output(&call_signature, &[]).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(3))"));
     }

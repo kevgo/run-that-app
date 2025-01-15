@@ -1,5 +1,3 @@
-use big_s::S;
-
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
@@ -9,6 +7,7 @@ use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::Log;
+use big_s::S;
 
 pub struct Npm {}
 

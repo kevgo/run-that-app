@@ -23,9 +23,9 @@ pub fn run(args: &Args) -> Result<ExitCode> {
     if let Some(executable) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
       let call_signature = determine_call_signature(app, executable);
       if args.error_on_output {
-        return subshell::execute_check_output(call_signature, &args.app_args);
+        return subshell::execute_check_output(&call_signature, &args.app_args);
       }
-      return subshell::execute_stream_output(call_signature, &args.app_args);
+      return subshell::execute_stream_output(&call_signature, &args.app_args);
     }
   }
   if args.optional {
@@ -135,7 +135,7 @@ fn load_or_install_from_yard(
 }
 
 fn determine_call_signature(app: &dyn App, executable: Executable) -> CallSignature {
-  let installation_method = app.install_methods().into_iter().nth(0).unwrap();
+  let installation_method = app.install_methods().into_iter().next().unwrap();
   match installation_method {
     Method::DownloadArchive(_)
     | Method::DownloadExecutable(_)
