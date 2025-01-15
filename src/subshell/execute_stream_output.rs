@@ -1,5 +1,5 @@
 use super::{exit_status_to_code, format_call};
-use crate::installation::run_other_executable::CallSignature;
+use crate::installation::CallSignature;
 use crate::prelude::*;
 use std::env;
 use std::ffi::OsString;
@@ -36,7 +36,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn unix_success() {
-      use crate::installation::run_other_executable::CallSignature;
+      use crate::installation::CallSignature;
       use crate::subshell::{execute_stream_output, Executable};
       use big_s::S;
       use std::io::Write;
@@ -63,7 +63,7 @@ mod tests {
     #[cfg(unix)]
     fn unix_error() {
       use crate::filesystem::make_file_executable;
-      use crate::installation::run_other_executable::CallSignature;
+      use crate::installation::CallSignature;
       use crate::subshell::{execute_stream_output, Executable};
       use big_s::S;
       use std::fs;

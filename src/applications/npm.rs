@@ -1,7 +1,7 @@
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::installation::run_other_executable::CallSignature;
+use crate::installation::CallSignature;
 use crate::installation::{self, Method, RunOtherExecutable};
 use crate::platform::Platform;
 use crate::prelude::*;
@@ -47,7 +47,7 @@ impl installation::RunOtherExecutable for Npm {
     Box::new(NodeJS {})
   }
 
-  fn call_signature(&self, executable: Executable) -> installation::run_other_executable::CallSignature {
+  fn call_signature(&self, executable: Executable) -> installation::CallSignature {
     CallSignature {
       executable,
       args: vec![S("node_modules/npm/bin/npm-cli.js")],

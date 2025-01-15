@@ -19,7 +19,7 @@ pub use compile_rust::CompileRustSource;
 pub use download_archive::DownloadArchive;
 pub use download_executable::DownloadExecutable;
 pub use executable_in_another_app::ExecutableInAnotherApp;
-pub use run_other_executable::RunOtherExecutable;
+pub use run_other_executable::{CallSignature, RunOtherExecutable};
 
 /// the different methods to install an application
 pub enum Method<'a> {

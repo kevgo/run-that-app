@@ -1,6 +1,6 @@
 use super::{exit_status_to_code, format_call};
 use crate::cli;
-use crate::installation::run_other_executable::CallSignature;
+use crate::installation::CallSignature;
 use crate::prelude::*;
 use std::io::{self, BufRead, BufReader, Read, Write};
 use std::process::{self, Child, Command, ExitCode, Stdio};
