@@ -15,7 +15,7 @@ pub trait PartOfAnotherApp: App {
   fn app_to_install(&self) -> Box<dyn App>;
 
   /// location of this app's executable within the archive of the other app
-  fn call_signature_for_other_app(&self, platform: Platform) -> CallSignature;
+  fn call_signature_for_other_app(&self, platform: Platform) -> CallSignature<String>;
 }
 
 pub fn install_other_app(

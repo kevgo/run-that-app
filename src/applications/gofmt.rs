@@ -46,11 +46,11 @@ impl installation::PartOfAnotherApp for Gofmt {
     Box::new(Go {})
   }
 
-  fn call_signature_for_other_app(&self, platform: Platform) -> crate::subshell::CallSignature {
+  fn call_signature_for_other_app(&self, platform: Platform) -> CallSignature<String> {
     let sep = path::MAIN_SEPARATOR;
     let executable = self.executable_filename(platform);
     CallSignature {
-      executable_name: format!("go{sep}bin{sep}{executable}"),
+      executable: format!("go{sep}bin{sep}{executable}"),
       arguments: vec![],
     }
   }

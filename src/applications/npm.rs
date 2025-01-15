@@ -46,9 +46,9 @@ impl installation::PartOfAnotherApp for Npm {
     Box::new(NodeJS {})
   }
 
-  fn call_signature_for_other_app(&self, platform: Platform) -> CallSignature {
+  fn call_signature_for_other_app(&self, platform: Platform) -> CallSignature<String> {
     CallSignature {
-      executable_name: (NodeJS {}).executable_filename(platform),
+      executable: (NodeJS {}).executable_filename(platform),
       arguments: vec![S("node_modules/bin/npm/npm.js")],
     }
   }

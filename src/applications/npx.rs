@@ -4,7 +4,7 @@ use crate::configuration::{ApplicationName, Version};
 use crate::installation::{self, Method};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::subshell::Executable;
+use crate::subshell::{CallSignature, Executable};
 use crate::{applications, Log};
 use std::path;
 
@@ -46,13 +46,14 @@ impl installation::PartOfAnotherApp for Npx {
     Box::new(NodeJS {})
   }
 
-  fn executable_path_in_other_app_yard(&self, version: &Version, platform: Platform) -> String {
-    format!(
-      "node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",
-      os = applications::nodejs::os_text(platform.os),
-      cpu = applications::nodejs::cpu_text(platform.cpu),
-      sep = path::MAIN_SEPARATOR,
-      executable = self.executable_filename(platform)
-    )
+  fn call_signature_for_other_app(&self, platform: Platform) -> CallSignature<String> {
+    let os = applications::nodejs::os_text(platform.os);
+    let cpu = applications::nodejs::cpu_text(platform.cpu);
+    let sep = path::MAIN_SEPARATOR;
+    let executable = self.executable_filename(platform);
+    CallSignature {
+      executable: format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}"),
+      arguments: todo!(),
+    }
   }
 }

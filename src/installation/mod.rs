@@ -6,11 +6,13 @@ pub mod download_archive;
 pub mod download_executable;
 pub mod other_app_folder;
 
+use std::path::PathBuf;
+
 use crate::configuration::{self, ApplicationName, Version};
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::subshell::Executable;
+use crate::subshell::{CallSignature, Executable};
 use crate::yard::Yard;
 pub use compile_go::CompileGoSource;
 pub use compile_rust::CompileRustSource;
@@ -34,13 +36,13 @@ pub enum Method<'a> {
 
 impl Method<'_> {
   /// provides the location of this app's executable within its yard
-  pub fn executable_location(&self, version: &Version, platform: Platform) -> String {
+  pub fn executable_location(&self, version: &Version, platform: Platform) -> CallSignature<PathBuf> {
     match self {
-      Method::DownloadArchive(app) => app.executable_path_in_archive(version, platform),
+      Method::DownloadArchive(app) => CallSignature { executable: (), arguments: () } app.executable_path_in_archive(version, platform),
       Method::DownloadExecutable(app) => app.executable_filename(platform),
       Method::CompileGoSource(app) => app.executable_filename(platform),
       Method::CompileRustSource(app) => app.executable_path_in_folder(platform),
-      Method::InstallAnotherApp(app) => app.executable_path_in_other_app_yard(version, platform),
+      Method::InstallAnotherApp(app) => app.call_signature_for_other_app(platform),
     }
   }
 
