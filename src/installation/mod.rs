@@ -16,7 +16,7 @@ pub use compile_go::CompileGoSource;
 pub use compile_rust::CompileRustSource;
 pub use download_archive::DownloadArchive;
 pub use download_executable::DownloadExecutable;
-pub use other_app_folder::ViaAnotherApp;
+pub use other_app_folder::PartOfAnotherApp;
 
 /// the different methods to install an application
 pub enum Method<'a> {
@@ -29,7 +29,7 @@ pub enum Method<'a> {
   /// installs the application by compiling it from its source written in Rust
   CompileRustSource(&'a dyn CompileRustSource),
   /// this application is shipped as part of another application
-  InstallAnotherApp(&'a dyn ViaAnotherApp),
+  InstallAnotherApp(&'a dyn PartOfAnotherApp),
 }
 
 impl Method<'_> {
