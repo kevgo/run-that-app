@@ -19,7 +19,7 @@ pub fn first_capture<'a>(text: &'a str, regex: &str) -> Result<&'a str> {
 #[cfg(test)]
 mod tests {
   use super::first_capture;
-  use crate::regexp::first_capture::UserError;
+  use crate::UserError;
 
   #[test]
   fn multiple_matches() {

@@ -1,6 +1,6 @@
 use super::strip_leading_v;
-use crate::config::Version;
-use crate::logger::Event;
+use crate::configuration::Version;
+use crate::logging::Event;
 use crate::prelude::*;
 use crate::Log;
 use big_s::S;
@@ -85,7 +85,7 @@ fn parse_versions_response(text: &str) -> Result<Vec<Version>> {
 
 #[cfg(test)]
 mod tests {
-  use crate::config::Version;
+  use crate::configuration::Version;
 
   #[test]
   #[allow(clippy::too_many_lines)]

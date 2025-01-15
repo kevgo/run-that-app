@@ -1,4 +1,4 @@
-use crate::logger::{Event, Log};
+use crate::logging::{Event, Log};
 use crate::prelude::*;
 use crate::subshell::Executable;
 use std::fs;

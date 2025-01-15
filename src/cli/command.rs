@@ -1,4 +1,4 @@
-use crate::cmd::{self, available, run, test, update, versions};
+use crate::commands::{self, available, run, test, update, versions};
 
 /// the main commands that run-this-app can execute
 #[derive(Debug, PartialEq)]
@@ -10,7 +10,7 @@ pub enum Command {
   DisplayHelp,
   Setup,
   Test(test::Args),
-  Which(cmd::which::Args),
+  Which(commands::which::Args),
   Update(update::Args),
   Version,
   Versions(versions::Args),
