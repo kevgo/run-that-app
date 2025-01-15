@@ -135,6 +135,7 @@ fn load_or_install_from_yard(
 }
 
 fn determine_call_signature(app: &dyn App, executable: Executable) -> CallSignature {
+  #[allow(clippy::unwrap_used)]
   let installation_method = app.install_methods().into_iter().next().unwrap();
   match installation_method {
     Method::DownloadArchive(_)
