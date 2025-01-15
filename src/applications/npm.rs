@@ -1,8 +1,8 @@
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::installation::{self, Method, ViaAnotherApp};
-use crate::platform::{Os, Platform};
+use crate::installation::{self, ExecutableInAnotherApp, Method};
+use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::Log;
@@ -25,7 +25,7 @@ impl App for Npm {
   }
 
   fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::InstallAnotherApp(self)]
+    vec![Method::ExecutableInAnotherApp(self)]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -46,7 +46,7 @@ impl App for Npm {
   }
 }
 
-impl installation::ViaAnotherApp for Npm {
+impl installation::ExecutableInAnotherApp for Npm {
   fn app_to_install(&self) -> Box<dyn App> {
     Box::new(NodeJS {})
   }

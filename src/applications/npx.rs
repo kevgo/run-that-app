@@ -20,7 +20,7 @@ impl App for Npx {
   }
 
   fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::InstallAnotherApp(self)]
+    vec![Method::ExecutableInAnotherApp(self)]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -41,7 +41,7 @@ impl App for Npx {
   }
 }
 
-impl installation::ViaAnotherApp for Npx {
+impl installation::ExecutableInAnotherApp for Npx {
   fn app_to_install(&self) -> Box<dyn App> {
     Box::new(NodeJS {})
   }
