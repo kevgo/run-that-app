@@ -25,11 +25,11 @@ impl App for Npm {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    self.app_to_install().latest_installable_version(log)
+    self.app_to_execute().latest_installable_version(log)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    self.app_to_install().installable_versions(amount, log)
+    self.app_to_execute().installable_versions(amount, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -43,7 +43,7 @@ impl App for Npm {
 }
 
 impl installation::RunOtherExecutable for Npm {
-  fn app_to_install(&self) -> Box<dyn App> {
+  fn app_to_execute(&self) -> Box<dyn App> {
     Box::new(NodeJS {})
   }
 

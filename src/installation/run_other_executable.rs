@@ -5,7 +5,7 @@ use crate::subshell::Executable;
 /// defines the information needed for apps who execute by running the executable of another application
 pub trait RunOtherExecutable: App {
   /// the application that ships the executable of this app
-  fn app_to_install(&self) -> Box<dyn App>;
+  fn app_to_execute(&self) -> Box<dyn App>;
 
   fn executable_to_call(&self, platform: Platform) -> String;
 

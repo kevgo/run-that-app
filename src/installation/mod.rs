@@ -58,7 +58,7 @@ impl Method<'_> {
       Method::CompileGoSource(app) => app.name(),
       Method::CompileRustSource(app) => app.name(),
       Method::ExecutableInAnotherApp(app) => app.app_to_install().name(),
-      Method::RunOtherExecutable(app) => app.app_to_install().name(),
+      Method::RunOtherExecutable(app) => app.app_to_execute().name(),
     }
   }
 
@@ -76,7 +76,7 @@ impl Method<'_> {
       Method::RunOtherExecutable(app) => format!(
         "run {app}@{version} by calling {carrier}",
         app = app.name(),
-        carrier = app.app_to_install().name()
+        carrier = app.app_to_execute().name()
       ),
     }
   }
@@ -121,7 +121,7 @@ pub fn install(
       Ok(Outcome::Installed)
     }
     Method::RunOtherExecutable(app) => {
-      let app_to_install = app.app_to_install();
+      let app_to_install = app.app_to_execute();
       let yard_version = RequestedVersion::Yard(version.to_owned());
       load_or_install(app_to_install.as_ref(), &yard_version, platform, optional, yard, config_file, log)?;
       Ok(Outcome::Installed)
