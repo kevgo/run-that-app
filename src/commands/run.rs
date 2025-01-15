@@ -2,6 +2,7 @@ use crate::applications::{AnalyzeResult, App};
 use crate::configuration::{self, ApplicationName, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
 use crate::installation::run_other_executable::CallSignature;
+use crate::installation::Method;
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
@@ -20,11 +21,11 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   for requested_version in requested_versions {
     if let Some(executable) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
-      let call_signature = determine_call_signature(app, &requested_version, platform);
+      let call_signature = determine_call_signature(app, executable);
       if args.error_on_output {
-        return subshell::execute_check_output(&executable, &args.app_args);
+        return subshell::execute_check_output(call_signature, &args.app_args);
       }
-      return subshell::execute_stream_output(&executable, &args.app_args);
+      return subshell::execute_stream_output(call_signature, &args.app_args);
     }
   }
   if args.optional {
@@ -133,4 +134,14 @@ fn load_or_install_from_yard(
   Ok(None)
 }
 
-fn determine_call_signature(app: &dyn App, executable: Executable, version: &Version, platform: Platform) -> CallSignature {}
+fn determine_call_signature(app: &dyn App, executable: Executable) -> CallSignature {
+  let installation_method = app.install_methods().into_iter().nth(0).unwrap();
+  match installation_method {
+    Method::DownloadArchive(_)
+    | Method::DownloadExecutable(_)
+    | Method::CompileGoSource(_)
+    | Method::CompileRustSource(_)
+    | Method::ExecutableInAnotherApp(_) => CallSignature { executable, args: vec![] },
+    Method::RunOtherExecutable(run_other_executable) => run_other_executable.call_signature(executable),
+  }
+}

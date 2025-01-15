@@ -1,3 +1,5 @@
+use big_s::S;
+
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
@@ -47,18 +49,10 @@ impl installation::RunOtherExecutable for Npm {
     Box::new(NodeJS {})
   }
 
-  fn call_signature(&self, version: &Version, platform: Platform) -> installation::run_other_executable::CallSignature {
-    let node = NodeJS {};
-    CallSignature { executable, args: vec![] }
-  }
-
-  fn executable_path_in_other_app_yard(&self, version: &Version, platform: Platform) -> String {
-    format!(
-      "node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",
-      os = applications::nodejs::os_text(platform.os),
-      cpu = applications::nodejs::cpu_text(platform.cpu),
-      sep = path::MAIN_SEPARATOR,
-      executable = self.executable_filename(platform)
-    )
+  fn call_signature(&self, executable: Executable) -> installation::run_other_executable::CallSignature {
+    CallSignature {
+      executable,
+      args: vec![S("node_modules/npm/bin/npm-cli.js")],
+    }
   }
 }

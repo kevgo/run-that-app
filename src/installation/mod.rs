@@ -108,6 +108,7 @@ pub fn install(
     Method::CompileGoSource(app) => compile_go::run(*app, platform, version, optional, config_file, yard, log),
     Method::CompileRustSource(app) => compile_rust::run(*app, version, yard, log),
     Method::ExecutableInAnotherApp(app) => executable_in_another_app::install_other_app(*app, version, platform, optional, yard, config_file, log),
+    Method::RunOtherExecutable(app) => executable_in_another_app::install_other_app(*app, version, platform, optional, yard, config_file, log),
   }
 }
 
