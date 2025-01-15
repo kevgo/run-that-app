@@ -7,7 +7,8 @@ pub mod download_executable;
 pub mod executable_in_another_app;
 pub mod run_other_executable;
 
-use crate::configuration::{self, ApplicationName, Version};
+use crate::commands::run::load_or_install;
+use crate::configuration::{self, ApplicationName, RequestedVersion, Version};
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
@@ -71,6 +72,11 @@ impl Method<'_> {
         app = app.name(),
         carrier = app.app_to_install().name()
       ),
+      Method::RunOtherExecutable(app) => format!(
+        "run {app}@{version} by calling {carrier}",
+        app = app.name(),
+        carrier = app.app_to_install().name()
+      ),
     }
   }
 }
@@ -107,8 +113,18 @@ pub fn install(
     Method::DownloadExecutable(app) => download_executable::install(*app, version, platform, optional, yard, log),
     Method::CompileGoSource(app) => compile_go::run(*app, platform, version, optional, config_file, yard, log),
     Method::CompileRustSource(app) => compile_rust::run(*app, version, yard, log),
-    Method::ExecutableInAnotherApp(app) => executable_in_another_app::install_other_app(*app, version, platform, optional, yard, config_file, log),
-    Method::RunOtherExecutable(app) => executable_in_another_app::install_other_app(*app, version, platform, optional, yard, config_file, log),
+    Method::ExecutableInAnotherApp(app) => {
+      let app_to_install = app.app_to_install();
+      let yard_version = RequestedVersion::Yard(version.to_owned());
+      load_or_install(app_to_install.as_ref(), &yard_version, platform, optional, yard, config_file, log)?;
+      Ok(Outcome::Installed)
+    }
+    Method::RunOtherExecutable(app) => {
+      let app_to_install = app.app_to_install();
+      let yard_version = RequestedVersion::Yard(version.to_owned());
+      load_or_install(app_to_install.as_ref(), &yard_version, platform, optional, yard, config_file, log)?;
+      Ok(Outcome::Installed)
+    }
   }
 }
 
