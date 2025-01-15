@@ -1,4 +1,4 @@
-use crate::logger::{Event, Log};
+use crate::logging::{Event, Log};
 use crate::prelude::*;
 use std::borrow::Cow;
 use std::ffi::OsStr;

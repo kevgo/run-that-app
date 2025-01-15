@@ -1,5 +1,5 @@
 use super::Archive;
-use crate::logger::{Event, Log};
+use crate::logging::{Event, Log};
 use crate::prelude::*;
 use flate2::read::GzDecoder;
 use std::io;

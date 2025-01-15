@@ -1,9 +1,9 @@
-use crate::config::{AppName, Version};
+use crate::configuration::{ApplicationName, Version};
 
 /// a request from the user to run a particular app
 #[derive(Debug, PartialEq)]
 pub struct AppVersion {
-  pub app_name: AppName,
+  pub app_name: ApplicationName,
   pub version: Option<Version>,
 }
 
@@ -22,14 +22,14 @@ impl AppVersion {
 mod tests {
   mod parse {
     use crate::cli::AppVersion;
-    use crate::config::{AppName, Version};
+    use crate::configuration::{ApplicationName, Version};
 
     #[test]
     fn name_and_version() {
       let give = "shellcheck@0.9.0";
       let have = AppVersion::new(give);
       let want = AppVersion {
-        app_name: AppName::from("shellcheck"),
+        app_name: ApplicationName::from("shellcheck"),
         version: Some(Version::from("0.9.0")),
       };
       pretty::assert_eq!(have, want);
@@ -40,7 +40,7 @@ mod tests {
       let give = "shellcheck";
       let have = AppVersion::new(give);
       let want = AppVersion {
-        app_name: AppName::from("shellcheck"),
+        app_name: ApplicationName::from("shellcheck"),
         version: None,
       };
       pretty::assert_eq!(have, want);
@@ -51,7 +51,7 @@ mod tests {
       let give = "shellcheck@";
       let have = AppVersion::new(give);
       let want = AppVersion {
-        app_name: AppName::from("shellcheck"),
+        app_name: ApplicationName::from("shellcheck"),
         version: None,
       };
       pretty::assert_eq!(have, want);
