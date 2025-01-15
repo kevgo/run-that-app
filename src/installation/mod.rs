@@ -4,7 +4,7 @@ pub mod compile_go;
 pub mod compile_rust;
 pub mod download_archive;
 pub mod download_executable;
-pub mod other_app_folder;
+pub mod executable_in_another_app;
 
 use std::path::PathBuf;
 
@@ -18,7 +18,7 @@ pub use compile_go::CompileGoSource;
 pub use compile_rust::CompileRustSource;
 pub use download_archive::DownloadArchive;
 pub use download_executable::DownloadExecutable;
-pub use other_app_folder::ExecutableInAnotherApp;
+pub use executable_in_another_app::ExecutableInAnotherApp;
 
 /// the different methods to install an application
 pub enum Method<'a> {
@@ -104,7 +104,7 @@ pub fn install(
     Method::DownloadExecutable(app) => download_executable::install(*app, version, platform, optional, yard, log),
     Method::CompileGoSource(app) => compile_go::run(*app, platform, version, optional, config_file, yard, log),
     Method::CompileRustSource(app) => compile_rust::run(*app, version, yard, log),
-    Method::ExecutableInAnotherApp(app) => other_app_folder::install_other_app(*app, version, platform, optional, yard, config_file, log),
+    Method::ExecutableInAnotherApp(app) => executable_in_another_app::install_other_app(*app, version, platform, optional, yard, config_file, log),
   }
 }
 
