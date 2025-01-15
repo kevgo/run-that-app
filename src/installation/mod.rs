@@ -5,6 +5,7 @@ pub mod compile_rust;
 pub mod download_archive;
 pub mod download_executable;
 pub mod executable_in_another_app;
+pub mod run_other_executable;
 
 use crate::configuration::{self, ApplicationName, Version};
 use crate::logging::{Event, Log};
