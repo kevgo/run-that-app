@@ -8,7 +8,7 @@ use crate::prelude::*;
 use crate::yard::Yard;
 use crate::{applications, configuration};
 
-/// defines the information needed for apps whose executable is shipped as part of another app
+/// defines the information needed for apps who have a dedicated executable, but this executable is shipped as part of another app
 pub trait ExecutableInAnotherApp: App {
   /// the application that ships the executable of this app
   fn app_to_install(&self) -> Box<dyn App>;
