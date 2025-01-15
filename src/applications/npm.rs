@@ -1,7 +1,8 @@
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::installation::{self, ExecutableInAnotherApp, Method};
+use crate::installation::run_other_executable::CallSignature;
+use crate::installation::{self, Method};
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
@@ -41,9 +42,14 @@ impl App for Npm {
   }
 }
 
-impl installation::ExecutableInAnotherApp for Npm {
+impl installation::RunOtherExecutable for Npm {
   fn app_to_install(&self) -> Box<dyn App> {
     Box::new(NodeJS {})
+  }
+
+  fn call_signature(&self, version: &Version, platform: Platform) -> installation::run_other_executable::CallSignature {
+    let node = NodeJS {};
+    CallSignature { executable, args: vec![] }
   }
 
   fn executable_path_in_other_app_yard(&self, version: &Version, platform: Platform) -> String {

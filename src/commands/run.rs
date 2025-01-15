@@ -1,6 +1,7 @@
 use crate::applications::{AnalyzeResult, App};
 use crate::configuration::{self, ApplicationName, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
+use crate::installation::run_other_executable::CallSignature;
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
@@ -19,6 +20,7 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   for requested_version in requested_versions {
     if let Some(executable) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
+      let call_signature = determine_call_signature(app, &requested_version, platform);
       if args.error_on_output {
         return subshell::execute_check_output(&executable, &args.app_args);
       }
@@ -130,3 +132,5 @@ fn load_or_install_from_yard(
   yard.mark_not_installable(&app.name(), version)?;
   Ok(None)
 }
+
+fn determine_call_signature(app: &dyn App, executable: Executable, version: &Version, platform: Platform) -> CallSignature {}

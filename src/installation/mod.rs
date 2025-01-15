@@ -18,6 +18,7 @@ pub use compile_rust::CompileRustSource;
 pub use download_archive::DownloadArchive;
 pub use download_executable::DownloadExecutable;
 pub use executable_in_another_app::ExecutableInAnotherApp;
+pub use run_other_executable::RunOtherExecutable;
 
 /// the different methods to install an application
 pub enum Method<'a> {
@@ -31,6 +32,8 @@ pub enum Method<'a> {
   CompileRustSource(&'a dyn CompileRustSource),
   /// this application is shipped as part of another application
   ExecutableInAnotherApp(&'a dyn ExecutableInAnotherApp),
+  /// this applications executes by running the executable of another app
+  RunOtherExecutable(&'a dyn RunOtherExecutable),
 }
 
 impl Method<'_> {
@@ -42,6 +45,7 @@ impl Method<'_> {
       Method::CompileGoSource(app) => app.executable_filename(platform),
       Method::CompileRustSource(app) => app.executable_path_in_folder(platform),
       Method::ExecutableInAnotherApp(app) => app.executable_path_in_other_app_yard(version, platform),
+      Method::RunOtherExecutable(app) => app.call_signature(version, platform).executable,
     }
   }
 
