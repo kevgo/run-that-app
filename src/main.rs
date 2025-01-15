@@ -1,14 +1,14 @@
-mod apps;
+mod applications;
 mod archives;
 mod cli;
-mod cmd;
-mod config;
+mod commands;
+mod configuration;
 mod download;
 mod error;
 mod filesystem;
 mod hosting;
-mod install;
-mod logger;
+mod installation;
+mod logging;
 mod platform;
 mod prelude;
 mod regexp;
@@ -16,7 +16,7 @@ mod subshell;
 mod yard;
 
 use cli::Command;
-use logger::Log;
+use logging::Log;
 use std::process::ExitCode;
 
 fn main() -> ExitCode {
@@ -32,16 +32,16 @@ fn main() -> ExitCode {
 fn inner() -> prelude::Result<ExitCode> {
   let cli_args = cli::parse(std::env::args())?;
   match cli_args.command {
-    Command::AppsLong => Ok(cmd::apps::long()),
-    Command::AppsShort => Ok(cmd::apps::short()),
-    Command::Available(args) => cmd::available(&args),
-    Command::RunApp(args) => cmd::run(&args),
-    Command::DisplayHelp => Ok(cmd::help()),
-    Command::Setup => cmd::setup(),
-    Command::Test(mut args) => cmd::test(&mut args),
-    Command::Which(args) => cmd::which(&args),
-    Command::Update(args) => cmd::update(&args),
-    Command::Version => Ok(cmd::version()),
-    Command::Versions(args) => cmd::versions(&args),
+    Command::AppsLong => Ok(commands::applications::long()),
+    Command::AppsShort => Ok(commands::applications::short()),
+    Command::Available(args) => commands::available(&args),
+    Command::RunApp(args) => commands::run(&args),
+    Command::DisplayHelp => Ok(commands::help()),
+    Command::Setup => commands::setup(),
+    Command::Test(mut args) => commands::test(&mut args),
+    Command::Which(args) => commands::which(&args),
+    Command::Update(args) => commands::update(&args),
+    Command::Version => Ok(commands::version()),
+    Command::Versions(args) => commands::versions(&args),
   }
 }

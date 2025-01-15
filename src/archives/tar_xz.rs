@@ -1,5 +1,5 @@
 use super::Archive;
-use crate::logger::{Event, Log};
+use crate::logging::{Event, Log};
 use crate::prelude::*;
 use std::io::Cursor;
 use std::path::Path;
