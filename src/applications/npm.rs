@@ -4,7 +4,7 @@ use super::nodejs::NodeJS;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::installation::run_other_executable::CallSignature;
-use crate::installation::{self, Method};
+use crate::installation::{self, Method, RunOtherExecutable};
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
@@ -22,7 +22,7 @@ impl App for Npm {
   }
 
   fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::ExecutableInAnotherApp(self)]
+    vec![Method::RunOtherExecutable(self)]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
