@@ -1,4 +1,4 @@
-use crate::config::{self, FILE_NAME};
+use crate::configuration::{self, FILE_NAME};
 use crate::subshell::Executable;
 use colored::Colorize;
 use std::path::PathBuf;
@@ -143,7 +143,7 @@ impl UserError {
       }
       UserError::CannotAccessConfigFile(reason) => {
         error(&format!("cannot read the config file: {reason}"));
-        desc(&format!("please make sure {} is a file and accessible to you", config::FILE_NAME,));
+        desc(&format!("please make sure {} is a file and accessible to you", configuration::FILE_NAME,));
       }
       UserError::CannotCompileRustSource { err } => error(&format!("cannot compile Rust source: {err}")),
       UserError::CannotDeleteFolder { folder, err } => error(&format!("cannot delete folder {folder}: {err}")),
@@ -217,7 +217,7 @@ impl UserError {
       UserError::GoNoPermission => error("No permission to execute the Go compiler"),
       UserError::InvalidConfigFileFormat { line_no, text } => {
         error("Invalid config file format");
-        desc(&format!("{}:{line_no}: {text}", config::FILE_NAME));
+        desc(&format!("{}:{line_no}: {text}", configuration::FILE_NAME));
       }
       UserError::InvalidGitHubAPIResponse { err } => error(&format!("invalid GitHub API response: {err}")),
       UserError::InvalidNumber => {
@@ -244,7 +244,7 @@ impl UserError {
         desc("Please provide the exact version of the app you want to execute in this format: app@1.2.3");
         desc(&format!(
           "You can also create a file {} that defines them using this format: https://asdf-vm.com/manage/configuration.html",
-          config::FILE_NAME,
+          configuration::FILE_NAME,
         ));
       }
       UserError::RustCompilationFailed => {
