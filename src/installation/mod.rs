@@ -1,10 +1,10 @@
 //! the different ways to install an application
 
-pub mod compile_go;
-pub mod compile_rust;
-pub mod download_archive;
-pub mod download_executable;
-pub mod other_app_folder;
+mod compile_go;
+mod compile_rust;
+mod download_archive;
+mod download_executable;
+mod other_app_folder;
 
 use crate::configuration::{self, ApplicationName, Version};
 use crate::logging::{Event, Log};
