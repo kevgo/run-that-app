@@ -1,5 +1,5 @@
 use super::strip_leading_v;
-use crate::logger::Event;
+use crate::logging::Event;
 use crate::prelude::*;
 use crate::Log;
 use big_s::S;
