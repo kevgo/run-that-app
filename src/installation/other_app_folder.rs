@@ -9,7 +9,7 @@ use crate::yard::Yard;
 use crate::{applications, configuration};
 
 /// defines the information needed for apps whose executable is shipped as part of another app
-pub trait PartOfAnotherApp: App {
+pub trait ExecutableInAnotherApp: App {
   /// the application that ships the executable of this app
   fn app_to_install(&self) -> Box<dyn App>;
 
@@ -18,7 +18,7 @@ pub trait PartOfAnotherApp: App {
 }
 
 pub fn install_other_app(
-  app: &dyn PartOfAnotherApp,
+  app: &dyn ExecutableInAnotherApp,
   version: &Version,
   platform: Platform,
   optional: bool,
