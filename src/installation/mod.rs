@@ -89,7 +89,16 @@ pub fn any(app: &dyn App, version: &Version, platform: Platform, optional: bool,
 }
 
 /// installs the given app using the given installation method
-pub fn install(app: &dyn App, install_method: &Method, version: &Version, platform: Platform, optional: bool, yard: &Yard, config_file: &configuration::File, log: Log) -> Result<Outcome> {
+pub fn install(
+  app: &dyn App,
+  install_method: &Method,
+  version: &Version,
+  platform: Platform,
+  optional: bool,
+  yard: &Yard,
+  config_file: &configuration::File,
+  log: Log,
+) -> Result<Outcome> {
   match install_method {
     Method::DownloadArchive { url: archive_url, filepath } => download_archive::run(app, version, archive_url, filepath, optional, yard, log),
     Method::DownloadExecutable { url: download_url } => download_executable::install(app, download_url, version, platform, optional, yard, log),
