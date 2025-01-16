@@ -10,10 +10,10 @@ including descriptions of what they do.
 
 ### Add a new applications
 
-Apps are in the [src/apps](../src/apps) folder. Copy the definition of an
-existing application that is close to the one you want to add and adjust the
-data and installation methods. You can test your installation methods by the
-end-to-end test for your app (see below).
+Apps are in the [src/applications](../src/applications) folder. Copy the
+definition of an existing application that is close to the one you want to add
+and adjust the data and installation methods. You can test your installation
+methods by the end-to-end test for your app (see below).
 
 ### End-to-end tests
 
@@ -38,3 +38,10 @@ The `--verbose` switch outputs more details around individual activities.
 
 If you provide an application name, the end-to-end test only tests this
 application, otherwise tests all apps.
+
+### Debugging
+
+To debug the `rta` executable:
+
+- adjust the debug parameters in .vscode/launch.json
+- VSCode: Run > Start Debugging
