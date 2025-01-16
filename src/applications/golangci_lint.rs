@@ -26,7 +26,7 @@ impl App for GolangCiLint {
     // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
     vec![Method::DownloadArchive {
       url: archive_url(version, platform),
-      executable_path: executable_path_in_archive(version, platform, &self.executable_filename(platform)),
+      filepath: executable_path_in_archive(version, platform, &self.executable_filename(platform)),
     }]
   }
 

@@ -25,7 +25,7 @@ impl App for StaticCheck {
     vec![
       Method::DownloadArchive {
         url: archive_url(version, platform),
-        executable_path: format!("staticcheck/{}", self.executable_filename(platform)),
+        filepath: format!("staticcheck/{}", self.executable_filename(platform)),
       },
       Method::CompileGoSource {
         import_path: format!("honnef.co/go/tools/cmd/staticcheck@{version}"),

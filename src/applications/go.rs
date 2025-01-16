@@ -26,7 +26,7 @@ impl App for Go {
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![Method::DownloadArchive {
       url: archive_url(version, platform),
-      executable_path: format!("go{sep}bin{sep}{file}", sep = path::MAIN_SEPARATOR, file = self.executable_filename(platform)),
+      filepath: format!("go{sep}bin{sep}{file}", sep = path::MAIN_SEPARATOR, file = self.executable_filename(platform)),
     }]
   }
 

@@ -25,7 +25,7 @@ impl App for Tikibase {
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![Method::DownloadArchive {
       url: archive_url(version, platform),
-      executable_path: self.executable_filename(platform),
+      filepath: self.executable_filename(platform),
     }]
   }
 

@@ -21,7 +21,7 @@ impl App for Npm {
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![Method::ExecutableInAnotherApp {
-      app_to_install: app_to_install(),
+      other_app: app_to_install(),
       executable_path: format!(
         "node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",
         os = applications::nodejs::os_text(platform.os),
