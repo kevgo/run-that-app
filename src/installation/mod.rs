@@ -6,7 +6,6 @@ mod download_archive;
 mod download_executable;
 mod executable_in_another_app;
 
-use std::fmt::Display;
 use std::path::PathBuf;
 
 use crate::applications::App;
@@ -66,25 +65,22 @@ impl Method {
       } => yard.app_folder(&app_to_install.name(), version).join(executable_path_in_other_yard),
     }
   }
-  fn name(&self, version: &Version) -> String {
+  pub fn name(&self, app: &str, version: &Version) -> String {
     match self {
       Method::DownloadArchive {
         archive_url: _,
         executable_path_in_archive: _,
-      } => format!("download archive for {}"),
-
-      Method::DownloadExecutable { download_url: _ } => format!("download executable"),
-      Method::CompileGoSource { import_path: _ } => format!("compile from Go source"),
+      } => format!("download archive for {app}@{version}"),
+      Method::DownloadExecutable { download_url: _ } => format!("download executable for {app}@{version}"),
+      Method::CompileGoSource { import_path: _ } => format!("compile {app}@{version} from source"),
       Method::CompileRustSource {
         crate_name: _,
         executable_path_in_folder: _,
-      } => format!("compile from Rust source"),
+      } => format!("compile {app}@{version} from source"),
       Method::ExecutableInAnotherApp {
         app_to_install,
         executable_path_in_other_yard: _,
-      } => {
-        format!("install through {}", app_to_install.name())
-      }
+      } => format!("install {app}@{version} through {carrier}", carrier = app_to_install.name()),
     }
   }
 }

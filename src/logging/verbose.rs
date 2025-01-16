@@ -74,7 +74,7 @@ pub fn log(event: Event) {
 
     Event::IntegrationTestNewApp { app } => eprintln!("TESTING {app}\n"),
     Event::IntegrationTestDeterminedVersion { version } => eprintln!("Latest version: {}", version.as_str().cyan()),
-    Event::IntegrationTestNewInstallMethod { method } => eprintln!("\n{}", method.to_string().bold()),
+    Event::IntegrationTestNewInstallMethod { app, method, version } => eprintln!("\n{}", method.name(app, version).bold()),
 
     Event::NotOnline => eprintln!("{}", "not online".red()),
 

@@ -27,8 +27,9 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
     log(Event::IntegrationTestDeterminedVersion { version: &latest_version });
     for install_method in app.install_methods(&latest_version, platform) {
       log(Event::IntegrationTestNewInstallMethod {
-        version: &latest_version,
+        app: app.name().as_str(),
         method: &install_method,
+        version: &latest_version,
       });
       if !installation::install(
         app.as_ref(),

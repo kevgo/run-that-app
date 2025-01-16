@@ -92,7 +92,9 @@ pub enum Event<'a> {
     version: &'a Version,
   },
   IntegrationTestNewInstallMethod {
+    app: &'a str,
     method: &'a Method,
+    version: &'a Version,
   },
 
   NotOnline,
