@@ -1,7 +1,8 @@
 use crate::logging::{Event, Log};
 use crate::prelude::*;
 use std::borrow::Cow;
-use std::ffi::OsStr;
+use std::env;
+use std::ffi::{OsStr, OsString};
 use std::fmt::Display;
 use std::path::PathBuf;
 use std::process::Command;
@@ -25,6 +26,16 @@ impl Executable {
   pub fn run_output(&self, arg: &str, log: Log) -> Result<String> {
     let mut cmd = Command::new(self);
     cmd.arg(arg);
+    cmd.envs(env::vars_os());
+    let parent = self.0.parent().unwrap(); // there is always a parent here since this is a location inside the yard
+    let new_path = if let Some(mut path) = env::var_os("PATH") {
+      path.push(":");
+      path.push(parent.as_os_str());
+      path
+    } else {
+      OsString::from(parent)
+    };
+    cmd.env("PATH", new_path);
     log(Event::AnalyzeExecutableBegin {
       cmd: &self.as_str(),
       args: &[arg],
@@ -49,6 +60,16 @@ impl Executable {
   pub fn run_output_args(&self, args: &[&str], log: Log) -> Result<String> {
     let mut cmd = Command::new(self);
     cmd.args(args);
+    cmd.envs(env::vars_os());
+    let parent = self.0.parent().unwrap(); // there is always a parent here since this is a location inside the yard
+    let new_path = if let Some(mut path) = env::var_os("PATH") {
+      path.push(":");
+      path.push(parent.as_os_str());
+      path
+    } else {
+      OsString::from(parent)
+    };
+    cmd.env("PATH", new_path);
     let output = match cmd.output() {
       Ok(output) => output,
       Err(err) => {
