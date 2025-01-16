@@ -47,14 +47,18 @@ impl Method<'_> {
       Method::CompileGoSource(app) => app.executable_filename(platform),
       Method::CompileRustSource(app) => app.executable_path_in_folder(platform),
       Method::ExecutableInAnotherApp(app) => app.executable_path_in_other_app_yard(version, platform),
-      Method::RunOtherExecutable(_) => S(""), //{
-                                              //     let app_to_call = app.app_to_execute();
-                                              //     for install_method in app_to_call.install_methods() {
-                                              //       if let Some(executable) = load_or_install(&app_to_call, requested_version, platform, optional, yard, config_file, log)? {
-                                              //         return executable;
-                                              //       }
-                                              //     }
-                                              //   }
+      Method::RunOtherExecutable(app) => {
+        let other_app = app.app_to_execute();
+        other_app.
+
+        app.S(""), //{
+                                                    //     let app_to_call = app.app_to_execute();
+                                                    //     for install_method in app_to_call.install_methods() {
+                                                    //       if let Some(executable) = load_or_install(&app_to_call, requested_version, platform, optional, yard, config_file, log)? {
+                                                    //         return executable;
+                                                    //       }
+                                                    //     }
+                                                    //   }
     }
   }
 
@@ -140,8 +144,11 @@ pub fn install(
 /// assuming one of the given installation methods of an app worked, loads that app's executable
 pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Option<Executable> {
   for installation_method in install_methods {
+    println!("trying installation method: {:?}", installation_method.name(version));
     let yard_app_name = installation_method.yard_app();
+    println!("yard app name: {yard_app_name}");
     let location_in_yard = installation_method.executable_location(version, platform);
+    println!("executable location in yard: {location_in_yard}");
     let fullpath = yard.app_folder(&yard_app_name, version).join(location_in_yard);
     log(Event::YardCheckExistingAppBegin { path: &fullpath });
     if fullpath.exists() {

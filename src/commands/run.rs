@@ -21,9 +21,9 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   for requested_version in requested_versions {
     println!("requested version: {requested_version}");
     let exe = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)?;
-    println!("loaded executable {:?}", exe);
+    println!("loaded executable: {:?}", exe);
     if let Some(executable) = exe {
-      println!("222222222222222222 {executable}");
+      println!("found executable: {executable}");
       let call_signature = determine_call_signature(app, executable);
       if args.error_on_output {
         return subshell::execute_check_output(&call_signature, &args.app_args);
@@ -122,7 +122,7 @@ fn load_or_install_from_yard(
 ) -> Result<Option<Executable>> {
   // try to load the app
   if let Some(executable) = installation::load(app.install_methods(), version, platform, yard, log) {
-    println!("444444444444444444444444444 {}", executable);
+    println!("found executable {executable}");
     return Ok(Some(executable));
   }
   // app not installed --> check if uninstallable
