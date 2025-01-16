@@ -62,9 +62,10 @@ impl Method {
       Method::ExecutableInAnotherApp {
         app_to_install,
         executable_path_in_other_yard,
-      } => yard.app_folder(&app_to_install.name(), version).join(executable_path_in_other_yard),
+      } => executable_in_another_app::executable_path(app_to_install.as_ref(), version, yard, executable_path_in_other_yard),
     }
   }
+
   pub fn name(&self, app: &str, version: &Version) -> String {
     match self {
       Method::DownloadArchive {
@@ -119,7 +120,7 @@ pub fn install(
     Method::CompileRustSource {
       crate_name,
       executable_path_in_folder,
-    } => compile_rust::run(app, &crate_name, version, yard, executable_path_in_folder, log),
+    } => compile_rust::run(app, crate_name, version, yard, executable_path_in_folder, log),
     Method::ExecutableInAnotherApp {
       app_to_install,
       executable_path_in_other_yard: _,
