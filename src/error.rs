@@ -78,10 +78,6 @@ pub enum UserError {
     executable: Executable,
     err: String,
   },
-  ExecutableNotFoundAfterInstallation {
-    app: String,
-    executable_path: String,
-  },
   GitHubReleasesApiProblem {
     problem: String,
     payload: String,
@@ -92,6 +88,9 @@ pub enum UserError {
   },
   GoCompilationFailed,
   GoNoPermission,
+  InternalError {
+    desc: String,
+  },
   InvalidConfigFileFormat {
     line_no: usize,
     text: String,
@@ -206,9 +205,6 @@ impl UserError {
       UserError::ExecutableCannotExecute { executable, err } => {
         error(&format!("cannot execute {executable}: {err}"));
       }
-      UserError::ExecutableNotFoundAfterInstallation { app, executable_path } => {
-        error(&format!("Cannot find executable {executable_path} after installing {app}"));
-      }
       UserError::GitHubReleasesApiProblem { problem, payload } => {
         error(&format!("Problem with the GitHub Releases API: {problem}"));
         desc(&payload);
@@ -222,6 +218,9 @@ impl UserError {
         desc("Please see the error output above and try again with a different version.");
       }
       UserError::GoNoPermission => error("No permission to execute the Go compiler"),
+      UserError::InternalError { desc } => error(&format!(
+        "Internal error: {desc}. Please report this at https://github.com/kevgo/run-that-app/issues/new"
+      )),
       UserError::InvalidConfigFileFormat { line_no, text } => {
         error("Invalid config file format");
         desc(&format!("{}:{line_no}: {text}", configuration::FILE_NAME));

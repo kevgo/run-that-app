@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use super::Outcome;
 use crate::applications::App;
 use crate::configuration::Version;
@@ -14,15 +16,26 @@ pub fn install(app: &dyn App, url: &str, version: &Version, platform: Platform, 
     return Ok(Outcome::NotInstalled);
   };
   let filepath_on_disk = yard.create_app_folder(&app.name(), version)?.join(app.executable_filename(platform));
-  let executable = filesystem::save_executable(artifact.data, &filepath_on_disk, log)?;
-  Ok(Outcome::Installed { executable })
+  let executable_path_1 = filesystem::save_executable(artifact.data, &filepath_on_disk, log)?;
+  let executable_path_2 = executable_path(app, version, platform, yard);
+  if executable_path_1.0 != executable_path_2 {
+    return Err(UserError::InternalError {
+      desc: format!(
+        "different executable paths returned after downloading an executable: {executable_path_1} and {}",
+        executable_path_2.to_string_lossy()
+      ),
+    });
+  }
+  if !executable_path_2.exists() {
+    return Err(UserError::InternalError {
+      desc: format!("downloaded application binary not found on disk at {}", executable_path_2.to_string_lossy()),
+    });
+  }
+  Ok(Outcome::Installed {
+    executable: Executable(executable_path_2),
+  })
 }
 
-pub fn load(app: &dyn App, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
-  let app_folder = yard.app_folder(&app.name(), version);
-  let executable_path_absolute = app_folder.join(app.executable_filename(platform));
-  if executable_path_absolute.exists() {
-    return Some(Executable(executable_path_absolute));
-  }
-  None
+pub fn executable_path(app: &dyn App, version: &Version, platform: Platform, yard: &Yard) -> PathBuf {
+  yard.app_folder(&app.name(), version).join(app.executable_filename(platform))
 }

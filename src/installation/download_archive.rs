@@ -10,7 +10,7 @@ use crate::{archives, download};
 use std::fs;
 #[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 /// downloads and unpacks the content of an archive file
 pub fn run(app: &dyn App, version: &Version, url: &str, executable_path_in_archive: &str, optional: bool, yard: &Yard, log: Log) -> Result<Outcome> {
@@ -22,27 +22,24 @@ pub fn run(app: &dyn App, version: &Version, url: &str, executable_path_in_archi
     return Err(UserError::UnknownArchive(artifact.filename));
   };
   archive.extract_all(&app_folder, log)?;
-  let Some(executable) = load(app, version, executable_path_in_archive, yard) else {
-    return Err(UserError::ExecutableNotFoundAfterInstallation {
-      app: app.name().to_string(),
-      executable_path: executable_path_in_archive.to_string(),
+  let executable_path = executable_path(app, version, executable_path_in_archive, yard);
+  if !executable_path.exists() {
+    return Err(UserError::InternalError {
+      desc: format!("executable not found after downloading archive: {}", executable_path.to_string_lossy()),
     });
   };
   #[cfg(unix)]
-  make_executable_unix(&executable.0)?;
+  make_executable_unix(&executable_path)?;
   #[cfg(windows)]
-  make_executable_windows(&executable.0);
-  Ok(Outcome::Installed { executable })
+  make_executable_windows(&executable_path);
+  Ok(Outcome::Installed {
+    executable: Executable(executable_path),
+  })
 }
 
 /// tries to load the executable of the given app, if it was installed by downloading
-pub fn load(app: &dyn App, version: &Version, executable_path_in_archive: &str, yard: &Yard) -> Option<Executable> {
-  let app_folder = yard.app_folder(&app.name(), version);
-  let executable_path_absolute = app_folder.join(executable_path_in_archive);
-  if executable_path_absolute.exists() {
-    return Some(Executable(executable_path_absolute));
-  }
-  None
+pub fn executable_path(app: &dyn App, version: &Version, executable_path_in_archive: &str, yard: &Yard) -> PathBuf {
+  yard.app_folder(&app.name(), version).join(executable_path_in_archive)
 }
 
 #[cfg(windows)]

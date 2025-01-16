@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use super::Outcome;
 use crate::applications::App;
 use crate::commands::run::load_or_install;
@@ -31,21 +33,21 @@ pub fn install_other_app(
     config_file,
     log,
   )?;
-  if let Some(executable) = load(app_to_install, version, yard, executable_filename) {
-    Ok(Outcome::Installed { executable })
-  } else {
-    Err(UserError::ExecutableNotFoundAfterInstallation {
-      app: app_to_install.name().to_string(),
-      executable_path: executable_filename.to_string(),
-    })
+  let executable_path = executable_path(app_to_install, version, yard, executable_filename);
+  if !executable_path.exists() {
+    return Err(UserError::InternalError {
+      desc: format!(
+        "executable not found after installing via other app {}: {}",
+        app_to_install.name(),
+        executable_path.to_string_lossy()
+      ),
+    });
   }
+  Ok(Outcome::Installed {
+    executable: Executable(executable_path),
+  })
 }
 
-pub fn load(app_to_install: &dyn App, version: &Version, yard: &Yard, executable_filename: &str) -> Option<Executable> {
-  let executable_path = yard.app_folder(&app_to_install.name(), version).join(executable_filename);
-  if executable_path.exists() {
-    Some(Executable(executable_path))
-  } else {
-    None
-  }
+pub fn executable_path(app_to_install: &dyn App, version: &Version, yard: &Yard, executable_path_in_other_yard: &str) -> PathBuf {
+  yard.app_folder(&app_to_install.name(), version).join(executable_path_in_other_yard)
 }

@@ -124,8 +124,7 @@ fn load_or_install_from_yard(
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  let outcome = installation::any(app, version, platform, optional, yard, config_file, log)?;
-  if let Outcome::Installed { executable } = outcome {
+  if let Outcome::Installed { executable } = installation::any(app, version, platform, optional, yard, config_file, log)? {
     return Ok(Some(executable));
   }
   // app could not be installed -> mark as uninstallable

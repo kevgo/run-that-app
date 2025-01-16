@@ -54,11 +54,11 @@ impl Method {
         executable_path_in_archive,
       } => yard.app_folder(&app.name(), version).join(executable_path_in_archive),
       Method::DownloadExecutable { download_url: _ } => yard.app_folder(&app.name(), version).join(app.executable_filename(platform)),
-      Method::CompileGoSource { import_path: _ } => yard.app_folder(&app.name(), version).join(app.executable_filename(platform)),
+      Method::CompileGoSource { import_path: _ } => compile_go::executable_path(app, version, platform, yard),
       Method::CompileRustSource {
         crate_name: _,
         executable_path_in_folder,
-      } => yard.app_folder(&app.name(), version).join(executable_path_in_folder),
+      } => compile_rust::executable_path(app, version, yard, executable_path_in_folder),
       Method::ExecutableInAnotherApp {
         app_to_install,
         executable_path_in_other_yard,
