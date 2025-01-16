@@ -4,7 +4,6 @@ use crate::configuration::{RequestedVersion, RequestedVersions, Version};
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{commands, configuration};
 use std::io::ErrorKind;
@@ -15,7 +14,7 @@ use which::which;
 /// installs the given Go-based application by compiling it from source
 pub fn run(
   app: &dyn App,
-  import_path: String,
+  import_path: &str,
   platform: Platform,
   version: &Version,
   optional: bool,

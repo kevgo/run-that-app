@@ -1,5 +1,4 @@
 use super::{AnalyzeResult, App};
-use crate::commands::version;
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::{self, Method};

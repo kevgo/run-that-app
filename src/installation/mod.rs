@@ -86,7 +86,7 @@ impl Method {
 }
 
 /// installs the given app using the first of the given installation methods that works
-// TODO: return the installation method used, so that we don't need to detect it later. Or - even better - return the installed executable because that's what we really need later.
+// TODO: return the installed executable because that's what we really need later
 pub fn any(app: &dyn App, version: &Version, platform: Platform, optional: bool, yard: &Yard, config_file: &configuration::File, log: Log) -> Result<Outcome> {
   for install_method in app.install_methods(version, platform) {
     if install(app, &install_method, version, platform, optional, yard, config_file, log)?.success() {
