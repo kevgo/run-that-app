@@ -22,8 +22,11 @@ impl App for NodeJS {
     "https://nodejs.org"
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::DownloadArchive(self)]
+  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    vec![Method::DownloadArchive {
+      archive_url: archive_url(version, platform),
+      executable_path_in_archive: executable_path_in_archive(version, platform, self.executable_filename(platform)),
+    }]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -46,29 +49,26 @@ impl App for NodeJS {
   }
 }
 
-impl installation::DownloadArchive for NodeJS {
-  fn archive_url(&self, version: &Version, platform: Platform) -> String {
-    let ext = match platform.os {
-      Os::Linux => "tar.xz",
-      Os::MacOS => "tar.gz",
-      Os::Windows => "zip",
-    };
-    format!(
-      "https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",
-      os = os_text(platform.os),
-      cpu = cpu_text(platform.cpu),
-    )
-  }
+fn archive_url(version: &Version, platform: Platform) -> String {
+  let ext = match platform.os {
+    Os::Linux => "tar.xz",
+    Os::MacOS => "tar.gz",
+    Os::Windows => "zip",
+  };
+  format!(
+    "https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",
+    os = os_text(platform.os),
+    cpu = cpu_text(platform.cpu),
+  )
+}
 
-  fn executable_path_in_archive(&self, version: &Version, platform: Platform) -> String {
-    let os = os_text(platform.os);
-    let cpu = cpu_text(platform.cpu);
-    let sep = path::MAIN_SEPARATOR;
-    let executable = self.executable_filename(platform);
-    match platform.os {
-      Os::Windows => format!("node-v{version}-{os}-{cpu}{sep}{executable}"),
-      Os::Linux | Os::MacOS => format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}"),
-    }
+fn executable_path_in_archive(version: &Version, platform: Platform, executable_filename: String) -> String {
+  let os = os_text(platform.os);
+  let cpu = cpu_text(platform.cpu);
+  let sep = path::MAIN_SEPARATOR;
+  match platform.os {
+    Os::Windows => format!("node-v{version}-{os}-{cpu}{sep}{executable_filename}"),
+    Os::Linux | Os::MacOS => format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{executable_filename}"),
   }
 }
 
@@ -94,18 +94,16 @@ pub fn os_text(os: Os) -> &'static str {
 #[cfg(test)]
 mod tests {
   use crate::configuration::Version;
-  use crate::installation::DownloadArchive;
   use crate::platform::{Cpu, Os, Platform};
   use crate::UserError;
 
   #[test]
   fn archive_url() {
-    let node = super::NodeJS {};
     let platform = Platform {
       os: Os::MacOS,
       cpu: Cpu::Arm64,
     };
-    let have = node.archive_url(&Version::from("20.10.0"), platform);
+    let have = super::archive_url(&Version::from("20.10.0"), platform);
     let want = "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz";
     assert_eq!(have, want);
   }
