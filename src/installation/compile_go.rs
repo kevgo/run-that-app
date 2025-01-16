@@ -19,15 +19,7 @@ pub trait CompileGoSource: App {
 }
 
 /// installs the given Go-based application by compiling it from source
-pub fn run(
-  app: &dyn CompileGoSource,
-  platform: Platform,
-  version: &Version,
-  optional: bool,
-  config_file: &configuration::File,
-  yard: &Yard,
-  log: Log,
-) -> Result<Outcome> {
+pub fn run(app: &dyn CompileGoSource, platform: Platform, version: &Version, optional: bool, config_file: &configuration::File, yard: &Yard, log: Log) -> Result<Outcome> {
   let target_folder = yard.create_app_folder(&app.name(), version)?;
   let import_path = app.import_path(version);
   let go_args = vec!["install", &import_path];

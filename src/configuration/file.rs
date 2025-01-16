@@ -30,9 +30,7 @@ impl File {
 # actionlint 1.2.26
 # gh 2.39.1
 ";
-    file
-      .write_all(content.as_bytes())
-      .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
+    file.write_all(content.as_bytes()).map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
   }
 
   pub fn load(apps: &Apps) -> Result<File> {
@@ -52,9 +50,7 @@ impl File {
       .truncate(true)
       .open(FILE_NAME)
       .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))?;
-    file
-      .write_all(self.to_string().as_bytes())
-      .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))?;
+    file.write_all(self.to_string().as_bytes()).map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))?;
     Ok(())
   }
 }
@@ -91,19 +87,13 @@ fn parse_line(line_text: &str, line_no: usize, apps: &Apps) -> Result<Option<App
   let app = apps.lookup(&name.into())?;
   let Some(version) = parts.next() else {
     // line has only one element --> invalid
-    return Err(UserError::InvalidConfigFileFormat {
-      line_no,
-      text: line_text.to_string(),
-    });
+    return Err(UserError::InvalidConfigFileFormat { line_no, text: line_text.to_string() });
   };
   let mut versions = RequestedVersions::new(vec![RequestedVersion::parse(version, app)?]);
   for part in parts {
     versions.push(RequestedVersion::parse(part, app)?);
   }
-  Ok(Some(AppVersions {
-    app_name: name.into(),
-    versions,
-  }))
+  Ok(Some(AppVersions { app_name: name.into(), versions }))
 }
 
 /// provides active (non-comment) words in the given line
@@ -113,9 +103,7 @@ struct LinePartsIterator<'a> {
 
 impl<'a> From<&'a str> for LinePartsIterator<'a> {
   fn from(line: &'a str) -> Self {
-    LinePartsIterator {
-      parts: line.split_ascii_whitespace(),
-    }
+    LinePartsIterator { parts: line.split_ascii_whitespace() }
   }
 }
 
@@ -162,10 +150,7 @@ mod tests {
           },
           AppVersions {
             app_name: ApplicationName::from("go"),
-            versions: RequestedVersions::new(vec![
-              RequestedVersion::Path(semver::VersionReq::parse("1.21").unwrap()),
-              RequestedVersion::Yard("1.22.1".into()),
-            ]),
+            versions: RequestedVersions::new(vec![RequestedVersion::Path(semver::VersionReq::parse("1.21").unwrap()), RequestedVersion::Yard("1.22.1".into())]),
           },
         ],
       };
@@ -236,10 +221,7 @@ mod tests {
     fn missing_version() {
       let give = "shellcheck ";
       let have = parse_line(give, 1, &applications::all());
-      let want = Err(UserError::InvalidConfigFileFormat {
-        line_no: 1,
-        text: S("shellcheck"),
-      });
+      let want = Err(UserError::InvalidConfigFileFormat { line_no: 1, text: S("shellcheck") });
       pretty::assert_eq!(have, want);
     }
 

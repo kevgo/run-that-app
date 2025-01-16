@@ -80,10 +80,7 @@ mod tests {
     #[test]
     fn windows_intel64() {
       let node_prune = super::super::NodePrune {};
-      let platform = Platform {
-        os: Os::Linux,
-        cpu: Cpu::Intel64,
-      };
+      let platform = Platform { os: Os::Linux, cpu: Cpu::Intel64 };
       let have = node_prune.download_url(&Version::from("1.0.1"), platform);
       let want = "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_linux_amd64.tar.gz";
       assert_eq!(have, want);

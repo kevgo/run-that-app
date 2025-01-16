@@ -179,9 +179,7 @@ impl UserError {
       #[cfg(unix)]
       UserError::CannotReadFileMetadata { err } => {
         error(&format!("cannot read file metadata: {err}"));
-        desc(
-          "This is an issue with your operating system permissions. Please allow the current user to read file permissions for the given path and try again.",
-        );
+        desc("This is an issue with your operating system permissions. Please allow the current user to read file permissions for the given path and try again.");
       }
       UserError::CannotReadZipFile { err } => error(&format!("cannot read ZIP file: {err}")),
       #[cfg(unix)]

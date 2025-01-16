@@ -61,25 +61,13 @@ impl Method<'_> {
       Method::DownloadExecutable(app) => format!("download executable for {app}@{version}", app = app.name()),
       Method::CompileGoSource(app) => format!("compile {app}@{version} from source", app = app.name()),
       Method::CompileRustSource(app) => format!("compile {app}@{version} from source", app = app.name()),
-      Method::ExecutableInAnotherApp(app) => format!(
-        "install {app}@{version} through {carrier}",
-        app = app.name(),
-        carrier = app.app_to_install().name()
-      ),
+      Method::ExecutableInAnotherApp(app) => format!("install {app}@{version} through {carrier}", app = app.name(), carrier = app.app_to_install().name()),
     }
   }
 }
 
 /// installs an app using the first of its installation methods that works
-pub fn any(
-  install_methods: Vec<Method>,
-  version: &Version,
-  platform: Platform,
-  optional: bool,
-  yard: &Yard,
-  config_file: &configuration::File,
-  log: Log,
-) -> Result<Outcome> {
+pub fn any(install_methods: Vec<Method>, version: &Version, platform: Platform, optional: bool, yard: &Yard, config_file: &configuration::File, log: Log) -> Result<Outcome> {
   for install_method in install_methods {
     if install(&install_method, version, platform, optional, yard, config_file, log)?.success() {
       return Ok(Outcome::Installed);
@@ -88,15 +76,7 @@ pub fn any(
   Ok(Outcome::NotInstalled)
 }
 
-pub fn install(
-  install_method: &Method,
-  version: &Version,
-  platform: Platform,
-  optional: bool,
-  yard: &Yard,
-  config_file: &configuration::File,
-  log: Log,
-) -> Result<Outcome> {
+pub fn install(install_method: &Method, version: &Version, platform: Platform, optional: bool, yard: &Yard, config_file: &configuration::File, log: Log) -> Result<Outcome> {
   match install_method {
     Method::DownloadArchive(app) => download_archive::run(*app, version, platform, optional, yard, log),
     Method::DownloadExecutable(app) => download_executable::install(*app, version, platform, optional, yard, log),

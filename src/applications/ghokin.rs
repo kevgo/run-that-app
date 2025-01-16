@@ -78,10 +78,7 @@ mod tests {
     #[test]
     fn macos_intel64() {
       let ghokin = super::super::Ghokin {};
-      let platform = Platform {
-        os: Os::MacOS,
-        cpu: Cpu::Intel64,
-      };
+      let platform = Platform { os: Os::MacOS, cpu: Cpu::Intel64 };
       let have = ghokin.archive_url(&Version::from("3.4.1"), platform);
       let want = "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_amd64.tar.gz";
       assert_eq!(have, want);
@@ -90,10 +87,7 @@ mod tests {
     #[test]
     fn windows_intel64() {
       let ghokin = super::super::Ghokin {};
-      let platform = Platform {
-        os: Os::Windows,
-        cpu: Cpu::Intel64,
-      };
+      let platform = Platform { os: Os::Windows, cpu: Cpu::Intel64 };
       let have = ghokin.archive_url(&Version::from("3.7.0"), platform);
       let want = "https://github.com/antham/ghokin/releases/download/v3.7.0/ghokin_3.7.0_windows_amd64.tar.gz";
       assert_eq!(have, want);

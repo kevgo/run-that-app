@@ -85,10 +85,7 @@ mod tests {
     #[test]
     fn mac_arm() {
       let tikibase = super::super::Tikibase {};
-      let platform = Platform {
-        os: Os::MacOS,
-        cpu: Cpu::Arm64,
-      };
+      let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
       let have = tikibase.archive_url(&Version::from("0.6.2"), platform);
       let want = "https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_macos_arm64.tar.gz";
       assert_eq!(have, want);
@@ -97,10 +94,7 @@ mod tests {
     #[test]
     fn linux_arm() {
       let tikibase = super::super::Tikibase {};
-      let platform = Platform {
-        os: Os::Linux,
-        cpu: Cpu::Intel64,
-      };
+      let platform = Platform { os: Os::Linux, cpu: Cpu::Intel64 };
       let have = tikibase.archive_url(&Version::from("0.6.2"), platform);
       let want = "https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_linux_intel64.tar.gz";
       assert_eq!(have, want);

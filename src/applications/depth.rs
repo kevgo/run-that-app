@@ -80,10 +80,7 @@ mod tests {
     #[test]
     fn linux() {
       let depth = super::super::Depth {};
-      let platform = Platform {
-        os: Os::Linux,
-        cpu: Cpu::Intel64,
-      };
+      let platform = Platform { os: Os::Linux, cpu: Cpu::Intel64 };
       let have = depth.download_url(&Version::from("1.2.1"), platform);
       let want = "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_linux_amd64";
       assert_eq!(have, want);
@@ -92,10 +89,7 @@ mod tests {
     #[test]
     fn windows() {
       let depth = super::super::Depth {};
-      let platform = Platform {
-        os: Os::Windows,
-        cpu: Cpu::Intel64,
-      };
+      let platform = Platform { os: Os::Windows, cpu: Cpu::Intel64 };
       let have = depth.download_url(&Version::from("1.2.1"), platform);
       let want = "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_windows_amd64.exe";
       assert_eq!(have, want);

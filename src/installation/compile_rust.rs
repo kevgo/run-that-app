@@ -28,10 +28,7 @@ pub fn run(app: &dyn CompileRustSource, version: &Version, yard: &Yard, log: Log
   let mut cmd = Command::new(&cargo_path);
   let target_folder_str = &target_folder.to_string_lossy();
   let args = vec!["install", "--root", &target_folder_str, "--locked", app.crate_name()];
-  log(Event::CompileRustStart {
-    cargo_path: &cargo_path,
-    args: &args,
-  });
+  log(Event::CompileRustStart { cargo_path: &cargo_path, args: &args });
   cmd.args(args);
   let status = match cmd.status() {
     Ok(status) => status,

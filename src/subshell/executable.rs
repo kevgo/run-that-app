@@ -25,10 +25,7 @@ impl Executable {
   pub fn run_output(&self, arg: &str, log: Log) -> Result<String> {
     let mut cmd = Command::new(self);
     cmd.arg(arg);
-    log(Event::AnalyzeExecutableBegin {
-      cmd: &self.as_str(),
-      args: &[arg],
-    });
+    log(Event::AnalyzeExecutableBegin { cmd: &self.as_str(), args: &[arg] });
     let output = match cmd.output() {
       Ok(output) => output,
       Err(err) => {
