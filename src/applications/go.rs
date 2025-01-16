@@ -26,7 +26,7 @@ impl App for Go {
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![Method::DownloadArchive {
       archive_url: archive_url(version, platform),
-      executable_path_in_archive: executable_path_in_archive(self.executable_filename(platform)),
+      executable_path_in_archive: format!("go{sep}bin{sep}{file}", sep = path::MAIN_SEPARATOR, file = self.executable_filename(platform)),
     }]
   }
 
@@ -96,10 +96,6 @@ fn archive_url(version: &Version, platform: Platform) -> String {
     Os::Windows => "zip",
   };
   format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}")
-}
-
-fn executable_path_in_archive(executable_filename: String) -> String {
-  format!("go{sep}bin{sep}{executable_filename}", sep = path::MAIN_SEPARATOR,)
 }
 
 fn extract_version(output: &str) -> Result<&str> {

@@ -3,6 +3,7 @@ use crate::applications::App;
 use crate::configuration::Version;
 use crate::logging::Log;
 use crate::prelude::*;
+use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{archives, download};
 #[cfg(unix)]
@@ -27,6 +28,16 @@ pub fn run(app: &dyn App, version: &Version, url: String, executable_path_in_arc
   #[cfg(windows)]
   make_executable_windows(&executable_path_absolute);
   Ok(Outcome::Installed)
+}
+
+/// tries to load the executable of the given app, if it was installed by downloading
+pub fn load(app: &dyn App, version: &Version, executable_path_in_archive: String, yard: &Yard) -> Option<Executable> {
+  let app_folder = yard.app_folder(&app.name(), version);
+  let executable_path_absolute = app_folder.join(executable_path_in_archive);
+  if executable_path_absolute.exists() {
+    return Some(Executable(executable_path_absolute));
+  }
+  None
 }
 
 #[cfg(windows)]

@@ -6,25 +6,26 @@ mod download_archive;
 mod download_executable;
 mod executable_in_another_app;
 
+use std::fmt::Display;
+use std::path::PathBuf;
+
 use crate::applications::App;
-use crate::configuration::{self, ApplicationName, Version};
+use crate::commands::run::load_or_install;
+use crate::configuration::{self, RequestedVersion, Version};
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::yard::Yard;
-pub use compile_go::CompileGoSource;
-pub use compile_rust::CompileRustSource;
-pub use download_archive::DownloadArchive;
-pub use download_executable::DownloadExecutable;
-pub use executable_in_another_app::ExecutableInAnotherApp;
 
 /// the different methods to install an application
 pub enum Method {
   /// installs the application by downloading and extracting an archive containing the application executable from the internet
+  // TODO: rename to url                  rename to executable_path
   DownloadArchive { archive_url: String, executable_path_in_archive: String },
 
   /// installs the application by downloading the pre-compiled executable from the internet
+  // TODO:              rename to url
   DownloadExecutable { download_url: String },
 
   /// installs the applications by compiling it from its source written in Go
@@ -33,6 +34,8 @@ pub enum Method {
   /// installs the application by compiling it from its source written in Rust
   CompileRustSource {
     crate_name: &'static str,
+    /// the executable path within the yard
+    // TODO: rename to executable_path
     executable_path_in_folder: String,
   },
 
@@ -45,86 +48,66 @@ pub enum Method {
 
 impl Method {
   /// provides the location of this app's executable within its yard
-  pub fn executable_location(&self) -> Option<&str> {
+  pub fn executable_location(&self, app: &dyn App, version: &Version, platform: Platform, yard: &Yard) -> PathBuf {
     match self {
       Method::DownloadArchive {
         archive_url: _,
         executable_path_in_archive,
-      } => Some(executable_path_in_archive),
-      Method::DownloadExecutable { download_url: _ } => None,
-      Method::CompileGoSource { import_path: _ } => None,
+      } => yard.app_folder(&app.name(), version).join(executable_path_in_archive),
+      Method::DownloadExecutable { download_url: _ } => yard.app_folder(&app.name(), version).join(app.executable_filename(platform)),
+      Method::CompileGoSource { import_path: _ } => yard.app_folder(&app.name(), version).join(app.executable_filename(platform)),
       Method::CompileRustSource {
         crate_name: _,
         executable_path_in_folder,
-      } => Some(executable_path_in_folder),
-      Method::ExecutableInAnotherApp {
-        app_to_install: _,
-        executable_path_in_other_yard: _,
-      } => None,
-    }
-  }
-
-  /// provides the name of the application in whose yard this app is installed
-  pub fn yard_app(&self) -> Option<&Box<dyn App>> {
-    match self {
-      Method::DownloadArchive {
-        archive_url: _,
-        executable_path_in_archive: _,
-      } => None,
-      Method::DownloadExecutable { download_url: _ } => None,
-      Method::CompileGoSource { import_path: _ } => None,
-      Method::CompileRustSource {
-        crate_name: _,
-        executable_path_in_folder: _,
-      } => None,
+      } => yard.app_folder(&app.name(), version).join(executable_path_in_folder),
       Method::ExecutableInAnotherApp {
         app_to_install,
-        executable_path_in_other_yard: _,
-      } => Some(app_to_install),
-    }
-  }
-
-  pub fn name(&self) -> String {
-    match self {
-      Method::DownloadArchive {
-        archive_url: _,
-        executable_path_in_archive: _,
-      } => format!("download archive"),
-      Method::DownloadExecutable { download_url: _ } => format!("download executable"),
-      Method::CompileGoSource { import_path: _ } => format!("compile from Go source"),
-      Method::CompileRustSource {
-        crate_name: _,
-        executable_path_in_folder: _,
-      } => format!("compile from Rust source"),
-      Method::ExecutableInAnotherApp {
-        app_to_install,
-        executable_path_in_other_yard: _,
-      } => format!("install through {}", app_to_install.name()),
+        executable_path_in_other_yard,
+      } => yard.app_folder(&app_to_install.name(), version).join(executable_path_in_other_yard),
     }
   }
 }
 
-/// installs an app using the first of its installation methods that works
-pub fn any(
-  install_methods: Vec<Method>,
-  version: &Version,
-  platform: Platform,
-  optional: bool,
-  yard: &Yard,
-  config_file: &configuration::File,
-  log: Log,
-) -> Result<Outcome> {
-  for install_method in install_methods {
-    if install(&install_method, version, platform, optional, yard, config_file, log)?.success() {
+impl Display for Method {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    match self {
+      Method::DownloadArchive {
+        archive_url: _,
+        executable_path_in_archive: _,
+      } => f.write_str("download archive"),
+      Method::DownloadExecutable { download_url: _ } => f.write_str("download executable"),
+      Method::CompileGoSource { import_path: _ } => f.write_str("compile from Go source"),
+      Method::CompileRustSource {
+        crate_name: _,
+        executable_path_in_folder: _,
+      } => f.write_str("compile from Rust source"),
+      Method::ExecutableInAnotherApp {
+        app_to_install,
+        executable_path_in_other_yard: _,
+      } => {
+        f.write_str("install through ");
+        f.write_str(app_to_install.name().as_str())
+      }
+    }
+  }
+}
+
+/// installs the given app using the first of the given installation methods that works
+// TODO: return the installation method used, so that we don't need to detect it later. Or - even better - return the installed executable because that's what we really need later.
+pub fn any(app: &dyn App, version: &Version, platform: Platform, optional: bool, yard: &Yard, config_file: &configuration::File, log: Log) -> Result<Outcome> {
+  for install_method in app.install_methods(version, platform) {
+    if install(app, install_method, version, platform, optional, yard, config_file, log)?.success() {
       return Ok(Outcome::Installed);
     }
   }
   Ok(Outcome::NotInstalled)
 }
 
+/// installs the given app using the given installation method
+// TODO: rename to "one" to complement "any"?
 pub fn install(
-  app: Box<dyn App>,
-  install_method: &Method,
+  app: &dyn App,
+  install_method: Method,
   version: &Version,
   platform: Platform,
   optional: bool,
@@ -136,26 +119,36 @@ pub fn install(
     Method::DownloadArchive {
       archive_url,
       executable_path_in_archive,
-    } => download_archive::run(app, version, platform, optional, yard, log),
-    Method::DownloadExecutable { download_url } => download_executable::install(*app, version, platform, optional, yard, log),
-    Method::CompileGoSource { import_path } => compile_go::run(*app, platform, version, optional, config_file, yard, log),
+    } => download_archive::run(app, version, archive_url, executable_path_in_archive, optional, yard, log),
+    Method::DownloadExecutable { download_url } => download_executable::install(app, download_url, version, platform, optional, yard, log),
+    Method::CompileGoSource { import_path } => compile_go::run(app, import_path, platform, version, optional, config_file, yard, log),
     Method::CompileRustSource {
       crate_name,
-      executable_path_in_folder,
-    } => compile_rust::run {},
+      executable_path_in_folder: _,
+    } => compile_rust::run(app, &crate_name, version, yard, log),
     Method::ExecutableInAnotherApp {
       app_to_install,
-      executable_path_in_other_yard,
-    } => executable_in_another_app::install_other_app(*app, version, platform, optional, yard, config_file, log),
+      executable_path_in_other_yard: _,
+    } => {
+      load_or_install(
+        app_to_install.as_ref(),
+        &RequestedVersion::Yard(version.to_owned()),
+        platform,
+        optional,
+        yard,
+        config_file,
+        log,
+      )?;
+      Ok(Outcome::Installed)
+    }
   }
 }
 
-/// assuming one of the given installation methods of an app worked, loads that app's executable
-pub fn load(install_methods: Vec<Method>, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Option<Executable> {
-  for installation_method in install_methods {
-    let yard_app_name = installation_method.yard_app();
-    let location_in_yard = installation_method.executable_location(version, platform);
-    let fullpath = yard.app_folder(&yard_app_name, version).join(location_in_yard);
+/// tries to load the executable of the given app from the yard
+// TODO: move into "yard" module
+pub fn load(app: &dyn App, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Option<Executable> {
+  for installation_method in app.install_methods(version, platform) {
+    let fullpath = installation_method.executable_location(app, version, platform, yard);
     log(Event::YardCheckExistingAppBegin { path: &fullpath });
     if fullpath.exists() {
       log(Event::YardCheckExistingAppFound);

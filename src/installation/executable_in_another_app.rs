@@ -1,12 +1,12 @@
 use super::Outcome;
 use crate::applications::App;
 use crate::commands::run::load_or_install;
+use crate::configuration;
 use crate::configuration::{RequestedVersion, Version};
 use crate::logging::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::yard::Yard;
-use crate::{applications, configuration};
 
 /// defines the information needed for apps who have a dedicated executable, but this executable is shipped as part of another app
 pub trait ExecutableInAnotherApp: App {
@@ -18,7 +18,7 @@ pub trait ExecutableInAnotherApp: App {
 }
 
 pub fn install_other_app(
-  app: &dyn ExecutableInAnotherApp,
+  app_to_install: &dyn App,
   version: &Version,
   platform: Platform,
   optional: bool,
@@ -26,12 +26,17 @@ pub fn install_other_app(
   config_file: &configuration::File,
   log: Log,
 ) -> Result<Outcome> {
-  let app_to_install = app.app_to_install();
-  let all_apps = applications::all();
-  let app = all_apps.lookup(&app_to_install.name())?;
   // Note: we know it must be the Yard variant here.
   // At this point we are installing the app.
   // Only Yard variants get installed. The Path variant doesn't get installed.
-  load_or_install(app, &RequestedVersion::Yard(version.to_owned()), platform, optional, yard, config_file, log)?;
+  load_or_install(
+    app_to_install,
+    &RequestedVersion::Yard(version.to_owned()),
+    platform,
+    optional,
+    yard,
+    config_file,
+    log,
+  )?;
   Ok(Outcome::Installed)
 }

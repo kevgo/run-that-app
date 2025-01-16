@@ -4,6 +4,7 @@ use crate::configuration::{RequestedVersion, RequestedVersions, Version};
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
+use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{commands, configuration};
 use std::io::ErrorKind;
@@ -11,16 +12,10 @@ use std::path::PathBuf;
 use std::process::Command;
 use which::which;
 
-/// defines the information needed to compile a Go app from source
-#[allow(clippy::module_name_repetitions)]
-pub trait CompileGoSource: App {
-  /// the Go import path of the application to compile from source
-  fn import_path(&self, version: &Version) -> String;
-}
-
 /// installs the given Go-based application by compiling it from source
 pub fn run(
-  app: &dyn CompileGoSource,
+  app: &dyn App,
+  import_path: String,
   platform: Platform,
   version: &Version,
   optional: bool,
@@ -29,7 +24,6 @@ pub fn run(
   log: Log,
 ) -> Result<Outcome> {
   let target_folder = yard.create_app_folder(&app.name(), version)?;
-  let import_path = app.import_path(version);
   let go_args = vec!["install", &import_path];
   let go_path = if let Ok(system_go_path) = which("go") {
     system_go_path
@@ -61,6 +55,8 @@ pub fn run(
   log(Event::CompileGoSuccess);
   Ok(Outcome::Installed)
 }
+
+pub fn load() -> Option<Executable> {}
 
 fn load_rta_go(platform: Platform, optional: bool, config_file: &configuration::File, yard: &Yard, log: Log) -> Result<Option<PathBuf>> {
   let go = applications::go::Go {};
