@@ -50,15 +50,11 @@ impl App for NodeJS {
 }
 
 fn archive_url(version: &Version, platform: Platform) -> String {
-  let ext = match platform.os {
-    Os::Linux => "tar.xz",
-    Os::MacOS => "tar.gz",
-    Os::Windows => "zip",
-  };
   format!(
     "https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",
     os = os_text(platform.os),
     cpu = cpu_text(platform.cpu),
+    ext = ext_text(platform.os),
   )
 }
 
@@ -81,6 +77,14 @@ pub fn cpu_text(cpu: Cpu) -> &'static str {
 
 fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"v(\d+\.\d+\.\d+)")
+}
+
+fn ext_text(os: Os) -> &'static str {
+  match os {
+    Os::Linux => "tar.xz",
+    Os::MacOS => "tar.gz",
+    Os::Windows => "zip",
+  }
 }
 
 pub fn os_text(os: Os) -> &'static str {
