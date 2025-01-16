@@ -9,8 +9,7 @@ mod executable_in_another_app;
 use std::path::PathBuf;
 
 use crate::applications::App;
-use crate::commands::run::load_or_install;
-use crate::configuration::{self, RequestedVersion, Version};
+use crate::configuration::{self, Version};
 use crate::logging::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
