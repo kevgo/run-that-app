@@ -25,7 +25,7 @@ impl App for Shfmt {
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![
       Method::DownloadExecutable {
-        download_url: download_url(version, platform),
+        url: download_url(version, platform),
       },
       Method::CompileGoSource {
         import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}"),
