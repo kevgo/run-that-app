@@ -1,0 +1,45 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'rta'",
+      "cargo": {
+        "args": [
+          "build",
+          "--bin=rta",
+          "--package=rta"
+        ],
+        "filter": {
+          "name": "rta",
+          "kind": "bin"
+        }
+      },
+      "args": [
+        "-v",
+        "npm@20.0.0"
+      ],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in executable 'rta'",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--bin=rta",
+          "--package=rta"
+        ],
+        "filter": {
+          "name": "rta",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
