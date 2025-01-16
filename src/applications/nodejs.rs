@@ -24,7 +24,7 @@ impl App for NodeJS {
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![Method::DownloadArchive {
-      archive_url: archive_url(version, platform),
+      url: archive_url(version, platform),
       executable_path_in_archive: executable_path_in_archive(version, platform, &self.executable_filename(platform)),
     }]
   }
