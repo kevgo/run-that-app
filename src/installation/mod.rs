@@ -65,8 +65,15 @@ impl Method {
     match self {
       Method::DownloadArchive { url: _, executable_path: _ } => format!("download archive for {app}@{version}"),
       Method::DownloadExecutable { url: _ } => format!("download executable for {app}@{version}"),
-      Method::CompileGoSource { import_path: _ } | Method::CompileRustSource { crate_name: _, executable_path: _ } => format!("compile {app}@{version} from source"),
-      Method::ExecutableInAnotherApp { app_to_install, executable_path: _ } => format!("install {app}@{version} through {carrier}", carrier = app_to_install.name()),
+      Method::CompileGoSource { import_path: _ }
+      | Method::CompileRustSource {
+        crate_name: _,
+        executable_path: _,
+      } => format!("compile {app}@{version} from source"),
+      Method::ExecutableInAnotherApp {
+        app_to_install,
+        executable_path: _,
+      } => format!("install {app}@{version} through {carrier}", carrier = app_to_install.name()),
     }
   }
 }
@@ -84,7 +91,16 @@ pub fn any(app: &dyn App, version: &Version, platform: Platform, optional: bool,
 }
 
 /// installs the given app using the given installation method
-pub fn install(app: &dyn App, install_method: &Method, version: &Version, platform: Platform, optional: bool, yard: &Yard, config_file: &configuration::File, log: Log) -> Result<Outcome> {
+pub fn install(
+  app: &dyn App,
+  install_method: &Method,
+  version: &Version,
+  platform: Platform,
+  optional: bool,
+  yard: &Yard,
+  config_file: &configuration::File,
+  log: Log,
+) -> Result<Outcome> {
   match install_method {
     Method::DownloadArchive {
       url: archive_url,

@@ -100,7 +100,15 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
   }
 }
 
-fn load_or_install_from_yard(app: &dyn App, version: &Version, platform: Platform, optional: bool, yard: &Yard, config_file: &configuration::File, log: Log) -> Result<Option<Executable>> {
+fn load_or_install_from_yard(
+  app: &dyn App,
+  version: &Version,
+  platform: Platform,
+  optional: bool,
+  yard: &Yard,
+  config_file: &configuration::File,
+  log: Log,
+) -> Result<Option<Executable>> {
   // try to load the app
   if let Some(executable) = yard.load(app, version, platform, log) {
     return Ok(Some(executable));

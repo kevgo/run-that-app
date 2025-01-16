@@ -80,7 +80,10 @@ mod tests {
 
     #[test]
     fn windows_intel64() {
-      let platform = Platform { os: Os::Windows, cpu: Cpu::Intel64 };
+      let platform = Platform {
+        os: Os::Windows,
+        cpu: Cpu::Intel64,
+      };
       let have = super::super::archive_url(&Version::from("3.7.0"), platform);
       let want = "https://github.com/antham/ghokin/releases/download/v3.7.0/ghokin_3.7.0_windows_amd64.tar.gz";
       assert_eq!(have, want);

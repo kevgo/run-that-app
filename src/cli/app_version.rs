@@ -11,7 +11,10 @@ impl AppVersion {
   pub fn new<S: AsRef<str>>(token: S) -> Self {
     let (app_name, version) = token.as_ref().split_once('@').unwrap_or((token.as_ref(), ""));
     let version = if version.is_empty() { None } else { Some(Version::from(version)) };
-    AppVersion { app_name: app_name.into(), version }
+    AppVersion {
+      app_name: app_name.into(),
+      version,
+    }
   }
 }
 

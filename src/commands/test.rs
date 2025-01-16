@@ -47,7 +47,10 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
       let executable = Executable(executable_path.clone());
       match app.analyze_executable(&executable, log)? {
         AnalyzeResult::NotIdentified { output } => {
-          println!("executable {} not identified based on this output:\n\"{output}\"\nOUTPUT END", executable_path.to_string_lossy());
+          println!(
+            "executable {} not identified based on this output:\n\"{output}\"\nOUTPUT END",
+            executable_path.to_string_lossy()
+          );
           return Ok(ExitCode::FAILURE);
         }
         AnalyzeResult::IdentifiedButUnknownVersion => println!("{}", "executable identified".green()),

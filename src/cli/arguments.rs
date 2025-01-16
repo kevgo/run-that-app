@@ -108,11 +108,21 @@ pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Arguments> {
   if let Some(AppVersion { app_name, version }) = app_version {
     if indicate_available {
       Ok(Arguments {
-        command: Command::Available(available::Args { app_name, optional, version, verbose }),
+        command: Command::Available(available::Args {
+          app_name,
+          optional,
+          version,
+          verbose,
+        }),
       })
     } else if which {
       Ok(Arguments {
-        command: Command::Which(commands::which::Args { app_name, optional, version, verbose }),
+        command: Command::Which(commands::which::Args {
+          app_name,
+          optional,
+          version,
+          verbose,
+        }),
       })
     } else if let Some(amount) = versions {
       Ok(Arguments {

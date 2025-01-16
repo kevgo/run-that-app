@@ -24,7 +24,9 @@ impl App for Depth {
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![
-      Method::DownloadExecutable { url: download_url(version, platform) },
+      Method::DownloadExecutable {
+        url: download_url(version, platform),
+      },
       Method::CompileGoSource {
         import_path: format!("github.com/{ORG}/{REPO}/cmd/depth@v{version}"),
       },
@@ -83,7 +85,10 @@ mod tests {
 
     #[test]
     fn windows() {
-      let platform = Platform { os: Os::Windows, cpu: Cpu::Intel64 };
+      let platform = Platform {
+        os: Os::Windows,
+        cpu: Cpu::Intel64,
+      };
       let have = super::super::download_url(&Version::from("1.2.1"), platform);
       let want = "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_windows_amd64.exe";
       assert_eq!(have, want);

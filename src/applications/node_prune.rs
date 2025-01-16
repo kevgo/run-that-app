@@ -32,7 +32,9 @@ impl App for NodePrune {
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![
-      Method::DownloadExecutable { url: download_url(version, platform) },
+      Method::DownloadExecutable {
+        url: download_url(version, platform),
+      },
       Method::CompileGoSource {
         import_path: format!("github.com/tj/node-prune@v{version}"),
       },

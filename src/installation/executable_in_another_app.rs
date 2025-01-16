@@ -27,7 +27,11 @@ pub fn install_other_app(
   let executable_path = executable_path(app_to_install, version, yard, executable_filename);
   if !executable_path.exists() {
     return Err(UserError::InternalError {
-      desc: format!("executable not found after installing via other app {}: {}", app_to_install.name(), executable_path.to_string_lossy()),
+      desc: format!(
+        "executable not found after installing via other app {}: {}",
+        app_to_install.name(),
+        executable_path.to_string_lossy()
+      ),
     });
   }
   Ok(Outcome::Installed {
