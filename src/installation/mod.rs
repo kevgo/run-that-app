@@ -11,7 +11,7 @@ use std::path::PathBuf;
 use crate::applications::App;
 use crate::commands::run::load_or_install;
 use crate::configuration::{self, RequestedVersion, Version};
-use crate::logging::{Event, Log};
+use crate::logging::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
@@ -140,21 +140,6 @@ pub fn install(
       }
     }
   }
-}
-
-/// tries to load the executable of the given app from the yard
-// TODO: move into "yard" module
-pub fn load(app: &dyn App, version: &Version, platform: Platform, yard: &Yard, log: Log) -> Option<Executable> {
-  for installation_method in app.install_methods(version, platform) {
-    let fullpath = installation_method.executable_location(app, version, platform, yard);
-    log(Event::YardCheckExistingAppBegin { path: &fullpath });
-    if fullpath.exists() {
-      log(Event::YardCheckExistingAppFound);
-      return Some(Executable(fullpath));
-    }
-  }
-  log(Event::YardCheckExistingAppNotFound);
-  None
 }
 
 #[derive(Debug, PartialEq)]

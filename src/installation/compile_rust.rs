@@ -2,23 +2,12 @@ use super::Outcome;
 use crate::applications::App;
 use crate::configuration::Version;
 use crate::logging::{Event, Log};
-use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::yard::Yard;
 use std::io::ErrorKind;
 use std::process::Command;
 use which::which;
-
-/// defines the information needed to compile a Rust app from source
-#[allow(clippy::module_name_repetitions)]
-pub trait CompileRustSource: App {
-  /// the name of the Rust crate containing the source code of the application to compile
-  fn crate_name(&self) -> &'static str;
-
-  /// the location of the executable within the archive
-  fn executable_path_in_folder(&self, platform: Platform) -> String;
-}
 
 /// installs the given Rust-based application by compiling it from source
 pub fn run(app: &dyn App, crate_name: &str, version: &Version, yard: &Yard, executable_filename: &str, log: Log) -> Result<Outcome> {

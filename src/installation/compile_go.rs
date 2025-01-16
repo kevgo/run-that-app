@@ -1,6 +1,6 @@
 use super::Outcome;
 use crate::applications::{self, App};
-use crate::configuration::{ApplicationName, RequestedVersion, RequestedVersions, Version};
+use crate::configuration::{RequestedVersion, RequestedVersions, Version};
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;

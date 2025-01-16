@@ -3,7 +3,8 @@ use crate::configuration::{self, ApplicationName};
 use crate::logging::Event;
 use crate::prelude::*;
 use crate::subshell::Executable;
-use crate::{applications, installation, logging, platform, yard};
+use crate::yard::Yard;
+use crate::{applications, installation, logging, platform};
 use colored::Colorize;
 use std::io;
 use std::process::ExitCode;
@@ -13,7 +14,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
   let temp_folder = tempfile::tempdir().map_err(|err| UserError::CannotCreateTempDir { err: err.to_string() })?;
-  let yard = yard::load_or_create(temp_folder.path())?;
+  let yard = Yard::new_or_create(temp_folder.path())?;
   let config_file = configuration::File::load(&apps)?;
   for app in apps {
     if let Some(start_app_name) = &args.start_at_app {

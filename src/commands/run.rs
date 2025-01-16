@@ -15,7 +15,7 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   let app = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
-  let yard = yard::load_or_create(&yard::production_location()?)?;
+  let yard = Yard::new_or_create(&yard::production_location()?)?;
   let config_file = configuration::File::load(&apps)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   for requested_version in requested_versions {
@@ -115,9 +115,8 @@ fn load_or_install_from_yard(
   config_file: &configuration::File,
   log: Log,
 ) -> Result<Option<Executable>> {
-  // TODO: move app.install_methods into a dedicated variable and reuse across the call sites in this function.
   // try to load the app
-  if let Some(executable) = installation::load(app, version, platform, yard, log) {
+  if let Some(executable) = yard.load(app, version, platform, log) {
     return Ok(Some(executable));
   }
   // app not installed --> check if uninstallable

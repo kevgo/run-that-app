@@ -8,12 +8,6 @@ use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{download, filesystem};
 
-/// defines the information needed to download a pre-compiled application executable
-pub trait DownloadExecutable: App {
-  /// the URL at which to download the executable
-  fn download_url(&self, version: &Version, platform: Platform) -> String;
-}
-
 /// downloads an uncompressed precompiled binary
 pub fn install(app: &dyn App, url: &str, version: &Version, platform: Platform, optional: bool, yard: &Yard, log: Log) -> Result<Outcome> {
   let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {

@@ -1,16 +1,10 @@
 //! The area on disk that stores the installed applications.
 //! Named after rail yards, i.e. locations where passenger cars of trains are stored, sorted, and repaired.
 
-mod create;
-mod load;
-mod load_or_create;
 #[allow(clippy::module_inception)] // I can't come up with a better name for this
 mod yard;
 
 use crate::prelude::*;
-pub use create::create;
-pub use load::load;
-pub use load_or_create::load_or_create;
 use std::path::{Path, PathBuf};
 pub use yard::Yard;
 
