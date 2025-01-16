@@ -26,7 +26,7 @@ impl App for Ireturn {
     vec![
       Method::DownloadArchive {
         url: archive_url(version, platform),
-        filepath: self.executable_filename(platform),
+        path_in_archive: self.executable_filename(platform),
       },
       Method::CompileGoSource {
         import_path: format!("github.com/{ORG}/{REPO}/cmd/ireturn@v{version}"),

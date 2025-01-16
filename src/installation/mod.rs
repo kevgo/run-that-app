@@ -22,7 +22,7 @@ pub enum Method {
     /// the URL of the archive to download
     url: String,
     /// relative path of the executable inside the archive
-    filepath: String,
+    path_in_archive: String,
   },
 
   /// installs the application by downloading the pre-compiled executable from the internet
@@ -53,7 +53,7 @@ impl Method {
   /// provides the location of this app's executable within its yard
   pub fn executable_location(&self, app: &dyn App, version: &Version, platform: Platform, yard: &Yard) -> PathBuf {
     match self {
-      Method::DownloadArchive { url: _, filepath } => yard.app_folder(&app.name(), version).join(filepath),
+      Method::DownloadArchive { url: _, path_in_archive } => yard.app_folder(&app.name(), version).join(path_in_archive),
       Method::DownloadExecutable { url: _ } => yard.app_folder(&app.name(), version).join(app.executable_filename(platform)),
       Method::CompileGoSource { import_path: _ } => compile_go::executable_path(app, version, platform, yard),
       Method::CompileRustSource { crate_name: _, filepath } => compile_rust::executable_path(app, version, yard, filepath),
@@ -66,7 +66,7 @@ impl Method {
 
   pub fn name(&self, app: &str, version: &Version) -> String {
     match self {
-      Method::DownloadArchive { url: _, filepath: _ } => format!("download archive for {app}@{version}"),
+      Method::DownloadArchive { url: _, path_in_archive: _ } => format!("download archive for {app}@{version}"),
       Method::DownloadExecutable { url: _ } => format!("download executable for {app}@{version}"),
       Method::CompileGoSource { import_path: _ } | Method::CompileRustSource { crate_name: _, filepath: _ } => format!("compile {app}@{version} from source"),
       Method::ExecutableInAnotherApp {
@@ -100,23 +100,17 @@ pub fn install(
   log: Log,
 ) -> Result<Outcome> {
   match install_method {
-    Method::DownloadArchive { url: archive_url, filepath } => download_archive::run(app, version, archive_url, filepath, optional, yard, log),
+    Method::DownloadArchive {
+      url: archive_url,
+      path_in_archive,
+    } => download_archive::run(app, version, archive_url, &path_in_archive, optional, yard, log),
     Method::DownloadExecutable { url: download_url } => download_executable::install(app, download_url, version, platform, optional, yard, log),
     Method::CompileGoSource { import_path } => compile_go::run(app, import_path, platform, version, optional, config_file, yard, log),
     Method::CompileRustSource { crate_name, filepath } => compile_rust::run(app, crate_name, version, yard, filepath, log),
     Method::ExecutableInAnotherApp {
       other_app: app_to_install,
-      executable_path: executable_path_in_other_yard,
-    } => executable_in_another_app::install_other_app(
-      app_to_install.as_ref(),
-      version,
-      platform,
-      optional,
-      yard,
-      executable_path_in_other_yard,
-      config_file,
-      log,
-    ),
+      executable_path,
+    } => executable_in_another_app::install_other_app(app_to_install.as_ref(), version, platform, optional, yard, executable_path, config_file, log),
   }
 }
 

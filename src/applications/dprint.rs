@@ -25,7 +25,7 @@ impl App for Dprint {
     vec![
       Method::DownloadArchive {
         url: archive_url(version, platform),
-        filepath: self.executable_filename(platform),
+        path_in_archive: self.executable_filename(platform),
       },
       Method::CompileRustSource {
         crate_name: "dprint",

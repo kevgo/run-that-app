@@ -24,7 +24,7 @@ impl App for Goreleaser {
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![Method::DownloadArchive {
       url: archive_url(version, platform),
-      filepath: self.executable_filename(platform),
+      path_in_archive: self.executable_filename(platform),
     }]
   }
 

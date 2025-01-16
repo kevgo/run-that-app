@@ -24,7 +24,7 @@ impl App for ShellCheck {
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![Method::DownloadArchive {
       url: archive_url(version, platform),
-      filepath: format!(
+      path_in_archive: format!(
         "shellcheck-v{version}{sep}{executable}",
         sep = std::path::MAIN_SEPARATOR,
         executable = self.executable_filename(platform)
