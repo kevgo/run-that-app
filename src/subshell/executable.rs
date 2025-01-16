@@ -27,7 +27,8 @@ impl Executable {
     let mut cmd = Command::new(self);
     cmd.arg(arg);
     cmd.envs(env::vars_os());
-    let parent = self.0.parent().unwrap(); // there is always a parent here since this is a location inside the yard
+    #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
+    let parent = self.0.parent().unwrap();
     let new_path = if let Some(mut path) = env::var_os("PATH") {
       path.push(":");
       path.push(parent.as_os_str());
@@ -61,7 +62,8 @@ impl Executable {
     let mut cmd = Command::new(self);
     cmd.args(args);
     cmd.envs(env::vars_os());
-    let parent = self.0.parent().unwrap(); // there is always a parent here since this is a location inside the yard
+    #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
+    let parent = self.0.parent().unwrap();
     let new_path = if let Some(mut path) = env::var_os("PATH") {
       path.push(":");
       path.push(parent.as_os_str());
