@@ -114,8 +114,9 @@ fn load_or_install_from_yard(
   config_file: &configuration::File,
   log: Log,
 ) -> Result<Option<Executable>> {
+  // TODO: move app.install_methods into a dedicated variable and reuse across the call sites in this function.
   // try to load the app
-  if let Some(executable) = installation::load(app.install_methods(), version, platform, yard, log) {
+  if let Some(executable) = installation::load(app.install_methods(version, platform), version, platform, yard, log) {
     return Ok(Some(executable));
   }
   // app not installed --> check if uninstallable
@@ -123,8 +124,8 @@ fn load_or_install_from_yard(
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  if installation::any(app.install_methods(), version, platform, optional, yard, config_file, log)?.success() {
-    return Ok(installation::load(app.install_methods(), version, platform, yard, log));
+  if installation::any(app.install_methods(version, platform), version, platform, optional, yard, config_file, log)?.success() {
+    return Ok(installation::load(app.install_methods(version, platform), version, platform, yard, log));
   }
   // app could not be installed -> mark as uninstallable
   yard.mark_not_installable(&app.name(), version)?;
