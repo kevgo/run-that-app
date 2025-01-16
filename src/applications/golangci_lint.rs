@@ -22,9 +22,12 @@ impl App for GolangCiLint {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
+  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
-    vec![Method::DownloadArchive(self)]
+    vec![Method::DownloadArchive {
+      archive_url: archive_url(version, platform),
+      executable_path_in_archive: executable_path_in_archive(version, platform, self.executable_filename(platform)),
+    }]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -43,25 +46,22 @@ impl App for GolangCiLint {
   }
 }
 
-impl installation::DownloadArchive for GolangCiLint {
-  fn archive_url(&self, version: &Version, platform: Platform) -> String {
-    format!(
-      "https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}",
-      os = os_text(platform.os),
-      cpu = cpu_text(platform.cpu),
-      ext = ext_text(platform.os)
-    )
-  }
+fn archive_url(version: &Version, platform: Platform) -> String {
+  format!(
+    "https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}",
+    os = os_text(platform.os),
+    cpu = cpu_text(platform.cpu),
+    ext = ext_text(platform.os)
+  )
+}
 
-  fn executable_path_in_archive(&self, version: &Version, platform: Platform) -> String {
-    format!(
-      "golangci-lint-{version}-{os}-{cpu}{sep}{executable}",
-      executable = self.executable_filename(platform),
-      os = os_text(platform.os),
-      cpu = cpu_text(platform.cpu),
-      sep = std::path::MAIN_SEPARATOR
-    )
-  }
+fn executable_path_in_archive(version: &Version, platform: Platform, executable_filename: String) -> String {
+  format!(
+    "golangci-lint-{version}-{os}-{cpu}{sep}{executable_filename}",
+    os = os_text(platform.os),
+    cpu = cpu_text(platform.cpu),
+    sep = std::path::MAIN_SEPARATOR
+  )
 }
 
 fn cpu_text(cpu: Cpu) -> &'static str {
@@ -93,18 +93,16 @@ fn os_text(os: Os) -> &'static str {
 #[cfg(test)]
 mod tests {
   use crate::configuration::Version;
-  use crate::installation::DownloadArchive;
   use crate::platform::{Cpu, Os, Platform};
   use crate::UserError;
 
   #[test]
   fn archive_url() {
-    let golangci_lint = super::GolangCiLint {};
     let platform = Platform {
       os: Os::MacOS,
       cpu: Cpu::Arm64,
     };
-    let have = golangci_lint.archive_url(&Version::from("1.55.2"), platform);
+    let have = super::archive_url(&Version::from("1.55.2"), platform);
     let want = "https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-darwin-arm64.tar.gz";
     assert_eq!(have, want);
   }

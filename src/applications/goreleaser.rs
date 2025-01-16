@@ -21,8 +21,11 @@ impl App for Goreleaser {
     "https://goreleaser.com"
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::DownloadArchive(self)]
+  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    vec![Method::DownloadArchive {
+      archive_url: archive_url(version, platform),
+      executable_path_in_archive: self.executable_filename(platform),
+    }]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -45,27 +48,21 @@ impl App for Goreleaser {
   }
 }
 
-impl installation::DownloadArchive for Goreleaser {
-  fn archive_url(&self, version: &Version, platform: Platform) -> String {
-    let os = match platform.os {
-      Os::Linux => "Linux",
-      Os::MacOS => "Darwin",
-      Os::Windows => "Windows",
-    };
-    let cpu = match platform.cpu {
-      Cpu::Arm64 => "arm64",
-      Cpu::Intel64 => "x86_64",
-    };
-    let ext = match platform.os {
-      Os::Linux | Os::MacOS => "tar.gz",
-      Os::Windows => "zip",
-    };
-    format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}")
-  }
-
-  fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
-    self.executable_filename(platform)
-  }
+fn archive_url(version: &Version, platform: Platform) -> String {
+  let os = match platform.os {
+    Os::Linux => "Linux",
+    Os::MacOS => "Darwin",
+    Os::Windows => "Windows",
+  };
+  let cpu = match platform.cpu {
+    Cpu::Arm64 => "arm64",
+    Cpu::Intel64 => "x86_64",
+  };
+  let ext = match platform.os {
+    Os::Linux | Os::MacOS => "tar.gz",
+    Os::Windows => "zip",
+  };
+  format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}")
 }
 
 fn extract_version(output: &str) -> Result<&str> {
@@ -75,17 +72,15 @@ fn extract_version(output: &str) -> Result<&str> {
 #[cfg(test)]
 mod tests {
   use crate::configuration::Version;
-  use crate::installation::DownloadArchive;
   use crate::platform::{Cpu, Os, Platform};
 
   #[test]
   fn archive_url() {
-    let goreleaser = super::Goreleaser {};
     let platform = Platform {
       os: Os::MacOS,
       cpu: Cpu::Arm64,
     };
-    let have = goreleaser.archive_url(&Version::from("1.22.1"), platform);
+    let have = super::archive_url(&Version::from("1.22.1"), platform);
     let want = "https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz";
     assert_eq!(have, want);
   }
