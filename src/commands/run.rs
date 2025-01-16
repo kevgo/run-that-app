@@ -1,6 +1,7 @@
 use crate::applications::{AnalyzeResult, App};
 use crate::configuration::{self, ApplicationName, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
+use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
@@ -124,8 +125,9 @@ fn load_or_install_from_yard(
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  if installation::any(app, version, platform, optional, yard, config_file, log)?.success() {
-    return Ok(installation::load(app, version, platform, yard, log));
+  let outcome = installation::any(app, version, platform, optional, yard, config_file, log)?;
+  if let Outcome::Installed { executable } = outcome {
+    return Ok(Some(executable));
   }
   // app could not be installed -> mark as uninstallable
   yard.mark_not_installable(&app.name(), version)?;
