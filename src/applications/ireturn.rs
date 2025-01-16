@@ -89,7 +89,10 @@ mod tests {
 
   #[test]
   fn archive_url() {
-    let platform = Platform { os: Os::Linux, cpu: Cpu::Intel64 };
+    let platform = Platform {
+      os: Os::Linux,
+      cpu: Cpu::Intel64,
+    };
     let have = super::archive_url(&Version::from("0.3.0"), platform);
     let want = "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_linux_x86_64.tar.gz";
     assert_eq!(have, want);

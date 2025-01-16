@@ -98,7 +98,10 @@ mod tests {
 
   #[test]
   fn archive_url() {
-    let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
+    let platform = Platform {
+      os: Os::MacOS,
+      cpu: Cpu::Arm64,
+    };
     let have = super::archive_url(&Version::from("1.55.2"), platform);
     let want = "https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-darwin-arm64.tar.gz";
     assert_eq!(have, want);

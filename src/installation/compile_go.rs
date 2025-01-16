@@ -13,7 +13,16 @@ use std::process::Command;
 use which::which;
 
 /// installs the given Go-based application by compiling it from source
-pub fn run(app: &dyn App, import_path: &str, platform: Platform, version: &Version, optional: bool, config_file: &configuration::File, yard: &Yard, log: Log) -> Result<Outcome> {
+pub fn run(
+  app: &dyn App,
+  import_path: &str,
+  platform: Platform,
+  version: &Version,
+  optional: bool,
+  config_file: &configuration::File,
+  yard: &Yard,
+  log: Log,
+) -> Result<Outcome> {
   let app_name = app.name();
   let target_folder = yard.create_app_folder(&app_name, version)?;
   let go_args = vec!["install", &import_path];

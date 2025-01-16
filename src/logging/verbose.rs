@@ -54,9 +54,16 @@ pub fn log(event: Event) {
       version: actual_version,
     } => {
       if let Some(version) = actual_version {
-        eprintln!("found version {} that does not match {}", version.as_str().red(), version_restriction.to_string().cyan());
+        eprintln!(
+          "found version {} that does not match {}",
+          version.as_str().red(),
+          version_restriction.to_string().cyan()
+        );
       } else {
-        eprintln!("found an installation with unknown version and it doesn't match {}", version_restriction.to_string().cyan());
+        eprintln!(
+          "found an installation with unknown version and it doesn't match {}",
+          version_restriction.to_string().cyan()
+        );
       }
     }
     Event::GlobalInstallNotFound => eprintln!("{}", "not found".red()),

@@ -107,7 +107,16 @@ pub fn install(
     Method::ExecutableInAnotherApp {
       other_app: app_to_install,
       executable_path: executable_path_in_other_yard,
-    } => executable_in_another_app::install_other_app(app_to_install.as_ref(), version, platform, optional, yard, executable_path_in_other_yard, config_file, log),
+    } => executable_in_another_app::install_other_app(
+      app_to_install.as_ref(),
+      version,
+      platform,
+      optional,
+      yard,
+      executable_path_in_other_yard,
+      config_file,
+      log,
+    ),
   }
 }
 

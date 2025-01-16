@@ -109,7 +109,9 @@ mod tests {
   #[test]
   fn app_file_path() {
     let yard = Yard { root: PathBuf::from("/root") };
-    let have = yard.app_folder(&ApplicationName::from("shellcheck"), &Version::from("0.9.0")).join("shellcheck.exe");
+    let have = yard
+      .app_folder(&ApplicationName::from("shellcheck"), &Version::from("0.9.0"))
+      .join("shellcheck.exe");
     let want = PathBuf::from("/root/apps/shellcheck/0.9.0/shellcheck.exe");
     assert_eq!(have, want);
   }

@@ -81,7 +81,10 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
+      let platform = Platform {
+        os: Os::MacOS,
+        cpu: Cpu::Arm64,
+      };
       let have = super::super::archive_url(&Version::from("3.2.0"), platform);
       let want = "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Darwin_arm64.tar.gz";
       assert_eq!(have, want);
@@ -89,7 +92,10 @@ mod tests {
 
     #[test]
     fn linux_intel() {
-      let platform = Platform { os: Os::Linux, cpu: Cpu::Intel64 };
+      let platform = Platform {
+        os: Os::Linux,
+        cpu: Cpu::Intel64,
+      };
       let have = super::super::archive_url(&Version::from("3.2.0"), platform);
       let want = "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Linux_x86_64.tar.gz";
       assert_eq!(have, want);

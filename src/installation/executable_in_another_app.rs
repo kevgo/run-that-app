@@ -23,7 +23,15 @@ pub fn install_other_app(
   // Note: we know it must be the Yard variant here.
   // At this point we are installing the app.
   // Only Yard variants get installed. The Path variant doesn't get installed.
-  load_or_install(app_to_install, &RequestedVersion::Yard(version.to_owned()), platform, optional, yard, config_file, log)?;
+  load_or_install(
+    app_to_install,
+    &RequestedVersion::Yard(version.to_owned()),
+    platform,
+    optional,
+    yard,
+    config_file,
+    log,
+  )?;
   let executable_path = executable_path(app_to_install, version, yard, executable_filename);
   if !executable_path.exists() {
     return Err(UserError::InternalError {

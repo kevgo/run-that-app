@@ -1,4 +1,4 @@
 group_imports = "One"
-max_width = 180
+max_width = 160
 tab_spaces = 2
 imports_granularity = "Module"

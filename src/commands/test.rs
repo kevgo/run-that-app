@@ -32,12 +32,26 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
         method: &install_method,
         version: &latest_version,
       });
-      if !installation::install(app.as_ref(), &install_method, &latest_version, platform, args.optional, &yard, &config_file, log)?.success() {
+      if !installation::install(
+        app.as_ref(),
+        &install_method,
+        &latest_version,
+        platform,
+        args.optional,
+        &yard,
+        &config_file,
+        log,
+      )?
+      .success()
+      {
         continue;
       }
       let executable_path = install_method.executable_location(app.as_ref(), &latest_version, platform, &yard);
       if !executable_path.exists() {
-        println!("executable {} not found, press ENTER after inspecting the yard", executable_path.to_string_lossy());
+        println!(
+          "executable {} not found, press ENTER after inspecting the yard",
+          executable_path.to_string_lossy()
+        );
         let mut buffer = String::new();
         if let Err(err) = io::stdin().read_line(&mut buffer) {
           eprintln!("Error: {err}");

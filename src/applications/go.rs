@@ -113,7 +113,10 @@ mod tests {
 
   #[test]
   fn archive_url() {
-    let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
+    let platform = Platform {
+      os: Os::MacOS,
+      cpu: Cpu::Arm64,
+    };
     let have = super::archive_url(&Version::from("1.21.5"), platform);
     let want = "https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz";
     assert_eq!(have, want);

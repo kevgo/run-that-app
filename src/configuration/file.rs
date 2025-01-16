@@ -30,7 +30,9 @@ impl File {
 # actionlint 1.2.26
 # gh 2.39.1
 ";
-    file.write_all(content.as_bytes()).map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
+    file
+      .write_all(content.as_bytes())
+      .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
   }
 
   pub fn load(apps: &Apps) -> Result<File> {
@@ -98,7 +100,10 @@ fn parse_line(line_text: &str, line_no: usize, apps: &Apps) -> Result<Option<App
   for part in parts {
     versions.push(RequestedVersion::parse(part, app)?);
   }
-  Ok(Some(AppVersions { app_name: name.into(), versions }))
+  Ok(Some(AppVersions {
+    app_name: name.into(),
+    versions,
+  }))
 }
 
 /// provides active (non-comment) words in the given line

@@ -80,7 +80,10 @@ mod tests {
 
   #[test]
   fn archive_url() {
-    let platform = Platform { os: Os::Linux, cpu: Cpu::Intel64 };
+    let platform = Platform {
+      os: Os::Linux,
+      cpu: Cpu::Intel64,
+    };
     let have = super::archive_url(&Version::from("0.9.0"), platform);
     let want = "https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.linux.x86_64.tar.xz";
     assert_eq!(have, want);

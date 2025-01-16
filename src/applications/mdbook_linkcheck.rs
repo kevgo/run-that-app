@@ -80,7 +80,10 @@ mod tests {
 
   #[test]
   fn archive_url() {
-    let platform = Platform { os: Os::MacOS, cpu: Cpu::Intel64 };
+    let platform = Platform {
+      os: Os::MacOS,
+      cpu: Cpu::Intel64,
+    };
     let have = super::archive_url(&Version::from("0.7.8"), platform);
     let want = "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-apple-darwin.zip";
     assert_eq!(have, want);
