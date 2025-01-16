@@ -99,7 +99,6 @@ pub fn any(app: &dyn App, version: &Version, platform: Platform, optional: bool,
 }
 
 /// installs the given app using the given installation method
-// TODO: rename to "one" to complement "any"?
 pub fn install(
   app: &dyn App,
   install_method: &Method,
@@ -123,23 +122,17 @@ pub fn install(
     } => compile_rust::run(app, crate_name, version, yard, executable_path_in_folder, log),
     Method::ExecutableInAnotherApp {
       app_to_install,
-      executable_path_in_other_yard: _,
-    } => {
-      let executable = load_or_install(
-        app_to_install.as_ref(),
-        &RequestedVersion::Yard(version.to_owned()),
-        platform,
-        optional,
-        yard,
-        config_file,
-        log,
-      )?;
-      if let Some(executable) = executable {
-        Ok(Outcome::Installed { executable })
-      } else {
-        Ok(Outcome::NotInstalled)
-      }
-    }
+      executable_path_in_other_yard,
+    } => executable_in_another_app::install_other_app(
+      app_to_install.as_ref(),
+      version,
+      platform,
+      optional,
+      yard,
+      &executable_path_in_other_yard,
+      config_file,
+      log,
+    ),
   }
 }
 
