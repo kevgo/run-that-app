@@ -21,8 +21,15 @@ impl App for ShellCheck {
     "https://www.shellcheck.net"
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::DownloadArchive(self)]
+  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    vec![Method::DownloadArchive {
+      archive_url: archive_url(version, platform),
+      executable_path_in_archive: format!(
+        "shellcheck-v{version}{sep}{executable}",
+        sep = std::path::MAIN_SEPARATOR,
+        executable = self.executable_filename(platform)
+      ),
+    }]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -45,31 +52,21 @@ impl App for ShellCheck {
   }
 }
 
-impl installation::DownloadArchive for ShellCheck {
-  fn archive_url(&self, version: &Version, platform: Platform) -> String {
-    let os = match platform.os {
-      Os::Linux => "linux",
-      Os::MacOS => "darwin",
-      Os::Windows => "windows",
-    };
-    let cpu = match platform.cpu {
-      Cpu::Arm64 => "aarch64",
-      Cpu::Intel64 => "x86_64",
-    };
-    let ext = match platform.os {
-      Os::Linux | Os::MacOS => "tar.xz",
-      Os::Windows => "zip",
-    };
-    format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}")
-  }
-
-  fn executable_path_in_archive(&self, version: &Version, platform: Platform) -> String {
-    format!(
-      "shellcheck-v{version}{sep}{executable}",
-      sep = std::path::MAIN_SEPARATOR,
-      executable = self.executable_filename(platform)
-    )
-  }
+fn archive_url(version: &Version, platform: Platform) -> String {
+  let os = match platform.os {
+    Os::Linux => "linux",
+    Os::MacOS => "darwin",
+    Os::Windows => "windows",
+  };
+  let cpu = match platform.cpu {
+    Cpu::Arm64 => "aarch64",
+    Cpu::Intel64 => "x86_64",
+  };
+  let ext = match platform.os {
+    Os::Linux | Os::MacOS => "tar.xz",
+    Os::Windows => "zip",
+  };
+  format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}")
 }
 
 fn extract_version(output: &str) -> Result<&str> {
@@ -79,17 +76,15 @@ fn extract_version(output: &str) -> Result<&str> {
 #[cfg(test)]
 mod tests {
   use crate::configuration::Version;
-  use crate::installation::DownloadArchive;
   use crate::platform::{Cpu, Os, Platform};
 
   #[test]
   fn archive_url() {
-    let shellcheck = super::ShellCheck {};
     let platform = Platform {
       os: Os::Linux,
       cpu: Cpu::Intel64,
     };
-    let have = shellcheck.archive_url(&Version::from("0.9.0"), platform);
+    let have = super::archive_url(&Version::from("0.9.0"), platform);
     let want = "https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.linux.x86_64.tar.xz";
     assert_eq!(have, want);
   }

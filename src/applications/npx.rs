@@ -19,8 +19,17 @@ impl App for Npx {
     "https://www.npmjs.com"
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::ExecutableInAnotherApp(self)]
+  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    vec![Method::ExecutableInAnotherApp {
+      app_to_install: app_to_install(),
+      executable_path_in_other_yard: format!(
+        "node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",
+        os = applications::nodejs::os_text(platform.os),
+        cpu = applications::nodejs::cpu_text(platform.cpu),
+        sep = path::MAIN_SEPARATOR,
+        executable = self.executable_filename(platform)
+      ),
+    }]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -41,18 +50,6 @@ impl App for Npx {
   }
 }
 
-impl installation::ExecutableInAnotherApp for Npx {
-  fn app_to_install(&self) -> Box<dyn App> {
-    Box::new(NodeJS {})
-  }
-
-  fn executable_path_in_other_app_yard(&self, version: &Version, platform: Platform) -> String {
-    format!(
-      "node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",
-      os = applications::nodejs::os_text(platform.os),
-      cpu = applications::nodejs::cpu_text(platform.cpu),
-      sep = path::MAIN_SEPARATOR,
-      executable = self.executable_filename(platform)
-    )
-  }
+fn app_to_install() -> Box<dyn App> {
+  Box::new(NodeJS {})
 }

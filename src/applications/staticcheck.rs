@@ -21,8 +21,16 @@ impl App for StaticCheck {
     "https://staticcheck.dev"
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::DownloadArchive(self), Method::CompileGoSource(self)]
+  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    vec![
+      Method::DownloadArchive {
+        archive_url: archive_url(version, platform),
+        executable_path_in_archive: format!("staticcheck/{}", self.executable_filename(platform)),
+      },
+      Method::CompileGoSource {
+        import_path: format!("honnef.co/go/tools/cmd/staticcheck@{version}"),
+      },
+    ]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -42,27 +50,15 @@ impl App for StaticCheck {
   }
 }
 
-impl installation::DownloadArchive for StaticCheck {
-  fn archive_url(&self, version: &Version, platform: Platform) -> String {
-    let os = match platform.os {
-      Os::Linux => "linux",
-      Os::MacOS => "darwin",
-      Os::Windows => "windows",
-    };
-    let cpu = match platform.cpu {
-      Cpu::Arm64 => "arm64",
-      Cpu::Intel64 => "amd64",
-    };
-    format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/staticcheck_{os}_{cpu}.tar.gz")
-  }
-
-  fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
-    format!("staticcheck/{}", self.executable_filename(platform))
-  }
-}
-
-impl installation::CompileGoSource for StaticCheck {
-  fn import_path(&self, version: &Version) -> String {
-    format!("honnef.co/go/tools/cmd/staticcheck@{version}")
-  }
+fn archive_url(version: &Version, platform: Platform) -> String {
+  let os = match platform.os {
+    Os::Linux => "linux",
+    Os::MacOS => "darwin",
+    Os::Windows => "windows",
+  };
+  let cpu = match platform.cpu {
+    Cpu::Arm64 => "arm64",
+    Cpu::Intel64 => "amd64",
+  };
+  format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/staticcheck_{os}_{cpu}.tar.gz")
 }

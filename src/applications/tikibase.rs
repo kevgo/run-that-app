@@ -22,8 +22,11 @@ impl App for Tikibase {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self) -> Vec<crate::installation::Method> {
-    vec![Method::DownloadArchive(self)]
+  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    vec![Method::DownloadArchive {
+      archive_url: archive_url(version, platform),
+      executable_path_in_archive: self.executable_filename(platform),
+    }]
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
@@ -46,27 +49,21 @@ impl App for Tikibase {
   }
 }
 
-impl installation::DownloadArchive for Tikibase {
-  fn archive_url(&self, version: &Version, platform: Platform) -> String {
-    let cpu = match platform.cpu {
-      Cpu::Arm64 => "arm64",
-      Cpu::Intel64 => "intel64",
-    };
-    let os = match platform.os {
-      Os::Linux => "linux",
-      Os::MacOS => "macos",
-      Os::Windows => "windows",
-    };
-    let ext = match platform.os {
-      Os::Linux | Os::MacOS => "tar.gz",
-      Os::Windows => "zip",
-    };
-    format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/tikibase_{os}_{cpu}.{ext}")
-  }
-
-  fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
-    self.executable_filename(platform)
-  }
+fn archive_url(version: &Version, platform: Platform) -> String {
+  let cpu = match platform.cpu {
+    Cpu::Arm64 => "arm64",
+    Cpu::Intel64 => "intel64",
+  };
+  let os = match platform.os {
+    Os::Linux => "linux",
+    Os::MacOS => "macos",
+    Os::Windows => "windows",
+  };
+  let ext = match platform.os {
+    Os::Linux | Os::MacOS => "tar.gz",
+    Os::Windows => "zip",
+  };
+  format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/tikibase_{os}_{cpu}.{ext}")
 }
 
 fn extract_version(output: &str) -> Result<&str> {
@@ -79,29 +76,26 @@ mod tests {
 
   mod archive_url {
     use crate::configuration::Version;
-    use crate::installation::DownloadArchive;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
     fn mac_arm() {
-      let tikibase = super::super::Tikibase {};
       let platform = Platform {
         os: Os::MacOS,
         cpu: Cpu::Arm64,
       };
-      let have = tikibase.archive_url(&Version::from("0.6.2"), platform);
+      let have = super::super::archive_url(&Version::from("0.6.2"), platform);
       let want = "https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_macos_arm64.tar.gz";
       assert_eq!(have, want);
     }
 
     #[test]
     fn linux_arm() {
-      let tikibase = super::super::Tikibase {};
       let platform = Platform {
         os: Os::Linux,
         cpu: Cpu::Intel64,
       };
-      let have = tikibase.archive_url(&Version::from("0.6.2"), platform);
+      let have = super::super::archive_url(&Version::from("0.6.2"), platform);
       let want = "https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_linux_intel64.tar.gz";
       assert_eq!(have, want);
     }
