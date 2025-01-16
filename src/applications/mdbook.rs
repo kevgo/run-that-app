@@ -30,7 +30,7 @@ impl App for MdBook {
       },
       Method::CompileRustSource {
         crate_name: "mdbook",
-        executable_path_in_folder: format!("bin/{}", self.executable_filename(platform)),
+        executable_path: format!("bin/{}", self.executable_filename(platform)),
       },
     ]
   }

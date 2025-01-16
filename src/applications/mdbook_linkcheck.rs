@@ -30,7 +30,7 @@ impl App for MdBookLinkCheck {
       },
       Method::CompileRustSource {
         crate_name: "mdbook-linkcheck",
-        executable_path_in_folder: format!("bin/{}", self.executable_filename(platform)),
+        executable_path: format!("bin/{}", self.executable_filename(platform)),
       },
     ]
   }

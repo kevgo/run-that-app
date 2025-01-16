@@ -40,10 +40,10 @@ pub enum Method {
 
   /// installs the application by compiling it from its source written in Rust
   CompileRustSource {
+    /// the name of the Rust crate that contains the executable
     crate_name: &'static str,
     /// the executable path within the yard
-    // TODO: rename to executable_path
-    executable_path_in_folder: String,
+    executable_path: String,
   },
 
   /// this application is shipped as part of another application
@@ -65,7 +65,7 @@ impl Method {
       Method::CompileGoSource { import_path: _ } => compile_go::executable_path(app, version, platform, yard),
       Method::CompileRustSource {
         crate_name: _,
-        executable_path_in_folder,
+        executable_path: executable_path_in_folder,
       } => compile_rust::executable_path(app, version, yard, executable_path_in_folder),
       Method::ExecutableInAnotherApp {
         app_to_install,
@@ -81,7 +81,7 @@ impl Method {
       Method::CompileGoSource { import_path: _ }
       | Method::CompileRustSource {
         crate_name: _,
-        executable_path_in_folder: _,
+        executable_path: _,
       } => format!("compile {app}@{version} from source"),
       Method::ExecutableInAnotherApp {
         app_to_install,
@@ -123,7 +123,7 @@ pub fn install(
     Method::CompileGoSource { import_path } => compile_go::run(app, import_path, platform, version, optional, config_file, yard, log),
     Method::CompileRustSource {
       crate_name,
-      executable_path_in_folder,
+      executable_path: executable_path_in_folder,
     } => compile_rust::run(app, crate_name, version, yard, executable_path_in_folder, log),
     Method::ExecutableInAnotherApp {
       app_to_install,
