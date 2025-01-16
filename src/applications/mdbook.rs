@@ -26,7 +26,7 @@ impl App for MdBook {
     vec![
       Method::DownloadArchive {
         url: archive_url(version, platform),
-        executable_path_in_archive: self.executable_filename(platform),
+        executable_path: self.executable_filename(platform),
       },
       Method::CompileRustSource {
         crate_name: "mdbook",

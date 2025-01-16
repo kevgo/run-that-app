@@ -30,7 +30,7 @@ impl App for ActionLint {
     vec![
       Method::DownloadArchive {
         url: archive_url(version, platform),
-        executable_path_in_archive: self.executable_filename(platform),
+        executable_path: self.executable_filename(platform),
       },
       Method::CompileGoSource {
         import_path: format!("github.com/{ORG}/{REPO}/cmd/actionlint@v{version}"),
