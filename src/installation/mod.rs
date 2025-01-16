@@ -57,16 +57,13 @@ impl Method {
   /// provides the location of this app's executable within its yard
   pub fn executable_location(&self, app: &dyn App, version: &Version, platform: Platform, yard: &Yard) -> PathBuf {
     match self {
-      Method::DownloadArchive {
-        url: _,
-        executable_path: executable_path_in_archive,
-      } => yard.app_folder(&app.name(), version).join(executable_path_in_archive),
+      Method::DownloadArchive { url: _, executable_path } => yard.app_folder(&app.name(), version).join(executable_path),
       Method::DownloadExecutable { url: _ } => yard.app_folder(&app.name(), version).join(app.executable_filename(platform)),
       Method::CompileGoSource { import_path: _ } => compile_go::executable_path(app, version, platform, yard),
       Method::CompileRustSource {
         crate_name: _,
-        executable_path: executable_path_in_folder,
-      } => compile_rust::executable_path(app, version, yard, executable_path_in_folder),
+        executable_path,
+      } => compile_rust::executable_path(app, version, yard, executable_path),
       Method::ExecutableInAnotherApp {
         app_to_install,
         executable_path_in_other_yard,
