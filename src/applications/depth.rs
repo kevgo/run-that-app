@@ -22,8 +22,15 @@ impl App for Depth {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::DownloadExecutable(self), Method::CompileGoSource(self)]
+  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    vec![
+      Method::DownloadExecutable {
+        download_url: download_url(version, platform),
+      },
+      Method::CompileGoSource {
+        import_path: format!("github.com/{ORG}/{REPO}/cmd/depth@v{version}"),
+      },
+    ]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -44,29 +51,21 @@ impl App for Depth {
   }
 }
 
-impl installation::CompileGoSource for Depth {
-  fn import_path(&self, version: &Version) -> String {
-    format!("github.com/{ORG}/{REPO}/cmd/depth@v{version}")
-  }
-}
-
-impl installation::DownloadExecutable for Depth {
-  fn download_url(&self, version: &Version, platform: Platform) -> String {
-    let cpu = match platform.cpu {
-      Cpu::Arm64 => "aarch64", // the "arm" binaries don't run on Apple Silicon
-      Cpu::Intel64 => "amd64",
-    };
-    let os = match platform.os {
-      Os::Linux => "linux",
-      Os::MacOS => "darwin",
-      Os::Windows => "windows",
-    };
-    let ext = match platform.os {
-      Os::Windows => ".exe",
-      Os::Linux | Os::MacOS => "",
-    };
-    format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}{ext}",)
-  }
+fn download_url(version: &Version, platform: Platform) -> String {
+  let cpu = match platform.cpu {
+    Cpu::Arm64 => "aarch64", // the "arm" binaries don't run on Apple Silicon
+    Cpu::Intel64 => "amd64",
+  };
+  let os = match platform.os {
+    Os::Linux => "linux",
+    Os::MacOS => "darwin",
+    Os::Windows => "windows",
+  };
+  let ext = match platform.os {
+    Os::Windows => ".exe",
+    Os::Linux | Os::MacOS => "",
+  };
+  format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}{ext}",)
 }
 
 #[cfg(test)]
@@ -74,29 +73,26 @@ mod tests {
 
   mod artifact_url {
     use crate::configuration::Version;
-    use crate::installation::DownloadExecutable;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
     fn linux() {
-      let depth = super::super::Depth {};
       let platform = Platform {
         os: Os::Linux,
         cpu: Cpu::Intel64,
       };
-      let have = depth.download_url(&Version::from("1.2.1"), platform);
+      let have = super::super::download_url(&Version::from("1.2.1"), platform);
       let want = "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_linux_amd64";
       assert_eq!(have, want);
     }
 
     #[test]
     fn windows() {
-      let depth = super::super::Depth {};
       let platform = Platform {
         os: Os::Windows,
         cpu: Cpu::Intel64,
       };
-      let have = depth.download_url(&Version::from("1.2.1"), platform);
+      let have = super::super::download_url(&Version::from("1.2.1"), platform);
       let want = "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_windows_amd64.exe";
       assert_eq!(have, want);
     }

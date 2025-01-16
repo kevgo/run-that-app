@@ -49,7 +49,7 @@ pub trait App {
   fn homepage(&self) -> &'static str;
 
   /// the various ways to install this application
-  fn install_methods(&self) -> Vec<installation::Method>;
+  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method>;
 
   /// provides the versions of this application that can be installed
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>>;

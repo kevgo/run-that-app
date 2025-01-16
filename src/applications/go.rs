@@ -23,8 +23,11 @@ impl App for Go {
     "https://go.dev"
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::DownloadArchive(self)]
+  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    vec![Method::DownloadArchive {
+      archive_url: archive_url(version, platform),
+      executable_path_in_archive: executable_path_in_archive(self.executable_filename(platform)),
+    }]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -77,32 +80,26 @@ impl App for Go {
   }
 }
 
-impl installation::DownloadArchive for Go {
-  fn archive_url(&self, version: &Version, platform: Platform) -> String {
-    let version_str = version.as_str().trim_start_matches("go");
-    let os = match platform.os {
-      Os::Linux => "linux",
-      Os::MacOS => "darwin",
-      Os::Windows => "windows",
-    };
-    let cpu = match platform.cpu {
-      Cpu::Arm64 => "arm64",
-      Cpu::Intel64 => "amd64",
-    };
-    let ext = match platform.os {
-      Os::Linux | Os::MacOS => "tar.gz",
-      Os::Windows => "zip",
-    };
-    format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}")
-  }
+fn archive_url(version: &Version, platform: Platform) -> String {
+  let version_str = version.as_str().trim_start_matches("go");
+  let os = match platform.os {
+    Os::Linux => "linux",
+    Os::MacOS => "darwin",
+    Os::Windows => "windows",
+  };
+  let cpu = match platform.cpu {
+    Cpu::Arm64 => "arm64",
+    Cpu::Intel64 => "amd64",
+  };
+  let ext = match platform.os {
+    Os::Linux | Os::MacOS => "tar.gz",
+    Os::Windows => "zip",
+  };
+  format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}")
+}
 
-  fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
-    format!(
-      "go{sep}bin{sep}{executable}",
-      sep = path::MAIN_SEPARATOR,
-      executable = self.executable_filename(platform)
-    )
-  }
+fn executable_path_in_archive(executable_filename: String) -> String {
+  format!("go{sep}bin{sep}{executable_filename}", sep = path::MAIN_SEPARATOR,)
 }
 
 fn extract_version(output: &str) -> Result<&str> {
@@ -116,17 +113,15 @@ fn parse_go_mod(text: &str) -> Result<&str> {
 #[cfg(test)]
 mod tests {
   use crate::configuration::Version;
-  use crate::installation::DownloadArchive;
   use crate::platform::{Cpu, Os, Platform};
 
   #[test]
   fn archive_url() {
-    let go = super::Go {};
     let platform = Platform {
       os: Os::MacOS,
       cpu: Cpu::Arm64,
     };
-    let have = go.archive_url(&Version::from("1.21.5"), platform);
+    let have = super::archive_url(&Version::from("1.21.5"), platform);
     let want = "https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz";
     assert_eq!(have, want);
   }

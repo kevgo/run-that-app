@@ -6,6 +6,7 @@ mod download_archive;
 mod download_executable;
 mod executable_in_another_app;
 
+use crate::applications::App;
 use crate::configuration::{self, ApplicationName, Version};
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
@@ -19,17 +20,27 @@ pub use download_executable::DownloadExecutable;
 pub use executable_in_another_app::ExecutableInAnotherApp;
 
 /// the different methods to install an application
-pub enum Method<'a> {
+pub enum Method {
   /// installs the application by downloading and extracting an archive containing the application executable from the internet
-  DownloadArchive(&'a dyn DownloadArchive),
+  DownloadArchive { archive_url: String, executable_path_in_archive: String },
+
   /// installs the application by downloading the pre-compiled executable from the internet
-  DownloadExecutable(&'a dyn DownloadExecutable),
+  DownloadExecutable { download_url: String },
+
   /// installs the applications by compiling it from its source written in Go
-  CompileGoSource(&'a dyn CompileGoSource),
+  CompileGoSource { import_path: String },
+
   /// installs the application by compiling it from its source written in Rust
-  CompileRustSource(&'a dyn CompileRustSource),
+  CompileRustSource {
+    crate_name: &'static str,
+    executable_path_in_folder: String,
+  },
+
   /// this application is shipped as part of another application
-  ExecutableInAnotherApp(&'a dyn ExecutableInAnotherApp),
+  ExecutableInAnotherApp {
+    app_to_install: Box<dyn App>,
+    executable_path_in_other_yard: String,
+  },
 }
 
 impl Method<'_> {

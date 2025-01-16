@@ -22,8 +22,16 @@ impl App for Ghokin {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self) -> Vec<crate::installation::Method> {
-    vec![Method::DownloadArchive(self), Method::CompileGoSource(self)]
+  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    vec![
+      Method::DownloadArchive {
+        archive_url: archive_url(version, platform),
+        executable_path_in_archive: self.executable_filename(platform),
+      },
+      Method::CompileGoSource {
+        import_path: format!("github.com/{ORG}/{REPO}/v3@v{version}"),
+      },
+    ]
   }
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
     github_releases::versions("antham", "ghokin", amount, log)
@@ -43,58 +51,43 @@ impl App for Ghokin {
   }
 }
 
-impl installation::DownloadArchive for Ghokin {
-  fn archive_url(&self, version: &Version, platform: Platform) -> String {
-    let cpu = match platform.cpu {
-      Cpu::Arm64 => "arm64",
-      Cpu::Intel64 => "amd64",
-    };
-    let os = match platform.os {
-      Os::Linux => "linux",
-      Os::MacOS => "darwin",
-      Os::Windows => "windows",
-    };
-    format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz")
-  }
-
-  fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
-    self.executable_filename(platform)
-  }
-}
-
-impl installation::CompileGoSource for Ghokin {
-  fn import_path(&self, version: &Version) -> String {
-    format!("github.com/{ORG}/{REPO}/v3@v{version}")
-  }
+fn archive_url(version: &Version, platform: Platform) -> String {
+  let cpu = match platform.cpu {
+    Cpu::Arm64 => "arm64",
+    Cpu::Intel64 => "amd64",
+  };
+  let os = match platform.os {
+    Os::Linux => "linux",
+    Os::MacOS => "darwin",
+    Os::Windows => "windows",
+  };
+  format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz")
 }
 
 #[cfg(test)]
 mod tests {
   mod archive_url {
     use crate::configuration::Version;
-    use crate::installation::DownloadArchive;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
     fn macos_intel64() {
-      let ghokin = super::super::Ghokin {};
       let platform = Platform {
         os: Os::MacOS,
         cpu: Cpu::Intel64,
       };
-      let have = ghokin.archive_url(&Version::from("3.4.1"), platform);
+      let have = super::super::archive_url(&Version::from("3.4.1"), platform);
       let want = "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_amd64.tar.gz";
       assert_eq!(have, want);
     }
 
     #[test]
     fn windows_intel64() {
-      let ghokin = super::super::Ghokin {};
       let platform = Platform {
         os: Os::Windows,
         cpu: Cpu::Intel64,
       };
-      let have = ghokin.archive_url(&Version::from("3.7.0"), platform);
+      let have = super::super::archive_url(&Version::from("3.7.0"), platform);
       let want = "https://github.com/antham/ghokin/releases/download/v3.7.0/ghokin_3.7.0_windows_amd64.tar.gz";
       assert_eq!(have, want);
     }

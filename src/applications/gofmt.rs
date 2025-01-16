@@ -1,7 +1,7 @@
 use super::go::Go;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::installation::{ExecutableInAnotherApp, Method};
+use crate::installation::Method;
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
@@ -19,16 +19,19 @@ impl App for Gofmt {
     "https://go.dev"
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::ExecutableInAnotherApp(self)]
+  fn install_methods(&self, _version: &Version, platform: Platform) -> Vec<installation::Method> {
+    vec![Method::ExecutableInAnotherApp {
+      app_to_install: app_to_install(),
+      executable_path_in_other_yard: executable_path_in_other_app_yard(self.executable_filename(platform)),
+    }]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    self.app_to_install().latest_installable_version(log)
+    app_to_install().latest_installable_version(log)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    self.app_to_install().installable_versions(amount, log)
+    app_to_install().installable_versions(amount, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -41,16 +44,10 @@ impl App for Gofmt {
   }
 }
 
-impl installation::ExecutableInAnotherApp for Gofmt {
-  fn app_to_install(&self) -> Box<dyn App> {
-    Box::new(Go {})
-  }
+fn app_to_install() -> Box<dyn App> {
+  Box::new(Go {})
+}
 
-  fn executable_path_in_other_app_yard(&self, _version: &Version, platform: Platform) -> String {
-    format!(
-      "go{sep}bin{sep}{executable}",
-      sep = path::MAIN_SEPARATOR,
-      executable = self.executable_filename(platform)
-    )
-  }
+fn executable_path_in_other_app_yard(executable_filename: String) -> String {
+  format!("go{sep}bin{sep}{executable_filename}", sep = path::MAIN_SEPARATOR,)
 }

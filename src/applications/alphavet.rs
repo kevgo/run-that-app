@@ -2,6 +2,7 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::{self, Method};
+use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::Log;
@@ -21,8 +22,10 @@ impl App for Alphavet {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::CompileGoSource(self)]
+  fn install_methods(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
+    vec![Method::CompileGoSource {
+      import_path: format!("github.com/{ORG}/{REPO}/cmd/alphavet@v{version}"),
+    }]
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
@@ -40,11 +43,5 @@ impl App for Alphavet {
     }
     // as of 0.1.0 the -V switch of alphavet is broken
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
-  }
-}
-
-impl installation::CompileGoSource for Alphavet {
-  fn import_path(&self, version: &Version) -> String {
-    format!("github.com/{ORG}/{REPO}/cmd/alphavet@v{version}")
   }
 }

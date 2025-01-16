@@ -22,8 +22,11 @@ impl App for Gh {
     "https://cli.github.com"
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::DownloadArchive(self)]
+  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    vec![Method::DownloadArchive {
+      archive_url: archive_url(version, platform),
+      executable_path_in_archive: executable_path_in_archive(version, platform, self.executable_filename(platform)),
+    }]
     // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
   }
 
@@ -47,25 +50,23 @@ impl App for Gh {
   }
 }
 
-impl installation::DownloadArchive for Gh {
-  fn archive_url(&self, version: &Version, platform: Platform) -> String {
-    format!(
-      "https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}",
-      os = os_text(platform.os),
-      cpu = cpu_text(platform.cpu),
-      ext = ext_text(platform.os)
-    )
-  }
+fn archive_url(version: &Version, platform: Platform) -> String {
+  format!(
+    "https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}",
+    os = os_text(platform.os),
+    cpu = cpu_text(platform.cpu),
+    ext = ext_text(platform.os)
+  )
+}
 
-  fn executable_path_in_archive(&self, version: &Version, platform: Platform) -> String {
-    let os = os_text(platform.os);
-    let cpu = cpu_text(platform.cpu);
-    let sep = path::MAIN_SEPARATOR;
-    let filename = self.executable_filename(platform);
-    match platform.os {
-      Os::Windows => format!("bin{sep}{filename}"),
-      Os::Linux | Os::MacOS => format!("gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}",),
-    }
+fn executable_path_in_archive(version: &Version, platform: Platform, executable_filename: String) -> String {
+  let os = os_text(platform.os);
+  let cpu = cpu_text(platform.cpu);
+  let sep = path::MAIN_SEPARATOR;
+  let filename = executable_filename;
+  match platform.os {
+    Os::Windows => format!("bin{sep}{filename}"),
+    Os::Linux | Os::MacOS => format!("gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}",),
   }
 }
 
@@ -98,36 +99,32 @@ fn os_text(os: Os) -> &'static str {
 #[cfg(test)]
 mod tests {
   use crate::configuration::Version;
-  use crate::installation::DownloadArchive;
   use crate::platform::{Cpu, Os, Platform};
 
   #[test]
   fn archive_url() {
-    let gh = super::Gh {};
     let platform = Platform {
       os: Os::Linux,
       cpu: Cpu::Intel64,
     };
-    let have = gh.archive_url(&Version::from("2.39.1"), platform);
+    let have = super::archive_url(&Version::from("2.39.1"), platform);
     let want = "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_amd64.tar.gz";
     assert_eq!(have, want);
   }
 
   mod executable_locations {
     use crate::configuration::Version;
-    use crate::installation::DownloadArchive;
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
     #[test]
     fn executable_locations() {
-      let gh = super::super::Gh {};
       let version = Version::from("1.2.3");
       let platform = Platform {
         os: Os::Linux,
         cpu: Cpu::Arm64,
       };
-      let have = gh.executable_path_in_archive(&version, platform);
+      let have = super::super::executable_path_in_archive(&version, platform, S("gh"));
       #[cfg(unix)]
       let want = S("gh_1.2.3_linux_arm64/bin/gh");
       #[cfg(windows)]

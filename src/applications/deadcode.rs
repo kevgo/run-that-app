@@ -1,6 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::installation::{self, Method};
+use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::Log;
@@ -16,8 +17,10 @@ impl App for Deadcode {
     "https://pkg.go.dev/golang.org/x/tools/cmd/deadcode"
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::CompileGoSource(self)]
+  fn install_methods(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
+    vec![Method::CompileGoSource {
+      import_path: format!("golang.org/x/tools/cmd/deadcode@v{version}"),
+    }]
   }
 
   fn latest_installable_version(&self, _log: Log) -> Result<Version> {
@@ -36,11 +39,5 @@ impl App for Deadcode {
     }
     // as of 0.16.1 deadcode does not display the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
-  }
-}
-
-impl installation::CompileGoSource for Deadcode {
-  fn import_path(&self, version: &Version) -> String {
-    format!("golang.org/x/tools/cmd/deadcode@v{version}")
   }
 }
