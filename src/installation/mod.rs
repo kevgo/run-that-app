@@ -72,8 +72,8 @@ impl Method {
         executable_path_in_archive: _,
       } => format!("download archive for {app}@{version}"),
       Method::DownloadExecutable { download_url: _ } => format!("download executable for {app}@{version}"),
-      Method::CompileGoSource { import_path: _ } => format!("compile {app}@{version} from source"),
-      Method::CompileRustSource {
+      Method::CompileGoSource { import_path: _ }
+      | Method::CompileRustSource {
         crate_name: _,
         executable_path_in_folder: _,
       } => format!("compile {app}@{version} from source"),
@@ -128,7 +128,7 @@ pub fn install(
       platform,
       optional,
       yard,
-      &executable_path_in_other_yard,
+      executable_path_in_other_yard,
       config_file,
       log,
     ),

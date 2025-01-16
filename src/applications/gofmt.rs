@@ -22,7 +22,7 @@ impl App for Gofmt {
   fn install_methods(&self, _version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![Method::ExecutableInAnotherApp {
       app_to_install: app_to_install(),
-      executable_path_in_other_yard: executable_path_in_other_app_yard(self.executable_filename(platform)),
+      executable_path_in_other_yard: executable_path_in_other_app_yard(&self.executable_filename(platform)),
     }]
   }
 
@@ -48,6 +48,6 @@ fn app_to_install() -> Box<dyn App> {
   Box::new(Go {})
 }
 
-fn executable_path_in_other_app_yard(executable_filename: String) -> String {
+fn executable_path_in_other_app_yard(executable_filename: &str) -> String {
   format!("go{sep}bin{sep}{executable_filename}", sep = path::MAIN_SEPARATOR,)
 }

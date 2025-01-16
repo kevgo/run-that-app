@@ -25,7 +25,7 @@ impl App for NodeJS {
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![Method::DownloadArchive {
       archive_url: archive_url(version, platform),
-      executable_path_in_archive: executable_path_in_archive(version, platform, self.executable_filename(platform)),
+      executable_path_in_archive: executable_path_in_archive(version, platform, &self.executable_filename(platform)),
     }]
   }
 
@@ -62,7 +62,7 @@ fn archive_url(version: &Version, platform: Platform) -> String {
   )
 }
 
-fn executable_path_in_archive(version: &Version, platform: Platform, executable_filename: String) -> String {
+fn executable_path_in_archive(version: &Version, platform: Platform, executable_filename: &str) -> String {
   let os = os_text(platform.os);
   let cpu = cpu_text(platform.cpu);
   let sep = path::MAIN_SEPARATOR;
