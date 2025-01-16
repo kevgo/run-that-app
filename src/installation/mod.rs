@@ -123,6 +123,7 @@ pub fn any(
 }
 
 pub fn install(
+  app: Box<dyn App>,
   install_method: &Method,
   version: &Version,
   platform: Platform,
@@ -135,7 +136,7 @@ pub fn install(
     Method::DownloadArchive {
       archive_url,
       executable_path_in_archive,
-    } => download_archive::run(*app, version, platform, optional, yard, log),
+    } => download_archive::run(app, version, platform, optional, yard, log),
     Method::DownloadExecutable { download_url } => download_executable::install(*app, version, platform, optional, yard, log),
     Method::CompileGoSource { import_path } => compile_go::run(*app, platform, version, optional, config_file, yard, log),
     Method::CompileRustSource {
