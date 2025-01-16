@@ -1,3 +1,4 @@
+use super::root_folder;
 use crate::applications::App;
 use crate::configuration::{ApplicationName, Version};
 use crate::logging::{Event, Log};
@@ -6,8 +7,6 @@ use crate::prelude::*;
 use crate::subshell::Executable;
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
-
-use super::root_folder;
 
 pub struct Yard {
   pub root: PathBuf,
@@ -110,9 +109,7 @@ mod tests {
   #[test]
   fn app_file_path() {
     let yard = Yard { root: PathBuf::from("/root") };
-    let have = yard
-      .app_folder(&ApplicationName::from("shellcheck"), &Version::from("0.9.0"))
-      .join("shellcheck.exe");
+    let have = yard.app_folder(&ApplicationName::from("shellcheck"), &Version::from("0.9.0")).join("shellcheck.exe");
     let want = PathBuf::from("/root/apps/shellcheck/0.9.0/shellcheck.exe");
     assert_eq!(have, want);
   }

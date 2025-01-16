@@ -6,8 +6,6 @@ mod download_archive;
 mod download_executable;
 mod executable_in_another_app;
 
-use std::path::PathBuf;
-
 use crate::applications::App;
 use crate::configuration::{self, Version};
 use crate::logging::Log;
@@ -15,6 +13,7 @@ use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::yard::Yard;
+use std::path::PathBuf;
 
 /// the different methods to install an application
 pub enum Method {
@@ -47,10 +46,7 @@ pub enum Method {
   },
 
   /// this application is shipped as part of another application
-  ExecutableInAnotherApp {
-    app_to_install: Box<dyn App>,
-    executable_path_in_other_yard: String,
-  },
+  ExecutableInAnotherApp { app_to_install: Box<dyn App>, executable_path: String },
 }
 
 impl Method {
@@ -60,13 +56,10 @@ impl Method {
       Method::DownloadArchive { url: _, executable_path } => yard.app_folder(&app.name(), version).join(executable_path),
       Method::DownloadExecutable { url: _ } => yard.app_folder(&app.name(), version).join(app.executable_filename(platform)),
       Method::CompileGoSource { import_path: _ } => compile_go::executable_path(app, version, platform, yard),
-      Method::CompileRustSource {
-        crate_name: _,
-        executable_path,
-      } => compile_rust::executable_path(app, version, yard, executable_path),
+      Method::CompileRustSource { crate_name: _, executable_path } => compile_rust::executable_path(app, version, yard, executable_path),
       Method::ExecutableInAnotherApp {
         app_to_install,
-        executable_path_in_other_yard,
+        executable_path: executable_path_in_other_yard,
       } => executable_in_another_app::executable_path(app_to_install.as_ref(), version, yard, executable_path_in_other_yard),
     }
   }
@@ -75,15 +68,8 @@ impl Method {
     match self {
       Method::DownloadArchive { url: _, executable_path: _ } => format!("download archive for {app}@{version}"),
       Method::DownloadExecutable { url: _ } => format!("download executable for {app}@{version}"),
-      Method::CompileGoSource { import_path: _ }
-      | Method::CompileRustSource {
-        crate_name: _,
-        executable_path: _,
-      } => format!("compile {app}@{version} from source"),
-      Method::ExecutableInAnotherApp {
-        app_to_install,
-        executable_path_in_other_yard: _,
-      } => format!("install {app}@{version} through {carrier}", carrier = app_to_install.name()),
+      Method::CompileGoSource { import_path: _ } | Method::CompileRustSource { crate_name: _, executable_path: _ } => format!("compile {app}@{version} from source"),
+      Method::ExecutableInAnotherApp { app_to_install, executable_path: _ } => format!("install {app}@{version} through {carrier}", carrier = app_to_install.name()),
     }
   }
 }
@@ -101,16 +87,7 @@ pub fn any(app: &dyn App, version: &Version, platform: Platform, optional: bool,
 }
 
 /// installs the given app using the given installation method
-pub fn install(
-  app: &dyn App,
-  install_method: &Method,
-  version: &Version,
-  platform: Platform,
-  optional: bool,
-  yard: &Yard,
-  config_file: &configuration::File,
-  log: Log,
-) -> Result<Outcome> {
+pub fn install(app: &dyn App, install_method: &Method, version: &Version, platform: Platform, optional: bool, yard: &Yard, config_file: &configuration::File, log: Log) -> Result<Outcome> {
   match install_method {
     Method::DownloadArchive {
       url: archive_url,
@@ -124,17 +101,8 @@ pub fn install(
     } => compile_rust::run(app, crate_name, version, yard, executable_path_in_folder, log),
     Method::ExecutableInAnotherApp {
       app_to_install,
-      executable_path_in_other_yard,
-    } => executable_in_another_app::install_other_app(
-      app_to_install.as_ref(),
-      version,
-      platform,
-      optional,
-      yard,
-      executable_path_in_other_yard,
-      config_file,
-      log,
-    ),
+      executable_path: executable_path_in_other_yard,
+    } => executable_in_another_app::install_other_app(app_to_install.as_ref(), version, platform, optional, yard, executable_path_in_other_yard, config_file, log),
   }
 }
 

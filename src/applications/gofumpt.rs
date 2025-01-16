@@ -28,9 +28,7 @@ impl App for Gofumpt {
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![
-      Method::DownloadExecutable {
-        url: download_url(version, platform),
-      },
+      Method::DownloadExecutable { url: download_url(version, platform) },
       Method::CompileGoSource {
         import_path: format!("mvdan.cc/gofumpt@v{version}"),
       },
@@ -84,10 +82,7 @@ mod tests {
 
     #[test]
     fn macos_arm64() {
-      let platform = Platform {
-        os: Os::MacOS,
-        cpu: Cpu::Arm64,
-      };
+      let platform = Platform { os: Os::MacOS, cpu: Cpu::Arm64 };
       let have = super::super::download_url(&Version::from("0.5.0"), platform);
       let want = "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_darwin_arm64";
       assert_eq!(have, want);
@@ -95,10 +90,7 @@ mod tests {
 
     #[test]
     fn windows_intel64() {
-      let platform = Platform {
-        os: Os::Windows,
-        cpu: Cpu::Intel64,
-      };
+      let platform = Platform { os: Os::Windows, cpu: Cpu::Intel64 };
       let have = super::super::download_url(&Version::from("0.5.0"), platform);
       let want = "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_windows_amd64.exe";
       assert_eq!(have, want);

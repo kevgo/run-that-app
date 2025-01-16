@@ -32,9 +32,7 @@ impl App for NodePrune {
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![
-      Method::DownloadExecutable {
-        url: download_url(version, platform),
-      },
+      Method::DownloadExecutable { url: download_url(version, platform) },
       Method::CompileGoSource {
         import_path: format!("github.com/tj/node-prune@v{version}"),
       },
@@ -77,10 +75,7 @@ mod tests {
 
     #[test]
     fn windows_intel64() {
-      let platform = Platform {
-        os: Os::Linux,
-        cpu: Cpu::Intel64,
-      };
+      let platform = Platform { os: Os::Linux, cpu: Cpu::Intel64 };
       let have = super::super::download_url(&Version::from("1.0.1"), platform);
       let want = "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_linux_amd64.tar.gz";
       assert_eq!(have, want);

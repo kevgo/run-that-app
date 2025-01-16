@@ -90,31 +90,17 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
       Ok(None)
     }
     AnalyzeResult::IdentifiedWithVersion(version) if range.matches(&version.semver()?) => {
-      log(Event::GlobalInstallMatchingVersion {
-        range,
-        version: Some(&version),
-      });
+      log(Event::GlobalInstallMatchingVersion { range, version: Some(&version) });
       Ok(Some(executable))
     }
     AnalyzeResult::IdentifiedWithVersion(version) => {
-      log(Event::GlobalInstallMismatchingVersion {
-        range,
-        version: Some(&version),
-      });
+      log(Event::GlobalInstallMismatchingVersion { range, version: Some(&version) });
       Ok(None)
     }
   }
 }
 
-fn load_or_install_from_yard(
-  app: &dyn App,
-  version: &Version,
-  platform: Platform,
-  optional: bool,
-  yard: &Yard,
-  config_file: &configuration::File,
-  log: Log,
-) -> Result<Option<Executable>> {
+fn load_or_install_from_yard(app: &dyn App, version: &Version, platform: Platform, optional: bool, yard: &Yard, config_file: &configuration::File, log: Log) -> Result<Option<Executable>> {
   // try to load the app
   if let Some(executable) = yard.load(app, version, platform, log) {
     return Ok(Some(executable));

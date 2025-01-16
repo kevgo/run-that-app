@@ -22,7 +22,7 @@ impl App for Gofmt {
   fn install_methods(&self, _version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![Method::ExecutableInAnotherApp {
       app_to_install: app_to_install(),
-      executable_path_in_other_yard: executable_path_in_other_app_yard(&self.executable_filename(platform)),
+      executable_path: executable_path_in_other_app_yard(&self.executable_filename(platform)),
     }]
   }
 
