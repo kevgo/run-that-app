@@ -4,6 +4,7 @@ use crate::configuration::Version;
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
+use crate::subshell::Executable;
 use crate::yard::Yard;
 use std::io::ErrorKind;
 use std::process::Command;
@@ -20,7 +21,7 @@ pub trait CompileRustSource: App {
 }
 
 /// installs the given Rust-based application by compiling it from source
-pub fn run(app: &dyn App, crate_name: &str, version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
+pub fn run(app: &dyn App, crate_name: &str, version: &Version, yard: &Yard, executable_filename: &str, log: Log) -> Result<Outcome> {
   let Ok(cargo_path) = which("cargo") else {
     return Err(UserError::RustNotInstalled);
   };
@@ -47,5 +48,20 @@ pub fn run(app: &dyn App, crate_name: &str, version: &Version, yard: &Yard, log:
     return Err(UserError::RustCompilationFailed);
   }
   log(Event::CompileRustSuccess);
-  Ok(Outcome::Installed)
+  let Some(executable) = load(app, version, yard, executable_filename) else {
+    return Err(UserError::ExecutableNotFoundAfterInstallation {
+      app: app.name().to_string(),
+      executable_path: executable_filename.to_string(),
+    });
+  };
+  Ok(Outcome::Installed { executable })
+}
+
+pub fn load(app: &dyn App, version: &Version, yard: &Yard, executable_filename: &str) -> Option<Executable> {
+  let executable_path = yard.app_folder(&app.name(), version).join(executable_filename);
+  if executable_path.exists() {
+    Some(Executable(executable_path))
+  } else {
+    None
+  }
 }

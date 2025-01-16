@@ -89,8 +89,9 @@ impl Method {
 // TODO: return the installed executable because that's what we really need later
 pub fn any(app: &dyn App, version: &Version, platform: Platform, optional: bool, yard: &Yard, config_file: &configuration::File, log: Log) -> Result<Outcome> {
   for install_method in app.install_methods(version, platform) {
-    if install(app, &install_method, version, platform, optional, yard, config_file, log)?.success() {
-      return Ok(Outcome::Installed);
+    let outcome = install(app, &install_method, version, platform, optional, yard, config_file, log)?;
+    if outcome.success() {
+      return Ok(outcome);
     }
   }
   Ok(Outcome::NotInstalled)
@@ -117,13 +118,13 @@ pub fn install(
     Method::CompileGoSource { import_path } => compile_go::run(app, import_path, platform, version, optional, config_file, yard, log),
     Method::CompileRustSource {
       crate_name,
-      executable_path_in_folder: _,
-    } => compile_rust::run(app, &crate_name, version, yard, log),
+      executable_path_in_folder,
+    } => compile_rust::run(app, &crate_name, version, yard, executable_path_in_folder, log),
     Method::ExecutableInAnotherApp {
       app_to_install,
       executable_path_in_other_yard: _,
     } => {
-      load_or_install(
+      let executable = load_or_install(
         app_to_install.as_ref(),
         &RequestedVersion::Yard(version.to_owned()),
         platform,
@@ -132,7 +133,11 @@ pub fn install(
         config_file,
         log,
       )?;
-      Ok(Outcome::Installed)
+      if let Some(executable) = executable {
+        Ok(Outcome::Installed { executable })
+      } else {
+        Ok(Outcome::NotInstalled)
+      }
     }
   }
 }
@@ -154,14 +159,14 @@ pub fn load(app: &dyn App, version: &Version, platform: Platform, yard: &Yard, l
 
 #[derive(Debug, PartialEq)]
 pub enum Outcome {
-  Installed,
+  Installed { executable: Executable },
   NotInstalled,
 }
 
 impl Outcome {
   pub fn success(&self) -> bool {
     match self {
-      Outcome::Installed => true,
+      Outcome::Installed { executable: _ } => true,
       Outcome::NotInstalled => false,
     }
   }

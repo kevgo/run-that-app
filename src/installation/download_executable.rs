@@ -20,8 +20,8 @@ pub fn install(app: &dyn App, url: &str, version: &Version, platform: Platform, 
     return Ok(Outcome::NotInstalled);
   };
   let filepath_on_disk = yard.create_app_folder(&app.name(), version)?.join(app.executable_filename(platform));
-  filesystem::save_executable(artifact.data, &filepath_on_disk, log)?;
-  Ok(Outcome::Installed)
+  let executable = filesystem::save_executable(artifact.data, &filepath_on_disk, log)?;
+  Ok(Outcome::Installed { executable })
 }
 
 pub fn load(app: &dyn App, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {

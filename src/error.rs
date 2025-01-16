@@ -78,6 +78,10 @@ pub enum UserError {
     executable: Executable,
     err: String,
   },
+  ExecutableNotFoundAfterInstallation {
+    app: String,
+    executable_path: String,
+  },
   GitHubReleasesApiProblem {
     problem: String,
     payload: String,
@@ -201,6 +205,9 @@ impl UserError {
       }
       UserError::ExecutableCannotExecute { executable, err } => {
         error(&format!("cannot execute {executable}: {err}"));
+      }
+      UserError::ExecutableNotFoundAfterInstallation { app, executable_path } => {
+        error(&format!("Cannot find executable {executable_path} after installing {app}"));
       }
       UserError::GitHubReleasesApiProblem { problem, payload } => {
         error(&format!("Problem with the GitHub Releases API: {problem}"));

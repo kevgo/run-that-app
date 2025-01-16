@@ -1,9 +1,10 @@
 use super::Outcome;
 use crate::applications::{self, App};
-use crate::configuration::{RequestedVersion, RequestedVersions, Version};
+use crate::configuration::{ApplicationName, RequestedVersion, RequestedVersions, Version};
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
+use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{commands, configuration};
 use std::io::ErrorKind;
@@ -22,7 +23,8 @@ pub fn run(
   yard: &Yard,
   log: Log,
 ) -> Result<Outcome> {
-  let target_folder = yard.create_app_folder(&app.name(), version)?;
+  let app_name = app.name();
+  let target_folder = yard.create_app_folder(&app_name, version)?;
   let go_args = vec!["install", &import_path];
   let go_path = if let Ok(system_go_path) = which("go") {
     system_go_path
@@ -52,10 +54,23 @@ pub fn run(
     return Err(UserError::GoCompilationFailed);
   }
   log(Event::CompileGoSuccess);
-  Ok(Outcome::Installed)
+  let Some(executable) = load(app, version, platform, yard) else {
+    return Err(UserError::ExecutableNotFoundAfterInstallation {
+      app: app.name().to_string(),
+      executable_path: app.executable_filename(platform),
+    });
+  };
+  Ok(Outcome::Installed { executable })
 }
 
-// pub fn load() -> Option<Executable> {}
+pub fn load(app: &dyn App, version: &Version, platform: Platform, yard: &Yard) -> Option<Executable> {
+  let executable_path = yard.app_folder(&app.name(), version).join(app.executable_filename(platform));
+  if executable_path.exists() {
+    Some(Executable(executable_path))
+  } else {
+    None
+  }
+}
 
 fn load_rta_go(platform: Platform, optional: bool, config_file: &configuration::File, yard: &Yard, log: Log) -> Result<Option<PathBuf>> {
   let go = applications::go::Go {};
