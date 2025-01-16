@@ -19,9 +19,9 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   let config_file = configuration::File::load(&apps)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   for requested_version in requested_versions {
-    println!("111111111111111 {requested_version}");
+    println!("requested version: {requested_version}");
     let exe = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)?;
-    println!("33333333333333333 {:?}", exe);
+    println!("loaded executable {:?}", exe);
     if let Some(executable) = exe {
       println!("222222222222222222 {executable}");
       let call_signature = determine_call_signature(app, executable);

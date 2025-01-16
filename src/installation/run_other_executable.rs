@@ -1,5 +1,4 @@
 use crate::applications::App;
-use crate::platform::Platform;
 use crate::subshell::Executable;
 
 /// defines the information needed for apps who execute by running the executable of another application
