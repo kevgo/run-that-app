@@ -30,7 +30,18 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
         version: &latest_version,
         method: &install_method,
       });
-      if !installation::install(app.as_ref(), install_method, &latest_version, platform, args.optional, &yard, &config_file, log)?.success() {
+      if !installation::install(
+        app.as_ref(),
+        &install_method,
+        &latest_version,
+        platform,
+        args.optional,
+        &yard,
+        &config_file,
+        log,
+      )?
+      .success()
+      {
         continue;
       }
       let executable_path = install_method.executable_location(app.as_ref(), &latest_version, platform, &yard);

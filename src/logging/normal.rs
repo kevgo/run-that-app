@@ -52,7 +52,7 @@ pub fn log(event: Event) {
 
     Event::IntegrationTestNewApp { app: _ } => {}
     Event::IntegrationTestDeterminedVersion { version: _ } => {}
-    Event::IntegrationTestNewInstallMethod { method, version } => eprintln!("\n{}", method.name(version).bold()),
+    Event::IntegrationTestNewInstallMethod { method } => eprintln!("\n{}", method.to_string().bold()),
 
     Event::NotOnline => eprintln!("{}", "not online".red()),
 

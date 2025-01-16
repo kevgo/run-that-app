@@ -56,7 +56,7 @@ pub fn run(
   Ok(Outcome::Installed)
 }
 
-pub fn load() -> Option<Executable> {}
+// pub fn load() -> Option<Executable> {}
 
 fn load_rta_go(platform: Platform, optional: bool, config_file: &configuration::File, yard: &Yard, log: Log) -> Result<Option<PathBuf>> {
   let go = applications::go::Go {};

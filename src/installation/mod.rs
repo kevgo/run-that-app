@@ -66,27 +66,24 @@ impl Method {
       } => yard.app_folder(&app_to_install.name(), version).join(executable_path_in_other_yard),
     }
   }
-}
-
-impl Display for Method {
-  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+  fn name(&self, version: &Version) -> String {
     match self {
       Method::DownloadArchive {
         archive_url: _,
         executable_path_in_archive: _,
-      } => f.write_str("download archive"),
-      Method::DownloadExecutable { download_url: _ } => f.write_str("download executable"),
-      Method::CompileGoSource { import_path: _ } => f.write_str("compile from Go source"),
+      } => format!("download archive for {}"),
+
+      Method::DownloadExecutable { download_url: _ } => format!("download executable"),
+      Method::CompileGoSource { import_path: _ } => format!("compile from Go source"),
       Method::CompileRustSource {
         crate_name: _,
         executable_path_in_folder: _,
-      } => f.write_str("compile from Rust source"),
+      } => format!("compile from Rust source"),
       Method::ExecutableInAnotherApp {
         app_to_install,
         executable_path_in_other_yard: _,
       } => {
-        f.write_str("install through ");
-        f.write_str(app_to_install.name().as_str())
+        format!("install through {}", app_to_install.name())
       }
     }
   }
@@ -96,7 +93,7 @@ impl Display for Method {
 // TODO: return the installation method used, so that we don't need to detect it later. Or - even better - return the installed executable because that's what we really need later.
 pub fn any(app: &dyn App, version: &Version, platform: Platform, optional: bool, yard: &Yard, config_file: &configuration::File, log: Log) -> Result<Outcome> {
   for install_method in app.install_methods(version, platform) {
-    if install(app, install_method, version, platform, optional, yard, config_file, log)?.success() {
+    if install(app, &install_method, version, platform, optional, yard, config_file, log)?.success() {
       return Ok(Outcome::Installed);
     }
   }
@@ -107,7 +104,7 @@ pub fn any(app: &dyn App, version: &Version, platform: Platform, optional: bool,
 // TODO: rename to "one" to complement "any"?
 pub fn install(
   app: &dyn App,
-  install_method: Method,
+  install_method: &Method,
   version: &Version,
   platform: Platform,
   optional: bool,

@@ -92,8 +92,7 @@ pub enum Event<'a> {
     version: &'a Version,
   },
   IntegrationTestNewInstallMethod {
-    method: &'a Method<'a>,
-    version: &'a Version,
+    method: &'a Method,
   },
 
   NotOnline,
