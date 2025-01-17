@@ -25,15 +25,11 @@ impl App for NodeJS {
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = os_text(platform.os);
     let cpu = cpu_text(platform.cpu);
+    let ext = ext_text(platform.os);
     let sep = path::MAIN_SEPARATOR;
     let filename = self.executable_filename(platform);
     vec![Method::DownloadArchive {
-      url: format!(
-        "https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",
-        os = os_text(platform.os),
-        cpu = cpu_text(platform.cpu),
-        ext = ext_text(platform.os),
-      ),
+      url: format!("https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",),
       path_in_archive: match platform.os {
         Os::Windows => format!("node-v{version}-{os}-{cpu}{sep}{filename}"),
         Os::Linux | Os::MacOS => format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{filename}"),
