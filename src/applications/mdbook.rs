@@ -78,19 +78,61 @@ fn extract_version(output: &str) -> Result<&str> {
 
 #[cfg(test)]
 mod tests {
-  use crate::configuration::Version;
-  use crate::platform::{Cpu, Os, Platform};
   use crate::UserError;
 
-  #[test]
-  fn archive_url() {
-    let platform = Platform {
-      os: Os::Linux,
-      cpu: Cpu::Intel64,
-    };
-    let have = super::archive_url(&Version::from("0.4.37"), platform);
-    let want = "https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz";
-    assert_eq!(have, want);
+  mod install_methods {
+    use crate::applications::mdbook::MdBook;
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    #[test]
+    #[cfg(unix)]
+    fn linux_arm() {
+      let have = (MdBook {}).install_methods(
+        &Version::from("0.4.37"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz"),
+          path_in_archive: S("mdbook"),
+        },
+        Method::CompileRustSource {
+          crate_name: "mdbook",
+          filepath: S("bin/mdbook"),
+        },
+      ];
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    #[cfg(windows)]
+    fn windows_intel() {
+      let have = (MdBookLinkCheck {}).install_methods(
+        &Version::from("0.4.37"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-pc-windows-msvc.zip"),
+          path_in_archive: S("mdbook.exe"),
+        },
+        Method::CompileRustSource {
+          crate_name: "mdbook",
+          filepath: S("bin\\mdbook.exe"),
+        },
+      ];
+      assert_eq!(have, want);
+    }
   }
 
   #[test]
