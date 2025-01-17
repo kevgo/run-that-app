@@ -87,15 +87,17 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
 
   mod install_methods {
-    use crate::applications::shellcheck::ShellCheck;
-    use crate::applications::App;
-    use crate::configuration::Version;
-    use crate::installation::Method;
-    use crate::platform::{Cpu, Os, Platform};
-    use big_s::S;
 
     #[test]
+    #[cfg(unix)]
     fn linux_arm() {
+      use crate::applications::shellcheck::ShellCheck;
+      use crate::applications::App;
+      use crate::configuration::Version;
+      use crate::installation::Method;
+      use crate::platform::{Cpu, Os, Platform};
+      use big_s::S;
+
       let have = (ShellCheck {}).install_methods(
         &Version::from("0.9.0"),
         Platform {
@@ -111,7 +113,15 @@ mod tests {
     }
 
     #[test]
-    fn windows_intel() {
+    #[cfg(unix)]
+    fn macos_arm() {
+      use crate::applications::shellcheck::ShellCheck;
+      use crate::applications::App;
+      use crate::configuration::Version;
+      use crate::installation::Method;
+      use crate::platform::{Cpu, Os, Platform};
+      use big_s::S;
+
       let have = (ShellCheck {}).install_methods(
         &Version::from("0.10.0"),
         Platform {

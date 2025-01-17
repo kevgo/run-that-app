@@ -85,6 +85,7 @@ mod tests {
   use crate::UserError;
 
   mod install_methods {
+    use crate::applications::tikibase::Tikibase;
     use crate::applications::App;
     use crate::configuration::Version;
     use crate::installation::Method;
@@ -94,8 +95,6 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::applications::tikibase::Tikibase;
-
       let have = (Tikibase {}).install_methods(
         &Version::from("0.6.2"),
         Platform {
@@ -113,18 +112,16 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      use crate::applications::tikibase::Tikibase;
-
       let have = (Tikibase {}).install_methods(
-        &Version::from("0.4.37"),
+        &Version::from("0.6.2"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
       let want = vec![Method::DownloadArchive {
-        url: S("https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_linux_intel64.tar.gz"),
-        path_in_archive: S("mdbook.exe"),
+        url: S("https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_windows_intel64.zip"),
+        path_in_archive: S("tikibase.exe"),
       }];
       assert_eq!(have, want);
     }

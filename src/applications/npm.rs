@@ -58,6 +58,7 @@ fn app_to_install() -> NodeJS {
 mod tests {
 
   mod install_methods {
+    use crate::applications::nodejs::NodeJS;
     use crate::applications::npm::Npm;
     use crate::applications::App;
     use crate::configuration::Version;
@@ -68,8 +69,6 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::applications::nodejs::NodeJS;
-
       let have = (Npm {}).install_methods(
         &Version::from("20.10.0"),
         Platform {
@@ -96,7 +95,7 @@ mod tests {
       );
       let want = vec![Method::ExecutableInAnotherApp {
         other_app: Box::new(NodeJS {}),
-        executable_path: S("node-v20.10.0-darwin-arm64\\bin\\npm.exe"),
+        executable_path: S("node-v20.10.0-win-x64\\bin\\npm.exe"),
       }];
       assert_eq!(have, want);
     }

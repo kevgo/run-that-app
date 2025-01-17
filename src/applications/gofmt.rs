@@ -93,7 +93,7 @@ mod tests {
       );
       let want = vec![Method::ExecutableInAnotherApp {
         other_app: Box::new(Go {}),
-        executable_path: S("go\\bin\\gofmt"),
+        executable_path: S("go\\bin\\gofmt.exe"),
       }];
       assert_eq!(have, want);
     }

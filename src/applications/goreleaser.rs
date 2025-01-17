@@ -101,7 +101,9 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      let have = (GolangCiLint {}).install_methods(
+      use crate::applications::goreleaser::Goreleaser;
+
+      let have = (Goreleaser {}).install_methods(
         &Version::from("1.22.1"),
         Platform {
           os: Os::Windows,

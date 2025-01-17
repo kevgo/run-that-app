@@ -95,7 +95,7 @@ mod tests {
       );
       let want = vec![Method::ExecutableInAnotherApp {
         other_app: Box::new(NodeJS {}),
-        executable_path: S("node-v20.10.0-darwin-arm64\\bin\\npx.exe"),
+        executable_path: S("node-v20.10.0-win-x64\\bin\\npx.exe"),
       }];
       assert_eq!(have, want);
     }

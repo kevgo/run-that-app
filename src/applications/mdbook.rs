@@ -7,6 +7,7 @@ use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::{regexp, Log};
 use const_format::formatcp;
+use std::path;
 
 pub struct MdBook {}
 
@@ -30,7 +31,7 @@ impl App for MdBook {
       },
       Method::CompileRustSource {
         crate_name: "mdbook",
-        filepath: format!("bin/{}", self.executable_filename(platform)),
+        filepath: format!("bin{sep}{filename}", sep = path::MAIN_SEPARATOR, filename = self.executable_filename(platform)),
       },
     ]
   }
@@ -114,7 +115,7 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      let have = (MdBookLinkCheck {}).install_methods(
+      let have = (MdBook {}).install_methods(
         &Version::from("0.4.37"),
         Platform {
           os: Os::Windows,

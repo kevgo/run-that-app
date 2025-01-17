@@ -1,3 +1,5 @@
+use std::path;
+
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
@@ -34,7 +36,7 @@ impl App for MdBookLinkCheck {
       },
       Method::CompileRustSource {
         crate_name: "mdbook-linkcheck",
-        filepath: format!("bin/{}", self.executable_filename(platform)),
+        filepath: format!("bin{sep}{filename}", sep = path::MAIN_SEPARATOR, filename = self.executable_filename(platform)),
       },
     ]
   }
