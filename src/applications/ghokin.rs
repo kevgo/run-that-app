@@ -66,29 +66,54 @@ fn archive_url(version: &Version, platform: Platform) -> String {
 
 #[cfg(test)]
 mod tests {
-  mod archive_url {
+
+  mod install_methods {
+    use crate::applications::ghokin::Ghokin;
+    use crate::applications::App;
     use crate::configuration::Version;
+    use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
 
     #[test]
-    fn macos_intel64() {
-      let platform = Platform {
-        os: Os::MacOS,
-        cpu: Cpu::Intel64,
-      };
-      let have = super::super::archive_url(&Version::from("3.4.1"), platform);
-      let want = "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_amd64.tar.gz";
+    fn linux_arm() {
+      let have = (Ghokin {}).install_methods(
+        &Version::from("3.4.1"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_amd64.tar.gz"),
+          path_in_archive: S("ghokin"),
+        },
+        Method::CompileGoSource {
+          import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
+        },
+      ];
       assert_eq!(have, want);
     }
 
     #[test]
-    fn windows_intel64() {
-      let platform = Platform {
-        os: Os::Windows,
-        cpu: Cpu::Intel64,
-      };
-      let have = super::super::archive_url(&Version::from("3.7.0"), platform);
-      let want = "https://github.com/antham/ghokin/releases/download/v3.7.0/ghokin_3.7.0_windows_amd64.tar.gz";
+    fn windows_intel() {
+      let have = (Ghokin {}).install_methods(
+        &Version::from("3.7.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/antham/ghokin/releases/download/v3.7.0/ghokin_3.7.0_windows_amd64.tar.gz"),
+          path_in_archive: S("ghokin.exe"),
+        },
+        Method::CompileGoSource {
+          import_path: S("github.com/antham/ghokin/v3@v3.7.0"),
+        },
+      ];
       assert_eq!(have, want);
     }
   }
