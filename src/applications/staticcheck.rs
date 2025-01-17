@@ -67,13 +67,12 @@ fn archive_url(version: &Version, platform: Platform) -> String {
 mod tests {
 
   mod install_methods {
-    use big_s::S;
-
     use crate::applications::staticcheck::StaticCheck;
     use crate::applications::App;
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
 
     #[test]
     fn linux_arm() {

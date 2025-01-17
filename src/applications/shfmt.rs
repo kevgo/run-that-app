@@ -79,13 +79,12 @@ mod tests {
   use crate::UserError;
 
   mod install_methods {
-    use big_s::S;
-
     use crate::applications::shfmt::Shfmt;
     use crate::applications::App;
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
 
     #[test]
     fn linux_arm() {
