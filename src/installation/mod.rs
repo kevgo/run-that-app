@@ -58,10 +58,9 @@ impl Method {
       Method::DownloadExecutable { url: _ } => yard.app_folder(&app.name(), version).join(app.executable_filename(platform)),
       Method::CompileGoSource { import_path: _ } => compile_go::executable_path(app, version, platform, yard),
       Method::CompileRustSource { crate_name: _, filepath } => compile_rust::executable_path(app, version, yard, filepath),
-      Method::ExecutableInAnotherApp {
-        other_app: app_to_install,
-        executable_path,
-      } => executable_in_another_app::executable_path(app_to_install.as_ref(), version, yard, executable_path),
+      Method::ExecutableInAnotherApp { other_app, executable_path } => {
+        executable_in_another_app::executable_path(other_app.as_ref(), version, yard, executable_path)
+      }
     }
   }
 
