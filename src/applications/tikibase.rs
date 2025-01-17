@@ -24,7 +24,12 @@ impl App for Tikibase {
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![Method::DownloadArchive {
-      url: archive_url(version, platform),
+      url: format!(
+        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/tikibase_{os}_{cpu}.{ext}",
+        cpu = cpu_text(platform.cpu),
+        os = os_text(platform.os),
+        ext = ext_text(platform.os),
+      ),
       path_in_archive: self.executable_filename(platform),
     }]
   }
@@ -49,54 +54,78 @@ impl App for Tikibase {
   }
 }
 
-fn archive_url(version: &Version, platform: Platform) -> String {
-  let cpu = match platform.cpu {
-    Cpu::Arm64 => "arm64",
-    Cpu::Intel64 => "intel64",
-  };
-  let os = match platform.os {
+fn extract_version(output: &str) -> Result<&str> {
+  regexp::first_capture(output, r"tikibase (\d+\.\d+\.\d+)")
+}
+
+fn ext_text(os: Os) -> &'static str {
+  match os {
+    Os::Linux | Os::MacOS => "tar.gz",
+    Os::Windows => "zip",
+  }
+}
+
+fn os_text(os: Os) -> &'static str {
+  match os {
     Os::Linux => "linux",
     Os::MacOS => "macos",
     Os::Windows => "windows",
-  };
-  let ext = match platform.os {
-    Os::Linux | Os::MacOS => "tar.gz",
-    Os::Windows => "zip",
-  };
-  format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/tikibase_{os}_{cpu}.{ext}")
+  }
 }
 
-fn extract_version(output: &str) -> Result<&str> {
-  regexp::first_capture(output, r"tikibase (\d+\.\d+\.\d+)")
+fn cpu_text(cpu: Cpu) -> &'static str {
+  match cpu {
+    Cpu::Arm64 => "arm64",
+    Cpu::Intel64 => "intel64",
+  }
 }
 
 #[cfg(test)]
 mod tests {
   use crate::UserError;
 
-  mod archive_url {
+  mod install_methods {
+    use crate::applications::App;
     use crate::configuration::Version;
+    use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
 
     #[test]
-    fn mac_arm() {
-      let platform = Platform {
-        os: Os::MacOS,
-        cpu: Cpu::Arm64,
-      };
-      let have = super::super::archive_url(&Version::from("0.6.2"), platform);
-      let want = "https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_macos_arm64.tar.gz";
+    #[cfg(unix)]
+    fn linux_arm() {
+      use crate::applications::tikibase::Tikibase;
+
+      let have = (Tikibase {}).install_methods(
+        &Version::from("0.6.2"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = vec![Method::DownloadArchive {
+        url: S("https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_macos_arm64.tar.gz"),
+        path_in_archive: S("tikibase"),
+      }];
       assert_eq!(have, want);
     }
 
     #[test]
-    fn linux_arm() {
-      let platform = Platform {
-        os: Os::Linux,
-        cpu: Cpu::Intel64,
-      };
-      let have = super::super::archive_url(&Version::from("0.6.2"), platform);
-      let want = "https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_linux_intel64.tar.gz";
+    #[cfg(windows)]
+    fn windows_intel() {
+      use crate::applications::tikibase::Tikibase;
+
+      let have = (Tikibase {}).install_methods(
+        &Version::from("0.4.37"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![Method::DownloadArchive {
+        url: S("https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_linux_intel64.tar.gz"),
+        path_in_archive: S("mdbook.exe"),
+      }];
       assert_eq!(have, want);
     }
   }
