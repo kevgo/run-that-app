@@ -25,7 +25,11 @@ impl App for MdBookLinkCheck {
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![
       Method::DownloadArchive {
-        url: archive_url(version, platform),
+        url: format!(
+          "https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-linkcheck.{cpu}-{os}.zip",
+          os = os_text(platform.os),
+          cpu = cpu_text(platform.cpu)
+        ),
         path_in_archive: self.executable_filename(platform),
       },
       Method::CompileRustSource {
@@ -55,17 +59,19 @@ impl App for MdBookLinkCheck {
   }
 }
 
-fn archive_url(version: &Version, platform: Platform) -> String {
-  let os = match platform.os {
+fn cpu_text(cpu: Cpu) -> &'static str {
+  match cpu {
+    Cpu::Arm64 => "aarch64",
+    Cpu::Intel64 => "x86_64",
+  }
+}
+
+fn os_text(os: Os) -> &'static str {
+  match os {
     Os::Linux => "unknown-linux-gnu",
     Os::MacOS => "apple-darwin",
     Os::Windows => "pc-windows-msvc",
-  };
-  let cpu = match platform.cpu {
-    Cpu::Arm64 => "aarch64",
-    Cpu::Intel64 => "x86_64",
-  };
-  format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-linkcheck.{cpu}-{os}.zip")
+  }
 }
 
 fn extract_version(output: &str) -> Result<&str> {
@@ -74,19 +80,61 @@ fn extract_version(output: &str) -> Result<&str> {
 
 #[cfg(test)]
 mod tests {
-  use crate::configuration::Version;
-  use crate::platform::{Cpu, Os, Platform};
   use crate::UserError;
 
-  #[test]
-  fn archive_url() {
-    let platform = Platform {
-      os: Os::MacOS,
-      cpu: Cpu::Intel64,
-    };
-    let have = super::archive_url(&Version::from("0.7.8"), platform);
-    let want = "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-apple-darwin.zip";
-    assert_eq!(have, want);
+  mod install_methods {
+    use crate::applications::mdbook_linkcheck::MdBookLinkCheck;
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    #[test]
+    #[cfg(unix)]
+    fn linux_arm() {
+      let have = (MdBookLinkCheck {}).install_methods(
+        &Version::from("0.7.8"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-apple-darwin.zip"),
+          path_in_archive: S("mdbook-linkcheck"),
+        },
+        Method::CompileRustSource {
+          crate_name: "mdbook-linkcheck",
+          filepath: S("bin/mdbook-linkcheck"),
+        },
+      ];
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    #[cfg(windows)]
+    fn windows_intel() {
+      let have = (MdBookLinkCheck {}).install_methods(
+        &Version::from("0.7.8"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-pc-windows-msvc.zip"),
+          path_in_archive: S("mdbook-linkcheck.exe"),
+        },
+        Method::CompileRustSource {
+          crate_name: "mdbook-linkcheck",
+          filepath: S("bin\\mdbook-linkcheck.exe"),
+        },
+      ];
+      assert_eq!(have, want);
+    }
   }
 
   #[test]
