@@ -22,14 +22,15 @@ impl App for Gofumpt {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, log)
-  }
-
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![
       Method::DownloadExecutable {
-        url: download_url(version, platform),
+        url: format!(
+          "https://github.com/{ORG}/{REPO}/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}{ext}",
+          os = os_text(platform.os),
+          cpu = cpu_text(platform.cpu),
+          ext = ext_text(platform.os)
+        ),
       },
       Method::CompileGoSource {
         import_path: format!("mvdan.cc/gofumpt@v{version}"),
@@ -39,6 +40,10 @@ impl App for Gofumpt {
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
     github_releases::versions(ORG, REPO, amount, log)
+  }
+
+  fn latest_installable_version(&self, log: Log) -> Result<Version> {
+    github_releases::latest(ORG, REPO, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -53,21 +58,26 @@ impl App for Gofumpt {
   }
 }
 
-fn download_url(version: &Version, platform: Platform) -> String {
-  let os = match platform.os {
+fn ext_text(os: Os) -> &'static str {
+  match os {
+    Os::Windows => ".exe",
+    Os::Linux | Os::MacOS => "",
+  }
+}
+
+fn cpu_text(cpu: Cpu) -> &'static str {
+  match cpu {
+    Cpu::Arm64 => "arm64",
+    Cpu::Intel64 => "amd64",
+  }
+}
+
+fn os_text(os: Os) -> &'static str {
+  match os {
     Os::Linux => "linux",
     Os::MacOS => "darwin",
     Os::Windows => "windows",
-  };
-  let cpu = match platform.cpu {
-    Cpu::Arm64 => "arm64",
-    Cpu::Intel64 => "amd64",
-  };
-  let ext = match platform.os {
-    Os::Windows => ".exe",
-    Os::Linux | Os::MacOS => "",
-  };
-  format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}{ext}")
+  }
 }
 
 fn extract_version(output: &str) -> Result<&str> {
@@ -78,29 +88,51 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
   use crate::UserError;
 
-  mod artifact_url {
+  mod install_methods {
+    use crate::applications::gofumpt::Gofumpt;
+    use crate::applications::App;
     use crate::configuration::Version;
+    use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
 
     #[test]
-    fn macos_arm64() {
-      let platform = Platform {
-        os: Os::MacOS,
-        cpu: Cpu::Arm64,
-      };
-      let have = super::super::download_url(&Version::from("0.5.0"), platform);
-      let want = "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_darwin_arm64";
+    fn linux_arm() {
+      let have = (Gofumpt {}).install_methods(
+        &Version::from("0.5.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = vec![
+        Method::DownloadExecutable {
+          url: S("https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_darwin_arm64"),
+        },
+        Method::CompileGoSource {
+          import_path: S("mvdan.cc/gofumpt@v0.5.0"),
+        },
+      ];
       assert_eq!(have, want);
     }
 
     #[test]
-    fn windows_intel64() {
-      let platform = Platform {
-        os: Os::Windows,
-        cpu: Cpu::Intel64,
-      };
-      let have = super::super::download_url(&Version::from("0.5.0"), platform);
-      let want = "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_windows_amd64.exe";
+    fn windows_intel() {
+      let have = (Gofumpt {}).install_methods(
+        &Version::from("0.5.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![
+        Method::DownloadExecutable {
+          url: S("https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_windows_amd64.exe"),
+        },
+        Method::CompileGoSource {
+          import_path: S("mvdan.cc/gofumpt@v0.5.0"),
+        },
+      ];
       assert_eq!(have, want);
     }
   }
