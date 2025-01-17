@@ -23,14 +23,27 @@ impl App for Gh {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let os = match platform.os {
+      Os::Linux => "linux",
+      Os::MacOS => "macOS",
+      Os::Windows => "windows",
+    };
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "arm64",
+      Cpu::Intel64 => "amd64",
+    };
+    let ext = match platform.os {
+      Os::Linux => "tar.gz",
+      Os::Windows | Os::MacOS => "zip",
+    };
+    let sep = path::MAIN_SEPARATOR;
+    let filename = self.executable_filename(platform);
     vec![Method::DownloadArchive {
-      url: format!(
-        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}",
-        os = os_text(platform.os),
-        cpu = cpu_text(platform.cpu),
-        ext = ext_text(platform.os)
-      ),
-      path_in_archive: executable_path_in_archive(version, platform, self.executable_filename(platform)),
+      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}",),
+      path_in_archive: match platform.os {
+        Os::Windows => format!("bin{sep}{filename}"),
+        Os::Linux | Os::MacOS => format!("gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}",),
+      },
     }]
     // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
   }
@@ -55,41 +68,8 @@ impl App for Gh {
   }
 }
 
-fn executable_path_in_archive(version: &Version, platform: Platform, executable_filename: String) -> String {
-  let os = os_text(platform.os);
-  let cpu = cpu_text(platform.cpu);
-  let sep = path::MAIN_SEPARATOR;
-  let filename = executable_filename;
-  match platform.os {
-    Os::Windows => format!("bin{sep}{filename}"),
-    Os::Linux | Os::MacOS => format!("gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}",),
-  }
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-  match cpu {
-    Cpu::Arm64 => "arm64",
-    Cpu::Intel64 => "amd64",
-  }
-}
-
-fn ext_text(os: Os) -> &'static str {
-  match os {
-    Os::Linux => "tar.gz",
-    Os::Windows | Os::MacOS => "zip",
-  }
-}
-
 fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"gh version (\d+\.\d+\.\d+)")
-}
-
-fn os_text(os: Os) -> &'static str {
-  match os {
-    Os::Linux => "linux",
-    Os::MacOS => "macOS",
-    Os::Windows => "windows",
-  }
 }
 
 #[cfg(test)]
