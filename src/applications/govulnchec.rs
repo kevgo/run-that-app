@@ -24,12 +24,12 @@ impl App for Govulncheck {
   }
 
   fn latest_installable_version(&self, _log: Log) -> Result<Version> {
-    // TODO: remove this file once deadcode is integrated into golangci-lint
-    Ok(Version::from("1.1.3"))
+    // TODO: remove this file once govulncheck is integrated into golangci-lint
+    Ok(Version::from("1.1.4"))
   }
 
   fn installable_versions(&self, _amount: usize, _log: Log) -> Result<Vec<Version>> {
-    Ok(vec![Version::from("1.1.3")])
+    Ok(vec![Version::from("1.1.4"), Version::from("1.1.3")])
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -37,7 +37,33 @@ impl App for Govulncheck {
     if !output.contains("Govulncheck reports known vulnerabilities in dependencies") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    // as of 0.16.1 deadcode does not display the version of the installed executable
+    // govulncheck does not display the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+  }
+}
+
+#[cfg(test)]
+mod tests {
+
+  #[test]
+  fn install_methods() {
+    use crate::applications::govulnchec::Govulncheck;
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    let have = (Govulncheck {}).install_methods(
+      &Version::from("1.1.4"),
+      Platform {
+        os: Os::MacOS,
+        cpu: Cpu::Arm64,
+      },
+    );
+    let want = vec![Method::CompileGoSource {
+      import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
+    }];
+    assert_eq!(have, want);
   }
 }
