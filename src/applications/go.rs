@@ -146,7 +146,7 @@ mod tests {
       );
       let want = vec![Method::DownloadArchive {
         url: S("https://go.dev/dl/go1.21.5.windows-amd64.zip"),
-        path_in_archive: S("go/bin/go.exe"),
+        path_in_archive: S("go\\bin\\go.exe"),
       }];
       assert_eq!(have, want);
     }
