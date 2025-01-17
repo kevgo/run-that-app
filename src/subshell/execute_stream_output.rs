@@ -1,8 +1,7 @@
+use super::executable::add_path;
 use super::{exit_status_to_code, format_call};
 use crate::prelude::*;
 use crate::subshell::Executable;
-use std::env;
-use std::ffi::OsString;
 use std::process::{Command, ExitCode};
 
 /// Runs the given executable with the given arguments.
@@ -11,16 +10,7 @@ use std::process::{Command, ExitCode};
 pub fn execute_stream_output(executable: &Executable, args: &[String]) -> Result<ExitCode> {
   let mut cmd = Command::new(executable);
   cmd.args(args);
-  cmd.envs(env::vars_os());
-  let parent = executable.0.parent().unwrap(); // there is always a parent here since this is a location inside the yard
-  let new_path = if let Some(mut path) = env::var_os("PATH") {
-    path.push(":");
-    path.push(parent.as_os_str());
-    path
-  } else {
-    OsString::from(parent)
-  };
-  cmd.env("PATH", new_path);
+  add_path(&mut cmd, executable.0.parent().unwrap());
   let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
     call: format_call(executable, args),
     reason: err.to_string(),

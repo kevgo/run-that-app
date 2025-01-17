@@ -77,7 +77,7 @@ impl Display for Executable {
   }
 }
 
-fn add_path(cmd: &mut Command, dir: &Path) {
+pub fn add_path(cmd: &mut Command, dir: &Path) {
   cmd.envs(env::vars_os());
   let new_path = if let Some(mut path) = env::var_os("PATH") {
     path.push(":");
