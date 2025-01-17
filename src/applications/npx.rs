@@ -20,15 +20,13 @@ impl App for Npx {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let os = applications::nodejs::os_text(platform.os);
+    let cpu = applications::nodejs::cpu_text(platform.cpu);
+    let sep = path::MAIN_SEPARATOR;
+    let executable = self.executable_filename(platform);
     vec![Method::ExecutableInAnotherApp {
       other_app: Box::new(app_to_install()),
-      executable_path: format!(
-        "node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",
-        os = applications::nodejs::os_text(platform.os),
-        cpu = applications::nodejs::cpu_text(platform.cpu),
-        sep = path::MAIN_SEPARATOR,
-        executable = self.executable_filename(platform)
-      ),
+      executable_path: format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",),
     }]
   }
 

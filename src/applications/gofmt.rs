@@ -23,7 +23,7 @@ impl App for Gofmt {
     let sep = path::MAIN_SEPARATOR;
     let filename = &self.executable_filename(platform);
     vec![Method::ExecutableInAnotherApp {
-      other_app: app_to_install(),
+      other_app: Box::new(app_to_install()),
       executable_path: format!("go{sep}bin{sep}{filename}",),
     }]
   }
@@ -46,8 +46,8 @@ impl App for Gofmt {
   }
 }
 
-fn app_to_install() -> Box<dyn App> {
-  Box::new(Go {})
+fn app_to_install() -> Go {
+  Go {}
 }
 
 #[cfg(test)]

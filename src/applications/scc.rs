@@ -23,9 +23,18 @@ impl App for Scc {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let os = match platform.os {
+      Os::Linux => "Linux",
+      Os::MacOS => "Darwin",
+      Os::Windows => "Windows",
+    };
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "arm64",
+      Cpu::Intel64 => "x86_64",
+    };
     vec![
       Method::DownloadArchive {
-        url: archive_url(version, platform),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/scc_{os}_{cpu}.tar.gz"),
         path_in_archive: self.executable_filename(platform),
       },
       Method::CompileGoSource {
@@ -52,19 +61,6 @@ impl App for Scc {
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
-}
-
-fn archive_url(version: &Version, platform: Platform) -> String {
-  let os = match platform.os {
-    Os::Linux => "Linux",
-    Os::MacOS => "Darwin",
-    Os::Windows => "Windows",
-  };
-  let cpu = match platform.cpu {
-    Cpu::Arm64 => "arm64",
-    Cpu::Intel64 => "x86_64",
-  };
-  format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/scc_{os}_{cpu}.tar.gz")
 }
 
 fn extract_version(output: &str) -> Result<&str> {
