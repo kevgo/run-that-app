@@ -24,7 +24,12 @@ impl App for Gh {
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![Method::DownloadArchive {
-      url: archive_url(version, platform),
+      url: format!(
+        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}",
+        os = os_text(platform.os),
+        cpu = cpu_text(platform.cpu),
+        ext = ext_text(platform.os)
+      ),
       path_in_archive: executable_path_in_archive(version, platform, self.executable_filename(platform)),
     }]
     // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
@@ -48,15 +53,6 @@ impl App for Gh {
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
-}
-
-fn archive_url(version: &Version, platform: Platform) -> String {
-  format!(
-    "https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}",
-    os = os_text(platform.os),
-    cpu = cpu_text(platform.cpu),
-    ext = ext_text(platform.os)
-  )
 }
 
 fn executable_path_in_archive(version: &Version, platform: Platform, executable_filename: String) -> String {
@@ -98,18 +94,46 @@ fn os_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
-  use crate::configuration::Version;
-  use crate::platform::{Cpu, Os, Platform};
 
-  #[test]
-  fn archive_url() {
-    let platform = Platform {
-      os: Os::Linux,
-      cpu: Cpu::Intel64,
-    };
-    let have = super::archive_url(&Version::from("2.39.1"), platform);
-    let want = "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_amd64.tar.gz";
-    assert_eq!(have, want);
+  mod install_methods {
+    use crate::applications::gh::Gh;
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    #[test]
+    fn linux_arm() {
+      let have = (Gh {}).install_methods(
+        &Version::from("2.39.1"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![Method::DownloadArchive {
+        url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_amd64.tar.gz"),
+        path_in_archive: S("gh_2.39.1_linux_amd64/bin/gh"),
+      }];
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_intel() {
+      let have = (Gh {}).install_methods(
+        &Version::from("2.39.1"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![Method::DownloadArchive {
+        url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip"),
+        path_in_archive: S("bin/gh.exe"),
+      }];
+      assert_eq!(have, want);
+    }
   }
 
   mod executable_locations {
