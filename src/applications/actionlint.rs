@@ -91,6 +91,8 @@ mod tests {
   use crate::UserError;
 
   mod install_methods {
+    use big_s::S;
+
     use crate::applications::actionlint::ActionLint;
     use crate::applications::App;
     use crate::configuration::Version;
@@ -100,20 +102,21 @@ mod tests {
     #[test]
     fn linux_arm() {
       let action_lint = ActionLint {};
-      let version = &Version::from("1.6.26");
       let platform = Platform {
         os: Os::Linux,
         cpu: Cpu::Arm64,
       };
-      let mut have = action_lint.install_methods(version, platform).into_iter();
-      let Method::DownloadArchive { url, path_in_archive } = have.next().unwrap() else {
-        panic!();
-      };
-      assert_eq!(
-        url,
-        "https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_linux_arm64.tar.gz"
-      );
-      assert_eq!(path_in_archive, "actionlint");
+      let have = action_lint.install_methods(&Version::from("1.6.26"), platform);
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_linux_arm64.tar.gz"),
+          path_in_archive: S("actionlint"),
+        },
+        Method::CompileGoSource {
+          import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.6.26"),
+        },
+      ];
+      assert_eq!(have, want);
     }
 
     #[test]
@@ -124,8 +127,8 @@ mod tests {
         os: Os::Windows,
         cpu: Cpu::Intel64,
       };
-      let mut have = action_lint.install_methods(version, platform).into_iter();
-      let Method::DownloadArchive { url, path_in_archive } = have.next().unwrap() else {
+      let mut methods = action_lint.install_methods(version, platform).into_iter();
+      let Method::DownloadArchive { url, path_in_archive } = methods.next().unwrap() else {
         panic!();
       };
       assert_eq!(
@@ -133,12 +136,17 @@ mod tests {
         "https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_windows_amd64.zip"
       );
       assert_eq!(path_in_archive, "actionlint.exe");
+      let Method::CompileGoSource { import_path } = methods.next().unwrap() else {
+        panic!();
+      };
+      assert_eq!(import_path, "github.com/rhysd/actionlint/cmd/actionlint@v1.6.26");
+      assert!(methods.next().is_none());
     }
   }
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("1.6.27"), Ok("1.6.27"));
+    assert_eq!(super::extract_version("actionlint 1.6.27"), Ok("1.6.27"));
     assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }

@@ -13,6 +13,7 @@ use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::yard::Yard;
+use std::fmt::Debug;
 use std::path::PathBuf;
 
 /// the different methods to install an application
@@ -73,6 +74,70 @@ impl Method {
         other_app: app_to_install,
         executable_path: _,
       } => format!("install {app}@{version} through {carrier}", carrier = app_to_install.name()),
+    }
+  }
+}
+
+impl Debug for Method {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    match self {
+      Self::DownloadArchive { url, path_in_archive } => f
+        .debug_struct("DownloadArchive")
+        .field("url", url)
+        .field("path_in_archive", path_in_archive)
+        .finish(),
+      Self::DownloadExecutable { url } => f.debug_struct("DownloadExecutable").field("url", url).finish(),
+      Self::CompileGoSource { import_path } => f.debug_struct("CompileGoSource").field("import_path", import_path).finish(),
+      Self::CompileRustSource { crate_name, filepath } => f
+        .debug_struct("CompileRustSource")
+        .field("crate_name", crate_name)
+        .field("filepath", filepath)
+        .finish(),
+      Self::ExecutableInAnotherApp { other_app, executable_path } => f
+        .debug_struct("ExecutableInAnotherApp")
+        .field("other_app", &other_app.name())
+        .field("executable_path", executable_path)
+        .finish(),
+    }
+  }
+}
+
+impl PartialEq for Method {
+  fn eq(&self, other: &Self) -> bool {
+    match (self, other) {
+      (
+        Self::DownloadArchive {
+          url: l_url,
+          path_in_archive: l_path_in_archive,
+        },
+        Self::DownloadArchive {
+          url: r_url,
+          path_in_archive: r_path_in_archive,
+        },
+      ) => l_url == r_url && l_path_in_archive == r_path_in_archive,
+      (Self::DownloadExecutable { url: l_url }, Self::DownloadExecutable { url: r_url }) => l_url == r_url,
+      (Self::CompileGoSource { import_path: l_import_path }, Self::CompileGoSource { import_path: r_import_path }) => l_import_path == r_import_path,
+      (
+        Self::CompileRustSource {
+          crate_name: l_crate_name,
+          filepath: l_filepath,
+        },
+        Self::CompileRustSource {
+          crate_name: r_crate_name,
+          filepath: r_filepath,
+        },
+      ) => l_crate_name == r_crate_name && l_filepath == r_filepath,
+      (
+        Self::ExecutableInAnotherApp {
+          other_app: l_other_app,
+          executable_path: l_executable_path,
+        },
+        Self::ExecutableInAnotherApp {
+          other_app: r_other_app,
+          executable_path: r_executable_path,
+        },
+      ) => l_other_app.name() == r_other_app.name() && l_executable_path == r_executable_path,
+      _ => false,
     }
   }
 }
