@@ -118,6 +118,7 @@ mod tests {
     use big_s::S;
 
     #[test]
+    #[cfg(unix)]
     fn linux_arm() {
       let have = (Go {}).install_methods(
         &Version::from("1.21.5"),
@@ -134,6 +135,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(windows)]
     fn windows_intel() {
       let have = (Go {}).install_methods(
         &Version::from("1.21.5"),
