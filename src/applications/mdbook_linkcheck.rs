@@ -1,5 +1,3 @@
-use std::path;
-
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
@@ -9,6 +7,7 @@ use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::{regexp, Log};
 use const_format::formatcp;
+use std::path;
 
 pub struct MdBookLinkCheck {}
 
