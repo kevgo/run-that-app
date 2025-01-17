@@ -24,13 +24,18 @@ impl App for MdBookLinkCheck {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let os = match platform.os {
+      Os::Linux => "unknown-linux-gnu",
+      Os::MacOS => "apple-darwin",
+      Os::Windows => "pc-windows-msvc",
+    };
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "aarch64",
+      Cpu::Intel64 => "x86_64",
+    };
     vec![
       Method::DownloadArchive {
-        url: format!(
-          "https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-linkcheck.{cpu}-{os}.zip",
-          os = os_text(platform.os),
-          cpu = cpu_text(platform.cpu)
-        ),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-linkcheck.{cpu}-{os}.zip",),
         path_in_archive: self.executable_filename(platform),
       },
       Method::CompileRustSource {
@@ -57,21 +62,6 @@ impl App for MdBookLinkCheck {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
-  }
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-  match cpu {
-    Cpu::Arm64 => "aarch64",
-    Cpu::Intel64 => "x86_64",
-  }
-}
-
-fn os_text(os: Os) -> &'static str {
-  match os {
-    Os::Linux => "unknown-linux-gnu",
-    Os::MacOS => "apple-darwin",
-    Os::Windows => "pc-windows-msvc",
   }
 }
 
