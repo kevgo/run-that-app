@@ -104,6 +104,7 @@ mod tests {
     use big_s::S;
 
     #[test]
+    #[cfg(unix)]
     fn linux_arm() {
       let have = (Gh {}).install_methods(
         &Version::from("2.39.1"),
@@ -120,6 +121,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(windows)]
     fn windows_intel() {
       let have = (Gh {}).install_methods(
         &Version::from("2.39.1"),
@@ -130,7 +132,7 @@ mod tests {
       );
       let want = vec![Method::DownloadArchive {
         url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip"),
-        path_in_archive: S("bin/gh.exe"),
+        path_in_archive: S("bin\\gh.exe"),
       }];
       assert_eq!(have, want);
     }
