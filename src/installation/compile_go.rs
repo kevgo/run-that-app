@@ -23,8 +23,7 @@ pub fn run(
   yard: &Yard,
   log: Log,
 ) -> Result<Outcome> {
-  let app_name = app.name();
-  let target_folder = yard.create_app_folder(&app_name, version)?;
+  let target_folder = yard.create_app_folder(&app.name(), version)?;
   let go_args = vec!["install", &import_path];
   let go_path = if let Ok(system_go_path) = which("go") {
     system_go_path
