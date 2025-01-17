@@ -109,12 +109,12 @@ mod tests {
         &Version::from("2.39.1"),
         Platform {
           os: Os::Linux,
-          cpu: Cpu::Intel64,
+          cpu: Cpu::Arm64,
         },
       );
       let want = vec![Method::DownloadArchive {
-        url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_amd64.tar.gz"),
-        path_in_archive: S("gh_2.39.1_linux_amd64/bin/gh"),
+        url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz"),
+        path_in_archive: S("gh_2.39.1_linux_arm64/bin/gh"),
       }];
       assert_eq!(have, want);
     }
@@ -132,27 +132,6 @@ mod tests {
         url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip"),
         path_in_archive: S("bin/gh.exe"),
       }];
-      assert_eq!(have, want);
-    }
-  }
-
-  mod executable_locations {
-    use crate::configuration::Version;
-    use crate::platform::{Cpu, Os, Platform};
-    use big_s::S;
-
-    #[test]
-    fn executable_locations() {
-      let version = Version::from("1.2.3");
-      let platform = Platform {
-        os: Os::Linux,
-        cpu: Cpu::Arm64,
-      };
-      let have = super::super::executable_path_in_archive(&version, platform, S("gh"));
-      #[cfg(unix)]
-      let want = S("gh_1.2.3_linux_arm64/bin/gh");
-      #[cfg(windows)]
-      let want = S("gh_1.2.3_linux_arm64\\bin\\gh");
       assert_eq!(have, want);
     }
   }
