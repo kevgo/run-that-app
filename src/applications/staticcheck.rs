@@ -62,3 +62,59 @@ fn archive_url(version: &Version, platform: Platform) -> String {
   };
   format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/staticcheck_{os}_{cpu}.tar.gz")
 }
+
+#[cfg(test)]
+mod tests {
+
+  mod install_methods {
+    use big_s::S;
+
+    use crate::applications::staticcheck::StaticCheck;
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+
+    #[test]
+    fn linux_arm() {
+      let have = (StaticCheck {}).install_methods(
+        &Version::from("3.7.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_darwin_arm64.tar.gz"),
+          path_in_archive: S("staticcheck/staticcheck"),
+        },
+        Method::CompileGoSource {
+          import_path: S("honnef.co/go/tools/cmd/staticcheck@3.7.0"),
+        },
+      ];
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_intel() {
+      let have = (StaticCheck {}).install_methods(
+        &Version::from("3.7.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_windows_amd64.tar.gz"),
+          path_in_archive: S("staticcheck/staticcheck.exe"),
+        },
+        Method::CompileGoSource {
+          import_path: S("honnef.co/go/tools/cmd/staticcheck@3.7.0"),
+        },
+      ];
+      assert_eq!(have, want);
+    }
+  }
+}
