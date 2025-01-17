@@ -9,7 +9,7 @@ pub fn which(args: &Args) -> Result<ExitCode> {
   let apps = applications::all();
   let app = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
-  let yard = Yard::new_or_create(&yard::production_location()?)?;
+  let yard = Yard::load_or_create(&yard::production_location()?)?;
   let platform = platform::detect(log)?;
   let config_file = configuration::File::load(&apps)?;
   let versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;

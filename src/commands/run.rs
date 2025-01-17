@@ -15,7 +15,7 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   let app = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
-  let yard = Yard::new_or_create(&yard::production_location()?)?;
+  let yard = Yard::load_or_create(&yard::production_location()?)?;
   let config_file = configuration::File::load(&apps)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   for requested_version in requested_versions {

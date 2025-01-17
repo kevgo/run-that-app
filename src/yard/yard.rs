@@ -64,7 +64,7 @@ impl Yard {
     Ok(Some(Yard { root: root_dir }))
   }
 
-  pub fn new_or_create(containing_folder: &Path) -> Result<Yard> {
+  pub fn load_or_create(containing_folder: &Path) -> Result<Yard> {
     match Yard::load(containing_folder)? {
       Some(existing_yard) => Ok(existing_yard),
       None => Yard::create(containing_folder),
