@@ -108,18 +108,46 @@ fn parse_go_mod(text: &str) -> Result<&str> {
 
 #[cfg(test)]
 mod tests {
-  use crate::configuration::Version;
-  use crate::platform::{Cpu, Os, Platform};
 
-  #[test]
-  fn archive_url() {
-    let platform = Platform {
-      os: Os::MacOS,
-      cpu: Cpu::Arm64,
-    };
-    let have = super::archive_url(&Version::from("1.21.5"), platform);
-    let want = "https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz";
-    assert_eq!(have, want);
+  mod install_methods {
+    use crate::applications::go::Go;
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    #[test]
+    fn linux_arm() {
+      let have = (Go {}).install_methods(
+        &Version::from("1.21.5"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = vec![Method::DownloadArchive {
+        url: S("https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz"),
+        path_in_archive: S("go/bin/go"),
+      }];
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_intel() {
+      let have = (Go {}).install_methods(
+        &Version::from("1.21.5"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![Method::DownloadArchive {
+        url: S("https://go.dev/dl/go1.21.5.windows-amd64.zip"),
+        path_in_archive: S("go/bin/go.exe"),
+      }];
+      assert_eq!(have, want);
+    }
   }
 
   #[test]
