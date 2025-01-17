@@ -84,17 +84,55 @@ fn os_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
-  use crate::configuration::Version;
-  use crate::platform::{Cpu, Os, Platform};
 
-  #[test]
-  fn archive_url() {
-    let platform = Platform {
-      os: Os::Linux,
-      cpu: Cpu::Intel64,
-    };
-    let have = super::archive_url(&Version::from("0.3.0"), platform);
-    let want = "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_linux_x86_64.tar.gz";
-    assert_eq!(have, want);
+  mod install_methods {
+    use crate::applications::ireturn::Ireturn;
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    #[test]
+    fn linux_arm() {
+      let have = (Ireturn {}).install_methods(
+        &Version::from("0.3.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_linux_x86_64.tar.gz"),
+          path_in_archive: S("ireturn"),
+        },
+        Method::CompileGoSource {
+          import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
+        },
+      ];
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_intel() {
+      let have = (Ireturn {}).install_methods(
+        &Version::from("0.3.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_windows_x86_64.zip"),
+          path_in_archive: S("ireturn.exe"),
+        },
+        Method::CompileGoSource {
+          import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
+        },
+      ];
+      assert_eq!(have, want);
+    }
   }
 }
