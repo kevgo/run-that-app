@@ -22,9 +22,18 @@ impl App for Dprint {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "aarch64",
+      Cpu::Intel64 => "x86_64",
+    };
+    let os = match platform.os {
+      Os::Linux => "unknown-linux-gnu",
+      Os::MacOS => "apple-darwin",
+      Os::Windows => "pc-windows-msvc",
+    };
     vec![
       Method::DownloadArchive {
-        url: archive_url(version, platform),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip"),
         path_in_archive: self.executable_filename(platform),
       },
       Method::CompileRustSource {
@@ -52,19 +61,6 @@ impl App for Dprint {
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
-}
-
-fn archive_url(version: &Version, platform: Platform) -> String {
-  let cpu = match platform.cpu {
-    Cpu::Arm64 => "aarch64",
-    Cpu::Intel64 => "x86_64",
-  };
-  let os = match platform.os {
-    Os::Linux => "unknown-linux-gnu",
-    Os::MacOS => "apple-darwin",
-    Os::Windows => "pc-windows-msvc",
-  };
-  format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip")
 }
 
 fn extract_version(output: &str) -> Result<&str> {

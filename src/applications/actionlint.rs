@@ -27,14 +27,22 @@ impl App for ActionLint {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "arm64",
+      Cpu::Intel64 => "amd64",
+    };
+    let os = match platform.os {
+      Os::Linux => "linux",
+      Os::MacOS => "darwin",
+      Os::Windows => "windows",
+    };
+    let ext = match platform.os {
+      Os::Linux | Os::MacOS => "tar.gz",
+      Os::Windows => "zip",
+    };
     vec![
       Method::DownloadArchive {
-        url: format!(
-          "https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}",
-          cpu = cpu_text(platform.cpu),
-          os = os_text(platform.os),
-          ext = ext_text(platform.os),
-        ),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}"),
         path_in_archive: self.executable_filename(platform),
       },
       Method::CompileGoSource {
@@ -62,28 +70,6 @@ impl App for ActionLint {
 
 fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"(\d+\.\d+\.\d+)")
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-  match cpu {
-    Cpu::Arm64 => "arm64",
-    Cpu::Intel64 => "amd64",
-  }
-}
-
-fn os_text(os: Os) -> &'static str {
-  match os {
-    Os::Linux => "linux",
-    Os::MacOS => "darwin",
-    Os::Windows => "windows",
-  }
-}
-
-fn ext_text(os: Os) -> &'static str {
-  match os {
-    Os::Linux | Os::MacOS => "tar.gz",
-    Os::Windows => "zip",
-  }
 }
 
 #[cfg(test)]

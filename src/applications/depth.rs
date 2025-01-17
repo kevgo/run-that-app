@@ -23,14 +23,22 @@ impl App for Depth {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "aarch64", // the "arm" binaries don't run on Apple Silicon
+      Cpu::Intel64 => "amd64",
+    };
+    let os = match platform.os {
+      Os::Linux => "linux",
+      Os::MacOS => "darwin",
+      Os::Windows => "windows",
+    };
+    let ext = match platform.os {
+      Os::Windows => ".exe",
+      Os::Linux | Os::MacOS => "",
+    };
     vec![
       Method::DownloadExecutable {
-        url: format!(
-          "https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}{ext}",
-          cpu = cpu_text(platform.cpu),
-          os = os_text(platform.os),
-          ext = ext_text(platform.os),
-        ),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}{ext}",),
       },
       Method::CompileGoSource {
         import_path: format!("github.com/{ORG}/{REPO}/cmd/depth@v{version}"),
@@ -53,28 +61,6 @@ impl App for Depth {
     }
     // as of 1.2.1 depth doesn't display the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
-  }
-}
-
-const fn ext_text(os: Os) -> &'static str {
-  match os {
-    Os::Windows => ".exe",
-    Os::Linux | Os::MacOS => "",
-  }
-}
-
-const fn os_text(os: Os) -> &'static str {
-  match os {
-    Os::Linux => "linux",
-    Os::MacOS => "darwin",
-    Os::Windows => "windows",
-  }
-}
-
-const fn cpu_text(cpu: Cpu) -> &'static str {
-  match cpu {
-    Cpu::Arm64 => "aarch64", // the "arm" binaries don't run on Apple Silicon
-    Cpu::Intel64 => "amd64",
   }
 }
 
