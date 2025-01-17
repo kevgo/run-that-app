@@ -23,13 +23,21 @@ impl App for Tikibase {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "arm64",
+      Cpu::Intel64 => "intel64",
+    };
+    let os = match platform.os {
+      Os::Linux => "linux",
+      Os::MacOS => "macos",
+      Os::Windows => "windows",
+    };
+    let ext = match platform.os {
+      Os::Linux | Os::MacOS => "tar.gz",
+      Os::Windows => "zip",
+    };
     vec![Method::DownloadArchive {
-      url: format!(
-        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/tikibase_{os}_{cpu}.{ext}",
-        cpu = cpu_text(platform.cpu),
-        os = os_text(platform.os),
-        ext = ext_text(platform.os),
-      ),
+      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/tikibase_{os}_{cpu}.{ext}",),
       path_in_archive: self.executable_filename(platform),
     }]
   }
@@ -56,28 +64,6 @@ impl App for Tikibase {
 
 fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"tikibase (\d+\.\d+\.\d+)")
-}
-
-fn ext_text(os: Os) -> &'static str {
-  match os {
-    Os::Linux | Os::MacOS => "tar.gz",
-    Os::Windows => "zip",
-  }
-}
-
-fn os_text(os: Os) -> &'static str {
-  match os {
-    Os::Linux => "linux",
-    Os::MacOS => "macos",
-    Os::Windows => "windows",
-  }
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-  match cpu {
-    Cpu::Arm64 => "arm64",
-    Cpu::Intel64 => "intel64",
-  }
 }
 
 #[cfg(test)]
