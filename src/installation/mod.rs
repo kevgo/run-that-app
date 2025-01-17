@@ -77,6 +77,7 @@ impl Method {
   }
 }
 
+// need to implement this manually because the ExecutableInAnotherApp::other_app is not debuggable per se
 impl Debug for Method {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     match self {
@@ -101,6 +102,7 @@ impl Debug for Method {
   }
 }
 
+// need to implement this manually because the ExecutableInAnotherApp::other_app is not comparable
 impl PartialEq for Method {
   fn eq(&self, other: &Self) -> bool {
     match (self, other) {
