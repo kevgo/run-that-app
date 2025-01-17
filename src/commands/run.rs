@@ -116,7 +116,7 @@ fn load_or_install_from_yard(
   log: Log,
 ) -> Result<Option<Executable>> {
   // try to load the app
-  if let Some(executable) = yard.load(app, version, platform, log) {
+  if let Some(executable) = yard.load_executable(app, version, platform, log) {
     return Ok(Some(executable));
   }
   // app not installed --> check if uninstallable

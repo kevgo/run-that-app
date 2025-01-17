@@ -16,6 +16,6 @@ pub fn production_location() -> Result<PathBuf> {
   Ok(home_dir)
 }
 
-pub fn root_folder(containing_folder: &Path) -> PathBuf {
+pub fn root_dir_path(containing_folder: &Path) -> PathBuf {
   containing_folder.join(".run-that-app")
 }

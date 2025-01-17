@@ -1,4 +1,4 @@
-use super::root_folder;
+use super::root_dir_path;
 use crate::applications::App;
 use crate::configuration::{ApplicationName, Version};
 use crate::logging::{Event, Log};
@@ -20,7 +20,7 @@ impl Yard {
   }
 
   pub fn create(containing_folder: &Path) -> Result<Yard> {
-    let root = root_folder(containing_folder);
+    let root = root_dir_path(containing_folder);
     if let Err(err) = fs::create_dir_all(&root) {
       return Err(UserError::CannotCreateFolder {
         folder: root,
@@ -53,26 +53,26 @@ impl Yard {
     self.not_installable_path(app, version).exists()
   }
 
-  pub fn new(containing_folder: &Path) -> Result<Option<Yard>> {
-    let root = root_folder(containing_folder);
-    let Ok(metadata) = root.metadata() else {
+  pub fn load(containing_folder: &Path) -> Result<Option<Yard>> {
+    let root_dir = root_dir_path(containing_folder);
+    let Ok(metadata) = root_dir.metadata() else {
       return Ok(None);
     };
     if !metadata.is_dir() {
-      return Err(UserError::YardRootIsNotFolder { root });
+      return Err(UserError::YardRootIsNotFolder { root: root_dir });
     }
-    Ok(Some(Yard { root }))
+    Ok(Some(Yard { root: root_dir }))
   }
 
   pub fn new_or_create(containing_folder: &Path) -> Result<Yard> {
-    match Yard::new(containing_folder)? {
+    match Yard::load(containing_folder)? {
       Some(existing_yard) => Ok(existing_yard),
       None => Yard::create(containing_folder),
     }
   }
 
   /// tries to load the executable of the given app from the yard
-  pub fn load(&self, app: &dyn App, version: &Version, platform: Platform, log: Log) -> Option<Executable> {
+  pub fn load_executable(&self, app: &dyn App, version: &Version, platform: Platform, log: Log) -> Option<Executable> {
     for installation_method in app.install_methods(version, platform) {
       let fullpath = installation_method.executable_location(app, version, platform, self);
       log(Event::YardCheckExistingAppBegin { path: &fullpath });
