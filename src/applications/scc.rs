@@ -75,29 +75,53 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
   use crate::UserError;
 
-  mod archive_url {
+  mod install_methods {
+    use crate::applications::scc::Scc;
+    use crate::applications::App;
     use crate::configuration::Version;
+    use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
 
     #[test]
     fn linux_arm() {
-      let platform = Platform {
-        os: Os::MacOS,
-        cpu: Cpu::Arm64,
-      };
-      let have = super::super::archive_url(&Version::from("3.2.0"), platform);
-      let want = "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Darwin_arm64.tar.gz";
+      let have = (Scc {}).install_methods(
+        &Version::from("3.2.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/boyter/scc/releases/download/v3.2.0/scc_Darwin_arm64.tar.gz"),
+          path_in_archive: S("scc"),
+        },
+        Method::CompileGoSource {
+          import_path: S("github.com/boyter/scc/v3@v3.2.0"),
+        },
+      ];
       assert_eq!(have, want);
     }
 
     #[test]
-    fn linux_intel() {
-      let platform = Platform {
-        os: Os::Linux,
-        cpu: Cpu::Intel64,
-      };
-      let have = super::super::archive_url(&Version::from("3.2.0"), platform);
-      let want = "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Linux_x86_64.tar.gz";
+    fn windows_intel() {
+      let have = (Scc {}).install_methods(
+        &Version::from("3.2.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/boyter/scc/releases/download/v3.2.0/scc_Windows_x86_64.tar.gz"),
+          path_in_archive: S("scc.exe"),
+        },
+        Method::CompileGoSource {
+          import_path: S("github.com/boyter/scc/v3@v3.2.0"),
+        },
+      ];
       assert_eq!(have, want);
     }
   }
