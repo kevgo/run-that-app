@@ -22,8 +22,21 @@ impl App for Goreleaser {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let os = match platform.os {
+      Os::Linux => "Linux",
+      Os::MacOS => "Darwin",
+      Os::Windows => "Windows",
+    };
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "arm64",
+      Cpu::Intel64 => "x86_64",
+    };
+    let ext = match platform.os {
+      Os::Linux | Os::MacOS => "tar.gz",
+      Os::Windows => "zip",
+    };
     vec![Method::DownloadArchive {
-      url: archive_url(version, platform),
+      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}"),
       path_in_archive: self.executable_filename(platform),
     }]
   }
@@ -46,23 +59,6 @@ impl App for Goreleaser {
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
-}
-
-fn archive_url(version: &Version, platform: Platform) -> String {
-  let os = match platform.os {
-    Os::Linux => "Linux",
-    Os::MacOS => "Darwin",
-    Os::Windows => "Windows",
-  };
-  let cpu = match platform.cpu {
-    Cpu::Arm64 => "arm64",
-    Cpu::Intel64 => "x86_64",
-  };
-  let ext = match platform.os {
-    Os::Linux | Os::MacOS => "tar.gz",
-    Os::Windows => "zip",
-  };
-  format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}")
 }
 
 fn extract_version(output: &str) -> Result<&str> {

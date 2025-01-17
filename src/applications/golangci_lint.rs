@@ -23,10 +23,25 @@ impl App for GolangCiLint {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let os = match platform.os {
+      Os::Linux => "linux",
+      Os::MacOS => "darwin",
+      Os::Windows => "windows",
+    };
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "arm64",
+      Cpu::Intel64 => "amd64",
+    };
+    let ext = match platform.os {
+      Os::Linux | Os::MacOS => "tar.gz",
+      Os::Windows => "zip",
+    };
+    let sep = std::path::MAIN_SEPARATOR;
+    let filename = self.executable_filename(platform);
     // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
     vec![Method::DownloadArchive {
-      url: archive_url(version, platform),
-      path_in_archive: executable_path_in_archive(version, platform, &self.executable_filename(platform)),
+      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}",),
+      path_in_archive: format!("golangci-lint-{version}-{os}-{cpu}{sep}{filename}"),
     }]
   }
 
@@ -46,48 +61,8 @@ impl App for GolangCiLint {
   }
 }
 
-fn archive_url(version: &Version, platform: Platform) -> String {
-  format!(
-    "https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}",
-    os = os_text(platform.os),
-    cpu = cpu_text(platform.cpu),
-    ext = ext_text(platform.os)
-  )
-}
-
-fn executable_path_in_archive(version: &Version, platform: Platform, executable_filename: &str) -> String {
-  format!(
-    "golangci-lint-{version}-{os}-{cpu}{sep}{executable_filename}",
-    os = os_text(platform.os),
-    cpu = cpu_text(platform.cpu),
-    sep = std::path::MAIN_SEPARATOR
-  )
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-  match cpu {
-    Cpu::Arm64 => "arm64",
-    Cpu::Intel64 => "amd64",
-  }
-}
-
-fn ext_text(os: Os) -> &'static str {
-  match os {
-    Os::Linux | Os::MacOS => "tar.gz",
-    Os::Windows => "zip",
-  }
-}
-
 fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"golangci-lint has version (\d+\.\d+\.\d+) built with")
-}
-
-fn os_text(os: Os) -> &'static str {
-  match os {
-    Os::Linux => "linux",
-    Os::MacOS => "darwin",
-    Os::Windows => "windows",
-  }
 }
 
 #[cfg(test)]
