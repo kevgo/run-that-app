@@ -73,38 +73,57 @@ fn extract_version(output: &str) -> Result<&str> {
 
 #[cfg(test)]
 mod tests {
-  use crate::UserError;
 
-  mod archive_url {
+  mod install_methods {
+    use super::super::Dprint;
+    use crate::applications::App;
     use crate::configuration::Version;
+    use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
 
     #[test]
-    fn mac_arm() {
-      let platform = Platform {
-        os: Os::MacOS,
-        cpu: Cpu::Arm64,
-      };
-      let have = super::super::archive_url(&Version::from("0.43.0"), platform);
-      let want = "https://github.com/dprint/dprint/releases/download/0.43.0/dprint-aarch64-apple-darwin.zip";
+    fn macos_arm() {
+      let have = (Dprint {}).install_methods(
+        &Version::from("0.48.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-apple-darwin.zip"),
+          path_in_archive: S("dprint"),
+        },
+        Method::CompileRustSource {
+          crate_name: "dprint",
+          filepath: S("bin/dprint"),
+        },
+      ];
       assert_eq!(have, want);
     }
 
     #[test]
     fn linux_arm() {
-      let platform = Platform {
-        os: Os::Linux,
-        cpu: Cpu::Arm64,
-      };
-      let have = super::super::archive_url(&Version::from("0.43.1"), platform);
-      let want = "https://github.com/dprint/dprint/releases/download/0.43.1/dprint-aarch64-unknown-linux-gnu.zip";
+      let have = (Dprint {}).install_methods(
+        &Version::from("0.48.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-unknown-linux-gnu.zip"),
+          path_in_archive: S("dprint"),
+        },
+        Method::CompileRustSource {
+          crate_name: "dprint",
+          filepath: S("bin/dprint"),
+        },
+      ];
       assert_eq!(have, want);
     }
-  }
-
-  #[test]
-  fn extract_version() {
-    assert_eq!(super::extract_version("dprint 0.45.0"), Ok("0.45.0"));
-    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
