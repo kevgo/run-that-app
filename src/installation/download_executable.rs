@@ -15,23 +15,24 @@ pub fn run(app: &dyn App, url: &str, version: &Version, platform: Platform, opti
     return Ok(Outcome::NotInstalled);
   };
   let filepath_on_disk = yard.create_app_folder(&app.name(), version)?.join(app.executable_filename(platform));
-  let executable_path_1 = filesystem::save_executable(artifact.data, &filepath_on_disk, log)?;
-  let executable_path_2 = executable_path(app, version, platform, yard);
-  if executable_path_1.0 != executable_path_2 {
+  let executable_path_have = filesystem::save_executable(artifact.data, &filepath_on_disk, log)?;
+  let executable_path_want = executable_path(app, version, platform, yard);
+  if executable_path_have.0 != executable_path_want {
     return Err(UserError::InternalError {
       desc: format!(
-        "different executable paths returned after downloading an executable: {executable_path_1} and {}",
-        executable_path_2.to_string_lossy()
+        "different executable paths returned after downloading an executable.\nhave: {have}\nwant: {want}",
+        have = executable_path_have,
+        want = executable_path_want.to_string_lossy()
       ),
     });
   }
-  if !executable_path_2.exists() {
+  if !executable_path_want.exists() {
     return Err(UserError::InternalError {
-      desc: format!("downloaded application binary not found on disk at {}", executable_path_2.to_string_lossy()),
+      desc: format!("downloaded application binary not found on disk at {}", executable_path_want.to_string_lossy()),
     });
   }
   Ok(Outcome::Installed {
-    executable: Executable(executable_path_2),
+    executable: Executable(executable_path_want),
   })
 }
 
