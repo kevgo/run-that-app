@@ -92,18 +92,44 @@ fn os_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
+  use big_s::S;
+
+  use crate::applications::golangci_lint::GolangCiLint;
+  use crate::applications::App;
   use crate::configuration::Version;
+  use crate::installation::Method;
   use crate::platform::{Cpu, Os, Platform};
   use crate::UserError;
 
   #[test]
-  fn archive_url() {
-    let platform = Platform {
-      os: Os::MacOS,
-      cpu: Cpu::Arm64,
-    };
-    let have = super::archive_url(&Version::from("1.55.2"), platform);
-    let want = "https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-darwin-arm64.tar.gz";
+  fn linux_arm() {
+    let have = (GolangCiLint {}).install_methods(
+      &Version::from("1.55.2"),
+      Platform {
+        os: Os::MacOS,
+        cpu: Cpu::Arm64,
+      },
+    );
+    let want = vec![Method::DownloadArchive {
+      url: S("https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-darwin-arm64.tar.gz"),
+      path_in_archive: S("golangci-lint-1.55.2-darwin-arm64/golangci-lint"),
+    }];
+    assert_eq!(have, want);
+  }
+
+  #[test]
+  fn windows_intel() {
+    let have = (GolangCiLint {}).install_methods(
+      &Version::from("1.55.2"),
+      Platform {
+        os: Os::Windows,
+        cpu: Cpu::Intel64,
+      },
+    );
+    let want = vec![Method::DownloadArchive {
+      url: S("https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-windows-amd64.zip"),
+      path_in_archive: S("golangci-lint-1.55.2-windows-amd64/golangci-lint.exe"),
+    }];
     assert_eq!(have, want);
   }
 
