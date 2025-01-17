@@ -26,8 +26,22 @@ impl App for Go {
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let sep = path::MAIN_SEPARATOR;
     let file = self.executable_filename(platform);
+    let version_str = version.as_str().trim_start_matches("go");
+    let os = match platform.os {
+      Os::Linux => "linux",
+      Os::MacOS => "darwin",
+      Os::Windows => "windows",
+    };
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "arm64",
+      Cpu::Intel64 => "amd64",
+    };
+    let ext = match platform.os {
+      Os::Linux | Os::MacOS => "tar.gz",
+      Os::Windows => "zip",
+    };
     vec![Method::DownloadArchive {
-      url: archive_url(version, platform),
+      url: format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}"),
       path_in_archive: format!("go{sep}bin{sep}{file}"),
     }]
   }
@@ -80,24 +94,6 @@ impl App for Go {
     })?;
     Ok(version_req)
   }
-}
-
-fn archive_url(version: &Version, platform: Platform) -> String {
-  let version_str = version.as_str().trim_start_matches("go");
-  let os = match platform.os {
-    Os::Linux => "linux",
-    Os::MacOS => "darwin",
-    Os::Windows => "windows",
-  };
-  let cpu = match platform.cpu {
-    Cpu::Arm64 => "arm64",
-    Cpu::Intel64 => "amd64",
-  };
-  let ext = match platform.os {
-    Os::Linux | Os::MacOS => "tar.gz",
-    Os::Windows => "zip",
-  };
-  format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}")
 }
 
 fn extract_version(output: &str) -> Result<&str> {
