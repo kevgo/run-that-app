@@ -54,28 +54,48 @@ fn app_to_install() -> Box<dyn App> {
 
 #[cfg(test)]
 mod tests {
-  use crate::applications::go::Go;
-  use crate::applications::gofmt::Gofmt;
 
-  #[test]
-  fn install_methods() {
+  mod install_methods {
+    use crate::applications::go::Go;
+    use crate::applications::gofmt::Gofmt;
     use crate::applications::App;
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    let have = (Gofmt {}).install_methods(
-      &Version::from("1.23.4"),
-      Platform {
-        os: Os::MacOS,
-        cpu: Cpu::Intel64,
-      },
-    );
-    let want = vec![Method::ExecutableInAnotherApp {
-      other_app: Box::new(Go {}),
-      executable_path: S("go/bin/gofmt"),
-    }];
-    assert_eq!(have, want);
+    #[test]
+    #[cfg(unix)]
+    fn macos() {
+      let have = (Gofmt {}).install_methods(
+        &Version::from("1.23.4"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![Method::ExecutableInAnotherApp {
+        other_app: Box::new(Go {}),
+        executable_path: S("go/bin/gofmt"),
+      }];
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    #[cfg(windows)]
+    fn windows() {
+      let have = (Gofmt {}).install_methods(
+        &Version::from("1.23.4"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![Method::ExecutableInAnotherApp {
+        other_app: Box::new(Go {}),
+        executable_path: S("go\\bin\\gofmt"),
+      }];
+      assert_eq!(have, want);
+    }
   }
 }
