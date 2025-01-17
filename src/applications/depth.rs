@@ -65,7 +65,7 @@ impl installation::DownloadExecutable for Depth {
       Os::Windows => ".exe",
       Os::Linux | Os::MacOS => "",
     };
-    format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}{ext}",)
+    format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}{ext}")
   }
 }
 

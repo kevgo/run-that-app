@@ -143,7 +143,7 @@ impl UserError {
       }
       UserError::CannotAccessConfigFile(reason) => {
         error(&format!("cannot read the config file: {reason}"));
-        desc(&format!("please make sure {} is a file and accessible to you", configuration::FILE_NAME,));
+        desc(&format!("please make sure {} is a file and accessible to you", configuration::FILE_NAME));
       }
       UserError::CannotCompileRustSource { err } => error(&format!("cannot compile Rust source: {err}")),
       UserError::CannotDeleteFolder { folder, err } => error(&format!("cannot delete folder {folder}: {err}")),
