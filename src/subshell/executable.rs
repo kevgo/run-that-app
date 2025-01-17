@@ -77,6 +77,7 @@ impl Display for Executable {
   }
 }
 
+/// adds the given dir to the PATH env variable of the given cmd
 pub fn add_path(cmd: &mut Command, dir: &Path) {
   cmd.envs(env::vars_os());
   let new_path = if let Some(mut path) = env::var_os("PATH") {
