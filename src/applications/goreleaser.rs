@@ -71,18 +71,49 @@ fn extract_version(output: &str) -> Result<&str> {
 
 #[cfg(test)]
 mod tests {
-  use crate::configuration::Version;
-  use crate::platform::{Cpu, Os, Platform};
 
-  #[test]
-  fn archive_url() {
-    let platform = Platform {
-      os: Os::MacOS,
-      cpu: Cpu::Arm64,
-    };
-    let have = super::archive_url(&Version::from("1.22.1"), platform);
-    let want = "https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz";
-    assert_eq!(have, want);
+  mod install_methods {
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    #[test]
+    #[cfg(unix)]
+    fn linux_arm() {
+      use crate::applications::goreleaser::Goreleaser;
+
+      let have = (Goreleaser {}).install_methods(
+        &Version::from("1.22.1"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = vec![Method::DownloadArchive {
+        url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz"),
+        path_in_archive: S("goreleaser"),
+      }];
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    #[cfg(windows)]
+    fn windows_intel() {
+      let have = (GolangCiLint {}).install_methods(
+        &Version::from("1.22.1"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![Method::DownloadArchive {
+        url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Windows_x86_64.zip"),
+        path_in_archive: S("goreleaser.exe"),
+      }];
+      assert_eq!(have, want);
+    }
   }
 
   mod extract_version {
