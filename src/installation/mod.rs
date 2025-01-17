@@ -169,7 +169,7 @@ pub fn install(
       url: archive_url,
       path_in_archive,
     } => download_archive::run(app, version, archive_url, path_in_archive, optional, yard, log),
-    Method::DownloadExecutable { url: download_url } => download_executable::install(app, download_url, version, platform, optional, yard, log),
+    Method::DownloadExecutable { url: download_url } => download_executable::run(app, download_url, version, platform, optional, yard, log),
     Method::CompileGoSource { import_path } => compile_go::run(app, import_path, platform, version, optional, config_file, yard, log),
     Method::CompileRustSource { crate_name, filepath } => compile_rust::run(app, crate_name, version, yard, filepath, log),
     Method::ExecutableInAnotherApp {
