@@ -62,7 +62,7 @@ impl installation::DownloadArchive for ActionLint {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}",)
+    format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}")
   }
 
   fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
