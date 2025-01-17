@@ -102,6 +102,7 @@ mod tests {
   use crate::UserError;
 
   #[test]
+  #[cfg(unix)]
   fn linux_arm() {
     let have = (GolangCiLint {}).install_methods(
       &Version::from("1.55.2"),
@@ -118,6 +119,7 @@ mod tests {
   }
 
   #[test]
+  #[cfg(windows)]
   fn windows_intel() {
     let have = (GolangCiLint {}).install_methods(
       &Version::from("1.55.2"),
@@ -128,7 +130,7 @@ mod tests {
     );
     let want = vec![Method::DownloadArchive {
       url: S("https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-windows-amd64.zip"),
-      path_in_archive: S("golangci-lint-1.55.2-windows-amd64/golangci-lint.exe"),
+      path_in_archive: S("golangci-lint-1.55.2-windows-amd64\\golangci-lint.exe"),
     }];
     assert_eq!(have, want);
   }
