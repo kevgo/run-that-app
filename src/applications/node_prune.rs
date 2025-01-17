@@ -71,18 +71,51 @@ fn download_url(version: &Version, platform: Platform) -> String {
 #[cfg(test)]
 mod tests {
 
-  mod artifact_url {
+  mod install_methods {
+    use crate::applications::node_prune::NodePrune;
+    use crate::applications::App;
     use crate::configuration::Version;
+    use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
 
     #[test]
-    fn windows_intel64() {
-      let platform = Platform {
-        os: Os::Linux,
-        cpu: Cpu::Intel64,
-      };
-      let have = super::super::download_url(&Version::from("1.0.1"), platform);
-      let want = "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_linux_amd64.tar.gz";
+    fn linux_arm() {
+      let have = (NodePrune {}).install_methods(
+        &Version::from("1.0.1"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![
+        Method::DownloadExecutable {
+          url: S("https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_linux_amd64.tar.gz"),
+        },
+        Method::CompileGoSource {
+          import_path: S("github.com/tj/node-prune@v1.0.1"),
+        },
+      ];
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_intel() {
+      let have = (NodePrune {}).install_methods(
+        &Version::from("1.0.1"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![
+        Method::DownloadExecutable {
+          url: S("https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_windows_amd64.tar.gz"),
+        },
+        Method::CompileGoSource {
+          import_path: S("github.com/tj/node-prune@v1.0.1"),
+        },
+      ];
       assert_eq!(have, want);
     }
   }
