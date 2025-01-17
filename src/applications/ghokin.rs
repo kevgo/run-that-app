@@ -23,9 +23,18 @@ impl App for Ghokin {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "arm64",
+      Cpu::Intel64 => "amd64",
+    };
+    let os = match platform.os {
+      Os::Linux => "linux",
+      Os::MacOS => "darwin",
+      Os::Windows => "windows",
+    };
     vec![
       Method::DownloadArchive {
-        url: archive_url(version, platform),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz"),
         path_in_archive: self.executable_filename(platform),
       },
       Method::CompileGoSource {
@@ -49,19 +58,6 @@ impl App for Ghokin {
     // as of 3.4.0 ghokin's "version" command prints nothing
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
-}
-
-fn archive_url(version: &Version, platform: Platform) -> String {
-  let cpu = match platform.cpu {
-    Cpu::Arm64 => "arm64",
-    Cpu::Intel64 => "amd64",
-  };
-  let os = match platform.os {
-    Os::Linux => "linux",
-    Os::MacOS => "darwin",
-    Os::Windows => "windows",
-  };
-  format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz")
 }
 
 #[cfg(test)]

@@ -20,13 +20,11 @@ impl App for Gofmt {
   }
 
   fn install_methods(&self, _version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let sep = path::MAIN_SEPARATOR;
+    let filename = &self.executable_filename(platform);
     vec![Method::ExecutableInAnotherApp {
       other_app: app_to_install(),
-      executable_path: format!(
-        "go{sep}bin{sep}{filename}",
-        sep = path::MAIN_SEPARATOR,
-        filename = &self.executable_filename(platform)
-      ),
+      executable_path: format!("go{sep}bin{sep}{filename}",),
     }]
   }
 
