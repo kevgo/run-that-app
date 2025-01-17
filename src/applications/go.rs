@@ -24,9 +24,6 @@ impl App for Go {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
-    let sep = path::MAIN_SEPARATOR;
-    let file = self.executable_filename(platform);
-    let version_str = version.as_str().trim_start_matches("go");
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -40,6 +37,9 @@ impl App for Go {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
+    let sep = path::MAIN_SEPARATOR;
+    let file = self.executable_filename(platform);
+    let version_str = version.as_str().trim_start_matches("go");
     vec![Method::DownloadArchive {
       url: format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}"),
       path_in_archive: format!("go{sep}bin{sep}{file}"),
