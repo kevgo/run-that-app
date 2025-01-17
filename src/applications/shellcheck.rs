@@ -22,18 +22,24 @@ impl App for ShellCheck {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let os = match platform.os {
+      Os::Linux => "linux",
+      Os::MacOS => "darwin",
+      Os::Windows => "windows",
+    };
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "aarch64",
+      Cpu::Intel64 => "x86_64",
+    };
+    let ext = match platform.os {
+      Os::Linux | Os::MacOS => "tar.xz",
+      Os::Windows => "zip",
+    };
+    let sep = std::path::MAIN_SEPARATOR;
+    let executable = self.executable_filename(platform);
     vec![Method::DownloadArchive {
-      url: format!(
-        "https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}",
-        os = os_text(platform.os),
-        cpu = cpu_text(platform.cpu),
-        ext = ext_text(platform.os),
-      ),
-      path_in_archive: format!(
-        "shellcheck-v{version}{sep}{executable}",
-        sep = std::path::MAIN_SEPARATOR,
-        executable = self.executable_filename(platform)
-      ),
+      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}"),
+      path_in_archive: format!("shellcheck-v{version}{sep}{executable}"),
     }]
   }
 
@@ -54,28 +60,6 @@ impl App for ShellCheck {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
-  }
-}
-
-fn ext_text(os: Os) -> &'static str {
-  match os {
-    Os::Linux | Os::MacOS => "tar.xz",
-    Os::Windows => "zip",
-  }
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-  match cpu {
-    Cpu::Arm64 => "aarch64",
-    Cpu::Intel64 => "x86_64",
-  }
-}
-
-fn os_text(os: Os) -> &'static str {
-  match os {
-    Os::Linux => "linux",
-    Os::MacOS => "darwin",
-    Os::Windows => "windows",
   }
 }
 

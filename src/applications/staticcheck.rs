@@ -22,9 +22,18 @@ impl App for StaticCheck {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let os = match platform.os {
+      Os::Linux => "linux",
+      Os::MacOS => "darwin",
+      Os::Windows => "windows",
+    };
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "arm64",
+      Cpu::Intel64 => "amd64",
+    };
     vec![
       Method::DownloadArchive {
-        url: archive_url(version, platform),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/staticcheck_{os}_{cpu}.tar.gz"),
         path_in_archive: format!("staticcheck/{}", self.executable_filename(platform)),
       },
       Method::CompileGoSource {
@@ -48,19 +57,6 @@ impl App for StaticCheck {
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
-}
-
-fn archive_url(version: &Version, platform: Platform) -> String {
-  let os = match platform.os {
-    Os::Linux => "linux",
-    Os::MacOS => "darwin",
-    Os::Windows => "windows",
-  };
-  let cpu = match platform.cpu {
-    Cpu::Arm64 => "arm64",
-    Cpu::Intel64 => "amd64",
-  };
-  format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/staticcheck_{os}_{cpu}.tar.gz")
 }
 
 #[cfg(test)]

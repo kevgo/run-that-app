@@ -23,9 +23,22 @@ impl App for Shfmt {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let os = match platform.os {
+      Os::Linux => "linux",
+      Os::MacOS => "darwin",
+      Os::Windows => "windows",
+    };
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "arm64",
+      Cpu::Intel64 => "amd64",
+    };
+    let ext = match platform.os {
+      Os::Linux | Os::MacOS => "",
+      Os::Windows => ".exe",
+    };
     vec![
       Method::DownloadExecutable {
-        url: download_url(version, platform),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}"),
       },
       Method::CompileGoSource {
         import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}"),
@@ -51,23 +64,6 @@ impl App for Shfmt {
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
-}
-
-fn download_url(version: &Version, platform: Platform) -> String {
-  let os = match platform.os {
-    Os::Linux => "linux",
-    Os::MacOS => "darwin",
-    Os::Windows => "windows",
-  };
-  let cpu = match platform.cpu {
-    Cpu::Arm64 => "arm64",
-    Cpu::Intel64 => "amd64",
-  };
-  let ext = match platform.os {
-    Os::Linux | Os::MacOS => "",
-    Os::Windows => ".exe",
-  };
-  format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}")
 }
 
 fn extract_version(output: &str) -> Result<&str> {
