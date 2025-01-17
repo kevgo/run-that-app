@@ -23,6 +23,10 @@ impl App for NodeJS {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let os = os_text(platform.os);
+    let cpu = cpu_text(platform.cpu);
+    let sep = path::MAIN_SEPARATOR;
+    let filename = self.executable_filename(platform);
     vec![Method::DownloadArchive {
       url: format!(
         "https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",
@@ -30,7 +34,10 @@ impl App for NodeJS {
         cpu = cpu_text(platform.cpu),
         ext = ext_text(platform.os),
       ),
-      path_in_archive: executable_path_in_archive(version, platform, &self.executable_filename(platform)),
+      path_in_archive: match platform.os {
+        Os::Windows => format!("node-v{version}-{os}-{cpu}{sep}{filename}"),
+        Os::Linux | Os::MacOS => format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{filename}"),
+      },
     }]
   }
 
@@ -51,16 +58,6 @@ impl App for NodeJS {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
-  }
-}
-
-fn executable_path_in_archive(version: &Version, platform: Platform, executable_filename: &str) -> String {
-  let os = os_text(platform.os);
-  let cpu = cpu_text(platform.cpu);
-  let sep = path::MAIN_SEPARATOR;
-  match platform.os {
-    Os::Windows => format!("node-v{version}-{os}-{cpu}{sep}{executable_filename}"),
-    Os::Linux | Os::MacOS => format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{executable_filename}"),
   }
 }
 
