@@ -23,9 +23,22 @@ impl App for Ireturn {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let os = match platform.os {
+      Os::Linux => "linux",
+      Os::MacOS => "darwin",
+      Os::Windows => "windows",
+    };
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "arm64",
+      Cpu::Intel64 => "x86_64",
+    };
+    let ext = match platform.os {
+      Os::Linux | Os::MacOS => "tar.gz",
+      Os::Windows => "zip",
+    };
     vec![
       Method::DownloadArchive {
-        url: archive_url(version, platform),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ireturn_{os}_{cpu}.{ext}",),
         path_in_archive: self.executable_filename(platform),
       },
       Method::CompileGoSource {
@@ -48,37 +61,6 @@ impl App for Ireturn {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
-  }
-}
-
-fn archive_url(version: &Version, platform: Platform) -> String {
-  format!(
-    "https://github.com/{ORG}/{REPO}/releases/download/v{version}/ireturn_{os}_{cpu}.{ext}",
-    os = os_text(platform.os),
-    cpu = cpu_text(platform.cpu),
-    ext = ext_text(platform.os)
-  )
-}
-
-fn cpu_text(cpu: Cpu) -> &'static str {
-  match cpu {
-    Cpu::Arm64 => "arm64",
-    Cpu::Intel64 => "x86_64",
-  }
-}
-
-fn ext_text(os: Os) -> &'static str {
-  match os {
-    Os::Linux | Os::MacOS => "tar.gz",
-    Os::Windows => "zip",
-  }
-}
-
-fn os_text(os: Os) -> &'static str {
-  match os {
-    Os::Linux => "linux",
-    Os::MacOS => "darwin",
-    Os::Windows => "windows",
   }
 }
 
