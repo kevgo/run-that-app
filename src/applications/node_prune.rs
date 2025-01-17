@@ -31,9 +31,18 @@ impl App for NodePrune {
   }
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let os = match platform.os {
+      Os::Linux => "linux",
+      Os::MacOS => "darwin",
+      Os::Windows => "windows",
+    };
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "arm64",
+      Cpu::Intel64 => "amd64",
+    };
     vec![
       Method::DownloadExecutable {
-        url: download_url(version, platform),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/node-prune_{version}_{os}_{cpu}.tar.gz"),
       },
       Method::CompileGoSource {
         import_path: format!("github.com/tj/node-prune@v{version}"),
@@ -53,19 +62,6 @@ impl App for NodePrune {
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
-}
-
-fn download_url(version: &Version, platform: Platform) -> String {
-  let os = match platform.os {
-    Os::Linux => "linux",
-    Os::MacOS => "darwin",
-    Os::Windows => "windows",
-  };
-  let cpu = match platform.cpu {
-    Cpu::Arm64 => "arm64",
-    Cpu::Intel64 => "amd64",
-  };
-  format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/node-prune_{version}_{os}_{cpu}.tar.gz")
 }
 
 #[cfg(test)]
