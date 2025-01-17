@@ -40,7 +40,7 @@ impl App for GolangCiLint {
     let filename = self.executable_filename(platform);
     // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
     vec![Method::DownloadArchive {
-      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}",),
+      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}"),
       path_in_archive: format!("golangci-lint-{version}-{os}-{cpu}{sep}{filename}"),
     }]
   }

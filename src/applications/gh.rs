@@ -39,10 +39,10 @@ impl App for Gh {
     let sep = path::MAIN_SEPARATOR;
     let filename = self.executable_filename(platform);
     vec![Method::DownloadArchive {
-      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}",),
+      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}"),
       path_in_archive: match platform.os {
         Os::Windows => format!("bin{sep}{filename}"),
-        Os::Linux | Os::MacOS => format!("gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}",),
+        Os::Linux | Os::MacOS => format!("gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}"),
       },
     }]
     // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md

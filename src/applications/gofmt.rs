@@ -24,7 +24,7 @@ impl App for Gofmt {
     let filename = &self.executable_filename(platform);
     vec![Method::ExecutableInAnotherApp {
       other_app: Box::new(app_to_install()),
-      executable_path: format!("go{sep}bin{sep}{filename}",),
+      executable_path: format!("go{sep}bin{sep}{filename}"),
     }]
   }
 

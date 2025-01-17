@@ -35,7 +35,7 @@ impl App for MdBookLinkCheck {
     };
     vec![
       Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-linkcheck.{cpu}-{os}.zip",),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-linkcheck.{cpu}-{os}.zip"),
         path_in_archive: self.executable_filename(platform),
       },
       Method::CompileRustSource {

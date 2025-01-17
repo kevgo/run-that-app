@@ -26,7 +26,7 @@ impl App for Npx {
     let executable = self.executable_filename(platform);
     vec![Method::ExecutableInAnotherApp {
       other_app: Box::new(app_to_install()),
-      executable_path: format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",),
+      executable_path: format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}"),
     }]
   }
 

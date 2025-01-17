@@ -37,7 +37,7 @@ impl App for Tikibase {
       Os::Windows => "zip",
     };
     vec![Method::DownloadArchive {
-      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/tikibase_{os}_{cpu}.{ext}",),
+      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/tikibase_{os}_{cpu}.{ext}"),
       path_in_archive: self.executable_filename(platform),
     }]
   }

@@ -38,7 +38,7 @@ impl App for Depth {
     };
     vec![
       Method::DownloadExecutable {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}{ext}",),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}{ext}"),
       },
       Method::CompileGoSource {
         import_path: format!("github.com/{ORG}/{REPO}/cmd/depth@v{version}"),
