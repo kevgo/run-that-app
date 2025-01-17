@@ -97,19 +97,49 @@ pub fn os_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
-  use crate::configuration::Version;
-  use crate::platform::{Cpu, Os, Platform};
   use crate::UserError;
 
-  #[test]
-  fn archive_url() {
-    let platform = Platform {
-      os: Os::MacOS,
-      cpu: Cpu::Arm64,
-    };
-    let have = super::archive_url(&Version::from("20.10.0"), platform);
-    let want = "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz";
-    assert_eq!(have, want);
+  mod install_methods {
+    use crate::applications::nodejs::NodeJS;
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    #[test]
+    #[cfg(unix)]
+    fn linux_arm() {
+      let have = (NodeJS {}).install_methods(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = vec![Method::DownloadArchive {
+        url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz"),
+        path_in_archive: S("node-v20.10.0-darwin-arm64/bin/node"),
+      }];
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    #[cfg(windows)]
+    fn windows_intel() {
+      let have = (NodeJS {}).install_methods(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![Method::DownloadArchive {
+        url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip"),
+        path_in_archive: S("node-v20.10.0-win-x64\\node.exe"),
+      }];
+      assert_eq!(have, want);
+    }
   }
 
   #[test]
