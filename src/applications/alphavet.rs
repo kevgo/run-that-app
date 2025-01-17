@@ -59,14 +59,14 @@ mod tests {
     use big_s::S;
 
     let have = (Alphavet {}).install_methods(
-      &Version::from("1.6.26"),
+      &Version::from("0.1.0"),
       Platform {
         os: Os::Linux,
         cpu: Cpu::Arm64,
       },
     );
     let want = vec![Method::CompileGoSource {
-      import_path: S("github.com/skx/alphavet/cmd/alphavet@v1.6.26"),
+      import_path: S("github.com/skx/alphavet/cmd/alphavet@v0.1.0"),
     }];
     assert_eq!(have, want);
   }
