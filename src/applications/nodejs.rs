@@ -24,7 +24,12 @@ impl App for NodeJS {
 
   fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     vec![Method::DownloadArchive {
-      url: archive_url(version, platform),
+      url: format!(
+        "https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",
+        os = os_text(platform.os),
+        cpu = cpu_text(platform.cpu),
+        ext = ext_text(platform.os),
+      ),
       path_in_archive: executable_path_in_archive(version, platform, &self.executable_filename(platform)),
     }]
   }
@@ -49,15 +54,6 @@ impl App for NodeJS {
   }
 }
 
-fn archive_url(version: &Version, platform: Platform) -> String {
-  format!(
-    "https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",
-    os = os_text(platform.os),
-    cpu = cpu_text(platform.cpu),
-    ext = ext_text(platform.os),
-  )
-}
-
 fn executable_path_in_archive(version: &Version, platform: Platform, executable_filename: &str) -> String {
   let os = os_text(platform.os);
   let cpu = cpu_text(platform.cpu);
@@ -68,15 +64,15 @@ fn executable_path_in_archive(version: &Version, platform: Platform, executable_
   }
 }
 
+fn extract_version(output: &str) -> Result<&str> {
+  regexp::first_capture(output, r"v(\d+\.\d+\.\d+)")
+}
+
 pub fn cpu_text(cpu: Cpu) -> &'static str {
   match cpu {
     Cpu::Arm64 => "arm64",
     Cpu::Intel64 => "x64",
   }
-}
-
-fn extract_version(output: &str) -> Result<&str> {
-  regexp::first_capture(output, r"v(\d+\.\d+\.\d+)")
 }
 
 fn ext_text(os: Os) -> &'static str {
