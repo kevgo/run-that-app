@@ -41,3 +41,29 @@ impl App for Deadcode {
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use crate::applications::deadcode::Deadcode;
+
+  #[test]
+  fn install_methods() {
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    let have = (Deadcode {}).install_methods(
+      &Version::from("0.16.1"),
+      Platform {
+        os: Os::Linux,
+        cpu: Cpu::Arm64,
+      },
+    );
+    let want = vec![Method::CompileGoSource {
+      import_path: S("golang.org/x/tools/cmd/deadcode@v0.16.1"),
+    }];
+    assert_eq!(have, want);
+  }
+}
