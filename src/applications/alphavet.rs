@@ -2,6 +2,7 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::{self, Method};
+use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::Log;
@@ -21,8 +22,10 @@ impl App for Alphavet {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::CompileGoSource(self)]
+  fn install_methods(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
+    vec![Method::CompileGoSource {
+      import_path: format!("github.com/{ORG}/{REPO}/cmd/alphavet@v{version}"),
+    }]
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
@@ -43,8 +46,28 @@ impl App for Alphavet {
   }
 }
 
-impl installation::CompileGoSource for Alphavet {
-  fn import_path(&self, version: &Version) -> String {
-    format!("github.com/{ORG}/{REPO}/cmd/alphavet@v{version}")
+#[cfg(test)]
+mod tests {
+
+  #[test]
+  fn install_methods() {
+    use crate::applications::alphavet::Alphavet;
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    let have = (Alphavet {}).install_methods(
+      &Version::from("0.1.0"),
+      Platform {
+        os: Os::Linux,
+        cpu: Cpu::Arm64,
+      },
+    );
+    let want = vec![Method::CompileGoSource {
+      import_path: S("github.com/skx/alphavet/cmd/alphavet@v0.1.0"),
+    }];
+    assert_eq!(have, want);
   }
 }

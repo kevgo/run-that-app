@@ -19,8 +19,15 @@ impl App for Npx {
     "https://www.npmjs.com"
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::ExecutableInAnotherApp(self)]
+  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let os = applications::nodejs::os_text(platform.os);
+    let cpu = applications::nodejs::cpu_text(platform.cpu);
+    let sep = path::MAIN_SEPARATOR;
+    let executable = self.executable_filename(platform);
+    vec![Method::ExecutableInAnotherApp {
+      other_app: Box::new(app_to_install()),
+      executable_path: format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}"),
+    }]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -41,18 +48,54 @@ impl App for Npx {
   }
 }
 
-impl installation::ExecutableInAnotherApp for Npx {
-  fn app_to_install(&self) -> Box<dyn App> {
-    Box::new(NodeJS {})
-  }
+fn app_to_install() -> NodeJS {
+  NodeJS {}
+}
 
-  fn executable_path_in_other_app_yard(&self, version: &Version, platform: Platform) -> String {
-    format!(
-      "node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}",
-      os = applications::nodejs::os_text(platform.os),
-      cpu = applications::nodejs::cpu_text(platform.cpu),
-      sep = path::MAIN_SEPARATOR,
-      executable = self.executable_filename(platform)
-    )
+#[cfg(test)]
+mod tests {
+
+  mod install_methods {
+    use crate::applications::nodejs::NodeJS;
+    use crate::applications::npx::Npx;
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    #[test]
+    #[cfg(unix)]
+    fn linux_arm() {
+      let have = (Npx {}).install_methods(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = vec![Method::ExecutableInAnotherApp {
+        other_app: Box::new(NodeJS {}),
+        executable_path: S("node-v20.10.0-darwin-arm64/bin/npx"),
+      }];
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    #[cfg(windows)]
+    fn windows_intel() {
+      let have = (Npx {}).install_methods(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![Method::ExecutableInAnotherApp {
+        other_app: Box::new(NodeJS {}),
+        executable_path: S("node-v20.10.0-win-x64\\bin\\npx.exe"),
+      }];
+      assert_eq!(have, want);
+    }
   }
 }

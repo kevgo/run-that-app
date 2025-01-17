@@ -104,7 +104,7 @@ mod tests {
       fn analyze_executable(&self, _path: &Executable, _log: Log) -> Result<AnalyzeResult> {
         unimplemented!()
       }
-      fn install_methods(&self) -> Vec<installation::Method> {
+      fn install_methods(&self, _version: &Version, _platform: Platform) -> Vec<installation::Method> {
         unimplemented!()
       }
     }

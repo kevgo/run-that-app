@@ -7,6 +7,7 @@ use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::{regexp, Log};
 use const_format::formatcp;
+use std::path;
 
 pub struct MdBook {}
 
@@ -22,8 +23,30 @@ impl App for MdBook {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::DownloadArchive(self), Method::CompileRustSource(self)]
+  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let os = match platform.os {
+      Os::Linux => "unknown-linux-gnu",
+      Os::MacOS => "apple-darwin",
+      Os::Windows => "pc-windows-msvc",
+    };
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "aarch64",
+      Cpu::Intel64 => "x86_64",
+    };
+    let ext = match platform.os {
+      Os::Linux | Os::MacOS => "tar.gz",
+      Os::Windows => "zip",
+    };
+    vec![
+      Method::DownloadArchive {
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-v{version}-{cpu}-{os}.{ext}"),
+        path_in_archive: self.executable_filename(platform),
+      },
+      Method::CompileRustSource {
+        crate_name: "mdbook",
+        filepath: format!("bin{sep}{filename}", sep = path::MAIN_SEPARATOR, filename = self.executable_filename(platform)),
+      },
+    ]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -46,60 +69,67 @@ impl App for MdBook {
   }
 }
 
-impl installation::DownloadArchive for MdBook {
-  fn archive_url(&self, version: &Version, platform: Platform) -> String {
-    let os = match platform.os {
-      Os::Linux => "unknown-linux-gnu",
-      Os::MacOS => "apple-darwin",
-      Os::Windows => "pc-windows-msvc",
-    };
-    let cpu = match platform.cpu {
-      Cpu::Arm64 => "aarch64",
-      Cpu::Intel64 => "x86_64",
-    };
-    let ext = match platform.os {
-      Os::Linux | Os::MacOS => "tar.gz",
-      Os::Windows => "zip",
-    };
-    format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-v{version}-{cpu}-{os}.{ext}")
-  }
-
-  fn executable_path_in_archive(&self, _version: &Version, platform: Platform) -> String {
-    self.executable_filename(platform)
-  }
-}
-
-impl installation::CompileRustSource for MdBook {
-  fn crate_name(&self) -> &'static str {
-    "mdbook"
-  }
-
-  fn executable_path_in_folder(&self, platform: Platform) -> String {
-    format!("bin/{}", self.executable_filename(platform))
-  }
-}
-
 fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"mdbook v(\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
 mod tests {
-  use crate::configuration::Version;
-  use crate::installation::DownloadArchive;
-  use crate::platform::{Cpu, Os, Platform};
   use crate::UserError;
 
-  #[test]
-  fn archive_url() {
-    let mdbook = super::MdBook {};
-    let platform = Platform {
-      os: Os::Linux,
-      cpu: Cpu::Intel64,
-    };
-    let have = mdbook.archive_url(&Version::from("0.4.37"), platform);
-    let want = "https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz";
-    assert_eq!(have, want);
+  mod install_methods {
+    use crate::applications::mdbook::MdBook;
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    #[test]
+    #[cfg(unix)]
+    fn linux_arm() {
+      let have = (MdBook {}).install_methods(
+        &Version::from("0.4.37"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz"),
+          path_in_archive: S("mdbook"),
+        },
+        Method::CompileRustSource {
+          crate_name: "mdbook",
+          filepath: S("bin/mdbook"),
+        },
+      ];
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    #[cfg(windows)]
+    fn windows_intel() {
+      let have = (MdBook {}).install_methods(
+        &Version::from("0.4.37"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-pc-windows-msvc.zip"),
+          path_in_archive: S("mdbook.exe"),
+        },
+        Method::CompileRustSource {
+          crate_name: "mdbook",
+          filepath: S("bin\\mdbook.exe"),
+        },
+      ];
+      assert_eq!(have, want);
+    }
   }
 
   #[test]

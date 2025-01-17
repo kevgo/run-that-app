@@ -22,8 +22,28 @@ impl App for Shfmt {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::DownloadExecutable(self), Method::CompileGoSource(self)]
+  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let os = match platform.os {
+      Os::Linux => "linux",
+      Os::MacOS => "darwin",
+      Os::Windows => "windows",
+    };
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "arm64",
+      Cpu::Intel64 => "amd64",
+    };
+    let ext = match platform.os {
+      Os::Linux | Os::MacOS => "",
+      Os::Windows => ".exe",
+    };
+    vec![
+      Method::DownloadExecutable {
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}"),
+      },
+      Method::CompileGoSource {
+        import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}"),
+      },
+    ]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -46,52 +66,61 @@ impl App for Shfmt {
   }
 }
 
-impl installation::DownloadExecutable for Shfmt {
-  fn download_url(&self, version: &Version, platform: Platform) -> String {
-    let os = match platform.os {
-      Os::Linux => "linux",
-      Os::MacOS => "darwin",
-      Os::Windows => "windows",
-    };
-    let cpu = match platform.cpu {
-      Cpu::Arm64 => "arm64",
-      Cpu::Intel64 => "amd64",
-    };
-    let ext = match platform.os {
-      Os::Linux | Os::MacOS => "",
-      Os::Windows => ".exe",
-    };
-    format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}")
-  }
-}
-
-impl installation::CompileGoSource for Shfmt {
-  fn import_path(&self, version: &Version) -> String {
-    format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}")
-  }
-}
-
 fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"^v(\d+\.\d+\.\d+)$")
 }
 
 #[cfg(test)]
 mod tests {
-  use crate::configuration::Version;
-  use crate::installation::DownloadExecutable;
-  use crate::platform::{Cpu, Os, Platform};
   use crate::UserError;
 
-  #[test]
-  fn artifact_url() {
-    let shfmt = super::Shfmt {};
-    let platform = Platform {
-      os: Os::MacOS,
-      cpu: Cpu::Arm64,
-    };
-    let have = shfmt.download_url(&Version::from("3.7.0"), platform);
-    let want = "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_arm64";
-    assert_eq!(have, want);
+  mod install_methods {
+    use crate::applications::shfmt::Shfmt;
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    #[test]
+    fn linux_arm() {
+      let have = (Shfmt {}).install_methods(
+        &Version::from("3.7.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = vec![
+        Method::DownloadExecutable {
+          url: S("https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_arm64"),
+        },
+        Method::CompileGoSource {
+          import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
+        },
+      ];
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_intel() {
+      let have = (Shfmt {}).install_methods(
+        &Version::from("3.7.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![
+        Method::DownloadExecutable {
+          url: S("https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_windows_amd64.exe"),
+        },
+        Method::CompileGoSource {
+          import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
+        },
+      ];
+      assert_eq!(have, want);
+    }
   }
 
   #[test]

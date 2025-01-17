@@ -2,28 +2,19 @@ use super::Outcome;
 use crate::applications::App;
 use crate::configuration::Version;
 use crate::logging::Log;
-use crate::platform::Platform;
 use crate::prelude::*;
+use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{archives, download};
 #[cfg(unix)]
 use std::fs;
 #[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
-use std::path::Path;
-
-/// defines the information needed to download and extract an archive containing an app
-pub trait DownloadArchive: App {
-  /// the URL of the archive to download
-  fn archive_url(&self, version: &Version, platform: Platform) -> String;
-
-  /// the location of the executable within the archive
-  fn executable_path_in_archive(&self, version: &Version, platform: Platform) -> String;
-}
+use std::path::{Path, PathBuf};
 
 /// downloads and unpacks the content of an archive file
-pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, optional: bool, yard: &Yard, log: Log) -> Result<Outcome> {
-  let Some(artifact) = download::artifact(app.archive_url(version, platform), &app.name(), optional, log)? else {
+pub fn run(app: &dyn App, version: &Version, url: &str, executable_path_in_archive: &str, optional: bool, yard: &Yard, log: Log) -> Result<Outcome> {
+  let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
   let app_folder = yard.create_app_folder(&app.name(), version)?;
@@ -31,13 +22,24 @@ pub fn run(app: &dyn DownloadArchive, version: &Version, platform: Platform, opt
     return Err(UserError::UnknownArchive(artifact.filename));
   };
   archive.extract_all(&app_folder, log)?;
-  let executable_path_relative = app.executable_path_in_archive(version, platform);
-  let executable_path_absolute = app_folder.join(executable_path_relative);
+  let executable_path = executable_path(app, version, executable_path_in_archive, yard);
+  if !executable_path.exists() {
+    return Err(UserError::InternalError {
+      desc: format!("executable not found after downloading archive: {}", executable_path.to_string_lossy()),
+    });
+  };
   #[cfg(unix)]
-  make_executable_unix(&executable_path_absolute)?;
+  make_executable_unix(&executable_path)?;
   #[cfg(windows)]
-  make_executable_windows(&executable_path_absolute);
-  Ok(Outcome::Installed)
+  make_executable_windows(&executable_path);
+  Ok(Outcome::Installed {
+    executable: Executable(executable_path),
+  })
+}
+
+/// tries to load the executable of the given app, if it was installed by downloading
+pub fn executable_path(app: &dyn App, version: &Version, executable_path_in_archive: &str, yard: &Yard) -> PathBuf {
+  yard.app_folder(&app.name(), version).join(executable_path_in_archive)
 }
 
 #[cfg(windows)]

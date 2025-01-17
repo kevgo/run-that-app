@@ -1,6 +1,7 @@
 use crate::applications::{AnalyzeResult, App};
 use crate::configuration::{self, ApplicationName, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
+use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
@@ -14,7 +15,7 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   let app = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
-  let yard = yard::load_or_create(&yard::production_location()?)?;
+  let yard = Yard::load_or_create(&yard::production_location()?)?;
   let config_file = configuration::File::load(&apps)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   for requested_version in requested_versions {
@@ -115,7 +116,7 @@ fn load_or_install_from_yard(
   log: Log,
 ) -> Result<Option<Executable>> {
   // try to load the app
-  if let Some(executable) = installation::load(app.install_methods(), version, platform, yard, log) {
+  if let Some(executable) = yard.load_executable(app, version, platform, log) {
     return Ok(Some(executable));
   }
   // app not installed --> check if uninstallable
@@ -123,8 +124,8 @@ fn load_or_install_from_yard(
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  if installation::any(app.install_methods(), version, platform, optional, yard, config_file, log)?.success() {
-    return Ok(installation::load(app.install_methods(), version, platform, yard, log));
+  if let Outcome::Installed { executable } = installation::any(app, version, platform, optional, yard, config_file, log)? {
+    return Ok(Some(executable));
   }
   // app could not be installed -> mark as uninstallable
   yard.mark_not_installable(&app.name(), version)?;

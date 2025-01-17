@@ -3,9 +3,9 @@ use crate::logging::{Event, Log};
 use crate::prelude::*;
 
 /// downloads the artifact at the given URL
-pub fn artifact(url: String, app: &ApplicationName, optional: bool, log: Log) -> Result<Option<Artifact>> {
-  log(Event::DownloadBegin { app, url: &url });
-  let Ok(response) = minreq::get(&url).send() else {
+pub fn artifact(url: &str, app: &ApplicationName, optional: bool, log: Log) -> Result<Option<Artifact>> {
+  log(Event::DownloadBegin { app, url });
+  let Ok(response) = minreq::get(url).send() else {
     log(Event::NotOnline);
     return Err(UserError::NotOnline);
   };
@@ -22,7 +22,7 @@ pub fn artifact(url: String, app: &ApplicationName, optional: bool, log: Log) ->
   }
   log(Event::DownloadSuccess);
   Ok(Some(Artifact {
-    filename: url,
+    filename: url.to_string(),
     data: response.into_bytes(),
   }))
 }

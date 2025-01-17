@@ -1,9 +1,10 @@
 use crate::logging::{Event, Log};
 use crate::prelude::*;
 use std::borrow::Cow;
-use std::ffi::OsStr;
+use std::env;
+use std::ffi::{OsStr, OsString};
 use std::fmt::Display;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 /// an application that can be executed
@@ -25,6 +26,8 @@ impl Executable {
   pub fn run_output(&self, arg: &str, log: Log) -> Result<String> {
     let mut cmd = Command::new(self);
     cmd.arg(arg);
+    #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
+    add_path(&mut cmd, self.0.parent().unwrap());
     log(Event::AnalyzeExecutableBegin {
       cmd: &self.as_str(),
       args: &[arg],
@@ -49,6 +52,8 @@ impl Executable {
   pub fn run_output_args(&self, args: &[&str], log: Log) -> Result<String> {
     let mut cmd = Command::new(self);
     cmd.args(args);
+    #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
+    add_path(&mut cmd, self.0.parent().unwrap());
     let output = match cmd.output() {
       Ok(output) => output,
       Err(err) => {
@@ -70,4 +75,17 @@ impl Display for Executable {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(&self.0.to_string_lossy())
   }
+}
+
+/// adds the given dir to the PATH env variable of the given cmd
+pub fn add_path(cmd: &mut Command, dir: &Path) {
+  cmd.envs(env::vars_os());
+  let new_path = if let Some(mut path) = env::var_os("PATH") {
+    path.push(":");
+    path.push(dir.as_os_str());
+    path
+  } else {
+    OsString::from(dir)
+  };
+  cmd.env("PATH", new_path);
 }

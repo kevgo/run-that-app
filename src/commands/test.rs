@@ -3,7 +3,8 @@ use crate::configuration::{self, ApplicationName};
 use crate::logging::Event;
 use crate::prelude::*;
 use crate::subshell::Executable;
-use crate::{applications, installation, logging, platform, yard};
+use crate::yard::Yard;
+use crate::{applications, installation, logging, platform};
 use colored::Colorize;
 use std::io;
 use std::process::ExitCode;
@@ -13,7 +14,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
   let temp_folder = tempfile::tempdir().map_err(|err| UserError::CannotCreateTempDir { err: err.to_string() })?;
-  let yard = yard::load_or_create(temp_folder.path())?;
+  let yard = Yard::load_or_create(temp_folder.path())?;
   let config_file = configuration::File::load(&apps)?;
   for app in apps {
     if let Some(start_app_name) = &args.start_at_app {
@@ -25,16 +26,27 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
     log(Event::IntegrationTestNewApp { app: &app.name() });
     let latest_version = app.latest_installable_version(log)?;
     log(Event::IntegrationTestDeterminedVersion { version: &latest_version });
-    for install_method in app.install_methods() {
+    for install_method in app.install_methods(&latest_version, platform) {
       log(Event::IntegrationTestNewInstallMethod {
-        version: &latest_version,
+        app: app.name().as_str(),
         method: &install_method,
+        version: &latest_version,
       });
-      if !installation::install(&install_method, &latest_version, platform, args.optional, &yard, &config_file, log)?.success() {
+      if !installation::install(
+        app.as_ref(),
+        &install_method,
+        &latest_version,
+        platform,
+        args.optional,
+        &yard,
+        &config_file,
+        log,
+      )?
+      .success()
+      {
         continue;
       }
-      let executable_location = install_method.executable_location(&latest_version, platform);
-      let executable_path = yard.app_folder(&install_method.yard_app(), &latest_version).join(executable_location);
+      let executable_path = install_method.executable_location(app.as_ref(), &latest_version, platform, &yard);
       if !executable_path.exists() {
         println!(
           "executable {} not found, press ENTER after inspecting the yard",

@@ -88,6 +88,9 @@ pub enum UserError {
   },
   GoCompilationFailed,
   GoNoPermission,
+  InternalError {
+    desc: String,
+  },
   InvalidConfigFileFormat {
     line_no: usize,
     text: String,
@@ -215,6 +218,9 @@ impl UserError {
         desc("Please see the error output above and try again with a different version.");
       }
       UserError::GoNoPermission => error("No permission to execute the Go compiler"),
+      UserError::InternalError { desc } => error(&format!(
+        "Internal error: {desc}. Please report this at https://github.com/kevgo/run-that-app/issues/new"
+      )),
       UserError::InvalidConfigFileFormat { line_no, text } => {
         error("Invalid config file format");
         desc(&format!("{}:{line_no}: {text}", configuration::FILE_NAME));

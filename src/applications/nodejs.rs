@@ -22,8 +22,19 @@ impl App for NodeJS {
     "https://nodejs.org"
   }
 
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::DownloadArchive(self)]
+  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+    let os = os_text(platform.os);
+    let cpu = cpu_text(platform.cpu);
+    let ext = ext_text(platform.os);
+    let sep = path::MAIN_SEPARATOR;
+    let filename = self.executable_filename(platform);
+    vec![Method::DownloadArchive {
+      url: format!("https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",),
+      path_in_archive: match platform.os {
+        Os::Windows => format!("node-v{version}-{os}-{cpu}{sep}{filename}"),
+        Os::Linux | Os::MacOS => format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{filename}"),
+      },
+    }]
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -46,30 +57,8 @@ impl App for NodeJS {
   }
 }
 
-impl installation::DownloadArchive for NodeJS {
-  fn archive_url(&self, version: &Version, platform: Platform) -> String {
-    let ext = match platform.os {
-      Os::Linux => "tar.xz",
-      Os::MacOS => "tar.gz",
-      Os::Windows => "zip",
-    };
-    format!(
-      "https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",
-      os = os_text(platform.os),
-      cpu = cpu_text(platform.cpu),
-    )
-  }
-
-  fn executable_path_in_archive(&self, version: &Version, platform: Platform) -> String {
-    let os = os_text(platform.os);
-    let cpu = cpu_text(platform.cpu);
-    let sep = path::MAIN_SEPARATOR;
-    let executable = self.executable_filename(platform);
-    match platform.os {
-      Os::Windows => format!("node-v{version}-{os}-{cpu}{sep}{executable}"),
-      Os::Linux | Os::MacOS => format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}"),
-    }
-  }
+fn extract_version(output: &str) -> Result<&str> {
+  regexp::first_capture(output, r"v(\d+\.\d+\.\d+)")
 }
 
 pub fn cpu_text(cpu: Cpu) -> &'static str {
@@ -79,8 +68,12 @@ pub fn cpu_text(cpu: Cpu) -> &'static str {
   }
 }
 
-fn extract_version(output: &str) -> Result<&str> {
-  regexp::first_capture(output, r"v(\d+\.\d+\.\d+)")
+fn ext_text(os: Os) -> &'static str {
+  match os {
+    Os::Linux => "tar.xz",
+    Os::MacOS => "tar.gz",
+    Os::Windows => "zip",
+  }
 }
 
 pub fn os_text(os: Os) -> &'static str {
@@ -93,21 +86,49 @@ pub fn os_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
-  use crate::configuration::Version;
-  use crate::installation::DownloadArchive;
-  use crate::platform::{Cpu, Os, Platform};
   use crate::UserError;
 
-  #[test]
-  fn archive_url() {
-    let node = super::NodeJS {};
-    let platform = Platform {
-      os: Os::MacOS,
-      cpu: Cpu::Arm64,
-    };
-    let have = node.archive_url(&Version::from("20.10.0"), platform);
-    let want = "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz";
-    assert_eq!(have, want);
+  mod install_methods {
+    use crate::applications::nodejs::NodeJS;
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    #[test]
+    #[cfg(unix)]
+    fn linux_arm() {
+      let have = (NodeJS {}).install_methods(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = vec![Method::DownloadArchive {
+        url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz"),
+        path_in_archive: S("node-v20.10.0-darwin-arm64/bin/node"),
+      }];
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    #[cfg(windows)]
+    fn windows_intel() {
+      let have = (NodeJS {}).install_methods(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = vec![Method::DownloadArchive {
+        url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip"),
+        path_in_archive: S("node-v20.10.0-win-x64\\node.exe"),
+      }];
+      assert_eq!(have, want);
+    }
   }
 
   #[test]

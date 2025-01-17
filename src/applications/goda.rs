@@ -2,6 +2,7 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::{self, Method};
+use crate::platform::Platform;
 use crate::prelude::*;
 use crate::subshell::Executable;
 use crate::Log;
@@ -21,6 +22,12 @@ impl App for Goda {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
+  fn install_methods(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
+    vec![Method::CompileGoSource {
+      import_path: format!("github.com/{ORG}/{REPO}@v{version}"),
+    }]
+  }
+
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
     github_releases::latest(ORG, REPO, log)
   }
@@ -37,14 +44,30 @@ impl App for Goda {
     // as of 0.5.7 goda has no way to determine the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
-
-  fn install_methods(&self) -> Vec<installation::Method> {
-    vec![Method::CompileGoSource(self)]
-  }
 }
 
-impl installation::CompileGoSource for Goda {
-  fn import_path(&self, version: &Version) -> String {
-    format!("github.com/{ORG}/{REPO}@v{version}")
+#[cfg(test)]
+mod tests {
+
+  #[test]
+  fn install_methods() {
+    use crate::applications::goda::Goda;
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    let have = (Goda {}).install_methods(
+      &Version::from("0.5.9"),
+      Platform {
+        os: Os::MacOS,
+        cpu: Cpu::Intel64,
+      },
+    );
+    let want = vec![Method::CompileGoSource {
+      import_path: S("github.com/loov/goda@v0.5.9"),
+    }];
+    assert_eq!(have, want);
   }
 }
