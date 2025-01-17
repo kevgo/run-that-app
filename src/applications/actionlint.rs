@@ -101,12 +101,13 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      let action_lint = ActionLint {};
-      let platform = Platform {
-        os: Os::Linux,
-        cpu: Cpu::Arm64,
-      };
-      let have = action_lint.install_methods(&Version::from("1.6.26"), platform);
+      let have = (ActionLint {}).install_methods(
+        &Version::from("1.6.26"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
       let want = vec![
         Method::DownloadArchive {
           url: S("https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_linux_arm64.tar.gz"),
@@ -121,26 +122,23 @@ mod tests {
 
     #[test]
     fn windows_intel() {
-      let action_lint = ActionLint {};
-      let version = &Version::from("1.6.26");
-      let platform = Platform {
-        os: Os::Windows,
-        cpu: Cpu::Intel64,
-      };
-      let mut methods = action_lint.install_methods(version, platform).into_iter();
-      let Method::DownloadArchive { url, path_in_archive } = methods.next().unwrap() else {
-        panic!();
-      };
-      assert_eq!(
-        url,
-        "https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_windows_amd64.zip"
+      let have = (ActionLint {}).install_methods(
+        &Version::from("1.6.26"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
       );
-      assert_eq!(path_in_archive, "actionlint.exe");
-      let Method::CompileGoSource { import_path } = methods.next().unwrap() else {
-        panic!();
-      };
-      assert_eq!(import_path, "github.com/rhysd/actionlint/cmd/actionlint@v1.6.26");
-      assert!(methods.next().is_none());
+      let want = vec![
+        Method::DownloadArchive {
+          url: S("https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_windows_amd64.zip"),
+          path_in_archive: S("actionlint.exe"),
+        },
+        Method::CompileGoSource {
+          import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.6.26"),
+        },
+      ];
+      assert_eq!(have, want);
     }
   }
 
