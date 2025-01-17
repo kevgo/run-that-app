@@ -45,3 +45,29 @@ impl App for Alphavet {
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 }
+
+#[cfg(test)]
+mod tests {
+
+  #[test]
+  fn install_methods() {
+    use crate::applications::alphavet::Alphavet;
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::Method;
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    let have = (Alphavet {}).install_methods(
+      &Version::from("1.6.26"),
+      Platform {
+        os: Os::Linux,
+        cpu: Cpu::Arm64,
+      },
+    );
+    let want = vec![Method::CompileGoSource {
+      import_path: S("github.com/skx/alphavet/cmd/alphavet@v1.6.26"),
+    }];
+    assert_eq!(have, want);
+  }
+}
