@@ -1,4 +1,4 @@
-use super::root_dir_path;
+use super::root_path;
 use crate::applications::App;
 use crate::configuration::{ApplicationName, Version};
 use crate::logging::{Event, Log};
@@ -20,7 +20,7 @@ impl Yard {
   }
 
   pub fn create(containing_folder: &Path) -> Result<Yard> {
-    let root = root_dir_path(containing_folder);
+    let root = root_path(containing_folder);
     if let Err(err) = fs::create_dir_all(&root) {
       return Err(UserError::CannotCreateFolder {
         folder: root,
@@ -54,7 +54,7 @@ impl Yard {
   }
 
   pub fn load(containing_folder: &Path) -> Result<Option<Yard>> {
-    let root_dir = root_dir_path(containing_folder);
+    let root_dir = root_path(containing_folder);
     let Ok(metadata) = root_dir.metadata() else {
       return Ok(None);
     };
