@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
-use crate::prelude::*;
 use crate::run::Executable;
+use crate::{prelude::*, run};
 use crate::{regexp, Log};
 use const_format::formatcp;
 use std::path;
@@ -23,7 +23,7 @@ impl App for MdBookLinkCheck {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let os = match platform.os {
       Os::Linux => "unknown-linux-gnu",
       Os::MacOS => "apple-darwin",
@@ -33,16 +33,18 @@ impl App for MdBookLinkCheck {
       Cpu::Arm64 => "aarch64",
       Cpu::Intel64 => "x86_64",
     };
-    vec![
-      Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-linkcheck.{cpu}-{os}.zip"),
-        path_in_archive: self.executable_filename(platform),
-      },
-      Method::CompileRustSource {
-        crate_name: "mdbook-linkcheck",
-        filepath: format!("bin{sep}{filename}", sep = path::MAIN_SEPARATOR, filename = self.executable_filename(platform)),
-      },
-    ]
+    run::Method::ThisApp {
+      install_methods: vec![
+        Method::DownloadArchive {
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-linkcheck.{cpu}-{os}.zip"),
+          path_in_archive: self.executable_filename(platform),
+        },
+        Method::CompileRustSource {
+          crate_name: "mdbook-linkcheck",
+          filepath: format!("bin{sep}{filename}", sep = path::MAIN_SEPARATOR, filename = self.executable_filename(platform)),
+        },
+      ],
+    }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -84,6 +86,8 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
+      use crate::run;
+
       let have = (MdBookLinkCheck {}).run_method(
         &Version::from("0.7.8"),
         Platform {
@@ -91,16 +95,18 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![
-        Method::DownloadArchive {
-          url: S("https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-apple-darwin.zip"),
-          path_in_archive: S("mdbook-linkcheck"),
-        },
-        Method::CompileRustSource {
-          crate_name: "mdbook-linkcheck",
-          filepath: S("bin/mdbook-linkcheck"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: S("https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-apple-darwin.zip"),
+            path_in_archive: S("mdbook-linkcheck"),
+          },
+          Method::CompileRustSource {
+            crate_name: "mdbook-linkcheck",
+            filepath: S("bin/mdbook-linkcheck"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
 

@@ -3,9 +3,9 @@ use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_tags;
 use crate::installation::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
-use crate::prelude::*;
 use crate::run::Executable;
 use crate::Log;
+use crate::{prelude::*, run};
 use const_format::formatcp;
 
 pub struct NodePrune {}
@@ -30,7 +30,7 @@ impl App for NodePrune {
     Ok(Version::from(tag))
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -40,14 +40,16 @@ impl App for NodePrune {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "amd64",
     };
-    vec![
-      Method::DownloadExecutable {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/node-prune_{version}_{os}_{cpu}.tar.gz"),
-      },
-      Method::CompileGoSource {
-        import_path: format!("github.com/tj/node-prune@v{version}"),
-      },
-    ]
+    run::Method::ThisApp {
+      install_methods: vec![
+        Method::DownloadExecutable {
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/node-prune_{version}_{os}_{cpu}.tar.gz"),
+        },
+        Method::CompileGoSource {
+          import_path: format!("github.com/tj/node-prune@v{version}"),
+        },
+      ],
+    }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
@@ -73,6 +75,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
@@ -84,14 +87,16 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![
-        Method::DownloadExecutable {
-          url: S("https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_linux_amd64.tar.gz"),
-        },
-        Method::CompileGoSource {
-          import_path: S("github.com/tj/node-prune@v1.0.1"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: S("https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_linux_amd64.tar.gz"),
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/tj/node-prune@v1.0.1"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
 
@@ -104,14 +109,16 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![
-        Method::DownloadExecutable {
-          url: S("https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_windows_amd64.tar.gz"),
-        },
-        Method::CompileGoSource {
-          import_path: S("github.com/tj/node-prune@v1.0.1"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: S("https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_windows_amd64.tar.gz"),
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/tj/node-prune@v1.0.1"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
   }
