@@ -1,12 +1,10 @@
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::installation::{self, Method};
 use crate::platform::Platform;
-use crate::prelude::*;
 use crate::run::Executable;
-use crate::{applications, Log};
-use std::path;
+use crate::Log;
+use crate::{prelude::*, run};
 
 pub struct Npm {}
 
@@ -19,15 +17,11 @@ impl App for Npm {
     "https://www.npmjs.com"
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
-    let os = applications::nodejs::os_text(platform.os);
-    let cpu = applications::nodejs::cpu_text(platform.cpu);
-    let sep = path::MAIN_SEPARATOR;
-    let executable = self.executable_filename(platform);
-    vec![Method::ExecutableInAnotherApp {
-      other_app: Box::new(app_to_install()),
-      executable_path: format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{executable}"),
-    }]
+  fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
+    run::Method::OtherAppOtherExecutable {
+      app: Box::new(app_to_install()),
+      executable_name: "npm",
+    }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -60,13 +54,13 @@ mod tests {
     use crate::applications::npm::Npm;
     use crate::applications::App;
     use crate::configuration::Version;
-    use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
-    use big_s::S;
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
+      use crate::run;
+
       let have = (Npm {}).run_method(
         &Version::from("20.10.0"),
         Platform {
@@ -74,10 +68,10 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = vec![Method::ExecutableInAnotherApp {
-        other_app: Box::new(NodeJS {}),
-        executable_path: S("node-v20.10.0-darwin-arm64/bin/npm"),
-      }];
+      let want = run::Method::OtherAppOtherExecutable {
+        app: Box::new(NodeJS {}),
+        executable_name: "npm",
+      };
       assert_eq!(have, want);
     }
 
