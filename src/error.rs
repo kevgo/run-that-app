@@ -1,5 +1,5 @@
 use crate::configuration::{self, FILE_NAME};
-use crate::subshell::Executable;
+use crate::execution::Executable;
 use colored::Colorize;
 use std::path::PathBuf;
 

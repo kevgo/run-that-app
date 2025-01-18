@@ -1,11 +1,11 @@
 use crate::applications::{AnalyzeResult, App};
 use crate::configuration::{self, ApplicationName, RequestedVersion, RequestedVersions, Version};
+use crate::execution::{self, Executable};
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
-use crate::subshell::{self, Executable};
 use crate::yard::Yard;
 use crate::{applications, installation, yard};
 use std::process::ExitCode;
@@ -21,9 +21,9 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   for requested_version in requested_versions {
     if let Some(executable) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
       if args.error_on_output {
-        return subshell::execute_check_output(&executable, &args.app_args);
+        return execution::execute_check_output(&executable, &args.app_args);
       }
-      return subshell::execute_stream_output(&executable, &args.app_args);
+      return execution::execute_stream_output(&executable, &args.app_args);
     }
   }
   if args.optional {

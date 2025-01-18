@@ -71,11 +71,11 @@ mod tests {
   mod parse {
     use crate::applications::{AnalyzeResult, App};
     use crate::configuration::Version;
+    use crate::execution::Executable;
     use crate::installation;
     use crate::logging::Log;
     use crate::platform::Platform;
     use crate::prelude::*;
-    use crate::subshell::Executable;
 
     /// an App instance that allows to mock the system version restrictions
     struct TestApp {

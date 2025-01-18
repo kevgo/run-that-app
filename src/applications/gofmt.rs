@@ -1,10 +1,10 @@
 use super::go::Go;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
+use crate::execution::Executable;
 use crate::installation::Method;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::subshell::Executable;
 use crate::{installation, Log};
 use std::path;
 

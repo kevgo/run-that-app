@@ -1,10 +1,10 @@
 use super::Outcome;
 use crate::applications::App;
 use crate::configuration::Version;
+use crate::execution::Executable;
 use crate::logging::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{download, filesystem};
 use std::path::PathBuf;
