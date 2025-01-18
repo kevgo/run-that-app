@@ -12,7 +12,7 @@ use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 
 /// downloads and unpacks the content of an archive file
-pub fn run(app: &dyn App, version: &Version, url: &str, executable_path_in_archive: &str, optional: bool, yard: &Yard, log: Log) -> Result<Outcome> {
+pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &[&str], optional: bool, yard: &Yard, log: Log) -> Result<Outcome> {
   let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
@@ -20,22 +20,27 @@ pub fn run(app: &dyn App, version: &Version, url: &str, executable_path_in_archi
   let Some(archive) = archives::lookup(&artifact.filename, artifact.data) else {
     return Err(UserError::UnknownArchive(artifact.filename));
   };
+  // extract the archive
   archive.extract_all(&app_folder, log)?;
-  let executable_path = executable_path(app, version, executable_path_in_archive, yard);
-  if !executable_path.exists() {
-    return Err(UserError::InternalError {
-      desc: format!("executable not found after downloading archive: {}", executable_path.to_string_lossy()),
-    });
-  };
-  // set the executable bit of all executable files that this app provides
-  #[cfg(unix)]
-  make_executable_unix(&executable_path)?;
-  for other_executable in app.other_executables() {
-    // TODO: determine the full path to the executable here
-    make_executable_unix(&other_executable)?;
+  // verify that all executables that should be there exist and are executable
+  for bin_folder in bin_folders {
+    let bin_path = app_folder.join(bin_folder);
+    let default_executable_path = bin_path.join(app.executable_filename(platform));
+    if !executable_path.exists() {
+      return Err(UserError::InternalError {
+        desc: format!("executable not found after downloading archive: {}", executable_path.to_string_lossy()),
+      });
+    };
+    // set the executable bit of all executable files that this app provides
+    #[cfg(unix)]
+    make_executable_unix(&executable_path)?;
+    for other_executable in app.other_executables() {
+      // TODO: determine the full path to the executable here
+      make_executable_unix(&other_executable)?;
+    }
+    #[cfg(windows)]
+    make_executable_windows(&executable_path);
   }
-  #[cfg(windows)]
-  make_executable_windows(&executable_path);
   Ok(Outcome::Installed)
 }
 

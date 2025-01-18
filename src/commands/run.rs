@@ -116,14 +116,14 @@ fn load_or_install_from_yard(
   log: Log,
 ) -> Result<Option<Executable>> {
   // determine the carrier app
-  let app_name = app.name();
+  let carrier_name = app.name();
   let app_and_executable = app_and_executable(app, version, platform);
   // try to load the app
   if let Some(executable) = yard.load_executable(app_and_executable, version, platform, log) {
     return Ok(Some(executable));
   }
   // app not installed --> check if uninstallable
-  if yard.is_not_installable(&app_name, version) {
+  if yard.is_not_installable(&carrier_name, version) {
     return Ok(None);
   }
   // app not installed and installable --> try to install
@@ -131,6 +131,6 @@ fn load_or_install_from_yard(
     return Ok(Some(executable));
   }
   // app could not be installed -> mark as uninstallable
-  yard.mark_not_installable(&app_name, version)?;
+  yard.mark_not_installable(&carrier_name, version)?;
   Ok(None)
 }
