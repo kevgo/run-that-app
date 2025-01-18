@@ -21,7 +21,7 @@ impl App for Goreleaser {
     "https://goreleaser.com"
   }
 
-  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = match platform.os {
       Os::Linux => "Linux",
       Os::MacOS => "Darwin",
@@ -80,7 +80,7 @@ mod tests {
     fn linux_arm() {
       use crate::applications::goreleaser::Goreleaser;
 
-      let have = (Goreleaser {}).run_methods(
+      let have = (Goreleaser {}).run_method(
         &Version::from("1.22.1"),
         Platform {
           os: Os::MacOS,

@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
-use crate::prelude::*;
 use crate::run::Executable;
+use crate::{prelude::*, run};
 use crate::{regexp, Log};
 
 pub struct Dprint {}
@@ -21,7 +21,7 @@ impl App for Dprint {
     "https://dprint.dev"
   }
 
-  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let cpu = match platform.cpu {
       Cpu::Arm64 => "aarch64",
       Cpu::Intel64 => "x86_64",
@@ -31,16 +31,18 @@ impl App for Dprint {
       Os::MacOS => "apple-darwin",
       Os::Windows => "pc-windows-msvc",
     };
-    vec![
-      Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip"),
-        path_in_archive: self.executable_filename(platform),
-      },
-      Method::CompileRustSource {
-        crate_name: "dprint",
-        filepath: format!("bin/{}", self.executable_filename(platform)),
-      },
-    ]
+    run::Method::ThisApp {
+      install_methods: vec![
+        Method::DownloadArchive {
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip"),
+          path_in_archive: self.executable_filename(platform),
+        },
+        Method::CompileRustSource {
+          crate_name: "dprint",
+          filepath: format!("bin/{}", self.executable_filename(platform)),
+        },
+      ],
+    }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
@@ -76,49 +78,54 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
     fn macos_arm() {
-      let have = (Dprint {}).run_methods(
+      let have = (Dprint {}).run_method(
         &Version::from("0.48.0"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
         },
       );
-      let want = vec![
-        Method::DownloadArchive {
-          url: S("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-apple-darwin.zip"),
-          path_in_archive: S("dprint"),
-        },
-        Method::CompileRustSource {
-          crate_name: "dprint",
-          filepath: S("bin/dprint"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: S("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-apple-darwin.zip"),
+            path_in_archive: S("dprint"),
+          },
+          Method::CompileRustSource {
+            crate_name: "dprint",
+            filepath: S("bin/dprint"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
 
     #[test]
     fn linux_arm() {
-      let have = (Dprint {}).run_methods(
+      let have = (Dprint {}).run_method(
         &Version::from("0.48.0"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Arm64,
         },
       );
-      let want = vec![
-        Method::DownloadArchive {
-          url: S("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-unknown-linux-gnu.zip"),
-          path_in_archive: S("dprint"),
-        },
-        Method::CompileRustSource {
-          crate_name: "dprint",
-          filepath: S("bin/dprint"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: S("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-unknown-linux-gnu.zip"),
+            path_in_archive: S("dprint"),
+          },
+          Method::CompileRustSource {
+            crate_name: "dprint",
+            filepath: S("bin/dprint"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
   }

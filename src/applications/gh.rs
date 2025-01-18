@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
-use crate::prelude::*;
 use crate::run::Executable;
+use crate::{prelude::*, run};
 use crate::{regexp, Log};
 use std::path;
 
@@ -22,7 +22,7 @@ impl App for Gh {
     "https://cli.github.com"
   }
 
-  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "macOS",
@@ -38,13 +38,15 @@ impl App for Gh {
     };
     let sep = path::MAIN_SEPARATOR;
     let filename = self.executable_filename(platform);
-    vec![Method::DownloadArchive {
-      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}"),
-      path_in_archive: match platform.os {
-        Os::Windows => format!("bin{sep}{filename}"),
-        Os::Linux | Os::MacOS => format!("gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}"),
-      },
-    }]
+    run::Method::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}"),
+        path_in_archive: match platform.os {
+          Os::Windows => format!("bin{sep}{filename}"),
+          Os::Linux | Os::MacOS => format!("gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}"),
+        },
+      }],
+    }
     // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
   }
 
@@ -86,17 +88,21 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      let have = (Gh {}).run_methods(
+      use crate::run;
+
+      let have = (Gh {}).run_method(
         &Version::from("2.39.1"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Arm64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz"),
-        path_in_archive: S("gh_2.39.1_linux_arm64/bin/gh"),
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz"),
+          path_in_archive: S("gh_2.39.1_linux_arm64/bin/gh"),
+        }],
+      };
       assert_eq!(have, want);
     }
 

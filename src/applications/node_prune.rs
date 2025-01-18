@@ -30,7 +30,7 @@ impl App for NodePrune {
     Ok(Version::from(tag))
   }
 
-  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -77,7 +77,7 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      let have = (NodePrune {}).run_methods(
+      let have = (NodePrune {}).run_method(
         &Version::from("1.0.1"),
         Platform {
           os: Os::Linux,
@@ -97,7 +97,7 @@ mod tests {
 
     #[test]
     fn windows_intel() {
-      let have = (NodePrune {}).run_methods(
+      let have = (NodePrune {}).run_method(
         &Version::from("1.0.1"),
         Platform {
           os: Os::Windows,

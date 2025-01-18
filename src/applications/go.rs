@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_tags;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
-use crate::prelude::*;
 use crate::run::Executable;
 use crate::{filesystem, regexp, Log};
+use crate::{prelude::*, run};
 use big_s::S;
 use std::path;
 
@@ -23,7 +23,7 @@ impl App for Go {
     "https://go.dev"
   }
 
-  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -40,10 +40,12 @@ impl App for Go {
     let sep = path::MAIN_SEPARATOR;
     let file = self.executable_filename(platform);
     let version_str = version.as_str().trim_start_matches("go");
-    vec![Method::DownloadArchive {
-      url: format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}"),
-      path_in_archive: format!("go{sep}bin{sep}{file}"),
-    }]
+    run::Method::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}"),
+        path_in_archive: format!("go{sep}bin{sep}{file}"),
+      }],
+    }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -118,17 +120,21 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      let have = (Go {}).run_methods(
+      use crate::run;
+
+      let have = (Go {}).run_method(
         &Version::from("1.21.5"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz"),
-        path_in_archive: S("go/bin/go"),
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz"),
+          path_in_archive: S("go/bin/go"),
+        }],
+      };
       assert_eq!(have, want);
     }
 

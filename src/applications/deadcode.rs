@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::Platform;
-use crate::prelude::*;
 use crate::run::Executable;
 use crate::Log;
+use crate::{prelude::*, run};
 
 pub struct Deadcode {}
 
@@ -17,10 +17,12 @@ impl App for Deadcode {
     "https://pkg.go.dev/golang.org/x/tools/cmd/deadcode"
   }
 
-  fn run_methods(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
-    vec![Method::CompileGoSource {
-      import_path: format!("golang.org/x/tools/cmd/deadcode@v{version}"),
-    }]
+  fn run_method(&self, version: &Version, _platform: Platform) -> run::Method {
+    run::Method::ThisApp {
+      install_methods: vec![Method::CompileGoSource {
+        import_path: format!("golang.org/x/tools/cmd/deadcode@v{version}"),
+      }],
+    }
   }
 
   fn latest_installable_version(&self, _log: Log) -> Result<Version> {
@@ -45,6 +47,7 @@ impl App for Deadcode {
 #[cfg(test)]
 mod tests {
   use crate::applications::deadcode::Deadcode;
+  use crate::run;
 
   #[test]
   fn install_methods() {
@@ -54,16 +57,18 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    let have = (Deadcode {}).run_methods(
+    let have = (Deadcode {}).run_method(
       &Version::from("0.16.1"),
       Platform {
         os: Os::Linux,
         cpu: Cpu::Arm64,
       },
     );
-    let want = vec![Method::CompileGoSource {
-      import_path: S("golang.org/x/tools/cmd/deadcode@v0.16.1"),
-    }];
+    let want = run::Method::ThisApp {
+      install_methods: vec![Method::CompileGoSource {
+        import_path: S("golang.org/x/tools/cmd/deadcode@v0.16.1"),
+      }],
+    };
     assert_eq!(have, want);
   }
 }

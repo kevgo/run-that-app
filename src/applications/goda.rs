@@ -22,7 +22,7 @@ impl App for Goda {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_methods(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
     vec![Method::CompileGoSource {
       import_path: format!("github.com/{ORG}/{REPO}@v{version}"),
     }]
@@ -58,7 +58,7 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    let have = (Goda {}).run_methods(
+    let have = (Goda {}).run_method(
       &Version::from("0.5.9"),
       Platform {
         os: Os::MacOS,

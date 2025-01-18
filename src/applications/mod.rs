@@ -46,7 +46,7 @@ pub trait App {
   }
 
   /// the various ways to install and run this application
-  fn run_methods(&self, version: &Version, platform: Platform) -> run::Method;
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method;
 
   /// link to the (human-readable) homepage of the app
   fn homepage(&self) -> &'static str;

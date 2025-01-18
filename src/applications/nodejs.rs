@@ -22,7 +22,7 @@ impl App for NodeJS {
     "https://nodejs.org"
   }
 
-  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = os_text(platform.os);
     let cpu = cpu_text(platform.cpu);
     let ext = ext_text(platform.os);
@@ -99,7 +99,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      let have = (NodeJS {}).run_methods(
+      let have = (NodeJS {}).run_method(
         &Version::from("20.10.0"),
         Platform {
           os: Os::MacOS,

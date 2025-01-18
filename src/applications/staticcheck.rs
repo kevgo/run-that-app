@@ -21,7 +21,7 @@ impl App for StaticCheck {
     "https://staticcheck.dev"
   }
 
-  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -72,7 +72,7 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      let have = (StaticCheck {}).run_methods(
+      let have = (StaticCheck {}).run_method(
         &Version::from("3.7.0"),
         Platform {
           os: Os::MacOS,
@@ -93,7 +93,7 @@ mod tests {
 
     #[test]
     fn windows_intel() {
-      let have = (StaticCheck {}).run_methods(
+      let have = (StaticCheck {}).run_method(
         &Version::from("3.7.0"),
         Platform {
           os: Os::Windows,

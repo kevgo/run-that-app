@@ -120,7 +120,7 @@ impl PartialEq for Method {
 
 /// installs the given app using the first of the given installation methods that works
 pub fn any(app: &dyn App, version: &Version, platform: Platform, optional: bool, yard: &Yard, config_file: &configuration::File, log: Log) -> Result<Outcome> {
-  for install_method in app.run_methods(version, platform) {
+  for install_method in app.run_method(version, platform) {
     let outcome = install(app, &install_method, version, platform, optional, yard, config_file, log)?;
     if outcome.success() {
       return Ok(outcome);

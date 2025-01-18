@@ -21,7 +21,7 @@ impl App for ShellCheck {
     "https://www.shellcheck.net"
   }
 
-  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -82,7 +82,7 @@ mod tests {
       use crate::platform::{Cpu, Os, Platform};
       use big_s::S;
 
-      let have = (ShellCheck {}).run_methods(
+      let have = (ShellCheck {}).run_method(
         &Version::from("0.9.0"),
         Platform {
           os: Os::Linux,
@@ -106,7 +106,7 @@ mod tests {
       use crate::platform::{Cpu, Os, Platform};
       use big_s::S;
 
-      let have = (ShellCheck {}).run_methods(
+      let have = (ShellCheck {}).run_method(
         &Version::from("0.10.0"),
         Platform {
           os: Os::MacOS,

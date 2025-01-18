@@ -22,7 +22,7 @@ impl App for GolangCiLint {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -80,7 +80,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      let have = (GolangCiLint {}).run_methods(
+      let have = (GolangCiLint {}).run_method(
         &Version::from("1.55.2"),
         Platform {
           os: Os::MacOS,

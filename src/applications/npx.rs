@@ -19,7 +19,7 @@ impl App for Npx {
     "https://www.npmjs.com"
   }
 
-  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = applications::nodejs::os_text(platform.os);
     let cpu = applications::nodejs::cpu_text(platform.cpu);
     let sep = path::MAIN_SEPARATOR;
@@ -67,7 +67,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      let have = (Npx {}).run_methods(
+      let have = (Npx {}).run_method(
         &Version::from("20.10.0"),
         Platform {
           os: Os::MacOS,

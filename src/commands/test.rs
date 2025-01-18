@@ -26,7 +26,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
     log(Event::IntegrationTestNewApp { app: &app.name() });
     let latest_version = app.latest_installable_version(log)?;
     log(Event::IntegrationTestDeterminedVersion { version: &latest_version });
-    for install_method in app.run_methods(&latest_version, platform) {
+    for install_method in app.run_method(&latest_version, platform) {
       log(Event::IntegrationTestNewInstallMethod {
         app: app.name().as_str(),
         method: &install_method,

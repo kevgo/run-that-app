@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::Platform;
-use crate::prelude::*;
 use crate::run::Executable;
 use crate::Log;
+use crate::{prelude::*, run};
 use const_format::formatcp;
 
 pub struct Exhaustruct {}
@@ -26,10 +26,12 @@ impl App for Exhaustruct {
     github_releases::latest(ORG, REPO, log)
   }
 
-  fn run_methods(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
-    vec![Method::CompileGoSource {
-      import_path: format!("github.com/{ORG}/{REPO}/v3/cmd/exhaustruct@v{version}"),
-    }]
+  fn run_method(&self, version: &Version, _platform: Platform) -> run::Method {
+    run::Method::ThisApp {
+      install_methods: vec![Method::CompileGoSource {
+        import_path: format!("github.com/{ORG}/{REPO}/v3/cmd/exhaustruct@v{version}"),
+      }],
+    }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
@@ -48,6 +50,7 @@ impl App for Exhaustruct {
 #[cfg(test)]
 mod tests {
   use crate::applications::exhaustruct::Exhaustruct;
+  use crate::run;
 
   #[test]
   fn install_methods() {
@@ -57,16 +60,18 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    let have = (Exhaustruct {}).run_methods(
+    let have = (Exhaustruct {}).run_method(
       &Version::from("3.3.0"),
       Platform {
         os: Os::Linux,
         cpu: Cpu::Arm64,
       },
     );
-    let want = vec![Method::CompileGoSource {
-      import_path: S("github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct@v3.3.0"),
-    }];
+    let want = run::Method::ThisApp {
+      install_methods: vec![Method::CompileGoSource {
+        import_path: S("github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct@v3.3.0"),
+      }],
+    };
     assert_eq!(have, want);
   }
 }

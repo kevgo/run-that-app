@@ -23,7 +23,7 @@ impl App for MdBook {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = match platform.os {
       Os::Linux => "unknown-linux-gnu",
       Os::MacOS => "apple-darwin",
@@ -88,7 +88,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      let have = (MdBook {}).run_methods(
+      let have = (MdBook {}).run_method(
         &Version::from("0.4.37"),
         Platform {
           os: Os::Linux,

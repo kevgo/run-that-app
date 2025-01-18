@@ -22,7 +22,7 @@ impl App for Tikibase {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let cpu = match platform.cpu {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "intel64",
@@ -81,7 +81,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      let have = (Tikibase {}).run_methods(
+      let have = (Tikibase {}).run_method(
         &Version::from("0.6.2"),
         Platform {
           os: Os::MacOS,

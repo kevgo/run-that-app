@@ -23,7 +23,7 @@ impl App for MdBookLinkCheck {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = match platform.os {
       Os::Linux => "unknown-linux-gnu",
       Os::MacOS => "apple-darwin",
@@ -84,7 +84,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      let have = (MdBookLinkCheck {}).run_methods(
+      let have = (MdBookLinkCheck {}).run_method(
         &Version::from("0.7.8"),
         Platform {
           os: Os::MacOS,
