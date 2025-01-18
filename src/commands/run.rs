@@ -56,7 +56,7 @@ pub struct Args {
 }
 
 pub fn load_or_install(
-  app: &dyn App,
+  app: Box<dyn App>,
   requested_version: &RequestedVersion,
   platform: Platform,
   optional: bool,
@@ -65,7 +65,7 @@ pub fn load_or_install(
   log: Log,
 ) -> Result<Option<Executable>> {
   match requested_version {
-    RequestedVersion::Path(version) => load_from_path(app, version, platform, log),
+    RequestedVersion::Path(version) => load_from_path(app.as_ref(), version, platform, log),
     RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, platform, optional, yard, config_file, log),
   }
 }
