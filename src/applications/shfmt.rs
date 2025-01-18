@@ -3,9 +3,9 @@ use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
-use crate::prelude::*;
 use crate::run::Executable;
-use crate::{installation, regexp, Log};
+use crate::{prelude::*, run};
+use crate::{regexp, Log};
 use const_format::formatcp;
 
 pub struct Shfmt {}
@@ -22,7 +22,7 @@ impl App for Shfmt {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -36,14 +36,16 @@ impl App for Shfmt {
       Os::Linux | Os::MacOS => "",
       Os::Windows => ".exe",
     };
-    vec![
-      Method::DownloadExecutable {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}"),
-      },
-      Method::CompileGoSource {
-        import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}"),
-      },
-    ]
+    run::Method::ThisApp {
+      install_methods: vec![
+        Method::DownloadExecutable {
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}"),
+        },
+        Method::CompileGoSource {
+          import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}"),
+        },
+      ],
+    }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -80,6 +82,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
@@ -91,14 +94,16 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = vec![
-        Method::DownloadExecutable {
-          url: S("https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_arm64"),
-        },
-        Method::CompileGoSource {
-          import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: S("https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_arm64"),
+          },
+          Method::CompileGoSource {
+            import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
 
@@ -111,14 +116,16 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![
-        Method::DownloadExecutable {
-          url: S("https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_windows_amd64.exe"),
-        },
-        Method::CompileGoSource {
-          import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: S("https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_windows_amd64.exe"),
+          },
+          Method::CompileGoSource {
+            import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
   }
