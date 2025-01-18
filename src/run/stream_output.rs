@@ -1,6 +1,6 @@
 use super::executable::add_path;
+use super::Executable;
 use super::{exit_status_to_code, format_call};
-use crate::execution::Executable;
 use crate::prelude::*;
 use std::process::{Command, ExitCode};
 
@@ -25,7 +25,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn unix_success() {
-      use crate::execution::{stream_output, Executable};
+      use crate::run::{stream_output, Executable};
       use big_s::S;
       use std::io::Write;
       use std::os::unix::fs::PermissionsExt;
@@ -46,8 +46,8 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn unix_error() {
-      use crate::execution::{stream_output, Executable};
       use crate::filesystem::make_file_executable;
+      use crate::run::{stream_output, Executable};
       use big_s::S;
       use std::fs;
       let tempdir = tempfile::tempdir().unwrap();
@@ -63,7 +63,7 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_success() {
-      use crate::execution::{stream_output, Executable};
+      use crate::run::{stream_output, Executable};
       use big_s::S;
       use std::fs;
       let tempdir = tempfile::tempdir().unwrap();
@@ -78,7 +78,7 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_error() {
-      use crate::execution::{stream_output, Executable};
+      use crate::run::{stream_output, Executable};
       use big_s::S;
       use std::fs;
       let tempdir = tempfile::tempdir().unwrap();

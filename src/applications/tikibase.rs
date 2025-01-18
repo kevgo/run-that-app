@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
 use crate::installation::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
+use crate::run::Executable;
 use crate::{regexp, Log};
 use const_format::formatcp;
 
@@ -22,7 +22,7 @@ impl App for Tikibase {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let cpu = match platform.cpu {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "intel64",
@@ -81,7 +81,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      let have = (Tikibase {}).install_methods(
+      let have = (Tikibase {}).run_methods(
         &Version::from("0.6.2"),
         Platform {
           os: Os::MacOS,

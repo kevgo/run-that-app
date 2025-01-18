@@ -1,9 +1,9 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::installation::{self, Method};
 use crate::platform::Platform;
 use crate::prelude::*;
+use crate::run::Executable;
 use crate::Log;
 
 pub struct Deadcode {}
@@ -17,7 +17,7 @@ impl App for Deadcode {
     "https://pkg.go.dev/golang.org/x/tools/cmd/deadcode"
   }
 
-  fn install_methods(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
+  fn run_methods(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
     vec![Method::CompileGoSource {
       import_path: format!("golang.org/x/tools/cmd/deadcode@v{version}"),
     }]
@@ -54,7 +54,7 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    let have = (Deadcode {}).install_methods(
+    let have = (Deadcode {}).run_methods(
       &Version::from("0.16.1"),
       Platform {
         os: Os::Linux,

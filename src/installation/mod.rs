@@ -8,10 +8,10 @@ mod executable_in_another_app;
 
 use crate::applications::App;
 use crate::configuration::{self, Version};
-use crate::execution::Executable;
 use crate::logging::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
+use crate::run::Executable;
 use crate::yard::Yard;
 use std::fmt::Debug;
 use std::path::PathBuf;
@@ -45,9 +45,6 @@ pub enum Method {
     /// the executable path within the yard
     filepath: String,
   },
-
-  /// this application is shipped as part of another application
-  ExecutableInAnotherApp { other_app: Box<dyn App>, executable_path: String },
 }
 
 impl Method {
@@ -58,9 +55,6 @@ impl Method {
       Method::DownloadExecutable { url: _ } => yard.app_folder(&app.name(), version).join(app.executable_filename(platform)),
       Method::CompileGoSource { import_path: _ } => compile_go::executable_path(app, version, platform, yard),
       Method::CompileRustSource { crate_name: _, filepath } => compile_rust::executable_path(app, version, yard, filepath),
-      Method::ExecutableInAnotherApp { other_app, executable_path } => {
-        executable_in_another_app::executable_path(other_app.as_ref(), version, yard, executable_path)
-      }
     }
   }
 
@@ -69,10 +63,6 @@ impl Method {
       Method::DownloadArchive { url: _, path_in_archive: _ } => format!("download archive for {app}@{version}"),
       Method::DownloadExecutable { url: _ } => format!("download executable for {app}@{version}"),
       Method::CompileGoSource { import_path: _ } | Method::CompileRustSource { crate_name: _, filepath: _ } => format!("compile {app}@{version} from source"),
-      Method::ExecutableInAnotherApp {
-        other_app: app_to_install,
-        executable_path: _,
-      } => format!("install {app}@{version} through {carrier}", carrier = app_to_install.name()),
     }
   }
 }
@@ -92,11 +82,6 @@ impl Debug for Method {
         .debug_struct("CompileRustSource")
         .field("crate_name", crate_name)
         .field("filepath", filepath)
-        .finish(),
-      Self::ExecutableInAnotherApp { other_app, executable_path } => f
-        .debug_struct("ExecutableInAnotherApp")
-        .field("other_app", &other_app.name())
-        .field("executable_path", executable_path)
         .finish(),
     }
   }
@@ -128,16 +113,6 @@ impl PartialEq for Method {
           filepath: r_filepath,
         },
       ) => l_crate_name == r_crate_name && l_filepath == r_filepath,
-      (
-        Self::ExecutableInAnotherApp {
-          other_app: l_other_app,
-          executable_path: l_executable_path,
-        },
-        Self::ExecutableInAnotherApp {
-          other_app: r_other_app,
-          executable_path: r_executable_path,
-        },
-      ) => l_other_app.name() == r_other_app.name() && l_executable_path == r_executable_path,
       _ => false,
     }
   }
@@ -145,7 +120,7 @@ impl PartialEq for Method {
 
 /// installs the given app using the first of the given installation methods that works
 pub fn any(app: &dyn App, version: &Version, platform: Platform, optional: bool, yard: &Yard, config_file: &configuration::File, log: Log) -> Result<Outcome> {
-  for install_method in app.install_methods(version, platform) {
+  for install_method in app.run_methods(version, platform) {
     let outcome = install(app, &install_method, version, platform, optional, yard, config_file, log)?;
     if outcome.success() {
       return Ok(outcome);
@@ -173,10 +148,6 @@ pub fn install(
     Method::DownloadExecutable { url: download_url } => download_executable::run(app, download_url, version, platform, optional, yard, log),
     Method::CompileGoSource { import_path } => compile_go::run(app, import_path, platform, version, optional, config_file, yard, log),
     Method::CompileRustSource { crate_name, filepath } => compile_rust::run(app, crate_name, version, yard, filepath, log),
-    Method::ExecutableInAnotherApp {
-      other_app: app_to_install,
-      executable_path,
-    } => executable_in_another_app::install_other_app(app_to_install.as_ref(), version, platform, optional, yard, executable_path, config_file, log),
   }
 }
 

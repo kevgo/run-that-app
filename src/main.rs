@@ -5,7 +5,6 @@ mod commands;
 mod configuration;
 mod download;
 mod error;
-mod execution;
 mod filesystem;
 mod hosting;
 mod installation;
@@ -13,6 +12,7 @@ mod logging;
 mod platform;
 mod prelude;
 mod regexp;
+mod run;
 mod yard;
 
 use cli::Command;

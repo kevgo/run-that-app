@@ -1,3 +1,6 @@
+use crate::applications::App;
+use crate::installation;
+
 /// the different ways to execute an application
 pub enum Method {
   /// execute this app's default executable
@@ -12,6 +15,11 @@ pub enum Method {
     /// name of the executable to run
     executable_name: String,
   },
-  //   /// executes the default executable of another app with additional arguments
-  //   OtherAppDefaultExecutable { app: Box<dyn App>, args: Vec<String> },
+  /// executes the default executable of another app with additional arguments
+  OtherAppDefaultExecutable {
+    /// the other applications whose default executable to run
+    app: Box<dyn App>,
+    /// additional arguments when running the default executable of the given app
+    args: Vec<String>,
+  },
 }

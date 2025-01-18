@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
 use crate::installation::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
+use crate::run::Executable;
 use crate::{regexp, Log};
 use std::path;
 
@@ -22,7 +22,7 @@ impl App for Gh {
     "https://cli.github.com"
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "macOS",
@@ -86,7 +86,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      let have = (Gh {}).install_methods(
+      let have = (Gh {}).run_methods(
         &Version::from("2.39.1"),
         Platform {
           os: Os::Linux,

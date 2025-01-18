@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
 use crate::installation::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
+use crate::run::Executable;
 use crate::{regexp, Log};
 
 pub struct Dprint {}
@@ -21,7 +21,7 @@ impl App for Dprint {
     "https://dprint.dev"
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let cpu = match platform.cpu {
       Cpu::Arm64 => "aarch64",
       Cpu::Intel64 => "x86_64",
@@ -80,7 +80,7 @@ mod tests {
 
     #[test]
     fn macos_arm() {
-      let have = (Dprint {}).install_methods(
+      let have = (Dprint {}).run_methods(
         &Version::from("0.48.0"),
         Platform {
           os: Os::MacOS,
@@ -102,7 +102,7 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      let have = (Dprint {}).install_methods(
+      let have = (Dprint {}).run_methods(
         &Version::from("0.48.0"),
         Platform {
           os: Os::Linux,

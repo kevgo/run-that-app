@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_tags;
 use crate::installation::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
+use crate::run::Executable;
 use crate::{filesystem, regexp, Log};
 use big_s::S;
 use std::path;
@@ -23,7 +23,7 @@ impl App for Go {
     "https://go.dev"
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -118,7 +118,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      let have = (Go {}).install_methods(
+      let have = (Go {}).run_methods(
         &Version::from("1.21.5"),
         Platform {
           os: Os::MacOS,

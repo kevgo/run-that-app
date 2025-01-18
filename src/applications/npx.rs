@@ -1,10 +1,10 @@
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::installation::{self, Method};
 use crate::platform::Platform;
 use crate::prelude::*;
+use crate::run::Executable;
 use crate::{applications, Log};
 use std::path;
 
@@ -19,7 +19,7 @@ impl App for Npx {
     "https://www.npmjs.com"
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = applications::nodejs::os_text(platform.os);
     let cpu = applications::nodejs::cpu_text(platform.cpu);
     let sep = path::MAIN_SEPARATOR;
@@ -67,7 +67,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      let have = (Npx {}).install_methods(
+      let have = (Npx {}).run_methods(
         &Version::from("20.10.0"),
         Platform {
           os: Os::MacOS,

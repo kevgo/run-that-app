@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
 use crate::installation::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
+use crate::run::Executable;
 use crate::{regexp, Log};
 use const_format::formatcp;
 
@@ -22,7 +22,7 @@ impl App for Gofumpt {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -84,7 +84,7 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      let have = (Gofumpt {}).install_methods(
+      let have = (Gofumpt {}).run_methods(
         &Version::from("0.5.0"),
         Platform {
           os: Os::MacOS,
@@ -104,7 +104,7 @@ mod tests {
 
     #[test]
     fn windows_intel() {
-      let have = (Gofumpt {}).install_methods(
+      let have = (Gofumpt {}).run_methods(
         &Version::from("0.5.0"),
         Platform {
           os: Os::Windows,

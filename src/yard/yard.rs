@@ -1,7 +1,7 @@
 use super::root_path;
 use crate::applications::App;
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
+use crate::run::Executable;
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
@@ -73,7 +73,7 @@ impl Yard {
 
   /// tries to load the executable of the given app from the yard
   pub fn load_executable(&self, app: &dyn App, version: &Version, platform: Platform, log: Log) -> Option<Executable> {
-    for installation_method in app.install_methods(version, platform) {
+    for installation_method in app.run_methods(version, platform) {
       let fullpath = installation_method.executable_location(app, version, platform, self);
       log(Event::YardCheckExistingAppBegin { path: &fullpath });
       if fullpath.exists() {

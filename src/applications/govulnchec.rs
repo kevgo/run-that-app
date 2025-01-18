@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
+use crate::run::Executable;
 use crate::installation::{self, Method};
 use crate::platform::Platform;
 use crate::prelude::*;
@@ -17,7 +17,7 @@ impl App for Govulncheck {
     "https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck"
   }
 
-  fn install_methods(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
+  fn run_methods(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
     vec![Method::CompileGoSource {
       import_path: format!("golang.org/x/vuln/cmd/govulncheck@v{version}"),
     }]
@@ -54,7 +54,7 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    let have = (Govulncheck {}).install_methods(
+    let have = (Govulncheck {}).run_methods(
       &Version::from("1.1.4"),
       Platform {
         os: Os::MacOS,

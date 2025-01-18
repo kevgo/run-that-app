@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
 use crate::installation::{self, Method};
 use crate::platform::Platform;
 use crate::prelude::*;
+use crate::run::Executable;
 use crate::Log;
 use const_format::formatcp;
 
@@ -22,7 +22,7 @@ impl App for Goda {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
+  fn run_methods(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
     vec![Method::CompileGoSource {
       import_path: format!("github.com/{ORG}/{REPO}@v{version}"),
     }]
@@ -58,7 +58,7 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    let have = (Goda {}).install_methods(
+    let have = (Goda {}).run_methods(
       &Version::from("0.5.9"),
       Platform {
         os: Os::MacOS,

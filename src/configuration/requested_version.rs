@@ -71,7 +71,7 @@ mod tests {
   mod parse {
     use crate::applications::{AnalyzeResult, App};
     use crate::configuration::Version;
-    use crate::execution::Executable;
+    use crate::run::Executable;
     use crate::installation;
     use crate::logging::Log;
     use crate::platform::Platform;
@@ -104,7 +104,7 @@ mod tests {
       fn analyze_executable(&self, _path: &Executable, _log: Log) -> Result<AnalyzeResult> {
         unimplemented!()
       }
-      fn install_methods(&self, _version: &Version, _platform: Platform) -> Vec<installation::Method> {
+      fn run_methods(&self, _version: &Version, _platform: Platform) -> Vec<installation::Method> {
         unimplemented!()
       }
     }

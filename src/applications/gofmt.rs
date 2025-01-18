@@ -1,11 +1,11 @@
 use super::go::Go;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::installation::Method;
 use crate::platform::Platform;
-use crate::prelude::*;
+use crate::run::Executable;
 use crate::{installation, Log};
+use crate::{prelude::*, run};
 use std::path;
 
 pub struct Gofmt {}
@@ -19,10 +19,10 @@ impl App for Gofmt {
     "https://go.dev"
   }
 
-  fn install_methods(&self, _version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_methods(&self, _version: &Version, platform: Platform) -> Vec<installation::Method> {
     let sep = path::MAIN_SEPARATOR;
     let filename = &self.executable_filename(platform);
-    vec![Method::ExecutableInAnotherApp {
+    vec![run::Method::ExecutableInAnotherApp {
       other_app: Box::new(app_to_install()),
       executable_path: format!("go{sep}bin{sep}{filename}"),
     }]
@@ -65,7 +65,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn macos() {
-      let have = (Gofmt {}).install_methods(
+      let have = (Gofmt {}).run_methods(
         &Version::from("1.23.4"),
         Platform {
           os: Os::MacOS,

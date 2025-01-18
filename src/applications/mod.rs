@@ -29,10 +29,10 @@ mod staticcheck;
 mod tikibase;
 
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::{installation, Log};
+use crate::run::{self, Executable};
+use crate::Log;
 use std::slice::Iter;
 
 pub trait App {
@@ -45,11 +45,11 @@ pub trait App {
     format!("{bare}{ext}", ext = platform.os.executable_extension())
   }
 
+  /// the various ways to install and run this application
+  fn run_methods(&self, version: &Version, platform: Platform) -> run::Method;
+
   /// link to the (human-readable) homepage of the app
   fn homepage(&self) -> &'static str;
-
-  /// the various ways to install this application
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method>;
 
   /// provides the versions of this application that can be installed
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>>;

@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
 use crate::installation::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
+use crate::run::Executable;
 use crate::{regexp, Log};
 use std::path;
 
@@ -22,7 +22,7 @@ impl App for NodeJS {
     "https://nodejs.org"
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = os_text(platform.os);
     let cpu = cpu_text(platform.cpu);
     let ext = ext_text(platform.os);
@@ -99,7 +99,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      let have = (NodeJS {}).install_methods(
+      let have = (NodeJS {}).run_methods(
         &Version::from("20.10.0"),
         Platform {
           os: Os::MacOS,

@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
+use crate::run::Executable;
 use crate::hosting::github_releases;
 use crate::installation::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
@@ -21,7 +21,7 @@ impl App for Goreleaser {
     "https://goreleaser.com"
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = match platform.os {
       Os::Linux => "Linux",
       Os::MacOS => "Darwin",
@@ -80,7 +80,7 @@ mod tests {
     fn linux_arm() {
       use crate::applications::goreleaser::Goreleaser;
 
-      let have = (Goreleaser {}).install_methods(
+      let have = (Goreleaser {}).run_methods(
         &Version::from("1.22.1"),
         Platform {
           os: Os::MacOS,

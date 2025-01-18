@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
 use crate::installation::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
+use crate::run::Executable;
 use crate::Log;
 use const_format::formatcp;
 
@@ -22,7 +22,7 @@ impl App for Ghokin {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let cpu = match platform.cpu {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "amd64",
@@ -73,7 +73,7 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      let have = (Ghokin {}).install_methods(
+      let have = (Ghokin {}).run_methods(
         &Version::from("3.4.1"),
         Platform {
           os: Os::MacOS,
@@ -94,7 +94,7 @@ mod tests {
 
     #[test]
     fn windows_intel() {
-      let have = (Ghokin {}).install_methods(
+      let have = (Ghokin {}).run_methods(
         &Version::from("3.7.0"),
         Platform {
           os: Os::Windows,

@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_tags;
 use crate::installation::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
+use crate::run::Executable;
 use crate::Log;
 use const_format::formatcp;
 
@@ -30,7 +30,7 @@ impl App for NodePrune {
     Ok(Version::from(tag))
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -77,7 +77,7 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      let have = (NodePrune {}).install_methods(
+      let have = (NodePrune {}).run_methods(
         &Version::from("1.0.1"),
         Platform {
           os: Os::Linux,
@@ -97,7 +97,7 @@ mod tests {
 
     #[test]
     fn windows_intel() {
-      let have = (NodePrune {}).install_methods(
+      let have = (NodePrune {}).run_methods(
         &Version::from("1.0.1"),
         Platform {
           os: Os::Windows,

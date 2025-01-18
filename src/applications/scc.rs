@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
 use crate::installation::{self, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
+use crate::run::Executable;
 use crate::{regexp, Log};
 use const_format::formatcp;
 
@@ -22,7 +22,7 @@ impl App for Scc {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = match platform.os {
       Os::Linux => "Linux",
       Os::MacOS => "Darwin",
@@ -81,7 +81,7 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      let have = (Scc {}).install_methods(
+      let have = (Scc {}).run_methods(
         &Version::from("3.2.0"),
         Platform {
           os: Os::MacOS,
@@ -102,7 +102,7 @@ mod tests {
 
     #[test]
     fn windows_intel() {
-      let have = (Scc {}).install_methods(
+      let have = (Scc {}).run_methods(
         &Version::from("3.2.0"),
         Platform {
           os: Os::Windows,

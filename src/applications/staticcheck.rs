@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
+use crate::run::Executable;
 use crate::{installation, Log};
 
 const ORG: &str = "dominikh";
@@ -21,7 +21,7 @@ impl App for StaticCheck {
     "https://staticcheck.dev"
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -72,7 +72,7 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      let have = (StaticCheck {}).install_methods(
+      let have = (StaticCheck {}).run_methods(
         &Version::from("3.7.0"),
         Platform {
           os: Os::MacOS,
@@ -93,7 +93,7 @@ mod tests {
 
     #[test]
     fn windows_intel() {
-      let have = (StaticCheck {}).install_methods(
+      let have = (StaticCheck {}).run_methods(
         &Version::from("3.7.0"),
         Platform {
           os: Os::Windows,

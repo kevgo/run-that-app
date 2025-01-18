@@ -3,7 +3,7 @@ use crate::applications::App;
 use crate::commands::run::load_or_install;
 use crate::configuration;
 use crate::configuration::{RequestedVersion, Version};
-use crate::execution::Executable;
+use crate::run::Executable;
 use crate::logging::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
