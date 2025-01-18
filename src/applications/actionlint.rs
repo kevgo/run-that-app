@@ -44,7 +44,7 @@ impl App for ActionLint {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}"),
-          path_in_archive: self.executable_filename(platform),
+          paths_in_archive: self.executable_filename(platform),
         },
         Method::CompileGoSource {
           import_path: format!("github.com/{ORG}/{REPO}/cmd/actionlint@v{version}"),
@@ -104,7 +104,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_linux_arm64.tar.gz"),
-            path_in_archive: S("actionlint"),
+            paths_in_archive: S("actionlint"),
           },
           Method::CompileGoSource {
             import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.6.26"),
@@ -127,7 +127,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_windows_amd64.zip"),
-            path_in_archive: S("actionlint.exe"),
+            paths_in_archive: S("actionlint.exe"),
           },
           Method::CompileGoSource {
             import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.6.26"),

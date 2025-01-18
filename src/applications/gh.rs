@@ -41,7 +41,7 @@ impl App for Gh {
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}"),
-        path_in_archive: match platform.os {
+        paths_in_archive: match platform.os {
           Os::Windows => format!("bin{sep}{filename}"),
           Os::Linux | Os::MacOS => format!("gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}"),
         },
@@ -104,7 +104,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz"),
-          path_in_archive: S("gh_2.39.1_linux_arm64/bin/gh"),
+          paths_in_archive: S("gh_2.39.1_linux_arm64/bin/gh"),
         }],
       };
       assert_eq!(have, want);

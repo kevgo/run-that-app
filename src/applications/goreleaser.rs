@@ -38,7 +38,7 @@ impl App for Goreleaser {
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}"),
-        path_in_archive: self.executable_filename(platform),
+        paths_in_archive: self.executable_filename(platform),
       }],
     }
   }
@@ -97,7 +97,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz"),
-          path_in_archive: S("goreleaser"),
+          paths_in_archive: S("goreleaser"),
         }],
       };
       assert_eq!(have, want);

@@ -31,7 +31,7 @@ impl App for NodeJS {
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",),
-        path_in_archive: match platform.os {
+        paths_in_archive: match platform.os {
           Os::Windows => format!("node-v{version}-{os}-{cpu}{sep}{filename}"),
           Os::Linux | Os::MacOS => format!("node-v{version}-{os}-{cpu}{sep}bin{sep}{filename}"),
         },
@@ -117,7 +117,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz"),
-          path_in_archive: S("node-v20.10.0-darwin-arm64/bin/node"),
+          paths_in_archive: S("node-v20.10.0-darwin-arm64/bin/node"),
         }],
       };
       assert_eq!(have, want);

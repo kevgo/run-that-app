@@ -6,7 +6,7 @@ mod download_archive;
 mod download_executable;
 mod executable_in_another_app;
 
-use crate::applications::App;
+use crate::applications::{App, AppAndExecutable};
 use crate::configuration::{self, Version};
 use crate::logging::Log;
 use crate::platform::Platform;
@@ -22,8 +22,8 @@ pub enum Method {
   DownloadArchive {
     /// the URL of the archive to download
     url: String,
-    /// relative path of the executable inside the archive
-    path_in_archive: String,
+    /// the folder within the archive that contains the executable files
+    bin_folder: Option<String>,
   },
 
   /// installs the application by downloading the pre-compiled executable from the internet
@@ -49,10 +49,21 @@ pub enum Method {
 
 impl Method {
   /// provides the location of this app's executable within its yard
-  pub fn executable_location(&self, app: &dyn App, version: &Version, platform: Platform, yard: &Yard) -> PathBuf {
+  pub fn executable_location(&self, app_and_executable: AppAndExecutable, version: &Version, platform: Platform, yard: &Yard) -> PathBuf {
     match self {
-      Method::DownloadArchive { url: _, path_in_archive } => yard.app_folder(&app.name(), version).join(path_in_archive),
-      Method::DownloadExecutable { url: _ } => yard.app_folder(&app.name(), version).join(app.executable_filename(platform)),
+      Method::DownloadArchive { url: _, bin_folder: None } => yard
+        .app_folder(&app_and_executable.app.name(), version)
+        .join(app_and_executable.executable_name),
+      Method::DownloadArchive {
+        url: _,
+        bin_folder: Some(bin_folder),
+      } => yard
+        .app_folder(&app_and_executable.app.name(), version)
+        .join(bin_folder)
+        .join(app_and_executable.executable_name),
+      Method::DownloadExecutable { url: _ } => yard
+        .app_folder(&app_and_executable.app.name(), version)
+        .join(app_and_executable.app.executable_filename(platform)),
       Method::CompileGoSource { import_path: _ } => compile_go::executable_path(app, version, platform, yard),
       Method::CompileRustSource { crate_name: _, filepath } => compile_rust::executable_path(app, version, yard, filepath),
     }
@@ -60,7 +71,7 @@ impl Method {
 
   pub fn name(&self, app: &str, version: &Version) -> String {
     match self {
-      Method::DownloadArchive { url: _, path_in_archive: _ } => format!("download archive for {app}@{version}"),
+      Method::DownloadArchive { url: _, paths_in_archive: _ } => format!("download archive for {app}@{version}"),
       Method::DownloadExecutable { url: _ } => format!("download executable for {app}@{version}"),
       Method::CompileGoSource { import_path: _ } | Method::CompileRustSource { crate_name: _, filepath: _ } => format!("compile {app}@{version} from source"),
     }
@@ -71,7 +82,10 @@ impl Method {
 impl Debug for Method {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     match self {
-      Self::DownloadArchive { url, path_in_archive } => f
+      Self::DownloadArchive {
+        url,
+        paths_in_archive: path_in_archive,
+      } => f
         .debug_struct("DownloadArchive")
         .field("url", url)
         .field("path_in_archive", path_in_archive)
@@ -94,11 +108,11 @@ impl PartialEq for Method {
       (
         Self::DownloadArchive {
           url: l_url,
-          path_in_archive: l_path_in_archive,
+          paths_in_archive: l_path_in_archive,
         },
         Self::DownloadArchive {
           url: r_url,
-          path_in_archive: r_path_in_archive,
+          paths_in_archive: r_path_in_archive,
         },
       ) => l_url == r_url && l_path_in_archive == r_path_in_archive,
       (Self::DownloadExecutable { url: l_url }, Self::DownloadExecutable { url: r_url }) => l_url == r_url,
@@ -143,7 +157,7 @@ pub fn install(
   match install_method {
     Method::DownloadArchive {
       url: archive_url,
-      path_in_archive,
+      paths_in_archive: path_in_archive,
     } => download_archive::run(app, version, archive_url, path_in_archive, optional, yard, log),
     Method::DownloadExecutable { url: download_url } => download_executable::run(app, download_url, version, platform, optional, yard, log),
     Method::CompileGoSource { import_path } => compile_go::run(app, import_path, platform, version, optional, config_file, yard, log),

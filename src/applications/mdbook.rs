@@ -41,7 +41,7 @@ impl App for MdBook {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-v{version}-{cpu}-{os}.{ext}"),
-          path_in_archive: self.executable_filename(platform),
+          paths_in_archive: self.executable_filename(platform),
         },
         Method::CompileRustSource {
           crate_name: "mdbook",
@@ -107,7 +107,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz"),
-            path_in_archive: S("mdbook"),
+            paths_in_archive: S("mdbook"),
           },
           Method::CompileRustSource {
             crate_name: "mdbook",

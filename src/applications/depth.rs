@@ -1,5 +1,3 @@
-use std::fmt::Debug;
-
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;

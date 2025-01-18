@@ -41,8 +41,7 @@ pub trait App {
 
   /// the filename of the executable that starts this app
   fn executable_filename(&self, platform: Platform) -> String {
-    let bare = self.name().to_string();
-    format!("{bare}{ext}", ext = platform.os.executable_extension())
+    format!("{bare}{ext}", bare = self.name(), ext = platform.os.executable_extension())
   }
 
   /// the various ways to install and run this application
@@ -82,25 +81,28 @@ pub fn app_and_executable(app: &dyn App, version: &Version, platform: Platform) 
   match app.run_method(version, platform) {
     run::Method::ThisApp { install_methods: _ } => AppAndExecutable {
       app: app.clone(),
-      executable: app_executable_filename,
+      executable_name: app_executable_filename,
     },
     run::Method::OtherAppOtherExecutable { app, executable_name } => AppAndExecutable {
       app: app,
-      executable: executable_name.to_string(),
+      executable_name: executable_name.to_string(),
     },
     run::Method::OtherAppDefaultExecutable { app, args: _ } => {
       let app_executable_file = app.executable_filename(platform);
       AppAndExecutable {
         app: app,
-        executable: app_executable_file,
+        executable_name: app_executable_file,
       }
     }
   }
 }
 
+/// represents the request to execute a particular executable provided by a particular app
 pub struct AppAndExecutable {
-  app: Box<dyn App>,
-  executable: String,
+  /// the app that contains the executable
+  pub app: Box<dyn App>,
+  /// name of the executable to run
+  pub executable_name: String,
 }
 
 pub enum AnalyzeResult {

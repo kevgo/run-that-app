@@ -36,7 +36,7 @@ impl App for Scc {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/scc_{os}_{cpu}.tar.gz"),
-          path_in_archive: self.executable_filename(platform),
+          paths_in_archive: self.executable_filename(platform),
         },
         Method::CompileGoSource {
           import_path: format!("github.com/{ORG}/{REPO}/v3@v{version}"),
@@ -99,7 +99,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/boyter/scc/releases/download/v3.2.0/scc_Darwin_arm64.tar.gz"),
-            path_in_archive: S("scc"),
+            paths_in_archive: S("scc"),
           },
           Method::CompileGoSource {
             import_path: S("github.com/boyter/scc/v3@v3.2.0"),
@@ -122,7 +122,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/boyter/scc/releases/download/v3.2.0/scc_Windows_x86_64.tar.gz"),
-            path_in_archive: S("scc.exe"),
+            paths_in_archive: S("scc.exe"),
           },
           Method::CompileGoSource {
             import_path: S("github.com/boyter/scc/v3@v3.2.0"),

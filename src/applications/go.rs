@@ -43,7 +43,7 @@ impl App for Go {
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}"),
-        path_in_archive: format!("go{sep}bin{sep}{file}"),
+        paths_in_archive: format!("go{sep}bin{sep}{file}"),
       }],
     }
   }
@@ -136,7 +136,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz"),
-          path_in_archive: S("go/bin/go"),
+          paths_in_archive: S("go/bin/go"),
         }],
       };
       assert_eq!(have, want);

@@ -35,12 +35,14 @@ impl App for ShellCheck {
       Os::Linux | Os::MacOS => "tar.xz",
       Os::Windows => "zip",
     };
-    let sep = std::path::MAIN_SEPARATOR;
-    let executable = self.executable_filename(platform);
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}"),
-        path_in_archive: format!("shellcheck-v{version}{sep}{executable}"),
+        paths_in_archive: Box::new(|executable, platform, version| match (executable, platform.os) {
+          ("shellcheck", Os::Windows) => Some(format!("shellcheck-v{version}\\shellcheck.exe")),
+          ("shellcheck", _) => Some(format!("shellcheck-v{version}/shellcheck")),
+          _ => None,
+        }),
       }],
     }
   }
@@ -81,7 +83,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::applications::shellcheck::ShellCheck;
+      use crate::applications::shellcheck::{path_in_archive, ShellCheck};
       use crate::applications::App;
       use crate::configuration::Version;
       use crate::installation::Method;
@@ -99,7 +101,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.linux.x86_64.tar.xz"),
-          path_in_archive: S("shellcheck-v0.9.0/shellcheck"),
+          paths_in_archive: path_in_archive,
         }],
       };
       assert_eq!(have, want);
@@ -108,7 +110,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn macos_arm() {
-      use crate::applications::shellcheck::ShellCheck;
+      use crate::applications::shellcheck::{path_in_archive, ShellCheck};
       use crate::applications::App;
       use crate::configuration::Version;
       use crate::installation::Method;
@@ -126,7 +128,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.darwin.aarch64.tar.xz"),
-          path_in_archive: S("shellcheck-v0.10.0/shellcheck"),
+          paths_in_archive: path_in_archive,
         }],
       };
       assert_eq!(have, want);
