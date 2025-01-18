@@ -1,8 +1,8 @@
 use crate::applications::AnalyzeResult;
 use crate::configuration::{self, ApplicationName};
-use crate::run::Executable;
 use crate::logging::Event;
 use crate::prelude::*;
+use crate::run::Executable;
 use crate::yard::Yard;
 use crate::{applications, installation, logging, platform};
 use colored::Colorize;
@@ -26,7 +26,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
     log(Event::IntegrationTestNewApp { app: &app.name() });
     let latest_version = app.latest_installable_version(log)?;
     log(Event::IntegrationTestDeterminedVersion { version: &latest_version });
-    for install_method in app.run_method(&latest_version, platform) {
+    for install_method in app.run_method(&latest_version, platform).install_methods() {
       log(Event::IntegrationTestNewInstallMethod {
         app: app.name().as_str(),
         method: &install_method,

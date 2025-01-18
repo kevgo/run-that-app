@@ -24,6 +24,15 @@ pub enum Method {
   },
 }
 
+impl Method {
+  pub fn install_methods(self) -> Vec<installation::Method> {
+    match self {
+      Method::ThisApp { install_methods } => install_methods,
+      Method::OtherAppOtherExecutable { app: _, executable_name: _ } | Method::OtherAppDefaultExecutable { app: _, args: _ } => vec![],
+    }
+  }
+}
+
 impl std::fmt::Debug for Method {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     match self {
