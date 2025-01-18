@@ -41,7 +41,7 @@ pub trait App {
 
   /// the filename of the executable that starts this app
   fn executable_filename(&self, platform: Platform) -> String {
-    format!("{bare}{ext}", bare = self.name(), ext = platform.os.executable_extension())
+    format!("{name}{ext}", name = self.name(), ext = platform.os.executable_extension())
   }
 
   /// link to the (human-readable) homepage of the app
