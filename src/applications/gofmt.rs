@@ -1,12 +1,10 @@
 use super::go::Go;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::installation::Method;
 use crate::platform::Platform;
 use crate::run::Executable;
-use crate::{installation, Log};
+use crate::Log;
 use crate::{prelude::*, run};
-use std::path;
 
 pub struct Gofmt {}
 
@@ -19,13 +17,11 @@ impl App for Gofmt {
     "https://go.dev"
   }
 
-  fn run_method(&self, _version: &Version, platform: Platform) -> Vec<installation::Method> {
-    let sep = path::MAIN_SEPARATOR;
-    let filename = &self.executable_filename(platform);
-    vec![run::Method::ExecutableInAnotherApp {
-      other_app: Box::new(app_to_install()),
-      executable_path: format!("go{sep}bin{sep}{filename}"),
-    }]
+  fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
+    run::Method::OtherAppOtherExecutable {
+      app: Box::new(app_to_install()),
+      executable_name: "gofmt",
+    }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -58,13 +54,13 @@ mod tests {
     use crate::applications::gofmt::Gofmt;
     use crate::applications::App;
     use crate::configuration::Version;
-    use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
-    use big_s::S;
 
     #[test]
     #[cfg(unix)]
     fn macos() {
+      use crate::run;
+
       let have = (Gofmt {}).run_method(
         &Version::from("1.23.4"),
         Platform {
@@ -72,10 +68,10 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![Method::ExecutableInAnotherApp {
-        other_app: Box::new(Go {}),
-        executable_path: S("go/bin/gofmt"),
-      }];
+      let want = run::Method::OtherAppOtherExecutable {
+        app: Box::new(Go {}),
+        executable_name: "gofmt",
+      };
       assert_eq!(have, want);
     }
 

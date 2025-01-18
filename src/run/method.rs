@@ -13,7 +13,7 @@ pub enum Method {
     /// the other application that contains the executable
     app: Box<dyn App>,
     /// name of the executable to run
-    executable_name: String,
+    executable_name: &'static str,
   },
   /// executes the default executable of another app with additional arguments
   OtherAppDefaultExecutable {
