@@ -74,6 +74,23 @@ pub trait App {
   }
 }
 
+/// provides the app that contains the executable for this app, and the name of the executable
+pub fn app_and_executable(app: Box<dyn App>, version: &Version, platform: Platform) -> AppAndExecutable {
+  match app.run_method(version, platform) {
+    run::Method::ThisApp { install_methods: _ } => AppAndExecutable {
+      app,
+      executable: app.executable_filename(platform),
+    },
+    run::Method::OtherAppOtherExecutable { app, executable_name: _ } => app,
+    run::Method::OtherAppDefaultExecutable { app, args: _ } => app,
+  }
+}
+
+pub struct AppAndExecutable {
+  app: Box<dyn App>,
+  executable: &'static str,
+}
+
 pub enum AnalyzeResult {
   /// the given executable does not belong to this app
   NotIdentified { output: String },

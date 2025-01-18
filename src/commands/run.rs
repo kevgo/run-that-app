@@ -1,4 +1,4 @@
-use crate::applications::{AnalyzeResult, App};
+use crate::applications::{app_and_executable, AnalyzeResult, App};
 use crate::configuration::{self, ApplicationName, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
@@ -107,7 +107,7 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
 }
 
 fn load_or_install_from_yard(
-  app: &dyn App,
+  app: Box<dyn App>,
   version: &Version,
   platform: Platform,
   optional: bool,
@@ -115,19 +115,22 @@ fn load_or_install_from_yard(
   config_file: &configuration::File,
   log: Log,
 ) -> Result<Option<Executable>> {
+  // determine the carrier app
+  let app_name = app.name();
+  let carrier = app_and_executable(app, version, platform);
   // try to load the app
-  if let Some(executable) = yard.load_executable(app, version, platform, log) {
+  if let Some(executable) = yard.load_executable(app.as_ref(), version, platform, log) {
     return Ok(Some(executable));
   }
   // app not installed --> check if uninstallable
-  if yard.is_not_installable(&app.name(), version) {
+  if yard.is_not_installable(&app_name, version) {
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  if let Outcome::Installed { executable } = installation::any(app, version, platform, optional, yard, config_file, log)? {
+  if let Outcome::Installed { executable } = installation::any(app.as_ref(), version, platform, optional, yard, config_file, log)? {
     return Ok(Some(executable));
   }
   // app could not be installed -> mark as uninstallable
-  yard.mark_not_installable(&app.name(), version)?;
+  yard.mark_not_installable(&app_name, version)?;
   Ok(None)
 }
