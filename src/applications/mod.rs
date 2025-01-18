@@ -41,7 +41,7 @@ pub trait App {
 
   /// the filename of the executable that starts this app
   fn executable_filename(&self, platform: Platform) -> String {
-    format!("{bare}{ext}", bare = self.name(), ext = platform.os.executable_extension())
+    format!("{name}{ext}", name = self.name(), ext = platform.os.executable_extension())
   }
 
   /// the various ways to install and run this application
