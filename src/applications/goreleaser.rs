@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::run::Executable;
 use crate::hosting::github_releases;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
+use crate::run::{self, Executable};
 use crate::{regexp, Log};
 
 pub struct Goreleaser {}
@@ -21,7 +21,7 @@ impl App for Goreleaser {
     "https://goreleaser.com"
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let os = match platform.os {
       Os::Linux => "Linux",
       Os::MacOS => "Darwin",
@@ -35,10 +35,12 @@ impl App for Goreleaser {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    vec![Method::DownloadArchive {
-      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}"),
-      path_in_archive: self.executable_filename(platform),
-    }]
+    run::Method::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}"),
+        path_in_archive: self.executable_filename(platform),
+      }],
+    }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -79,6 +81,7 @@ mod tests {
     #[cfg(unix)]
     fn linux_arm() {
       use crate::applications::goreleaser::Goreleaser;
+      use crate::run;
 
       let have = (Goreleaser {}).run_method(
         &Version::from("1.22.1"),
@@ -87,10 +90,12 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz"),
-        path_in_archive: S("goreleaser"),
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz"),
+          path_in_archive: S("goreleaser"),
+        }],
+      };
       assert_eq!(have, want);
     }
 

@@ -1,9 +1,9 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::run::Executable;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::Platform;
 use crate::prelude::*;
+use crate::run::{self, Executable};
 use crate::Log;
 
 pub struct Govulncheck {}
@@ -17,10 +17,12 @@ impl App for Govulncheck {
     "https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck"
   }
 
-  fn run_method(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
-    vec![Method::CompileGoSource {
-      import_path: format!("golang.org/x/vuln/cmd/govulncheck@v{version}"),
-    }]
+  fn run_method(&self, version: &Version, _platform: Platform) -> run::Method {
+    run::Method::ThisApp {
+      install_methods: vec![Method::CompileGoSource {
+        import_path: format!("golang.org/x/vuln/cmd/govulncheck@v{version}"),
+      }],
+    }
   }
 
   fn latest_installable_version(&self, _log: Log) -> Result<Version> {
@@ -44,6 +46,7 @@ impl App for Govulncheck {
 
 #[cfg(test)]
 mod tests {
+  use crate::run;
 
   #[test]
   fn install_methods() {
@@ -61,9 +64,11 @@ mod tests {
         cpu: Cpu::Arm64,
       },
     );
-    let want = vec![Method::CompileGoSource {
-      import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
-    }];
+    let want = run::Method::ThisApp {
+      install_methods: vec![Method::CompileGoSource {
+        import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
+      }],
+    };
     assert_eq!(have, want);
   }
 }
