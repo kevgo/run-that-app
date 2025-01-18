@@ -8,10 +8,10 @@ mod executable_in_another_app;
 
 use crate::applications::App;
 use crate::configuration::{self, Version};
+use crate::execution::Executable;
 use crate::logging::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::subshell::Executable;
 use crate::yard::Yard;
 use std::fmt::Debug;
 use std::path::PathBuf;

@@ -1,9 +1,9 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
+use crate::execution::Executable;
 use crate::installation::{self, Method};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::subshell::Executable;
 use crate::Log;
 
 pub struct Govulncheck {}

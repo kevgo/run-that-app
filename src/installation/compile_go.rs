@@ -1,10 +1,10 @@
 use super::Outcome;
 use crate::applications::{self, App};
 use crate::configuration::{RequestedVersion, RequestedVersions, Version};
+use crate::execution::Executable;
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::subshell::Executable;
 use crate::yard::Yard;
 use crate::{commands, configuration};
 use std::io::ErrorKind;

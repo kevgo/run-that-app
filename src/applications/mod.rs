@@ -29,9 +29,9 @@ mod staticcheck;
 mod tikibase;
 
 use crate::configuration::{ApplicationName, Version};
+use crate::execution::Executable;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::subshell::Executable;
 use crate::{installation, Log};
 use std::slice::Iter;
 

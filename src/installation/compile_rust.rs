@@ -1,9 +1,9 @@
 use super::Outcome;
 use crate::applications::App;
 use crate::configuration::Version;
+use crate::execution::Executable;
 use crate::logging::{Event, Log};
 use crate::prelude::*;
-use crate::subshell::Executable;
 use crate::yard::Yard;
 use std::io::ErrorKind;
 use std::path::PathBuf;
