@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
-use crate::prelude::*;
 use crate::run::Executable;
+use crate::{prelude::*, run};
 use crate::{regexp, Log};
 use const_format::formatcp;
 
@@ -22,7 +22,7 @@ impl App for Gofumpt {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -36,14 +36,16 @@ impl App for Gofumpt {
       Os::Windows => ".exe",
       Os::Linux | Os::MacOS => "",
     };
-    vec![
-      Method::DownloadExecutable {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}{ext}"),
-      },
-      Method::CompileGoSource {
-        import_path: format!("mvdan.cc/gofumpt@v{version}"),
-      },
-    ]
+    run::Method::ThisApp {
+      install_methods: vec![
+        Method::DownloadExecutable {
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}{ext}"),
+        },
+        Method::CompileGoSource {
+          import_path: format!("mvdan.cc/gofumpt@v{version}"),
+        },
+      ],
+    }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
@@ -80,6 +82,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
@@ -91,14 +94,16 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = vec![
-        Method::DownloadExecutable {
-          url: S("https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_darwin_arm64"),
-        },
-        Method::CompileGoSource {
-          import_path: S("mvdan.cc/gofumpt@v0.5.0"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: S("https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_darwin_arm64"),
+          },
+          Method::CompileGoSource {
+            import_path: S("mvdan.cc/gofumpt@v0.5.0"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
 
@@ -111,14 +116,16 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![
-        Method::DownloadExecutable {
-          url: S("https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_windows_amd64.exe"),
-        },
-        Method::CompileGoSource {
-          import_path: S("mvdan.cc/gofumpt@v0.5.0"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: S("https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_windows_amd64.exe"),
+          },
+          Method::CompileGoSource {
+            import_path: S("mvdan.cc/gofumpt@v0.5.0"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
   }
