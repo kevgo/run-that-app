@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
-use crate::prelude::*;
 use crate::run::Executable;
+use crate::{prelude::*, run};
 use crate::{regexp, Log};
 use const_format::formatcp;
 
@@ -22,7 +22,7 @@ impl App for Tikibase {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let cpu = match platform.cpu {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "intel64",
@@ -36,10 +36,12 @@ impl App for Tikibase {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    vec![Method::DownloadArchive {
-      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/tikibase_{os}_{cpu}.{ext}"),
-      path_in_archive: self.executable_filename(platform),
-    }]
+    run::Method::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/tikibase_{os}_{cpu}.{ext}"),
+        path_in_archive: self.executable_filename(platform),
+      }],
+    }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
@@ -81,6 +83,8 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
+      use crate::run;
+
       let have = (Tikibase {}).run_method(
         &Version::from("0.6.2"),
         Platform {
@@ -88,10 +92,12 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_macos_arm64.tar.gz"),
-        path_in_archive: S("tikibase"),
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_macos_arm64.tar.gz"),
+          path_in_archive: S("tikibase"),
+        }],
+      };
       assert_eq!(have, want);
     }
 
