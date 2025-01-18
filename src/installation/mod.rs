@@ -22,8 +22,10 @@ pub enum Method {
   DownloadArchive {
     /// the URL of the archive to download
     url: String,
-    /// the folder within the archive that contains the executable files
-    bin_folder: Option<String>,
+    /// The folders within the archive that might contain executable files.
+    /// Provide all possible folders here, they will be tried until the executable is found.
+    /// Leave this empty if the executables are in the root folder of the archive.
+    bin_folders: Vec<String>,
   },
 
   /// installs the application by downloading the pre-compiled executable from the internet
@@ -51,12 +53,12 @@ impl Method {
   /// provides the location of this app's executable within its yard
   pub fn executable_location(&self, app_and_executable: AppAndExecutable, version: &Version, platform: Platform, yard: &Yard) -> PathBuf {
     match self {
-      Method::DownloadArchive { url: _, bin_folder: None } => yard
+      Method::DownloadArchive { url: _, bin_folders: None } => yard
         .app_folder(&app_and_executable.app.name(), version)
         .join(app_and_executable.executable_name),
       Method::DownloadArchive {
         url: _,
-        bin_folder: Some(bin_folder),
+        bin_folders: Some(bin_folder),
       } => yard
         .app_folder(&app_and_executable.app.name(), version)
         .join(bin_folder)

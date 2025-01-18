@@ -37,7 +37,7 @@ impl App for MdBookLinkCheck {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-linkcheck.{cpu}-{os}.zip"),
-          paths_in_archive: self.executable_filename(platform),
+          bin_folders: vec![],
         },
         Method::CompileRustSource {
           crate_name: "mdbook-linkcheck",
@@ -103,7 +103,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-apple-darwin.zip"),
-            paths_in_archive: S("mdbook-linkcheck"),
+            bin_folders: vec![],
           },
           Method::CompileRustSource {
             crate_name: "mdbook-linkcheck",

@@ -1,3 +1,5 @@
+use big_s::S;
+
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
@@ -35,7 +37,7 @@ impl App for StaticCheck {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/staticcheck_{os}_{cpu}.tar.gz"),
-          paths_in_archive: format!("staticcheck/{}", self.executable_filename(platform)),
+          bin_folders: vec![S("staticcheck")],
         },
         Method::CompileGoSource {
           import_path: format!("honnef.co/go/tools/cmd/staticcheck@{version}"),
@@ -90,7 +92,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_darwin_arm64.tar.gz"),
-            paths_in_archive: S("staticcheck/staticcheck"),
+            bin_folders: vec![S("staticcheck")],
           },
           Method::CompileGoSource {
             import_path: S("honnef.co/go/tools/cmd/staticcheck@3.7.0"),
@@ -113,7 +115,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_windows_amd64.tar.gz"),
-            paths_in_archive: S("staticcheck/staticcheck.exe"),
+            bin_folders: vec![S("staticcheck")],
           },
           Method::CompileGoSource {
             import_path: S("honnef.co/go/tools/cmd/staticcheck@3.7.0"),

@@ -39,7 +39,7 @@ impl App for Tikibase {
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/tikibase_{os}_{cpu}.{ext}"),
-        paths_in_archive: self.executable_filename(platform),
+        bin_folders: vec![],
       }],
     }
   }
@@ -99,7 +99,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_macos_arm64.tar.gz"),
-          paths_in_archive: S("tikibase"),
+          bin_folders: vec![],
         }],
       };
       assert_eq!(have, want);
@@ -117,7 +117,7 @@ mod tests {
       );
       let want = vec![Method::DownloadArchive {
         url: S("https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_windows_intel64.zip"),
-        path_in_archive: S("tikibase.exe"),
+        bin_folders: vec![],
       }];
       assert_eq!(have, want);
     }

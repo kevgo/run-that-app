@@ -36,13 +36,11 @@ impl App for GolangCiLint {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    let sep = std::path::MAIN_SEPARATOR;
-    let filename = self.executable_filename(platform);
     run::Method::ThisApp { install_methods:
     // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
     vec![Method::DownloadArchive {
-      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}"),
-      paths_in_archive: format!("golangci-lint-{version}-{os}-{cpu}{sep}{filename}"),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}"),
+        bin_folders: vec![format!("golangci-lint-{version}-{os}-{cpu}")],
     }]}
   }
 
@@ -97,7 +95,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-darwin-arm64.tar.gz"),
-          paths_in_archive: S("golangci-lint-1.55.2-darwin-arm64/golangci-lint"),
+          bin_folders: vec![format!("golangci-lint-1.55.2-darwin-arm64")],
         }],
       };
       assert_eq!(have, want);
@@ -115,7 +113,7 @@ mod tests {
       );
       let want = vec![Method::DownloadArchive {
         url: S("https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-windows-amd64.zip"),
-        path_in_archive: S("golangci-lint-1.55.2-windows-amd64\\golangci-lint.exe"),
+        bin_folders: vec![format!("golangci-lint-1.55.2-darwin-arm64")],
       }];
       assert_eq!(have, want);
     }

@@ -35,7 +35,7 @@ impl App for Dprint {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip"),
-          paths_in_archive: self.executable_filename(platform),
+          bin_folders: vec![],
         },
         Method::CompileRustSource {
           crate_name: "dprint",
@@ -98,7 +98,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-apple-darwin.zip"),
-            paths_in_archive: S("dprint"),
+            bin_folders: vec![],
           },
           Method::CompileRustSource {
             crate_name: "dprint",
@@ -122,7 +122,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-unknown-linux-gnu.zip"),
-            paths_in_archive: S("dprint"),
+            bin_folders: vec![],
           },
           Method::CompileRustSource {
             crate_name: "dprint",

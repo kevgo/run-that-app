@@ -38,12 +38,11 @@ impl App for Go {
       Os::Windows => "zip",
     };
     let sep = path::MAIN_SEPARATOR;
-    let file = self.executable_filename(platform);
     let version_str = version.as_str().trim_start_matches("go");
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}"),
-        paths_in_archive: format!("go{sep}bin{sep}{file}"),
+        bin_folders: vec![format!("go{sep}bin")],
       }],
     }
   }
@@ -136,7 +135,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz"),
-          paths_in_archive: S("go/bin/go"),
+          bin_folders: vec![S("go/bin")],
         }],
       };
       assert_eq!(have, want);
@@ -154,7 +153,7 @@ mod tests {
       );
       let want = vec![Method::DownloadArchive {
         url: S("https://go.dev/dl/go1.21.5.windows-amd64.zip"),
-        path_in_archive: S("go\\bin\\go.exe"),
+        bin_folders: vec![S("go\\bin")],
       }];
       assert_eq!(have, want);
     }
