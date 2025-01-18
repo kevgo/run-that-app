@@ -71,10 +71,10 @@ mod tests {
   mod parse {
     use crate::applications::{AnalyzeResult, App};
     use crate::configuration::Version;
-    use crate::installation;
     use crate::logging::Log;
     use crate::platform::Platform;
     use crate::prelude::*;
+    use crate::run;
     use crate::run::Executable;
 
     /// an App instance that allows to mock the system version restrictions
@@ -104,7 +104,7 @@ mod tests {
       fn analyze_executable(&self, _path: &Executable, _log: Log) -> Result<AnalyzeResult> {
         unimplemented!()
       }
-      fn run_method(&self, _version: &Version, _platform: Platform) -> Vec<installation::Method> {
+      fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
         unimplemented!()
       }
     }
