@@ -3,7 +3,6 @@ use crate::applications::App;
 use crate::configuration::Version;
 use crate::logging::Log;
 use crate::prelude::*;
-use crate::run::Executable;
 use crate::yard::Yard;
 use crate::{archives, download};
 #[cfg(unix)]
@@ -28,13 +27,16 @@ pub fn run(app: &dyn App, version: &Version, url: &str, executable_path_in_archi
       desc: format!("executable not found after downloading archive: {}", executable_path.to_string_lossy()),
     });
   };
+  // set the executable bit of all executable files that this app provides
   #[cfg(unix)]
   make_executable_unix(&executable_path)?;
+  for other_executable in app.other_executables() {
+    // TODO: determine the full path to the executable here
+    make_executable_unix(&other_executable)?;
+  }
   #[cfg(windows)]
   make_executable_windows(&executable_path);
-  Ok(Outcome::Installed {
-    executable: Executable(executable_path),
-  })
+  Ok(Outcome::Installed)
 }
 
 /// tries to load the executable of the given app, if it was installed by downloading

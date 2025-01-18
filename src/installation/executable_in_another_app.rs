@@ -3,7 +3,6 @@ use crate::applications::App;
 use crate::commands::run::load_or_install;
 use crate::configuration;
 use crate::configuration::{RequestedVersion, Version};
-use crate::run::Executable;
 use crate::logging::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
@@ -42,9 +41,7 @@ pub fn install_other_app(
       ),
     });
   }
-  Ok(Outcome::Installed {
-    executable: Executable(executable_path),
-  })
+  Ok(Outcome::Installed)
 }
 
 pub fn executable_path(app_to_install: &dyn App, version: &Version, yard: &Yard, executable_path_in_other_yard: &str) -> PathBuf {

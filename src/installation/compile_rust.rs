@@ -1,7 +1,6 @@
 use super::Outcome;
 use crate::applications::App;
 use crate::configuration::Version;
-use crate::run::Executable;
 use crate::logging::{Event, Log};
 use crate::prelude::*;
 use crate::yard::Yard;
@@ -44,9 +43,7 @@ pub fn run(app: &dyn App, crate_name: &str, version: &Version, yard: &Yard, exec
       desc: format!("executable not found after compiling Rust source: {}", executable_path.to_string_lossy()),
     });
   }
-  Ok(Outcome::Installed {
-    executable: Executable(executable_path),
-  })
+  Ok(Outcome::Installed)
 }
 
 pub fn executable_path(app: &dyn App, version: &Version, yard: &Yard, executable_path_in_folder: &str) -> PathBuf {

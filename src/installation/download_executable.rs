@@ -4,7 +4,6 @@ use crate::configuration::Version;
 use crate::logging::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::Executable;
 use crate::yard::Yard;
 use crate::{download, filesystem};
 use std::path::PathBuf;
@@ -31,9 +30,7 @@ pub fn run(app: &dyn App, url: &str, version: &Version, platform: Platform, opti
       desc: format!("downloaded application binary not found on disk at {}", executable_path_want.to_string_lossy()),
     });
   }
-  Ok(Outcome::Installed {
-    executable: Executable(executable_path_want),
-  })
+  Ok(Outcome::Installed)
 }
 
 pub fn executable_path(app: &dyn App, version: &Version, platform: Platform, yard: &Yard) -> PathBuf {

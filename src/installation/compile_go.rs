@@ -1,7 +1,6 @@
 use super::Outcome;
 use crate::applications::{self, App};
 use crate::configuration::{RequestedVersion, RequestedVersions, Version};
-use crate::run::Executable;
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
@@ -59,12 +58,11 @@ pub fn run(
       desc: format!("executable not found after compiling Go source: {}", executable_path.to_string_lossy()),
     });
   }
-  Ok(Outcome::Installed {
-    executable: Executable(executable_path),
-  })
+  Ok(Outcome::Installed)
 }
 
 /// provides the path that the executable would have when installed via this method
+// TODO: delete this
 pub fn executable_path(app: &dyn App, version: &Version, platform: Platform, yard: &Yard) -> PathBuf {
   yard.app_folder(&app.name(), version).join(app.executable_filename(platform))
 }

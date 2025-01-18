@@ -44,6 +44,12 @@ pub trait App {
     format!("{name}{ext}", name = self.name(), ext = platform.os.executable_extension())
   }
 
+  /// provides the names (unix style) of all other executables that this app provides,
+  /// and which are used in other apps
+  fn other_executables(&self) -> Vec<String> {
+    vec![]
+  }
+
   /// the various ways to install and run this application
   fn run_method(&self, version: &Version, platform: Platform) -> run::Method;
 
