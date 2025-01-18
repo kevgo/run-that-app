@@ -62,6 +62,10 @@ impl App for Tikibase {
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Tikibase {})
+  }
 }
 
 fn extract_version(output: &str) -> Result<&str> {

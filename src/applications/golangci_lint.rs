@@ -60,6 +60,10 @@ impl App for GolangCiLint {
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(GolangCiLint {})
+  }
 }
 
 fn extract_version(output: &str) -> Result<&str> {

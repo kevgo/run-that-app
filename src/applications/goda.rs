@@ -46,6 +46,10 @@ impl App for Goda {
     // as of 0.5.7 goda has no way to determine the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Goda {})
+  }
 }
 
 #[cfg(test)]

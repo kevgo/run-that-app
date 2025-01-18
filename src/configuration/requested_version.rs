@@ -107,6 +107,9 @@ mod tests {
       fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
         unimplemented!()
       }
+      fn clone(&self) -> Box<dyn App> {
+        unimplemented!()
+      }
     }
 
     mod unknown_allowed_versions {

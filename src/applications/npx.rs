@@ -40,6 +40,10 @@ impl App for Npx {
     // Npx is versioned together with NodeJS. The actual version of npm is therefore not relevant here.
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Npx {})
+  }
 }
 
 fn app_to_install() -> NodeJS {

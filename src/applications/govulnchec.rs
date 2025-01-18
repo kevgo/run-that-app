@@ -42,6 +42,10 @@ impl App for Govulncheck {
     // govulncheck does not display the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Govulncheck {})
+  }
 }
 
 #[cfg(test)]

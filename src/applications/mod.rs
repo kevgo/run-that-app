@@ -72,24 +72,26 @@ pub trait App {
   fn allowed_versions(&self) -> Result<semver::VersionReq> {
     Ok(semver::VersionReq::STAR)
   }
+
+  fn clone(&self) -> Box<dyn App>;
 }
 
 /// provides the app that contains the executable for this app, and the name of the executable
-pub fn app_and_executable(app: Box<dyn App>, version: &Version, platform: Platform) -> AppAndExecutable {
+pub fn app_and_executable(app: &dyn App, version: &Version, platform: Platform) -> AppAndExecutable {
   let app_executable_filename = app.executable_filename(platform);
   match app.run_method(version, platform) {
     run::Method::ThisApp { install_methods: _ } => AppAndExecutable {
-      app,
+      app: app.clone(),
       executable: app_executable_filename,
     },
     run::Method::OtherAppOtherExecutable { app, executable_name } => AppAndExecutable {
-      app,
+      app: app,
       executable: executable_name.to_string(),
     },
     run::Method::OtherAppDefaultExecutable { app, args: _ } => {
       let app_executable_file = app.executable_filename(platform);
       AppAndExecutable {
-        app,
+        app: app,
         executable: app_executable_file,
       }
     }

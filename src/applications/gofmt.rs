@@ -40,6 +40,10 @@ impl App for Gofmt {
     // TODO: return the version of Go here
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Gofmt {})
+  }
 }
 
 fn app_to_install() -> Go {

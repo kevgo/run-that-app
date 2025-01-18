@@ -64,6 +64,10 @@ impl App for Ireturn {
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Ireturn {})
+  }
 }
 
 #[cfg(test)]

@@ -46,6 +46,10 @@ impl App for Alphavet {
     // as of 0.1.0 the -V switch of alphavet is broken
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Alphavet {})
+  }
 }
 
 #[cfg(test)]

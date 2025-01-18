@@ -63,6 +63,10 @@ impl App for ShellCheck {
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(ShellCheck {})
+  }
 }
 
 fn extract_version(output: &str) -> Result<&str> {

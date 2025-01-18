@@ -63,6 +63,10 @@ impl App for Scc {
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Scc {})
+  }
 }
 
 fn extract_version(output: &str) -> Result<&str> {

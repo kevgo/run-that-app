@@ -40,6 +40,10 @@ impl App for Npm {
     // Npm is versioned together with NodeJS. The actual version of npm is therefore not relevant here.
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Npm {})
+  }
 }
 
 fn app_to_install() -> NodeJS {

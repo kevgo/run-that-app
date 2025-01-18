@@ -64,6 +64,10 @@ impl App for NodePrune {
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(NodePrune {})
+  }
 }
 
 #[cfg(test)]

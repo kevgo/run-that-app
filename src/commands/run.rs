@@ -56,7 +56,7 @@ pub struct Args {
 }
 
 pub fn load_or_install(
-  app: Box<dyn App>,
+  app: &dyn App,
   requested_version: &RequestedVersion,
   platform: Platform,
   optional: bool,
@@ -65,7 +65,7 @@ pub fn load_or_install(
   log: Log,
 ) -> Result<Option<Executable>> {
   match requested_version {
-    RequestedVersion::Path(version) => load_from_path(app.as_ref(), version, platform, log),
+    RequestedVersion::Path(version) => load_from_path(app, version, platform, log),
     RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, platform, optional, yard, config_file, log),
   }
 }
@@ -107,7 +107,7 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
 }
 
 fn load_or_install_from_yard(
-  app: Box<dyn App>,
+  app: &dyn App,
   version: &Version,
   platform: Platform,
   optional: bool,
@@ -119,7 +119,7 @@ fn load_or_install_from_yard(
   let app_name = app.name();
   let carrier = app_and_executable(app, version, platform);
   // try to load the app
-  if let Some(executable) = yard.load_executable(app.as_ref(), version, platform, log) {
+  if let Some(executable) = yard.load_executable(app, version, platform, log) {
     return Ok(Some(executable));
   }
   // app not installed --> check if uninstallable
@@ -127,7 +127,7 @@ fn load_or_install_from_yard(
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  if let Outcome::Installed { executable } = installation::any(app.as_ref(), version, platform, optional, yard, config_file, log)? {
+  if let Outcome::Installed { executable } = installation::any(app, version, platform, optional, yard, config_file, log)? {
     return Ok(Some(executable));
   }
   // app could not be installed -> mark as uninstallable

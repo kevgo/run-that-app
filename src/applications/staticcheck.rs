@@ -59,6 +59,10 @@ impl App for StaticCheck {
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(StaticCheck {})
+  }
 }
 
 #[cfg(test)]

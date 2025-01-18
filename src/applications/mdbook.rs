@@ -69,6 +69,10 @@ impl App for MdBook {
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(MdBook {})
+  }
 }
 
 fn extract_version(output: &str) -> Result<&str> {

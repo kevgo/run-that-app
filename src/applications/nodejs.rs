@@ -57,6 +57,10 @@ impl App for NodeJS {
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(NodeJS {})
+  }
 }
 
 fn extract_version(output: &str) -> Result<&str> {

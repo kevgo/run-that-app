@@ -60,6 +60,10 @@ impl App for Ghokin {
     // as of 3.4.0 ghokin's "version" command prints nothing
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Ghokin {})
+  }
 }
 
 #[cfg(test)]

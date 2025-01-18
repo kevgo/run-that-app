@@ -68,6 +68,10 @@ impl App for ActionLint {
       Err(_) => Ok(AnalyzeResult::NotIdentified { output }),
     }
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(ActionLint {})
+  }
 }
 
 fn extract_version(output: &str) -> Result<&str> {

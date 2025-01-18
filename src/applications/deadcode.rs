@@ -42,6 +42,10 @@ impl App for Deadcode {
     // as of 0.16.1 deadcode does not display the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Deadcode {})
+  }
 }
 
 #[cfg(test)]

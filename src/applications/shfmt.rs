@@ -66,6 +66,10 @@ impl App for Shfmt {
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Shfmt {})
+  }
 }
 
 fn extract_version(output: &str) -> Result<&str> {

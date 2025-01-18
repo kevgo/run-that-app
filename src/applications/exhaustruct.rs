@@ -45,6 +45,10 @@ impl App for Exhaustruct {
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Exhaustruct {})
+  }
 }
 
 #[cfg(test)]

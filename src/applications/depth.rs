@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
@@ -63,6 +65,10 @@ impl App for Depth {
     }
     // as of 1.2.1 depth doesn't display the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+  }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Depth {})
   }
 }
 

@@ -63,6 +63,10 @@ impl App for Dprint {
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Dprint {})
+  }
 }
 
 fn extract_version(output: &str) -> Result<&str> {
