@@ -2,7 +2,7 @@ use super::nodejs::NodeJS;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
-use crate::run::ExecutablePath;
+use crate::run::{ExecutablePath, UnixExecutableName};
 use crate::Log;
 use crate::{prelude::*, run};
 
@@ -20,7 +20,7 @@ impl App for Npx {
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
     run::Method::OtherAppOtherExecutable {
       app: Box::new(app_to_install()),
-      executable_name: "npx",
+      executable_name: UnixExecutableName::from("npx"),
     }
   }
 
@@ -59,12 +59,11 @@ mod tests {
     use crate::applications::App;
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run::{self, UnixExecutableName};
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::run;
-
       let have = (Npx {}).run_method(
         &Version::from("20.10.0"),
         Platform {
@@ -74,7 +73,7 @@ mod tests {
       );
       let want = run::Method::OtherAppOtherExecutable {
         app: Box::new(NodeJS {}),
-        executable_name: "npx",
+        executable_name: UnixExecutableName::from("npx"),
       };
       assert_eq!(have, want);
     }
