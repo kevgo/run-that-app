@@ -13,13 +13,15 @@ applications, what you really want is running them. By integrating installation
 and execution, run-that-app can drastically simplify many technical aspects.
 
 Run-that-app is minimalistic and completely non-invasive. It ships as a single
-stand-alone binary. Run-that-app uses no magic, no configuration changes, no
-environment variables, no application shims or stubs, no shell integrations, no
-dependencies, no plugins, no need to package applications to install in a
-special way, no application repository, no Docker, no WASM, no system daemons,
-no sudo, no emulation, no IDE plugins, no bloat. Applications download in 1-2
-seconds, and store very little (just the executables) on your hard drive.
-Applications execute at 100% native speed.
+stand-alone binary. Following the principle "perfection is not achieved when
+there is nothing left to add, but when there is nothing left to take away",
+run-that-app uses no magic, no environment variables, no application shims, no
+shell integrations, no dependencies, no plugins, no need to package applications
+into a specific container format, no need to install applications, no
+application repository, no Docker, no WASM, no system daemons, no sudo, no
+emulation, no IDE plugins, no bloat. Applications download in 1-2 seconds from
+their original hosting location, and store very little (just the executables) on
+your hard drive. Applications execute at 100% native speed.
 
 ### quickstart
 
