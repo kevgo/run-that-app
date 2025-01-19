@@ -3,7 +3,7 @@ use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::Platform;
-use crate::run::Executable;
+use crate::run::ExecutablePath;
 use crate::Log;
 use crate::{prelude::*, run};
 use const_format::formatcp;
@@ -38,7 +38,7 @@ impl App for Exhaustruct {
     github_releases::versions(ORG, REPO, amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
     if !output.contains("exhaustruct: Checks if all structure fields are initialized") {
       return Ok(AnalyzeResult::NotIdentified { output });

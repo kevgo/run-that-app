@@ -3,7 +3,7 @@ use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_tags;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
-use crate::run::Executable;
+use crate::run::ExecutablePath;
 use crate::Log;
 use crate::{prelude::*, run};
 use const_format::formatcp;
@@ -57,7 +57,7 @@ impl App for NodePrune {
     Ok(tags.into_iter().map(Version::from).collect())
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
     if !output.contains("Glob of files that should not be pruned") {
       return Ok(AnalyzeResult::NotIdentified { output });

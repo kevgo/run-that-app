@@ -5,7 +5,7 @@ use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
-use crate::run::Executable;
+use crate::run::ExecutablePath;
 use crate::Log;
 use crate::{prelude::*, run};
 
@@ -54,7 +54,7 @@ impl App for StaticCheck {
     github_releases::versions(ORG, REPO, amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
     if !output.contains("Usage: staticcheck [flags] [packages]") {
       return Ok(AnalyzeResult::NotIdentified { output });

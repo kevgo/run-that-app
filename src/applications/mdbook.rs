@@ -3,7 +3,7 @@ use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
-use crate::run::Executable;
+use crate::run::ExecutablePath;
 use crate::{prelude::*, run};
 use crate::{regexp, Log};
 use const_format::formatcp;
@@ -45,7 +45,7 @@ impl App for MdBook {
         },
         Method::CompileRustSource {
           crate_name: "mdbook",
-          filepath: format!("bin{sep}{filename}", sep = path::MAIN_SEPARATOR, filename = self.executable_filename(platform)),
+          filepath: format!("bin{sep}{filename}", sep = path::MAIN_SEPARATOR, filename = self.default_executable_filename()),
         },
       ],
     }
@@ -59,7 +59,7 @@ impl App for MdBook {
     github_releases::versions(ORG, REPO, amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
     if !output.contains("Creates a book from markdown files") {
       return Ok(AnalyzeResult::NotIdentified { output });

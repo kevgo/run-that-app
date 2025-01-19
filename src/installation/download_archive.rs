@@ -2,6 +2,7 @@ use super::Outcome;
 use crate::applications::App;
 use crate::configuration::Version;
 use crate::logging::Log;
+use crate::platform::{Os, Platform};
 use crate::prelude::*;
 use crate::yard::Yard;
 use crate::{archives, download};
@@ -12,7 +13,7 @@ use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 
 /// downloads and unpacks the content of an archive file
-pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &[&str], optional: bool, yard: &Yard, log: Log) -> Result<Outcome> {
+pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &[&str], optional: bool, platform: Platform, yard: &Yard, log: Log) -> Result<Outcome> {
   let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
@@ -25,23 +26,21 @@ pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &[&str], op
   // verify that all executables that should be there exist and are executable
   for bin_folder in bin_folders {
     let bin_path = app_folder.join(bin_folder);
-    let default_executable_path = bin_path.join(app.executable_filename(platform));
-    if !executable_path.exists() {
-      return Err(UserError::InternalError {
-        desc: format!("executable not found after downloading archive: {}", executable_path.to_string_lossy()),
-      });
-    };
+    make_executable(&bin_path.join(app.default_executable_filename().platform_path(platform.os)));
     // set the executable bit of all executable files that this app provides
-    #[cfg(unix)]
-    make_executable_unix(&executable_path)?;
-    for other_executable in app.other_executables() {
+    for other_executable in app.additional_executables() {
       // TODO: determine the full path to the executable here
-      make_executable_unix(&other_executable)?;
+      make_executable(&bin_path.join(other_executable.platform_path(platform.os)))?;
     }
-    #[cfg(windows)]
-    make_executable_windows(&executable_path);
   }
   Ok(Outcome::Installed)
+}
+
+fn make_executable(filepath: &Path) {
+  #[cfg(unix)]
+  make_executable_unix(&filepath);
+  #[cfg(windows)]
+  make_executable_windows(&filepath);
 }
 
 /// tries to load the executable of the given app, if it was installed by downloading

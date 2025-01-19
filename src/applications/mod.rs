@@ -31,7 +31,7 @@ mod tikibase;
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{self, Executable};
+use crate::run::{self, ExecutablePath, UnixExecutableName};
 use crate::Log;
 use std::slice::Iter;
 
@@ -40,13 +40,14 @@ pub trait App {
   fn name(&self) -> ApplicationName;
 
   /// the filename of the executable that starts this app
-  fn executable_filename(&self, platform: Platform) -> String {
-    format!("{name}{ext}", name = self.name(), ext = platform.os.executable_extension())
+  fn default_executable_filename(&self) -> UnixExecutableName {
+    UnixExecutableName::from(self.name())
   }
 
   /// provides the names (unix style) of all other executables that this app provides,
+  /// i.e. all executables of this app minus the default executable name.
   /// and which are used in other apps
-  fn other_executables(&self) -> Vec<String> {
+  fn additional_executables(&self) -> Vec<UnixExecutableName> {
     vec![]
   }
 
@@ -63,7 +64,7 @@ pub trait App {
   fn latest_installable_version(&self, log: Log) -> Result<Version>;
 
   /// ensures that the given executable belongs to this app and if yes returns its version
-  fn analyze_executable(&self, path: &Executable, log: Log) -> Result<AnalyzeResult>;
+  fn analyze_executable(&self, path: &ExecutablePath, log: Log) -> Result<AnalyzeResult>;
 
   /// Apps can override this method to provide version restrictions
   /// defined by config files in the working directory.
@@ -83,7 +84,7 @@ pub trait App {
 
 /// provides the app that contains the executable for this app, and the name of the executable
 pub fn app_and_executable(app: &dyn App, version: &Version, platform: Platform) -> AppAndExecutable {
-  let app_executable_filename = app.executable_filename(platform);
+  let app_executable_filename = app.default_executable_filename();
   match app.run_method(version, platform) {
     run::Method::ThisApp { install_methods: _ } => AppAndExecutable {
       app: app.clone(),
@@ -91,10 +92,10 @@ pub fn app_and_executable(app: &dyn App, version: &Version, platform: Platform) 
     },
     run::Method::OtherAppOtherExecutable { app, executable_name } => AppAndExecutable {
       app: app,
-      executable_name: executable_name.to_string(),
+      executable_name: executable_name,
     },
     run::Method::OtherAppDefaultExecutable { app, args: _ } => {
-      let app_executable_file = app.executable_filename(platform);
+      let app_executable_file = app.default_executable_filename();
       AppAndExecutable {
         app: app,
         executable_name: app_executable_file,
@@ -108,7 +109,7 @@ pub struct AppAndExecutable {
   /// the app that contains the executable
   pub app: Box<dyn App>,
   /// name of the executable to run
-  pub executable_name: String,
+  pub executable_name: UnixExecutableName,
 }
 
 pub enum AnalyzeResult {

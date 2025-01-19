@@ -4,7 +4,7 @@ use crate::configuration::{ApplicationName, Version};
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::Executable;
+use crate::run::ExecutablePath;
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
 
@@ -72,14 +72,14 @@ impl Yard {
   }
 
   /// tries to load the given executable of the given app from the yard
-  pub fn load_executable(&self, app: &dyn App, executable: &str, version: &Version, platform: Platform, log: Log) -> Option<Executable> {
+  pub fn load_executable(&self, app: &dyn App, executable: &str, version: &Version, platform: Platform, log: Log) -> Option<ExecutablePath> {
     for installation_method in app.run_method(version, platform).install_methods() {
       let fullpaths = installation_method.executable_location(app, executable, version, platform, self);
       for fullpath in fullpaths {
         log(Event::YardCheckExistingAppBegin { path: &fullpath });
         if fullpath.exists() {
           log(Event::YardCheckExistingAppFound);
-          return Some(Executable(fullpath));
+          return Some(ExecutablePath(fullpath));
         }
         log(Event::YardCheckExistingAppNotFound);
       }

@@ -13,7 +13,7 @@ pub fn run(app: &dyn App, url: &str, version: &Version, platform: Platform, opti
   let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
-  let filepath_on_disk = yard.create_app_folder(&app.name(), version)?.join(app.executable_filename(platform));
+  let filepath_on_disk = yard.create_app_folder(&app.name(), version)?.join(app.default_executable_filename(platform));
   let executable_path_have = filesystem::save_executable(artifact.data, &filepath_on_disk, log)?;
   let executable_path_want = executable_path(app, version, platform, yard);
   if executable_path_have.0 != executable_path_want {
@@ -34,5 +34,5 @@ pub fn run(app: &dyn App, url: &str, version: &Version, platform: Platform, opti
 }
 
 pub fn executable_path(app: &dyn App, version: &Version, platform: Platform, yard: &Yard) -> PathBuf {
-  yard.app_folder(&app.name(), version).join(app.executable_filename(platform))
+  yard.app_folder(&app.name(), version).join(app.default_executable_filename(platform))
 }

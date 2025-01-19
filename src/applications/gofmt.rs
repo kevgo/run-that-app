@@ -2,7 +2,7 @@ use super::go::Go;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
-use crate::run::Executable;
+use crate::run::ExecutablePath;
 use crate::Log;
 use crate::{prelude::*, run};
 
@@ -32,7 +32,7 @@ impl App for Gofmt {
     app_to_install().installable_versions(amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
     if !output.contains("report all errors (not just the first 10 on different lines)") {
       return Ok(AnalyzeResult::NotIdentified { output });

@@ -2,7 +2,7 @@ use crate::applications::AnalyzeResult;
 use crate::configuration::{self, ApplicationName};
 use crate::logging::Event;
 use crate::prelude::*;
-use crate::run::Executable;
+use crate::run::ExecutablePath;
 use crate::yard::Yard;
 use crate::{applications, installation, logging, platform};
 use colored::Colorize;
@@ -58,7 +58,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
         }
         return Ok(ExitCode::FAILURE);
       }
-      let executable = Executable(executable_path.clone());
+      let executable = ExecutablePath(executable_path.clone());
       match app.analyze_executable(&executable, log)? {
         AnalyzeResult::NotIdentified { output } => {
           println!(
