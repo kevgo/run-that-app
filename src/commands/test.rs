@@ -54,29 +54,23 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
       );
       let mut executable_found = true;
       for executable_path in executable_paths {
-        println!("33333333333333333333333 {}", executable_path.to_string_lossy());
         if !executable_path.exists() {
           continue;
         }
         executable_found = true;
         let executable = Executable(executable_path);
-        println!("22222222222222222222222222");
         match app.analyze_executable(&executable, log)? {
           AnalyzeResult::NotIdentified { output } => {
-            println!("11111111111111111111111111");
             println!("executable {executable} not identified based on this output:\n\"{output}\"\nOUTPUT END");
             return Ok(ExitCode::FAILURE);
           }
           AnalyzeResult::IdentifiedButUnknownVersion => {
-            println!("11111111111111111111111111");
             println!("{}", "executable identified".green());
           }
           AnalyzeResult::IdentifiedWithVersion(executable_version) if executable_version == latest_version => {
-            println!("11111111111111111111111111");
             println!("{}", "executable has the correct version".green());
           }
           AnalyzeResult::IdentifiedWithVersion(executable_version) => {
-            println!("11111111111111111111111111");
             println!("executable has version {executable_version} but we installed version {latest_version}");
             return Ok(ExitCode::FAILURE);
           }
