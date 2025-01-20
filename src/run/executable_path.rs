@@ -97,12 +97,6 @@ impl From<&Path> for ExecutablePath {
   }
 }
 
-impl AsRef<Path> for ExecutablePath {
-  fn as_ref(&self) -> &Path {
-    &self.0
-  }
-}
-
 /// adds the given dir to the PATH env variable of the given cmd
 pub fn add_path(cmd: &mut Command, dir: &Path) {
   cmd.envs(env::vars_os());
