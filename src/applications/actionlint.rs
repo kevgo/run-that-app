@@ -82,7 +82,7 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
   use crate::UserError;
 
-  mod execution_methods {
+  mod run_method {
     use crate::applications::actionlint::ActionLint;
     use crate::applications::App;
     use crate::configuration::Version;
