@@ -24,7 +24,7 @@ pub enum Method {
     url: String,
     /// The possible folders within the archive that might contain the executable files.
     /// Multiple options exist because for some apps, the Windows archive contains a different folder structure than the Linux or macOS archive.
-    /// Provide all possible folders here.  If the executables are in the root folder of the archive, leave this empty.
+    /// Provide all possible folders here. If the executables are in the root folder of the archive, leave this empty.
     bin_folders: Vec<String>,
   },
 
