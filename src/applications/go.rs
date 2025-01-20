@@ -152,8 +152,8 @@ mod tests {
       );
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz"),
-          bin_folders: vec![S("go/bin")],
+          url: S("https://go.dev/dl/go1.21.5.windows-amd64.zip"),
+          bin_folders: vec![S("go\\bin")],
         }],
       };
       assert_eq!(have, want);

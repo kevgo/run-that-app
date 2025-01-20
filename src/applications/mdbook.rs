@@ -129,7 +129,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: S("https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz"),
+            url: S("https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-pc-windows-msvc.zip"),
             bin_folders: vec![],
           },
           Method::CompileRustSource {

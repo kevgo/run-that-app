@@ -90,7 +90,7 @@ mod tests {
       );
       let want = run::Method::OtherAppOtherExecutable {
         app: Box::new(Go {}),
-        executable_name: UnixExecutableName::from("go\\bin\\gofmt.exe"),
+        executable_name: UnixExecutableName::from("gofmt"),
       };
       assert_eq!(have, want);
     }

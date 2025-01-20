@@ -112,8 +112,8 @@ mod tests {
       );
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-darwin-arm64.tar.gz"),
-          bin_folders: vec![format!("golangci-lint-1.55.2-darwin-arm64")],
+          url: S("https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-windows-amd64.zip"),
+          bin_folders: vec![format!("golangci-lint-1.55.2-windows-amd64")],
         }],
       };
       assert_eq!(have, want);

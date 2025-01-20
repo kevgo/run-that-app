@@ -130,8 +130,8 @@ mod tests {
       );
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz"),
-          bin_folders: vec![S("node-v20.10.0-darwin-arm64"), S("node-v20.10.0-darwin-arm64/bin")],
+          url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip"),
+          bin_folders: vec![S("node-v20.10.0-win-x64"), S("node-v20.10.0-win-x64\\bin")],
         }],
       };
       assert_eq!(have, want);

@@ -118,8 +118,8 @@ mod tests {
       );
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz"),
-          bin_folders: vec![S("bin"), S("gh_2.39.1_linux_arm64\\bin")],
+          url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip"),
+          bin_folders: vec![S("bin"), S("gh_2.39.1_windows_amd64\\bin")],
         }],
       };
       assert_eq!(have, want);
