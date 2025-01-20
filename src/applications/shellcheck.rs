@@ -124,7 +124,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.darwin.aarch64.tar.xz"),
-          bin_folders: vec![format!("shellcheck-v0.9.0")],
+          bin_folders: vec![format!("shellcheck-v0.10.0")],
         }],
       };
       assert_eq!(have, want);
