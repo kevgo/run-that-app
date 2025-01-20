@@ -40,7 +40,7 @@ fn make_executable(filepath: &Path) {
   #[cfg(unix)]
   let _ = make_executable_unix(filepath);
   #[cfg(windows)]
-  make_executable_windows(&filepath);
+  make_executable_windows(filepath);
 }
 
 #[cfg(windows)]
