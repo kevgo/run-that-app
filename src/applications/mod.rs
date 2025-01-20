@@ -33,6 +33,7 @@ use crate::platform::Platform;
 use crate::prelude::*;
 use crate::run::{self, ExecutablePath, UnixExecutableName};
 use crate::Log;
+use std::fmt::Display;
 use std::slice::Iter;
 
 pub trait App {
@@ -82,25 +83,9 @@ pub trait App {
   fn clone(&self) -> Box<dyn App>;
 }
 
-/// provides the app that contains the executable for this app, and the name of the executable
-pub fn app_and_executable(app: &dyn App, version: &Version, platform: Platform) -> AppAndExecutable {
-  let app_executable_filename = app.default_executable_filename();
-  match app.run_method(version, platform) {
-    run::Method::ThisApp { install_methods: _ } => AppAndExecutable {
-      app: app.clone(),
-      executable_name: app_executable_filename,
-    },
-    run::Method::OtherAppOtherExecutable { app, executable_name } => AppAndExecutable {
-      app: app,
-      executable_name: executable_name,
-    },
-    run::Method::OtherAppDefaultExecutable { app, args: _ } => {
-      let app_executable_file = app.default_executable_filename();
-      AppAndExecutable {
-        app: app,
-        executable_name: app_executable_file,
-      }
-    }
+impl Display for dyn App {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.write_str(self.name().as_str())
   }
 }
 
