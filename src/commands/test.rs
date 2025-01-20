@@ -46,7 +46,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
       {
         continue;
       }
-      let executable_path = install_method.executable_location(app.as_ref(), &latest_version, platform, &yard);
+      let executable_path = install_method.executable_locations(app.as_ref(), &latest_version, platform, &yard);
       if !executable_path.exists() {
         println!(
           "executable {} not found, press ENTER after inspecting the yard",

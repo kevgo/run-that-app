@@ -9,7 +9,7 @@ mod executable_in_another_app;
 use crate::applications::App;
 use crate::configuration::{self, Version};
 use crate::logging::Log;
-use crate::platform::Platform;
+use crate::platform::{self, Platform};
 use crate::prelude::*;
 use crate::yard::Yard;
 use std::fmt::Debug;
@@ -22,9 +22,10 @@ pub enum Method {
   DownloadArchive {
     /// the URL of the archive to download
     url: String,
-    /// The folders within the archive that might contain executable files.
+    /// The possible folders within the archive that might contain the executable files.
+    /// Multiple options exist because for some apps, the Windows archive contains a different folder structure than the Linux or macOS archive.
     /// Provide all possible folders here, they will be tried until the executable is found.
-    /// Leave this empty if the executables are in the root folder of the archive.
+    /// If the executables are in the root folder of the archive, leave this empty.
     bin_folders: Vec<String>,
   },
 
@@ -44,25 +45,27 @@ pub enum Method {
   CompileRustSource {
     /// the name of the Rust crate that contains the executable
     crate_name: &'static str,
-    /// the executable path within the yard
-    filepath: String,
+    /// The subfolder that contains the executables after compilation.
+    bin_folder: Option<String>,
   },
 }
 
 impl Method {
   /// provides possible locations of the given executable within the given app folder in the given  yard
-  pub fn executable_location(&self, app: &dyn App, executable_name: &str, version: &Version, platform: Platform, yard: &Yard) -> Vec<PathBuf> {
+  pub fn executable_locations(&self, app: &dyn App, executable_name: &str, version: &Version, platform: Platform, yard: &Yard) -> Vec<PathBuf> {
     let app_folder = yard.app_folder(&app.name(), version);
     let executable_filename = format!("{executable_name}{ext}", ext = platform.os.executable_extension());
-    let in_root_folder = vec![app_folder.join(&executable_filename)];
     match self {
       Method::DownloadArchive { url: _, bin_folders } => bin_folders
         .into_iter()
         .map(|bin_folder| app_folder.join(bin_folder).join(&executable_filename))
         .collect(),
-      Method::DownloadExecutable { url: _ } => in_root_folder,
-      Method::CompileGoSource { import_path: _ } => in_root_folder,
-      Method::CompileRustSource { crate_name: _, filepath } => vec![app_folder.join(filepath).join(executable_filename)],
+      Method::DownloadExecutable { url: _ } => vec![app_folder.join(&executable_filename)],
+      Method::CompileGoSource { import_path: _ } => vec![app_folder.join(&executable_filename)],
+      Method::CompileRustSource { crate_name: _, bin_folder } => vec![match bin_folder {
+        Some(bin_folder) => app_folder.join(bin_folder).join(executable_filename),
+        None => app_folder.join(executable_filename),
+      }],
     }
   }
 
@@ -70,7 +73,7 @@ impl Method {
     match self {
       Method::DownloadArchive { url: _, bin_folders: _ } => format!("download archive for {app}@{version}"),
       Method::DownloadExecutable { url: _ } => format!("download executable for {app}@{version}"),
-      Method::CompileGoSource { import_path: _ } | Method::CompileRustSource { crate_name: _, filepath: _ } => format!("compile {app}@{version} from source"),
+      Method::CompileGoSource { import_path: _ } | Method::CompileRustSource { crate_name: _, bin_folder: _ } => format!("compile {app}@{version} from source"),
     }
   }
 }
@@ -98,10 +101,10 @@ pub fn install(
   log: Log,
 ) -> Result<Outcome> {
   match install_method {
-    Method::DownloadArchive { url, bin_folders } => download_archive::run(app, version, url, bin_folders, optional, yard, log),
+    Method::DownloadArchive { url, bin_folders } => download_archive::run(app, version, url, &bin_folders, optional, platform, yard, log),
     Method::DownloadExecutable { url: download_url } => download_executable::run(app, download_url, version, platform, optional, yard, log),
     Method::CompileGoSource { import_path } => compile_go::run(app, import_path, platform, version, optional, config_file, yard, log),
-    Method::CompileRustSource { crate_name, filepath } => compile_rust::run(app, crate_name, version, yard, filepath, log),
+    Method::CompileRustSource { crate_name, bin_folder } => compile_rust::run(app, crate_name, version, yard, bin_folder, log),
   }
 }
 

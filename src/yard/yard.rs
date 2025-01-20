@@ -74,7 +74,7 @@ impl Yard {
   /// tries to load the given executable of the given app from the yard
   pub fn load_executable(&self, app: &dyn App, executable: &str, version: &Version, platform: Platform, log: Log) -> Option<ExecutablePath> {
     for installation_method in app.run_method(version, platform).install_methods() {
-      let fullpaths = installation_method.executable_location(app, executable, version, platform, self);
+      let fullpaths = installation_method.executable_locations(app, executable, version, platform, self);
       for fullpath in fullpaths {
         log(Event::YardCheckExistingAppBegin { path: &fullpath });
         if fullpath.exists() {

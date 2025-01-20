@@ -13,7 +13,7 @@ use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 
 /// downloads and unpacks the content of an archive file
-pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &[&str], optional: bool, platform: Platform, yard: &Yard, log: Log) -> Result<Outcome> {
+pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &[String], optional: bool, platform: Platform, yard: &Yard, log: Log) -> Result<Outcome> {
   let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
