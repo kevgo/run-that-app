@@ -105,7 +105,7 @@ pub fn install(
     Method::DownloadArchive { url, bin_folders } => download_archive::run(app, version, url, &bin_folders, optional, platform, yard, log),
     Method::DownloadExecutable { url: download_url } => download_executable::run(app, download_url, version, platform, optional, yard, log),
     Method::CompileGoSource { import_path } => compile_go::run(app, import_path, platform, version, optional, config_file, yard, log),
-    Method::CompileRustSource { crate_name, bin_folder } => compile_rust::run(app, crate_name, version, yard, bin_folder, log),
+    Method::CompileRustSource { crate_name, bin_folder: _ } => compile_rust::run(app, crate_name, version, yard, log),
   }
 }
 
