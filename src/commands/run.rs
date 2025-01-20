@@ -72,7 +72,7 @@ pub fn load_or_install(
 
 // checks if the app is in the PATH and has the correct version
 fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<Executable>> {
-  let Some(executable) = find_global_install(app.default_executable_filename().platform_path(platform.os), log) else {
+  let Some(executable) = find_global_install(&app.default_executable_filename().platform_path(platform.os), log) else {
     log(Event::GlobalInstallNotFound);
     return Ok(None);
   };
@@ -118,7 +118,7 @@ fn load_or_install_from_yard(
   // determine the carrier app
   let carrier_name = app.name();
   // try to load the app
-  if let Some(executable) = yard.load_executable(app, app.default_executable_filename().platform_path(platform.os), version, platform, log) {
+  if let Some(executable) = yard.load_executable(app, &app.default_executable_filename().platform_path(platform.os), version, platform, log) {
     return Ok(Some(executable));
   }
   // app not installed --> check if uninstallable
@@ -127,7 +127,7 @@ fn load_or_install_from_yard(
   }
   // app not installed and installable --> try to install
   if installation::any(app, version, platform, optional, yard, config_file, log)? == Outcome::Installed {
-    return Ok(yard.load_executable(app, app.default_executable_filename().platform_path(platform.os), version, platform, log));
+    return Ok(yard.load_executable(app, &app.default_executable_filename().platform_path(platform.os), version, platform, log));
   }
   // app could not be installed -> mark as uninstallable
   yard.mark_not_installable(&carrier_name, version)?;

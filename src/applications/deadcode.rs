@@ -2,9 +2,9 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::installation::Method;
 use crate::platform::Platform;
+use crate::prelude::*;
 use crate::run::Executable;
-use crate::Log;
-use crate::{prelude::*, run};
+use crate::{run, Log};
 
 pub struct Deadcode {}
 

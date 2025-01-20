@@ -74,8 +74,7 @@ mod tests {
     use crate::logging::Log;
     use crate::platform::Platform;
     use crate::prelude::*;
-    use crate::run::Executable;
-    use crate::run::{self, UnixExecutableName};
+    use crate::run::{self, Executable, UnixExecutableName};
 
     /// an App instance that allows to mock the system version restrictions
     struct TestApp {

@@ -3,9 +3,9 @@ use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::Platform;
+use crate::prelude::*;
 use crate::run::Executable;
-use crate::Log;
-use crate::{prelude::*, run};
+use crate::{run, Log};
 use const_format::formatcp;
 
 pub struct Exhaustruct {}

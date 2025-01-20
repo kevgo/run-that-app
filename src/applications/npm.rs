@@ -2,9 +2,9 @@ use super::nodejs::NodeJS;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
+use crate::prelude::*;
 use crate::run::{Executable, UnixExecutableName};
-use crate::Log;
-use crate::{prelude::*, run};
+use crate::{run, Log};
 
 pub struct Npm {}
 

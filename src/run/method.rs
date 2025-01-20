@@ -1,7 +1,6 @@
+use super::UnixExecutableName;
 use crate::applications::App;
 use crate::installation;
-
-use super::UnixExecutableName;
 
 /// the different ways to execute an application
 pub enum Method {

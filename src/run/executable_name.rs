@@ -8,7 +8,7 @@ use std::path::Path;
 pub struct UnixExecutableName(String);
 
 impl UnixExecutableName {
-  /// provides the platform-specific version of this UnixExecutableName
+  /// provides the platform-specific version of this `UnixExecutableName`
   pub fn platform_path(self, os: Os) -> ExecutableFilename {
     ExecutableFilename(match os {
       Os::Linux | Os::MacOS => self.0,

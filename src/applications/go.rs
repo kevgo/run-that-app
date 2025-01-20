@@ -3,9 +3,9 @@ use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_tags;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
+use crate::prelude::*;
 use crate::run::Executable;
-use crate::{filesystem, regexp, Log};
-use crate::{prelude::*, run};
+use crate::{filesystem, regexp, run, Log};
 use big_s::S;
 use std::path;
 

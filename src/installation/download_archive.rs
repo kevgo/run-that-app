@@ -38,7 +38,7 @@ pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &[String], 
 
 fn make_executable(filepath: &Path) {
   #[cfg(unix)]
-  let _ = make_executable_unix(&filepath);
+  let _ = make_executable_unix(filepath);
   #[cfg(windows)]
   make_executable_windows(&filepath);
 }

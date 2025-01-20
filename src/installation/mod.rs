@@ -57,11 +57,10 @@ impl Method {
     let executable_filename = format!("{executable_name}{ext}", ext = platform.os.executable_extension());
     match self {
       Method::DownloadArchive { url: _, bin_folders } => bin_folders
-        .into_iter()
+        .iter()
         .map(|bin_folder| app_folder.join(bin_folder).join(&executable_filename))
         .collect(),
-      Method::DownloadExecutable { url: _ } => vec![app_folder.join(&executable_filename)],
-      Method::CompileGoSource { import_path: _ } => vec![app_folder.join(&executable_filename)],
+      Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => vec![app_folder.join(&executable_filename)],
       Method::CompileRustSource { crate_name: _, bin_folder } => vec![match bin_folder {
         Some(bin_folder) => app_folder.join(bin_folder).join(executable_filename),
         None => app_folder.join(executable_filename),
@@ -101,7 +100,7 @@ pub fn install(
   log: Log,
 ) -> Result<Outcome> {
   match install_method {
-    Method::DownloadArchive { url, bin_folders } => download_archive::run(app, version, url, &bin_folders, optional, platform, yard, log),
+    Method::DownloadArchive { url, bin_folders } => download_archive::run(app, version, url, bin_folders, optional, platform, yard, log),
     Method::DownloadExecutable { url: download_url } => download_executable::run(app, download_url, version, platform, optional, yard, log),
     Method::CompileGoSource { import_path } => compile_go::run(app, import_path, platform, version, optional, config_file, yard, log),
     Method::CompileRustSource { crate_name, bin_folder: _ } => compile_rust::run(app, crate_name, version, yard, log),

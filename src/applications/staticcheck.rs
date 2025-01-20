@@ -1,13 +1,12 @@
-use big_s::S;
-
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
+use crate::prelude::*;
 use crate::run::Executable;
-use crate::Log;
-use crate::{prelude::*, run};
+use crate::{run, Log};
+use big_s::S;
 
 const ORG: &str = "dominikh";
 const REPO: &str = "go-tools";

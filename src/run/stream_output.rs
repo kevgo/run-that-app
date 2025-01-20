@@ -1,6 +1,5 @@
 use super::executable::add_path;
-use super::Executable;
-use super::{exit_status_to_code, format_call};
+use super::{exit_status_to_code, format_call, Executable};
 use crate::prelude::*;
 use std::process::{Command, ExitCode};
 

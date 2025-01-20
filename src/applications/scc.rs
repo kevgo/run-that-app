@@ -3,9 +3,9 @@ use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
+use crate::prelude::*;
 use crate::run::Executable;
-use crate::{prelude::*, run};
-use crate::{regexp, Log};
+use crate::{regexp, run, Log};
 use const_format::formatcp;
 
 pub struct Scc {}
