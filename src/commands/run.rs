@@ -125,10 +125,11 @@ fn load_or_install_from_yard(
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  if installation::any(app, version, platform, optional, yard, config_file, log)? == Outcome::Installed {
-    return Ok(yard.load_executable(&carrier, version, platform, log));
+  match installation::any(app, version, platform, optional, yard, config_file, log)? {
+    Outcome::Installed => Ok(yard.load_executable(&carrier, version, platform, log)),
+    Outcome::NotInstalled => {
+      yard.mark_not_installable(&carrier.app.name(), version)?;
+      Ok(None)
+    }
   }
-  // app could not be installed -> mark as uninstallable
-  yard.mark_not_installable(&carrier.app.name(), version)?;
-  Ok(None)
 }
