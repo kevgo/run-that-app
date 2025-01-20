@@ -84,13 +84,12 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::run;
-
       let have = (MdBookLinkCheck {}).run_method(
         &Version::from("0.7.8"),
         Platform {
@@ -116,23 +115,25 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      let have = (MdBookLinkCheck {}).install_methods(
+      let have = (MdBookLinkCheck {}).run_method(
         &Version::from("0.7.8"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![
-        Method::DownloadArchive {
-          url: S("https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-pc-windows-msvc.zip"),
-          path_in_archive: S("mdbook-linkcheck.exe"),
-        },
-        Method::CompileRustSource {
-          crate_name: "mdbook-linkcheck",
-          bin_folder: Some("bin"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: S("https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-apple-darwin.zip"),
+            bin_folders: vec![],
+          },
+          Method::CompileRustSource {
+            crate_name: "mdbook-linkcheck",
+            bin_folder: Some("bin"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
   }

@@ -84,13 +84,12 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::run;
-
       let have = (Gh {}).run_method(
         &Version::from("2.39.1"),
         Platform {
@@ -110,17 +109,19 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      let have = (Gh {}).install_methods(
+      let have = (Gh {}).run_method(
         &Version::from("2.39.1"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip"),
-        bin_folders: vec![S("bin"), S("gh_2.39.1_linux_arm64\\bin")],
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz"),
+          bin_folders: vec![S("bin"), S("gh_2.39.1_linux_arm64\\bin")],
+        }],
+      };
       assert_eq!(have, want);
     }
   }
