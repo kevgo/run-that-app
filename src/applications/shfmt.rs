@@ -68,7 +68,7 @@ impl App for Shfmt {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Shfmt {})
+    Box::new(Self {})
   }
 }
 

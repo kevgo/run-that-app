@@ -64,7 +64,7 @@ impl App for Tikibase {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Tikibase {})
+    Box::new(Self {})
   }
 }
 

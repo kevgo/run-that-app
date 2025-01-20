@@ -97,7 +97,7 @@ impl App for Go {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Go {})
+    Box::new(Self {})
   }
 }
 

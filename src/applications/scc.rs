@@ -65,7 +65,7 @@ impl App for Scc {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Scc {})
+    Box::new(Self {})
   }
 }
 

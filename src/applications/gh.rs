@@ -67,7 +67,7 @@ impl App for Gh {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Gh {})
+    Box::new(Self {})
   }
 }
 

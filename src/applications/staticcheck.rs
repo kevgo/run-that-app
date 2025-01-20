@@ -62,7 +62,7 @@ impl App for StaticCheck {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(StaticCheck {})
+    Box::new(Self {})
   }
 }
 

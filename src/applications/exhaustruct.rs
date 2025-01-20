@@ -47,7 +47,7 @@ impl App for Exhaustruct {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Exhaustruct {})
+    Box::new(Self {})
   }
 }
 

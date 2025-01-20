@@ -63,7 +63,7 @@ impl App for Goreleaser {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Goreleaser {})
+    Box::new(Self {})
   }
 }
 

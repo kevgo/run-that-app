@@ -48,7 +48,7 @@ impl App for Goda {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Goda {})
+    Box::new(Self {})
   }
 }
 

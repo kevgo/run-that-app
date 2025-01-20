@@ -42,7 +42,7 @@ impl App for Npx {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Npx {})
+    Box::new(Self {})
   }
 }
 

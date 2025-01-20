@@ -44,7 +44,7 @@ impl App for Govulncheck {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Govulncheck {})
+    Box::new(Self {})
   }
 }
 

@@ -65,7 +65,7 @@ impl App for Dprint {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Dprint {})
+    Box::new(Self {})
   }
 }
 

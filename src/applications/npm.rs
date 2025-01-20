@@ -42,7 +42,7 @@ impl App for Npm {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Npm {})
+    Box::new(Self {})
   }
 }
 

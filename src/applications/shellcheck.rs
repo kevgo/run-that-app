@@ -63,7 +63,7 @@ impl App for ShellCheck {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(ShellCheck {})
+    Box::new(Self {})
   }
 }
 

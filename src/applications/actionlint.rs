@@ -70,7 +70,7 @@ impl App for ActionLint {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(ActionLint {})
+    Box::new(Self {})
   }
 }
 

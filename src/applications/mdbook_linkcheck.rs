@@ -66,7 +66,7 @@ impl App for MdBookLinkCheck {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(MdBookLinkCheck {})
+    Box::new(Self {})
   }
 }
 

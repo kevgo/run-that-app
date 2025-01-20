@@ -55,7 +55,7 @@ impl App for NodeJS {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(NodeJS {})
+    Box::new(Self {})
   }
 }
 

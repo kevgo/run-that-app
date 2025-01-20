@@ -68,7 +68,7 @@ impl App for Gofumpt {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Gofumpt {})
+    Box::new(Self {})
   }
 }
 

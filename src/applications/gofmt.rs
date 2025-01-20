@@ -42,7 +42,7 @@ impl App for Gofmt {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Gofmt {})
+    Box::new(Self {})
   }
 }
 

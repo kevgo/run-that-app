@@ -70,7 +70,7 @@ impl App for MdBook {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(MdBook {})
+    Box::new(Self {})
   }
 }
 

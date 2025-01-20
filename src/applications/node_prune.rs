@@ -66,7 +66,7 @@ impl App for NodePrune {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(NodePrune {})
+    Box::new(Self {})
   }
 }
 

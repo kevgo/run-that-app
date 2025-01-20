@@ -62,7 +62,7 @@ impl App for Ghokin {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Ghokin {})
+    Box::new(Self {})
   }
 }
 

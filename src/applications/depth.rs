@@ -66,7 +66,7 @@ impl App for Depth {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Depth {})
+    Box::new(Self {})
   }
 }
 

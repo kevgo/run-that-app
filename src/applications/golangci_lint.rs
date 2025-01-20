@@ -60,7 +60,7 @@ impl App for GolangCiLint {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(GolangCiLint {})
+    Box::new(Self {})
   }
 }
 

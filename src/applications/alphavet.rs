@@ -48,7 +48,7 @@ impl App for Alphavet {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Alphavet {})
+    Box::new(Self {})
   }
 }
 

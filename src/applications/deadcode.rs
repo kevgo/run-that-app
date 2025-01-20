@@ -44,7 +44,7 @@ impl App for Deadcode {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Deadcode {})
+    Box::new(Self {})
   }
 }
 

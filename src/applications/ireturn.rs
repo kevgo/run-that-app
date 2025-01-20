@@ -66,7 +66,7 @@ impl App for Ireturn {
   }
 
   fn clone(&self) -> Box<dyn App> {
-    Box::new(Ireturn {})
+    Box::new(Self {})
   }
 }
 
