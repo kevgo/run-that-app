@@ -1,4 +1,4 @@
-use crate::applications::{app_and_executable, AnalyzeResult, App};
+use crate::applications::{AnalyzeResult, App};
 use crate::configuration::{self, ApplicationName, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;

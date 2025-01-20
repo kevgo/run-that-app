@@ -1,5 +1,5 @@
 use super::root_path;
-use crate::applications::{App, AppAndExecutable};
+use crate::applications::App;
 use crate::configuration::{ApplicationName, Version};
 use crate::logging::{Event, Log};
 use crate::platform::Platform;

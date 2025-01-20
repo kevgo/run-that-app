@@ -55,14 +55,6 @@ pub fn run(
   Ok(Outcome::Installed)
 }
 
-/// provides the path that the executable would have when installed via this method
-// TODO: delete this
-pub fn executable_path(app: &dyn App, version: &Version, platform: Platform, yard: &Yard) -> PathBuf {
-  yard
-    .app_folder(&app.name(), version)
-    .join(app.default_executable_filename().platform_path(platform.os))
-}
-
 fn load_rta_go(platform: Platform, optional: bool, config_file: &configuration::File, yard: &Yard, log: Log) -> Result<Option<PathBuf>> {
   let go = applications::go::Go {};
   let requested_go_versions = if let Some(versions) = config_file.lookup(&go.name()) {

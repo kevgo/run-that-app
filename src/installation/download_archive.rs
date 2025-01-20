@@ -10,7 +10,7 @@ use crate::{archives, download};
 use std::fs;
 #[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 /// downloads and unpacks the content of an archive file
 pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &[String], optional: bool, platform: Platform, yard: &Yard, log: Log) -> Result<Outcome> {
@@ -38,14 +38,9 @@ pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &[String], 
 
 fn make_executable(filepath: &Path) {
   #[cfg(unix)]
-  make_executable_unix(&filepath);
+  let _ = make_executable_unix(&filepath);
   #[cfg(windows)]
   make_executable_windows(&filepath);
-}
-
-/// tries to load the executable of the given app, if it was installed by downloading
-pub fn executable_path(app: &dyn App, version: &Version, executable_path_in_archive: &str, yard: &Yard) -> PathBuf {
-  yard.app_folder(&app.name(), version).join(executable_path_in_archive)
 }
 
 #[cfg(windows)]

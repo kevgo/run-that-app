@@ -4,12 +4,11 @@ mod compile_go;
 mod compile_rust;
 mod download_archive;
 mod download_executable;
-mod executable_in_another_app;
 
 use crate::applications::App;
 use crate::configuration::{self, Version};
 use crate::logging::Log;
-use crate::platform::{self, Platform};
+use crate::platform::Platform;
 use crate::prelude::*;
 use crate::run::ExecutableFilename;
 use crate::yard::Yard;

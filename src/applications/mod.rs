@@ -89,14 +89,6 @@ impl Display for dyn App {
   }
 }
 
-/// represents the request to execute a particular executable provided by a particular app
-pub struct AppAndExecutable {
-  /// the app that contains the executable
-  pub app: Box<dyn App>,
-  /// name of the executable to run
-  pub executable_name: UnixExecutableName,
-}
-
 pub enum AnalyzeResult {
   /// the given executable does not belong to this app
   NotIdentified { output: String },

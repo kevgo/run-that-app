@@ -7,7 +7,6 @@ use crate::run::ExecutablePath;
 use crate::{prelude::*, run};
 use crate::{regexp, Log};
 use const_format::formatcp;
-use std::path;
 
 pub struct MdBookLinkCheck {}
 
