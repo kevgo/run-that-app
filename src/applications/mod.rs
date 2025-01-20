@@ -82,6 +82,14 @@ pub trait App {
 
   /// this is necessary because a limitation of Rust does not allow deriving the Clone trait automatically
   fn clone(&self) -> Box<dyn App>;
+
+  /// provides the app that contains the executable for this app
+  fn carrier(&self, version: &Version, platform: Platform) -> Box<dyn App> {
+    match self.run_method(version, platform) {
+      run::Method::ThisApp { install_methods: _ } => self.clone(),
+      run::Method::OtherAppOtherExecutable { app, executable_name: _ } | run::Method::OtherAppDefaultExecutable { app, args: _ } => app.clone(),
+    }
+  }
 }
 
 impl Display for dyn App {
