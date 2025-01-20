@@ -56,10 +56,16 @@ impl Method {
     let app_folder = yard.app_folder(&app.name(), version);
     let executable_filename = format!("{executable_name}{ext}", ext = platform.os.executable_extension());
     match self {
-      Method::DownloadArchive { url: _, bin_folders } => bin_folders
-        .iter()
-        .map(|bin_folder| app_folder.join(bin_folder).join(&executable_filename))
-        .collect(),
+      Method::DownloadArchive { url: _, bin_folders } => {
+        if bin_folders.len() > 0 {
+          bin_folders
+            .iter()
+            .map(|bin_folder| app_folder.join(bin_folder).join(&executable_filename))
+            .collect()
+        } else {
+          vec![app_folder.join(executable_filename)]
+        }
+      }
       Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => vec![app_folder.join(&executable_filename)],
       Method::CompileRustSource { crate_name: _, bin_folder } => vec![match bin_folder {
         Some(bin_folder) => app_folder.join(bin_folder).join(executable_filename),
