@@ -80,6 +80,7 @@ pub trait App {
     Ok(semver::VersionReq::STAR)
   }
 
+  /// this is necessary because a limitation of Rust does not allow deriving the Clone trait automatically
   fn clone(&self) -> Box<dyn App>;
 }
 
