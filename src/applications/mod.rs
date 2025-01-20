@@ -84,10 +84,23 @@ pub trait App {
   fn clone(&self) -> Box<dyn App>;
 
   /// provides the app that contains the executable for this app
-  fn carrier(&self, version: &Version, platform: Platform) -> Box<dyn App> {
+  fn carrier(&self, version: &Version, platform: Platform) -> AppAndExecutable {
     match self.run_method(version, platform) {
-      run::Method::ThisApp { install_methods: _ } => self.clone(),
-      run::Method::OtherAppOtherExecutable { app, executable_name: _ } | run::Method::OtherAppDefaultExecutable { app, args: _ } => app.clone(),
+      run::Method::ThisApp { install_methods: _ } => AppAndExecutable {
+        app: self.clone(),
+        executable: self.default_executable_filename(),
+        args: vec![],
+      },
+      run::Method::OtherAppOtherExecutable { app, executable_name } => AppAndExecutable {
+        app: app.clone(),
+        executable: executable_name,
+        args: vec![],
+      },
+      run::Method::OtherAppDefaultExecutable { app, args } => AppAndExecutable {
+        app: app.clone(),
+        executable: app.default_executable_filename(),
+        args,
+      },
     }
   }
 }
@@ -96,6 +109,13 @@ impl Display for dyn App {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(self.name().as_str())
   }
+}
+
+// TODO: use references
+pub struct AppAndExecutable {
+  pub app: Box<dyn App>,
+  pub executable: UnixExecutableName,
+  pub args: Vec<String>,
 }
 
 pub enum AnalyzeResult {
