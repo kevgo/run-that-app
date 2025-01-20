@@ -96,13 +96,12 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::run;
-
       let have = (NodeJS {}).run_method(
         &Version::from("20.10.0"),
         Platform {
@@ -122,17 +121,19 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      let have = (NodeJS {}).install_methods(
+      let have = (NodeJS {}).run_method(
         &Version::from("20.10.0"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip"),
-        bin_folders: vec![S("node-v20.10.0-darwin-arm64"), S("node-v20.10.0-darwin-arm64\\bin")],
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz"),
+          bin_folders: vec![S("node-v20.10.0-darwin-arm64"), S("node-v20.10.0-darwin-arm64/bin")],
+        }],
+      };
       assert_eq!(have, want);
     }
   }

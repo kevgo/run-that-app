@@ -88,13 +88,12 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::run;
-
       let have = (MdBook {}).run_method(
         &Version::from("0.4.37"),
         Platform {
@@ -120,23 +119,25 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      let have = (MdBook {}).install_methods(
+      let have = (MdBook {}).run_method(
         &Version::from("0.4.37"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![
-        Method::DownloadArchive {
-          url: S("https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-pc-windows-msvc.zip"),
-          bin_folders: vec![],
-        },
-        Method::CompileRustSource {
-          crate_name: "mdbook",
-          bin_folder: Some("bin"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: S("https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz"),
+            bin_folders: vec![],
+          },
+          Method::CompileRustSource {
+            crate_name: "mdbook",
+            bin_folder: Some("bin"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
   }

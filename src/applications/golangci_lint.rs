@@ -78,13 +78,12 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::run;
-
       let have = (GolangCiLint {}).run_method(
         &Version::from("1.55.2"),
         Platform {
@@ -104,17 +103,19 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      let have = (GolangCiLint {}).install_methods(
+      let have = (GolangCiLint {}).run_method(
         &Version::from("1.55.2"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-windows-amd64.zip"),
-        bin_folders: vec![format!("golangci-lint-1.55.2-darwin-arm64")],
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-darwin-arm64.tar.gz"),
+          bin_folders: vec![format!("golangci-lint-1.55.2-darwin-arm64")],
+        }],
+      };
       assert_eq!(have, want);
     }
   }

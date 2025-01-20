@@ -75,18 +75,17 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
 
   mod install_methods {
+    use crate::applications::goreleaser::Goreleaser;
     use crate::applications::App;
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::applications::goreleaser::Goreleaser;
-      use crate::run;
-
       let have = (Goreleaser {}).run_method(
         &Version::from("1.22.1"),
         Platform {
@@ -106,19 +105,19 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      use crate::applications::goreleaser::Goreleaser;
-
-      let have = (Goreleaser {}).install_methods(
+      let have = (Goreleaser {}).run_method(
         &Version::from("1.22.1"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Windows_x86_64.zip"),
-        bin_folders: vec![],
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz"),
+          bin_folders: vec![],
+        }],
+      };
       assert_eq!(have, want);
     }
   }

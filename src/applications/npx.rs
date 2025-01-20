@@ -81,17 +81,17 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      let have = (Npx {}).install_methods(
+      let have = (Npx {}).run_method(
         &Version::from("20.10.0"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![Method::ExecutableInAnotherApp {
-        other_app: Box::new(NodeJS {}),
-        executable_path: S("node-v20.10.0-win-x64\\bin\\npx.exe"),
-      }];
+      let want = run::Method::OtherAppOtherExecutable {
+        app: Box::new(NodeJS {}),
+        executable_name: UnixExecutableName::from("npx"),
+      };
       assert_eq!(have, want);
     }
   }

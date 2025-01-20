@@ -118,13 +118,12 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::run;
-
       let have = (Go {}).run_method(
         &Version::from("1.21.5"),
         Platform {
@@ -144,17 +143,19 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      let have = (Go {}).install_methods(
+      let have = (Go {}).run_method(
         &Version::from("1.21.5"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://go.dev/dl/go1.21.5.windows-amd64.zip"),
-        bin_folders: vec![S("go\\bin")],
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz"),
+          bin_folders: vec![S("go/bin")],
+        }],
+      };
       assert_eq!(have, want);
     }
   }
