@@ -1,5 +1,5 @@
 use crate::configuration::{self, FILE_NAME};
-use crate::run::ExecutablePath;
+use crate::run::Executable;
 use colored::Colorize;
 use std::path::PathBuf;
 
@@ -75,7 +75,7 @@ pub enum UserError {
   CompilationInterupted,
   ConfigFileAlreadyExists,
   ExecutableCannotExecute {
-    executable: ExecutablePath,
+    executable: Executable,
     err: String,
   },
   GitHubReleasesApiProblem {

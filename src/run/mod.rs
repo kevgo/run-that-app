@@ -10,7 +10,7 @@ mod stream_output;
 
 pub use check_output::check_output;
 pub use executable_name::{ExecutableFilename, UnixExecutableName};
-pub use executable_path::ExecutablePath;
+pub use executable_path::Executable;
 pub use exit_status_to_code::exit_status_to_code;
 pub use format_call::format_call;
 pub use method::Method;

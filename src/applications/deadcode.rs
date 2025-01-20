@@ -2,7 +2,7 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::installation::Method;
 use crate::platform::Platform;
-use crate::run::ExecutablePath;
+use crate::run::Executable;
 use crate::Log;
 use crate::{prelude::*, run};
 
@@ -34,7 +34,7 @@ impl App for Deadcode {
     Ok(vec![Version::from("0.16.1")])
   }
 
-  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
     if !output.contains("The deadcode command reports unreachable functions in Go programs") {
       return Ok(AnalyzeResult::NotIdentified { output });

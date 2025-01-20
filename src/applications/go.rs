@@ -3,7 +3,7 @@ use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_tags;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
-use crate::run::ExecutablePath;
+use crate::run::Executable;
 use crate::{filesystem, regexp, Log};
 use crate::{prelude::*, run};
 use big_s::S;
@@ -70,7 +70,7 @@ impl App for Go {
     Ok(go_tags.into_iter().map(Version::from).collect())
   }
 
-  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     if let Ok(version) = extract_version(&executable.run_output("version", log)?) {
       return Ok(AnalyzeResult::IdentifiedWithVersion(version.into()));
     }

@@ -9,15 +9,15 @@ use std::process::Command;
 
 /// an application that can be executed
 #[derive(Clone, Debug, PartialEq)]
-pub struct ExecutablePath(pub PathBuf);
+pub struct Executable(pub PathBuf);
 
-impl AsRef<OsStr> for ExecutablePath {
+impl AsRef<OsStr> for Executable {
   fn as_ref(&self) -> &OsStr {
     self.0.as_os_str()
   }
 }
 
-impl ExecutablePath {
+impl Executable {
   pub fn as_str(&self) -> Cow<'_, str> {
     self.0.to_string_lossy()
   }
@@ -71,7 +71,7 @@ impl ExecutablePath {
   }
 }
 
-impl Display for ExecutablePath {
+impl Display for Executable {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(&self.0.to_string_lossy())
   }

@@ -3,7 +3,7 @@ use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::Platform;
-use crate::run::ExecutablePath;
+use crate::run::Executable;
 use crate::Log;
 use crate::{prelude::*, run};
 use const_format::formatcp;
@@ -38,7 +38,7 @@ impl App for Alphavet {
     github_releases::latest(ORG, REPO, log)
   }
 
-  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
     if !output.contains("Checks that functions are ordered alphabetically within packages") {
       return Ok(AnalyzeResult::NotIdentified { output });
