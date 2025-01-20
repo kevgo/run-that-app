@@ -52,9 +52,8 @@ pub enum Method {
 
 impl Method {
   /// provides possible locations of the given executable within the given app folder in the given  yard
-  pub fn executable_locations(&self, app: &dyn App, executable_name: &ExecutableFilename, version: &Version, platform: Platform, yard: &Yard) -> Vec<PathBuf> {
+  pub fn executable_locations(&self, app: &dyn App, executable_filename: &ExecutableFilename, version: &Version, yard: &Yard) -> Vec<PathBuf> {
     let app_folder = yard.app_folder(&app.name(), version);
-    let executable_filename = format!("{executable_name}{ext}", ext = platform.os.executable_extension());
     match self {
       Method::DownloadArchive { url: _, bin_folders } => {
         if bin_folders.is_empty() {

@@ -50,7 +50,6 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
         app.as_ref(),
         &app.default_executable_filename().platform_path(platform.os),
         &latest_version,
-        platform,
         &yard,
       );
       let mut executable_found = true;

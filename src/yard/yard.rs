@@ -78,10 +78,10 @@ impl Yard {
         app_and_executable.app.as_ref(),
         &app_and_executable.executable.clone().platform_path(platform.os),
         version,
-        platform,
         self,
       );
       for fullpath in fullpaths {
+        println!("2222222222222222222222 {}", fullpath.to_string_lossy());
         log(Event::YardCheckExistingAppBegin { path: &fullpath });
         if fullpath.exists() {
           log(Event::YardCheckExistingAppFound);
