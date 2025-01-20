@@ -9,7 +9,7 @@ use std::process::{Command, ExitCode};
 pub fn stream_output(executable: &Executable, args: &[String]) -> Result<ExitCode> {
   let mut cmd = Command::new(executable);
   cmd.args(args);
-  add_path(&mut cmd, executable.0.parent().unwrap());
+  add_path(&mut cmd, executable.as_path().parent().unwrap());
   let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
     call: format_call(executable, args),
     reason: err.to_string(),
@@ -38,7 +38,7 @@ mod tests {
       file.set_permissions(fs::Permissions::from_mode(0o744)).unwrap();
       drop(file);
       thread::sleep(Duration::from_millis(10)); // give the OS time to close the file to avoid a flaky test
-      let have = stream_output(&Executable(executable_path), &[]).unwrap();
+      let have = stream_output(&Executable::from(executable_path), &[]).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(0))"));
     }
@@ -51,7 +51,7 @@ mod tests {
       let executable_path = tempdir.path().join("executable");
       fs::write(&executable_path, b"#!/bin/sh\nexit 3").unwrap();
       make_file_executable(&executable_path).unwrap();
-      let executable = Executable(executable_path);
+      let executable = Executable::from(executable_path);
       let have = stream_output(&executable, &[]).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(3))"));

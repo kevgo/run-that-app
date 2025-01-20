@@ -12,5 +12,5 @@ pub fn save_executable(data: Vec<u8>, path_on_disk: &Path, log: Log) -> Result<E
     Err(err) => log(Event::ExecutableInstallSaveFail { err: err.to_string() }),
   }
   super::make_file_executable(path_on_disk)?;
-  Ok(Executable(path_on_disk.to_path_buf()))
+  Ok(Executable::from(path_on_disk))
 }

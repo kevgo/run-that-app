@@ -15,7 +15,7 @@ pub fn which(args: &Args) -> Result<ExitCode> {
   let versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   for version in versions {
     if let Some(executable) = load_or_install(app, &version, platform, args.optional, &yard, &config_file, log)? {
-      println!("{}", executable.0.to_string_lossy());
+      println!("{}", executable.as_str());
       return Ok(ExitCode::SUCCESS);
     }
   }

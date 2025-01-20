@@ -9,7 +9,7 @@ use std::process::Command;
 
 /// an application that can be executed
 #[derive(Clone, Debug, PartialEq)]
-pub struct Executable(pub PathBuf);
+pub struct Executable(PathBuf);
 
 impl AsRef<OsStr> for Executable {
   fn as_ref(&self) -> &OsStr {
@@ -69,11 +69,37 @@ impl Executable {
     let output = format!("{stdout}{stderr}");
     Ok(output)
   }
+
+  pub fn inner(self) -> PathBuf {
+    self.0
+  }
+
+  pub fn as_path(&self) -> &Path {
+    &self.0
+  }
 }
 
 impl Display for Executable {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(&self.0.to_string_lossy())
+  }
+}
+
+impl From<PathBuf> for Executable {
+  fn from(value: PathBuf) -> Self {
+    Executable(value)
+  }
+}
+
+impl From<&Path> for Executable {
+  fn from(value: &Path) -> Self {
+    Executable(value.to_path_buf())
+  }
+}
+
+impl AsRef<Path> for Executable {
+  fn as_ref(&self) -> &Path {
+    &self.0
   }
 }
 

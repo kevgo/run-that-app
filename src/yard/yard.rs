@@ -84,7 +84,7 @@ impl Yard {
         log(Event::YardCheckExistingAppBegin { path: &fullpath });
         if fullpath.exists() {
           log(Event::YardCheckExistingAppFound);
-          return Some(Executable(fullpath));
+          return Some(Executable::from(fullpath));
         }
         log(Event::YardCheckExistingAppNotFound);
       }

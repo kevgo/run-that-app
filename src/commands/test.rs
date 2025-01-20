@@ -58,7 +58,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
           continue;
         }
         executable_found = true;
-        let executable = Executable(executable_path);
+        let executable = Executable::from(executable_path);
         match app.analyze_executable(&executable, log)? {
           AnalyzeResult::NotIdentified { output } => {
             println!("executable {executable} not identified based on this output:\n\"{output}\"\nOUTPUT END");
