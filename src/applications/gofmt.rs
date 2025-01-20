@@ -81,17 +81,17 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows() {
-      let have = (Gofmt {}).install_methods(
+      let have = (Gofmt {}).run_method(
         &Version::from("1.23.4"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![Method::ExecutableInAnotherApp {
-        other_app: Box::new(Go {}),
-        executable_path: S("go\\bin\\gofmt.exe"),
-      }];
+      let want = run::Method::OtherAppOtherExecutable {
+        app: Box::new(Go {}),
+        executable_name: UnixExecutableName::from("go\\bin\\gofmt.exe"),
+      };
       assert_eq!(have, want);
     }
   }
