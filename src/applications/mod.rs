@@ -45,9 +45,7 @@ pub trait App {
     UnixExecutableName::from(self.name())
   }
 
-  /// provides the names (unix style) of all other executables that this app provides,
-  /// i.e. all executables of this app minus the default executable name.
-  /// and which are used in other apps
+  /// names of other executables that this app provides
   fn additional_executables(&self) -> Vec<UnixExecutableName> {
     vec![]
   }
