@@ -2,7 +2,7 @@ use std::fmt::Display;
 use std::path::Path;
 
 #[derive(Debug, PartialEq)]
-pub struct ApplicationName(pub String);
+pub struct ApplicationName(String);
 
 impl ApplicationName {
   pub fn as_str(&self) -> &str {
