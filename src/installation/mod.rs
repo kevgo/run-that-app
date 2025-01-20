@@ -11,6 +11,7 @@ use crate::configuration::{self, Version};
 use crate::logging::Log;
 use crate::platform::{self, Platform};
 use crate::prelude::*;
+use crate::run::ExecutableFilename;
 use crate::yard::Yard;
 use std::fmt::Debug;
 use std::path::PathBuf;
@@ -52,7 +53,7 @@ pub enum Method {
 
 impl Method {
   /// provides possible locations of the given executable within the given app folder in the given  yard
-  pub fn executable_locations(&self, app: &dyn App, executable_name: &str, version: &Version, platform: Platform, yard: &Yard) -> Vec<PathBuf> {
+  pub fn executable_locations(&self, app: &dyn App, executable_name: &ExecutableFilename, version: &Version, platform: Platform, yard: &Yard) -> Vec<PathBuf> {
     let app_folder = yard.app_folder(&app.name(), version);
     let executable_filename = format!("{executable_name}{ext}", ext = platform.os.executable_extension());
     match self {

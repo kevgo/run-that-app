@@ -2,7 +2,7 @@ use super::Outcome;
 use crate::applications::App;
 use crate::configuration::Version;
 use crate::logging::Log;
-use crate::platform::{Os, Platform};
+use crate::platform::Platform;
 use crate::prelude::*;
 use crate::yard::Yard;
 use crate::{archives, download};
@@ -30,7 +30,7 @@ pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &[String], 
     // set the executable bit of all executable files that this app provides
     for other_executable in app.additional_executables() {
       // TODO: determine the full path to the executable here
-      make_executable(&bin_path.join(other_executable.platform_path(platform.os)))?;
+      make_executable(&bin_path.join(other_executable.platform_path(platform.os)));
     }
   }
   Ok(Outcome::Installed)

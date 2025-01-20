@@ -72,7 +72,7 @@ pub fn load_or_install(
 
 // checks if the app is in the PATH and has the correct version
 fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutablePath>> {
-  let Some(executable) = find_global_install(&app.default_executable_filename(platform), log) else {
+  let Some(executable) = find_global_install(app.default_executable_filename().platform_path(platform.os), log) else {
     log(Event::GlobalInstallNotFound);
     return Ok(None);
   };
@@ -119,7 +119,7 @@ fn load_or_install_from_yard(
   let carrier_name = app.name();
   let app_and_executable = app_and_executable(app, version, platform);
   // try to load the app
-  if let Some(executable) = yard.load_executable(app_and_executable, version, platform, log) {
+  if let Some(executable) = yard.load_executable(app, app.default_executable_filename().platform_path(platform.os), version, platform, log) {
     return Ok(Some(executable));
   }
   // app not installed --> check if uninstallable

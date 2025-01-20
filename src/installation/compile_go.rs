@@ -52,12 +52,6 @@ pub fn run(
     return Err(UserError::GoCompilationFailed);
   }
   log(Event::CompileGoSuccess);
-  let executable_path = executable_path(app, version, platform, yard);
-  if !executable_path.exists() {
-    return Err(UserError::InternalError {
-      desc: format!("executable not found after compiling Go source: {}", executable_path.to_string_lossy()),
-    });
-  }
   Ok(Outcome::Installed)
 }
 
