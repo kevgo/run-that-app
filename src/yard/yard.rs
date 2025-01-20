@@ -1,10 +1,10 @@
 use super::root_path;
-use crate::applications::{App, AppAndExecutable};
+use crate::applications::AppAndExecutable;
 use crate::configuration::{ApplicationName, Version};
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{Executable, ExecutableFilename};
+use crate::run::Executable;
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
 
