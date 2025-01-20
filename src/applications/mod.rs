@@ -109,7 +109,6 @@ impl Display for dyn App {
   }
 }
 
-// TODO: use references
 pub struct AppAndExecutable {
   pub app: Box<dyn App>,
   pub executable: UnixExecutableName,
