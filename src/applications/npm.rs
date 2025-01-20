@@ -3,7 +3,7 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{ExecutablePath, UnixExecutableName};
+use crate::run::ExecutablePath;
 use crate::{run, Log};
 
 pub struct Npm {}
@@ -18,9 +18,9 @@ impl App for Npm {
   }
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
-    run::Method::OtherAppOtherExecutable {
-      app: Box::new(app_to_install()),
-      executable_name: UnixExecutableName::from("npm"),
+    run::Method::OtherAppDefaultExecutable {
+      app: Box::new(NodeJS {}),
+      args: vec!["node_modules/npm/bin/npm-cli.js"],
     }
   }
 

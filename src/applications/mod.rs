@@ -112,7 +112,7 @@ impl Display for dyn App {
 pub struct AppAndExecutable {
   pub app: Box<dyn App>,
   pub executable: UnixExecutableName,
-  pub args: Vec<String>,
+  pub args: Vec<&'static str>,
 }
 
 pub enum AnalyzeResult {

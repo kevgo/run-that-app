@@ -4,7 +4,7 @@ use crate::configuration::{ApplicationName, Version};
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::ExecutablePath;
+use crate::run::{ExecutableCall, ExecutablePath};
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
 
@@ -72,8 +72,9 @@ impl Yard {
   }
 
   /// tries to load the given executable of the given app from the yard
-  pub fn load_executable(&self, app_and_executable: &AppAndExecutable, version: &Version, platform: Platform, log: Log) -> Option<ExecutablePath> {
-    for installation_method in app_and_executable.app.run_method(version, platform).install_methods() {
+  pub fn load_executable(&self, app_and_executable: &AppAndExecutable, version: &Version, platform: Platform, log: Log) -> Option<ExecutableCall> {
+    let run_method =app_and_executable.app.run_method(version, platform)
+    for installation_method in &run_method.install_methods() {
       let fullpaths = installation_method.executable_locations(
         app_and_executable.app.as_ref(),
         &app_and_executable.executable.clone().platform_path(platform.os),
@@ -84,7 +85,10 @@ impl Yard {
         log(Event::YardCheckExistingAppBegin { path: &fullpath });
         if fullpath.exists() {
           log(Event::YardCheckExistingAppFound);
-          return Some(ExecutablePath::from(fullpath));
+          return Some(ExecutableCall {
+            executable: ExecutablePath::from(fullpath),
+            args: &run_method.call_args(),
+          });
         }
         log(Event::YardCheckExistingAppNotFound);
       }

@@ -1,4 +1,4 @@
-use crate::applications::{AnalyzeResult, App};
+use crate::applications::{AnalyzeResult, App, AppAndExecutable};
 use crate::configuration::{self, ApplicationName, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
@@ -20,6 +20,8 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   for requested_version in requested_versions {
     if let Some(executable) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
+      println!("executable: {executable}");
+      println!("args: {}", args.app_args.join(" "));
       if args.error_on_output {
         return run::check_output(&executable, &args.app_args);
       }
@@ -114,7 +116,7 @@ fn load_or_install_from_yard(
   yard: &Yard,
   config_file: &configuration::File,
   log: Log,
-) -> Result<Option<ExecutablePath>> {
+) -> Result<Option<AppAndExecutable>> {
   let carrier = app.carrier(version, platform);
   // try to load the app
   if let Some(executable) = yard.load_executable(&carrier, version, platform, log) {

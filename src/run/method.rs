@@ -21,7 +21,7 @@ pub enum Method {
     /// the other applications whose default executable to run
     app: Box<dyn App>,
     /// additional arguments when running the default executable of the given app
-    args: Vec<String>,
+    args: Vec<&'static str>,
   },
 }
 
@@ -30,6 +30,13 @@ impl Method {
     match self {
       Method::ThisApp { install_methods } => install_methods,
       Method::OtherAppOtherExecutable { app: _, executable_name: _ } | Method::OtherAppDefaultExecutable { app: _, args: _ } => vec![],
+    }
+  }
+
+  pub fn call_args(&self) -> Vec<&'static str> {
+    match self {
+      Method::ThisApp { install_methods: _ } | Method::OtherAppOtherExecutable { app: _, executable_name: _ } => vec![],
+      Method::OtherAppDefaultExecutable { app, args } => args,
     }
   }
 }
