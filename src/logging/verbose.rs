@@ -40,7 +40,7 @@ pub fn log(event: Event) {
     Event::GitHubApiRequestSuccess => eprintln!("{}", "ok".green()),
     Event::GitHubApiRequestFail { err } => eprintln!("{}", err.red()),
 
-    Event::GlobalInstallSearch { binary } => eprintf!("Looking for {} in the PATH ... ", binary.cyan()),
+    Event::GlobalInstallSearch { binary } => eprintf!("Looking for {} in the PATH ... ", binary.to_string().cyan()),
     Event::GlobalInstallFound { path } => eprintln!("{}", path.to_string_lossy().green()),
     Event::GlobalInstallMatchingVersion { range: version_range, version } => {
       if let Some(version) = version {
