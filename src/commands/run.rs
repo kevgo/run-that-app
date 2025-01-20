@@ -5,7 +5,7 @@ use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
-use crate::run::{self, Executable};
+use crate::run::{self, ExecutablePath};
 use crate::yard::Yard;
 use crate::{applications, installation, yard};
 use std::process::ExitCode;
@@ -63,7 +63,7 @@ pub fn load_or_install(
   yard: &Yard,
   config_file: &configuration::File,
   log: Log,
-) -> Result<Option<Executable>> {
+) -> Result<Option<ExecutablePath>> {
   match requested_version {
     RequestedVersion::Path(version) => load_from_path(app, version, platform, log),
     RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, platform, optional, yard, config_file, log),
@@ -71,7 +71,7 @@ pub fn load_or_install(
 }
 
 // checks if the app is in the PATH and has the correct version
-fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<Executable>> {
+fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutablePath>> {
   let Some(executable) = find_global_install(&app.default_executable_filename().platform_path(platform.os), log) else {
     log(Event::GlobalInstallNotFound);
     return Ok(None);
@@ -114,7 +114,7 @@ fn load_or_install_from_yard(
   yard: &Yard,
   config_file: &configuration::File,
   log: Log,
-) -> Result<Option<Executable>> {
+) -> Result<Option<ExecutablePath>> {
   let carrier = app.carrier(version, platform);
   // try to load the app
   if let Some(executable) = yard.load_executable(&carrier, version, platform, log) {

@@ -3,7 +3,7 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{Executable, UnixExecutableName};
+use crate::run::{ExecutablePath, UnixExecutableName};
 use crate::{run, Log};
 
 pub struct Npm {}
@@ -32,7 +32,7 @@ impl App for Npm {
     app_to_install().installable_versions(amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output_args(&["help", "npm"], log)?;
     if !output.contains("javascript package manager") {
       return Ok(AnalyzeResult::NotIdentified { output });

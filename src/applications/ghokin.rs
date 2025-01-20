@@ -4,7 +4,7 @@ use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::run::Executable;
+use crate::run::ExecutablePath;
 use crate::{run, Log};
 use const_format::formatcp;
 
@@ -52,7 +52,7 @@ impl App for Ghokin {
     github_releases::latest(ORG, REPO, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
     if !output.contains("Clean and/or apply transformation on gherkin files") {
       return Ok(AnalyzeResult::NotIdentified { output });

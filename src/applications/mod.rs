@@ -31,7 +31,7 @@ mod tikibase;
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{self, Executable, UnixExecutableName};
+use crate::run::{self, ExecutablePath, UnixExecutableName};
 use crate::Log;
 use std::fmt::Display;
 use std::slice::Iter;
@@ -63,7 +63,7 @@ pub trait App {
   fn latest_installable_version(&self, log: Log) -> Result<Version>;
 
   /// ensures that the given executable belongs to this app and if yes returns its version
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult>;
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult>;
 
   /// Apps can override this method to provide version restrictions
   /// defined by config files in the working directory.

@@ -7,17 +7,17 @@ use std::fmt::Display;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-/// an application that can be executed
+/// the full path to an executable that RTA can execute
 #[derive(Clone, Debug, PartialEq)]
-pub struct Executable(PathBuf);
+pub struct ExecutablePath(PathBuf);
 
-impl AsRef<OsStr> for Executable {
+impl AsRef<OsStr> for ExecutablePath {
   fn as_ref(&self) -> &OsStr {
     self.0.as_os_str()
   }
 }
 
-impl Executable {
+impl ExecutablePath {
   pub fn as_str(&self) -> Cow<'_, str> {
     self.0.to_string_lossy()
   }
@@ -79,25 +79,25 @@ impl Executable {
   }
 }
 
-impl Display for Executable {
+impl Display for ExecutablePath {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(&self.0.to_string_lossy())
   }
 }
 
-impl From<PathBuf> for Executable {
+impl From<PathBuf> for ExecutablePath {
   fn from(value: PathBuf) -> Self {
-    Executable(value)
+    ExecutablePath(value)
   }
 }
 
-impl From<&Path> for Executable {
+impl From<&Path> for ExecutablePath {
   fn from(value: &Path) -> Self {
-    Executable(value.to_path_buf())
+    ExecutablePath(value.to_path_buf())
   }
 }
 
-impl AsRef<Path> for Executable {
+impl AsRef<Path> for ExecutablePath {
   fn as_ref(&self) -> &Path {
     &self.0
   }
