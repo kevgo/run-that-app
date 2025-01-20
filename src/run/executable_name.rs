@@ -4,7 +4,7 @@ use std::fmt::Display;
 use std::path::Path;
 
 /// the unix name of an executable
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct UnixExecutableName(String);
 
 impl UnixExecutableName {
