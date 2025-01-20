@@ -46,7 +46,7 @@ pub enum Method {
     /// the name of the Rust crate that contains the executable
     crate_name: &'static str,
     /// The subfolder that contains the executables after compilation.
-    bin_folder: Option<String>,
+    bin_folder: Option<&'static str>,
   },
 }
 

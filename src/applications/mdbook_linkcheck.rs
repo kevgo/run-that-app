@@ -41,7 +41,7 @@ impl App for MdBookLinkCheck {
         },
         Method::CompileRustSource {
           crate_name: "mdbook-linkcheck",
-          filepath: format!("bin{sep}{filename}", sep = path::MAIN_SEPARATOR, filename = self.default_executable_filename()),
+          bin_folder: Some("bin"),
         },
       ],
     }
@@ -107,7 +107,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "mdbook-linkcheck",
-            filepath: S("bin/mdbook-linkcheck"),
+            bin_folder: Some("bin"),
           },
         ],
       };
@@ -131,7 +131,7 @@ mod tests {
         },
         Method::CompileRustSource {
           crate_name: "mdbook-linkcheck",
-          filepath: S("bin\\mdbook-linkcheck.exe"),
+          bin_folder: Some("bin"),
         },
       ];
       assert_eq!(have, want);

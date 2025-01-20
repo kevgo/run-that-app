@@ -39,7 +39,7 @@ impl App for Dprint {
         },
         Method::CompileRustSource {
           crate_name: "dprint",
-          filepath: format!("bin/{}", self.default_executable_filename().platform_path(platform.os)),
+          bin_folder: Some("bin"),
         },
       ],
     }
@@ -102,7 +102,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "dprint",
-            filepath: S("bin/dprint"),
+            bin_folder: Some("bin"),
           },
         ],
       };
@@ -126,7 +126,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "dprint",
-            filepath: S("bin/dprint"),
+            bin_folder: Some("bin"),
           },
         ],
       };

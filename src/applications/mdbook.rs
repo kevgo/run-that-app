@@ -7,7 +7,6 @@ use crate::run::ExecutablePath;
 use crate::{prelude::*, run};
 use crate::{regexp, Log};
 use const_format::formatcp;
-use std::path;
 
 pub struct MdBook {}
 
@@ -45,7 +44,7 @@ impl App for MdBook {
         },
         Method::CompileRustSource {
           crate_name: "mdbook",
-          filepath: format!("bin{sep}{filename}", sep = path::MAIN_SEPARATOR, filename = self.default_executable_filename()),
+          bin_folder: Some("bin"),
         },
       ],
     }
@@ -111,7 +110,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "mdbook",
-            filepath: S("bin/mdbook"),
+            bin_folder: Some("bin"),
           },
         ],
       };
@@ -135,7 +134,7 @@ mod tests {
         },
         Method::CompileRustSource {
           crate_name: "mdbook",
-          filepath: S("bin\\mdbook.exe"),
+          bin_folder: Some("bin"),
         },
       ];
       assert_eq!(have, want);
