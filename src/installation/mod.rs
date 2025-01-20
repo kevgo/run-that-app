@@ -61,11 +61,11 @@ impl Method {
         } else {
           bin_folders
             .iter()
-            .map(|bin_folder| app_folder.join(bin_folder).join(&executable_filename))
+            .map(|bin_folder| app_folder.join(bin_folder).join(executable_filename))
             .collect()
         }
       }
-      Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => vec![app_folder.join(&executable_filename)],
+      Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => vec![app_folder.join(executable_filename)],
       Method::CompileRustSource { crate_name: _, bin_folder } => vec![match bin_folder {
         Some(bin_folder) => app_folder.join(bin_folder).join(executable_filename),
         None => app_folder.join(executable_filename),
