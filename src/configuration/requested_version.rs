@@ -71,11 +71,10 @@ mod tests {
   mod parse {
     use crate::applications::{AnalyzeResult, App};
     use crate::configuration::Version;
-    use crate::execution::Executable;
-    use crate::installation;
     use crate::logging::Log;
     use crate::platform::Platform;
     use crate::prelude::*;
+    use crate::run::{self, ExecutablePath, UnixExecutableName};
 
     /// an App instance that allows to mock the system version restrictions
     struct TestApp {
@@ -89,7 +88,7 @@ mod tests {
       fn name(&self) -> crate::configuration::ApplicationName {
         unimplemented!()
       }
-      fn executable_filename(&self, _platform: Platform) -> String {
+      fn default_executable_filename(&self) -> UnixExecutableName {
         unimplemented!()
       }
       fn homepage(&self) -> &'static str {
@@ -101,10 +100,13 @@ mod tests {
       fn latest_installable_version(&self, _log: Log) -> Result<Version> {
         unimplemented!()
       }
-      fn analyze_executable(&self, _path: &Executable, _log: Log) -> Result<AnalyzeResult> {
+      fn analyze_executable(&self, _path: &ExecutablePath, _log: Log) -> Result<AnalyzeResult> {
         unimplemented!()
       }
-      fn install_methods(&self, _version: &Version, _platform: Platform) -> Vec<installation::Method> {
+      fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
+        unimplemented!()
+      }
+      fn clone(&self) -> Box<dyn App> {
         unimplemented!()
       }
     }

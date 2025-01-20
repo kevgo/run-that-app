@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::{regexp, Log};
+use crate::run::ExecutablePath;
+use crate::{regexp, run, Log};
 use const_format::formatcp;
 
 pub struct Scc {}
@@ -22,7 +22,7 @@ impl App for Scc {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let os = match platform.os {
       Os::Linux => "Linux",
       Os::MacOS => "Darwin",
@@ -32,15 +32,17 @@ impl App for Scc {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "x86_64",
     };
-    vec![
-      Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/scc_{os}_{cpu}.tar.gz"),
-        path_in_archive: self.executable_filename(platform),
-      },
-      Method::CompileGoSource {
-        import_path: format!("github.com/{ORG}/{REPO}/v3@v{version}"),
-      },
-    ]
+    run::Method::ThisApp {
+      install_methods: vec![
+        Method::DownloadArchive {
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/scc_{os}_{cpu}.tar.gz"),
+          bin_folders: vec![],
+        },
+        Method::CompileGoSource {
+          import_path: format!("github.com/{ORG}/{REPO}/v3@v{version}"),
+        },
+      ],
+    }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -51,7 +53,7 @@ impl App for Scc {
     github_releases::versions(ORG, REPO, amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
     if !output.contains("Count lines of code in a directory with complexity estimation") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -60,6 +62,10 @@ impl App for Scc {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
+  }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Self {})
   }
 }
 
@@ -77,47 +83,52 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
     fn linux_arm() {
-      let have = (Scc {}).install_methods(
+      let have = (Scc {}).run_method(
         &Version::from("3.2.0"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
         },
       );
-      let want = vec![
-        Method::DownloadArchive {
-          url: S("https://github.com/boyter/scc/releases/download/v3.2.0/scc_Darwin_arm64.tar.gz"),
-          path_in_archive: S("scc"),
-        },
-        Method::CompileGoSource {
-          import_path: S("github.com/boyter/scc/v3@v3.2.0"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: S("https://github.com/boyter/scc/releases/download/v3.2.0/scc_Darwin_arm64.tar.gz"),
+            bin_folders: vec![],
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/boyter/scc/v3@v3.2.0"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
 
     #[test]
     fn windows_intel() {
-      let have = (Scc {}).install_methods(
+      let have = (Scc {}).run_method(
         &Version::from("3.2.0"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![
-        Method::DownloadArchive {
-          url: S("https://github.com/boyter/scc/releases/download/v3.2.0/scc_Windows_x86_64.tar.gz"),
-          path_in_archive: S("scc.exe"),
-        },
-        Method::CompileGoSource {
-          import_path: S("github.com/boyter/scc/v3@v3.2.0"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: S("https://github.com/boyter/scc/releases/download/v3.2.0/scc_Windows_x86_64.tar.gz"),
+            bin_folders: vec![],
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/boyter/scc/v3@v3.2.0"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
   }

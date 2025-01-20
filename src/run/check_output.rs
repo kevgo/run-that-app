@@ -1,7 +1,7 @@
 use super::{exit_status_to_code, format_call};
 use crate::cli;
-use crate::execution::Executable;
 use crate::prelude::*;
+use crate::run::ExecutablePath;
 use std::io::{self, BufRead, BufReader, Read, Write};
 use std::process::{self, Child, Command, ExitCode, Stdio};
 use std::sync::mpsc;
@@ -26,7 +26,7 @@ const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
 
 /// Executes the given executable with the given arguments.
 /// The returned `ExitCode` also indicates failure if there has been any output.
-pub fn check_output(executable: &Executable, args: &[String]) -> Result<ExitCode> {
+pub fn check_output(executable: &ExecutablePath, args: &[String]) -> Result<ExitCode> {
   let (sender, receiver) = mpsc::channel();
   let mut cmd = Command::new(executable);
   cmd.args(args);
@@ -78,7 +78,7 @@ pub fn check_output(executable: &Executable, args: &[String]) -> Result<ExitCode
     }
   }
   if encountered_output {
-    let mut call = vec![executable.0.file_name().unwrap_or_default().to_string_lossy().to_string()];
+    let mut call = vec![executable.as_path().file_name().unwrap_or_default().to_string_lossy().to_string()];
     call.extend(args.to_owned());
     return Err(UserError::ProcessEmittedOutput { cmd: call.join(" ") });
   }

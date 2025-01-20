@@ -1,12 +1,10 @@
 use super::go::Go;
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
-use crate::installation::Method;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::{installation, Log};
-use std::path;
+use crate::run::{ExecutablePath, UnixExecutableName};
+use crate::{run, Log};
 
 pub struct Gofmt {}
 
@@ -19,13 +17,11 @@ impl App for Gofmt {
     "https://go.dev"
   }
 
-  fn install_methods(&self, _version: &Version, platform: Platform) -> Vec<installation::Method> {
-    let sep = path::MAIN_SEPARATOR;
-    let filename = &self.executable_filename(platform);
-    vec![Method::ExecutableInAnotherApp {
-      other_app: Box::new(app_to_install()),
-      executable_path: format!("go{sep}bin{sep}{filename}"),
-    }]
+  fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
+    run::Method::OtherAppOtherExecutable {
+      app: Box::new(app_to_install()),
+      executable_name: UnixExecutableName::from("gofmt"),
+    }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -36,13 +32,17 @@ impl App for Gofmt {
     app_to_install().installable_versions(amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
     if !output.contains("report all errors (not just the first 10 on different lines)") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     // TODO: return the version of Go here
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+  }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Self {})
   }
 }
 
@@ -58,41 +58,40 @@ mod tests {
     use crate::applications::gofmt::Gofmt;
     use crate::applications::App;
     use crate::configuration::Version;
-    use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
-    use big_s::S;
+    use crate::run::{self, UnixExecutableName};
 
     #[test]
     #[cfg(unix)]
     fn macos() {
-      let have = (Gofmt {}).install_methods(
+      let have = (Gofmt {}).run_method(
         &Version::from("1.23.4"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![Method::ExecutableInAnotherApp {
-        other_app: Box::new(Go {}),
-        executable_path: S("go/bin/gofmt"),
-      }];
+      let want = run::Method::OtherAppOtherExecutable {
+        app: Box::new(Go {}),
+        executable_name: UnixExecutableName::from("gofmt"),
+      };
       assert_eq!(have, want);
     }
 
     #[test]
     #[cfg(windows)]
     fn windows() {
-      let have = (Gofmt {}).install_methods(
+      let have = (Gofmt {}).run_method(
         &Version::from("1.23.4"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![Method::ExecutableInAnotherApp {
-        other_app: Box::new(Go {}),
-        executable_path: S("go\\bin\\gofmt.exe"),
-      }];
+      let want = run::Method::OtherAppOtherExecutable {
+        app: Box::new(Go {}),
+        executable_name: UnixExecutableName::from("gofmt"),
+      };
       assert_eq!(have, want);
     }
   }

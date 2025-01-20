@@ -1,7 +1,6 @@
 use super::Outcome;
 use crate::applications::{self, App};
 use crate::configuration::{RequestedVersion, RequestedVersions, Version};
-use crate::execution::Executable;
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
@@ -53,20 +52,7 @@ pub fn run(
     return Err(UserError::GoCompilationFailed);
   }
   log(Event::CompileGoSuccess);
-  let executable_path = executable_path(app, version, platform, yard);
-  if !executable_path.exists() {
-    return Err(UserError::InternalError {
-      desc: format!("executable not found after compiling Go source: {}", executable_path.to_string_lossy()),
-    });
-  }
-  Ok(Outcome::Installed {
-    executable: Executable(executable_path),
-  })
-}
-
-/// provides the path that the executable would have when installed via this method
-pub fn executable_path(app: &dyn App, version: &Version, platform: Platform, yard: &Yard) -> PathBuf {
-  yard.app_folder(&app.name(), version).join(app.executable_filename(platform))
+  Ok(Outcome::Installed)
 }
 
 fn load_rta_go(platform: Platform, optional: bool, config_file: &configuration::File, yard: &Yard, log: Log) -> Result<Option<PathBuf>> {
@@ -79,7 +65,7 @@ fn load_rta_go(platform: Platform, optional: bool, config_file: &configuration::
   };
   for requested_go_version in &requested_go_versions.0 {
     if let Some(executable) = commands::run::load_or_install(&go, requested_go_version, platform, optional, yard, config_file, log)? {
-      return Ok(Some(executable.0));
+      return Ok(Some(executable.inner()));
     }
   }
   Ok(None)

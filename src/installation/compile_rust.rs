@@ -1,17 +1,15 @@
 use super::Outcome;
 use crate::applications::App;
 use crate::configuration::Version;
-use crate::execution::Executable;
 use crate::logging::{Event, Log};
 use crate::prelude::*;
 use crate::yard::Yard;
 use std::io::ErrorKind;
-use std::path::PathBuf;
 use std::process::Command;
 use which::which;
 
 /// installs the given Rust-based application by compiling it from source
-pub fn run(app: &dyn App, crate_name: &str, version: &Version, yard: &Yard, executable_filename: &str, log: Log) -> Result<Outcome> {
+pub fn run(app: &dyn App, crate_name: &str, version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
   let Ok(cargo_path) = which("cargo") else {
     return Err(UserError::RustNotInstalled);
   };
@@ -38,17 +36,5 @@ pub fn run(app: &dyn App, crate_name: &str, version: &Version, yard: &Yard, exec
     return Err(UserError::RustCompilationFailed);
   }
   log(Event::CompileRustSuccess);
-  let executable_path = executable_path(app, version, yard, executable_filename);
-  if !executable_path.exists() {
-    return Err(UserError::InternalError {
-      desc: format!("executable not found after compiling Rust source: {}", executable_path.to_string_lossy()),
-    });
-  }
-  Ok(Outcome::Installed {
-    executable: Executable(executable_path),
-  })
-}
-
-pub fn executable_path(app: &dyn App, version: &Version, yard: &Yard, executable_path_in_folder: &str) -> PathBuf {
-  yard.app_folder(&app.name(), version).join(executable_path_in_folder)
+  Ok(Outcome::Installed)
 }

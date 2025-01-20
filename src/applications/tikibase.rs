@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::{regexp, Log};
+use crate::run::ExecutablePath;
+use crate::{regexp, run, Log};
 use const_format::formatcp;
 
 pub struct Tikibase {}
@@ -22,7 +22,7 @@ impl App for Tikibase {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let cpu = match platform.cpu {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "intel64",
@@ -36,10 +36,12 @@ impl App for Tikibase {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    vec![Method::DownloadArchive {
-      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/tikibase_{os}_{cpu}.{ext}"),
-      path_in_archive: self.executable_filename(platform),
-    }]
+    run::Method::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/tikibase_{os}_{cpu}.{ext}"),
+        bin_folders: vec![],
+      }],
+    }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
@@ -50,7 +52,7 @@ impl App for Tikibase {
     github_releases::latest(ORG, REPO, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
     if !output.contains("Linter for Markdown-based knowledge databases") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -59,6 +61,10 @@ impl App for Tikibase {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
+  }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Self {})
   }
 }
 
@@ -76,39 +82,44 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      let have = (Tikibase {}).install_methods(
+      let have = (Tikibase {}).run_method(
         &Version::from("0.6.2"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_macos_arm64.tar.gz"),
-        path_in_archive: S("tikibase"),
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_macos_arm64.tar.gz"),
+          bin_folders: vec![],
+        }],
+      };
       assert_eq!(have, want);
     }
 
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      let have = (Tikibase {}).install_methods(
+      let have = (Tikibase {}).run_method(
         &Version::from("0.6.2"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_windows_intel64.zip"),
-        path_in_archive: S("tikibase.exe"),
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_windows_intel64.zip"),
+          bin_folders: vec![],
+        }],
+      };
       assert_eq!(have, want);
     }
   }

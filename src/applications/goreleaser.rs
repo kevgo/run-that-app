@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
+use crate::run::{self, ExecutablePath};
 use crate::{regexp, Log};
 
 pub struct Goreleaser {}
@@ -21,7 +21,7 @@ impl App for Goreleaser {
     "https://goreleaser.com"
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let os = match platform.os {
       Os::Linux => "Linux",
       Os::MacOS => "Darwin",
@@ -35,10 +35,12 @@ impl App for Goreleaser {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    vec![Method::DownloadArchive {
-      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}"),
-      path_in_archive: self.executable_filename(platform),
-    }]
+    run::Method::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}"),
+        bin_folders: vec![],
+      }],
+    }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -49,7 +51,7 @@ impl App for Goreleaser {
     github_releases::versions(ORG, REPO, amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-v", log)?;
     if !output.contains("https://goreleaser.com") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -58,6 +60,10 @@ impl App for Goreleaser {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
+  }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Self {})
   }
 }
 
@@ -69,47 +75,49 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
 
   mod install_methods {
+    use crate::applications::goreleaser::Goreleaser;
     use crate::applications::App;
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::applications::goreleaser::Goreleaser;
-
-      let have = (Goreleaser {}).install_methods(
+      let have = (Goreleaser {}).run_method(
         &Version::from("1.22.1"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz"),
-        path_in_archive: S("goreleaser"),
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz"),
+          bin_folders: vec![],
+        }],
+      };
       assert_eq!(have, want);
     }
 
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      use crate::applications::goreleaser::Goreleaser;
-
-      let have = (Goreleaser {}).install_methods(
+      let have = (Goreleaser {}).run_method(
         &Version::from("1.22.1"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Windows_x86_64.zip"),
-        path_in_archive: S("goreleaser.exe"),
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Windows_x86_64.zip"),
+          bin_folders: vec![],
+        }],
+      };
       assert_eq!(have, want);
     }
   }

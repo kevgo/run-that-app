@@ -29,10 +29,11 @@ mod staticcheck;
 mod tikibase;
 
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::{installation, Log};
+use crate::run::{self, ExecutablePath, UnixExecutableName};
+use crate::Log;
+use std::fmt::Display;
 use std::slice::Iter;
 
 pub trait App {
@@ -40,15 +41,20 @@ pub trait App {
   fn name(&self) -> ApplicationName;
 
   /// the filename of the executable that starts this app
-  fn executable_filename(&self, platform: Platform) -> String {
-    format!("{name}{ext}", name = self.name(), ext = platform.os.executable_extension())
+  fn default_executable_filename(&self) -> UnixExecutableName {
+    UnixExecutableName::from(self.name().inner())
   }
+
+  /// names of other executables that this app provides
+  fn additional_executables(&self) -> Vec<UnixExecutableName> {
+    vec![]
+  }
+
+  /// the various ways to install and run this application
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method;
 
   /// link to the (human-readable) homepage of the app
   fn homepage(&self) -> &'static str;
-
-  /// the various ways to install this application
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method>;
 
   /// provides the versions of this application that can be installed
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>>;
@@ -57,7 +63,7 @@ pub trait App {
   fn latest_installable_version(&self, log: Log) -> Result<Version>;
 
   /// ensures that the given executable belongs to this app and if yes returns its version
-  fn analyze_executable(&self, path: &Executable, log: Log) -> Result<AnalyzeResult>;
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult>;
 
   /// Apps can override this method to provide version restrictions
   /// defined by config files in the working directory.
@@ -71,6 +77,42 @@ pub trait App {
   fn allowed_versions(&self) -> Result<semver::VersionReq> {
     Ok(semver::VersionReq::STAR)
   }
+
+  /// this is necessary because a limitation of Rust does not allow deriving the Clone trait automatically
+  fn clone(&self) -> Box<dyn App>;
+
+  /// provides the app that contains the executable for this app
+  fn carrier(&self, version: &Version, platform: Platform) -> AppAndExecutable {
+    match self.run_method(version, platform) {
+      run::Method::ThisApp { install_methods: _ } => AppAndExecutable {
+        app: self.clone(),
+        executable: self.default_executable_filename(),
+        args: vec![],
+      },
+      run::Method::OtherAppOtherExecutable { app, executable_name } => AppAndExecutable {
+        app: app.clone(),
+        executable: executable_name,
+        args: vec![],
+      },
+      run::Method::OtherAppDefaultExecutable { app, args } => AppAndExecutable {
+        app: app.clone(),
+        executable: app.default_executable_filename(),
+        args,
+      },
+    }
+  }
+}
+
+impl Display for dyn App {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.write_str(self.name().as_str())
+  }
+}
+
+pub struct AppAndExecutable {
+  pub app: Box<dyn App>,
+  pub executable: UnixExecutableName,
+  pub args: Vec<String>,
 }
 
 pub enum AnalyzeResult {

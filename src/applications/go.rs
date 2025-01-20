@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_tags;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::{filesystem, regexp, Log};
+use crate::run::ExecutablePath;
+use crate::{filesystem, regexp, run, Log};
 use big_s::S;
 use std::path;
 
@@ -23,7 +23,7 @@ impl App for Go {
     "https://go.dev"
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -38,12 +38,13 @@ impl App for Go {
       Os::Windows => "zip",
     };
     let sep = path::MAIN_SEPARATOR;
-    let file = self.executable_filename(platform);
     let version_str = version.as_str().trim_start_matches("go");
-    vec![Method::DownloadArchive {
-      url: format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}"),
-      path_in_archive: format!("go{sep}bin{sep}{file}"),
-    }]
+    run::Method::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}"),
+        bin_folders: vec![format!("go{sep}bin")],
+      }],
+    }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -69,7 +70,7 @@ impl App for Go {
     Ok(go_tags.into_iter().map(Version::from).collect())
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     if let Ok(version) = extract_version(&executable.run_output("version", log)?) {
       return Ok(AnalyzeResult::IdentifiedWithVersion(version.into()));
     }
@@ -94,6 +95,10 @@ impl App for Go {
     })?;
     Ok(version_req)
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Self {})
+  }
 }
 
 fn extract_version(output: &str) -> Result<&str> {
@@ -113,39 +118,44 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      let have = (Go {}).install_methods(
+      let have = (Go {}).run_method(
         &Version::from("1.21.5"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz"),
-        path_in_archive: S("go/bin/go"),
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz"),
+          bin_folders: vec![S("go/bin")],
+        }],
+      };
       assert_eq!(have, want);
     }
 
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      let have = (Go {}).install_methods(
+      let have = (Go {}).run_method(
         &Version::from("1.21.5"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://go.dev/dl/go1.21.5.windows-amd64.zip"),
-        path_in_archive: S("go\\bin\\go.exe"),
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://go.dev/dl/go1.21.5.windows-amd64.zip"),
+          bin_folders: vec![S("go\\bin")],
+        }],
+      };
       assert_eq!(have, want);
     }
   }

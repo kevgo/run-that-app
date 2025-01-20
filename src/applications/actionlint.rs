@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
+use crate::run::{self, ExecutablePath};
 use crate::{regexp, Log};
 use const_format::formatcp;
 
@@ -26,7 +26,7 @@ impl App for ActionLint {
     github_releases::latest(ORG, REPO, log)
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let cpu = match platform.cpu {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "amd64",
@@ -40,22 +40,24 @@ impl App for ActionLint {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    vec![
-      Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}"),
-        path_in_archive: self.executable_filename(platform),
-      },
-      Method::CompileGoSource {
-        import_path: format!("github.com/{ORG}/{REPO}/cmd/actionlint@v{version}"),
-      },
-    ]
+    run::Method::ThisApp {
+      install_methods: vec![
+        Method::DownloadArchive {
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}"),
+          bin_folders: vec![],
+        },
+        Method::CompileGoSource {
+          import_path: format!("github.com/{ORG}/{REPO}/cmd/actionlint@v{version}"),
+        },
+      ],
+    }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
     github_releases::versions(ORG, REPO, amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
     if !output.contains("actionlint is a linter for GitHub Actions workflow files") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -65,6 +67,10 @@ impl App for ActionLint {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::NotIdentified { output }),
     }
+  }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Self {})
   }
 }
 
@@ -76,53 +82,58 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
   use crate::UserError;
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::actionlint::ActionLint;
     use crate::applications::App;
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
     fn linux_arm() {
-      let have = (ActionLint {}).install_methods(
+      let have = (ActionLint {}).run_method(
         &Version::from("1.6.26"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Arm64,
         },
       );
-      let want = vec![
-        Method::DownloadArchive {
-          url: S("https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_linux_arm64.tar.gz"),
-          path_in_archive: S("actionlint"),
-        },
-        Method::CompileGoSource {
-          import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.6.26"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: S("https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_linux_arm64.tar.gz"),
+            bin_folders: vec![],
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.6.26"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
 
     #[test]
     fn windows_intel() {
-      let have = (ActionLint {}).install_methods(
+      let have = (ActionLint {}).run_method(
         &Version::from("1.6.26"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![
-        Method::DownloadArchive {
-          url: S("https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_windows_amd64.zip"),
-          path_in_archive: S("actionlint.exe"),
-        },
-        Method::CompileGoSource {
-          import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.6.26"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: S("https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_windows_amd64.zip"),
+            bin_folders: vec![],
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.6.26"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
   }

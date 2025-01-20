@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::{regexp, Log};
+use crate::run::ExecutablePath;
+use crate::{regexp, run, Log};
 
 pub struct ShellCheck {}
 
@@ -21,7 +21,7 @@ impl App for ShellCheck {
     "https://www.shellcheck.net"
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -35,12 +35,12 @@ impl App for ShellCheck {
       Os::Linux | Os::MacOS => "tar.xz",
       Os::Windows => "zip",
     };
-    let sep = std::path::MAIN_SEPARATOR;
-    let executable = self.executable_filename(platform);
-    vec![Method::DownloadArchive {
-      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}"),
-      path_in_archive: format!("shellcheck-v{version}{sep}{executable}"),
-    }]
+    run::Method::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}"),
+        bin_folders: vec![format!("shellcheck-v{version}")],
+      }],
+    }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -51,7 +51,7 @@ impl App for ShellCheck {
     github_releases::versions(ORG, REPO, amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("--version", log)?;
     if !output.contains("ShellCheck - shell script analysis tool") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -60,6 +60,10 @@ impl App for ShellCheck {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
+  }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Self {})
   }
 }
 
@@ -80,19 +84,22 @@ mod tests {
       use crate::configuration::Version;
       use crate::installation::Method;
       use crate::platform::{Cpu, Os, Platform};
+      use crate::run;
       use big_s::S;
 
-      let have = (ShellCheck {}).install_methods(
+      let have = (ShellCheck {}).run_method(
         &Version::from("0.9.0"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.linux.x86_64.tar.xz"),
-        path_in_archive: S("shellcheck-v0.9.0/shellcheck"),
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.linux.x86_64.tar.xz"),
+          bin_folders: vec![format!("shellcheck-v0.9.0")],
+        }],
+      };
       assert_eq!(have, want);
     }
 
@@ -104,19 +111,22 @@ mod tests {
       use crate::configuration::Version;
       use crate::installation::Method;
       use crate::platform::{Cpu, Os, Platform};
+      use crate::run;
       use big_s::S;
 
-      let have = (ShellCheck {}).install_methods(
+      let have = (ShellCheck {}).run_method(
         &Version::from("0.10.0"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.darwin.aarch64.tar.xz"),
-        path_in_archive: S("shellcheck-v0.10.0/shellcheck"),
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.darwin.aarch64.tar.xz"),
+          bin_folders: vec![format!("shellcheck-v0.10.0")],
+        }],
+      };
       assert_eq!(have, want);
     }
   }

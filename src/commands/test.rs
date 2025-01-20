@@ -1,8 +1,8 @@
 use crate::applications::AnalyzeResult;
 use crate::configuration::{self, ApplicationName};
-use crate::execution::Executable;
 use crate::logging::Event;
 use crate::prelude::*;
+use crate::run::ExecutablePath;
 use crate::yard::Yard;
 use crate::{applications, installation, logging, platform};
 use colored::Colorize;
@@ -26,7 +26,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
     log(Event::IntegrationTestNewApp { app: &app.name() });
     let latest_version = app.latest_installable_version(log)?;
     log(Event::IntegrationTestDeterminedVersion { version: &latest_version });
-    for install_method in app.install_methods(&latest_version, platform) {
+    for install_method in app.run_method(&latest_version, platform).install_methods() {
       log(Event::IntegrationTestNewInstallMethod {
         app: app.name().as_str(),
         method: &install_method,
@@ -46,35 +46,43 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
       {
         continue;
       }
-      let executable_path = install_method.executable_location(app.as_ref(), &latest_version, platform, &yard);
-      if !executable_path.exists() {
-        println!(
-          "executable {} not found, press ENTER after inspecting the yard",
-          executable_path.to_string_lossy()
-        );
+      let executable_paths = install_method.executable_locations(
+        app.as_ref(),
+        &app.default_executable_filename().platform_path(platform.os),
+        &latest_version,
+        &yard,
+      );
+      let mut executable_found = true;
+      for executable_path in executable_paths {
+        if !executable_path.exists() {
+          continue;
+        }
+        executable_found = true;
+        let executable = ExecutablePath::from(executable_path);
+        match app.analyze_executable(&executable, log)? {
+          AnalyzeResult::NotIdentified { output } => {
+            println!("executable {executable} not identified based on this output:\n\"{output}\"\nOUTPUT END");
+            return Ok(ExitCode::FAILURE);
+          }
+          AnalyzeResult::IdentifiedButUnknownVersion => {
+            println!("{}", "executable identified".green());
+          }
+          AnalyzeResult::IdentifiedWithVersion(executable_version) if executable_version == latest_version => {
+            println!("{}", "executable has the correct version".green());
+          }
+          AnalyzeResult::IdentifiedWithVersion(executable_version) => {
+            println!("executable has version {executable_version} but we installed version {latest_version}");
+            return Ok(ExitCode::FAILURE);
+          }
+        }
+      }
+      if !executable_found {
+        println!("executable for {app} not found, press ENTER after inspecting the yard");
         let mut buffer = String::new();
         if let Err(err) = io::stdin().read_line(&mut buffer) {
           eprintln!("Error: {err}");
         }
         return Ok(ExitCode::FAILURE);
-      }
-      let executable = Executable(executable_path.clone());
-      match app.analyze_executable(&executable, log)? {
-        AnalyzeResult::NotIdentified { output } => {
-          println!(
-            "executable {} not identified based on this output:\n\"{output}\"\nOUTPUT END",
-            executable_path.to_string_lossy()
-          );
-          return Ok(ExitCode::FAILURE);
-        }
-        AnalyzeResult::IdentifiedButUnknownVersion => println!("{}", "executable identified".green()),
-        AnalyzeResult::IdentifiedWithVersion(executable_version) if executable_version == latest_version => {
-          println!("{}", "executable has the correct version".green());
-        }
-        AnalyzeResult::IdentifiedWithVersion(executable_version) => {
-          println!("executable has version {executable_version} but we installed version {latest_version}");
-          return Ok(ExitCode::FAILURE);
-        }
       }
       let _ = yard.delete_app_folder(&app.name());
     }

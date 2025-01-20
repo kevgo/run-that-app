@@ -1,11 +1,11 @@
 use crate::applications::{AnalyzeResult, App};
 use crate::configuration::{self, ApplicationName, RequestedVersion, RequestedVersions, Version};
-use crate::execution::{self, Executable};
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
+use crate::run::{self, ExecutablePath};
 use crate::yard::Yard;
 use crate::{applications, installation, yard};
 use std::process::ExitCode;
@@ -21,9 +21,9 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   for requested_version in requested_versions {
     if let Some(executable) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
       if args.error_on_output {
-        return execution::check_output(&executable, &args.app_args);
+        return run::check_output(&executable, &args.app_args);
       }
-      return execution::stream_output(&executable, &args.app_args);
+      return run::stream_output(&executable, &args.app_args);
     }
   }
   if args.optional {
@@ -63,7 +63,7 @@ pub fn load_or_install(
   yard: &Yard,
   config_file: &configuration::File,
   log: Log,
-) -> Result<Option<Executable>> {
+) -> Result<Option<ExecutablePath>> {
   match requested_version {
     RequestedVersion::Path(version) => load_from_path(app, version, platform, log),
     RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, platform, optional, yard, config_file, log),
@@ -71,8 +71,8 @@ pub fn load_or_install(
 }
 
 // checks if the app is in the PATH and has the correct version
-fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<Executable>> {
-  let Some(executable) = find_global_install(&app.executable_filename(platform), log) else {
+fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutablePath>> {
+  let Some(executable) = find_global_install(&app.default_executable_filename().platform_path(platform.os), log) else {
     log(Event::GlobalInstallNotFound);
     return Ok(None);
   };
@@ -114,20 +114,22 @@ fn load_or_install_from_yard(
   yard: &Yard,
   config_file: &configuration::File,
   log: Log,
-) -> Result<Option<Executable>> {
+) -> Result<Option<ExecutablePath>> {
+  let carrier = app.carrier(version, platform);
   // try to load the app
-  if let Some(executable) = yard.load_executable(app, version, platform, log) {
+  if let Some(executable) = yard.load_executable(&carrier, version, platform, log) {
     return Ok(Some(executable));
   }
   // app not installed --> check if uninstallable
-  if yard.is_not_installable(&app.name(), version) {
+  if yard.is_not_installable(&carrier.app.name(), version) {
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  if let Outcome::Installed { executable } = installation::any(app, version, platform, optional, yard, config_file, log)? {
-    return Ok(Some(executable));
+  match installation::any(app, version, platform, optional, yard, config_file, log)? {
+    Outcome::Installed => Ok(yard.load_executable(&carrier, version, platform, log)),
+    Outcome::NotInstalled => {
+      yard.mark_not_installable(&carrier.app.name(), version)?;
+      Ok(None)
+    }
   }
-  // app could not be installed -> mark as uninstallable
-  yard.mark_not_installable(&app.name(), version)?;
-  Ok(None)
 }

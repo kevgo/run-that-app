@@ -1,11 +1,12 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::{regexp, Log};
+use crate::run::ExecutablePath;
+use crate::{regexp, run, Log};
+use big_s::S;
 use std::path;
 
 pub struct Gh {}
@@ -22,7 +23,7 @@ impl App for Gh {
     "https://cli.github.com"
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "macOS",
@@ -37,14 +38,12 @@ impl App for Gh {
       Os::Windows | Os::MacOS => "zip",
     };
     let sep = path::MAIN_SEPARATOR;
-    let filename = self.executable_filename(platform);
-    vec![Method::DownloadArchive {
-      url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}"),
-      path_in_archive: match platform.os {
-        Os::Windows => format!("bin{sep}{filename}"),
-        Os::Linux | Os::MacOS => format!("gh_{version}_{os}_{cpu}{sep}bin{sep}{filename}"),
-      },
-    }]
+    run::Method::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}"),
+        bin_folders: vec![S("bin"), format!("gh_{version}_{os}_{cpu}{sep}bin")],
+      }],
+    }
     // installation from source seems more involved, see https://github.com/cli/cli/blob/trunk/docs/source.md
   }
 
@@ -56,7 +55,7 @@ impl App for Gh {
     github_releases::latest(ORG, REPO, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
     if !output.contains("Work seamlessly with GitHub from the command line") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -65,6 +64,10 @@ impl App for Gh {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
+  }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Self {})
   }
 }
 
@@ -81,39 +84,44 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      let have = (Gh {}).install_methods(
+      let have = (Gh {}).run_method(
         &Version::from("2.39.1"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Arm64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz"),
-        path_in_archive: S("gh_2.39.1_linux_arm64/bin/gh"),
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz"),
+          bin_folders: vec![S("bin"), S("gh_2.39.1_linux_arm64/bin")],
+        }],
+      };
       assert_eq!(have, want);
     }
 
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      let have = (Gh {}).install_methods(
+      let have = (Gh {}).run_method(
         &Version::from("2.39.1"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![Method::DownloadArchive {
-        url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip"),
-        path_in_archive: S("bin\\gh.exe"),
-      }];
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip"),
+          bin_folders: vec![S("bin"), S("gh_2.39.1_windows_amd64\\bin")],
+        }],
+      };
       assert_eq!(have, want);
     }
   }

@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::Log;
+use crate::run::ExecutablePath;
+use crate::{run, Log};
 
 pub struct Deadcode {}
 
@@ -17,10 +17,12 @@ impl App for Deadcode {
     "https://pkg.go.dev/golang.org/x/tools/cmd/deadcode"
   }
 
-  fn install_methods(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
-    vec![Method::CompileGoSource {
-      import_path: format!("golang.org/x/tools/cmd/deadcode@v{version}"),
-    }]
+  fn run_method(&self, version: &Version, _platform: Platform) -> run::Method {
+    run::Method::ThisApp {
+      install_methods: vec![Method::CompileGoSource {
+        import_path: format!("golang.org/x/tools/cmd/deadcode@v{version}"),
+      }],
+    }
   }
 
   fn latest_installable_version(&self, _log: Log) -> Result<Version> {
@@ -32,7 +34,7 @@ impl App for Deadcode {
     Ok(vec![Version::from("0.16.1")])
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
     if !output.contains("The deadcode command reports unreachable functions in Go programs") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -40,11 +42,16 @@ impl App for Deadcode {
     // as of 0.16.1 deadcode does not display the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Self {})
+  }
 }
 
 #[cfg(test)]
 mod tests {
   use crate::applications::deadcode::Deadcode;
+  use crate::run;
 
   #[test]
   fn install_methods() {
@@ -54,16 +61,18 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    let have = (Deadcode {}).install_methods(
+    let have = (Deadcode {}).run_method(
       &Version::from("0.16.1"),
       Platform {
         os: Os::Linux,
         cpu: Cpu::Arm64,
       },
     );
-    let want = vec![Method::CompileGoSource {
-      import_path: S("golang.org/x/tools/cmd/deadcode@v0.16.1"),
-    }];
+    let want = run::Method::ThisApp {
+      install_methods: vec![Method::CompileGoSource {
+        import_path: S("golang.org/x/tools/cmd/deadcode@v0.16.1"),
+      }],
+    };
     assert_eq!(have, want);
   }
 }

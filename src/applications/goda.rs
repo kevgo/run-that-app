@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::Log;
+use crate::run::ExecutablePath;
+use crate::{run, Log};
 use const_format::formatcp;
 
 pub struct Goda {}
@@ -22,10 +22,12 @@ impl App for Goda {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self, version: &Version, _platform: Platform) -> Vec<installation::Method> {
-    vec![Method::CompileGoSource {
-      import_path: format!("github.com/{ORG}/{REPO}@v{version}"),
-    }]
+  fn run_method(&self, version: &Version, _platform: Platform) -> run::Method {
+    run::Method::ThisApp {
+      install_methods: vec![Method::CompileGoSource {
+        import_path: format!("github.com/{ORG}/{REPO}@v{version}"),
+      }],
+    }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
@@ -36,7 +38,7 @@ impl App for Goda {
     github_releases::versions(ORG, REPO, amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("help", log)?;
     if !output.contains("Print dependency graph") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -44,10 +46,15 @@ impl App for Goda {
     // as of 0.5.7 goda has no way to determine the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Self {})
+  }
 }
 
 #[cfg(test)]
 mod tests {
+  use crate::run;
 
   #[test]
   fn install_methods() {
@@ -58,16 +65,18 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    let have = (Goda {}).install_methods(
+    let have = (Goda {}).run_method(
       &Version::from("0.5.9"),
       Platform {
         os: Os::MacOS,
         cpu: Cpu::Intel64,
       },
     );
-    let want = vec![Method::CompileGoSource {
-      import_path: S("github.com/loov/goda@v0.5.9"),
-    }];
+    let want = run::Method::ThisApp {
+      install_methods: vec![Method::CompileGoSource {
+        import_path: S("github.com/loov/goda@v0.5.9"),
+      }],
+    };
     assert_eq!(have, want);
   }
 }

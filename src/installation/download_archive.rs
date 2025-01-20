@@ -1,8 +1,8 @@
 use super::Outcome;
 use crate::applications::App;
 use crate::configuration::Version;
-use crate::execution::Executable;
 use crate::logging::Log;
+use crate::platform::Platform;
 use crate::prelude::*;
 use crate::yard::Yard;
 use crate::{archives, download};
@@ -10,10 +10,10 @@ use crate::{archives, download};
 use std::fs;
 #[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 /// downloads and unpacks the content of an archive file
-pub fn run(app: &dyn App, version: &Version, url: &str, executable_path_in_archive: &str, optional: bool, yard: &Yard, log: Log) -> Result<Outcome> {
+pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &[String], optional: bool, platform: Platform, yard: &Yard, log: Log) -> Result<Outcome> {
   let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
@@ -21,25 +21,25 @@ pub fn run(app: &dyn App, version: &Version, url: &str, executable_path_in_archi
   let Some(archive) = archives::lookup(&artifact.filename, artifact.data) else {
     return Err(UserError::UnknownArchive(artifact.filename));
   };
+  // extract the archive
   archive.extract_all(&app_folder, log)?;
-  let executable_path = executable_path(app, version, executable_path_in_archive, yard);
-  if !executable_path.exists() {
-    return Err(UserError::InternalError {
-      desc: format!("executable not found after downloading archive: {}", executable_path.to_string_lossy()),
-    });
-  };
-  #[cfg(unix)]
-  make_executable_unix(&executable_path)?;
-  #[cfg(windows)]
-  make_executable_windows(&executable_path);
-  Ok(Outcome::Installed {
-    executable: Executable(executable_path),
-  })
+  // verify that all executables that should be there exist and are executable
+  for bin_folder in bin_folders {
+    let bin_path = app_folder.join(bin_folder);
+    make_executable(&bin_path.join(app.default_executable_filename().platform_path(platform.os)));
+    // set the executable bit of all executable files that this app provides
+    for other_executable in app.additional_executables() {
+      make_executable(&bin_path.join(other_executable.platform_path(platform.os)));
+    }
+  }
+  Ok(Outcome::Installed)
 }
 
-/// tries to load the executable of the given app, if it was installed by downloading
-pub fn executable_path(app: &dyn App, version: &Version, executable_path_in_archive: &str, yard: &Yard) -> PathBuf {
-  yard.app_folder(&app.name(), version).join(executable_path_in_archive)
+fn make_executable(filepath: &Path) {
+  #[cfg(unix)]
+  let _ = make_executable_unix(filepath);
+  #[cfg(windows)]
+  make_executable_windows(filepath);
 }
 
 #[cfg(windows)]

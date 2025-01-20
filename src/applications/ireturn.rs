@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
-use crate::execution::Executable;
 use crate::hosting::github_releases;
-use crate::installation::{self, Method};
+use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::Log;
+use crate::run::ExecutablePath;
+use crate::{run, Log};
 use const_format::formatcp;
 
 pub struct Ireturn {}
@@ -22,7 +22,7 @@ impl App for Ireturn {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn install_methods(&self, version: &Version, platform: Platform) -> Vec<installation::Method> {
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -36,15 +36,17 @@ impl App for Ireturn {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    vec![
-      Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ireturn_{os}_{cpu}.{ext}"),
-        path_in_archive: self.executable_filename(platform),
-      },
-      Method::CompileGoSource {
-        import_path: format!("github.com/{ORG}/{REPO}/cmd/ireturn@v{version}"),
-      },
-    ]
+    run::Method::ThisApp {
+      install_methods: vec![
+        Method::DownloadArchive {
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ireturn_{os}_{cpu}.{ext}"),
+          bin_folders: vec![],
+        },
+        Method::CompileGoSource {
+          import_path: format!("github.com/{ORG}/{REPO}/cmd/ireturn@v{version}"),
+        },
+      ],
+    }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
@@ -55,12 +57,16 @@ impl App for Ireturn {
     github_releases::latest(ORG, REPO, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output("-h", log)?;
     if !output.contains("ireturn: Accept Interfaces, Return Concrete Types") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+  }
+
+  fn clone(&self) -> Box<dyn App> {
+    Box::new(Self {})
   }
 }
 
@@ -73,47 +79,52 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
     use big_s::S;
 
     #[test]
     fn linux_arm() {
-      let have = (Ireturn {}).install_methods(
+      let have = (Ireturn {}).run_method(
         &Version::from("0.3.0"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![
-        Method::DownloadArchive {
-          url: S("https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_linux_x86_64.tar.gz"),
-          path_in_archive: S("ireturn"),
-        },
-        Method::CompileGoSource {
-          import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: S("https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_linux_x86_64.tar.gz"),
+            bin_folders: vec![],
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
 
     #[test]
     fn windows_intel() {
-      let have = (Ireturn {}).install_methods(
+      let have = (Ireturn {}).run_method(
         &Version::from("0.3.0"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = vec![
-        Method::DownloadArchive {
-          url: S("https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_windows_x86_64.zip"),
-          path_in_archive: S("ireturn.exe"),
-        },
-        Method::CompileGoSource {
-          import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
-        },
-      ];
+      let want = run::Method::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: S("https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_windows_x86_64.zip"),
+            bin_folders: vec![],
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
+          },
+        ],
+      };
       assert_eq!(have, want);
     }
   }
