@@ -29,7 +29,6 @@ pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &[String], 
     make_executable(&bin_path.join(app.default_executable_filename().platform_path(platform.os)));
     // set the executable bit of all executable files that this app provides
     for other_executable in app.additional_executables() {
-      // TODO: determine the full path to the executable here
       make_executable(&bin_path.join(other_executable.platform_path(platform.os)));
     }
   }
