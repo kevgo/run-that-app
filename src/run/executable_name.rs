@@ -28,6 +28,12 @@ impl From<&str> for UnixExecutableName {
   }
 }
 
+impl From<String> for UnixExecutableName {
+  fn from(value: String) -> Self {
+    UnixExecutableName(value)
+  }
+}
+
 /// The platform-specific filename of an executable.
 /// On Windows: "unix-executable-name.exe"
 pub struct ExecutableFilename(String);
