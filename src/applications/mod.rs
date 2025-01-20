@@ -42,7 +42,7 @@ pub trait App {
 
   /// the filename of the executable that starts this app
   fn default_executable_filename(&self) -> UnixExecutableName {
-    UnixExecutableName::from(self.name().string())
+    UnixExecutableName::from(self.name().inner())
   }
 
   /// names of other executables that this app provides

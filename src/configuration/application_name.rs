@@ -48,7 +48,7 @@ impl AsRef<Path> for ApplicationName {
 
 impl ApplicationName {
   /// provides the underlying string value
-  pub fn string(self) -> String {
+  pub fn inner(self) -> String {
     self.0
   }
 }
