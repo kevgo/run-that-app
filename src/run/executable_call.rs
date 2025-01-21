@@ -1,7 +1,7 @@
 use super::ExecutablePath;
 use std::fmt::{Display, Write};
 
-/// a way to call an executable
+/// all the information needed to call an `App`s executable
 pub struct ExecutableCall {
   /// the executable to call
   pub executable_path: ExecutablePath,
