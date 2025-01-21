@@ -237,12 +237,28 @@ installed by package managers:
 
 #### Why not use Docker?
 
-Docker is overkill for running simple applications that don't need a custom
-Linux environment. Docker isn't available natively on macOS and Windows. Docker
-often uses Gigabytes of hard drive space. Docker doesn't help with different CPU
-architectures (Intel, ARM, Risc-V). Using Docker on CI can cause the
-Docker-in-Docker problem. Docker doesn't help you install random executables
-from GitHub Releases.
+Docker is a standardized container format for distributing complex applications
+along with their runtime environments. Its benefits are often likened to those
+of standardized shipping containers in maritime transport: a reliable,
+consistent, and portable way to package and deliver goods—or, in this case,
+software.
+
+However, just as companies rarely manufacture goods inside shipping containers,
+you likely don't need to "manufacture" your software inside a container either.
+Your development machine already has a capable operating system—there’s no need
+to layer additional OS environments just to write and debug code.
+
+Consider the implications: on macOS or Windows, which lack native Docker
+support, you end up running a full Linux instance inside a virtual machine,
+which then runs another Linux environment inside Docker. That’s two and a half
+operating systems in play! Each additional OS layer consumes gigabytes of
+storage and RAM, adding unnecessary complexity and overhead to your workflow.
+
+Moreover, Docker falls short in key areas. It doesn’t resolve compatibility
+issues with different CPU architectures (Intel, ARM, RISC-V). Using Docker in CI
+can introduce the infamous "Docker-in-Docker" problem. And if you need to
+install arbitrary executables from GitHub Releases, Docker won’t make that
+process any easier.
 
 #### Why not quickly write a small Bash script that downloads the executable?
 
