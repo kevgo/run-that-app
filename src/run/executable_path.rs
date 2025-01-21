@@ -23,7 +23,8 @@ impl ExecutablePath {
   }
 
   pub fn dir(&self) -> &Path {
-    &self.0.parent().unwrap()
+    #[allow(clippy::unwrap_used)] // there is always a parent because this is the path of an executable
+    self.0.parent().unwrap()
   }
 
   /// runs this executable with the given args and returns the output it produced
