@@ -36,7 +36,7 @@ impl Method {
   pub fn call_args(&self) -> Vec<&'static str> {
     match self {
       Method::ThisApp { install_methods: _ } | Method::OtherAppOtherExecutable { app: _, executable_name: _ } => vec![],
-      Method::OtherAppDefaultExecutable { app, args } => args,
+      Method::OtherAppDefaultExecutable { app: _, args } => args.clone(),
     }
   }
 }

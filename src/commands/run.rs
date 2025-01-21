@@ -1,11 +1,11 @@
-use crate::applications::{AnalyzeResult, App, AppAndExecutable};
+use crate::applications::{AnalyzeResult, App};
 use crate::configuration::{self, ApplicationName, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
-use crate::run::{self, ExecutablePath};
+use crate::run::{self, ExecutableCall, ExecutablePath};
 use crate::yard::Yard;
 use crate::{applications, installation, yard};
 use std::process::ExitCode;
@@ -21,6 +21,7 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   for requested_version in requested_versions {
     if let Some(executable) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
       println!("executable: {executable}");
+      let run_method = app.run_method(args.version, platform);
       println!("args: {}", args.app_args.join(" "));
       if args.error_on_output {
         return run::check_output(&executable, &args.app_args);
@@ -65,7 +66,7 @@ pub fn load_or_install(
   yard: &Yard,
   config_file: &configuration::File,
   log: Log,
-) -> Result<Option<ExecutablePath>> {
+) -> Result<Option<ExecutableCall>> {
   match requested_version {
     RequestedVersion::Path(version) => load_from_path(app, version, platform, log),
     RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, platform, optional, yard, config_file, log),
@@ -116,11 +117,14 @@ fn load_or_install_from_yard(
   yard: &Yard,
   config_file: &configuration::File,
   log: Log,
-) -> Result<Option<AppAndExecutable>> {
+) -> Result<Option<ExecutableCall>> {
   let carrier = app.carrier(version, platform);
   // try to load the app
   if let Some(executable) = yard.load_executable(&carrier, version, platform, log) {
-    return Ok(Some(executable));
+    return Ok(Some(ExecutableCall {
+      executable,
+      args: carrier.args,
+    }));
   }
   // app not installed --> check if uninstallable
   if yard.is_not_installable(&carrier.app.name(), version) {
@@ -128,7 +132,10 @@ fn load_or_install_from_yard(
   }
   // app not installed and installable --> try to install
   match installation::any(app, version, platform, optional, yard, config_file, log)? {
-    Outcome::Installed => Ok(yard.load_executable(&carrier, version, platform, log)),
+    Outcome::Installed => Ok(yard.load_executable(&carrier, version, platform, log).map(|executable_path| ExecutableCall {
+      executable: executable_path,
+      args: carrier.args,
+    })),
     Outcome::NotInstalled => {
       yard.mark_not_installable(&carrier.app.name(), version)?;
       Ok(None)
