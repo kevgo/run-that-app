@@ -55,7 +55,7 @@ mod tests {
     use crate::applications::App;
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run::{self, UnixExecutableName};
+    use crate::run;
 
     #[test]
     #[cfg(unix)]
@@ -67,9 +67,9 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = run::Method::OtherAppOtherExecutable {
+      let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
-        executable_name: UnixExecutableName::from("npx"),
+        args: vec!["../lib/node_modules/npm/bin/npx-cli.js"],
       };
       assert_eq!(have, want);
     }
@@ -84,9 +84,9 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::OtherAppOtherExecutable {
+      let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
-        executable_name: UnixExecutableName::from("npx"),
+        args: vec!["../lib/node_modules/npm/bin/npx-cli.js"],
       };
       assert_eq!(have, want);
     }
