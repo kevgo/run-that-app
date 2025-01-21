@@ -82,19 +82,19 @@ pub trait App {
   fn clone(&self) -> Box<dyn App>;
 
   /// provides the app that contains the executable for this app
-  fn carrier(&self, version: &Version, platform: Platform) -> AppAndExecutable {
+  fn executable_definition(&self, version: &Version, platform: Platform) -> ExecutableDefinition {
     match self.run_method(version, platform) {
-      run::Method::ThisApp { install_methods: _ } => AppAndExecutable {
+      run::Method::ThisApp { install_methods: _ } => ExecutableDefinition {
         app: self.clone(),
         executable: self.default_executable_filename(),
         args: vec![],
       },
-      run::Method::OtherAppOtherExecutable { app, executable_name } => AppAndExecutable {
+      run::Method::OtherAppOtherExecutable { app, executable_name } => ExecutableDefinition {
         app: app.clone(),
         executable: executable_name,
         args: vec![],
       },
-      run::Method::OtherAppDefaultExecutable { app, args } => AppAndExecutable {
+      run::Method::OtherAppDefaultExecutable { app, args } => ExecutableDefinition {
         app: app.clone(),
         executable: app.default_executable_filename(),
         args,
@@ -109,7 +109,7 @@ impl Display for dyn App {
   }
 }
 
-pub struct AppAndExecutable {
+pub struct ExecutableDefinition {
   pub app: Box<dyn App>,
   pub executable: UnixExecutableName,
   pub args: Vec<&'static str>,

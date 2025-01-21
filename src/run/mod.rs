@@ -2,6 +2,7 @@
 
 mod check_output;
 mod executable_call;
+mod executable_definition;
 mod executable_name;
 mod executable_path;
 mod exit_status_to_code;
@@ -11,6 +12,7 @@ mod stream_output;
 
 pub use check_output::check_output;
 pub use executable_call::ExecutableCall;
+pub use executable_definition::ExecutableDefinition;
 pub use executable_name::{ExecutableFilename, UnixExecutableName};
 pub use executable_path::ExecutablePath;
 pub use exit_status_to_code::exit_status_to_code;
