@@ -85,7 +85,7 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
     }
     AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
       log(Event::GlobalInstallMatchingVersion { range, version: None });
-      let args = make_args_absolute(executable_definition.args, executable_path.dir());
+      let args = make_args_absolute(&executable_definition.args, executable_path.dir());
       Ok(Some(ExecutableCall { executable_path, args }))
     }
     AnalyzeResult::IdentifiedButUnknownVersion => {
@@ -97,7 +97,7 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
         range,
         version: Some(&version),
       });
-      let args = make_args_absolute(executable_definition.args, executable_path.dir());
+      let args = make_args_absolute(&executable_definition.args, executable_path.dir());
       Ok(Some(ExecutableCall { executable_path, args }))
     }
     AnalyzeResult::IdentifiedWithVersion(version) => {
@@ -122,7 +122,7 @@ fn load_or_install_from_yard(
   let executable_definition = app.executable_definition(version, platform);
   // try to load the app
   if let Some(executable_path) = yard.load_executable(&executable_definition, version, platform, log) {
-    let args = make_args_absolute(executable_definition.args, executable_path.dir());
+    let args = make_args_absolute(&executable_definition.args, executable_path.dir());
     return Ok(Some(ExecutableCall { executable_path, args }));
   }
   // app not installed --> check if uninstallable
@@ -132,7 +132,7 @@ fn load_or_install_from_yard(
   // app not installed and installable --> try to install
   match installation::any(app, version, platform, optional, yard, config_file, log)? {
     Outcome::Installed => Ok(yard.load_executable(&executable_definition, version, platform, log).map(|executable_path| {
-      let args = make_args_absolute(executable_definition.args, executable_path.dir());
+      let args = make_args_absolute(&executable_definition.args, executable_path.dir());
       ExecutableCall { executable_path, args }
     })),
     Outcome::NotInstalled => {
@@ -142,6 +142,6 @@ fn load_or_install_from_yard(
   }
 }
 
-fn make_args_absolute(args: Vec<&str>, dir: &Path) -> Vec<String> {
+fn make_args_absolute(args: &[&str], dir: &Path) -> Vec<String> {
   args.iter().map(|arg| dir.join(arg).to_string_lossy().to_string()).collect()
 }
