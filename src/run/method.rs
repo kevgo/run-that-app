@@ -103,5 +103,6 @@ impl PartialEq for Method {
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum OtherAppArgs {
+  /// uses the first of the given options that exists inside the folder that application is installed in
   OneOfTheseInAppFolder { options: Vec<&'static str> },
 }
