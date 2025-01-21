@@ -13,7 +13,7 @@ use crate::prelude::*;
 use crate::run::ExecutableFilename;
 use crate::yard::Yard;
 use std::fmt::Debug;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 /// the different methods to install an application
 #[derive(Debug, PartialEq)]
@@ -25,7 +25,7 @@ pub enum Method {
     /// The possible folders within the archive that might contain the executable files.
     /// Multiple options exist because for some apps, the Windows archive contains a different folder structure than the Linux or macOS archive.
     /// Provide all possible folders here. If the executables are in the root folder of the archive, leave this empty.
-    bin_folders: Vec<String>,
+    bin_folders: BinFolderOptions,
   },
 
   /// installs the application by downloading the pre-compiled executable from the internet
@@ -51,19 +51,10 @@ pub enum Method {
 
 impl Method {
   /// provides possible locations of the given executable within the given app folder in the given  yard
-  pub fn executable_locations(&self, app: &dyn App, executable_filename: &ExecutableFilename, version: &Version, yard: &Yard) -> Vec<PathBuf> {
+  pub fn executable_paths(&self, app: &dyn App, executable_filename: &ExecutableFilename, version: &Version, yard: &Yard) -> Vec<PathBuf> {
     let app_folder = yard.app_folder(&app.name(), version);
     match self {
-      Method::DownloadArchive { url: _, bin_folders } => {
-        if bin_folders.is_empty() {
-          vec![app_folder.join(executable_filename)]
-        } else {
-          bin_folders
-            .iter()
-            .map(|bin_folder| app_folder.join(bin_folder).join(executable_filename))
-            .collect()
-        }
-      }
+      Method::DownloadArchive { url: _, bin_folders } => bin_folders.executable_paths(&app_folder, executable_filename),
       Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => vec![app_folder.join(executable_filename)],
       Method::CompileRustSource { crate_name: _, bin_folder } => vec![match bin_folder {
         Some(bin_folder) => app_folder.join(bin_folder).join(executable_filename),
@@ -77,6 +68,28 @@ impl Method {
       Method::DownloadArchive { url: _, bin_folders: _ } => format!("download archive for {app}@{version}"),
       Method::DownloadExecutable { url: _ } => format!("download executable for {app}@{version}"),
       Method::CompileGoSource { import_path: _ } | Method::CompileRustSource { crate_name: _, bin_folder: _ } => format!("compile {app}@{version} from source"),
+    }
+  }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum BinFolderOptions {
+  /// all binaries are in the root folder
+  AppFolder,
+  /// looks for the executable in the app folder or one of the given subfolders within the app folder
+  RootOrOneOf { options: Vec<String> },
+}
+
+impl BinFolderOptions {
+  pub fn executable_paths(&self, app_folder: &Path, executable_name: &ExecutableFilename) -> Vec<PathBuf> {
+    match self {
+      BinFolderOptions::RootOrOneOf { options } => {
+        let mut result = vec![app_folder.join(executable_name)];
+        for option in options {
+          result.push(app_folder.join(option).join(executable_name));
+        }
+        result
+      }
     }
   }
 }
