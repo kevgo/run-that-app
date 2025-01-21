@@ -95,6 +95,15 @@ impl BinFolderOptions {
         }
         result
       }
+      BinFolderOptions::AppFolder => vec![app_folder.join(executable_name)],
+      BinFolderOptions::Subfolder { path } => vec![app_folder.join(path).join(executable_name)],
+      BinFolderOptions::OneOf { options } => {
+        let mut result = vec![];
+        for option in options {
+          result.push(app_folder.join(option).join(executable_name));
+        }
+        result
+      }
     }
   }
 }
