@@ -3,7 +3,7 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{ExecutablePath, UnixExecutableName};
+use crate::run::ExecutablePath;
 use crate::{run, Log};
 
 pub struct Npx {}
@@ -18,9 +18,9 @@ impl App for Npx {
   }
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
-    run::Method::OtherAppOtherExecutable {
-      app: Box::new(app_to_install()),
-      executable_name: UnixExecutableName::from("npx"),
+    run::Method::OtherAppDefaultExecutable {
+      app: Box::new(NodeJS {}),
+      args: vec!["../lib/node_modules/npm/bin/npx-cli.js"],
     }
   }
 
@@ -44,10 +44,6 @@ impl App for Npx {
   fn clone(&self) -> Box<dyn App> {
     Box::new(Self {})
   }
-}
-
-fn app_to_install() -> NodeJS {
-  NodeJS {}
 }
 
 #[cfg(test)]
