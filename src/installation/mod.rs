@@ -10,7 +10,7 @@ use crate::configuration::{self, Version};
 use crate::logging::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::executable_name;
+use crate::run::ExecutableNamePlatform;
 use crate::yard::Yard;
 use std::fmt::Debug;
 use std::path::PathBuf;
@@ -51,7 +51,7 @@ pub enum Method {
 
 impl Method {
   /// provides possible locations of the given executable within the given app folder in the given  yard
-  pub fn executable_locations(&self, app: &dyn App, executable_filename: &executable_name::Platform, version: &Version, yard: &Yard) -> Vec<PathBuf> {
+  pub fn executable_locations(&self, app: &dyn App, executable_filename: &ExecutableNamePlatform, version: &Version, yard: &Yard) -> Vec<PathBuf> {
     let app_folder = yard.app_folder(&app.name(), version);
     match self {
       Method::DownloadArchive { url: _, bin_folders } => {

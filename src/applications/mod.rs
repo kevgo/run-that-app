@@ -31,7 +31,7 @@ mod tikibase;
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{self, executable_name, ExecutablePath};
+use crate::run::{self, ExecutableNameUnix, ExecutablePath};
 use crate::Log;
 use std::fmt::Display;
 use std::slice::Iter;
@@ -41,12 +41,12 @@ pub trait App {
   fn name(&self) -> ApplicationName;
 
   /// the filename of the executable that starts this app
-  fn default_executable_filename(&self) -> executable_name::Unix {
-    executable_name::Unix::from(self.name().inner())
+  fn default_executable_filename(&self) -> ExecutableNameUnix {
+    ExecutableNameUnix::from(self.name().inner())
   }
 
   /// names of other executables that this app provides
-  fn additional_executables(&self) -> Vec<executable_name::Unix> {
+  fn additional_executables(&self) -> Vec<ExecutableNameUnix> {
     vec![]
   }
 
@@ -114,7 +114,7 @@ pub struct ExecutableDefinition {
   /// the `App` that provides the executable
   pub app: Box<dyn App>,
   /// name of the executable
-  pub executable: executable_name::Unix,
+  pub executable: ExecutableNameUnix,
   /// arguments to call the above named binary so that it acts like the executable
   /// Example: when calling "npm" as "node node_modules/npm/bin/npm-cli.js", the args are "node node_modules/npm/bin/npm-cli.js"
   pub args: Vec<&'static str>,

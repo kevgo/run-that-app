@@ -1,6 +1,6 @@
 use crate::configuration::{ApplicationName, Version};
 use crate::installation::Method;
-use crate::run::executable_name;
+use crate::run::ExecutableNamePlatform;
 use std::borrow::Cow;
 use std::path::Path;
 
@@ -63,7 +63,7 @@ pub enum Event<'a> {
   GitHubApiRequestSuccess,
 
   GlobalInstallSearch {
-    binary: &'a executable_name::Platform,
+    binary: &'a ExecutableNamePlatform,
   },
   GlobalInstallFound {
     path: &'a Path,
