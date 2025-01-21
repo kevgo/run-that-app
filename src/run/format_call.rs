@@ -5,7 +5,7 @@ use super::ExecutableCall;
 pub fn format_call(executable_call: &ExecutableCall, args: &[String]) -> String {
   format!(
     "{} {} {}",
-    executable_call.executable.as_path().to_string_lossy(),
+    executable_call.executable_path.as_path().to_string_lossy(),
     executable_call.args.join(" "),
     args.join(" ")
   )

@@ -8,6 +8,7 @@ use crate::prelude::*;
 use crate::run::{self, ExecutableCall};
 use crate::yard::Yard;
 use crate::{applications, installation, yard};
+use std::path::Path;
 use std::process::ExitCode;
 
 pub fn run(args: &Args) -> Result<ExitCode> {
@@ -85,7 +86,7 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
     AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
       log(Event::GlobalInstallMatchingVersion { range, version: None });
       Ok(Some(ExecutableCall {
-        executable,
+        executable_path: executable,
         args: executable_definition.args,
       }))
     }
@@ -99,7 +100,7 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
         version: Some(&version),
       });
       Ok(Some(ExecutableCall {
-        executable,
+        executable_path: executable,
         args: executable_definition.args,
       }))
     }
@@ -124,11 +125,9 @@ fn load_or_install_from_yard(
 ) -> Result<Option<ExecutableCall>> {
   let executable_definition = app.executable_definition(version, platform);
   // try to load the app
-  if let Some(executable) = yard.load_executable(&executable_definition, version, platform, log) {
-    return Ok(Some(ExecutableCall {
-      executable,
-      args: executable_definition.args,
-    }));
+  if let Some(executable_path) = yard.load_executable(&executable_definition, version, platform, log) {
+    let args = make_args_absolute(executable_definition.args, executable_path.dir());
+    return Ok(Some(ExecutableCall { executable_path, args }));
   }
   // app not installed --> check if uninstallable
   if yard.is_not_installable(&executable_definition.app.name(), version) {
@@ -136,17 +135,17 @@ fn load_or_install_from_yard(
   }
   // app not installed and installable --> try to install
   match installation::any(app, version, platform, optional, yard, config_file, log)? {
-    Outcome::Installed => Ok(
-      yard
-        .load_executable(&executable_definition, version, platform, log)
-        .map(|executable_path| ExecutableCall {
-          executable: executable_path,
-          args: executable_definition.args,
-        }),
-    ),
+    Outcome::Installed => Ok(yard.load_executable(&executable_definition, version, platform, log).map(|executable_path| {
+      let args = make_args_absolute(executable_definition.args, executable_path.dir());
+      ExecutableCall { executable_path, args }
+    })),
     Outcome::NotInstalled => {
       yard.mark_not_installable(&executable_definition.app.name(), version)?;
       Ok(None)
     }
   }
+}
+
+fn make_args_absolute(args: Vec<&str>, dir: &Path) -> Vec<String> {
+  args.iter().map(|arg| dir.join(arg).to_string_lossy().to_string()).collect()
 }

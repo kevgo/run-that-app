@@ -22,7 +22,12 @@ impl ExecutablePath {
     self.0.to_string_lossy()
   }
 
+  pub fn dir(&self) -> &Path {
+    &self.0.parent().unwrap()
+  }
+
   /// runs this executable with the given args and returns the output it produced
+  // TODO: move this into a top-level function
   pub fn run_output(&self, arg: &str, log: Log) -> Result<String> {
     let mut cmd = Command::new(self);
     cmd.arg(arg);
@@ -49,6 +54,7 @@ impl ExecutablePath {
   }
 
   /// runs this executable with the given args and returns the output it produced
+  // TODO: move this into a top-level function
   pub fn run_output_args(&self, args: &[&str], log: Log) -> Result<String> {
     let mut cmd = Command::new(self);
     cmd.args(args);

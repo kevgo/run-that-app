@@ -4,14 +4,14 @@ use std::fmt::{Display, Write};
 /// a way to call an executable
 pub struct ExecutableCall {
   /// the executable to call
-  pub executable: ExecutablePath,
+  pub executable_path: ExecutablePath,
   /// arguments that are part of running the executable itself, not arguments provided by the user
-  pub args: Vec<&'static str>,
+  pub args: Vec<String>,
 }
 
 impl Display for ExecutableCall {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(&self.executable.as_str())?;
+    f.write_str(&self.executable_path.as_str())?;
     for arg in &self.args {
       f.write_char(' ')?;
       f.write_str(arg)?;

@@ -28,7 +28,7 @@ const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
 /// The returned `ExitCode` also indicates failure if there has been any output.
 pub fn check_output(executable_call: &ExecutableCall, args: &[String]) -> Result<ExitCode> {
   let (sender, receiver) = mpsc::channel();
-  let mut cmd = Command::new(&executable_call.executable);
+  let mut cmd = Command::new(&executable_call.executable_path);
   cmd.args(&executable_call.args);
   cmd.args(args);
   cmd.stdout(Stdio::piped());
@@ -80,7 +80,7 @@ pub fn check_output(executable_call: &ExecutableCall, args: &[String]) -> Result
   }
   if encountered_output {
     let mut call = vec![executable_call
-      .executable
+      .executable_path
       .as_path()
       .file_name()
       .unwrap_or_default()

@@ -7,10 +7,10 @@ use std::process::{Command, ExitCode};
 /// Streams output to the user's terminal.
 #[allow(clippy::unwrap_used)]
 pub fn stream_output(executable: &ExecutableCall, args: &[String]) -> Result<ExitCode> {
-  let mut cmd = Command::new(&executable.executable);
+  let mut cmd = Command::new(&executable.executable_path);
   cmd.args(&executable.args);
   cmd.args(args);
-  add_path(&mut cmd, executable.executable.as_path().parent().unwrap());
+  add_path(&mut cmd, executable.executable_path.as_path().parent().unwrap());
   let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
     call: format_call(executable, args),
     reason: err.to_string(),
@@ -43,7 +43,7 @@ mod tests {
       thread::sleep(Duration::from_millis(10)); // give the OS time to close the file to avoid a flaky test
       let have = stream_output(
         &ExecutableCall {
-          executable: ExecutablePath::from(executable_path),
+          executable_path: ExecutablePath::from(executable_path),
           args: vec![],
         },
         &[],
@@ -63,7 +63,14 @@ mod tests {
       fs::write(&executable_path, b"#!/bin/sh\nexit 3").unwrap();
       make_file_executable(&executable_path).unwrap();
       let executable = ExecutablePath::from(executable_path);
-      let have = stream_output(&ExecutableCall { executable, args: vec![] }, &[]).unwrap();
+      let have = stream_output(
+        &ExecutableCall {
+          executable_path: executable,
+          args: vec![],
+        },
+        &[],
+      )
+      .unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(3))"));
     }
