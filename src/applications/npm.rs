@@ -20,7 +20,7 @@ impl App for Npm {
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
     run::Method::OtherAppDefaultExecutable {
       app: Box::new(NodeJS {}),
-      args: vec!["node_modules/npm/bin/npm-cli.js"],
+      args: vec!["../lib/node_modules/npm/bin/npm-cli.js"],
     }
   }
 
