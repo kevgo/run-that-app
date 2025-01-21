@@ -109,9 +109,14 @@ impl Display for dyn App {
   }
 }
 
+/// an `Executable` as it is defined within an `App`
 pub struct ExecutableDefinition {
+  /// the `App` that provides the executable
   pub app: Box<dyn App>,
+  /// name of the executable
   pub executable: UnixExecutableName,
+  /// arguments to call the above named binary so that it acts like the executable
+  /// Example: when calling "npm" as "node node_modules/npm/bin/npm-cli.js", the args are "node node_modules/npm/bin/npm-cli.js"
   pub args: Vec<&'static str>,
 }
 
