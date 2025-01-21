@@ -150,5 +150,5 @@ fn load_or_install_from_yard(
 }
 
 fn make_args_absolute(args: &[&str], dir: &Path) -> Vec<String> {
-  args.iter().map(|arg| dir.join(arg).to_string_lossy().to_string()).collect()
+  args.into_iter().map(|arg| dir.join(arg).to_string_lossy().to_string()).collect()
 }

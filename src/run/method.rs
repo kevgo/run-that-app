@@ -1,6 +1,8 @@
 use super::executable_name_unix;
 use crate::applications::App;
+use crate::configuration::Version;
 use crate::installation;
+use crate::yard::Yard;
 
 /// the different ways to execute an application
 pub enum Method {
@@ -21,7 +23,7 @@ pub enum Method {
     /// the other applications whose default executable to run
     app: Box<dyn App>,
     /// additional arguments when running the default executable of the given app
-    args: Vec<&'static str>,
+    args: OtherAppArgs,
   },
 }
 
@@ -33,10 +35,21 @@ impl Method {
     }
   }
 
-  pub fn call_args(&self) -> Vec<&'static str> {
+  pub fn call_args(&self, version: &Version, yard: &Yard) -> Option<Vec<String>> {
     match self {
-      Method::ThisApp { install_methods: _ } | Method::OtherAppOtherExecutable { app: _, executable_name: _ } => vec![],
-      Method::OtherAppDefaultExecutable { app: _, args } => args.clone(),
+      Method::ThisApp { install_methods: _ } | Method::OtherAppOtherExecutable { app: _, executable_name: _ } => Some(vec![]),
+      Method::OtherAppDefaultExecutable { app, args } => match args {
+        OtherAppArgs::OneOfTheseInAppFolder { options } => {
+          let app_folder = yard.app_folder(&app.name(), version);
+          for option in options {
+            let full_path = app_folder.join(option);
+            if full_path.exists() {
+              return Some(vec![full_path.to_string_lossy().to_string()]);
+            }
+          }
+          None
+        }
+      },
     }
   }
 }
@@ -86,4 +99,9 @@ impl PartialEq for Method {
       _ => false,
     }
   }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum OtherAppArgs {
+  OneOfTheseInAppFolder { options: Vec<&'static str> },
 }

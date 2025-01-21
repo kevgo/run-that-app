@@ -17,5 +17,5 @@ pub use executable_name_unix::ExecutableNameUnix;
 pub use executable_path::ExecutablePath;
 pub use exit_status_to_code::exit_status_to_code;
 pub use format_call::format_call;
-pub use method::Method;
+pub use method::{Method, OtherAppArgs};
 pub use stream_output::stream_output;
