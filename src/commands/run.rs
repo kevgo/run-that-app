@@ -74,21 +74,19 @@ pub fn load_or_install(
 // checks if the app is in the PATH and has the correct version
 fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutableCall>> {
   let executable_definition = app.executable_definition(&Version::from(""), platform);
-  let Some(executable) = find_global_install(&app.default_executable_filename().platform_path(platform.os), log) else {
+  let Some(executable_path) = find_global_install(&app.default_executable_filename().platform_path(platform.os), log) else {
     log(Event::GlobalInstallNotFound);
     return Ok(None);
   };
-  match app.analyze_executable(&executable, log)? {
+  match app.analyze_executable(&executable_path, log)? {
     AnalyzeResult::NotIdentified { output: _ } => {
       log(Event::GlobalInstallNotIdentified);
       Ok(None)
     }
     AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
       log(Event::GlobalInstallMatchingVersion { range, version: None });
-      Ok(Some(ExecutableCall {
-        executable_path: executable,
-        args: executable_definition.args,
-      }))
+      let args = make_args_absolute(executable_definition.args, executable_path.dir());
+      Ok(Some(ExecutableCall { executable_path, args }))
     }
     AnalyzeResult::IdentifiedButUnknownVersion => {
       log(Event::GlobalInstallMismatchingVersion { range, version: None });
@@ -99,10 +97,8 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
         range,
         version: Some(&version),
       });
-      Ok(Some(ExecutableCall {
-        executable_path: executable,
-        args: executable_definition.args,
-      }))
+      let args = make_args_absolute(executable_definition.args, executable_path.dir());
+      Ok(Some(ExecutableCall { executable_path, args }))
     }
     AnalyzeResult::IdentifiedWithVersion(version) => {
       log(Event::GlobalInstallMismatchingVersion {
