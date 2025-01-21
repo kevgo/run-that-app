@@ -3,7 +3,7 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::ExecutablePath;
+use crate::run::{ExecutablePath, OtherAppArgs};
 use crate::{run, Log};
 
 pub struct Npx {}
@@ -20,7 +20,9 @@ impl App for Npx {
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
     run::Method::OtherAppDefaultExecutable {
       app: Box::new(NodeJS {}),
-      args: vec!["../lib/node_modules/npm/bin/npx-cli.js"],
+      args: OtherAppArgs::OneOfTheseInAppFolder {
+        options: vec!["../lib/node_modules/npm/bin/npx-cli.js"],
+      },
     }
   }
 
@@ -56,6 +58,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
+    use crate::run::OtherAppArgs;
 
     #[test]
     #[cfg(unix)]
@@ -69,7 +72,9 @@ mod tests {
       );
       let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
-        args: vec!["../lib/node_modules/npm/bin/npx-cli.js"],
+        args: OtherAppArgs::OneOfTheseInAppFolder {
+          options: vec!["../lib/node_modules/npm/bin/npx-cli.js"],
+        },
       };
       assert_eq!(have, want);
     }
@@ -86,7 +91,9 @@ mod tests {
       );
       let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
-        args: vec!["../lib/node_modules/npm/bin/npx-cli.js"],
+        args: OtherAppArgs::OneOfTheseInAppFolder {
+          options: vec!["../lib/node_modules/npm/bin/npx-cli.js"],
+        },
       };
       assert_eq!(have, want);
     }

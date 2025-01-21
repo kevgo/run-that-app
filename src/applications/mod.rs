@@ -81,24 +81,11 @@ pub trait App {
   /// this is necessary because a limitation of Rust does not allow deriving the Clone trait automatically
   fn clone(&self) -> Box<dyn App>;
 
-  /// provides the app that contains the executable for this app
-  fn executable_definition(&self, version: &Version, platform: Platform) -> ExecutableDefinition {
+  fn executable_definition(&self, version: &Version, platform: Platform) -> (Box<dyn App>, ExecutableNameUnix) {
     match self.run_method(version, platform) {
-      run::Method::ThisApp { install_methods: _ } => ExecutableDefinition {
-        app: self.clone(),
-        executable: self.default_executable_filename(),
-        args: vec![],
-      },
-      run::Method::OtherAppOtherExecutable { app, executable_name } => ExecutableDefinition {
-        app: app.clone(),
-        executable: executable_name,
-        args: vec![],
-      },
-      run::Method::OtherAppDefaultExecutable { app, args } => ExecutableDefinition {
-        app: app.clone(),
-        executable: app.default_executable_filename(),
-        args,
-      },
+      run::Method::ThisApp { install_methods: _ } => (self.clone(), self.default_executable_filename()),
+      run::Method::OtherAppOtherExecutable { app, executable_name } => (app.clone(), executable_name),
+      run::Method::OtherAppDefaultExecutable { app, args: _ } => (app.clone(), app.default_executable_filename()),
     }
   }
 }
@@ -117,7 +104,7 @@ pub struct ExecutableDefinition {
   pub executable: ExecutableNameUnix,
   /// arguments to call the above named binary so that it acts like the executable
   /// Example: when calling "npm" as "node node_modules/npm/bin/npm-cli.js", the args are "node node_modules/npm/bin/npm-cli.js"
-  pub args: Vec<&'static str>,
+  pub args: Option<Vec<&'static str>>,
 }
 
 pub enum AnalyzeResult {
