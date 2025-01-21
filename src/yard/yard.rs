@@ -72,12 +72,12 @@ impl Yard {
   }
 
   /// tries to load the given executable of the given app from the yard
-  pub fn load_executable(&self, app_and_executable: &ExecutableDefinition, version: &Version, platform: Platform, log: Log) -> Option<ExecutablePath> {
-    let run_method = app_and_executable.app.run_method(version, platform);
+  pub fn load_executable(&self, executable_definition: &ExecutableDefinition, version: &Version, platform: Platform, log: Log) -> Option<ExecutablePath> {
+    let run_method = executable_definition.app.run_method(version, platform);
     for installation_method in &run_method.install_methods() {
       let fullpaths = installation_method.executable_locations(
-        app_and_executable.app.as_ref(),
-        &app_and_executable.executable.clone().platform_path(platform.os),
+        executable_definition.app.as_ref(),
+        &executable_definition.executable.clone().platform_path(platform.os),
         version,
         self,
       );
