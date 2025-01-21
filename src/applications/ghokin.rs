@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::Method;
+use crate::installation::{BinFolderOptions, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::ExecutablePath;
@@ -36,7 +36,7 @@ impl App for Ghokin {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz"),
-          bin_folders: vec![],
+          bin_folders: BinFolderOptions::AppFolder,
         },
         Method::CompileGoSource {
           import_path: format!("github.com/{ORG}/{REPO}/v3@v{version}"),
@@ -73,7 +73,7 @@ mod tests {
     use crate::applications::ghokin::Ghokin;
     use crate::applications::App;
     use crate::configuration::Version;
-    use crate::installation::Method;
+    use crate::installation::{BinFolderOptions, Method};
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
     use big_s::S;
@@ -91,7 +91,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_amd64.tar.gz"),
-            bin_folders: vec![],
+            bin_folders: BinFolderOptions::AppFolder,
           },
           Method::CompileGoSource {
             import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
@@ -114,7 +114,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/antham/ghokin/releases/download/v3.7.0/ghokin_3.7.0_windows_amd64.tar.gz"),
-            bin_folders: vec![],
+            bin_folders: BinFolderOptions::AppFolder,
           },
           Method::CompileGoSource {
             import_path: S("github.com/antham/ghokin/v3@v3.7.0"),

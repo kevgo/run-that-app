@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::Method;
+use crate::installation::{BinFolderOptions, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::{self, ExecutablePath};
@@ -40,7 +40,7 @@ impl App for GolangCiLint {
     // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
     vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}"),
-        bin_folders: vec![format!("golangci-lint-{version}-{os}-{cpu}")],
+        bin_folders: BinFolderOptions::Subfolder { path: format!("golangci-lint-{version}-{os}-{cpu}")},
     }]}
   }
 
@@ -84,6 +84,8 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
+      use crate::installation::BinFolderOptions;
+
       let have = (GolangCiLint {}).run_method(
         &Version::from("1.55.2"),
         Platform {
@@ -94,7 +96,9 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-darwin-arm64.tar.gz"),
-          bin_folders: vec![format!("golangci-lint-1.55.2-darwin-arm64")],
+          bin_folders: BinFolderOptions::Subfolder {
+            path: format!("golangci-lint-1.55.2-darwin-arm64"),
+          },
         }],
       };
       assert_eq!(have, want);

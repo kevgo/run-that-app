@@ -72,10 +72,15 @@ impl Method {
   }
 }
 
+/// describes the various options where the executable files could be inside an application folder
 #[derive(Debug, PartialEq)]
 pub enum BinFolderOptions {
   /// all binaries are in the root folder
   AppFolder,
+  /// look for the executable in the given subfolder
+  Subfolder { path: String },
+  /// looks for the executable in one of the given subfolders of the app folder
+  OneOf { options: Vec<String> },
   /// looks for the executable in the app folder or one of the given subfolders within the app folder
   RootOrOneOf { options: Vec<String> },
 }
