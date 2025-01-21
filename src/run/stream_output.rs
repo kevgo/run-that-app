@@ -28,12 +28,11 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn unix_success() {
+      use crate::run::ExecutableCall;
       use std::io::Write;
       use std::os::unix::fs::PermissionsExt;
       use std::thread;
       use std::time::Duration;
-
-      use crate::run::ExecutableCall;
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable");
       let mut file = fs::File::create(&executable_path).unwrap();
