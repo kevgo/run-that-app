@@ -78,6 +78,8 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
     log(Event::GlobalInstallNotFound);
     return Ok(None);
   };
+  #[allow(clippy::unwrap_used)] // executable paths always have a parent
+  let app_folder = executable_path.as_path().parent().unwrap();
   match app.analyze_executable(&executable_path, log)? {
     AnalyzeResult::NotIdentified { output: _ } => {
       log(Event::GlobalInstallNotIdentified);
@@ -85,7 +87,7 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
     }
     AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
       log(Event::GlobalInstallMatchingVersion { range, version: None });
-      let args = make_args_absolute(&executable_definition.args, executable_path.dir());
+      let args = make_args_absolute(&executable_definition.args, app_folder);
       Ok(Some(ExecutableCall { executable_path, args }))
     }
     AnalyzeResult::IdentifiedButUnknownVersion => {
@@ -97,7 +99,7 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
         range,
         version: Some(&version),
       });
-      let args = make_args_absolute(&executable_definition.args, executable_path.dir());
+      let args = make_args_absolute(&executable_definition.args, app_folder);
       Ok(Some(ExecutableCall { executable_path, args }))
     }
     AnalyzeResult::IdentifiedWithVersion(version) => {
@@ -120,9 +122,10 @@ fn load_or_install_from_yard(
   log: Log,
 ) -> Result<Option<ExecutableCall>> {
   let executable_definition = app.executable_definition(version, platform);
+  let app_folder = yard.app_folder(&app.name(), version);
   // try to load the app
   if let Some(executable_path) = yard.load_executable(&executable_definition, version, platform, log) {
-    let args = make_args_absolute(&executable_definition.args, executable_path.dir());
+    let args = make_args_absolute(&executable_definition.args, &app_folder);
     return Ok(Some(ExecutableCall { executable_path, args }));
   }
   // app not installed --> check if uninstallable
@@ -132,7 +135,7 @@ fn load_or_install_from_yard(
   // app not installed and installable --> try to install
   match installation::any(app, version, platform, optional, yard, config_file, log)? {
     Outcome::Installed => Ok(yard.load_executable(&executable_definition, version, platform, log).map(|executable_path| {
-      let args = make_args_absolute(&executable_definition.args, executable_path.dir());
+      let args = make_args_absolute(&executable_definition.args, &app_folder);
       ExecutableCall { executable_path, args }
     })),
     Outcome::NotInstalled => {

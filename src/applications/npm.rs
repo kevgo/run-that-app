@@ -20,7 +20,7 @@ impl App for Npm {
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
     run::Method::OtherAppDefaultExecutable {
       app: Box::new(NodeJS {}),
-      args: vec!["../lib/node_modules/npm/bin/npm-cli.js"],
+      args: vec!["node_modules/npm/bin/npm-cli.js"],
     }
   }
 
@@ -73,7 +73,7 @@ mod tests {
       );
       let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
-        args: vec!["../lib/node_modules/npm/bin/npm-cli.js"],
+        args: vec!["node_modules/npm/bin/npm-cli.js"],
       };
       assert_eq!(have, want);
     }
@@ -90,7 +90,7 @@ mod tests {
       );
       let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
-        args: vec!["../lib/node_modules/npm/bin/npm-cli.js"],
+        args: vec!["node_modules/npm/bin/npm-cli.js"],
       };
       assert_eq!(have, want);
     }
