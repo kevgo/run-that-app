@@ -19,14 +19,14 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   let config_file = configuration::File::load(&apps)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   for requested_version in requested_versions {
-    if let Some(executable) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
-      println!("executable: {executable}");
+    if let Some(executable_call) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
+      println!("executable: {}", executable_call.executable);
       let run_method = app.run_method(args.version, platform);
-      println!("args: {}", args.app_args.join(" "));
+      println!("args: {}", executable_call.args);
       if args.error_on_output {
-        return run::check_output(&executable, &args.app_args);
+        return run::check_output(&executable_call, &args.app_args);
       }
-      return run::stream_output(&executable, &args.app_args);
+      return run::stream_output(&executable_call, &args.app_args);
     }
   }
   if args.optional {
@@ -74,7 +74,8 @@ pub fn load_or_install(
 }
 
 // checks if the app is in the PATH and has the correct version
-fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutablePath>> {
+fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutableCall>> {
+  let carrier = app.carrier(&Version::from(""), platform);
   let Some(executable) = find_global_install(&app.default_executable_filename().platform_path(platform.os), log) else {
     log(Event::GlobalInstallNotFound);
     return Ok(None);
@@ -86,7 +87,10 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
     }
     AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
       log(Event::GlobalInstallMatchingVersion { range, version: None });
-      Ok(Some(executable))
+      Ok(Some(ExecutableCall {
+        executable,
+        args: carrier.args,
+      }))
     }
     AnalyzeResult::IdentifiedButUnknownVersion => {
       log(Event::GlobalInstallMismatchingVersion { range, version: None });
@@ -97,7 +101,10 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
         range,
         version: Some(&version),
       });
-      Ok(Some(executable))
+      Ok(Some(ExecutableCall {
+        executable,
+        args: carrier.args,
+      }))
     }
     AnalyzeResult::IdentifiedWithVersion(version) => {
       log(Event::GlobalInstallMismatchingVersion {
