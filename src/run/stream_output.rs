@@ -21,7 +21,7 @@ pub fn stream_output(executable: &ExecutableCall, args: &[String]) -> Result<Exi
 #[cfg(test)]
 mod tests {
   mod execute {
-    use crate::run::{stream_output, ExecutablePath};
+    use crate::run::{stream_output, ExecutableCall, ExecutablePath};
     use big_s::S;
     use std::fs;
 
@@ -81,7 +81,14 @@ mod tests {
       let executable_path = tempdir.path().join("executable.cmd");
       fs::write(&executable_path, b"echo hello").unwrap();
       let executable = ExecutablePath::from(executable_path);
-      let have = stream_output(&executable, &[]).unwrap();
+      let have = stream_output(
+        &ExecutableCall {
+          executable_path: executable,
+          args: vec![],
+        },
+        &[],
+      )
+      .unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(0))"));
     }
@@ -93,7 +100,14 @@ mod tests {
       let executable_path = tempdir.path().join("executable.cmd");
       fs::write(&executable_path, b"EXIT 3").unwrap();
       let executable = ExecutablePath::from(executable_path);
-      let have = stream_output(&executable, &[]).unwrap();
+      let have = stream_output(
+        &ExecutableCall {
+          executable_path: executable,
+          args: vec![],
+        },
+        &[],
+      )
+      .unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(3))"));
     }

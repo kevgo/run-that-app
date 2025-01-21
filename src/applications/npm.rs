@@ -88,9 +88,9 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::OtherAppOtherExecutable {
+      let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
-        executable_name: UnixExecutableName::from("npm"),
+        args: vec!["../lib/node_modules/npm/bin/npm-cli.js"],
       };
       assert_eq!(have, want);
     }
