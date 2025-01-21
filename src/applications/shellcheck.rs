@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::Method;
+use crate::installation::{BinFolderOptions, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::ExecutablePath;
@@ -38,7 +38,9 @@ impl App for ShellCheck {
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}"),
-        bin_folders: vec![format!("shellcheck-v{version}")],
+        bin_folders: BinFolderOptions::Subfolder {
+          path: format!("shellcheck-v{version}"),
+        },
       }],
     }
   }
@@ -75,18 +77,17 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
 
   mod install_methods {
+    use crate::applications::shellcheck::ShellCheck;
+    use crate::applications::App;
+    use crate::configuration::Version;
+    use crate::installation::{BinFolderOptions, Method};
+    use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
+    use big_s::S;
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::applications::shellcheck::ShellCheck;
-      use crate::applications::App;
-      use crate::configuration::Version;
-      use crate::installation::Method;
-      use crate::platform::{Cpu, Os, Platform};
-      use crate::run;
-      use big_s::S;
-
       let have = (ShellCheck {}).run_method(
         &Version::from("0.9.0"),
         Platform {
@@ -97,7 +98,9 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.linux.x86_64.tar.xz"),
-          bin_folders: vec![format!("shellcheck-v0.9.0")],
+          bin_folders: BinFolderOptions::Subfolder {
+            path: format!("shellcheck-v0.9.0"),
+          },
         }],
       };
       assert_eq!(have, want);
@@ -106,14 +109,6 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn macos_arm() {
-      use crate::applications::shellcheck::ShellCheck;
-      use crate::applications::App;
-      use crate::configuration::Version;
-      use crate::installation::Method;
-      use crate::platform::{Cpu, Os, Platform};
-      use crate::run;
-      use big_s::S;
-
       let have = (ShellCheck {}).run_method(
         &Version::from("0.10.0"),
         Platform {
@@ -124,7 +119,9 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.darwin.aarch64.tar.xz"),
-          bin_folders: vec![format!("shellcheck-v0.10.0")],
+          bin_folders: BinFolderOptions::Subfolder {
+            path: format!("shellcheck-v0.9.0"),
+          },
         }],
       };
       assert_eq!(have, want);
@@ -132,7 +129,7 @@ mod tests {
   }
 
   mod extract_version {
-    use super::super::extract_version;
+    use crate::applications::shellcheck::extract_version;
     use crate::UserError;
 
     #[test]
