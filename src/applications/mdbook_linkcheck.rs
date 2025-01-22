@@ -128,7 +128,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-pc-windows-msvc.zip"),
-            bin_folders: BinFolder::AppFolder,
+            bin_folders: BinFolder::Root,
           },
           Method::CompileRustSource {
             crate_name: "mdbook-linkcheck",
