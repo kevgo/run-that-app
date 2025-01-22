@@ -8,7 +8,6 @@ use crate::prelude::*;
 use crate::run::{self, ExecutableCall};
 use crate::yard::Yard;
 use crate::{applications, installation, yard};
-use std::path::Path;
 use std::process::ExitCode;
 
 pub fn run(args: &Args) -> Result<ExitCode> {
@@ -74,7 +73,7 @@ pub fn load_or_install(
 // checks if the app is in the PATH and has the correct version
 fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutableCall>> {
   let (app, executable_name, executable_args) = app.executable_definition(&Version::from(""), platform);
-  let Some(executable_path) = find_global_install(&app.default_executable_filename().platform_path(platform.os), log) else {
+  let Some(executable_path) = find_global_install(&executable_name.platform_path(platform.os), log) else {
     log(Event::GlobalInstallNotFound);
     return Ok(None);
   };
