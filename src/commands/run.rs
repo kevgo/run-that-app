@@ -122,7 +122,7 @@ fn load_or_install_from_yard(
   log: Log,
 ) -> Result<Option<ExecutableCall>> {
   let executable_definition = app.executable_definition(version, platform);
-  let app_folder = yard.app_folder(&app.name(), version);
+  let app_folder = yard.app_folder(&executable_definition.app.name(), version);
   // try to load the app
   if let Some(executable_path) = yard.load_executable(&executable_definition, version, platform, log) {
     let args = make_args_absolute(&executable_definition.args, &app_folder);
@@ -133,11 +133,15 @@ fn load_or_install_from_yard(
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  match installation::any(app, version, platform, optional, yard, config_file, log)? {
-    Outcome::Installed => Ok(yard.load_executable(&executable_definition, version, platform, log).map(|executable_path| {
-      let args = make_args_absolute(&executable_definition.args, &app_folder);
-      ExecutableCall { executable_path, args }
-    })),
+  match installation::any(executable_definition.app.as_ref(), version, platform, optional, yard, config_file, log)? {
+    Outcome::Installed => {
+      if let Some(executable_path) = yard.load_executable(&executable_definition, version, platform, log) {
+        let args = make_args_absolute(&executable_definition.args, &app_folder);
+        Ok(Some(ExecutableCall { executable_path, args }))
+      } else {
+        Ok(None)
+      }
+    }
     Outcome::NotInstalled => {
       yard.mark_not_installable(&executable_definition.app.name(), version)?;
       Ok(None)
@@ -146,5 +150,5 @@ fn load_or_install_from_yard(
 }
 
 fn make_args_absolute(args: &[&str], dir: &Path) -> Vec<String> {
-  args.iter().map(|arg| dir.join(arg).to_string_lossy().to_string()).collect()
+  args.into_iter().map(|arg| dir.join(arg).to_string_lossy().to_string()).collect()
 }
