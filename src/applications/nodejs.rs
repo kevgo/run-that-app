@@ -96,8 +96,7 @@ mod tests {
     use crate::applications::nodejs::NodeJS;
     use crate::applications::App;
     use crate::configuration::Version;
-    use crate::installation::BinFolder;
-    use crate::installation::Method;
+    use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
     use big_s::S;
