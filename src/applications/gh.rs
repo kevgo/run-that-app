@@ -41,7 +41,7 @@ impl App for Gh {
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}"),
-        bin_folders: BinFolder::Subfolders {
+        bin_folder: BinFolder::Subfolders {
           options: vec![S("bin"), format!("gh_{version}_{os}_{cpu}{sep}bin")],
         },
       }],
@@ -103,7 +103,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz"),
-          bin_folders: BinFolder::Subfolders {
+          bin_folder: BinFolder::Subfolders {
             options: vec![S("bin"), S("gh_2.39.1_linux_arm64/bin")],
           },
         }],

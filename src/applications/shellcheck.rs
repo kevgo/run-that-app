@@ -38,7 +38,7 @@ impl App for ShellCheck {
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}"),
-        bin_folders: BinFolder::Subfolder {
+        bin_folder: BinFolder::Subfolder {
           path: format!("shellcheck-v{version}"),
         },
       }],
@@ -98,7 +98,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.linux.x86_64.tar.xz"),
-          bin_folders: BinFolder::Subfolder { path: S("shellcheck-v0.9.0") },
+          bin_folder: BinFolder::Subfolder { path: S("shellcheck-v0.9.0") },
         }],
       };
       assert_eq!(have, want);
@@ -117,7 +117,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.darwin.aarch64.tar.xz"),
-          bin_folders: BinFolder::Subfolder { path: S("shellcheck-v0.10.0") },
+          bin_folder: BinFolder::Subfolder { path: S("shellcheck-v0.10.0") },
         }],
       };
       assert_eq!(have, want);

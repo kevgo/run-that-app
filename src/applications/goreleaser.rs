@@ -38,7 +38,7 @@ impl App for Goreleaser {
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}"),
-        bin_folders: BinFolder::Root,
+        bin_folder: BinFolder::Root,
       }],
     }
   }
@@ -98,7 +98,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz"),
-          bin_folders: BinFolder::Root,
+          bin_folder: BinFolder::Root,
         }],
       };
       assert_eq!(have, want);

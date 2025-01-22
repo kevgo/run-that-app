@@ -40,7 +40,7 @@ impl App for Ireturn {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ireturn_{os}_{cpu}.{ext}"),
-          bin_folders: BinFolder::Root,
+          bin_folder: BinFolder::Root,
         },
         Method::CompileGoSource {
           import_path: format!("github.com/{ORG}/{REPO}/cmd/ireturn@v{version}"),
@@ -95,7 +95,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_linux_x86_64.tar.gz"),
-            bin_folders: BinFolder::Root,
+            bin_folder: BinFolder::Root,
           },
           Method::CompileGoSource {
             import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
@@ -118,7 +118,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_windows_x86_64.zip"),
-            bin_folders: BinFolder::Root,
+            bin_folder: BinFolder::Root,
           },
           Method::CompileGoSource {
             import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
