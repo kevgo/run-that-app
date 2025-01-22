@@ -59,8 +59,7 @@ mod tests {
     use crate::applications::App;
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run;
-    use crate::run::ExecutableNameUnix;
+    use crate::run::{self, ExecutableNameUnix};
 
     #[test]
     #[cfg(unix)]

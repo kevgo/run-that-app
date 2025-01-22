@@ -31,7 +31,7 @@ mod tikibase;
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{self, ExecutableArgs, ExecutableNameUnix, ExecutablePath};
+use crate::run::{self, ExecutableNameUnix, ExecutablePath};
 use crate::Log;
 use std::fmt::Display;
 use std::slice::Iter;

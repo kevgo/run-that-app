@@ -1,4 +1,4 @@
-use super::executable_name_unix;
+use super::ExecutableNameUnix;
 use crate::applications::App;
 use crate::configuration::Version;
 use crate::installation::{self, BinFolder};
@@ -18,7 +18,7 @@ pub enum Method {
     /// the other application that contains the executable
     app: Box<dyn App>,
     /// name of the executable to run
-    executable_name: executable_name_unix::ExecutableNameUnix,
+    executable_name: ExecutableNameUnix,
   },
   /// executes the default executable of another app with additional arguments
   OtherAppDefaultExecutable {
