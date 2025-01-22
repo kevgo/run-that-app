@@ -114,6 +114,8 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
+      use crate::installation::BinFolder;
+
       let have = (Gh {}).run_method(
         &Version::from("2.39.1"),
         Platform {
@@ -124,7 +126,9 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip"),
-          bin_folders: vec![S("bin"), S("gh_2.39.1_windows_amd64\\bin")],
+          bin_folders: BinFolder::Subfolders {
+            options: vec![S("bin"), S("gh_2.39.1_windows_amd64\\bin")],
+          },
         }],
       };
       assert_eq!(have, want);

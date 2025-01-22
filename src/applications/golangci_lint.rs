@@ -76,7 +76,7 @@ mod tests {
     use crate::applications::golangci_lint::GolangCiLint;
     use crate::applications::App;
     use crate::configuration::Version;
-    use crate::installation::Method;
+    use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
     use big_s::S;
@@ -117,7 +117,9 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-windows-amd64.zip"),
-          bin_folders: vec![S("golangci-lint-1.55.2-windows-amd64")],
+          bin_folders: BinFolder::Subfolder {
+            path: S("golangci-lint-1.55.2-windows-amd64"),
+          },
         }],
       };
       assert_eq!(have, want);

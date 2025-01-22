@@ -145,6 +145,8 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
+      use crate::installation::BinFolder;
+
       let have = (Go {}).run_method(
         &Version::from("1.21.5"),
         Platform {
@@ -155,7 +157,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://go.dev/dl/go1.21.5.windows-amd64.zip"),
-          bin_folders: vec![S("go\\bin")],
+          bin_folders: BinFolder::Subfolder { path: S("go\\bin") },
         }],
       };
       assert_eq!(have, want);

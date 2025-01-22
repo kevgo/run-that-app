@@ -82,7 +82,7 @@ mod tests {
     use crate::applications::mdbook_linkcheck::MdBookLinkCheck;
     use crate::applications::App;
     use crate::configuration::Version;
-    use crate::installation::Method;
+    use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
     use big_s::S;
@@ -128,7 +128,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-pc-windows-msvc.zip"),
-            bin_folders: BinFolderOptions::AppFolder,
+            bin_folders: BinFolder::AppFolder,
           },
           Method::CompileRustSource {
             crate_name: "mdbook-linkcheck",
