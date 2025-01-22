@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::Method;
+use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::ExecutablePath;
@@ -40,7 +40,7 @@ impl App for MdBook {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-v{version}-{cpu}-{os}.{ext}"),
-          bin_folders: vec![],
+          bin_folder: BinFolder::Root,
         },
         Method::CompileRustSource {
           crate_name: "mdbook",
@@ -86,7 +86,7 @@ mod tests {
     use crate::applications::mdbook::MdBook;
     use crate::applications::App;
     use crate::configuration::Version;
-    use crate::installation::Method;
+    use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
     use big_s::S;
@@ -105,7 +105,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz"),
-            bin_folders: vec![],
+            bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {
             crate_name: "mdbook",
@@ -130,7 +130,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-pc-windows-msvc.zip"),
-            bin_folders: vec![],
+            bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {
             crate_name: "mdbook",
