@@ -54,10 +54,7 @@ impl Method {
   pub fn executable_paths(&self, app: &dyn App, executable_filename: &ExecutableFilename, version: &Version, yard: &Yard) -> Vec<PathBuf> {
     let app_folder = yard.app_folder(&app.name(), version);
     match self {
-      Method::DownloadArchive {
-        url: _,
-        bin_folder: bin_folders,
-      } => bin_folders.executable_paths(&app_folder, executable_filename),
+      Method::DownloadArchive { url: _, bin_folder } => bin_folder.executable_paths(&app_folder, executable_filename),
       Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => vec![app_folder.join(executable_filename)],
       Method::CompileRustSource { crate_name: _, bin_folder } => vec![match bin_folder {
         Some(bin_folder) => app_folder.join(bin_folder).join(executable_filename),
