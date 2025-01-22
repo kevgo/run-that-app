@@ -78,6 +78,7 @@ mod tests {
     use crate::applications::goreleaser::Goreleaser;
     use crate::applications::App;
     use crate::configuration::Version;
+    use crate::installation::BinFolder;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
@@ -86,8 +87,6 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::installation::BinFolder;
-
       let have = (Goreleaser {}).run_method(
         &Version::from("1.22.1"),
         Platform {
@@ -107,8 +106,6 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      use crate::installation::BinFolder;
-
       let have = (Goreleaser {}).run_method(
         &Version::from("1.22.1"),
         Platform {
