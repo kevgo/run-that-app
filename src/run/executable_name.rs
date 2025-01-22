@@ -4,6 +4,7 @@ use std::path::Path;
 
 /// the unix name of an executable
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::module_name_repetitions)]
 pub struct UnixExecutableName(String);
 
 impl UnixExecutableName {
