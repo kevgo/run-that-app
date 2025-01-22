@@ -76,6 +76,7 @@ fn extract_version(output: &str) -> Result<&str> {
 #[cfg(test)]
 mod tests {
 
+  #[cfg(unix)]
   mod install_methods {
     use crate::applications::shellcheck::ShellCheck;
     use crate::applications::App;
@@ -86,7 +87,6 @@ mod tests {
     use big_s::S;
 
     #[test]
-    #[cfg(unix)]
     fn linux_arm() {
       let have = (ShellCheck {}).run_method(
         &Version::from("0.9.0"),
@@ -105,7 +105,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(unix)]
     fn macos_arm() {
       let have = (ShellCheck {}).run_method(
         &Version::from("0.10.0"),
