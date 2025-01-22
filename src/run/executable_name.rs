@@ -5,47 +5,47 @@ use std::path::Path;
 /// the unix name of an executable
 #[derive(Clone, Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions)]
-pub struct UnixExecutableName(String);
+pub struct ExecutableNameUnix(String);
 
-impl UnixExecutableName {
+impl ExecutableNameUnix {
   /// provides the platform-specific version of this `UnixExecutableName`
-  pub fn platform_path(self, os: Os) -> ExecutableFilename {
-    ExecutableFilename(match os {
+  pub fn platform_path(self, os: Os) -> ExecutableNamePlatform {
+    ExecutableNamePlatform(match os {
       Os::Linux | Os::MacOS => self.0,
       Os::Windows => format!("{self}.exe"),
     })
   }
 }
 
-impl Display for UnixExecutableName {
+impl Display for ExecutableNameUnix {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(&self.0)
   }
 }
 
-impl From<&str> for UnixExecutableName {
+impl From<&str> for ExecutableNameUnix {
   fn from(value: &str) -> Self {
-    UnixExecutableName(value.to_string())
+    ExecutableNameUnix(value.to_string())
   }
 }
 
-impl From<String> for UnixExecutableName {
+impl From<String> for ExecutableNameUnix {
   fn from(value: String) -> Self {
-    UnixExecutableName(value)
+    ExecutableNameUnix(value)
   }
 }
 
 /// The platform-specific filename of an executable.
 /// On Windows: "unix-executable-name.exe"
-pub struct ExecutableFilename(String);
+pub struct ExecutableNamePlatform(String);
 
-impl AsRef<Path> for ExecutableFilename {
+impl AsRef<Path> for ExecutableNamePlatform {
   fn as_ref(&self) -> &Path {
     Path::new(&self.0)
   }
 }
 
-impl Display for ExecutableFilename {
+impl Display for ExecutableNamePlatform {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(&self.0)
   }

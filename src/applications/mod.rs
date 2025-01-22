@@ -31,7 +31,7 @@ mod tikibase;
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{self, ExecutablePath, UnixExecutableName};
+use crate::run::{self, ExecutableNameUnix, ExecutablePath};
 use crate::Log;
 use std::fmt::Display;
 use std::slice::Iter;
@@ -41,12 +41,12 @@ pub trait App {
   fn name(&self) -> ApplicationName;
 
   /// the filename of the executable that starts this app
-  fn default_executable_filename(&self) -> UnixExecutableName {
-    UnixExecutableName::from(self.name().inner())
+  fn default_executable_filename(&self) -> ExecutableNameUnix {
+    ExecutableNameUnix::from(self.name().inner())
   }
 
   /// names of other executables that this app provides
-  fn additional_executables(&self) -> Vec<UnixExecutableName> {
+  fn additional_executables(&self) -> Vec<ExecutableNameUnix> {
     vec![]
   }
 
@@ -111,7 +111,7 @@ impl Display for dyn App {
 
 pub struct AppAndExecutable {
   pub app: Box<dyn App>,
-  pub executable: UnixExecutableName,
+  pub executable: ExecutableNameUnix,
   pub args: Vec<String>,
 }
 

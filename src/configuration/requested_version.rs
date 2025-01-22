@@ -74,7 +74,7 @@ mod tests {
     use crate::logging::Log;
     use crate::platform::Platform;
     use crate::prelude::*;
-    use crate::run::{self, ExecutablePath, UnixExecutableName};
+    use crate::run::{self, ExecutablePath, ExecutableNameUnix};
 
     /// an App instance that allows to mock the system version restrictions
     struct TestApp {
@@ -88,7 +88,7 @@ mod tests {
       fn name(&self) -> crate::configuration::ApplicationName {
         unimplemented!()
       }
-      fn default_executable_filename(&self) -> UnixExecutableName {
+      fn default_executable_filename(&self) -> ExecutableNameUnix {
         unimplemented!()
       }
       fn homepage(&self) -> &'static str {
