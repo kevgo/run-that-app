@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_tags;
-use crate::installation::Method;
+use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::ExecutablePath;
@@ -42,7 +42,7 @@ impl App for Go {
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}"),
-        bin_folders: vec![format!("go{sep}bin")],
+        bin_folder: BinFolder::Subfolder { path: format!("go{sep}bin") },
       }],
     }
   }
@@ -116,7 +116,7 @@ mod tests {
     use crate::applications::go::Go;
     use crate::applications::App;
     use crate::configuration::Version;
-    use crate::installation::Method;
+    use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
     use big_s::S;
@@ -134,7 +134,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz"),
-          bin_folders: vec![S("go/bin")],
+          bin_folder: BinFolder::Subfolder { path: S("go/bin") },
         }],
       };
       assert_eq!(have, want);
@@ -153,7 +153,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://go.dev/dl/go1.21.5.windows-amd64.zip"),
-          bin_folders: vec![S("go\\bin")],
+          bin_folder: BinFolder::Subfolder { path: S("go\\bin") },
         }],
       };
       assert_eq!(have, want);

@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::Method;
+use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::ExecutablePath;
@@ -30,7 +30,9 @@ impl App for NodeJS {
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",),
-        bin_folders: vec![format!("node-v{version}-{os}-{cpu}"), format!("node-v{version}-{os}-{cpu}{sep}bin")],
+        bin_folder: BinFolder::RootOrSubfolders {
+          options: vec![format!("node-v{version}-{os}-{cpu}"), format!("node-v{version}-{os}-{cpu}{sep}bin")],
+        },
       }],
     }
   }
@@ -94,7 +96,7 @@ mod tests {
     use crate::applications::nodejs::NodeJS;
     use crate::applications::App;
     use crate::configuration::Version;
-    use crate::installation::Method;
+    use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
     use big_s::S;
@@ -112,7 +114,9 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz"),
-          bin_folders: vec![S("node-v20.10.0-darwin-arm64"), S("node-v20.10.0-darwin-arm64/bin")],
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec![S("node-v20.10.0-darwin-arm64"), S("node-v20.10.0-darwin-arm64/bin")],
+          },
         }],
       };
       assert_eq!(have, want);
@@ -131,7 +135,9 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip"),
-          bin_folders: vec![S("node-v20.10.0-win-x64"), S("node-v20.10.0-win-x64\\bin")],
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec![S("node-v20.10.0-win-x64"), S("node-v20.10.0-win-x64\\bin")],
+          },
         }],
       };
       assert_eq!(have, want);

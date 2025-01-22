@@ -1,4 +1,4 @@
-use super::Outcome;
+use super::{BinFolder, Outcome};
 use crate::applications::App;
 use crate::configuration::Version;
 use crate::logging::Log;
@@ -13,7 +13,7 @@ use std::os::unix::fs::PermissionsExt;
 use std::path::Path;
 
 /// downloads and unpacks the content of an archive file
-pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &[String], optional: bool, platform: Platform, yard: &Yard, log: Log) -> Result<Outcome> {
+pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &BinFolder, optional: bool, platform: Platform, yard: &Yard, log: Log) -> Result<Outcome> {
   let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
@@ -23,8 +23,9 @@ pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &[String], 
   };
   // extract the archive
   archive.extract_all(&app_folder, log)?;
+  let executable_filename = app.default_executable_filename().platform_path(platform.os);
   // verify that all executables that should be there exist and are executable
-  for bin_folder in bin_folders {
+  for bin_folder in bin_folders.executable_paths(&app_folder, &executable_filename) {
     let bin_path = app_folder.join(bin_folder);
     make_executable(&bin_path.join(app.default_executable_filename().platform_path(platform.os)));
     // set the executable bit of all executable files that this app provides
