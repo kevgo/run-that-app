@@ -25,7 +25,7 @@ pub enum Method {
     /// The possible folders within the archive that might contain the executable files.
     /// Multiple options exist because for some apps, the Windows archive contains a different folder structure than the Linux or macOS archive.
     /// Provide all possible folders here. If the executables are in the root folder of the archive, leave this empty.
-    bin_folders: BinFolders,
+    bin_folders: BinFolder,
   },
 
   /// installs the application by downloading the pre-compiled executable from the internet
@@ -74,9 +74,9 @@ impl Method {
 
 /// describes the various locations where the executable files could be inside an application folder
 #[derive(Debug, PartialEq)]
-pub enum BinFolders {
+pub enum BinFolder {
   /// all executables are directly in the app folder
-  AppFolder,
+  Root,
   /// the executables are in the given subfolder
   Subfolder { path: String },
   /// the executables are in one of the given subfolders
@@ -85,19 +85,19 @@ pub enum BinFolders {
   RootOrSubfolders { options: Vec<String> },
 }
 
-impl BinFolders {
+impl BinFolder {
   pub fn executable_paths(&self, app_folder: &Path, executable_name: &ExecutableFilename) -> Vec<PathBuf> {
     match self {
-      BinFolders::RootOrSubfolders { options } => {
+      BinFolder::RootOrSubfolders { options } => {
         let mut result = vec![app_folder.join(executable_name)];
         for option in options {
           result.push(app_folder.join(option).join(executable_name));
         }
         result
       }
-      BinFolders::AppFolder => vec![app_folder.join(executable_name)],
-      BinFolders::Subfolder { path } => vec![app_folder.join(path).join(executable_name)],
-      BinFolders::Subfolders { options } => {
+      BinFolder::Root => vec![app_folder.join(executable_name)],
+      BinFolder::Subfolder { path } => vec![app_folder.join(path).join(executable_name)],
+      BinFolder::Subfolders { options } => {
         let mut result = vec![];
         for option in options {
           result.push(app_folder.join(option).join(executable_name));
