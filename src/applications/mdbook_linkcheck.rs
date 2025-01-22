@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::Method;
+use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::ExecutablePath;
@@ -36,7 +36,7 @@ impl App for MdBookLinkCheck {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-linkcheck.{cpu}-{os}.zip"),
-          bin_folders: vec![],
+          bin_folder: BinFolder::Root,
         },
         Method::CompileRustSource {
           crate_name: "mdbook-linkcheck",
@@ -82,7 +82,7 @@ mod tests {
     use crate::applications::mdbook_linkcheck::MdBookLinkCheck;
     use crate::applications::App;
     use crate::configuration::Version;
-    use crate::installation::Method;
+    use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
     use big_s::S;
@@ -101,7 +101,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-apple-darwin.zip"),
-            bin_folders: vec![],
+            bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {
             crate_name: "mdbook-linkcheck",
@@ -126,7 +126,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-pc-windows-msvc.zip"),
-            bin_folders: vec![],
+            bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {
             crate_name: "mdbook-linkcheck",
