@@ -153,7 +153,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://go.dev/dl/go1.21.5.windows-amd64.zip"),
-          bin_folders: BinFolder::Subfolder { path: S("go\\bin") },
+          bin_folder: BinFolder::Subfolder { path: S("go\\bin") },
         }],
       };
       assert_eq!(have, want);

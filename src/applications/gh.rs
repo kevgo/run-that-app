@@ -123,7 +123,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip"),
-          bin_folders: BinFolder::Subfolders {
+          bin_folder: BinFolder::Subfolders {
             options: vec![S("bin"), S("gh_2.39.1_windows_amd64\\bin")],
           },
         }],
