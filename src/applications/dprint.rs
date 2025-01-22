@@ -1,3 +1,5 @@
+use big_s::S;
+
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
@@ -39,7 +41,7 @@ impl App for Dprint {
         },
         Method::CompileRustSource {
           crate_name: "dprint",
-          bin_folder: Some("bin"),
+          bin_folder: BinFolder::Subfolder { path: S("bin") },
         },
       ],
     }
@@ -102,7 +104,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "dprint",
-            bin_folder: Some("bin"),
+            bin_folder: BinFolder::Subfolder { path: S("bin") },
           },
         ],
       };
@@ -126,7 +128,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "dprint",
-            bin_folder: Some("bin"),
+            bin_folder: BinFolder::Subfolder { path: S("bin") },
           },
         ],
       };

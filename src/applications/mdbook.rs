@@ -6,6 +6,7 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::ExecutablePath;
 use crate::{regexp, run, Log};
+use big_s::S;
 use const_format::formatcp;
 
 pub struct MdBook {}
@@ -44,7 +45,7 @@ impl App for MdBook {
         },
         Method::CompileRustSource {
           crate_name: "mdbook",
-          bin_folder: Some("bin"),
+          bin_folder: BinFolder::Subfolder { path: S("bin") },
         },
       ],
     }
@@ -109,7 +110,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "mdbook",
-            bin_folder: Some("bin"),
+            bin_folder: BinFolder::Subfolder { path: S("bin") },
           },
         ],
       };
@@ -134,7 +135,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "mdbook",
-            bin_folder: Some("bin"),
+            bin_folder: BinFolder::Subfolder { path: S("bin") },
           },
         ],
       };
