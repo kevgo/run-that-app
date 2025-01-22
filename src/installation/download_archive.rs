@@ -14,11 +14,11 @@ use std::path::Path;
 
 /// downloads and unpacks the content of an archive file
 pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &BinFolder, optional: bool, platform: Platform, yard: &Yard, log: Log) -> Result<Outcome> {
-  let executable_definition = app.executable_definition(version, platform);
+  let (app, executable_name, args) = app.executable_definition(version, platform);
   let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
-  let app_folder = yard.create_app_folder(&executable_definition.app.name(), version)?;
+  let app_folder = yard.create_app_folder(&app.name(), version)?;
   let Some(archive) = archives::lookup(&artifact.filename, artifact.data) else {
     return Err(UserError::UnknownArchive(artifact.filename));
   };
