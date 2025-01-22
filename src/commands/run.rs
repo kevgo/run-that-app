@@ -121,6 +121,7 @@ fn load_or_install_from_yard(
   log: Log,
 ) -> Result<Option<ExecutableCall>> {
   let (app, executable_name_unix, args) = app.executable_definition(version, platform);
+  println!("app: {app}\nexecutable: {executable_name_unix}\nargs: {args}");
   let executable_name = executable_name_unix.platform_path(platform.os);
   let app_folder = yard.app_folder(&app.name(), version);
   // try to load the app
@@ -135,6 +136,7 @@ fn load_or_install_from_yard(
   // app not installed and installable --> try to install
   match installation::any(app.as_ref(), version, platform, optional, yard, config_file, log)? {
     Outcome::Installed => {
+      println!("1111111111111111111");
       if let Some(executable_path) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
         let args = args.make_absolute(&app_folder);
         Ok(Some(ExecutableCall { executable_path, args }))

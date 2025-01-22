@@ -3,6 +3,7 @@ use crate::applications::App;
 use crate::configuration::Version;
 use crate::installation;
 use crate::yard::Yard;
+use std::fmt::{Display, Write};
 use std::path::Path;
 
 /// the different ways to execute an application
@@ -125,6 +126,22 @@ impl ExecutableArgs {
           }
         }
         vec![]
+      }
+    }
+  }
+}
+
+impl Display for ExecutableArgs {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    match self {
+      ExecutableArgs::None => f.write_str("no args"),
+      ExecutableArgs::OneOfTheseInAppFolder { options } => {
+        f.write_str("one of these filesystem entries:");
+        for option in options {
+          f.write_char(' ');
+          f.write_str(option);
+        }
+        Ok(())
       }
     }
   }
