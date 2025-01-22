@@ -4,7 +4,7 @@ use crate::configuration::{ApplicationName, Version};
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{ExecutableNamePlatform, ExecutableNameUnix, ExecutablePath};
+use crate::run::{ExecutableNamePlatform, ExecutablePath};
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
 

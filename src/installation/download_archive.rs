@@ -14,7 +14,7 @@ use std::path::Path;
 
 /// downloads and unpacks the content of an archive file
 pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &BinFolder, optional: bool, platform: Platform, yard: &Yard, log: Log) -> Result<Outcome> {
-  let (app, executable_name, args) = app.executable_definition(version, platform);
+  let (app, _executable_name, _args) = app.executable_definition(version, platform);
   let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };

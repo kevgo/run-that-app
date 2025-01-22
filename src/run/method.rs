@@ -1,10 +1,9 @@
-use std::path::{Path, PathBuf};
-
 use super::executable_name_unix;
 use crate::applications::App;
 use crate::configuration::Version;
 use crate::installation;
 use crate::yard::Yard;
+use std::path::Path;
 
 /// the different ways to execute an application
 pub enum Method {
