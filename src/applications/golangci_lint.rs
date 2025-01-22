@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::{BinFolders, Method};
+use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::{self, ExecutablePath};
@@ -40,7 +40,7 @@ impl App for GolangCiLint {
     // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
     vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}"),
-        bin_folders: BinFolders::Subfolder { path: format!("golangci-lint-{version}-{os}-{cpu}")},
+        bin_folders: BinFolder::Subfolder { path: format!("golangci-lint-{version}-{os}-{cpu}")},
     }]}
   }
 
@@ -76,6 +76,7 @@ mod tests {
     use crate::applications::golangci_lint::GolangCiLint;
     use crate::applications::App;
     use crate::configuration::Version;
+    use crate::installation::BinFolder;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
@@ -84,8 +85,6 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::installation::BinFolders;
-
       let have = (GolangCiLint {}).run_method(
         &Version::from("1.55.2"),
         Platform {
@@ -96,7 +95,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-darwin-arm64.tar.gz"),
-          bin_folders: BinFolders::Subfolder {
+          bin_folders: BinFolder::Subfolder {
             path: S("golangci-lint-1.55.2-darwin-arm64"),
           },
         }],
@@ -117,7 +116,9 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-windows-amd64.zip"),
-          bin_folders: vec![S("golangci-lint-1.55.2-windows-amd64")],
+          bin_folders: BinFolder::Subfolder {
+            path: S("golangci-lint-1.55.2-windows-amd64"),
+          },
         }],
       };
       assert_eq!(have, want);

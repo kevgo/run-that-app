@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::{BinFolders, Method};
+use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::ExecutablePath;
@@ -41,7 +41,7 @@ impl App for Gh {
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}"),
-        bin_folders: BinFolders::Subfolders {
+        bin_folders: BinFolder::Subfolders {
           options: vec![S("bin"), format!("gh_{version}_{os}_{cpu}{sep}bin")],
         },
       }],
@@ -92,7 +92,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::installation::BinFolders;
+      use crate::installation::BinFolder;
 
       let have = (Gh {}).run_method(
         &Version::from("2.39.1"),
@@ -115,6 +115,8 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
+      use crate::installation::BinFolder;
+
       let have = (Gh {}).run_method(
         &Version::from("2.39.1"),
         Platform {
@@ -125,7 +127,9 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip"),
-          bin_folders: vec![S("bin"), S("gh_2.39.1_windows_amd64\\bin")],
+          bin_folders: BinFolder::Subfolders {
+            options: vec![S("bin"), S("gh_2.39.1_windows_amd64\\bin")],
+          },
         }],
       };
       assert_eq!(have, want);

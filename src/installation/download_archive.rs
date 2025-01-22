@@ -1,4 +1,4 @@
-use super::{BinFolders, Outcome};
+use super::{BinFolder, Outcome};
 use crate::applications::App;
 use crate::configuration::Version;
 use crate::logging::Log;
@@ -13,16 +13,7 @@ use std::os::unix::fs::PermissionsExt;
 use std::path::Path;
 
 /// downloads and unpacks the content of an archive file
-pub fn run(
-  app: &dyn App,
-  version: &Version,
-  url: &str,
-  bin_folders: &BinFolders,
-  optional: bool,
-  platform: Platform,
-  yard: &Yard,
-  log: Log,
-) -> Result<Outcome> {
+pub fn run(app: &dyn App, version: &Version, url: &str, bin_folders: &BinFolder, optional: bool, platform: Platform, yard: &Yard, log: Log) -> Result<Outcome> {
   let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
