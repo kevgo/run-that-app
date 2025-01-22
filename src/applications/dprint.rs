@@ -1,5 +1,3 @@
-use big_s::S;
-
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
@@ -8,6 +6,7 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::ExecutablePath;
 use crate::{regexp, run, Log};
+use big_s::S;
 
 pub struct Dprint {}
 
