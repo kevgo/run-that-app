@@ -46,7 +46,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
       {
         continue;
       }
-      let executable_paths = install_method.executable_paths(
+      let executable_paths = install_method.executable_locations(
         app.as_ref(),
         &app.default_executable_filename().platform_path(platform.os),
         &latest_version,
