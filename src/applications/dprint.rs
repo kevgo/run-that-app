@@ -6,6 +6,7 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::ExecutablePath;
 use crate::{regexp, run, Log};
+use big_s::S;
 
 pub struct Dprint {}
 
@@ -39,7 +40,7 @@ impl App for Dprint {
         },
         Method::CompileRustSource {
           crate_name: "dprint",
-          bin_folder: Some("bin"),
+          bin_folder: BinFolder::Subfolder { path: S("bin") },
         },
       ],
     }
@@ -102,7 +103,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "dprint",
-            bin_folder: Some("bin"),
+            bin_folder: BinFolder::Subfolder { path: S("bin") },
           },
         ],
       };
@@ -126,7 +127,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "dprint",
-            bin_folder: Some("bin"),
+            bin_folder: BinFolder::Subfolder { path: S("bin") },
           },
         ],
       };
