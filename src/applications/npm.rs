@@ -3,7 +3,7 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{ExecutablePath, UnixExecutableName};
+use crate::run::{ExecutableNameUnix, ExecutablePath};
 use crate::{run, Log};
 
 pub struct Npm {}
@@ -20,7 +20,7 @@ impl App for Npm {
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
     run::Method::OtherAppOtherExecutable {
       app: Box::new(app_to_install()),
-      executable_name: UnixExecutableName::from("npm"),
+      executable_name: ExecutableNameUnix::from("npm"),
     }
   }
 
@@ -60,7 +60,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
-    use crate::run::UnixExecutableName;
+    use crate::run::ExecutableNameUnix;
 
     #[test]
     #[cfg(unix)]
@@ -74,7 +74,7 @@ mod tests {
       );
       let want = run::Method::OtherAppOtherExecutable {
         app: Box::new(NodeJS {}),
-        executable_name: UnixExecutableName::from("npm"),
+        executable_name: ExecutableNameUnix::from("npm"),
       };
       assert_eq!(have, want);
     }
@@ -91,7 +91,7 @@ mod tests {
       );
       let want = run::Method::OtherAppOtherExecutable {
         app: Box::new(NodeJS {}),
-        executable_name: UnixExecutableName::from("npm"),
+        executable_name: ExecutableNameUnix::from("npm"),
       };
       assert_eq!(have, want);
     }

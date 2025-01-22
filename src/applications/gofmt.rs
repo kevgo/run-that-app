@@ -3,7 +3,7 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{ExecutablePath, UnixExecutableName};
+use crate::run::{ExecutableNameUnix, ExecutablePath};
 use crate::{run, Log};
 
 pub struct Gofmt {}
@@ -20,7 +20,7 @@ impl App for Gofmt {
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
     run::Method::OtherAppOtherExecutable {
       app: Box::new(app_to_install()),
-      executable_name: UnixExecutableName::from("gofmt"),
+      executable_name: ExecutableNameUnix::from("gofmt"),
     }
   }
 
@@ -59,7 +59,7 @@ mod tests {
     use crate::applications::App;
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run::{self, UnixExecutableName};
+    use crate::run::{self, ExecutableNameUnix};
 
     #[test]
     #[cfg(unix)]
@@ -73,7 +73,7 @@ mod tests {
       );
       let want = run::Method::OtherAppOtherExecutable {
         app: Box::new(Go {}),
-        executable_name: UnixExecutableName::from("gofmt"),
+        executable_name: ExecutableNameUnix::from("gofmt"),
       };
       assert_eq!(have, want);
     }
@@ -90,7 +90,7 @@ mod tests {
       );
       let want = run::Method::OtherAppOtherExecutable {
         app: Box::new(Go {}),
-        executable_name: UnixExecutableName::from("gofmt"),
+        executable_name: ExecutableNameUnix::from("gofmt"),
       };
       assert_eq!(have, want);
     }
