@@ -86,6 +86,7 @@ mod tests {
     use crate::applications::mdbook::MdBook;
     use crate::applications::App;
     use crate::configuration::Version;
+    use crate::installation::BinFolder;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
@@ -94,8 +95,6 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::installation::BinFolder;
-
       let have = (MdBook {}).run_method(
         &Version::from("0.4.37"),
         Platform {
@@ -132,7 +131,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-pc-windows-msvc.zip"),
-            bin_folders: BinFolderOptions::AppFolder,
+            bin_folders: BinFolder::AppFolder,
           },
           Method::CompileRustSource {
             crate_name: "mdbook",

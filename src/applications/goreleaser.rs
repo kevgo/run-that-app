@@ -107,6 +107,8 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
+      use crate::installation::BinFolder;
+
       let have = (Goreleaser {}).run_method(
         &Version::from("1.22.1"),
         Platform {
@@ -117,7 +119,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Windows_x86_64.zip"),
-          bin_folders: vec![],
+          bin_folders: BinFolder::AppFolder,
         }],
       };
       assert_eq!(have, want);

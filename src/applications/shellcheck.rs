@@ -86,12 +86,12 @@ mod tests {
     use big_s::S;
 
     #[test]
-    #[cfg(unix)]
+    #[cfg(windows)]
     fn linux_arm() {
       let have = (ShellCheck {}).run_method(
         &Version::from("0.9.0"),
         Platform {
-          os: Os::Linux,
+          os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );

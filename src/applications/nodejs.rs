@@ -96,6 +96,7 @@ mod tests {
     use crate::applications::nodejs::NodeJS;
     use crate::applications::App;
     use crate::configuration::Version;
+    use crate::installation::BinFolder;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
@@ -104,8 +105,6 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::installation::BinFolder;
-
       let have = (NodeJS {}).run_method(
         &Version::from("20.10.0"),
         Platform {
@@ -137,7 +136,9 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip"),
-          bin_folders: vec![S("node-v20.10.0-win-x64"), S("node-v20.10.0-win-x64\\bin")],
+          bin_folders: BinFolder::RootOrSubfolders {
+            options: vec![S("node-v20.10.0-win-x64"), S("node-v20.10.0-win-x64\\bin")],
+          },
         }],
       };
       assert_eq!(have, want);
