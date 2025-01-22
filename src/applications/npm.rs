@@ -78,7 +78,7 @@ mod tests {
       let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["node_modules/npm/bin/npm-cli.js"],
+          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
         },
       };
       assert_eq!(have, want);
