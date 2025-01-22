@@ -9,8 +9,8 @@ pub struct ExecutableNameUnix(String);
 
 impl ExecutableNameUnix {
   /// provides the platform-specific version of this `UnixExecutableName`
-  pub fn platform_path(self, os: Os) -> ExecutableNamePlatform {
-    ExecutableNamePlatform(match os {
+  pub fn platform_path(self, os: Os) -> ExecutableFileName {
+    ExecutableFileName(match os {
       Os::Linux | Os::MacOS => self.0,
       Os::Windows => format!("{self}.exe"),
     })
@@ -37,15 +37,15 @@ impl From<String> for ExecutableNameUnix {
 
 /// The platform-specific filename of an executable.
 /// On Windows: "unix-executable-name.exe"
-pub struct ExecutableNamePlatform(String);
+pub struct ExecutableFileName(String);
 
-impl AsRef<Path> for ExecutableNamePlatform {
+impl AsRef<Path> for ExecutableFileName {
   fn as_ref(&self) -> &Path {
     Path::new(&self.0)
   }
 }
 
-impl Display for ExecutableNamePlatform {
+impl Display for ExecutableFileName {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(&self.0)
   }
