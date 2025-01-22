@@ -104,8 +104,6 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::installation::BinFolder;
-
       let have = (NodeJS {}).run_method(
         &Version::from("20.10.0"),
         Platform {
