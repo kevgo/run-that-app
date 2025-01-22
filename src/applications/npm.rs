@@ -3,7 +3,7 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{ExecutablePath, OtherAppArgs};
+use crate::run::{ExecutableArgs, ExecutablePath};
 use crate::{run, Log};
 
 pub struct Npm {}
@@ -20,7 +20,7 @@ impl App for Npm {
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
     run::Method::OtherAppDefaultExecutable {
       app: Box::new(NodeJS {}),
-      args: OtherAppArgs::OneOfTheseInAppFolder {
+      args: ExecutableArgs::OneOfTheseInAppFolder {
         options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
       },
     }
@@ -66,7 +66,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::run::OtherAppArgs;
+      use crate::run::ExecutableArgs;
 
       let have = (Npm {}).run_method(
         &Version::from("20.10.0"),
@@ -77,7 +77,7 @@ mod tests {
       );
       let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
-        args: OtherAppArgs::OneOfTheseInAppFolder {
+        args: ExecutableArgs::OneOfTheseInAppFolder {
           options: vec!["node_modules/npm/bin/npm-cli.js"],
         },
       };

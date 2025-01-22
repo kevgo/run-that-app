@@ -73,8 +73,8 @@ pub fn load_or_install(
 
 // checks if the app is in the PATH and has the correct version
 fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutableCall>> {
-  let executable_definition = app.executable_definition(&Version::from(""), platform);
-  let Some(executable_path) = find_global_install(&app.default_executable_filename().platform_path(platform.os), log) else {
+  let (app, executable_name, executable_args) = app.executable_definition(&Version::from(""), platform);
+  let Some(executable_path) = find_global_install(&executable_name.platform_path(platform.os), log) else {
     log(Event::GlobalInstallNotFound);
     return Ok(None);
   };
@@ -87,7 +87,7 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
     }
     AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
       log(Event::GlobalInstallMatchingVersion { range, version: None });
-      let args = make_args_absolute(&executable_definition.args, app_folder);
+      let args = executable_args.make_absolute(app_folder);
       Ok(Some(ExecutableCall { executable_path, args }))
     }
     AnalyzeResult::IdentifiedButUnknownVersion => {
@@ -99,7 +99,7 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
         range,
         version: Some(&version),
       });
-      let args = make_args_absolute(&executable_definition.args, app_folder);
+      let args = executable_args.make_absolute(app_folder);
       Ok(Some(ExecutableCall { executable_path, args }))
     }
     AnalyzeResult::IdentifiedWithVersion(version) => {
@@ -147,8 +147,4 @@ fn load_or_install_from_yard(
       Ok(None)
     }
   }
-}
-
-fn make_args_absolute(args: &[&str], dir: &Path) -> Vec<String> {
-  args.into_iter().map(|arg| dir.join(arg).to_string_lossy().to_string()).collect()
 }

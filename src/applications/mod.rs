@@ -31,7 +31,7 @@ mod tikibase;
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{self, ExecutableNameUnix, ExecutablePath};
+use crate::run::{self, ExecutableArgs, ExecutableNameUnix, ExecutablePath};
 use crate::Log;
 use std::fmt::Display;
 use std::slice::Iter;
@@ -81,11 +81,11 @@ pub trait App {
   /// this is necessary because a limitation of Rust does not allow deriving the Clone trait automatically
   fn clone(&self) -> Box<dyn App>;
 
-  fn executable_definition(&self, version: &Version, platform: Platform) -> (Box<dyn App>, ExecutableNameUnix) {
+  fn executable_definition(&self, version: &Version, platform: Platform) -> (Box<dyn App>, ExecutableNameUnix, ExecutableArgs) {
     match self.run_method(version, platform) {
-      run::Method::ThisApp { install_methods: _ } => (self.clone(), self.default_executable_filename()),
-      run::Method::OtherAppOtherExecutable { app, executable_name } => (app.clone(), executable_name),
-      run::Method::OtherAppDefaultExecutable { app, args: _ } => (app.clone(), app.default_executable_filename()),
+      run::Method::ThisApp { install_methods: _ } => (self.clone(), self.default_executable_filename(), ExecutableArgs::None),
+      run::Method::OtherAppOtherExecutable { app, executable_name } => (app.clone(), executable_name, ExecutableArgs::None),
+      run::Method::OtherAppDefaultExecutable { app, args } => (app.clone(), app.default_executable_filename(), args),
     }
   }
 }

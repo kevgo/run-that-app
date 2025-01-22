@@ -3,7 +3,7 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{ExecutablePath, OtherAppArgs};
+use crate::run::{ExecutablePath, ExecutableArgs};
 use crate::{run, Log};
 
 pub struct Npx {}
@@ -20,7 +20,7 @@ impl App for Npx {
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
     run::Method::OtherAppDefaultExecutable {
       app: Box::new(NodeJS {}),
-      args: OtherAppArgs::OneOfTheseInAppFolder {
+      args: ExecutableArgs::OneOfTheseInAppFolder {
         options: vec!["../lib/node_modules/npm/bin/npx-cli.js"],
       },
     }
@@ -58,7 +58,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
-    use crate::run::OtherAppArgs;
+    use crate::run::ExecutableArgs;
 
     #[test]
     #[cfg(unix)]
@@ -72,7 +72,7 @@ mod tests {
       );
       let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
-        args: OtherAppArgs::OneOfTheseInAppFolder {
+        args: ExecutableArgs::OneOfTheseInAppFolder {
           options: vec!["../lib/node_modules/npm/bin/npx-cli.js"],
         },
       };
@@ -91,7 +91,7 @@ mod tests {
       );
       let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
-        args: OtherAppArgs::OneOfTheseInAppFolder {
+        args: ExecutableArgs::OneOfTheseInAppFolder {
           options: vec!["../lib/node_modules/npm/bin/npx-cli.js"],
         },
       };

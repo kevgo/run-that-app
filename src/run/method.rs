@@ -1,3 +1,5 @@
+use std::path::{Path, PathBuf};
+
 use super::executable_name_unix;
 use crate::applications::App;
 use crate::configuration::Version;
@@ -23,7 +25,7 @@ pub enum Method {
     /// the other applications whose default executable to run
     app: Box<dyn App>,
     /// additional arguments when running the default executable of the given app
-    args: OtherAppArgs,
+    args: ExecutableArgs,
   },
 }
 
@@ -39,7 +41,7 @@ impl Method {
     match self {
       Method::ThisApp { install_methods: _ } | Method::OtherAppOtherExecutable { app: _, executable_name: _ } => Some(vec![]),
       Method::OtherAppDefaultExecutable { app, args } => match args {
-        OtherAppArgs::OneOfTheseInAppFolder { options } => {
+        ExecutableArgs::OneOfTheseInAppFolder { options } => {
           let app_folder = yard.app_folder(&app.name(), version);
           for option in options {
             let full_path = app_folder.join(option);
@@ -49,6 +51,7 @@ impl Method {
           }
           None
         }
+        ExecutableArgs::None => None,
       },
     }
   }
@@ -101,8 +104,29 @@ impl PartialEq for Method {
   }
 }
 
+/// arguments that are required to execute an application itself - these are not arguments provided by the user
 #[derive(Clone, Debug, PartialEq)]
-pub enum OtherAppArgs {
+pub enum ExecutableArgs {
+  /// the executable can be called without any additional arguments
+  None,
   /// uses the first of the given options that exists inside the folder that application is installed in
   OneOfTheseInAppFolder { options: Vec<&'static str> },
+}
+
+impl ExecutableArgs {
+  /// makes the arguments
+  pub fn make_absolute(self, dir: &Path) -> Vec<String> {
+    match self {
+      ExecutableArgs::None => vec![],
+      ExecutableArgs::OneOfTheseInAppFolder { options } => {
+        for option in options {
+          let absolute_path = dir.join(option);
+          if absolute_path.exists() {
+            return vec![absolute_path.to_string_lossy().to_string()];
+          }
+        }
+        vec![]
+      }
+    }
+  }
 }
