@@ -1,7 +1,7 @@
 use super::executable_name_unix;
 use crate::applications::App;
 use crate::configuration::Version;
-use crate::installation;
+use crate::installation::{self, BinFolder};
 use crate::yard::Yard;
 use std::fmt::{Display, Write};
 use std::path::Path;
@@ -115,15 +115,18 @@ pub enum ExecutableArgs {
 
 impl ExecutableArgs {
   /// makes the arguments
-  pub fn make_absolute(self, dir: &Path) -> Vec<String> {
+  pub fn make_absolute(self, bin_folder: BinFolder) -> Vec<String> {
     match self {
       ExecutableArgs::None => vec![],
       ExecutableArgs::OneOfTheseInAppFolder { options } => {
         for option in options {
-          let absolute_path = dir.join(option);
+          let absolute_path = bin_folder.join(option);
+          println!("444444444444444444444 {}", absolute_path.to_string_lossy());
           if absolute_path.exists() {
+            println!("exists");
             return vec![absolute_path.to_string_lossy().to_string()];
           }
+          println!("doesn't exist");
         }
         vec![]
       }
@@ -136,10 +139,10 @@ impl Display for ExecutableArgs {
     match self {
       ExecutableArgs::None => f.write_str("no args"),
       ExecutableArgs::OneOfTheseInAppFolder { options } => {
-        f.write_str("one of these filesystem entries:");
+        f.write_str("one of these filesystem entries:")?;
         for option in options {
-          f.write_char(' ');
-          f.write_str(option);
+          f.write_char(' ')?;
+          f.write_str(option)?;
         }
         Ok(())
       }

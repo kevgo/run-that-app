@@ -45,21 +45,27 @@ pub enum Method {
     /// the name of the Rust crate that contains the executable
     crate_name: &'static str,
     /// The subfolder that contains the executables after compilation.
-    bin_folder: Option<&'static str>,
+    bin_folder: BinFolder,
   },
 }
 
 impl Method {
+  pub fn bin_folder(&self) -> BinFolder {
+    match self {
+      Method::DownloadArchive { url: _, bin_folder } => bin_folder.to_owned(),
+      Method::DownloadExecutable { url: _ } => BinFolder::Root,
+      Method::CompileGoSource { import_path: _ } => BinFolder::Root,
+      Method::CompileRustSource { crate_name: _, bin_folder } => bin_folder.to_owned(),
+    }
+  }
+
   /// provides possible locations of the given executable within the given app folder in the given  yard
   pub fn executable_locations(&self, app: &dyn App, executable_filename: &ExecutableNamePlatform, version: &Version, yard: &Yard) -> Vec<PathBuf> {
     let app_folder = yard.app_folder(&app.name(), version);
     match self {
       Method::DownloadArchive { url: _, bin_folder } => bin_folder.executable_paths(&app_folder, executable_filename),
       Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => vec![app_folder.join(executable_filename)],
-      Method::CompileRustSource { crate_name: _, bin_folder } => vec![match bin_folder {
-        Some(bin_folder) => app_folder.join(bin_folder).join(executable_filename),
-        None => app_folder.join(executable_filename),
-      }],
+      Method::CompileRustSource { crate_name: _, bin_folder } => bin_folder.executable_paths(&app_folder, executable_filename),
     }
   }
 
@@ -73,7 +79,7 @@ impl Method {
 }
 
 /// describes the various locations where the executable files could be inside an application folder
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum BinFolder {
   /// all executables are directly in the app folder
   Root,

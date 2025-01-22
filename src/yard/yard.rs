@@ -1,10 +1,11 @@
 use super::root_path;
 use crate::applications::App;
 use crate::configuration::{ApplicationName, Version};
+use crate::installation::BinFolder;
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
-use crate::prelude::*;
 use crate::run::{ExecutableNamePlatform, ExecutablePath};
+use crate::{installation, prelude::*};
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
 
@@ -72,15 +73,30 @@ impl Yard {
   }
 
   /// tries to load the given executable of the given app from the yard
-  pub fn load_executable(&self, app: &dyn App, executable: &ExecutableNamePlatform, version: &Version, platform: Platform, log: Log) -> Option<ExecutablePath> {
+  pub fn load_executable(
+    &self,
+    app: &dyn App,
+    executable: &ExecutableNamePlatform,
+    version: &Version,
+    platform: Platform,
+    yard: &Yard,
+    log: Log,
+  ) -> Option<(ExecutablePath, PathBuf)> {
     let run_method = app.run_method(version, platform);
+    let app_folder = yard.app_folder(&app.name(), version);
     for installation_method in &run_method.install_methods() {
-      let fullpaths = installation_method.executable_locations(app, executable, version, self);
-      for fullpath in fullpaths {
-        log(Event::YardCheckExistingAppBegin { path: &fullpath });
-        if fullpath.exists() {
+      let executable_paths = installation_method.executable_locations(app, executable, version, self);
+      for executable_path in executable_paths {
+        log(Event::YardCheckExistingAppBegin { path: &executable_path });
+        if executable_path.exists() {
           log(Event::YardCheckExistingAppFound);
-          return Some(ExecutablePath::from(fullpath));
+          let bin_folder = installation_method.bin_folder();
+          let bin_paths = bin_folder.executable_paths(&app_folder, executable);
+          for bin_path in bin_paths {
+            if bin_path.exists() {
+              return Some((ExecutablePath::from(executable_path), bin_path));
+            }
+          }
         }
         log(Event::YardCheckExistingAppNotFound);
       }

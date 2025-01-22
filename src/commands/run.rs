@@ -20,6 +20,7 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   for requested_version in requested_versions {
     if let Some(executable_call) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
+      println!("executable call: {executable_call}");
       if args.error_on_output {
         return run::check_output(&executable_call, &args.app_args);
       }
@@ -121,12 +122,13 @@ fn load_or_install_from_yard(
   log: Log,
 ) -> Result<Option<ExecutableCall>> {
   let (app, executable_name_unix, args) = app.executable_definition(version, platform);
-  println!("app: {app}\nexecutable: {executable_name_unix}\nargs: {args}");
+  println!("222222222222222222222 {args}");
   let executable_name = executable_name_unix.platform_path(platform.os);
   let app_folder = yard.app_folder(&app.name(), version);
   // try to load the app
-  if let Some(executable_path) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
+  if let Some((executable_path, bin_folder)) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
     let args = args.make_absolute(&app_folder);
+    println!("333333333333333333 {}", args.join(" "));
     return Ok(Some(ExecutableCall { executable_path, args }));
   }
   // app not installed --> check if uninstallable
@@ -136,9 +138,8 @@ fn load_or_install_from_yard(
   // app not installed and installable --> try to install
   match installation::any(app.as_ref(), version, platform, optional, yard, config_file, log)? {
     Outcome::Installed => {
-      println!("1111111111111111111");
-      if let Some(executable_path) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
-        let args = args.make_absolute(&app_folder);
+      if let Some((executable_path, bin_folder)) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
+        let args = args.make_absolute(bin_folder);
         Ok(Some(ExecutableCall { executable_path, args }))
       } else {
         Ok(None)
