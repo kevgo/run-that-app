@@ -65,7 +65,13 @@ impl Method {
     match self {
       Method::DownloadArchive { url: _, bin_folder } => bin_folder.executable_paths(&app_folder, executable_filename),
       Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => vec![app_folder.join(executable_filename)],
-      Method::CompileRustSource { crate_name: _, bin_folder } => bin_folder.executable_paths(&app_folder, executable_filename),
+      Method::CompileRustSource { crate_name: _, bin_folder } => match bin_folder {
+        BinFolder::Root => vec![app_folder.join(executable_filename)],
+        BinFolder::Subfolder { path } => vec![app_folder.join(path).join(executable_filename)],
+        BinFolder::Subfolders { options } | BinFolder::RootOrSubfolders { options } => {
+          options.iter().map(|option| app_folder.join(option).join(executable_filename)).collect()
+        }
+      },
     }
   }
 
