@@ -114,8 +114,6 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_intel() {
-      use crate::installation::BinFolder;
-
       let have = (Gh {}).run_method(
         &Version::from("2.39.1"),
         Platform {
