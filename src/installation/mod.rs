@@ -86,7 +86,7 @@ pub enum BinFolder {
 }
 
 impl BinFolder {
-  pub fn executable_paths(&self, app_folder: &Path, executable_name: &ExecutableFilename) -> Vec<PathBuf> {
+  pub fn executable_paths(&self, app_folder: &Path, executable_name: &ExecutableNamePlatform) -> Vec<PathBuf> {
     match self {
       BinFolder::RootOrSubfolders { options } => {
         let mut result = vec![app_folder.join(executable_name)];
