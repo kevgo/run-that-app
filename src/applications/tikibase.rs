@@ -80,8 +80,7 @@ mod tests {
     use crate::applications::tikibase::Tikibase;
     use crate::applications::App;
     use crate::configuration::Version;
-    use crate::installation::BinFolderOptions;
-    use crate::installation::Method;
+    use crate::installation::{BinFolderOptions, Method};
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
     use big_s::S;
