@@ -94,8 +94,6 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::installation::BinFolder;
-
       let have = (MdBook {}).run_method(
         &Version::from("0.4.37"),
         Platform {
