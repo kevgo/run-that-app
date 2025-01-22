@@ -90,8 +90,6 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::installation::BinFolder;
-
       let have = (MdBookLinkCheck {}).run_method(
         &Version::from("0.7.8"),
         Platform {
