@@ -115,7 +115,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-windows-amd64.zip"),
-          bin_folders: BinFolder::Subfolder {
+          bin_folder: BinFolder::Subfolder {
             path: S("golangci-lint-1.55.2-windows-amd64"),
           },
         }],

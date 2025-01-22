@@ -86,18 +86,18 @@ mod tests {
     use big_s::S;
 
     #[test]
-    #[cfg(unix)]
-    fn linux_arm() {
+    #[cfg(windows)]
+    fn wintel() {
       let have = (ShellCheck {}).run_method(
         &Version::from("0.9.0"),
         Platform {
-          os: Os::Linux,
+          os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.linux.x86_64.tar.xz"),
+          url: S("https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.windows.x86_64.zip"),
           bin_folder: BinFolder::Subfolder { path: S("shellcheck-v0.9.0") },
         }],
       };
