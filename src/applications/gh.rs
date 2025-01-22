@@ -84,6 +84,7 @@ mod tests {
     use crate::applications::gh::Gh;
     use crate::applications::App;
     use crate::configuration::Version;
+    use crate::installation::BinFolders;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
@@ -92,8 +93,6 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::installation::BinFolders;
-
       let have = (Gh {}).run_method(
         &Version::from("2.39.1"),
         Platform {
