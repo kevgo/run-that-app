@@ -84,8 +84,6 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::installation::BinFolder;
-
       let have = (GolangCiLint {}).run_method(
         &Version::from("1.55.2"),
         Platform {
