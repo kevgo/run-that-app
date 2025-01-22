@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::{BinFolderOptions, Method};
+use crate::installation::{BinFolders, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::ExecutablePath;
@@ -41,7 +41,7 @@ impl App for Gh {
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}"),
-        bin_folders: BinFolderOptions::OneOf {
+        bin_folders: BinFolders::Subfolders {
           options: vec![S("bin"), format!("gh_{version}_{os}_{cpu}{sep}bin")],
         },
       }],
@@ -92,7 +92,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::installation::BinFolderOptions;
+      use crate::installation::BinFolders;
 
       let have = (Gh {}).run_method(
         &Version::from("2.39.1"),
@@ -104,7 +104,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz"),
-          bin_folders: BinFolderOptions::OneOf {
+          bin_folders: BinFolders::Subfolders {
             options: vec![S("bin"), S("gh_2.39.1_linux_arm64/bin")],
           },
         }],

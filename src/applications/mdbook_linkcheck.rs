@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::{BinFolderOptions, Method};
+use crate::installation::{BinFolders, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::ExecutablePath;
@@ -36,7 +36,7 @@ impl App for MdBookLinkCheck {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-linkcheck.{cpu}-{os}.zip"),
-          bin_folders: BinFolderOptions::AppFolder,
+          bin_folders: BinFolders::AppFolder,
         },
         Method::CompileRustSource {
           crate_name: "mdbook-linkcheck",
@@ -90,7 +90,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::installation::BinFolderOptions;
+      use crate::installation::BinFolders;
 
       let have = (MdBookLinkCheck {}).run_method(
         &Version::from("0.7.8"),
@@ -103,7 +103,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-apple-darwin.zip"),
-            bin_folders: BinFolderOptions::AppFolder,
+            bin_folders: BinFolders::AppFolder,
           },
           Method::CompileRustSource {
             crate_name: "mdbook-linkcheck",

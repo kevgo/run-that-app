@@ -25,7 +25,7 @@ pub enum Method {
     /// The possible folders within the archive that might contain the executable files.
     /// Multiple options exist because for some apps, the Windows archive contains a different folder structure than the Linux or macOS archive.
     /// Provide all possible folders here. If the executables are in the root folder of the archive, leave this empty.
-    bin_folders: BinFolderOptions,
+    bin_folders: BinFolders,
   },
 
   /// installs the application by downloading the pre-compiled executable from the internet
@@ -72,32 +72,32 @@ impl Method {
   }
 }
 
-/// describes the various options where the executable files could be inside an application folder
+/// describes the various locations where the executable files could be inside an application folder
 #[derive(Debug, PartialEq)]
-pub enum BinFolderOptions {
-  /// all binaries are in the root folder
+pub enum BinFolders {
+  /// all executables are directly in the app folder
   AppFolder,
-  /// look for the executable in the given subfolder
+  /// the executables are in the given subfolder
   Subfolder { path: String },
-  /// looks for the executable in one of the given subfolders of the app folder
-  OneOf { options: Vec<String> },
-  /// looks for the executable in the app folder or one of the given subfolders within the app folder
-  RootOrOneOf { options: Vec<String> },
+  /// the executables are in one of the given subfolders
+  Subfolders { options: Vec<String> },
+  /// the executables are either directly in the app folder or in one of the given subfolders
+  RootOrSubfolders { options: Vec<String> },
 }
 
-impl BinFolderOptions {
+impl BinFolders {
   pub fn executable_paths(&self, app_folder: &Path, executable_name: &ExecutableFilename) -> Vec<PathBuf> {
     match self {
-      BinFolderOptions::RootOrOneOf { options } => {
+      BinFolders::RootOrSubfolders { options } => {
         let mut result = vec![app_folder.join(executable_name)];
         for option in options {
           result.push(app_folder.join(option).join(executable_name));
         }
         result
       }
-      BinFolderOptions::AppFolder => vec![app_folder.join(executable_name)],
-      BinFolderOptions::Subfolder { path } => vec![app_folder.join(path).join(executable_name)],
-      BinFolderOptions::OneOf { options } => {
+      BinFolders::AppFolder => vec![app_folder.join(executable_name)],
+      BinFolders::Subfolder { path } => vec![app_folder.join(path).join(executable_name)],
+      BinFolders::Subfolders { options } => {
         let mut result = vec![];
         for option in options {
           result.push(app_folder.join(option).join(executable_name));

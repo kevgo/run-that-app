@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::{BinFolderOptions, Method};
+use crate::installation::{BinFolders, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::{self, ExecutablePath};
@@ -38,7 +38,7 @@ impl App for Goreleaser {
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}"),
-        bin_folders: BinFolderOptions::AppFolder,
+        bin_folders: BinFolders::AppFolder,
       }],
     }
   }
@@ -86,7 +86,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::installation::BinFolderOptions;
+      use crate::installation::BinFolders;
 
       let have = (Goreleaser {}).run_method(
         &Version::from("1.22.1"),
@@ -98,7 +98,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz"),
-          bin_folders: BinFolderOptions::AppFolder,
+          bin_folders: BinFolders::AppFolder,
         }],
       };
       assert_eq!(have, want);

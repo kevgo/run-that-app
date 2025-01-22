@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::{BinFolderOptions, Method};
+use crate::installation::{BinFolders, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::{self, ExecutablePath};
@@ -44,7 +44,7 @@ impl App for ActionLint {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}"),
-          bin_folders: BinFolderOptions::AppFolder,
+          bin_folders: BinFolders::AppFolder,
         },
         Method::CompileGoSource {
           import_path: format!("github.com/{ORG}/{REPO}/cmd/actionlint@v{version}"),
@@ -86,7 +86,7 @@ mod tests {
     use crate::applications::actionlint::ActionLint;
     use crate::applications::App;
     use crate::configuration::Version;
-    use crate::installation::{BinFolderOptions, Method};
+    use crate::installation::{BinFolders, Method};
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
     use big_s::S;
@@ -104,7 +104,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_linux_arm64.tar.gz"),
-            bin_folders: BinFolderOptions::AppFolder,
+            bin_folders: BinFolders::AppFolder,
           },
           Method::CompileGoSource {
             import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.6.26"),
@@ -127,7 +127,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_windows_amd64.zip"),
-            bin_folders: BinFolderOptions::AppFolder,
+            bin_folders: BinFolders::AppFolder,
           },
           Method::CompileGoSource {
             import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.6.26"),

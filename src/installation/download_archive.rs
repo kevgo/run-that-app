@@ -1,4 +1,4 @@
-use super::{BinFolderOptions, Outcome};
+use super::{BinFolders, Outcome};
 use crate::applications::App;
 use crate::configuration::Version;
 use crate::logging::Log;
@@ -17,7 +17,7 @@ pub fn run(
   app: &dyn App,
   version: &Version,
   url: &str,
-  bin_folders: &BinFolderOptions,
+  bin_folders: &BinFolders,
   optional: bool,
   platform: Platform,
   yard: &Yard,

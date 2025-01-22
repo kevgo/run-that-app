@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::{BinFolderOptions, Method};
+use crate::installation::{BinFolders, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::ExecutablePath;
@@ -30,7 +30,7 @@ impl App for NodeJS {
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",),
-        bin_folders: BinFolderOptions::RootOrOneOf {
+        bin_folders: BinFolders::RootOrSubfolders {
           options: vec![format!("node-v{version}-{os}-{cpu}"), format!("node-v{version}-{os}-{cpu}{sep}bin")],
         },
       }],
@@ -104,7 +104,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::installation::BinFolderOptions;
+      use crate::installation::BinFolders;
 
       let have = (NodeJS {}).run_method(
         &Version::from("20.10.0"),
@@ -116,7 +116,7 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz"),
-          bin_folders: BinFolderOptions::RootOrOneOf {
+          bin_folders: BinFolders::RootOrSubfolders {
             options: vec![S("node-v20.10.0-darwin-arm64"), S("node-v20.10.0-darwin-arm64/bin")],
           },
         }],

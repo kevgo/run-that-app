@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
-use crate::installation::{BinFolderOptions, Method};
+use crate::installation::{BinFolders, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::ExecutablePath;
@@ -35,7 +35,7 @@ impl App for Dprint {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip"),
-          bin_folders: BinFolderOptions::AppFolder,
+          bin_folders: BinFolders::AppFolder,
         },
         Method::CompileRustSource {
           crate_name: "dprint",
@@ -80,7 +80,7 @@ mod tests {
     use super::super::Dprint;
     use crate::applications::App;
     use crate::configuration::Version;
-    use crate::installation::{BinFolderOptions, Method};
+    use crate::installation::{BinFolders, Method};
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
     use big_s::S;
@@ -98,7 +98,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-apple-darwin.zip"),
-            bin_folders: BinFolderOptions::AppFolder,
+            bin_folders: BinFolders::AppFolder,
           },
           Method::CompileRustSource {
             crate_name: "dprint",
@@ -122,7 +122,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-unknown-linux-gnu.zip"),
-            bin_folders: BinFolderOptions::AppFolder,
+            bin_folders: BinFolders::AppFolder,
           },
           Method::CompileRustSource {
             crate_name: "dprint",
