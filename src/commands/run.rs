@@ -5,7 +5,7 @@ use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
-use crate::run::{self, ExecutableCall};
+use crate::run::{self, ExecutableCall, ExecutablePath};
 use crate::yard::Yard;
 use crate::{applications, installation, yard};
 use std::process::ExitCode;
@@ -66,7 +66,17 @@ pub fn load_or_install(
   log: Log,
 ) -> Result<Option<ExecutableCall>> {
   match requested_version {
-    RequestedVersion::Path(version) => load_from_path(app, version, platform, log),
+    RequestedVersion::Path(version) => {
+      if let Some(executable_path) = load_from_path(app, version, platform, log)? {
+        let args = match app.run_method(&Version::from(""), platform) {
+          run::Method::ThisApp { install_methods: _ } | run::Method::OtherAppOtherExecutable { app: _, executable_name: _ } => vec![],
+          run::Method::OtherAppDefaultExecutable { app: _, args } => args,
+        };
+        Ok(Some(ExecutableCall { executable_path, args }))
+      } else {
+        Ok(None)
+      }
+    }
     RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, platform, optional, yard, config_file, log),
   }
 }
@@ -121,14 +131,9 @@ fn load_or_install_from_yard(
   config_file: &configuration::File,
   log: Log,
 ) -> Result<Option<ExecutableCall>> {
-  let (app, executable_name_unix, args) = app.executable_definition(version, platform);
-  println!("222222222222222222222 {args}");
-  let executable_name = executable_name_unix.platform_path(platform.os);
-  let app_folder = yard.app_folder(&app.name(), version);
+  let (app, executable_name, args) = app.carrier(version, platform);
   // try to load the app
-  if let Some((executable_path, bin_folder)) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
-    let args = args.make_absolute(&app_folder);
-    println!("333333333333333333 {}", args.join(" "));
+  if let Some(executable_path) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
     return Ok(Some(ExecutableCall { executable_path, args }));
   }
   // app not installed --> check if uninstallable
@@ -138,11 +143,13 @@ fn load_or_install_from_yard(
   // app not installed and installable --> try to install
   match installation::any(app.as_ref(), version, platform, optional, yard, config_file, log)? {
     Outcome::Installed => {
-      if let Some((executable_path, bin_folder)) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
-        let args = args.make_absolute(bin_folder);
+      if let Some(executable_path) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
         Ok(Some(ExecutableCall { executable_path, args }))
       } else {
-        Ok(None)
+        Err(UserError::CannotFindExecutable {
+          app: app.name().to_string(),
+          executable_name: executable_name.to_string(),
+        })
       }
     }
     Outcome::NotInstalled => {
