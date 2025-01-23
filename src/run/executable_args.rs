@@ -2,7 +2,8 @@ use crate::prelude::*;
 use std::fmt::{Display, Write};
 use std::path::Path;
 
-/// arguments that are required to execute an application itself - these are not arguments provided by the user
+/// Arguments that are required to execute an application itself - these are not arguments provided by the user.
+/// Example: running npm happens as "node npm.js", "npm.js" is the executable arg.
 #[derive(Clone, Debug, PartialEq)]
 pub enum ExecutableArgs {
   /// the executable can be called without any additional arguments
