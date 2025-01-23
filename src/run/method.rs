@@ -1,6 +1,10 @@
 use super::ExecutableNameUnix;
 use crate::applications::App;
-use crate::installation;
+use crate::configuration::Version;
+use crate::installation::{self, BinFolder};
+use crate::yard::Yard;
+use std::fmt::{Display, Write};
+use std::path::Path;
 
 /// the different ways to execute an application
 pub enum Method {
@@ -21,7 +25,7 @@ pub enum Method {
     /// the other applications whose default executable to run
     app: Box<dyn App>,
     /// additional arguments when running the default executable of the given app
-    args: Vec<String>,
+    args: ExecutableArgs,
   },
 }
 
@@ -30,6 +34,25 @@ impl Method {
     match self {
       Method::ThisApp { install_methods } => install_methods,
       Method::OtherAppOtherExecutable { app: _, executable_name: _ } | Method::OtherAppDefaultExecutable { app: _, args: _ } => vec![],
+    }
+  }
+
+  pub fn call_args(&self, version: &Version, yard: &Yard) -> Option<Vec<String>> {
+    match self {
+      Method::ThisApp { install_methods: _ } | Method::OtherAppOtherExecutable { app: _, executable_name: _ } => Some(vec![]),
+      Method::OtherAppDefaultExecutable { app, args } => match args {
+        ExecutableArgs::OneOfTheseInAppFolder { options } => {
+          let app_folder = yard.app_folder(&app.name(), version);
+          for option in options {
+            let full_path = app_folder.join(option);
+            if full_path.exists() {
+              return Some(vec![full_path.to_string_lossy().to_string()]);
+            }
+          }
+          None
+        }
+        ExecutableArgs::None => None,
+      },
     }
   }
 }
