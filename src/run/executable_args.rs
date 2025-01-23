@@ -13,8 +13,8 @@ pub enum ExecutableArgs {
 }
 
 impl ExecutableArgs {
-  /// makes the arguments
-  pub fn make_absolute(&self, app_folder: &Path) -> Result<Vec<String>> {
+  /// provides the argument to use, adjusted to a callable format
+  pub fn locate(&self, app_folder: &Path) -> Result<Vec<String>> {
     match self {
       ExecutableArgs::None => Ok(vec![]),
       ExecutableArgs::OneOfTheseInAppFolder { options } => {
