@@ -28,7 +28,12 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn unix_success() {
+      use crate::run::ExecutableCall;
+      use std::io::Write;
       use std::os::unix::fs::PermissionsExt;
+      use std::thread;
+      use std::time::Duration;
+
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable");
       let mut file = fs::File::create(&executable_path).unwrap();
@@ -52,6 +57,9 @@ mod tests {
     #[cfg(unix)]
     fn unix_error() {
       use crate::filesystem::make_file_executable;
+      use crate::run::ExecutableCall;
+
+      let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable");
       fs::write(&executable_path, b"#!/bin/sh\nexit 3").unwrap();
       make_file_executable(&executable_path).unwrap();
