@@ -143,19 +143,19 @@ mod tests {
     fn is_marked() {
       let tempdir = tempfile::tempdir().unwrap();
       let yard = Yard::create(tempdir.path()).unwrap();
-      let app = ApplicationName::from("shellcheck");
+      let app_name = ApplicationName::from("shellcheck");
       let version = Version::from("0.9.0");
-      yard.mark_not_installable(&app, &version).unwrap();
-      let have = yard.is_not_installable(&app, &version);
+      yard.mark_not_installable(&app_name, &version).unwrap();
+      let have = yard.is_not_installable(&app_name, &version);
       assert!(have);
     }
 
     #[test]
     fn is_not_marked() {
       let yard = Yard { root: PathBuf::from("/root") };
-      let app = ApplicationName::from("shellcheck");
+      let app_name = ApplicationName::from("shellcheck");
       let version = Version::from("0.9.0");
-      let have = yard.is_not_installable(&app, &version);
+      let have = yard.is_not_installable(&app_name, &version);
       assert!(!have);
     }
   }
