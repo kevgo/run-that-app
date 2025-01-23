@@ -42,10 +42,14 @@ impl Method {
 
   pub fn call_args(&self, version: &Version, yard: &Yard) -> Option<Vec<String>> {
     match self {
-      Method::ThisApp { install_methods: _ } | Method::OtherAppOtherExecutable { app: _, executable_name: _ } => Some(vec![]),
-      Method::OtherAppDefaultExecutable { app, args } => match args {
+      Method::ThisApp { install_methods: _ }
+      | Method::OtherAppOtherExecutable {
+        app_definition: _,
+        executable_name: _,
+      } => Some(vec![]),
+      Method::OtherAppDefaultExecutable { app_definition, args } => match args {
         ExecutableArgs::OneOfTheseInAppFolder { options } => {
-          let app_folder = yard.app_folder(&app.name(), version);
+          let app_folder = yard.app_folder(&app_definition.name(), version);
           for option in options {
             let full_path = app_folder.join(option);
             if full_path.exists() {
