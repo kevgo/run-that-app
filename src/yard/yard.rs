@@ -4,8 +4,8 @@ use crate::configuration::{ApplicationName, Version};
 use crate::installation::BinFolder;
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
-use crate::run::{ExecutableNamePlatform, ExecutablePath};
-use crate::{installation, prelude::*};
+use crate::prelude::*;
+use crate::run::{ExecutableNameUnix, ExecutablePath};
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
 
@@ -73,22 +73,12 @@ impl Yard {
   }
 
   /// tries to load the given executable of the given app from the yard
-  pub fn load_executable(
-    &self,
-    app: &dyn App,
-    executable: &ExecutableNamePlatform,
-    version: &Version,
-    platform: Platform,
-    yard: &Yard,
-    log: Log,
-  ) -> Option<(ExecutablePath, PathBuf)> {
-    let run_method = app.run_method(version, platform);
-    let app_folder = yard.app_folder(&app.name(), version);
-    for installation_method in &run_method.install_methods() {
-      let executable_paths = installation_method.executable_locations(app, executable, version, self);
-      for executable_path in executable_paths {
-        log(Event::YardCheckExistingAppBegin { path: &executable_path });
-        if executable_path.exists() {
+  pub fn load_executable(&self, app: &dyn App, executable: &ExecutableNameUnix, version: &Version, platform: Platform, log: Log) -> Option<ExecutablePath> {
+    for installation_method in app.run_method(version, platform).install_methods() {
+      let fullpaths = installation_method.executable_paths(app, &executable.clone().platform_path(platform.os), version, self);
+      for fullpath in fullpaths {
+        log(Event::YardCheckExistingAppBegin { path: &fullpath });
+        if fullpath.exists() {
           log(Event::YardCheckExistingAppFound);
           let bin_folder = installation_method.bin_folder();
           let bin_paths = bin_folder.executable_paths(&app_folder, executable);

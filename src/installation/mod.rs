@@ -10,7 +10,7 @@ use crate::configuration::{self, Version};
 use crate::logging::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::ExecutableNamePlatform;
+use crate::run::ExecutableFileName;
 use crate::yard::Yard;
 use std::fmt::Debug;
 use std::path::{Path, PathBuf};
@@ -60,12 +60,18 @@ impl Method {
   }
 
   /// provides possible locations of the given executable within the given app folder in the given  yard
-  pub fn executable_locations(&self, app: &dyn App, executable_filename: &ExecutableNamePlatform, version: &Version, yard: &Yard) -> Vec<PathBuf> {
+  pub fn executable_paths(&self, app: &dyn App, executable_filename: &ExecutableFileName, version: &Version, yard: &Yard) -> Vec<PathBuf> {
     let app_folder = yard.app_folder(&app.name(), version);
     match self {
       Method::DownloadArchive { url: _, bin_folder } => bin_folder.executable_paths(&app_folder, executable_filename),
       Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => vec![app_folder.join(executable_filename)],
-      Method::CompileRustSource { crate_name: _, bin_folder } => bin_folder.executable_paths(&app_folder, executable_filename),
+      Method::CompileRustSource { crate_name: _, bin_folder } => match bin_folder {
+        BinFolder::Root => vec![app_folder.join(executable_filename)],
+        BinFolder::Subfolder { path } => vec![app_folder.join(path).join(executable_filename)],
+        BinFolder::Subfolders { options } | BinFolder::RootOrSubfolders { options } => {
+          options.iter().map(|option| app_folder.join(option).join(executable_filename)).collect()
+        }
+      },
     }
   }
 
@@ -92,7 +98,7 @@ pub enum BinFolder {
 }
 
 impl BinFolder {
-  pub fn executable_paths(&self, app_folder: &Path, executable_name: &ExecutableNamePlatform) -> Vec<PathBuf> {
+  pub fn executable_paths(&self, app_folder: &Path, executable_name: &ExecutableFileName) -> Vec<PathBuf> {
     match self {
       BinFolder::RootOrSubfolders { options } => {
         let mut result = vec![app_folder.join(executable_name)];

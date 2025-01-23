@@ -31,7 +31,7 @@ mod tikibase;
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{self, ExecutableArgs, ExecutableNameUnix, ExecutablePath};
+use crate::run::{self, ExecutableNameUnix, ExecutablePath};
 use crate::Log;
 use std::fmt::Display;
 use std::slice::Iter;
@@ -81,10 +81,13 @@ pub trait App {
   /// this is necessary because a limitation of Rust does not allow deriving the Clone trait automatically
   fn clone(&self) -> Box<dyn App>;
 
-  fn executable_definition(&self, version: &Version, platform: Platform) -> (Box<dyn App>, ExecutableNameUnix, ExecutableArgs) {
+  /// provides the app that contains the executable for this app,
+  /// the name of the executable provided by this app to call,
+  /// and arguments to call that executable with.
+  fn carrier(&self, version: &Version, platform: Platform) -> (Box<dyn App>, ExecutableNameUnix, Vec<String>) {
     match self.run_method(version, platform) {
-      run::Method::ThisApp { install_methods: _ } => (self.clone(), self.default_executable_filename(), ExecutableArgs::None),
-      run::Method::OtherAppOtherExecutable { app, executable_name } => (app.clone(), executable_name, ExecutableArgs::None),
+      run::Method::ThisApp { install_methods: _ } => (self.clone(), self.default_executable_filename(), vec![]),
+      run::Method::OtherAppOtherExecutable { app, executable_name } => (app.clone(), executable_name, vec![]),
       run::Method::OtherAppDefaultExecutable { app, args } => (app.clone(), app.default_executable_filename(), args),
     }
   }
@@ -95,17 +98,6 @@ impl Display for dyn App {
     f.write_str(self.name().as_str())
   }
 }
-
-/// an `Executable` as it is defined within an `App`
-// pub struct ExecutableDefinition {
-//   /// the `App` that provides the executable
-//   pub app: Box<dyn App>,
-//   /// name of the executable
-//   pub executable: ExecutableNameUnix,
-//   /// arguments to call the above named binary so that it acts like the executable
-//   /// Example: when calling "npm" as "node node_modules/npm/bin/npm-cli.js", the args are "node node_modules/npm/bin/npm-cli.js"
-//   pub args: Option<Vec<&'static str>>,
-// }
 
 pub enum AnalyzeResult {
   /// the given executable does not belong to this app

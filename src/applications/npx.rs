@@ -3,7 +3,7 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{ExecutableArgs, ExecutablePath};
+use crate::run::{ExecutableNameUnix, ExecutablePath};
 use crate::{run, Log};
 
 pub struct Npx {}
@@ -18,20 +18,18 @@ impl App for Npx {
   }
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
-    run::Method::OtherAppDefaultExecutable {
-      app: Box::new(NodeJS {}),
-      args: ExecutableArgs::OneOfTheseInAppFolder {
-        options: vec!["../lib/node_modules/npm/bin/npx-cli.js"],
-      },
+    run::Method::OtherAppOtherExecutable {
+      app: Box::new(app_to_install()),
+      executable_name: ExecutableNameUnix::from("npx"),
     }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    (NodeJS {}).latest_installable_version(log)
+    app_to_install().latest_installable_version(log)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    (NodeJS {}).installable_versions(amount, log)
+    app_to_install().installable_versions(amount, log)
   }
 
   fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
@@ -57,8 +55,7 @@ mod tests {
     use crate::applications::App;
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run;
-    use crate::run::ExecutableArgs;
+    use crate::run::{self, ExecutableNameUnix};
 
     #[test]
     #[cfg(unix)]
@@ -72,9 +69,7 @@ mod tests {
       );
       let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["../lib/node_modules/npm/bin/npx-cli.js"],
-        },
+        executable_name: ExecutableNameUnix::from("npx"),
       };
       assert_eq!(have, want);
     }
@@ -91,9 +86,7 @@ mod tests {
       );
       let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["../lib/node_modules/npm/bin/npx-cli.js"],
-        },
+        executable_name: ExecutableNameUnix::from("npx"),
       };
       assert_eq!(have, want);
     }

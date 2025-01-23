@@ -8,6 +8,7 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
 use crate::run::ExecutablePath;
 use crate::{regexp, run, Log};
+use big_s::S;
 
 pub struct Dprint {}
 

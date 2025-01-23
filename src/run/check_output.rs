@@ -85,7 +85,6 @@ pub fn check_output(executable_call: &ExecutableCall, args: &[String]) -> Result
       .unwrap_or_default()
       .to_string_lossy()
       .to_string()];
-    call.extend(executable_call.args.iter().map(std::string::ToString::to_string));
     call.extend(args.to_owned());
     return Err(UserError::ProcessEmittedOutput { cmd: call.join(" ") });
   }

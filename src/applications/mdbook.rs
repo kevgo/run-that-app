@@ -135,7 +135,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "mdbook",
-            bin_folder: Some("bin"),
+            bin_folder: BinFolder::Subfolder { path: S("bin") },
           },
         ],
       };
