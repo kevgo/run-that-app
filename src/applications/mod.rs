@@ -33,7 +33,7 @@ use crate::platform::Platform;
 use crate::prelude::*;
 use crate::run::{self, ExecutableArgs, ExecutableNameUnix, ExecutablePath};
 use crate::Log;
-use std::fmt::Display;
+use std::fmt::{Debug, Display};
 use std::slice::Iter;
 
 pub trait App {
@@ -94,6 +94,18 @@ pub trait App {
 }
 
 impl Display for dyn App {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.write_str(self.name().as_str())
+  }
+}
+
+impl PartialEq for dyn App {
+  fn eq(&self, other: &Self) -> bool {
+    self.name() == other.name()
+  }
+}
+
+impl Debug for dyn App {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(self.name().as_str())
   }
