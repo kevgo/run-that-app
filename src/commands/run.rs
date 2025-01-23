@@ -19,11 +19,11 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   let config_file = configuration::File::load(&apps)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   for requested_version in requested_versions {
-    if let Some(executable) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
+    if let Some(executable_path) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
       if args.error_on_output {
-        return run::check_output(&executable, &args.app_args);
+        return run::check_output(&executable_path, &args.app_args);
       }
-      return run::stream_output(&executable, &args.app_args);
+      return run::stream_output(&executable_path, &args.app_args);
     }
   }
   if args.optional {
@@ -72,18 +72,18 @@ pub fn load_or_install(
 
 // checks if the app is in the PATH and has the correct version
 fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutablePath>> {
-  let Some(executable) = find_global_install(&app.default_executable_filename().platform_path(platform.os), log) else {
+  let Some(executable_path) = find_global_install(&app.default_executable_filename().platform_path(platform.os), log) else {
     log(Event::GlobalInstallNotFound);
     return Ok(None);
   };
-  match app.analyze_executable(&executable, log)? {
+  match app.analyze_executable(&executable_path, log)? {
     AnalyzeResult::NotIdentified { output: _ } => {
       log(Event::GlobalInstallNotIdentified);
       Ok(None)
     }
     AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
       log(Event::GlobalInstallMatchingVersion { range, version: None });
-      Ok(Some(executable))
+      Ok(Some(executable_path))
     }
     AnalyzeResult::IdentifiedButUnknownVersion => {
       log(Event::GlobalInstallMismatchingVersion { range, version: None });
@@ -94,7 +94,7 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
         range,
         version: Some(&version),
       });
-      Ok(Some(executable))
+      Ok(Some(executable_path))
     }
     AnalyzeResult::IdentifiedWithVersion(version) => {
       log(Event::GlobalInstallMismatchingVersion {
@@ -117,8 +117,8 @@ fn load_or_install_from_yard(
 ) -> Result<Option<ExecutablePath>> {
   let carrier = app.carrier(version, platform);
   // try to load the app
-  if let Some(executable) = yard.load_executable(&carrier, version, platform, log) {
-    return Ok(Some(executable));
+  if let Some(executable_path) = yard.load_executable(&carrier, version, platform, log) {
+    return Ok(Some(executable_path));
   }
   // app not installed --> check if uninstallable
   if yard.is_not_installable(&carrier.app.name(), version) {
