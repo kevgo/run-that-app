@@ -1,7 +1,7 @@
+use super::ExecutableCall;
 use super::{exit_status_to_code, format_call};
 use crate::cli;
 use crate::prelude::*;
-use crate::run::ExecutablePath;
 use std::io::{self, BufRead, BufReader, Read, Write};
 use std::process::{self, Child, Command, ExitCode, Stdio};
 use std::sync::mpsc;
@@ -26,14 +26,15 @@ const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
 
 /// Executes the given executable with the given arguments.
 /// The returned `ExitCode` also indicates failure if there has been any output.
-pub fn check_output(executable: &ExecutablePath, args: &[String]) -> Result<ExitCode> {
+pub fn check_output(executable_call: &ExecutableCall, args: &[String]) -> Result<ExitCode> {
   let (sender, receiver) = mpsc::channel();
-  let mut cmd = Command::new(executable);
+  let mut cmd = Command::new(&executable_call.executable_path);
+  cmd.args(&executable_call.args);
   cmd.args(args);
   cmd.stdout(Stdio::piped());
   cmd.stderr(Stdio::piped());
   let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
-    call: format_call(executable, args),
+    call: format_call(executable_call, args),
     reason: err.to_string(),
   })?;
   let Some(stdout) = process.stdout.take() else {
@@ -78,7 +79,13 @@ pub fn check_output(executable: &ExecutablePath, args: &[String]) -> Result<Exit
     }
   }
   if encountered_output {
-    let mut call = vec![executable.as_path().file_name().unwrap_or_default().to_string_lossy().to_string()];
+    let mut call = vec![executable_call
+      .executable_path
+      .as_path()
+      .file_name()
+      .unwrap_or_default()
+      .to_string_lossy()
+      .to_string()];
     call.extend(args.to_owned());
     return Err(UserError::ProcessEmittedOutput { cmd: call.join(" ") });
   }
