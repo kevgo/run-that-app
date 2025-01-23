@@ -5,7 +5,7 @@ use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
-use crate::run::{self, ExecutablePath};
+use crate::run::{self, ExecutableCall, ExecutablePath};
 use crate::yard::Yard;
 use crate::{applications, installation, yard};
 use std::process::ExitCode;
@@ -63,27 +63,38 @@ pub fn load_or_install(
   yard: &Yard,
   config_file: &configuration::File,
   log: Log,
-) -> Result<Option<ExecutablePath>> {
+) -> Result<Option<ExecutableCall>> {
   match requested_version {
-    RequestedVersion::Path(version) => load_from_path(app, version, platform, log),
+    RequestedVersion::Path(version) => {
+      if let Some(executable_path) = load_from_path(app, version, platform, log)? {
+        let args = match app.run_method(&Version::from(""), platform) {
+          run::Method::ThisApp { install_methods: _ } => vec![],
+          run::Method::OtherAppOtherExecutable { app: _, executable_name: _ } => vec![],
+          run::Method::OtherAppDefaultExecutable { app: _, args } => args,
+        };
+        Ok(Some(ExecutableCall { executable_path, args }))
+      } else {
+        Ok(None)
+      }
+    }
     RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, platform, optional, yard, config_file, log),
   }
 }
 
 // checks if the app is in the PATH and has the correct version
 fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutablePath>> {
-  let Some(executable) = find_global_install(&app.default_executable_filename().platform_path(platform.os), log) else {
+  let Some(executable_path) = find_global_install(&app.default_executable_filename().platform_path(platform.os), log) else {
     log(Event::GlobalInstallNotFound);
     return Ok(None);
   };
-  match app.analyze_executable(&executable, log)? {
+  match app.analyze_executable(&executable_path, log)? {
     AnalyzeResult::NotIdentified { output: _ } => {
       log(Event::GlobalInstallNotIdentified);
       Ok(None)
     }
     AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
       log(Event::GlobalInstallMatchingVersion { range, version: None });
-      Ok(Some(executable))
+      Ok(Some(executable_path))
     }
     AnalyzeResult::IdentifiedButUnknownVersion => {
       log(Event::GlobalInstallMismatchingVersion { range, version: None });
@@ -94,7 +105,7 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
         range,
         version: Some(&version),
       });
-      Ok(Some(executable))
+      Ok(Some(executable_path))
     }
     AnalyzeResult::IdentifiedWithVersion(version) => {
       log(Event::GlobalInstallMismatchingVersion {
@@ -115,10 +126,10 @@ fn load_or_install_from_yard(
   config_file: &configuration::File,
   log: Log,
 ) -> Result<Option<ExecutableCall>> {
-  let (app, executable, args) = app.carrier(version, platform);
+  let (app, executable_name, args) = app.carrier(version, platform);
   // try to load the app
-  if let Some(executable) = yard.load_executable(app.as_ref(), &executable, version, platform, log) {
-    return Ok(Some(executable));
+  if let Some(executable_path) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
+    return Ok(Some(ExecutableCall { executable_path, args }));
   }
   // app not installed --> check if uninstallable
   if yard.is_not_installable(&app.name(), version) {
@@ -126,7 +137,13 @@ fn load_or_install_from_yard(
   }
   // app not installed and installable --> try to install
   match installation::any(app.as_ref(), version, platform, optional, yard, config_file, log)? {
-    Outcome::Installed => Ok(yard.load_executable(app.as_ref(), &executable, version, platform, log)),
+    Outcome::Installed => {
+      if let Some(executable_path) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
+        return Ok(Some(ExecutableCall { executable_path, args }));
+      }
+      // here the app was installed but we cannot identify an executable --> what to do?
+      Err(UserError::CannotFindExecutable {})
+    }
     Outcome::NotInstalled => {
       yard.mark_not_installable(&app.name(), version)?;
       Ok(None)
