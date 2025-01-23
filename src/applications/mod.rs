@@ -88,8 +88,11 @@ pub trait AppDefinition {
   fn carrier(&self, version: &Version, platform: Platform) -> (Box<dyn AppDefinition>, ExecutableNameUnix, ExecutableArgs) {
     match self.run_method(version, platform) {
       run::Method::ThisApp { install_methods: _ } => (self.clone(), self.default_executable_filename(), ExecutableArgs::None),
-      run::Method::OtherAppOtherExecutable { app, executable_name } => (app.clone(), executable_name, ExecutableArgs::None),
-      run::Method::OtherAppDefaultExecutable { app, args } => (app.clone(), app.default_executable_filename(), args),
+      run::Method::OtherAppOtherExecutable {
+        app_definition,
+        executable_name,
+      } => (app_definition.clone(), executable_name, ExecutableArgs::None),
+      run::Method::OtherAppDefaultExecutable { app_definition, args } => (app_definition.clone(), app_definition.default_executable_filename(), args),
     }
   }
 }
