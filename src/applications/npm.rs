@@ -19,7 +19,7 @@ impl AppDefinition for Npm {
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
     run::Method::OtherAppOtherExecutable {
-      app: Box::new(app_to_install()),
+      app_definition: Box::new(app_to_install()),
       executable_name: ExecutableNameUnix::from("npm"),
     }
   }
@@ -73,7 +73,7 @@ mod tests {
         },
       );
       let want = run::Method::OtherAppOtherExecutable {
-        app: Box::new(NodeJS {}),
+        app_definition: Box::new(NodeJS {}),
         executable_name: ExecutableNameUnix::from("npm"),
       };
       assert_eq!(have, want);
