@@ -133,9 +133,6 @@ fn load_or_install_from_yard(
   let (app_to_install, executable_name, executable_args) = app_definition.carrier(version, platform);
   // try to load the app
   if let Some(executable_path) = yard.load_executable(app_definition, &executable_name, version, platform, log) {
-    println!("executable found: {}", executable_path);
-    // make the options absolute
-    println!("executable args before: {}", executable_args);
     let app_folder = yard.app_folder(&app_definition.name(), version);
     let args = executable_args.make_absolute(&app_folder)?;
     return Ok(Some(ExecutableCall { executable_path, args }));
