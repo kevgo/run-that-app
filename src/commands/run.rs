@@ -19,11 +19,11 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   let config_file = configuration::File::load(&apps)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   for requested_version in requested_versions {
-    if let Some(executable) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
+    if let Some(executable_path) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
       if args.error_on_output {
-        return run::check_output(&executable, &args.app_args);
+        return run::check_output(&executable_path, &args.app_args);
       }
-      return run::stream_output(&executable, &args.app_args);
+      return run::stream_output(&executable_path, &args.app_args);
     }
   }
   if args.optional {
