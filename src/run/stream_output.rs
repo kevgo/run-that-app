@@ -21,16 +21,14 @@ pub fn stream_output(executable_call: &ExecutableCall, args: &[String]) -> Resul
 #[cfg(test)]
 mod tests {
   mod execute {
-    use crate::run::{stream_output, ExecutableCall, ExecutablePath};
+    use crate::run::{stream_output, ExecutablePath};
     use big_s::S;
-    use std::io::Write;
-    use std::os::unix::fs::PermissionsExt;
-    use std::time::Duration;
-    use std::{fs, thread};
+    use std::fs;
 
     #[test]
     #[cfg(unix)]
     fn unix_success() {
+      use std::os::unix::fs::PermissionsExt;
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable");
       let mut file = fs::File::create(&executable_path).unwrap();
@@ -54,7 +52,6 @@ mod tests {
     #[cfg(unix)]
     fn unix_error() {
       use crate::filesystem::make_file_executable;
-      let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable");
       fs::write(&executable_path, b"#!/bin/sh\nexit 3").unwrap();
       make_file_executable(&executable_path).unwrap();
@@ -70,11 +67,16 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_success() {
+      use crate::run::ExecutableCall;
+
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable.cmd");
       fs::write(&executable_path, b"echo hello").unwrap();
-      let executable = ExecutablePath::from(executable_path);
-      let have = stream_output(&executable, &[]).unwrap();
+      let executable_call = ExecutableCall {
+        executable_path: ExecutablePath::from(executable_path),
+        args: vec![],
+      };
+      let have = stream_output(&executable_call, &[]).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(0))"));
     }
@@ -82,11 +84,16 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_error() {
+      use crate::run::ExecutableCall;
+
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable.cmd");
       fs::write(&executable_path, b"EXIT 3").unwrap();
-      let executable = ExecutablePath::from(executable_path);
-      let have = stream_output(&executable, &[]).unwrap();
+      let executable_call = ExecutableCall {
+        executable_path: ExecutablePath::from(executable_path),
+        args: vec![],
+      };
+      let have = stream_output(&executable_call, &[]).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(3))"));
     }
