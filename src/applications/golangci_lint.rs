@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
@@ -13,7 +13,7 @@ pub struct GolangCiLint {}
 const ORG: &str = "golangci";
 const REPO: &str = "golangci-lint";
 
-impl App for GolangCiLint {
+impl AppDefinition for GolangCiLint {
   fn name(&self) -> ApplicationName {
     ApplicationName::from("golangci-lint")
   }
@@ -59,7 +59,7 @@ impl App for GolangCiLint {
     }
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -74,7 +74,7 @@ mod tests {
 
   mod install_methods {
     use crate::applications::golangci_lint::GolangCiLint;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};

@@ -1,4 +1,4 @@
-use crate::applications::{AnalyzeResult, App};
+use crate::applications::{AnalyzeResult, AppDefinition};
 use crate::configuration::{self, ApplicationName, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
@@ -56,7 +56,7 @@ pub struct Args {
 }
 
 pub fn load_or_install(
-  app: &dyn App,
+  app: &dyn AppDefinition,
   requested_version: &RequestedVersion,
   platform: Platform,
   optional: bool,
@@ -81,7 +81,7 @@ pub fn load_or_install(
 }
 
 // checks if the app is in the PATH and has the correct version
-fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutablePath>> {
+fn load_from_path(app: &dyn AppDefinition, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutablePath>> {
   let Some(executable_path) = find_global_install(&app.default_executable_filename().platform_path(platform.os), log) else {
     log(Event::GlobalInstallNotFound);
     return Ok(None);
@@ -117,7 +117,7 @@ fn load_from_path(app: &dyn App, range: &semver::VersionReq, platform: Platform,
 }
 
 fn load_or_install_from_yard(
-  app: &dyn App,
+  app: &dyn AppDefinition,
   version: &Version,
   platform: Platform,
   optional: bool,
