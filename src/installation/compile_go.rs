@@ -64,8 +64,8 @@ fn load_rta_go(platform: Platform, optional: bool, config_file: &configuration::
     &RequestedVersions::new(versions.into_iter().map(RequestedVersion::from).collect())
   };
   for requested_go_version in &requested_go_versions.0 {
-    if let Some(executable) = commands::run::load_or_install(&go, requested_go_version, platform, optional, yard, config_file, log)? {
-      return Ok(Some(executable.inner()));
+    if let Some(executable_call) = commands::run::load_or_install(&go, requested_go_version, platform, optional, yard, config_file, log)? {
+      return Ok(Some(executable_call.executable_path.inner()));
     }
   }
   Ok(None)

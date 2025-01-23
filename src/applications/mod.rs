@@ -31,7 +31,7 @@ mod tikibase;
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{self, ExecutableFileName, ExecutableNameUnix, ExecutablePath};
+use crate::run::{self, ExecutableNameUnix, ExecutablePath};
 use crate::Log;
 use std::fmt::Display;
 use std::slice::Iter;
@@ -95,12 +95,6 @@ impl Display for dyn App {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(self.name().as_str())
   }
-}
-
-pub struct AppAndExecutable {
-  pub app: Box<dyn App>,
-  pub executable: ExecutableNameUnix,
-  pub args: Vec<String>,
 }
 
 pub enum AnalyzeResult {
