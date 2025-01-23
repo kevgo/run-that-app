@@ -85,7 +85,7 @@ pub trait AppDefinition {
   /// provides the app that contains the executable for this app,
   /// the name of the executable provided by this app to call,
   /// and arguments to call that executable with.
-  fn carrier(&self, version: &Version, platform: Platform) -> (Box<dyn AppDefinition>, ExecutableNameUnix, Vec<String>) {
+  fn carrier(&self, version: &Version, platform: Platform) -> (Box<dyn AppDefinition>, ExecutableNameUnix, ExecutableArgs) {
     match self.run_method(version, platform) {
       run::Method::ThisApp { install_methods: _ } => (self.clone(), self.default_executable_filename(), ExecutableArgs::None),
       run::Method::OtherAppOtherExecutable { app, executable_name } => (app.clone(), executable_name, ExecutableArgs::None),
