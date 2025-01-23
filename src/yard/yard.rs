@@ -14,7 +14,6 @@ pub struct Yard {
 
 /// stores executables of and metadata about applications
 impl Yard {
-  /// provides the path to the folder containing the given application
   pub fn app_folder(&self, app_name: &ApplicationName, app_version: &Version) -> PathBuf {
     self.root.join("apps").join(app_name).join(app_version)
   }
@@ -30,7 +29,6 @@ impl Yard {
     Ok(Yard { root })
   }
 
-  /// provides the path to the folder containing the given application, creates the folder if it doesn't exist
   pub fn create_app_folder(&self, app_name: &ApplicationName, app_version: &Version) -> Result<PathBuf> {
     let folder = self.app_folder(app_name, app_version);
     fs::create_dir_all(&folder).map_err(|err| UserError::CannotCreateFolder {
@@ -71,7 +69,6 @@ impl Yard {
     }
   }
 
-  /// tries to load the given executable of the given app from the yard
   pub fn load_executable(
     &self,
     app_definition: &dyn AppDefinition,
@@ -104,7 +101,6 @@ impl Yard {
     }
   }
 
-  /// provides the path to the given file that is part of the given application
   fn not_installable_path(&self, app_name: &ApplicationName, app_version: &Version) -> PathBuf {
     self.app_folder(app_name, app_version).join("not_installable")
   }
