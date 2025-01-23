@@ -142,7 +142,10 @@ fn load_or_install_from_yard(
         return Ok(Some(ExecutableCall { executable_path, args }));
       }
       // here the app was installed but we cannot identify an executable --> what to do?
-      Err(UserError::CannotFindExecutable {})
+      Err(UserError::CannotFindExecutable {
+        app: app.name().to_string(),
+        executable_name: executable_name.to_string(),
+      })
     }
     Outcome::NotInstalled => {
       yard.mark_not_installable(&app.name(), version)?;
