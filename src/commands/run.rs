@@ -143,22 +143,22 @@ fn load_or_install_from_yard(
   }
   // app not installed and installable --> try to install
   match installation::any(app_to_install.as_ref(), version, platform, optional, yard, config_file, log)? {
-    Outcome::Installed => {
-      if let Some(executable_path) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
-        Ok(Some(ExecutableCall {
-          executable_path,
-          args: executable_args,
-        }))
-      } else {
-        Err(UserError::CannotFindExecutable {
-          app: app_to_install.name().to_string(),
-          executable_name: executable_name.to_string(),
-        })
-      }
-    }
+    Outcome::Installed => {} // we'll load it below
     Outcome::NotInstalled => {
       yard.mark_not_installable(&app_to_install.name(), version)?;
-      Ok(None)
+      return Ok(None);
     }
+  }
+  // load again now that it is installed
+  if let Some(executable_path) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
+    Ok(Some(ExecutableCall {
+      executable_path,
+      args: executable_args,
+    }))
+  } else {
+    Err(UserError::CannotFindExecutable {
+      app: app_to_install.name().to_string(),
+      executable_name: executable_name.to_string(),
+    })
   }
 }
