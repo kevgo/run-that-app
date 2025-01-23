@@ -15,7 +15,7 @@ impl ExecutableArgs {
   pub fn make_absolute(&self, app_folder: &Path) -> Vec<PathBuf> {
     match self {
       ExecutableArgs::None => vec![],
-      ExecutableArgs::OneOfTheseInAppFolder { options } => options.into_iter().map(|option| app_folder.join(option)).collect(),
+      ExecutableArgs::OneOfTheseInAppFolder { options } => options.iter().map(|option| app_folder.join(option)).collect(),
     }
   }
 }
