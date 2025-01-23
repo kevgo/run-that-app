@@ -25,11 +25,11 @@ impl App for Npx {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    (NodeJS {}).latest_installable_version(log)
+    app_to_install().latest_installable_version(log)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    (NodeJS {}).installable_versions(amount, log)
+    app_to_install().installable_versions(amount, log)
   }
 
   fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
