@@ -21,6 +21,7 @@ pub fn stream_output(executable_call: &ExecutableCall, args: &[String]) -> Resul
 #[cfg(test)]
 mod tests {
   mod execute {
+    use crate::run::ExecutableCall;
     use crate::run::{stream_output, ExecutablePath};
     use big_s::S;
     use std::fs;
@@ -28,7 +29,6 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn unix_success() {
-      use crate::run::ExecutableCall;
       use std::io::Write;
       use std::os::unix::fs::PermissionsExt;
       use std::thread;
@@ -57,7 +57,6 @@ mod tests {
     #[cfg(unix)]
     fn unix_error() {
       use crate::filesystem::make_file_executable;
-      use crate::run::ExecutableCall;
 
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable");
@@ -75,8 +74,6 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_success() {
-      use crate::run::ExecutableCall;
-
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable.cmd");
       fs::write(&executable_path, b"echo hello").unwrap();
@@ -92,8 +89,6 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_error() {
-      use crate::run::ExecutableCall;
-
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable.cmd");
       fs::write(&executable_path, b"EXIT 3").unwrap();
