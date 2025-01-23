@@ -9,11 +9,11 @@ use std::process::Command;
 use which::which;
 
 /// installs the given Rust-based application by compiling it from source
-pub fn run(app: &dyn AppDefinition, crate_name: &str, version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
+pub fn run(app_definition: &dyn AppDefinition, crate_name: &str, version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
   let Ok(cargo_path) = which("cargo") else {
     return Err(UserError::RustNotInstalled);
   };
-  let target_folder = yard.create_app_folder(&app.name(), version)?;
+  let target_folder = yard.create_app_folder(&app_definition.name(), version)?;
   let mut cmd = Command::new(&cargo_path);
   let target_folder_str = &target_folder.to_string_lossy();
   let args = vec!["install", "--root", &target_folder_str, "--locked", crate_name];

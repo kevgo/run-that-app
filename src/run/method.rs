@@ -13,14 +13,14 @@ pub enum Method {
   /// executes another executable (not the default executable) of another app
   OtherAppOtherExecutable {
     /// the other application that contains the executable
-    app: Box<dyn AppDefinition>,
+    app_definition: Box<dyn AppDefinition>,
     /// name of the executable to run
     executable_name: ExecutableNameUnix,
   },
   /// executes the default executable of another app with additional arguments
   OtherAppDefaultExecutable {
     /// the other applications whose default executable to run
-    app: Box<dyn AppDefinition>,
+    app_definition: Box<dyn AppDefinition>,
     /// additional arguments when running the default executable of the given app
     args: Vec<String>,
   },
@@ -30,7 +30,11 @@ impl Method {
   pub fn install_methods(self) -> Vec<installation::Method> {
     match self {
       Method::ThisApp { install_methods } => install_methods,
-      Method::OtherAppOtherExecutable { app: _, executable_name: _ } | Method::OtherAppDefaultExecutable { app: _, args: _ } => vec![],
+      Method::OtherAppOtherExecutable {
+        app_definition: _,
+        executable_name: _,
+      }
+      | Method::OtherAppDefaultExecutable { app_definition: _, args: _ } => vec![],
     }
   }
 }
