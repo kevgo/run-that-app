@@ -56,7 +56,7 @@ pub struct Args {
 }
 
 pub fn load_or_install(
-  app: &dyn AppDefinition,
+  app_definition: &dyn AppDefinition,
   requested_version: &RequestedVersion,
   platform: Platform,
   optional: bool,
@@ -66,27 +66,31 @@ pub fn load_or_install(
 ) -> Result<Option<ExecutableCall>> {
   match requested_version {
     RequestedVersion::Path(version) => {
-      if let Some(executable_path) = load_from_path(app, version, platform, log)? {
-        let args = match app.run_method(&Version::from(""), platform) {
-          run::Method::ThisApp { install_methods: _ } | run::Method::OtherAppOtherExecutable { app: _, executable_name: _ } => vec![],
-          run::Method::OtherAppDefaultExecutable { app: _, args } => args,
+      if let Some(executable_path) = load_from_path(app_definition, version, platform, log)? {
+        let args = match app_definition.run_method(&Version::from(""), platform) {
+          run::Method::ThisApp { install_methods: _ }
+          | run::Method::OtherAppOtherExecutable {
+            app_definition: _,
+            executable_name: _,
+          } => vec![],
+          run::Method::OtherAppDefaultExecutable { app_definition: _, args } => args,
         };
         Ok(Some(ExecutableCall { executable_path, args }))
       } else {
         Ok(None)
       }
     }
-    RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, platform, optional, yard, config_file, log),
+    RequestedVersion::Yard(version) => load_or_install_from_yard(app_definition, version, platform, optional, yard, config_file, log),
   }
 }
 
 // checks if the app is in the PATH and has the correct version
-fn load_from_path(app: &dyn AppDefinition, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutablePath>> {
-  let Some(executable_path) = find_global_install(&app.default_executable_filename().platform_path(platform.os), log) else {
+fn load_from_path(app_definition: &dyn AppDefinition, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutablePath>> {
+  let Some(executable_path) = find_global_install(&app_definition.default_executable_filename().platform_path(platform.os), log) else {
     log(Event::GlobalInstallNotFound);
     return Ok(None);
   };
-  match app.analyze_executable(&executable_path, log)? {
+  match app_definition.analyze_executable(&executable_path, log)? {
     AnalyzeResult::NotIdentified { output: _ } => {
       log(Event::GlobalInstallNotIdentified);
       Ok(None)

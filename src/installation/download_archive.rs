@@ -14,7 +14,7 @@ use std::path::Path;
 
 /// downloads and unpacks the content of an archive file
 pub fn run(
-  app: &dyn AppDefinition,
+  app_definition: &dyn AppDefinition,
   version: &Version,
   url: &str,
   bin_folders: &BinFolder,
@@ -23,22 +23,22 @@ pub fn run(
   yard: &Yard,
   log: Log,
 ) -> Result<Outcome> {
-  let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {
+  let Some(artifact) = download::artifact(url, &app_definition.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
-  let app_folder = yard.create_app_folder(&app.name(), version)?;
+  let app_folder = yard.create_app_folder(&app_definition.name(), version)?;
   let Some(archive) = archives::lookup(&artifact.filename, artifact.data) else {
     return Err(UserError::UnknownArchive(artifact.filename));
   };
   // extract the archive
   archive.extract_all(&app_folder, log)?;
-  let executable_filename = app.default_executable_filename().platform_path(platform.os);
+  let executable_filename = app_definition.default_executable_filename().platform_path(platform.os);
   // verify that all executables that should be there exist and are executable
   for bin_folder in bin_folders.executable_paths(&app_folder, &executable_filename) {
     let bin_path = app_folder.join(bin_folder);
-    make_executable(&bin_path.join(app.default_executable_filename().platform_path(platform.os)));
+    make_executable(&bin_path.join(app_definition.default_executable_filename().platform_path(platform.os)));
     // set the executable bit of all executable files that this app provides
-    for other_executable in app.additional_executables() {
+    for other_executable in app_definition.additional_executables() {
       make_executable(&bin_path.join(other_executable.platform_path(platform.os)));
     }
   }
