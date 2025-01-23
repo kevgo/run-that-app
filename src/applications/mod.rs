@@ -112,6 +112,18 @@ impl Debug for dyn AppDefinition {
   }
 }
 
+impl PartialEq for dyn App {
+  fn eq(&self, other: &Self) -> bool {
+    self.name() == other.name()
+  }
+}
+
+impl Debug for dyn App {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.write_str(self.name().as_str())
+  }
+}
+
 pub enum AnalyzeResult {
   /// the given executable does not belong to this app
   NotIdentified { output: String },
