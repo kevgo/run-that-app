@@ -90,7 +90,7 @@ mod tests {
         },
       );
       let want = run::Method::OtherAppOtherExecutable {
-        app: Box::new(NodeJS {}),
+        app_definition: Box::new(NodeJS {}),
         executable_name: ExecutableNameUnix::from("npm"),
       };
       assert_eq!(have, want);
