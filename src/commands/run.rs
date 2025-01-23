@@ -68,8 +68,7 @@ pub fn load_or_install(
     RequestedVersion::Path(version) => {
       if let Some(executable_path) = load_from_path(app, version, platform, log)? {
         let args = match app.run_method(&Version::from(""), platform) {
-          run::Method::ThisApp { install_methods: _ } => vec![],
-          run::Method::OtherAppOtherExecutable { app: _, executable_name: _ } => vec![],
+          run::Method::ThisApp { install_methods: _ } | run::Method::OtherAppOtherExecutable { app: _, executable_name: _ } => vec![],
           run::Method::OtherAppDefaultExecutable { app: _, args } => args,
         };
         Ok(Some(ExecutableCall { executable_path, args }))

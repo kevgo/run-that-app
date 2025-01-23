@@ -1,5 +1,4 @@
-use super::ExecutableCall;
-use super::{exit_status_to_code, format_call};
+use super::{exit_status_to_code, format_call, ExecutableCall};
 use crate::cli;
 use crate::prelude::*;
 use std::io::{self, BufRead, BufReader, Read, Write};

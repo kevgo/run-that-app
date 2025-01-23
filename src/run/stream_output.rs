@@ -21,14 +21,12 @@ pub fn stream_output(executable_call: &ExecutableCall, args: &[String]) -> Resul
 #[cfg(test)]
 mod tests {
   mod execute {
-    use crate::run::ExecutableCall;
-    use crate::run::{stream_output, ExecutablePath};
+    use crate::run::{stream_output, ExecutableCall, ExecutablePath};
     use big_s::S;
-    use std::fs;
     use std::io::Write;
     use std::os::unix::fs::PermissionsExt;
-    use std::thread;
     use std::time::Duration;
+    use std::{fs, thread};
 
     #[test]
     #[cfg(unix)]
