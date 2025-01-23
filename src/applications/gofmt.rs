@@ -19,7 +19,7 @@ impl AppDefinition for Gofmt {
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
     run::Method::OtherAppOtherExecutable {
-      app: Box::new(app_to_install()),
+      app_definition: Box::new(app_to_install()),
       executable_name: ExecutableNameUnix::from("gofmt"),
     }
   }
@@ -72,7 +72,7 @@ mod tests {
         },
       );
       let want = run::Method::OtherAppOtherExecutable {
-        app: Box::new(Go {}),
+        app_definition: Box::new(Go {}),
         executable_name: ExecutableNameUnix::from("gofmt"),
       };
       assert_eq!(have, want);
@@ -89,7 +89,7 @@ mod tests {
         },
       );
       let want = run::Method::OtherAppOtherExecutable {
-        app: Box::new(Go {}),
+        app_definition: Box::new(Go {}),
         executable_name: ExecutableNameUnix::from("gofmt"),
       };
       assert_eq!(have, want);

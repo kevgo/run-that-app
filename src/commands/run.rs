@@ -56,7 +56,7 @@ pub struct Args {
 }
 
 pub fn load_or_install(
-  app: &dyn AppDefinition,
+  app_definition: &dyn AppDefinition,
   requested_version: &RequestedVersion,
   platform: Platform,
   optional: bool,
@@ -84,17 +84,17 @@ pub fn load_or_install(
         Ok(None)
       }
     }
-    RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, platform, optional, yard, config_file, log),
+    RequestedVersion::Yard(version) => load_or_install_from_yard(app_definition, version, platform, optional, yard, config_file, log),
   }
 }
 
 // checks if the app is in the PATH and has the correct version
-fn load_from_path(app: &dyn AppDefinition, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutablePath>> {
-  let Some(executable_path) = find_global_install(&app.default_executable_filename().platform_path(platform.os), log) else {
+fn load_from_path(app_definition: &dyn AppDefinition, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutablePath>> {
+  let Some(executable_path) = find_global_install(&app_definition.default_executable_filename().platform_path(platform.os), log) else {
     log(Event::GlobalInstallNotFound);
     return Ok(None);
   };
-  match app.analyze_executable(&executable_path, log)? {
+  match app_definition.analyze_executable(&executable_path, log)? {
     AnalyzeResult::NotIdentified { output: _ } => {
       log(Event::GlobalInstallNotIdentified);
       Ok(None)
@@ -125,7 +125,7 @@ fn load_from_path(app: &dyn AppDefinition, range: &semver::VersionReq, platform:
 }
 
 fn load_or_install_from_yard(
-  app: &dyn AppDefinition,
+  app_definition: &dyn AppDefinition,
   version: &Version,
   platform: Platform,
   optional: bool,
@@ -133,7 +133,7 @@ fn load_or_install_from_yard(
   config_file: &configuration::File,
   log: Log,
 ) -> Result<Option<ExecutableCall>> {
-  let (app, executable_name, args) = app.carrier(version, platform);
+  let (app, executable_name, args) = app_definition.carrier(version, platform);
   // try to load the app
   if let Some(executable_path) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
     let app_folder = yard.app_folder(&app.name(), version);

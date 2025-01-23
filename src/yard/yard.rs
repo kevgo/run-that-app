@@ -74,7 +74,7 @@ impl Yard {
   /// tries to load the given executable of the given app from the yard
   pub fn load_executable(
     &self,
-    app: &dyn AppDefinition,
+    app_definition: &dyn AppDefinition,
     executable: &ExecutableNameUnix,
     version: &Version,
     platform: Platform,
