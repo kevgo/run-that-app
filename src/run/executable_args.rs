@@ -6,7 +6,7 @@ use std::path::Path;
 /// Example: running npm happens as "node npm.js", "npm.js" is the executable arg.
 #[derive(Debug, PartialEq)]
 pub enum ExecutableArgs {
-  /// the executable can be called without any additional arguments
+  /// the executable is called without any additional arguments
   None,
   /// uses the first of the given options that exists inside the folder that application is installed in
   OneOfTheseInAppFolder { options: Vec<&'static str> },
