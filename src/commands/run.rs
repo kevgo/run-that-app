@@ -66,10 +66,14 @@ pub fn load_or_install(
 ) -> Result<Option<ExecutableCall>> {
   match requested_version {
     RequestedVersion::Path(version) => {
-      if let Some(executable_path) = load_from_path(app, version, platform, log)? {
-        let args = match app.run_method(&Version::from(""), platform) {
-          run::Method::ThisApp { install_methods: _ } | run::Method::OtherAppOtherExecutable { app: _, executable_name: _ } => ExecutableArgs::None,
-          run::Method::OtherAppDefaultExecutable { app: _, args } => args,
+      if let Some(executable_path) = load_from_path(app_definition, version, platform, log)? {
+        let args = match app_definition.run_method(&Version::from(""), platform) {
+          run::Method::ThisApp { install_methods: _ }
+          | run::Method::OtherAppOtherExecutable {
+            app_definition: _,
+            executable_name: _,
+          } => ExecutableArgs::None,
+          run::Method::OtherAppDefaultExecutable { app_definition: _, args } => args,
         };
         let args = match args {
           ExecutableArgs::None => vec![],
@@ -135,12 +139,15 @@ fn load_or_install_from_yard(
 ) -> Result<Option<ExecutableCall>> {
   let (app_to_install, executable_name, executable_args) = app_definition.carrier(version, platform);
   // try to load the app
-  if let Some(executable_path) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
-    let app_folder = yard.app_folder(&app.name(), version);
-    let options = args.make_absolute(&app_folder);
+  if let Some(executable_path) = yard.load_executable(app_definition, &executable_name, version, platform, log) {
+    let app_folder = yard.app_folder(&app_definition.name(), version);
+    let options = executable_args.make_absolute(&app_folder);
     for option in options {
       if option.exists() {
-        return Ok(Some(ExecutableCall { executable_path, option }));
+        return Ok(Some(ExecutableCall {
+          executable_path,
+          args: vec![option.to_string_lossy().to_string()],
+        }));
       }
     }
   }
@@ -150,22 +157,22 @@ fn load_or_install_from_yard(
   }
   // app not installed and installable --> try to install
   match installation::any(app_to_install.as_ref(), version, platform, optional, yard, config_file, log)? {
-    Outcome::Installed => {
-      if let Some(executable_path) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
-        Ok(Some(ExecutableCall {
-          executable_path,
-          args: executable_args,
-        }))
-      } else {
-        Err(UserError::CannotFindExecutable {
-          app: app_to_install.name().to_string(),
-          executable_name: executable_name.to_string(),
-        })
-      }
-    }
+    Outcome::Installed => {}
     Outcome::NotInstalled => {
       yard.mark_not_installable(&app_to_install.name(), version)?;
       Ok(None)
     }
+  }
+  // load again after installation
+  if let Some(executable_path) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
+    Ok(Some(ExecutableCall {
+      executable_path,
+      args: executable_args,
+    }))
+  } else {
+    Err(UserError::CannotFindExecutable {
+      app: app_to_install.name().to_string(),
+      executable_name: executable_name.to_string(),
+    })
   }
 }
