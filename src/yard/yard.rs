@@ -82,7 +82,6 @@ impl Yard {
     }
   }
 
-  /// provides the path to the given file that is part of the given application
   fn not_installable_path(&self, app_name: &ApplicationName, version: &Version) -> PathBuf {
     self.app_folder_path(app_name, version).join("not_installable")
   }
