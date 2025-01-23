@@ -157,13 +157,13 @@ fn load_or_install_from_yard(
   }
   // app not installed and installable --> try to install
   match installation::any(app_to_install.as_ref(), version, platform, optional, yard, config_file, log)? {
-    Outcome::Installed => {}
+    Outcome::Installed => {} // we'll load it below
     Outcome::NotInstalled => {
       yard.mark_not_installable(&app_to_install.name(), version)?;
-      Ok(None)
+      return Ok(None);
     }
   }
-  // load again after installation
+  // load again now that it is installed
   if let Some(executable_path) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
     Ok(Some(ExecutableCall {
       executable_path,
