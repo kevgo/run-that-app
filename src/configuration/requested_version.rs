@@ -1,5 +1,5 @@
 use super::Version;
-use crate::applications::App;
+use crate::applications::AppDefinition;
 use crate::prelude::*;
 use std::fmt::Display;
 
@@ -13,7 +13,7 @@ pub enum RequestedVersion {
 }
 
 impl RequestedVersion {
-  pub fn parse(version: &str, app: &dyn App) -> Result<RequestedVersion> {
+  pub fn parse(version: &str, app: &dyn AppDefinition) -> Result<RequestedVersion> {
     if let Some(system_version) = is_system(version) {
       if system_version == "auto" {
         return Ok(RequestedVersion::Path(app.allowed_versions()?));
@@ -69,7 +69,7 @@ mod tests {
   use big_s::S;
 
   mod parse {
-    use crate::applications::{AnalyzeResult, App};
+    use crate::applications::{AnalyzeResult, AppDefinition};
     use crate::configuration::Version;
     use crate::logging::Log;
     use crate::platform::Platform;
@@ -80,7 +80,7 @@ mod tests {
     struct TestApp {
       allowed_versions: semver::VersionReq,
     }
-    impl App for TestApp {
+    impl AppDefinition for TestApp {
       fn allowed_versions(&self) -> Result<semver::VersionReq> {
         Ok(self.allowed_versions.clone())
       }
@@ -106,7 +106,7 @@ mod tests {
       fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
         unimplemented!()
       }
-      fn clone(&self) -> Box<dyn App> {
+      fn clone(&self) -> Box<dyn AppDefinition> {
         unimplemented!()
       }
     }

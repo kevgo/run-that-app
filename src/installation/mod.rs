@@ -5,7 +5,7 @@ mod compile_rust;
 mod download_archive;
 mod download_executable;
 
-use crate::applications::App;
+use crate::applications::AppDefinition;
 use crate::configuration::{self, Version};
 use crate::logging::Log;
 use crate::platform::Platform;
@@ -60,7 +60,7 @@ impl Method {
   }
 
   /// provides possible locations of the given executable within the given app folder in the given  yard
-  pub fn executable_paths(&self, app: &dyn App, executable_filename: &ExecutableFileName, version: &Version, yard: &Yard) -> Vec<PathBuf> {
+  pub fn executable_paths(&self, app: &dyn AppDefinition, executable_filename: &ExecutableFileName, version: &Version, yard: &Yard) -> Vec<PathBuf> {
     let app_folder = yard.app_folder(&app.name(), version);
     match self {
       Method::DownloadArchive { url: _, bin_folder } => bin_folder.executable_paths(&app_folder, executable_filename),
@@ -121,7 +121,15 @@ impl BinFolder {
 }
 
 /// installs the given app using the first of the given installation methods that works
-pub fn any(app: &dyn App, version: &Version, platform: Platform, optional: bool, yard: &Yard, config_file: &configuration::File, log: Log) -> Result<Outcome> {
+pub fn any(
+  app: &dyn AppDefinition,
+  version: &Version,
+  platform: Platform,
+  optional: bool,
+  yard: &Yard,
+  config_file: &configuration::File,
+  log: Log,
+) -> Result<Outcome> {
   for install_method in app.run_method(version, platform).install_methods() {
     let outcome = install(app, &install_method, version, platform, optional, yard, config_file, log)?;
     if outcome.success() {
@@ -133,7 +141,7 @@ pub fn any(app: &dyn App, version: &Version, platform: Platform, optional: bool,
 
 /// installs the given app using the given installation method
 pub fn install(
-  app: &dyn App,
+  app: &dyn AppDefinition,
   install_method: &Method,
   version: &Version,
   platform: Platform,

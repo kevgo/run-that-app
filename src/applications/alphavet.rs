@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::Method;
@@ -13,7 +13,7 @@ pub struct Alphavet {}
 const ORG: &str = "skx";
 const REPO: &str = "alphavet";
 
-impl App for Alphavet {
+impl AppDefinition for Alphavet {
   fn name(&self) -> ApplicationName {
     ApplicationName::from("alphavet")
   }
@@ -47,7 +47,7 @@ impl App for Alphavet {
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -59,7 +59,7 @@ mod tests {
   #[test]
   fn install_methods() {
     use crate::applications::alphavet::Alphavet;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};

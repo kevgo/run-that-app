@@ -36,7 +36,8 @@ use crate::Log;
 use std::fmt::{Debug, Display};
 use std::slice::Iter;
 
-pub trait App {
+/// allows definining an application that run-that-app can install
+pub trait AppDefinition {
   /// the name by which the user can select this application at the run-that-app CLI
   fn name(&self) -> ApplicationName;
 
@@ -79,12 +80,12 @@ pub trait App {
   }
 
   /// this is necessary because a limitation of Rust does not allow deriving the Clone trait automatically
-  fn clone(&self) -> Box<dyn App>;
+  fn clone(&self) -> Box<dyn AppDefinition>;
 
   /// provides the app that contains the executable for this app,
   /// the name of the executable provided by this app to call,
   /// and arguments to call that executable with.
-  fn carrier(&self, version: &Version, platform: Platform) -> (Box<dyn App>, ExecutableNameUnix, ExecutableArgs) {
+  fn carrier(&self, version: &Version, platform: Platform) -> (Box<dyn AppDefinition>, ExecutableNameUnix, Vec<String>) {
     match self.run_method(version, platform) {
       run::Method::ThisApp { install_methods: _ } => (self.clone(), self.default_executable_filename(), ExecutableArgs::None),
       run::Method::OtherAppOtherExecutable { app, executable_name } => (app.clone(), executable_name, ExecutableArgs::None),
@@ -93,19 +94,19 @@ pub trait App {
   }
 }
 
-impl Display for dyn App {
+impl Display for dyn AppDefinition {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(self.name().as_str())
   }
 }
 
-impl PartialEq for dyn App {
+impl PartialEq for dyn AppDefinition {
   fn eq(&self, other: &Self) -> bool {
     self.name() == other.name()
   }
 }
 
-impl Debug for dyn App {
+impl Debug for dyn AppDefinition {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(self.name().as_str())
   }
@@ -154,17 +155,17 @@ pub fn all() -> Apps {
   ])
 }
 
-pub struct Apps(Vec<Box<dyn App>>);
+pub struct Apps(Vec<Box<dyn AppDefinition>>);
 
 impl Apps {
   /// provides an `Iterator` over the applications
-  pub fn iter(&self) -> Iter<'_, Box<dyn App>> {
+  pub fn iter(&self) -> Iter<'_, Box<dyn AppDefinition>> {
     self.0.iter()
   }
 
   /// provides the app with the given name
   /// TODO: return the actual Box<dyn App> instead of a reference here
-  pub fn lookup(&self, name: &ApplicationName) -> Result<&dyn App> {
+  pub fn lookup(&self, name: &ApplicationName) -> Result<&dyn AppDefinition> {
     for app in &self.0 {
       if app.name() == name {
         return Ok(app.as_ref());
@@ -180,8 +181,8 @@ impl Apps {
 }
 
 impl IntoIterator for Apps {
-  type Item = Box<dyn App>;
-  type IntoIter = std::vec::IntoIter<Box<dyn App>>;
+  type Item = Box<dyn AppDefinition>;
+  type IntoIter = std::vec::IntoIter<Box<dyn AppDefinition>>;
 
   fn into_iter(self) -> Self::IntoIter {
     self.0.into_iter()

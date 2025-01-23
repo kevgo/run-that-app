@@ -1,5 +1,5 @@
 use super::go::Go;
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
@@ -8,7 +8,7 @@ use crate::{run, Log};
 
 pub struct Gofmt {}
 
-impl App for Gofmt {
+impl AppDefinition for Gofmt {
   fn name(&self) -> ApplicationName {
     ApplicationName::from("gofmt")
   }
@@ -41,7 +41,7 @@ impl App for Gofmt {
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -56,7 +56,7 @@ mod tests {
   mod install_methods {
     use crate::applications::go::Go;
     use crate::applications::gofmt::Gofmt;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
     use crate::run::{self, ExecutableNameUnix};

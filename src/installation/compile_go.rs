@@ -1,5 +1,5 @@
 use super::Outcome;
-use crate::applications::{self, App};
+use crate::applications::{self, AppDefinition};
 use crate::configuration::{RequestedVersion, RequestedVersions, Version};
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
@@ -13,7 +13,7 @@ use which::which;
 
 /// installs the given Go-based application by compiling it from source
 pub fn run(
-  app: &dyn App,
+  app: &dyn AppDefinition,
   import_path: &str,
   platform: Platform,
   version: &Version,
