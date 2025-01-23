@@ -117,7 +117,7 @@ fn load_from_path(app: &dyn AppDefinition, range: &semver::VersionReq, platform:
 }
 
 fn load_or_install_from_yard(
-  app: &dyn AppDefinition,
+  app_definition: &dyn AppDefinition,
   version: &Version,
   platform: Platform,
   optional: bool,
@@ -125,30 +125,30 @@ fn load_or_install_from_yard(
   config_file: &configuration::File,
   log: Log,
 ) -> Result<Option<ExecutableCall>> {
-  let (app, executable_name, args) = app.carrier(version, platform);
-  let installed_app = yard.
+  let (app, executable_name, args) = app_definition.carrier(version, platform);
+  let app_folder = yard.app_folder(app.clone(), version);
   // try to load the app
-  if let Some(executable_path) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
+  if let Some(executable_path) = app_folder.load_executable(&executable_name, version, platform, log) {
     return Ok(Some(ExecutableCall { executable_path, args }));
   }
   // app not installed --> check if uninstallable
-  if yard.is_not_installable(&app.name(), version) {
+  if yard.is_not_installable(&app_definition.name(), version) {
     return Ok(None);
   }
   // app not installed and installable --> try to install
   match installation::any(app.as_ref(), version, platform, optional, yard, config_file, log)? {
     Outcome::Installed => {
-      if let Some(executable_path) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
+      if let Some(executable_path) = app_folder.load_executable(&executable_name, version, platform, log) {
         Ok(Some(ExecutableCall { executable_path, args }))
       } else {
         Err(UserError::CannotFindExecutable {
-          app: app.name().to_string(),
+          app: app_definition.name().to_string(),
           executable_name: executable_name.to_string(),
         })
       }
     }
     Outcome::NotInstalled => {
-      yard.mark_not_installable(&app.name(), version)?;
+      yard.mark_not_installable(&app_definition.name(), version)?;
       Ok(None)
     }
   }

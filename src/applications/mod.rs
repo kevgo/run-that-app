@@ -34,7 +34,7 @@ use crate::prelude::*;
 use crate::run::{self, ExecutableNameUnix, ExecutablePath};
 use crate::Log;
 pub use shellcheck::ShellCheck;
-use std::fmt::Display;
+use std::fmt::{Debug, Display};
 use std::slice::Iter;
 
 pub trait AppDefinition {
@@ -103,6 +103,12 @@ impl Display for dyn AppDefinition {
 impl PartialEq for dyn AppDefinition {
   fn eq(&self, other: &Self) -> bool {
     self.name() == other.name()
+  }
+}
+
+impl Debug for dyn AppDefinition {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.write_str(self.name().as_str())
   }
 }
 
