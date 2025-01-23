@@ -133,16 +133,12 @@ fn load_or_install_from_yard(
   let (app_to_install, executable_name, executable_args) = app_definition.carrier(version, platform);
   // try to load the app
   if let Some(executable_path) = yard.load_executable(app_definition, &executable_name, version, platform, log) {
+    println!("executable found: {}", executable_path);
+    // make the options absolute
+    println!("executable args before: {}", executable_args);
     let app_folder = yard.app_folder(&app_definition.name(), version);
-    let options = &executable_args.make_absolute(&app_folder);
-    for option in options {
-      if option.exists() {
-        return Ok(Some(ExecutableCall {
-          executable_path,
-          args: vec![option.to_string_lossy().to_string()],
-        }));
-      }
-    }
+    let args = executable_args.make_absolute(&app_folder)?;
+    return Ok(Some(ExecutableCall { executable_path, args }));
   }
   // app not installed --> check if uninstallable
   if yard.is_not_installable(&app_to_install.name(), version) {
@@ -159,18 +155,8 @@ fn load_or_install_from_yard(
   // load again now that it is installed
   if let Some(executable_path) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
     let app_folder = yard.app_folder(&app_definition.name(), version);
-    let options = &executable_args.make_absolute(&app_folder);
-    for option in options {
-      if option.exists() {
-        return Ok(Some(ExecutableCall {
-          executable_path,
-          args: vec![option.to_string_lossy().to_string()],
-        }));
-      }
-    }
+    let args = executable_args.make_absolute(&app_folder)?;
+    return Ok(Some(ExecutableCall { executable_path, args }));
   }
-  Err(UserError::CannotFindExecutable {
-    app: app_to_install.name().to_string(),
-    executable_name: executable_name.to_string(),
-  })
+  Err(UserError::CannotFindExecutable)
 }

@@ -1,5 +1,6 @@
+use crate::prelude::*;
 use std::fmt::{Display, Write};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 /// arguments that are required to execute an application itself - these are not arguments provided by the user
 #[derive(Clone, Debug, PartialEq)]
@@ -12,10 +13,18 @@ pub enum ExecutableArgs {
 
 impl ExecutableArgs {
   /// makes the arguments
-  pub fn make_absolute(&self, app_folder: &Path) -> Vec<PathBuf> {
+  pub fn make_absolute(&self, app_folder: &Path) -> Result<Vec<String>> {
     match self {
-      ExecutableArgs::None => vec![],
-      ExecutableArgs::OneOfTheseInAppFolder { options } => options.iter().map(|option| app_folder.join(option)).collect(),
+      ExecutableArgs::None => Ok(vec![]),
+      ExecutableArgs::OneOfTheseInAppFolder { options } => {
+        for option in options {
+          let absolute_path = app_folder.join(option);
+          if absolute_path.exists() {
+            return Ok(vec![absolute_path.to_string_lossy().to_string()]);
+          }
+        }
+        Err(UserError::CannotFindExecutable)
+      }
     }
   }
 }
