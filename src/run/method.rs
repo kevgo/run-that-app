@@ -1,8 +1,6 @@
 use super::{ExecutableArgs, ExecutableNameUnix};
 use crate::applications::AppDefinition;
-use crate::configuration::Version;
 use crate::installation;
-use crate::yard::Yard;
 
 /// the different ways to execute an application
 #[derive(Debug, PartialEq)]
@@ -49,29 +47,6 @@ impl Method {
         executable_name: _,
       }
       | Method::OtherAppDefaultExecutable { app_definition: _, args: _ } => vec![],
-    }
-  }
-
-  pub fn call_args(&self, version: &Version, yard: &Yard) -> Option<Vec<String>> {
-    match self {
-      Method::ThisApp { install_methods: _ }
-      | Method::OtherAppOtherExecutable {
-        app_definition: _,
-        executable_name: _,
-      } => Some(vec![]),
-      Method::OtherAppDefaultExecutable { app_definition, args } => match args {
-        ExecutableArgs::OneOfTheseInAppFolder { options } => {
-          let app_folder = yard.app_folder(&app_definition.name(), version);
-          for option in options {
-            let full_path = app_folder.join(option);
-            if full_path.exists() {
-              return Some(vec![full_path.to_string_lossy().to_string()]);
-            }
-          }
-          None
-        }
-        ExecutableArgs::None => None,
-      },
     }
   }
 }
