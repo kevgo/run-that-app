@@ -57,7 +57,7 @@ pub struct Args {
 }
 
 pub fn load_or_install(
-  app: &dyn AppDefinition,
+  app_definition: &dyn AppDefinition,
   requested_version: &RequestedVersion,
   platform: Platform,
   optional: bool,
@@ -67,17 +67,21 @@ pub fn load_or_install(
 ) -> Result<Option<ExecutableCall>> {
   match requested_version {
     RequestedVersion::Path(version) => {
-      if let Some(executable_path) = load_from_path(app, version, platform, log)? {
-        let args = match app.run_method(&Version::from(""), platform) {
-          run::Method::ThisApp { install_methods: _ } | run::Method::OtherAppOtherExecutable { app: _, executable_name: _ } => vec![],
-          run::Method::OtherAppDefaultExecutable { app: _, args } => args,
+      if let Some(executable_path) = load_from_path(app_definition, version, platform, log)? {
+        let args = match app_definition.run_method(&Version::from(""), platform) {
+          run::Method::ThisApp { install_methods: _ }
+          | run::Method::OtherAppOtherExecutable {
+            app_definition: _,
+            executable_name: _,
+          } => vec![],
+          run::Method::OtherAppDefaultExecutable { app_definition: _, args } => args,
         };
         Ok(Some(ExecutableCall { executable_path, args }))
       } else {
         Ok(None)
       }
     }
-    RequestedVersion::Yard(version) => load_or_install_from_yard(app, version, platform, optional, yard, config_file, log),
+    RequestedVersion::Yard(version) => load_or_install_from_yard(app_definition, version, platform, optional, yard, config_file, log),
   }
 }
 
@@ -123,7 +127,7 @@ fn load_from_path(app: &dyn AppDefinition, range: &semver::VersionReq, platform:
 }
 
 fn load_or_install_from_yard(
-  app: &dyn AppDefinition,
+  app_definition: &dyn AppDefinition,
   version: &Version,
   platform: Platform,
   optional: bool,
@@ -131,7 +135,7 @@ fn load_or_install_from_yard(
   config_file: &configuration::File,
   log: Log,
 ) -> Result<Option<ExecutableCall>> {
-  let (app, executable_name, args) = app.carrier(version, platform);
+  let (app, executable_name, args) = app_definition.carrier(version, platform);
   // try to load the app
   if let Some(executable_path) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
     return Ok(Some(ExecutableCall { executable_path, args }));
