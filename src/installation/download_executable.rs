@@ -1,5 +1,5 @@
 use super::Outcome;
-use crate::applications::App;
+use crate::applications::AppDefinition;
 use crate::configuration::Version;
 use crate::logging::Log;
 use crate::platform::Platform;
@@ -8,7 +8,7 @@ use crate::yard::Yard;
 use crate::{download, filesystem};
 
 /// downloads an uncompressed precompiled binary
-pub fn run(app: &dyn App, url: &str, version: &Version, platform: Platform, optional: bool, yard: &Yard, log: Log) -> Result<Outcome> {
+pub fn run(app: &dyn AppDefinition, url: &str, version: &Version, platform: Platform, optional: bool, yard: &Yard, log: Log) -> Result<Outcome> {
   let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };

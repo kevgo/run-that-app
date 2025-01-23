@@ -1,5 +1,5 @@
 use super::Outcome;
-use crate::applications::App;
+use crate::applications::AppDefinition;
 use crate::configuration::Version;
 use crate::logging::{Event, Log};
 use crate::prelude::*;
@@ -9,7 +9,7 @@ use std::process::Command;
 use which::which;
 
 /// installs the given Rust-based application by compiling it from source
-pub fn run(app: &dyn App, crate_name: &str, version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
+pub fn run(app: &dyn AppDefinition, crate_name: &str, version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
   let Ok(cargo_path) = which("cargo") else {
     return Err(UserError::RustNotInstalled);
   };

@@ -1,5 +1,5 @@
 use super::nodejs::NodeJS;
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
@@ -8,7 +8,7 @@ use crate::{run, Log};
 
 pub struct Npx {}
 
-impl App for Npx {
+impl AppDefinition for Npx {
   fn name(&self) -> ApplicationName {
     ApplicationName::from("npx")
   }
@@ -41,7 +41,7 @@ impl App for Npx {
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -56,7 +56,7 @@ mod tests {
   mod install_methods {
     use crate::applications::nodejs::NodeJS;
     use crate::applications::npx::Npx;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
     use crate::run::{self, ExecutableNameUnix};

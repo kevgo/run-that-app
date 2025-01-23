@@ -1,6 +1,7 @@
 //! The area on disk that stores the installed applications.
 //! Named after rail yards, i.e. locations where passenger cars of trains are stored, sorted, and repaired.
 
+mod app_folder;
 #[allow(clippy::module_inception)] // I can't come up with a better name for this
 mod yard;
 

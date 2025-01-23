@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::Method;
@@ -13,7 +13,7 @@ pub struct Depth {}
 const ORG: &str = "KyleBanks";
 const REPO: &str = "depth";
 
-impl App for Depth {
+impl AppDefinition for Depth {
   fn name(&self) -> ApplicationName {
     ApplicationName::from("depth")
   }
@@ -65,7 +65,7 @@ impl App for Depth {
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -75,7 +75,7 @@ mod tests {
 
   mod install_methods {
     use super::super::Depth;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
