@@ -125,6 +125,7 @@ pub enum UserError {
   UnknownApp(String),
   UnknownArchive(String),
   UnknownCliOption(String),
+  Unimplemented(&'static str),
   UnsupportedPlatform,
   UnsupportedCPU(String),
   UnsupportedOS(String),
@@ -280,6 +281,10 @@ impl UserError {
       UserError::UnknownCliOption(option) => {
         error(&format!("Unknown option: {option}"));
         // help::print_options();
+      }
+      UserError::Unimplemented(reason) => {
+        error(reason);
+        desc("If you have a use case for this feature, please report it at https://github.com/kevgo/run-that-app/issues/new.");
       }
       UserError::UnsupportedCPU(name) => {
         error(&format!("Your CPU ({name}) is currently not supported."));

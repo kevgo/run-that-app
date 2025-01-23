@@ -71,6 +71,14 @@ pub fn load_or_install(
           run::Method::ThisApp { install_methods: _ } | run::Method::OtherAppOtherExecutable { app: _, executable_name: _ } => ExecutableArgs::None,
           run::Method::OtherAppDefaultExecutable { app: _, args } => args,
         };
+        let args = match args {
+          ExecutableArgs::None => vec![],
+          ExecutableArgs::OneOfTheseInAppFolder { options: _ } => {
+            return Err(UserError::Unimplemented(
+              "Calling global executables that run as an argument to another executable are not supported yet. Implementing them adds a lot of complexity, and their use case is limited since you could as well call the globally installed app without going through run-that-app.",
+            ))
+          }
+        };
         Ok(Some(ExecutableCall { executable_path, args }))
       } else {
         Ok(None)
