@@ -19,7 +19,7 @@ impl App for Npx {
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
     run::Method::OtherAppDefaultExecutable {
-      app: Box::new(NodeJS {}),
+      app: Box::new(app_to_install()),
       args: ExecutableArgs::OneOfTheseInAppFolder {
         options: vec!["node_modules/npx/bin/npx-cli.js", "lib/node_modules/npx/bin/npx-cli.js"],
       },
@@ -27,11 +27,11 @@ impl App for Npx {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    (NodeJS {}).latest_installable_version(log)
+    app_to_install().latest_installable_version(log)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    (NodeJS {}).installable_versions(amount, log)
+    app_to_install().installable_versions(amount, log)
   }
 
   fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
@@ -46,6 +46,10 @@ impl App for Npx {
   fn clone(&self) -> Box<dyn App> {
     Box::new(Self {})
   }
+}
+
+fn app_to_install() -> NodeJS {
+  NodeJS {}
 }
 
 #[cfg(test)]
