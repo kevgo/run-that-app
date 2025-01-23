@@ -67,15 +67,8 @@ pub fn load_or_install(
   match requested_version {
     RequestedVersion::Path(version) => {
       if let Some(executable_path) = load_from_path(app_definition, version, platform, log)? {
-        let args = match app_definition.run_method(&Version::from(""), platform) {
-          run::Method::ThisApp { install_methods: _ }
-          | run::Method::OtherAppOtherExecutable {
-            app_definition: _,
-            executable_name: _,
-          } => ExecutableArgs::None,
-          run::Method::OtherAppDefaultExecutable { app_definition: _, args } => args,
-        };
-        let args = match args {
+        let executable_args = app_definition.run_method(&Version::from(""), platform).executable_args();
+        let args = match executable_args {
           ExecutableArgs::None => vec![],
           ExecutableArgs::OneOfTheseInAppFolder { options: _ } => {
             return Err(UserError::Unimplemented(
