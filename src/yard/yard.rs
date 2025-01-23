@@ -130,9 +130,9 @@ mod tests {
     #[test]
     fn is_not_marked() {
       let yard = Yard { root: PathBuf::from("/root") };
-      let app = ApplicationName::from("shellcheck");
+      let app_name = ApplicationName::from("shellcheck");
       let version = Version::from("0.9.0");
-      let have = yard.is_not_installable(&app, &version);
+      let have = yard.is_not_installable(&app_name, &version);
       assert!(!have);
     }
   }
