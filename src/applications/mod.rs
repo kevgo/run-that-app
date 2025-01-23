@@ -89,9 +89,9 @@ pub trait AppDefinition {
     match self.run_method(version, platform) {
       run::Method::ThisApp { install_methods: _ } => (self.clone(), self.default_executable_filename(), vec![]),
       run::Method::OtherAppOtherExecutable {
-        app_definition: app,
+        app_definition,
         executable_name,
-      } => (app.clone(), executable_name, vec![]),
+      } => (app_definition.clone(), executable_name, vec![]),
       run::Method::OtherAppDefaultExecutable { app_definition: app, args } => (app.clone(), app.default_executable_filename(), args),
     }
   }
