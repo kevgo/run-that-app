@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::installation::Method;
 use crate::platform::Platform;
@@ -8,7 +8,7 @@ use crate::Log;
 
 pub struct Govulncheck {}
 
-impl App for Govulncheck {
+impl AppDefinition for Govulncheck {
   fn name(&self) -> ApplicationName {
     ApplicationName::from("govulncheck")
   }
@@ -43,7 +43,7 @@ impl App for Govulncheck {
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -55,7 +55,7 @@ mod tests {
   #[test]
   fn install_methods() {
     use crate::applications::govulnchec::Govulncheck;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
