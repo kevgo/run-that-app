@@ -6,13 +6,12 @@ use crate::run::{ExecutableNameUnix, ExecutablePath};
 use std::path::PathBuf;
 
 /// a folder that contains an installed app
-#[derive(Debug, PartialEq)]
-pub struct AppFolder {
+pub struct AppFolder<'a> {
   pub root: PathBuf,
-  pub app_definition: Box<dyn AppDefinition>,
+  pub app_definition: &'a dyn AppDefinition,
 }
 
-impl AppFolder {
+impl<'a> AppFolder<'a> {
   /// tries to load the given executable of the given app from the yard
   pub fn load_executable(&self, executable: &ExecutableNameUnix, version: &Version, platform: Platform, log: Log) -> Option<ExecutablePath> {
     for installation_method in self.app_definition.run_method(version, platform).install_methods() {
