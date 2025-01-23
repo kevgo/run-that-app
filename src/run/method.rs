@@ -29,6 +29,7 @@ pub enum Method {
 }
 
 impl Method {
+  /// provides the `ExecutableArgs` to use
   pub fn executable_args(self) -> ExecutableArgs {
     match self {
       Method::ThisApp { install_methods: _ }
