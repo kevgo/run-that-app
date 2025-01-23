@@ -62,13 +62,12 @@ mod tests {
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
+    use crate::run::ExecutableArgs;
     use crate::run::ExecutableNameUnix;
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::run::ExecutableArgs;
-
       let have = (Npm {}).run_method(
         &Version::from("20.10.0"),
         Platform {
