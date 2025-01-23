@@ -112,7 +112,15 @@ impl BinFolder {
 }
 
 /// installs the given app using the first of the given installation methods that works
-pub fn any(app: &dyn AppDefinition, version: &Version, platform: Platform, optional: bool, yard: &Yard, config_file: &configuration::File, log: Log) -> Result<Outcome> {
+pub fn any(
+  app: &dyn AppDefinition,
+  version: &Version,
+  platform: Platform,
+  optional: bool,
+  yard: &Yard,
+  config_file: &configuration::File,
+  log: Log,
+) -> Result<Outcome> {
   for install_method in app.run_method(version, platform).install_methods() {
     let outcome = install(app, &install_method, version, platform, optional, yard, config_file, log)?;
     if outcome.success() {
