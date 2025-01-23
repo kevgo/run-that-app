@@ -136,9 +136,13 @@ fn load_or_install_from_yard(
   let (app, executable_name, args) = app.carrier(version, platform);
   // try to load the app
   if let Some(executable_path) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
-    let bin_folder = app.bin
-    let x = args.make_absolute(bin_folder);
-    return Ok(Some(ExecutableCall { executable_path, args }));
+    let app_folder = yard.app_folder(&app.name(), version);
+    let options = args.make_absolute(&app_folder);
+    for option in options {
+      if option.exists() {
+        return Ok(Some(ExecutableCall { executable_path, option }));
+      }
+    }
   }
   // app not installed --> check if uninstallable
   if yard.is_not_installable(&app.name(), version) {

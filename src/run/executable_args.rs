@@ -1,5 +1,5 @@
 use std::fmt::{Display, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 /// arguments that are required to execute an application itself - these are not arguments provided by the user
 #[derive(Clone, Debug, PartialEq)]
@@ -12,20 +12,10 @@ pub enum ExecutableArgs {
 
 impl ExecutableArgs {
   /// makes the arguments
-  pub fn make_absolute(self, app_folder: &Path) -> Vec<String> {
+  pub fn make_absolute(self, app_folder: &Path) -> Vec<PathBuf> {
     match self {
       ExecutableArgs::None => vec![],
-      ExecutableArgs::OneOfTheseInAppFolder { options } => {
-        for option in options {
-          let absolute_path = app_folder.join(option);
-          if absolute_path.exists() {
-            println!("exists");
-            return vec![absolute_path.to_string_lossy().to_string()];
-          }
-          println!("doesn't exist");
-        }
-        vec![]
-      }
+      ExecutableArgs::OneOfTheseInAppFolder { options } => options.into_iter().map(|option| app_folder.join(option)).collect(),
     }
   }
 }
