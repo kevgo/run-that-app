@@ -140,7 +140,6 @@ fn load_or_install_from_yard(
       if let Some(executable_path) = yard.load_executable(app.as_ref(), &executable_name, version, platform, log) {
         return Ok(Some(ExecutableCall { executable_path, args }));
       }
-      // here the app was installed but we cannot identify an executable --> what to do?
       Err(UserError::CannotFindExecutable {
         app: app.name().to_string(),
         executable_name: executable_name.to_string(),
