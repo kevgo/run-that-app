@@ -1,6 +1,5 @@
 use std::fmt::{Display, Write};
-
-use crate::installation::BinFolder;
+use std::path::Path;
 
 /// arguments that are required to execute an application itself - these are not arguments provided by the user
 #[derive(Clone, Debug, PartialEq)]
@@ -13,13 +12,12 @@ pub enum ExecutableArgs {
 
 impl ExecutableArgs {
   /// makes the arguments
-  pub fn make_absolute(self, bin_folder: BinFolder) -> Vec<String> {
+  pub fn make_absolute(self, app_folder: &Path) -> Vec<String> {
     match self {
       ExecutableArgs::None => vec![],
       ExecutableArgs::OneOfTheseInAppFolder { options } => {
         for option in options {
-          let x = bin_folder.executable_paths(app_folder, option);
-          let absolute_path = bin_folder.join(option);
+          let absolute_path = app_folder.join(option);
           if absolute_path.exists() {
             println!("exists");
             return vec![absolute_path.to_string_lossy().to_string()];
