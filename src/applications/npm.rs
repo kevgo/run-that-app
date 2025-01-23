@@ -3,7 +3,7 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{ExecutableNameUnix, ExecutablePath};
+use crate::run::{ExecutableArgs, ExecutableNameUnix, ExecutablePath};
 use crate::{run, Log};
 
 pub struct Npm {}
