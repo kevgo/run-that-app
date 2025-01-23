@@ -1,3 +1,7 @@
+use std::fmt::{Display, Write};
+
+use crate::installation::BinFolder;
+
 /// arguments that are required to execute an application itself - these are not arguments provided by the user
 #[derive(Clone, Debug, PartialEq)]
 pub enum ExecutableArgs {
@@ -15,7 +19,6 @@ impl ExecutableArgs {
       ExecutableArgs::OneOfTheseInAppFolder { options } => {
         for option in options {
           let absolute_path = bin_folder.join(option);
-          println!("444444444444444444444 {}", absolute_path.to_string_lossy());
           if absolute_path.exists() {
             println!("exists");
             return vec![absolute_path.to_string_lossy().to_string()];
