@@ -3,7 +3,7 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{ExecutableNameUnix, ExecutablePath};
+use crate::run::{ExecutableArgs, ExecutableNameUnix, ExecutablePath};
 use crate::{run, Log};
 
 pub struct Npm {}
@@ -18,9 +18,11 @@ impl App for Npm {
   }
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
-    run::Method::OtherAppOtherExecutable {
-      app: Box::new(app_to_install()),
-      executable_name: ExecutableNameUnix::from("npm"),
+    run::Method::OtherAppDefaultExecutable {
+      app: Box::new(NodeJS {}),
+      args: ExecutableArgs::OneOfTheseInAppFolder {
+        options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+      },
     }
   }
 
@@ -60,13 +62,12 @@ mod tests {
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
+    use crate::run::ExecutableArgs;
     use crate::run::ExecutableNameUnix;
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::run::ExecutableArgs;
-
       let have = (Npm {}).run_method(
         &Version::from("20.10.0"),
         Platform {
@@ -76,7 +77,9 @@ mod tests {
       );
       let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
-        executable_name: ExecutableNameUnix::from("npm"),
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+        },
       };
       assert_eq!(have, want);
     }
@@ -93,7 +96,9 @@ mod tests {
       );
       let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
-        executable_name: ExecutableNameUnix::from("npm"),
+        args: OtherAppArgs::OneOfTheseInAppFolder {
+          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+        },
       };
       assert_eq!(have, want);
     }

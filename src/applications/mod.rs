@@ -31,7 +31,7 @@ mod tikibase;
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{self, ExecutableNameUnix, ExecutablePath};
+use crate::run::{self, ExecutableArgs, ExecutableNameUnix, ExecutablePath};
 use crate::Log;
 use std::fmt::Display;
 use std::slice::Iter;
@@ -84,10 +84,10 @@ pub trait App {
   /// provides the app that contains the executable for this app,
   /// the name of the executable provided by this app to call,
   /// and arguments to call that executable with.
-  fn carrier(&self, version: &Version, platform: Platform) -> (Box<dyn App>, ExecutableNameUnix, Vec<String>) {
+  fn carrier(&self, version: &Version, platform: Platform) -> (Box<dyn App>, ExecutableNameUnix, ExecutableArgs) {
     match self.run_method(version, platform) {
-      run::Method::ThisApp { install_methods: _ } => (self.clone(), self.default_executable_filename(), vec![]),
-      run::Method::OtherAppOtherExecutable { app, executable_name } => (app.clone(), executable_name, vec![]),
+      run::Method::ThisApp { install_methods: _ } => (self.clone(), self.default_executable_filename(), ExecutableArgs::None),
+      run::Method::OtherAppOtherExecutable { app, executable_name } => (app.clone(), executable_name, ExecutableArgs::None),
       run::Method::OtherAppDefaultExecutable { app, args } => (app.clone(), app.default_executable_filename(), args),
     }
   }

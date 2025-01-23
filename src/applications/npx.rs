@@ -3,7 +3,7 @@ use super::{AnalyzeResult, App};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{ExecutableNameUnix, ExecutablePath};
+use crate::run::{ExecutableArgs, ExecutablePath};
 use crate::{run, Log};
 
 pub struct Npx {}
@@ -18,9 +18,11 @@ impl App for Npx {
   }
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
-    run::Method::OtherAppOtherExecutable {
+    run::Method::OtherAppDefaultExecutable {
       app: Box::new(app_to_install()),
-      executable_name: ExecutableNameUnix::from("npx"),
+      args: ExecutableArgs::OneOfTheseInAppFolder {
+        options: vec!["node_modules/npx/bin/npx-cli.js", "lib/node_modules/npx/bin/npx-cli.js"],
+      },
     }
   }
 
@@ -46,6 +48,10 @@ impl App for Npx {
   }
 }
 
+fn app_to_install() -> NodeJS {
+  NodeJS {}
+}
+
 #[cfg(test)]
 mod tests {
 
@@ -55,6 +61,7 @@ mod tests {
     use crate::applications::App;
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
+    use crate::run::ExecutableArgs;
     use crate::run::{self, ExecutableNameUnix};
 
     #[test]
@@ -69,7 +76,9 @@ mod tests {
       );
       let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
-        executable_name: ExecutableNameUnix::from("npx"),
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["node_modules/npx/bin/npx-cli.js", "lib/node_modules/npx/bin/npx-cli.js"],
+        },
       };
       assert_eq!(have, want);
     }
@@ -86,7 +95,11 @@ mod tests {
       );
       let want = run::Method::OtherAppDefaultExecutable {
         app: Box::new(NodeJS {}),
-        executable_name: ExecutableNameUnix::from("npx"),
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          args: ExecutableArgs::OneOfTheseInAppFolder {
+            options: vec!["node_modules/npx/bin/npx-cli.js", "lib/node_modules/npx/bin/npx-cli.js"],
+          },
+        },
       };
       assert_eq!(have, want);
     }
