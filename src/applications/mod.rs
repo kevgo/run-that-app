@@ -92,7 +92,7 @@ pub trait AppDefinition {
         app_definition,
         executable_name,
       } => (app_definition.clone(), executable_name, vec![]),
-      run::Method::OtherAppDefaultExecutable { app_definition: app, args } => (app.clone(), app.default_executable_filename(), args),
+      run::Method::OtherAppDefaultExecutable { app_definition, args } => (app_definition.clone(), app_definition.default_executable_filename(), args),
     }
   }
 }
