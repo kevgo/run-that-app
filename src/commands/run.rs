@@ -162,9 +162,6 @@ fn load_or_install_from_yard(
       args: executable_args,
     }))
   } else {
-    Err(UserError::CannotFindExecutable {
-      app: app_to_install.name().to_string(),
-      executable_name: executable_name.to_string(),
-    })
+    Err(UserError::CannotFindExecutable)
   }
 }

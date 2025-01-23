@@ -43,10 +43,7 @@ pub enum UserError {
     call: String,
     reason: String,
   },
-  CannotFindExecutable {
-    app: String,
-    executable_name: String,
-  },
+  CannotFindExecutable,
   #[cfg(unix)]
   CannotMakeFileExecutable {
     file: String,
@@ -169,8 +166,8 @@ impl UserError {
       UserError::CannotExecuteBinary { call, reason } => {
         error(&format!("cannot execute \"{call}\":\n{reason}"));
       }
-      UserError::CannotFindExecutable { app, executable_name } => {
-        error(&format!("cannot locate executable {executable_name} for app {app}."));
+      UserError::CannotFindExecutable => {
+        error("cannot locate executable for app.");
         desc("Please report this at https://github.com/kevgo/run-that-app/issues/new and try using an older version until this is fixed.");
       }
       #[cfg(unix)]
