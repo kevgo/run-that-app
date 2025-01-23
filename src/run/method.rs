@@ -1,4 +1,4 @@
-use super::ExecutableNameUnix;
+use super::{ExecutableArgs, ExecutableNameUnix};
 use crate::applications::AppDefinition;
 use crate::installation;
 
@@ -22,11 +22,23 @@ pub enum Method {
     /// the other applications whose default executable to run
     app_definition: Box<dyn AppDefinition>,
     /// additional arguments when running the default executable of the given app
-    args: Vec<String>,
+    args: ExecutableArgs,
   },
 }
 
 impl Method {
+  /// provides the `ExecutableArgs` to use
+  pub fn executable_args(self) -> ExecutableArgs {
+    match self {
+      Method::ThisApp { install_methods: _ }
+      | Method::OtherAppOtherExecutable {
+        app_definition: _,
+        executable_name: _,
+      } => ExecutableArgs::None,
+      Method::OtherAppDefaultExecutable { app_definition: _, args } => args,
+    }
+  }
+
   pub fn install_methods(self) -> Vec<installation::Method> {
     match self {
       Method::ThisApp { install_methods } => install_methods,

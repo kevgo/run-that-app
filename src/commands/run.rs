@@ -5,7 +5,7 @@ use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
-use crate::run::{self, ExecutableCall, ExecutablePath};
+use crate::run::{self, ExecutableArgs, ExecutableCall, ExecutablePath};
 use crate::yard::Yard;
 use crate::{applications, installation, yard};
 use std::process::ExitCode;
@@ -67,13 +67,14 @@ pub fn load_or_install(
   match requested_version {
     RequestedVersion::Path(version) => {
       if let Some(executable_path) = load_from_path(app_definition, version, platform, log)? {
-        let args = match app_definition.run_method(&Version::from(""), platform) {
-          run::Method::ThisApp { install_methods: _ }
-          | run::Method::OtherAppOtherExecutable {
-            app_definition: _,
-            executable_name: _,
-          } => vec![],
-          run::Method::OtherAppDefaultExecutable { app_definition: _, args } => args,
+        let executable_args = app_definition.run_method(&Version::from(""), platform).executable_args();
+        let args = match executable_args {
+          ExecutableArgs::None => vec![],
+          ExecutableArgs::OneOfTheseInAppFolder { options: _ } => {
+            return Err(UserError::Unimplemented(
+              "Calling global executables that run as an argument to another executable are not supported yet. Implementing them adds a lot of complexity, and their use case is limited since you could as well call the globally installed app without going through run-that-app.",
+            ))
+          }
         };
         Ok(Some(ExecutableCall { executable_path, args }))
       } else {
@@ -131,11 +132,10 @@ fn load_or_install_from_yard(
 ) -> Result<Option<ExecutableCall>> {
   let (app_to_install, executable_name, executable_args) = app_definition.carrier(version, platform);
   // try to load the app
-  if let Some(executable_path) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
-    return Ok(Some(ExecutableCall {
-      executable_path,
-      args: executable_args,
-    }));
+  if let Some(executable_path) = yard.load_executable(app_definition, &executable_name, version, platform, log) {
+    let app_folder = yard.app_folder(&app_definition.name(), version);
+    let args = executable_args.locate(&app_folder)?;
+    return Ok(Some(ExecutableCall { executable_path, args }));
   }
   // app not installed --> check if uninstallable
   if yard.is_not_installable(&app_to_install.name(), version) {
@@ -151,11 +151,9 @@ fn load_or_install_from_yard(
   }
   // load again now that it is installed
   if let Some(executable_path) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
-    Ok(Some(ExecutableCall {
-      executable_path,
-      args: executable_args,
-    }))
-  } else {
-    Err(UserError::CannotFindExecutable)
+    let app_folder = yard.app_folder(&app_definition.name(), version);
+    let args = executable_args.locate(&app_folder)?;
+    return Ok(Some(ExecutableCall { executable_path, args }));
   }
+  Err(UserError::CannotFindExecutable)
 }
