@@ -46,7 +46,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
       {
         continue;
       }
-      let executable_paths = install_method.executable_paths(&app.default_executable_filename().platform_path(platform.os), &latest_version);
+      let executable_paths = install_method.executable_paths(&app.default_executable_filename().platform_path(platform.os), &app_folder);
       let mut executable_found = true;
       for executable_path in executable_paths {
         if !executable_path.exists() {
