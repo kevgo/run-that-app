@@ -5,7 +5,7 @@ use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
-use crate::run::{self, ExecutableCall, ExecutablePath};
+use crate::run::{self, ExecutableArgs, ExecutableCall, ExecutablePath};
 use crate::yard::Yard;
 use crate::{applications, installation, yard};
 use std::process::ExitCode;
@@ -68,7 +68,7 @@ pub fn load_or_install(
     RequestedVersion::Path(version) => {
       if let Some(executable_path) = load_from_path(app, version, platform, log)? {
         let args = match app.run_method(&Version::from(""), platform) {
-          run::Method::ThisApp { install_methods: _ } | run::Method::OtherAppOtherExecutable { app: _, executable_name: _ } => vec![],
+          run::Method::ThisApp { install_methods: _ } | run::Method::OtherAppOtherExecutable { app: _, executable_name: _ } => ExecutableArgs::None,
           run::Method::OtherAppDefaultExecutable { app: _, args } => args,
         };
         Ok(Some(ExecutableCall { executable_path, args }))
