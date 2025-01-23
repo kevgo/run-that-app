@@ -141,7 +141,7 @@ fn load_or_install_from_yard(
   // try to load the app
   if let Some(executable_path) = yard.load_executable(app_definition, &executable_name, version, platform, log) {
     let app_folder = yard.app_folder(&app_definition.name(), version);
-    let options = executable_args.make_absolute(&app_folder);
+    let options = &executable_args.make_absolute(&app_folder);
     for option in options {
       if option.exists() {
         return Ok(Some(ExecutableCall {
@@ -165,14 +165,19 @@ fn load_or_install_from_yard(
   }
   // load again now that it is installed
   if let Some(executable_path) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
-    Ok(Some(ExecutableCall {
-      executable_path,
-      args: executable_args,
-    }))
-  } else {
-    Err(UserError::CannotFindExecutable {
-      app: app_to_install.name().to_string(),
-      executable_name: executable_name.to_string(),
-    })
+    let app_folder = yard.app_folder(&app_definition.name(), version);
+    let options = &executable_args.make_absolute(&app_folder);
+    for option in options {
+      if option.exists() {
+        return Ok(Some(ExecutableCall {
+          executable_path,
+          args: vec![option.to_string_lossy().to_string()],
+        }));
+      }
+    }
   }
+  Err(UserError::CannotFindExecutable {
+    app: app_to_install.name().to_string(),
+    executable_name: executable_name.to_string(),
+  })
 }
