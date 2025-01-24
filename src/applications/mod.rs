@@ -36,6 +36,38 @@ use crate::Log;
 use std::fmt::{Debug, Display};
 use std::slice::Iter;
 
+pub fn all() -> Apps {
+  Apps(vec![
+    Box::new(actionlint::ActionLint {}),
+    Box::new(alphavet::Alphavet {}),
+    Box::new(deadcode::Deadcode {}),
+    Box::new(depth::Depth {}),
+    Box::new(dprint::Dprint {}),
+    Box::new(gh::Gh {}),
+    Box::new(exhaustruct::Exhaustruct {}),
+    Box::new(ghokin::Ghokin {}),
+    Box::new(go::Go {}),
+    Box::new(goda::Goda {}),
+    Box::new(gofmt::Gofmt {}),
+    Box::new(gofumpt::Gofumpt {}),
+    Box::new(golangci_lint::GolangCiLint {}),
+    Box::new(goreleaser::Goreleaser {}),
+    Box::new(govulnchec::Govulncheck {}),
+    Box::new(ireturn::Ireturn {}),
+    Box::new(mdbook::MdBook {}),
+    Box::new(mdbook_linkcheck::MdBookLinkCheck {}),
+    Box::new(nodejs::NodeJS {}),
+    Box::new(node_prune::NodePrune {}),
+    Box::new(npm::Npm {}),
+    Box::new(npx::Npx {}),
+    Box::new(scc::Scc {}),
+    Box::new(shellcheck::ShellCheck {}),
+    Box::new(shfmt::Shfmt {}),
+    Box::new(staticcheck::StaticCheck {}),
+    Box::new(tikibase::Tikibase {}),
+  ])
+}
+
 /// allows definining an application that run-that-app can install
 pub trait AppDefinition {
   /// the name by which the user can select this application at the run-that-app CLI
@@ -124,38 +156,6 @@ pub enum AnalyzeResult {
 
   /// the given executable belongs to this app and has the contained version
   IdentifiedWithVersion(Version),
-}
-
-pub fn all() -> Apps {
-  Apps(vec![
-    Box::new(actionlint::ActionLint {}),
-    Box::new(alphavet::Alphavet {}),
-    Box::new(deadcode::Deadcode {}),
-    Box::new(depth::Depth {}),
-    Box::new(dprint::Dprint {}),
-    Box::new(gh::Gh {}),
-    Box::new(exhaustruct::Exhaustruct {}),
-    Box::new(ghokin::Ghokin {}),
-    Box::new(go::Go {}),
-    Box::new(goda::Goda {}),
-    Box::new(gofmt::Gofmt {}),
-    Box::new(gofumpt::Gofumpt {}),
-    Box::new(golangci_lint::GolangCiLint {}),
-    Box::new(goreleaser::Goreleaser {}),
-    Box::new(govulnchec::Govulncheck {}),
-    Box::new(ireturn::Ireturn {}),
-    Box::new(mdbook::MdBook {}),
-    Box::new(mdbook_linkcheck::MdBookLinkCheck {}),
-    Box::new(nodejs::NodeJS {}),
-    Box::new(node_prune::NodePrune {}),
-    Box::new(npm::Npm {}),
-    Box::new(npx::Npx {}),
-    Box::new(scc::Scc {}),
-    Box::new(shellcheck::ShellCheck {}),
-    Box::new(shfmt::Shfmt {}),
-    Box::new(staticcheck::StaticCheck {}),
-    Box::new(tikibase::Tikibase {}),
-  ])
 }
 
 pub struct Apps(Vec<Box<dyn AppDefinition>>);
