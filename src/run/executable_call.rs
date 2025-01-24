@@ -10,7 +10,7 @@ pub struct ExecutableCallDefinition {
 }
 
 impl ExecutableCallDefinition {
-  pub fn to_executable_call(self, app_folder: &Path) -> Option<ExecutableCall> {
+  pub fn into_executable_call(self, app_folder: &Path) -> Option<ExecutableCall> {
     match self.args {
       ExecutableArgs::None => Some(ExecutableCall {
         executable_path: self.executable_path,
@@ -51,7 +51,7 @@ impl Display for ExecutableCall {
     f.write_str(&self.executable_path.as_str())?;
     for arg in &self.args {
       f.write_char(' ')?;
-      f.write_str(&arg)?;
+      f.write_str(arg)?;
     }
     Ok(())
   }
