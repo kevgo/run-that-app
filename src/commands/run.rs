@@ -5,7 +5,7 @@ use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
-use crate::run::{self, ExecutableArgs, ExecutableCall, ExecutableCallDefinition};
+use crate::run::{self, ExecutableCall, ExecutableCallDefinition};
 use crate::yard::Yard;
 use crate::{applications, installation, yard};
 use std::process::ExitCode;
@@ -88,7 +88,6 @@ fn load_from_path(app: &dyn AppDefinition, range: &semver::VersionReq, platform:
     return Ok(None);
   };
   #[allow(clippy::unwrap_used)] // executable paths always have a parent
-  let app_folder = executable_path.as_path().parent().unwrap();
   match app.analyze_executable(&executable_path, log)? {
     AnalyzeResult::NotIdentified { output: _ } => {
       log(Event::GlobalInstallNotIdentified);

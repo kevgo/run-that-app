@@ -51,7 +51,7 @@ impl Display for ExecutableCall {
     f.write_str(&self.executable_path.as_str())?;
     for arg in &self.args {
       f.write_char(' ')?;
-      f.write_str(&arg);
+      f.write_str(&arg)?;
     }
     Ok(())
   }

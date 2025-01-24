@@ -1,7 +1,6 @@
 use super::root_path;
 use crate::applications::AppDefinition;
 use crate::configuration::{ApplicationName, Version};
-use crate::installation::BinFolder;
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
