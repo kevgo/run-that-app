@@ -20,6 +20,7 @@ lint: build  # runs all linters
 	target/debug/rta actionlint
 	# target/debug/rta dprint check  # this breaks the Windows CI due to linebreak errors
 	target/debug/rta --optional shellcheck download.sh
+	(cd .cargo-task/pub-crate && cargo clippy --all)
 	cargo task pub-crate
 
 setup:  # install development dependencies on this computer
