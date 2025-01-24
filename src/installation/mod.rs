@@ -112,6 +112,7 @@ impl BinFolder {
         for option in options {
           result.push(app_folder.join(option));
         }
+        result.sort_by(|a, b| b.as_os_str().len().cmp(&a.as_os_str().len()));
         result
       }
     }
