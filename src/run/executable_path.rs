@@ -22,12 +22,6 @@ impl ExecutablePath {
     self.0.to_string_lossy()
   }
 
-  /// provides the directory of this executable path
-  pub fn dir(&self) -> &Path {
-    #[allow(clippy::unwrap_used)] // there is always a parent because this is the path of an executable
-    self.0.parent().unwrap()
-  }
-
   /// runs this executable with the given args and returns the output it produced
   // TODO: move this into a top-level function
   pub fn run_output(&self, arg: &str, log: Log) -> Result<String> {
