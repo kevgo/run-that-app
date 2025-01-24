@@ -67,7 +67,7 @@ pub fn load_or_install(
   match requested_version {
     RequestedVersion::Path(version) => {
       if let Some(executable_call_def) = load_from_path(app_definition, version, platform, log)? {
-        if let Some(app_folder) = executable_call_def.clone().executable_path.as_path().parent() {
+        if let Some(app_folder) = executable_call_def.executable_path.clone().as_path().parent() {
           if let Some(executable_call) = executable_call_def.into_executable_call(app_folder) {
             return Ok(Some(executable_call));
           }
