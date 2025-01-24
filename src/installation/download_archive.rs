@@ -23,7 +23,7 @@ pub fn run(
   yard: &Yard,
   log: Log,
 ) -> Result<Outcome> {
-  let (app, _executable_name, _args) = app.executable_definition(version, platform);
+  let (app, _executable_name, _args) = app_definition.carrier(version, platform);
   let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
