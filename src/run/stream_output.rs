@@ -21,8 +21,7 @@ pub fn stream_output(executable_call: &ExecutableCall, args: &[String]) -> Resul
 #[cfg(test)]
 mod tests {
   mod execute {
-    use crate::run::ExecutableCall;
-    use crate::run::{stream_output, ExecutablePath};
+    use crate::run::{stream_output, ExecutableCall, ExecutablePath};
     use big_s::S;
     use std::fs;
 
