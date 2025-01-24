@@ -3,7 +3,7 @@ use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{ExecutableArgs, ExecutableNameUnix, ExecutablePath};
+use crate::run::{ExecutableArgs, ExecutablePath};
 use crate::{run, Log};
 
 pub struct Npm {}
@@ -63,7 +63,6 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
     use crate::run::ExecutableArgs;
-    use crate::run::ExecutableNameUnix;
 
     #[test]
     #[cfg(unix)]

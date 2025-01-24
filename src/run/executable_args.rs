@@ -4,7 +4,7 @@ use std::path::Path;
 
 /// Arguments that are required to execute an application itself - these are not arguments provided by the user.
 /// Example: running npm happens as "node npm.js", "npm.js" is the executable arg.
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ExecutableArgs {
   /// the executable is called without any additional arguments
   None,

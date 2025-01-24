@@ -5,7 +5,7 @@ use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
-use crate::run::{self, ExecutableArgs, ExecutableCall, ExecutablePath};
+use crate::run::{self, ExecutableArgs, ExecutableCall, ExecutableCallDefinition};
 use crate::yard::Yard;
 use crate::{applications, installation, yard};
 use std::process::ExitCode;
@@ -67,28 +67,22 @@ pub fn load_or_install(
 ) -> Result<Option<ExecutableCall>> {
   match requested_version {
     RequestedVersion::Path(version) => {
-      if let Some(executable_path) = load_from_path(app_definition, version, platform, log)? {
-        let executable_args = app_definition.run_method(&Version::from(""), platform).executable_args();
-        let args = match executable_args {
-          ExecutableArgs::None => vec![],
-          ExecutableArgs::OneOfTheseInAppFolder { options: _ } => {
-            return Err(UserError::Unimplemented(
-              "Calling global executables that run as an argument to another executable are not supported yet. Implementing them adds a lot of complexity, and their use case is limited since you could as well call the globally installed app without going through run-that-app.",
-            ))
+      if let Some(executable_call_def) = load_from_path(app_definition, version, platform, log)? {
+        if let Some(app_folder) = executable_call_def.clone().executable_path.as_path().parent() {
+          if let Some(executable_call) = executable_call_def.to_executable_call(app_folder) {
+            return Ok(Some(executable_call));
           }
-        };
-        Ok(Some(ExecutableCall { executable_path, args }))
-      } else {
-        Ok(None)
+        }
       }
+      Ok(None)
     }
     RequestedVersion::Yard(version) => load_or_install_from_yard(app_definition, version, platform, optional, yard, config_file, log),
   }
 }
 
 // checks if the app is in the PATH and has the correct version
-fn load_from_path(app: &dyn AppDefinition, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutableCall>> {
-  let (app, executable_name, executable_args) = app.executable_definition(&Version::from(""), platform);
+fn load_from_path(app: &dyn AppDefinition, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutableCallDefinition>> {
+  let (app, executable_name, executable_args) = app.carrier(&Version::from(""), platform);
   let Some(executable_path) = find_global_install(&executable_name.platform_path(platform.os), log) else {
     log(Event::GlobalInstallNotFound);
     return Ok(None);
@@ -102,8 +96,10 @@ fn load_from_path(app: &dyn AppDefinition, range: &semver::VersionReq, platform:
     }
     AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
       log(Event::GlobalInstallMatchingVersion { range, version: None });
-      let args = executable_args.make_absolute(app_folder);
-      Ok(Some(ExecutableCall { executable_path, args }))
+      Ok(Some(ExecutableCallDefinition {
+        executable_path,
+        args: executable_args,
+      }))
     }
     AnalyzeResult::IdentifiedButUnknownVersion => {
       log(Event::GlobalInstallMismatchingVersion { range, version: None });
@@ -114,8 +110,10 @@ fn load_from_path(app: &dyn AppDefinition, range: &semver::VersionReq, platform:
         range,
         version: Some(&version),
       });
-      let args = executable_args.make_absolute(app_folder);
-      Ok(Some(ExecutableCall { executable_path, args }))
+      Ok(Some(ExecutableCallDefinition {
+        executable_path,
+        args: executable_args,
+      }))
     }
     AnalyzeResult::IdentifiedWithVersion(version) => {
       log(Event::GlobalInstallMismatchingVersion {
