@@ -50,10 +50,10 @@ pub enum Method {
 }
 
 impl Method {
-  pub fn bin_folder(&self) -> BinFolder {
+  pub fn bin_folder(self) -> BinFolder {
     match self {
       Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => BinFolder::Root,
-      Method::DownloadArchive { url: _, bin_folder } | Method::CompileRustSource { crate_name: _, bin_folder } => bin_folder.to_owned(),
+      Method::DownloadArchive { url: _, bin_folder } | Method::CompileRustSource { crate_name: _, bin_folder } => bin_folder,
     }
   }
 
