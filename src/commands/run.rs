@@ -139,7 +139,7 @@ fn load_or_install_from_yard(
     println!("found executable: {executable_path} and bin_paths: {}", bin_folder);
     let app_folder = yard.app_folder(&app_to_install.name(), version);
     println!("app folder: {}", app_folder.to_string_lossy());
-    let args = executable_args.locate(&app_folder)?;
+    let args = executable_args.locate(&app_folder, bin_folder)?;
     println!("executable call: executable = {executable_path}, args = {}", args.join(" "));
     return Ok(Some(ExecutableCall { executable_path, args }));
   }
@@ -156,9 +156,9 @@ fn load_or_install_from_yard(
     }
   }
   // load again now that it is installed
-  if let Some((executable_path, _bin_path)) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
+  if let Some((executable_path, bin_folder)) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
     let app_folder = yard.app_folder(&app_definition.name(), version);
-    let args = executable_args.locate(&app_folder)?;
+    let args = executable_args.locate(&app_folder, bin_folder)?;
     return Ok(Some(ExecutableCall { executable_path, args }));
   }
   Err(UserError::CannotFindExecutable)

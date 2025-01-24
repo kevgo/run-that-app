@@ -1,3 +1,4 @@
+use crate::installation::BinFolder;
 use crate::prelude::*;
 use std::fmt::{Display, Write};
 use std::path::Path;
@@ -14,18 +15,21 @@ pub enum ExecutableArgs {
 
 impl ExecutableArgs {
   /// provides the argument to use, adjusted to a callable format
-  pub fn locate(&self, app_folder: &Path) -> Result<Vec<String>> {
+  pub fn locate(&self, app_folder: &Path, bin_folder: BinFolder) -> Result<Vec<String>> {
     match self {
       ExecutableArgs::None => Ok(vec![]),
       ExecutableArgs::OneOfTheseInAppFolder { options } => {
+        let bin_folder_paths = bin_folder.possible_paths(app_folder);
         for option in options {
-          let absolute_path = app_folder.join(option);
-          println!("arg fullpath: {}", absolute_path.to_string_lossy());
-          if absolute_path.exists() {
-            println!("arg fullpath exists");
-            return Ok(vec![absolute_path.to_string_lossy().to_string()]);
+          for bin_folder_path in &bin_folder_paths {
+            let absolute_path = bin_folder_path.join(option);
+            println!("possible arg fullpath: {}", absolute_path.to_string_lossy());
+            if absolute_path.exists() {
+              println!("arg fullpath exists");
+              return Ok(vec![absolute_path.to_string_lossy().to_string()]);
+            }
+            println!("doesn't exist");
           }
-          println!("doesn't exist");
         }
         Err(UserError::CannotFindExecutable)
       }
