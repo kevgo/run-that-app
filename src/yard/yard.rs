@@ -86,7 +86,8 @@ impl Yard {
         if fullpath.exists() {
           log(Event::YardCheckExistingAppFound);
           let bin_folder = installation_method.bin_folder();
-          let bin_paths = bin_folder.executable_paths(&app_folder, &executable.platform_path(platform.os));
+          let app_folder = self.app_folder(&app_definition.name(), version);
+          let bin_paths = bin_folder.executable_paths(&app_folder, &executable.clone().platform_path(platform.os));
           for bin_path in bin_paths {
             if bin_path.exists() {
               return Some((ExecutablePath::from(fullpath), bin_path));
