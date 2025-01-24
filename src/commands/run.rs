@@ -133,9 +133,11 @@ fn load_or_install_from_yard(
   log: Log,
 ) -> Result<Option<ExecutableCall>> {
   let (app_to_install, executable_name, executable_args) = app_definition.carrier(version, platform);
+  println!("app to install: {app_to_install}, executable: {executable_name}, args: {executable_args}");
   // try to load the app
-  if let Some((executable_path, _bin_path)) = yard.load_executable(app_definition, &executable_name, version, platform, log) {
-    let app_folder = yard.app_folder(&app_definition.name(), version);
+  if let Some((executable_path, _bin_path)) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
+    println!("found executable: {executable_path}");
+    let app_folder = yard.app_folder(&app_to_install.name(), version);
     let args = executable_args.locate(&app_folder)?;
     return Ok(Some(ExecutableCall { executable_path, args }));
   }
