@@ -19,9 +19,8 @@ impl ExecutableArgs {
     match self {
       ExecutableArgs::None => Ok(vec![]),
       ExecutableArgs::OneOfTheseInAppFolder { options } => {
-        let bin_folder_paths = bin_folder.possible_paths(app_folder);
-        for option in options {
-          for bin_folder_path in &bin_folder_paths {
+        for bin_folder_path in &bin_folder.possible_paths(app_folder) {
+          for option in options {
             let absolute_path = bin_folder_path.join(option);
             if absolute_path.exists() {
               return Ok(vec![absolute_path.to_string_lossy().to_string()]);
