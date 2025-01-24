@@ -11,8 +11,8 @@ fn main() -> io::Result<()> {
     for (index, line) in lines_in_file(&file)?.enumerate() {
       if let Ok(line_content) = line {
         if line_content.trim_start().starts_with("pub ") {
-          exit_code = 1;
           println!("{}:{} {}", file.to_string_lossy(), index + 1, line_content);
+          exit_code = 1;
         }
       }
     }
