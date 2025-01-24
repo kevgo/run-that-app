@@ -77,7 +77,7 @@ impl Yard {
     version: &Version,
     platform: Platform,
     log: Log,
-  ) -> Option<ExecutablePath> {
+  ) -> Option<(ExecutablePath, PathBuf)> {
     let run_method = app_definition.run_method(version, platform);
     for installation_method in run_method.install_methods() {
       let fullpaths = installation_method.executable_paths(app_definition, &executable.clone().platform_path(platform.os), version, self);
@@ -89,7 +89,7 @@ impl Yard {
           let bin_paths = bin_folder.executable_paths(&app_folder, executable);
           for bin_path in bin_paths {
             if bin_path.exists() {
-              return Some((ExecutablePath::from(executable_path), bin_path));
+              return Some((ExecutablePath::from(fullpath), bin_path));
             }
           }
         }
