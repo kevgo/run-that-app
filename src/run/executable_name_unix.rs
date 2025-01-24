@@ -4,11 +4,11 @@ use std::fmt::Display;
 
 /// the unix name of an executable
 #[derive(Clone, Debug, PartialEq)]
-pub struct ExecutableNameUnix(String);
+pub(crate) struct ExecutableNameUnix(String);
 
 impl ExecutableNameUnix {
   /// provides the platform-specific version of this `UnixExecutableName`
-  pub fn platform_path(self, os: Os) -> ExecutableNamePlatform {
+  pub(crate) fn platform_path(self, os: Os) -> ExecutableNamePlatform {
     ExecutableNamePlatform::from(match os {
       Os::Linux | Os::MacOS => self.0,
       Os::Windows => format!("{self}.exe"),

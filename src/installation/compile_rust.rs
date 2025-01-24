@@ -9,7 +9,7 @@ use std::process::Command;
 use which::which;
 
 /// installs the given Rust-based application by compiling it from source
-pub fn run(app_definition: &dyn AppDefinition, crate_name: &str, version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
+pub(crate) fn run(app_definition: &dyn AppDefinition, crate_name: &str, version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
   let Ok(cargo_path) = which("cargo") else {
     return Err(UserError::RustNotInstalled);
   };

@@ -5,7 +5,7 @@ use std::borrow::Cow;
 use std::path::Path;
 
 /// the different events that can result in CLI output
-pub enum Event<'a> {
+pub(crate) enum Event<'a> {
   AnalyzeExecutableBegin {
     cmd: &'a str,
     args: &'a [&'a str],

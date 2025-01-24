@@ -6,7 +6,7 @@ use crate::prelude::*;
 use crate::run::ExecutablePath;
 use crate::{run, Log};
 
-pub struct Deadcode {}
+pub(crate) struct Deadcode {}
 
 impl AppDefinition for Deadcode {
   fn name(&self) -> ApplicationName {

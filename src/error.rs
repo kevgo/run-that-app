@@ -6,7 +6,7 @@ use std::path::PathBuf;
 /// errors that are the user's fault and should be displayed to them
 #[derive(Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions)]
-pub enum UserError {
+pub(crate) enum UserError {
   ArchiveCannotExtract {
     reason: String,
   },
@@ -89,9 +89,6 @@ pub enum UserError {
   },
   GoCompilationFailed,
   GoNoPermission,
-  InternalError {
-    desc: String,
-  },
   InvalidConfigFileFormat {
     line_no: usize,
     text: String,
@@ -122,7 +119,6 @@ pub enum UserError {
   UnknownApp(String),
   UnknownArchive(String),
   UnknownCliOption(String),
-  Unimplemented(&'static str),
   UnsupportedPlatform,
   UnsupportedCPU(String),
   UnsupportedOS(String),
@@ -137,7 +133,7 @@ pub enum UserError {
 
 impl UserError {
   #[allow(clippy::too_many_lines)]
-  pub fn print(self) {
+  pub(crate) fn print(self) {
     match self {
       UserError::ArchiveCannotExtract { reason } => {
         error(&format!("cannot extract the archive: {reason}"));
@@ -224,9 +220,6 @@ impl UserError {
         desc("Please see the error output above and try again with a different version.");
       }
       UserError::GoNoPermission => error("No permission to execute the Go compiler"),
-      UserError::InternalError { desc } => error(&format!(
-        "Internal error: {desc}. Please report this at https://github.com/kevgo/run-that-app/issues/new"
-      )),
       UserError::InvalidConfigFileFormat { line_no, text } => {
         error("Invalid config file format");
         desc(&format!("{}:{line_no}: {text}", configuration::FILE_NAME));
@@ -278,10 +271,6 @@ impl UserError {
       UserError::UnknownCliOption(option) => {
         error(&format!("Unknown option: {option}"));
         // help::print_options();
-      }
-      UserError::Unimplemented(reason) => {
-        error(reason);
-        desc("If you have a use case for this feature, please report it at https://github.com/kevgo/run-that-app/issues/new.");
       }
       UserError::UnsupportedCPU(name) => {
         error(&format!("Your CPU ({name}) is currently not supported."));

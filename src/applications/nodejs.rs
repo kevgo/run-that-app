@@ -8,10 +8,10 @@ use crate::run::ExecutablePath;
 use crate::{regexp, run, Log};
 use std::path;
 
-pub struct NodeJS {}
+pub(crate) struct NodeJS {}
 
-pub const ORG: &str = "nodejs";
-pub const REPO: &str = "node";
+pub(crate) const ORG: &str = "nodejs";
+pub(crate) const REPO: &str = "node";
 
 impl AppDefinition for NodeJS {
   fn name(&self) -> ApplicationName {
@@ -65,7 +65,7 @@ fn extract_version(output: &str) -> Result<&str> {
   regexp::first_capture(output, r"v(\d+\.\d+\.\d+)")
 }
 
-pub fn cpu_text(cpu: Cpu) -> &'static str {
+pub(crate) fn cpu_text(cpu: Cpu) -> &'static str {
   match cpu {
     Cpu::Arm64 => "arm64",
     Cpu::Intel64 => "x64",
@@ -80,7 +80,7 @@ fn ext_text(os: Os) -> &'static str {
   }
 }
 
-pub fn os_text(os: Os) -> &'static str {
+pub(crate) fn os_text(os: Os) -> &'static str {
   match os {
     Os::Linux => "linux",
     Os::MacOS => "darwin",

@@ -13,7 +13,7 @@ use std::os::unix::fs::PermissionsExt;
 use std::path::Path;
 
 /// downloads and unpacks the content of an archive file
-pub fn run(
+pub(crate) fn run(
   app_definition: &dyn AppDefinition,
   version: &Version,
   url: &str,

@@ -9,7 +9,7 @@ use std::process::Command;
 
 /// the full path to an executable that RTA can execute
 #[derive(Clone, Debug, PartialEq)]
-pub struct ExecutablePath(PathBuf);
+pub(crate) struct ExecutablePath(PathBuf);
 
 impl AsRef<OsStr> for ExecutablePath {
   fn as_ref(&self) -> &OsStr {
@@ -18,13 +18,13 @@ impl AsRef<OsStr> for ExecutablePath {
 }
 
 impl ExecutablePath {
-  pub fn as_str(&self) -> Cow<'_, str> {
+  pub(crate) fn as_str(&self) -> Cow<'_, str> {
     self.0.to_string_lossy()
   }
 
   /// runs this executable with the given args and returns the output it produced
   // TODO: move this into ExecutableCall
-  pub fn run_output(&self, arg: &str, log: Log) -> Result<String> {
+  pub(crate) fn run_output(&self, arg: &str, log: Log) -> Result<String> {
     let mut cmd = Command::new(self);
     cmd.arg(arg);
     #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
@@ -51,7 +51,7 @@ impl ExecutablePath {
 
   /// runs this executable with the given args and returns the output it produced
   // TODO: move this into ExecutableCall
-  pub fn run_output_args(&self, args: &[&str], log: Log) -> Result<String> {
+  pub(crate) fn run_output_args(&self, args: &[&str], log: Log) -> Result<String> {
     let mut cmd = Command::new(self);
     cmd.args(args);
     #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
@@ -72,11 +72,11 @@ impl ExecutablePath {
     Ok(output)
   }
 
-  pub fn inner(self) -> PathBuf {
+  pub(crate) fn inner(self) -> PathBuf {
     self.0
   }
 
-  pub fn as_path(&self) -> &Path {
+  pub(crate) fn as_path(&self) -> &Path {
     &self.0
   }
 }
@@ -100,7 +100,7 @@ impl From<&Path> for ExecutablePath {
 }
 
 /// adds the given dir to the PATH env variable of the given cmd
-pub fn add_path(cmd: &mut Command, dir: &Path) {
+pub(crate) fn add_path(cmd: &mut Command, dir: &Path) {
   cmd.envs(env::vars_os());
   let new_path = if let Some(mut path) = env::var_os("PATH") {
     path.push(":");

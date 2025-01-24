@@ -5,7 +5,7 @@ use std::fmt::Display;
 
 /// an application version requested by the user
 #[derive(Clone, Debug, PartialEq)]
-pub enum RequestedVersion {
+pub(crate) enum RequestedVersion {
   /// the user has requested an externally installed application that matches the given version requirement
   Path(semver::VersionReq),
   /// the user has requested an application in the Yard with the exact version given
@@ -13,7 +13,7 @@ pub enum RequestedVersion {
 }
 
 impl RequestedVersion {
-  pub fn parse(version: &str, app_definition: &dyn AppDefinition) -> Result<RequestedVersion> {
+  pub(crate) fn parse(version: &str, app_definition: &dyn AppDefinition) -> Result<RequestedVersion> {
     if let Some(system_version) = is_system(version) {
       if system_version == "auto" {
         return Ok(RequestedVersion::Path(app_definition.allowed_versions()?));

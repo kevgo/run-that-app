@@ -9,7 +9,7 @@ use crate::{regexp, run, Log};
 use big_s::S;
 use std::path;
 
-pub struct Gh {}
+pub(crate) struct Gh {}
 
 const ORG: &str = "cli";
 const REPO: &str = "cli";

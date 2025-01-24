@@ -7,7 +7,7 @@ use crate::prelude::*;
 use crate::run::{self, ExecutablePath};
 use crate::{regexp, Log};
 
-pub struct Goreleaser {}
+pub(crate) struct Goreleaser {}
 
 const ORG: &str = "goreleaser";
 const REPO: &str = "goreleaser";

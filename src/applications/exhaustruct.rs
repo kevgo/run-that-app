@@ -8,7 +8,7 @@ use crate::run::ExecutablePath;
 use crate::{run, Log};
 use const_format::formatcp;
 
-pub struct Exhaustruct {}
+pub(crate) struct Exhaustruct {}
 
 const ORG: &str = "GaijinEntertainment";
 const REPO: &str = "go-exhaustruct";

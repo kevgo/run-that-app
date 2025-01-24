@@ -9,7 +9,7 @@ use crate::{regexp, run, Log};
 use big_s::S;
 use const_format::formatcp;
 
-pub struct MdBookLinkCheck {}
+pub(crate) struct MdBookLinkCheck {}
 
 const ORG: &str = "Michael-F-Bryan";
 const REPO: &str = "mdbook-linkcheck";
