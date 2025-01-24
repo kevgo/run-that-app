@@ -19,7 +19,7 @@ impl AppDefinition for Npx {
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
     run::Method::OtherAppDefaultExecutable {
-      app: Box::new(app_to_install()),
+      app_definition: Box::new(app_to_install()),
       args: ExecutableArgs::OneOfTheseInAppFolder {
         options: vec!["node_modules/npx/bin/npx-cli.js", "lib/node_modules/npx/bin/npx-cli.js"],
       },
@@ -75,7 +75,7 @@ mod tests {
         },
       );
       let want = run::Method::OtherAppDefaultExecutable {
-        app: Box::new(NodeJS {}),
+        app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
           options: vec!["node_modules/npx/bin/npx-cli.js", "lib/node_modules/npx/bin/npx-cli.js"],
         },
@@ -94,7 +94,7 @@ mod tests {
         },
       );
       let want = run::Method::OtherAppDefaultExecutable {
-        app: Box::new(NodeJS {}),
+        app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
           args: ExecutableArgs::OneOfTheseInAppFolder {
             options: vec!["node_modules/npx/bin/npx-cli.js", "lib/node_modules/npx/bin/npx-cli.js"],
