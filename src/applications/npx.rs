@@ -21,7 +21,7 @@ impl AppDefinition for Npx {
     run::Method::OtherAppDefaultExecutable {
       app_definition: Box::new(app_to_install()),
       args: ExecutableArgs::OneOfTheseInAppFolder {
-        options: vec!["node_modules/npx/bin/npx-cli.js", "lib/node_modules/npx/bin/npx-cli.js"],
+        options: vec!["node_modules/npm/bin/npx-cli.js", "lib/node_modules/npm/bin/npx-cli.js"],
       },
     }
   }
