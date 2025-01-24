@@ -20,7 +20,6 @@ pub fn run(args: &Args) -> Result<ExitCode> {
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   for requested_version in requested_versions {
     if let Some(executable_call) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
-      println!("executable call: {executable_call}");
       if args.error_on_output {
         return run::check_output(&executable_call, &args.app_args);
       }
