@@ -95,9 +95,7 @@ mod tests {
       let want = run::Method::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
-          args: ExecutableArgs::OneOfTheseInAppFolder {
-            options: vec!["node_modules/npm/bin/npx-cli.js", "lib/node_modules/npm/bin/npx-cli.js"],
-          },
+          options: vec!["node_modules/npm/bin/npx-cli.js", "lib/node_modules/npm/bin/npx-cli.js"],
         },
       };
       assert_eq!(have, want);
