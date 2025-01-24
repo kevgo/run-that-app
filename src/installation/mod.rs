@@ -141,6 +141,7 @@ impl BinFolder {
 
 impl Display for BinFolder {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.write_str("BinFolder: ")?;
     match self {
       BinFolder::Root => write!(f, "root"),
       BinFolder::Subfolder { path } => write!(f, "subfolder {path}"),
