@@ -6,16 +6,18 @@ fn main() -> io::Result<()> {
   let current_dir = std::env::current_dir()?;
   let mut files = Vec::new();
   find_files(&current_dir, &mut files)?;
+  let mut exit_code = 0;
   for file in files {
     for (index, line) in lines_in_file(&file)?.enumerate() {
       if let Ok(line_content) = line {
         if line_content.trim_start().starts_with("pub ") {
+          exit_code = 1;
           println!("{}:{} {}", file.to_string_lossy(), index + 1, line_content);
         }
       }
     }
   }
-  Ok(())
+  std::process::exit(exit_code);
 }
 
 fn find_files(dir: &Path, result: &mut Vec<std::path::PathBuf>) -> io::Result<()> {
