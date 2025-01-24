@@ -102,6 +102,21 @@ pub enum BinFolder {
 }
 
 impl BinFolder {
+  pub fn possible_paths(&self, app_folder: &Path) -> Vec<PathBuf> {
+    match self {
+      BinFolder::Root => vec![app_folder.to_path_buf()],
+      BinFolder::Subfolder { path } => vec![app_folder.join(path)],
+      BinFolder::Subfolders { options } => options.into_iter().map(|option| app_folder.join(option)).collect(),
+      BinFolder::RootOrSubfolders { options } => {
+        let mut result = vec![app_folder.to_path_buf()];
+        for option in options {
+          result.push(app_folder.join(option));
+        }
+        result
+      }
+    }
+  }
+
   pub fn executable_paths(&self, app_folder: &Path, executable_name: &ExecutableNamePlatform) -> Vec<PathBuf> {
     match self {
       BinFolder::RootOrSubfolders { options } => {
