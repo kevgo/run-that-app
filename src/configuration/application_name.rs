@@ -2,14 +2,14 @@ use std::fmt::Display;
 use std::path::Path;
 
 #[derive(Debug, PartialEq)]
-pub struct ApplicationName(String);
+pub(crate) struct ApplicationName(String);
 
 impl ApplicationName {
-  pub fn as_str(&self) -> &str {
+  pub(crate) fn as_str(&self) -> &str {
     &self.0
   }
 
-  pub fn new(name: String) -> ApplicationName {
+  pub(crate) fn new(name: String) -> ApplicationName {
     ApplicationName(name)
   }
 }
@@ -48,7 +48,7 @@ impl AsRef<Path> for ApplicationName {
 
 impl ApplicationName {
   /// provides the underlying string value
-  pub fn inner(self) -> String {
+  pub(crate) fn inner(self) -> String {
     self.0
   }
 }

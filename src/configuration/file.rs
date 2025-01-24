@@ -8,12 +8,12 @@ use std::io::{ErrorKind, Write};
 use std::str::SplitAsciiWhitespace;
 
 #[derive(Debug, Default, PartialEq)]
-pub struct File {
-  pub apps: Vec<AppVersions>,
+pub(crate) struct File {
+  pub(crate) apps: Vec<AppVersions>,
 }
 
 impl File {
-  pub fn create() -> Result<()> {
+  pub(crate) fn create() -> Result<()> {
     let mut file = match OpenOptions::new().write(true).create_new(true).open(FILE_NAME) {
       Ok(file) => file,
       Err(err) => {
@@ -35,18 +35,18 @@ impl File {
       .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
   }
 
-  pub fn load(apps: &Apps) -> Result<File> {
+  pub(crate) fn load(apps: &Apps) -> Result<File> {
     match filesystem::read_file(FILE_NAME)? {
       Some(text) => parse(&text, apps),
       None => Ok(File::default()),
     }
   }
 
-  pub fn lookup(&self, app_name: &ApplicationName) -> Option<&RequestedVersions> {
+  pub(crate) fn lookup(&self, app_name: &ApplicationName) -> Option<&RequestedVersions> {
     self.apps.iter().find(|app| app.app_name == app_name).map(|app_version| &app_version.versions)
   }
 
-  pub fn save(&self) -> Result<()> {
+  pub(crate) fn save(&self) -> Result<()> {
     let mut file = OpenOptions::new()
       .write(true)
       .truncate(true)

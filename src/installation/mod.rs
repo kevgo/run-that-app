@@ -17,7 +17,7 @@ use std::path::{Path, PathBuf};
 
 /// the different methods to install an application
 #[derive(Debug, PartialEq)]
-pub enum Method {
+pub(crate) enum Method {
   /// installs the application by downloading and extracting an archive containing the application executable from the internet
   DownloadArchive {
     /// the URL of the archive to download
@@ -50,7 +50,7 @@ pub enum Method {
 }
 
 impl Method {
-  pub fn bin_folder(self) -> BinFolder {
+  pub(crate) fn bin_folder(self) -> BinFolder {
     match self {
       Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => BinFolder::Root,
       Method::DownloadArchive { url: _, bin_folder } | Method::CompileRustSource { crate_name: _, bin_folder } => bin_folder,
@@ -58,7 +58,7 @@ impl Method {
   }
 
   /// provides possible locations of the given executable within the given app folder in the given  yard
-  pub fn executable_paths(
+  pub(crate) fn executable_paths(
     &self,
     app_definition: &dyn AppDefinition,
     executable_filename: &ExecutableNamePlatform,
@@ -79,7 +79,7 @@ impl Method {
     }
   }
 
-  pub fn name(&self, app: &str, version: &Version) -> String {
+  pub(crate) fn name(&self, app: &str, version: &Version) -> String {
     match self {
       Method::DownloadArchive { url: _, bin_folder: _ } => format!("download archive for {app}@{version}"),
       Method::DownloadExecutable { url: _ } => format!("download executable for {app}@{version}"),
@@ -90,7 +90,7 @@ impl Method {
 
 /// describes the various locations where the executable files could be inside an application folder
 #[derive(Clone, Debug, PartialEq)]
-pub enum BinFolder {
+pub(crate) enum BinFolder {
   /// all executables are directly in the app folder
   Root,
   /// the executables are in the given subfolder
@@ -102,7 +102,7 @@ pub enum BinFolder {
 }
 
 impl BinFolder {
-  pub fn possible_paths(&self, app_folder: &Path) -> Vec<PathBuf> {
+  pub(crate) fn possible_paths(&self, app_folder: &Path) -> Vec<PathBuf> {
     match self {
       BinFolder::Root => vec![app_folder.to_path_buf()],
       BinFolder::Subfolder { path } => vec![app_folder.join(path)],
@@ -117,7 +117,7 @@ impl BinFolder {
     }
   }
 
-  pub fn executable_paths(&self, app_folder: &Path, executable_name: &ExecutableNamePlatform) -> Vec<PathBuf> {
+  pub(crate) fn executable_paths(&self, app_folder: &Path, executable_name: &ExecutableNamePlatform) -> Vec<PathBuf> {
     match self {
       BinFolder::RootOrSubfolders { options } => {
         let mut result = vec![app_folder.join(executable_name)];
@@ -152,7 +152,7 @@ impl Display for BinFolder {
 }
 
 /// installs the given app using the first of the given installation methods that works
-pub fn any(
+pub(crate) fn any(
   app_definition: &dyn AppDefinition,
   version: &Version,
   platform: Platform,
@@ -171,7 +171,7 @@ pub fn any(
 }
 
 /// installs the given app using the given installation method
-pub fn install(
+pub(crate) fn install(
   app_definition: &dyn AppDefinition,
   install_method: &Method,
   version: &Version,
@@ -190,13 +190,13 @@ pub fn install(
 }
 
 #[derive(Debug, PartialEq)]
-pub enum Outcome {
+pub(crate) enum Outcome {
   Installed,
   NotInstalled,
 }
 
 impl Outcome {
-  pub fn success(&self) -> bool {
+  pub(crate) fn success(&self) -> bool {
     match self {
       Outcome::Installed => true,
       Outcome::NotInstalled => false,

@@ -6,7 +6,7 @@ use crate::prelude::*;
 use crate::run::{ExecutableArgs, ExecutablePath};
 use crate::{run, Log};
 
-pub struct Npx {}
+pub(crate) struct Npx {}
 
 impl AppDefinition for Npx {
   fn name(&self) -> ApplicationName {

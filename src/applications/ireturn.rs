@@ -8,7 +8,7 @@ use crate::run::ExecutablePath;
 use crate::{run, Log};
 use const_format::formatcp;
 
-pub struct Ireturn {}
+pub(crate) struct Ireturn {}
 
 const ORG: &str = "butuzov";
 const REPO: &str = "ireturn";

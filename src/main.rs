@@ -16,7 +16,7 @@ mod run;
 mod yard;
 
 use cli::Command;
-pub use error::UserError;
+pub(crate) use error::UserError;
 use logging::Log;
 use std::process::ExitCode;
 

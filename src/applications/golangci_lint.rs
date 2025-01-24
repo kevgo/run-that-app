@@ -8,7 +8,7 @@ use crate::run::{self, ExecutablePath};
 use crate::{regexp, Log};
 use const_format::formatcp;
 
-pub struct GolangCiLint {}
+pub(crate) struct GolangCiLint {}
 
 const ORG: &str = "golangci";
 const REPO: &str = "golangci-lint";

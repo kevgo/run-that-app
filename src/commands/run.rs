@@ -10,7 +10,7 @@ use crate::yard::Yard;
 use crate::{applications, installation, yard};
 use std::process::ExitCode;
 
-pub fn run(args: &Args) -> Result<ExitCode> {
+pub(crate) fn run(args: &Args) -> Result<ExitCode> {
   let apps = applications::all();
   let app = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
@@ -35,27 +35,27 @@ pub fn run(args: &Args) -> Result<ExitCode> {
 
 /// data needed to run an executable
 #[derive(Debug, PartialEq)]
-pub struct Args {
+pub(crate) struct Args {
   /// name of the app to execute
-  pub app_name: ApplicationName,
+  pub(crate) app_name: ApplicationName,
 
   /// possible versions of the app to execute
-  pub version: Option<Version>,
+  pub(crate) version: Option<Version>,
 
   /// arguments to call the app with
   #[allow(clippy::struct_field_names)]
-  pub app_args: Vec<String>,
+  pub(crate) app_args: Vec<String>,
 
   /// if true, any output produced by the app is equivalent to an exit code > 0
-  pub error_on_output: bool,
+  pub(crate) error_on_output: bool,
 
   /// whether it's okay to not run the app if it cannot be installed
-  pub optional: bool,
+  pub(crate) optional: bool,
 
-  pub verbose: bool,
+  pub(crate) verbose: bool,
 }
 
-pub fn load_or_install(
+pub(crate) fn load_or_install(
   app_definition: &dyn AppDefinition,
   requested_version: &RequestedVersion,
   platform: Platform,

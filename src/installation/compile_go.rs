@@ -12,7 +12,7 @@ use std::process::Command;
 use which::which;
 
 /// installs the given Go-based application by compiling it from source
-pub fn run(
+pub(crate) fn run(
   app_definition: &dyn AppDefinition,
   import_path: &str,
   platform: Platform,

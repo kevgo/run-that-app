@@ -11,7 +11,7 @@ use big_s::S;
 const ORG: &str = "dominikh";
 const REPO: &str = "go-tools";
 
-pub struct StaticCheck {}
+pub(crate) struct StaticCheck {}
 
 impl AppDefinition for StaticCheck {
   fn name(&self) -> ApplicationName {

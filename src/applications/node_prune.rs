@@ -8,7 +8,7 @@ use crate::run::ExecutablePath;
 use crate::{run, Log};
 use const_format::formatcp;
 
-pub struct NodePrune {}
+pub(crate) struct NodePrune {}
 
 const ORG: &str = "tj";
 const REPO: &str = "node-prune";

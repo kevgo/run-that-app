@@ -4,7 +4,7 @@ use crate::installation;
 
 /// the different ways to execute an application
 #[derive(Debug, PartialEq)]
-pub enum Method {
+pub(crate) enum Method {
   /// execute this app's default executable
   ThisApp {
     /// defines the ways in which this app can be installed
@@ -27,19 +27,7 @@ pub enum Method {
 }
 
 impl Method {
-  /// provides the `ExecutableArgs` to use
-  pub fn executable_args(self) -> ExecutableArgs {
-    match self {
-      Method::ThisApp { install_methods: _ }
-      | Method::OtherAppOtherExecutable {
-        app_definition: _,
-        executable_name: _,
-      } => ExecutableArgs::None,
-      Method::OtherAppDefaultExecutable { app_definition: _, args } => args,
-    }
-  }
-
-  pub fn install_methods(self) -> Vec<installation::Method> {
+  pub(crate) fn install_methods(self) -> Vec<installation::Method> {
     match self {
       Method::ThisApp { install_methods } => install_methods,
       Method::OtherAppOtherExecutable {

@@ -3,7 +3,7 @@ use colored::Colorize;
 use std::io::{self, Write};
 
 /// a logger with verbose output, for debugging
-pub fn log(event: Event) {
+pub(crate) fn log(event: Event) {
   #[allow(clippy::match_same_arms)]
   match event {
     Event::AnalyzeExecutableBegin { cmd, args } => eprintln!("{}", format!("{cmd} {}", args.join(" ")).bold()),

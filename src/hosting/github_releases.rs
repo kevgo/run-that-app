@@ -6,7 +6,7 @@ use crate::Log;
 use big_s::S;
 
 /// provides the latest official version of the given application on GitHub Releases
-pub fn latest(org: &str, repo: &str, log: Log) -> Result<Version> {
+pub(crate) fn latest(org: &str, repo: &str, log: Log) -> Result<Version> {
   let url = format!("https://api.github.com/repos/{org}/{repo}/releases/latest");
   log(Event::GitHubApiRequestBegin { url: &url });
   let get = minreq::get(&url)
@@ -47,7 +47,7 @@ fn parse_latest_response(text: &str) -> Result<Version> {
 }
 
 /// provides the given number of latest versions of the given application on GitHub Releases
-pub fn versions(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<Version>> {
+pub(crate) fn versions(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<Version>> {
   let url = format!("https://api.github.com/repos/{org}/{repo}/releases?per_page={amount}");
   log(Event::GitHubApiRequestBegin { url: &url });
   let get = minreq::get(&url)

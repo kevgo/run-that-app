@@ -1,6 +1,6 @@
 use std::process::{ExitCode, ExitStatus};
 
-pub fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
+pub(crate) fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
   if exit_status.success() {
     return ExitCode::SUCCESS;
   }
