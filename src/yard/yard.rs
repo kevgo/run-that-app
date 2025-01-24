@@ -1,6 +1,7 @@
 use super::root_path;
 use crate::applications::AppDefinition;
 use crate::configuration::{ApplicationName, Version};
+use crate::installation::BinFolder;
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
@@ -76,28 +77,22 @@ impl Yard {
     version: &Version,
     platform: Platform,
     log: Log,
-  ) -> Option<(ExecutablePath, PathBuf)> {
+  ) -> Option<(ExecutablePath, BinFolder)> {
     let run_method = app_definition.run_method(version, platform);
     for installation_method in run_method.install_methods() {
       let fullpaths = installation_method.executable_paths(app_definition, &executable.clone().platform_path(platform.os), version, self);
       for fullpath in fullpaths {
         println!("fullpath: {}", fullpath.to_string_lossy());
         log(Event::YardCheckExistingAppBegin { path: &fullpath });
-        if fullpath.exists() {
-          log(Event::YardCheckExistingAppFound);
-          let bin_folder = installation_method.bin_folder();
-          let app_folder = self.app_folder(&app_definition.name(), version);
-          let bin_paths = bin_folder.possible_paths(&app_folder);
-          for bin_path in bin_paths {
-            println!("bin_path: {}", bin_path.to_string_lossy());
-            if bin_path.exists() {
-              return Some((ExecutablePath::from(fullpath), bin_path));
-            }
-          }
+        if !fullpath.exists() {
+          continue;
         }
-        log(Event::YardCheckExistingAppNotFound);
+        log(Event::YardCheckExistingAppFound);
+        let bin_folder = installation_method.bin_folder();
+        return Some((ExecutablePath::from(fullpath), bin_folder));
       }
     }
+    log(Event::YardCheckExistingAppNotFound);
     None
   }
 

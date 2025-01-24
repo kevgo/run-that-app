@@ -12,7 +12,7 @@ use crate::platform::Platform;
 use crate::prelude::*;
 use crate::run::ExecutableNamePlatform;
 use crate::yard::Yard;
-use std::fmt::Debug;
+use std::fmt::{Debug, Display};
 use std::path::{Path, PathBuf};
 
 /// the different methods to install an application
@@ -136,6 +136,17 @@ impl BinFolder {
         }
         result
       }
+    }
+  }
+}
+
+impl Display for BinFolder {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    match self {
+      BinFolder::Root => write!(f, "root"),
+      BinFolder::Subfolder { path } => write!(f, "subfolder {path}"),
+      BinFolder::Subfolders { options } => write!(f, "subfolders {}", options.join(", ")),
+      BinFolder::RootOrSubfolders { options } => write!(f, "root or subfolders {}", options.join(", ")),
     }
   }
 }

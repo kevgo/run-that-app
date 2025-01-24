@@ -20,9 +20,12 @@ impl ExecutableArgs {
       ExecutableArgs::OneOfTheseInAppFolder { options } => {
         for option in options {
           let absolute_path = app_folder.join(option);
+          println!("arg fullpath: {}", absolute_path.to_string_lossy());
           if absolute_path.exists() {
+            println!("arg fullpath exists");
             return Ok(vec![absolute_path.to_string_lossy().to_string()]);
           }
+          println!("doesn't exist");
         }
         Err(UserError::CannotFindExecutable)
       }
