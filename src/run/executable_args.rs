@@ -23,12 +23,9 @@ impl ExecutableArgs {
         for option in options {
           for bin_folder_path in &bin_folder_paths {
             let absolute_path = bin_folder_path.join(option);
-            println!("possible arg fullpath: {}", absolute_path.to_string_lossy());
             if absolute_path.exists() {
-              println!("arg fullpath exists");
               return Ok(vec![absolute_path.to_string_lossy().to_string()]);
             }
-            println!("doesn't exist");
           }
         }
         Err(UserError::CannotFindExecutable)

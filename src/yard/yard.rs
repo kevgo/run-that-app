@@ -82,7 +82,6 @@ impl Yard {
     for installation_method in run_method.install_methods() {
       let fullpaths = installation_method.executable_paths(app_definition, &executable.clone().platform_path(platform.os), version, self);
       for fullpath in fullpaths {
-        println!("fullpath: {}", fullpath.to_string_lossy());
         log(Event::YardCheckExistingAppBegin { path: &fullpath });
         if !fullpath.exists() {
           continue;
