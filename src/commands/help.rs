@@ -1,6 +1,6 @@
 use std::process::ExitCode;
 
-pub fn help() -> ExitCode {
+pub(crate) fn help() -> ExitCode {
   print_usage();
   print_options();
   print_examples();
@@ -11,7 +11,7 @@ fn print_usage() {
   println!("Usage: rta install [options] application@version\n");
 }
 
-pub fn print_options() {
+pub(crate) fn print_options() {
   println!(
     "OPTIONS:
 

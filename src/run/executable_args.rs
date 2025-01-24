@@ -6,7 +6,7 @@ use std::path::Path;
 /// Arguments that are required to execute an application itself - these are not arguments provided by the user.
 /// Example: running npm happens as "node npm.js", "npm.js" is the executable arg.
 #[derive(Clone, Debug, PartialEq)]
-pub enum ExecutableArgs {
+pub(crate) enum ExecutableArgs {
   /// the executable is called without any additional arguments
   None,
   /// uses the first of the given options that exists inside the folder that application is installed in
@@ -15,7 +15,7 @@ pub enum ExecutableArgs {
 
 impl ExecutableArgs {
   /// provides the argument to use, adjusted to a callable format
-  pub fn locate(&self, app_folder: &Path, bin_folder: &BinFolder) -> Result<Vec<String>> {
+  pub(crate) fn locate(&self, app_folder: &Path, bin_folder: &BinFolder) -> Result<Vec<String>> {
     match self {
       ExecutableArgs::None => Ok(vec![]),
       ExecutableArgs::OneOfTheseInAppFolder { options } => {

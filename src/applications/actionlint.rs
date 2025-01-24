@@ -8,7 +8,7 @@ use crate::run::{self, ExecutablePath};
 use crate::{regexp, Log};
 use const_format::formatcp;
 
-pub struct ActionLint {}
+pub(crate) struct ActionLint {}
 
 const ORG: &str = "rhysd";
 const REPO: &str = "actionlint";

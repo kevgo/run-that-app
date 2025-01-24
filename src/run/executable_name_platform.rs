@@ -3,7 +3,7 @@ use std::path::Path;
 
 /// The platform-specific filename of an executable.
 /// On Windows: "unix-executable-name.exe"
-pub struct ExecutableNamePlatform(String);
+pub(crate) struct ExecutableNamePlatform(String);
 
 impl From<String> for ExecutableNamePlatform {
   fn from(value: String) -> Self {

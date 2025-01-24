@@ -6,7 +6,7 @@ use crate::prelude::*;
 use crate::run::{self, ExecutablePath};
 use crate::Log;
 
-pub struct Govulncheck {}
+pub(crate) struct Govulncheck {}
 
 impl AppDefinition for Govulncheck {
   fn name(&self) -> ApplicationName {

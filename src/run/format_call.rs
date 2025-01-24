@@ -2,7 +2,7 @@ use super::ExecutableCall;
 
 /// provides a printable version of the given executable invocation
 // TODO: move into the upcoming CallSignature
-pub fn format_call(executable_call: &ExecutableCall, args: &[String]) -> String {
+pub(crate) fn format_call(executable_call: &ExecutableCall, args: &[String]) -> String {
   let mut result = String::from(executable_call.executable_path.as_str());
   for arg in &executable_call.args {
     result.push(' ');

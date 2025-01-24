@@ -8,7 +8,7 @@ use crate::run::ExecutablePath;
 use crate::{run, Log};
 use const_format::formatcp;
 
-pub struct Ghokin {}
+pub(crate) struct Ghokin {}
 
 const ORG: &str = "antham";
 const REPO: &str = "ghokin";

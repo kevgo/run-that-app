@@ -8,7 +8,7 @@ use crate::run::ExecutablePath;
 use crate::{run, Log};
 use const_format::formatcp;
 
-pub struct Depth {}
+pub(crate) struct Depth {}
 
 const ORG: &str = "KyleBanks";
 const REPO: &str = "depth";

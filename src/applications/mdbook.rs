@@ -9,7 +9,7 @@ use crate::{regexp, run, Log};
 use big_s::S;
 use const_format::formatcp;
 
-pub struct MdBook {}
+pub(crate) struct MdBook {}
 
 const ORG: &str = "rust-lang";
 const REPO: &str = "mdBook";

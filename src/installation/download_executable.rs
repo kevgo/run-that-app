@@ -8,7 +8,15 @@ use crate::yard::Yard;
 use crate::{download, filesystem};
 
 /// downloads an uncompressed precompiled binary
-pub fn run(app_definition: &dyn AppDefinition, url: &str, version: &Version, platform: Platform, optional: bool, yard: &Yard, log: Log) -> Result<Outcome> {
+pub(crate) fn run(
+  app_definition: &dyn AppDefinition,
+  url: &str,
+  version: &Version,
+  platform: Platform,
+  optional: bool,
+  yard: &Yard,
+  log: Log,
+) -> Result<Outcome> {
   let Some(artifact) = download::artifact(url, &app_definition.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };

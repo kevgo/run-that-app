@@ -4,13 +4,13 @@ use std::path::Path;
 
 /// information to call an `App`s executable, as it is defined by the user
 #[derive(Clone)]
-pub struct ExecutableCallDefinition {
-  pub executable_path: ExecutablePath,
-  pub args: ExecutableArgs,
+pub(crate) struct ExecutableCallDefinition {
+  pub(crate) executable_path: ExecutablePath,
+  pub(crate) args: ExecutableArgs,
 }
 
 impl ExecutableCallDefinition {
-  pub fn into_executable_call(self, app_folder: &Path) -> Option<ExecutableCall> {
+  pub(crate) fn into_executable_call(self, app_folder: &Path) -> Option<ExecutableCall> {
     match self.args {
       ExecutableArgs::None => Some(ExecutableCall {
         executable_path: self.executable_path,
@@ -41,9 +41,9 @@ impl Display for ExecutableCallDefinition {
 }
 
 /// information to call an app with file paths adjusted
-pub struct ExecutableCall {
-  pub executable_path: ExecutablePath,
-  pub args: Vec<String>,
+pub(crate) struct ExecutableCall {
+  pub(crate) executable_path: ExecutablePath,
+  pub(crate) args: Vec<String>,
 }
 
 impl Display for ExecutableCall {

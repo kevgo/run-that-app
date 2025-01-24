@@ -8,7 +8,7 @@ use crate::run::ExecutablePath;
 use crate::{regexp, run, Log};
 use const_format::formatcp;
 
-pub struct Shfmt {}
+pub(crate) struct Shfmt {}
 
 const ORG: &str = "mvdan";
 const REPO: &str = "sh";

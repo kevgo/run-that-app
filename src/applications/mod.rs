@@ -8,7 +8,7 @@ mod dprint;
 mod exhaustruct;
 mod gh;
 mod ghokin;
-pub mod go;
+pub(crate) mod go;
 mod goda;
 mod gofmt;
 mod gofumpt;
@@ -36,7 +36,7 @@ use crate::Log;
 use std::fmt::{Debug, Display};
 use std::slice::Iter;
 
-pub fn all() -> Apps {
+pub(crate) fn all() -> Apps {
   Apps(vec![
     Box::new(actionlint::ActionLint {}),
     Box::new(alphavet::Alphavet {}),
@@ -69,7 +69,7 @@ pub fn all() -> Apps {
 }
 
 /// allows definining an application that run-that-app can install
-pub trait AppDefinition {
+pub(crate) trait AppDefinition {
   /// the name by which the user can select this application at the run-that-app CLI
   fn name(&self) -> ApplicationName;
 
@@ -147,7 +147,7 @@ impl Debug for dyn AppDefinition {
   }
 }
 
-pub enum AnalyzeResult {
+pub(crate) enum AnalyzeResult {
   /// the given executable does not belong to this app
   NotIdentified { output: String },
 
@@ -158,17 +158,17 @@ pub enum AnalyzeResult {
   IdentifiedWithVersion(Version),
 }
 
-pub struct Apps(Vec<Box<dyn AppDefinition>>);
+pub(crate) struct Apps(Vec<Box<dyn AppDefinition>>);
 
 impl Apps {
   /// provides an `Iterator` over the applications
-  pub fn iter(&self) -> Iter<'_, Box<dyn AppDefinition>> {
+  pub(crate) fn iter(&self) -> Iter<'_, Box<dyn AppDefinition>> {
     self.0.iter()
   }
 
   /// provides the app with the given name
   /// TODO: return the actual Box<dyn App> instead of a reference here
-  pub fn lookup(&self, name: &ApplicationName) -> Result<&dyn AppDefinition> {
+  pub(crate) fn lookup(&self, name: &ApplicationName) -> Result<&dyn AppDefinition> {
     for app in &self.0 {
       if app.name() == name {
         return Ok(app.as_ref());
@@ -178,7 +178,7 @@ impl Apps {
   }
 
   /// provides the length of the name of the app with the longest name
-  pub fn longest_name_length(&self) -> usize {
+  pub(crate) fn longest_name_length(&self) -> usize {
     self.iter().map(|app| app.name().as_str().len()).max().unwrap_or_default()
   }
 }

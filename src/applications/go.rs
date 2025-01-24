@@ -9,7 +9,7 @@ use crate::{filesystem, regexp, run, Log};
 use big_s::S;
 use std::path;
 
-pub struct Go {}
+pub(crate) struct Go {}
 
 const ORG: &str = "golang";
 const REPO: &str = "go";

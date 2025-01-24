@@ -8,7 +8,7 @@ use crate::run::ExecutablePath;
 use crate::{regexp, run, Log};
 use const_format::formatcp;
 
-pub struct Tikibase {}
+pub(crate) struct Tikibase {}
 
 const ORG: &str = "kevgo";
 const REPO: &str = "tikibase";

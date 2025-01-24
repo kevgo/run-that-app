@@ -9,7 +9,7 @@ use colored::Colorize;
 use std::io;
 use std::process::ExitCode;
 
-pub fn test(args: &mut Args) -> Result<ExitCode> {
+pub(crate) fn test(args: &mut Args) -> Result<ExitCode> {
   let apps = applications::all();
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
@@ -87,8 +87,8 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Args {
-  pub optional: bool,
-  pub start_at_app: Option<ApplicationName>,
-  pub verbose: bool,
+pub(crate) struct Args {
+  pub(crate) optional: bool,
+  pub(crate) start_at_app: Option<ApplicationName>,
+  pub(crate) verbose: bool,
 }

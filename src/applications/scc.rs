@@ -8,7 +8,7 @@ use crate::run::ExecutablePath;
 use crate::{regexp, run, Log};
 use const_format::formatcp;
 
-pub struct Scc {}
+pub(crate) struct Scc {}
 
 const ORG: &str = "boyter";
 const REPO: &str = "scc";

@@ -3,7 +3,7 @@ use crate::prelude::*;
 use std::env;
 use std::fmt::Display;
 
-pub fn detect(log: Log) -> Result<Os> {
+pub(crate) fn detect(log: Log) -> Result<Os> {
   log(Event::IdentifiedOs { name: env::consts::OS });
   match env::consts::OS {
     "linux" => Ok(Os::Linux),
@@ -14,7 +14,7 @@ pub fn detect(log: Log) -> Result<Os> {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub enum Os {
+pub(crate) enum Os {
   Windows,
   Linux,
   MacOS,

@@ -6,7 +6,7 @@ use crate::prelude::*;
 use crate::run::{ExecutableArgs, ExecutablePath};
 use crate::{run, Log};
 
-pub struct Npm {}
+pub(crate) struct Npm {}
 
 impl AppDefinition for Npm {
   fn name(&self) -> ApplicationName {

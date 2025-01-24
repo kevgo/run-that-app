@@ -7,11 +7,11 @@ mod requested_version;
 mod requested_versions;
 mod version;
 
-pub use app_versions::AppVersions;
-pub use application_name::ApplicationName;
-pub use file::File;
-pub use requested_version::RequestedVersion;
-pub use requested_versions::RequestedVersions;
-pub use version::Version;
+pub(crate) use app_versions::AppVersions;
+pub(crate) use application_name::ApplicationName;
+pub(crate) use file::File;
+pub(crate) use requested_version::RequestedVersion;
+pub(crate) use requested_versions::RequestedVersions;
+pub(crate) use version::Version;
 
-pub const FILE_NAME: &str = ".tool-versions";
+pub(crate) const FILE_NAME: &str = ".tool-versions";

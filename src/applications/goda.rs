@@ -8,7 +8,7 @@ use crate::run::ExecutablePath;
 use crate::{run, Log};
 use const_format::formatcp;
 
-pub struct Goda {}
+pub(crate) struct Goda {}
 
 const ORG: &str = "loov";
 const REPO: &str = "goda";

@@ -6,7 +6,7 @@ use crate::prelude::*;
 use crate::run::{ExecutableNameUnix, ExecutablePath};
 use crate::{run, Log};
 
-pub struct Gofmt {}
+pub(crate) struct Gofmt {}
 
 impl AppDefinition for Gofmt {
   fn name(&self) -> ApplicationName {

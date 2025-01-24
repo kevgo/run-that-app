@@ -3,12 +3,12 @@ use crate::prelude::*;
 
 /// a collection of Version instances
 #[derive(Debug, PartialEq)]
-pub struct RequestedVersions(pub Vec<RequestedVersion>);
+pub(crate) struct RequestedVersions(pub Vec<RequestedVersion>);
 
 impl RequestedVersions {
   /// Provides the version to use: if the user provided a version to use via CLI, use it.
   /// Otherwise provide the versions from the config file.
-  pub fn determine(app: &ApplicationName, cli_version: Option<&Version>, config_file: &File) -> Result<RequestedVersions> {
+  pub(crate) fn determine(app: &ApplicationName, cli_version: Option<&Version>, config_file: &File) -> Result<RequestedVersions> {
     if let Some(version) = cli_version {
       return Ok(RequestedVersions::from(version));
     }
@@ -18,7 +18,7 @@ impl RequestedVersions {
     }
   }
 
-  pub fn join(&self, sep: &str) -> String {
+  pub(crate) fn join(&self, sep: &str) -> String {
     let strings: Vec<String> = self.0.iter().map(RequestedVersion::to_string).collect();
     strings.join(sep)
   }
@@ -40,17 +40,17 @@ impl RequestedVersions {
     result
   }
 
-  pub fn new(inner: Vec<RequestedVersion>) -> RequestedVersions {
+  pub(crate) fn new(inner: Vec<RequestedVersion>) -> RequestedVersions {
     RequestedVersions(inner)
   }
 
-  pub fn push(&mut self, value: RequestedVersion) {
+  pub(crate) fn push(&mut self, value: RequestedVersion) {
     self.0.push(value);
   }
 
   /// Updates the largest non-system version in this collection with the given value.
   /// Returns the value that was replaced.
-  pub fn update_largest_with(&mut self, value: &Version) -> Option<Version> {
+  pub(crate) fn update_largest_with(&mut self, value: &Version) -> Option<Version> {
     let largest = self.largest_non_system()?;
     if largest == value {
       return None;

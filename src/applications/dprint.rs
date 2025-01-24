@@ -8,7 +8,7 @@ use crate::run::ExecutablePath;
 use crate::{regexp, run, Log};
 use big_s::S;
 
-pub struct Dprint {}
+pub(crate) struct Dprint {}
 
 const ORG: &str = "dprint";
 const REPO: &str = "dprint";

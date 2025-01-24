@@ -7,7 +7,7 @@ use crate::prelude::*;
 use crate::run::ExecutablePath;
 use crate::{regexp, run, Log};
 
-pub struct ShellCheck {}
+pub(crate) struct ShellCheck {}
 
 const ORG: &str = "koalaman";
 const REPO: &str = "shellcheck";

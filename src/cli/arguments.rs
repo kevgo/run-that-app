@@ -4,12 +4,12 @@ use crate::prelude::*;
 
 /// all arguments that can be provided via the CLI
 #[derive(Debug, PartialEq)]
-pub struct Arguments {
-  pub command: Command,
+pub(crate) struct Arguments {
+  pub(crate) command: Command,
 }
 
 #[allow(clippy::too_many_lines)]
-pub fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Arguments> {
+pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Arguments> {
   let _skipped_binary_name = cli_args.next();
   let mut app_version: Option<AppVersion> = None;
   let mut verbose = false;
