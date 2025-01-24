@@ -27,7 +27,7 @@ pub(crate) enum Method {
 }
 
 impl Method {
-  pub fn install_methods(self) -> Vec<installation::Method> {
+  pub(crate) fn install_methods(self) -> Vec<installation::Method> {
     match self {
       Method::ThisApp { install_methods } => install_methods,
       Method::OtherAppOtherExecutable {
