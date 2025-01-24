@@ -79,15 +79,15 @@ pub fn load_or_install(
   }
 }
 
-// checks if the app is in the PATH and has the correct version
-fn load_from_path(app: &dyn AppDefinition, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutableCallDefinition>> {
-  let (app, executable_name, executable_args) = app.carrier(&Version::from(""), platform);
-  let Some(executable_path) = find_global_install(&executable_name.platform_path(platform.os), log) else {
+// finds the app in the PATH and verifies it has the correct version
+fn load_from_path(app_to_run: &dyn AppDefinition, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutableCallDefinition>> {
+  let (app_to_install, executable_name, executable_args) = app_to_run.carrier(&Version::from(""), platform);
+  let executable_filename = executable_name.platform_path(platform.os);
+  let Some(executable_path) = find_global_install(&executable_filename, log) else {
     log(Event::GlobalInstallNotFound);
     return Ok(None);
   };
-  #[allow(clippy::unwrap_used)] // executable paths always have a parent
-  match app.analyze_executable(&executable_path, log)? {
+  match app_to_install.analyze_executable(&executable_path, log)? {
     AnalyzeResult::NotIdentified { output: _ } => {
       log(Event::GlobalInstallNotIdentified);
       Ok(None)
