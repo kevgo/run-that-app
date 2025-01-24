@@ -106,7 +106,7 @@ impl BinFolder {
     match self {
       BinFolder::Root => vec![app_folder.to_path_buf()],
       BinFolder::Subfolder { path } => vec![app_folder.join(path)],
-      BinFolder::Subfolders { options } => options.into_iter().map(|option| app_folder.join(option)).collect(),
+      BinFolder::Subfolders { options } => options.iter().map(|option| app_folder.join(option)).collect(),
       BinFolder::RootOrSubfolders { options } => {
         let mut result = vec![app_folder.to_path_buf()];
         for option in options {
