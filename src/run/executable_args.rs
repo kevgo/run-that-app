@@ -1,10 +1,11 @@
+use crate::installation::BinFolder;
 use crate::prelude::*;
 use std::fmt::{Display, Write};
 use std::path::Path;
 
 /// Arguments that are required to execute an application itself - these are not arguments provided by the user.
 /// Example: running npm happens as "node npm.js", "npm.js" is the executable arg.
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ExecutableArgs {
   /// the executable is called without any additional arguments
   None,
@@ -14,14 +15,16 @@ pub enum ExecutableArgs {
 
 impl ExecutableArgs {
   /// provides the argument to use, adjusted to a callable format
-  pub fn locate(&self, app_folder: &Path) -> Result<Vec<String>> {
+  pub fn locate(&self, app_folder: &Path, bin_folder: &BinFolder) -> Result<Vec<String>> {
     match self {
       ExecutableArgs::None => Ok(vec![]),
       ExecutableArgs::OneOfTheseInAppFolder { options } => {
-        for option in options {
-          let absolute_path = app_folder.join(option);
-          if absolute_path.exists() {
-            return Ok(vec![absolute_path.to_string_lossy().to_string()]);
+        for bin_folder_path in &bin_folder.possible_paths(app_folder) {
+          for option in options {
+            let absolute_path = bin_folder_path.join(option);
+            if absolute_path.exists() {
+              return Ok(vec![absolute_path.to_string_lossy().to_string()]);
+            }
           }
         }
         Err(UserError::CannotFindExecutable)

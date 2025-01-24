@@ -23,6 +23,7 @@ impl ExecutablePath {
   }
 
   /// runs this executable with the given args and returns the output it produced
+  // TODO: move this into ExecutableCall
   pub fn run_output(&self, arg: &str, log: Log) -> Result<String> {
     let mut cmd = Command::new(self);
     cmd.arg(arg);
@@ -49,6 +50,7 @@ impl ExecutablePath {
   }
 
   /// runs this executable with the given args and returns the output it produced
+  // TODO: move this into ExecutableCall
   pub fn run_output_args(&self, args: &[&str], log: Log) -> Result<String> {
     let mut cmd = Command::new(self);
     cmd.args(args);

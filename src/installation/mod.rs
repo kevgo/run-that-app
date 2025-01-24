@@ -10,9 +10,9 @@ use crate::configuration::{self, Version};
 use crate::logging::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::ExecutableFileName;
+use crate::run::ExecutableNamePlatform;
 use crate::yard::Yard;
-use std::fmt::Debug;
+use std::fmt::{Debug, Display};
 use std::path::{Path, PathBuf};
 
 /// the different methods to install an application
@@ -50,8 +50,21 @@ pub enum Method {
 }
 
 impl Method {
+  pub fn bin_folder(self) -> BinFolder {
+    match self {
+      Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => BinFolder::Root,
+      Method::DownloadArchive { url: _, bin_folder } | Method::CompileRustSource { crate_name: _, bin_folder } => bin_folder,
+    }
+  }
+
   /// provides possible locations of the given executable within the given app folder in the given  yard
-  pub fn executable_paths(&self, app_definition: &dyn AppDefinition, executable_filename: &ExecutableFileName, version: &Version, yard: &Yard) -> Vec<PathBuf> {
+  pub fn executable_paths(
+    &self,
+    app_definition: &dyn AppDefinition,
+    executable_filename: &ExecutableNamePlatform,
+    version: &Version,
+    yard: &Yard,
+  ) -> Vec<PathBuf> {
     let app_folder = yard.app_folder(&app_definition.name(), version);
     match self {
       Method::DownloadArchive { url: _, bin_folder } => bin_folder.executable_paths(&app_folder, executable_filename),
@@ -76,7 +89,7 @@ impl Method {
 }
 
 /// describes the various locations where the executable files could be inside an application folder
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum BinFolder {
   /// all executables are directly in the app folder
   Root,
@@ -89,7 +102,22 @@ pub enum BinFolder {
 }
 
 impl BinFolder {
-  pub fn executable_paths(&self, app_folder: &Path, executable_name: &ExecutableFileName) -> Vec<PathBuf> {
+  pub fn possible_paths(&self, app_folder: &Path) -> Vec<PathBuf> {
+    match self {
+      BinFolder::Root => vec![app_folder.to_path_buf()],
+      BinFolder::Subfolder { path } => vec![app_folder.join(path)],
+      BinFolder::Subfolders { options } => options.iter().map(|option| app_folder.join(option)).collect(),
+      BinFolder::RootOrSubfolders { options } => {
+        let mut result = vec![app_folder.to_path_buf()];
+        for option in options {
+          result.push(app_folder.join(option));
+        }
+        result
+      }
+    }
+  }
+
+  pub fn executable_paths(&self, app_folder: &Path, executable_name: &ExecutableNamePlatform) -> Vec<PathBuf> {
     match self {
       BinFolder::RootOrSubfolders { options } => {
         let mut result = vec![app_folder.join(executable_name)];
@@ -107,6 +135,18 @@ impl BinFolder {
         }
         result
       }
+    }
+  }
+}
+
+impl Display for BinFolder {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.write_str("BinFolder: ")?;
+    match self {
+      BinFolder::Root => write!(f, "root"),
+      BinFolder::Subfolder { path } => write!(f, "subfolder {path}"),
+      BinFolder::Subfolders { options } => write!(f, "subfolders {}", options.join(", ")),
+      BinFolder::RootOrSubfolders { options } => write!(f, "root or subfolders {}", options.join(", ")),
     }
   }
 }

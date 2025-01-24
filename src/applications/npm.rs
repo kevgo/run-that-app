@@ -3,7 +3,7 @@ use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{ExecutableNameUnix, ExecutablePath};
+use crate::run::{ExecutableArgs, ExecutablePath};
 use crate::{run, Log};
 
 pub struct Npm {}
@@ -18,9 +18,11 @@ impl AppDefinition for Npm {
   }
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
-    run::Method::OtherAppOtherExecutable {
-      app_definition: Box::new(app_to_install()),
-      executable_name: ExecutableNameUnix::from("npm"),
+    run::Method::OtherAppDefaultExecutable {
+      app_definition: Box::new(NodeJS {}),
+      args: ExecutableArgs::OneOfTheseInAppFolder {
+        options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+      },
     }
   }
 
@@ -60,7 +62,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
     use crate::run;
-    use crate::run::ExecutableNameUnix;
+    use crate::run::ExecutableArgs;
 
     #[test]
     #[cfg(unix)]
@@ -72,9 +74,11 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = run::Method::OtherAppOtherExecutable {
+      let want = run::Method::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
-        executable_name: ExecutableNameUnix::from("npm"),
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+        },
       };
       assert_eq!(have, want);
     }
@@ -89,9 +93,11 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::OtherAppOtherExecutable {
+      let want = run::Method::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
-        executable_name: ExecutableNameUnix::from("npm"),
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+        },
       };
       assert_eq!(have, want);
     }
