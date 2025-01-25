@@ -1,5 +1,24 @@
 # run-that-app changelog
 
+### 0.10.4 (2025-01-24)
+
+Lots of bug fixes, especially around running on Windows.
+
+#### Bug Fixes
+
+- npm and npx: run correctly on Windows
+- depth: fix Windows download
+- go: fix tags
+- staticcheck: fix installation from source
+- node-prune: fix installation from source
+- ireturn: fix installation from source
+- govulncheck: fix identification
+- goreleaser: fix identification, no longer installs from source
+- ghokin: fix archive download
+- gh: fix executable path on Windows
+- node: fix executable path on Windown
+- prints "not found" messages in yellow instead of red now because they are not necessarily error conditions
+
 ### 0.10.3 (2025-01-13)
 
 #### Bug Fixes
