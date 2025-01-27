@@ -2,11 +2,11 @@
 
 - in a branch:
   - update [CHANGELOG.md](../CHANGELOG.md)
-  - update all occurrences of `0.10.4`
+  - update all occurrences of `0.10.5`
   - ship into `main`
 - create a new tag:
 
   ```bash
-  git tag v0.10.4 && git push --tags
+  git tag v0.10.5 && git push --tags
   ```
 - the CI server creates the release fully automatically
