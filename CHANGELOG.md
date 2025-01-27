@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+### 0.10.5 (2025-01-27)
+
+#### Bug Fixes
+
+- npm and npm: run correctly on first run
+
 ### 0.10.4 (2025-01-24)
 
 Lots of bug fixes, especially around running on Windows.
