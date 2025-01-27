@@ -37,29 +37,32 @@ pub(crate) fn run(
   // verify that all executables that should be there exist and are executable
   for bin_folder in bin_folders.executable_paths(&app_folder, &executable_filename) {
     let bin_path = app_folder.join(bin_folder);
-    make_executable(&bin_path.join(app_definition.default_executable_filename().platform_path(platform.os)));
+    make_executable(&bin_path.join(app_definition.default_executable_filename().platform_path(platform.os)), log);
     // set the executable bit of all executable files that this app provides
     for other_executable in app_definition.additional_executables() {
-      make_executable(&bin_path.join(other_executable.platform_path(platform.os)));
+      make_executable(&bin_path.join(other_executable.platform_path(platform.os)), log);
     }
   }
   Ok(Outcome::Installed)
 }
 
-fn make_executable(filepath: &Path) {
+fn make_executable(filepath: &Path, log: Log) {
   #[cfg(unix)]
-  let _ = make_executable_unix(filepath);
+  let _ = make_executable_unix(filepath, log);
   #[cfg(windows)]
-  make_executable_windows(filepath);
+  make_executable_windows();
 }
 
 #[cfg(windows)]
-fn make_executable_windows(_filepath: &Path) {
+fn make_executable_windows() {
   // Windows does not have file permissions --> nothing to do here
 }
 
 #[cfg(unix)]
-fn make_executable_unix(filepath: &Path) -> Result<()> {
+fn make_executable_unix(filepath: &Path, log: Log) -> Result<()> {
+  use crate::logging::Event;
+
+  log(Event::MakeExecutable { file: &filepath });
   let Ok(executable_file) = fs::File::open(filepath) else {
     return Err(UserError::ArchiveDoesNotContainExecutable {
       expected: filepath.to_string_lossy().to_string(),
