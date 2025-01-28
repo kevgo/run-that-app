@@ -23,24 +23,29 @@ pub(crate) fn run(
   yard: &Yard,
   log: Log,
 ) -> Result<Outcome> {
-  let (app, _executable_name, _args) = app_definition.carrier(version, platform);
-  let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {
+  let (app_to_install, executable_name, _args) = app_definition.carrier(version, platform);
+  let Some(artifact) = download::artifact(url, &app_to_install.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
-  let app_folder = yard.create_app_folder(&app_definition.name(), version)?;
+  let app_folder = yard.create_app_folder(&app_to_install.name(), version)?;
   let Some(archive) = archives::lookup(&artifact.filename, artifact.data) else {
     return Err(UserError::UnknownArchive(artifact.filename));
   };
   // extract the archive
   archive.extract_all(&app_folder, log)?;
-  let executable_filename = app_definition.default_executable_filename().platform_path(platform.os);
+  let executable_filename = executable_name.platform_path(platform.os);
   // verify that all executables that should be there exist and are executable
-  for bin_folder in bin_folders.executable_paths(&app_folder, &executable_filename) {
-    let bin_path = app_folder.join(bin_folder);
-    make_executable(&bin_path.join(app_definition.default_executable_filename().platform_path(platform.os)), log);
+  println!("app folder: {}", app_folder.to_string_lossy());
+  println!("bin folders: {}", bin_folders);
+  for executable_path in bin_folders.executable_paths(&app_folder, &executable_filename) {
+    println!("executable path: {}", executable_path.to_string_lossy());
+    make_executable(&executable_path, log);
     // set the executable bit of all executable files that this app provides
     for other_executable in app_definition.additional_executables() {
-      make_executable(&bin_path.join(other_executable.platform_path(platform.os)), log);
+      let other_executable_filename = other_executable.platform_path(platform.os);
+      for other_executable_path in bin_folders.executable_paths(&app_folder, &other_executable_filename) {
+        make_executable(&other_executable_path, log);
+      }
     }
   }
   Ok(Outcome::Installed)
