@@ -76,6 +76,7 @@ pub(crate) fn log(event: Event) {
     Event::IntegrationTestDeterminedVersion { version } => eprintln!("Latest version: {}", version.as_str().cyan()),
     Event::IntegrationTestNewInstallMethod { app, method, version } => eprintln!("\n{}", method.name(app, version).bold()),
 
+    #[cfg(unix)]
     Event::MakeExecutable { file } => eprintln!("make file {} executable", file.to_string_lossy()),
 
     Event::NotOnline => eprintln!("{}", "not online".red()),
