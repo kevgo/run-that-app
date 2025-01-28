@@ -35,10 +35,7 @@ pub(crate) fn run(
   archive.extract_all(&app_folder, log)?;
   let executable_filename = executable_name.platform_path(platform.os);
   // verify that all executables that should be there exist and are executable
-  println!("app folder: {}", app_folder.to_string_lossy());
-  println!("bin folders: {}", bin_folders);
   for executable_path in bin_folders.executable_paths(&app_folder, &executable_filename) {
-    println!("executable path: {}", executable_path.to_string_lossy());
     make_executable(&executable_path, log);
     // set the executable bit of all executable files that this app provides
     for other_executable in app_definition.additional_executables() {
