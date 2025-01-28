@@ -52,11 +52,11 @@ fn make_executable(filepath: &Path, log: Log) {
   #[cfg(unix)]
   let _ = make_executable_unix(filepath, log);
   #[cfg(windows)]
-  make_executable_windows();
+  make_executable_windows(filepath, log);
 }
 
 #[cfg(windows)]
-fn make_executable_windows() {
+fn make_executable_windows(_filepath: &Path, _log: Log) {
   // Windows does not have file permissions --> nothing to do here
 }
 
