@@ -64,7 +64,7 @@ fn make_executable_windows() {
 fn make_executable_unix(filepath: &Path, log: Log) -> Result<()> {
   use crate::logging::Event;
 
-  log(Event::MakeExecutable { file: &filepath });
+  log(Event::MakeExecutable { file: filepath });
   let Ok(executable_file) = fs::File::open(filepath) else {
     return Err(UserError::ArchiveDoesNotContainExecutable {
       expected: filepath.to_string_lossy().to_string(),
