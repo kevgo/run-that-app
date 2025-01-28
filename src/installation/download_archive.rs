@@ -23,43 +23,48 @@ pub(crate) fn run(
   yard: &Yard,
   log: Log,
 ) -> Result<Outcome> {
-  let (app, _executable_name, _args) = app_definition.carrier(version, platform);
-  let Some(artifact) = download::artifact(url, &app.name(), optional, log)? else {
+  let (app_to_install, executable_name, _args) = app_definition.carrier(version, platform);
+  let Some(artifact) = download::artifact(url, &app_to_install.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
-  let app_folder = yard.create_app_folder(&app_definition.name(), version)?;
+  let app_folder = yard.create_app_folder(&app_to_install.name(), version)?;
   let Some(archive) = archives::lookup(&artifact.filename, artifact.data) else {
     return Err(UserError::UnknownArchive(artifact.filename));
   };
   // extract the archive
   archive.extract_all(&app_folder, log)?;
-  let executable_filename = app_definition.default_executable_filename().platform_path(platform.os);
+  let executable_filename = executable_name.platform_path(platform.os);
   // verify that all executables that should be there exist and are executable
-  for bin_folder in bin_folders.executable_paths(&app_folder, &executable_filename) {
-    let bin_path = app_folder.join(bin_folder);
-    make_executable(&bin_path.join(app_definition.default_executable_filename().platform_path(platform.os)));
+  for executable_path in bin_folders.executable_paths(&app_folder, &executable_filename) {
+    make_executable(&executable_path, log);
     // set the executable bit of all executable files that this app provides
     for other_executable in app_definition.additional_executables() {
-      make_executable(&bin_path.join(other_executable.platform_path(platform.os)));
+      let other_executable_filename = other_executable.platform_path(platform.os);
+      for other_executable_path in bin_folders.executable_paths(&app_folder, &other_executable_filename) {
+        make_executable(&other_executable_path, log);
+      }
     }
   }
   Ok(Outcome::Installed)
 }
 
-fn make_executable(filepath: &Path) {
+fn make_executable(filepath: &Path, log: Log) {
   #[cfg(unix)]
-  let _ = make_executable_unix(filepath);
+  let _ = make_executable_unix(filepath, log);
   #[cfg(windows)]
-  make_executable_windows(filepath);
+  make_executable_windows(filepath, log);
 }
 
 #[cfg(windows)]
-fn make_executable_windows(_filepath: &Path) {
+fn make_executable_windows(_filepath: &Path, _log: Log) {
   // Windows does not have file permissions --> nothing to do here
 }
 
 #[cfg(unix)]
-fn make_executable_unix(filepath: &Path) -> Result<()> {
+fn make_executable_unix(filepath: &Path, log: Log) -> Result<()> {
+  use crate::logging::Event;
+
+  log(Event::MakeExecutable { file: filepath });
   let Ok(executable_file) = fs::File::open(filepath) else {
     return Err(UserError::ArchiveDoesNotContainExecutable {
       expected: filepath.to_string_lossy().to_string(),

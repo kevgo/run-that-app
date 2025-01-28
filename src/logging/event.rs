@@ -13,7 +13,6 @@ pub(crate) enum Event<'a> {
   AnalyzeExecutableError {
     err: String,
   },
-
   ArchiveExtractBegin {
     archive_type: &'a str,
   },
@@ -21,21 +20,18 @@ pub(crate) enum Event<'a> {
   ArchiveExtractFailed {
     err: String,
   },
-
   CompileGoBegin {
     go_path: Cow<'a, str>,
     args: &'a [&'a str],
   },
   CompileGoSuccess,
   CompileGoFailed,
-
   CompileRustStart {
     cargo_path: &'a Path,
     args: &'a [&'a str],
   },
   CompileRustSuccess,
   CompileRustFailed,
-
   DownloadBegin {
     app: &'a ApplicationName,
     url: &'a str,
@@ -47,13 +43,11 @@ pub(crate) enum Event<'a> {
   DownloadFail {
     code: i32,
   },
-
   ExecutableInstallSaveBegin,
   ExecutableInstallSaveSuccess,
   ExecutableInstallSaveFail {
     err: String,
   },
-
   GitHubApiRequestBegin {
     url: &'a str,
   },
@@ -61,7 +55,6 @@ pub(crate) enum Event<'a> {
     err: String,
   },
   GitHubApiRequestSuccess,
-
   GlobalInstallSearch {
     binary: &'a ExecutableNamePlatform,
   },
@@ -78,14 +71,12 @@ pub(crate) enum Event<'a> {
   },
   GlobalInstallNotFound,
   GlobalInstallNotIdentified,
-
   IdentifiedCpu {
     architecture: &'static str,
   },
   IdentifiedOs {
     name: &'static str,
   },
-
   IntegrationTestNewApp {
     app: &'a ApplicationName,
   },
@@ -97,9 +88,11 @@ pub(crate) enum Event<'a> {
     method: &'a Method,
     version: &'a Version,
   },
-
+  #[cfg(unix)]
+  MakeExecutable {
+    file: &'a Path,
+  },
   NotOnline,
-
   UpdateBegin {
     app: &'a ApplicationName,
   },
@@ -108,7 +101,6 @@ pub(crate) enum Event<'a> {
     new_version: &'a Version,
   },
   UpdateAlreadyNewest,
-
   YardCheckExistingAppBegin {
     path: &'a Path,
   },
