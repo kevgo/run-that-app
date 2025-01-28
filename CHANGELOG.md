@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+### 0.10.6 (2025-01-27)
+
+#### Bug Fixes
+
+- extracting archives makes executables properly executable
+
 ### 0.10.5 (2025-01-27)
 
 #### Bug Fixes
