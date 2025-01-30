@@ -23,7 +23,7 @@ pub(crate) fn test(args: &mut Args) -> Result<ExitCode> {
       }
       args.start_at_app = None;
     }
-    log(Event::IntegrationTestNewApp { app: &app.name() });
+    log(Event::IntegrationTestNewApp { app: app.name() });
     let latest_version = app.latest_installable_version(log)?;
     log(Event::IntegrationTestDeterminedVersion { version: &latest_version });
     for install_method in app.run_method(&latest_version, platform).install_methods() {
