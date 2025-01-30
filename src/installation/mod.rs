@@ -177,7 +177,7 @@ pub(crate) fn install(
   let app_folder = yard.create_app_folder(&app_definition.name(), version)?;
   match install_method {
     Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, version, url, bin_folder, optional, platform, yard, log),
-    Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, download_url, version, platform, optional, yard, log),
+    Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &app_folder, download_url, platform, optional, log),
     Method::CompileGoSource { import_path } => compile_go::run(&app_folder, import_path, platform, optional, config_file, yard, log),
     Method::CompileRustSource { crate_name, bin_folder: _ } => compile_rust::run(&app_folder, crate_name, log),
   }
