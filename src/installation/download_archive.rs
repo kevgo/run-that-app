@@ -30,15 +30,15 @@ pub(crate) fn run(
     return Err(UserError::UnknownArchive(artifact.filename));
   };
   // extract the archive
-  archive.extract_all(&app_folder, log)?;
+  archive.extract_all(app_folder, log)?;
   let executable_filename = executable_name.platform_path(platform.os);
   // verify that all executables that should be there exist and are executable
-  for executable_path in bin_folders.executable_paths(&app_folder, &executable_filename) {
+  for executable_path in bin_folders.executable_paths(app_folder, &executable_filename) {
     make_executable(&executable_path, log);
     // set the executable bit of all executable files that this app provides
     for other_executable in app_definition.additional_executables() {
       let other_executable_filename = other_executable.platform_path(platform.os);
-      for other_executable_path in bin_folders.executable_paths(&app_folder, &other_executable_filename) {
+      for other_executable_path in bin_folders.executable_paths(app_folder, &other_executable_filename) {
         make_executable(&other_executable_path, log);
       }
     }
