@@ -1,28 +1,26 @@
 use super::Outcome;
 use crate::applications::{self, AppDefinition};
-use crate::configuration::{RequestedVersion, RequestedVersions, Version};
+use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::yard::Yard;
 use crate::{commands, configuration};
 use std::io::ErrorKind;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use which::which;
 
 /// installs the given Go-based application by compiling it from source
 pub(crate) fn run(
-  app_definition: &dyn AppDefinition,
+  app_folder: &Path,
   import_path: &str,
   platform: Platform,
-  version: &Version,
   optional: bool,
   config_file: &configuration::File,
   yard: &Yard,
   log: Log,
 ) -> Result<Outcome> {
-  let target_folder = yard.create_app_folder(&app_definition.app_name(), version)?;
   let go_args = vec!["install", &import_path];
   let go_path = if let Ok(system_go_path) = which("go") {
     system_go_path
@@ -38,7 +36,7 @@ pub(crate) fn run(
   });
   let mut cmd = Command::new(go_path);
   cmd.args(go_args);
-  cmd.env("GOBIN", target_folder);
+  cmd.env("GOBIN", app_folder);
   let status = match cmd.status() {
     Ok(status) => status,
     Err(err) => match err.kind() {
