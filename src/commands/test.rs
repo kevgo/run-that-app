@@ -18,7 +18,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
   let config_file = configuration::File::load(&apps)?;
   for app in apps {
     if let Some(start_app_name) = &args.start_at_app {
-      if app.name() != start_app_name {
+      if app.name() != start_app_name.as_str() {
         continue;
       }
       args.start_at_app = None;
@@ -47,7 +47,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
         continue;
       }
       let executable_paths = install_method.executable_paths(
-        app.as_ref(),
+        &app.name(),
         &app.default_executable_filename().platform_path(platform.os),
         &latest_version,
         &yard,
