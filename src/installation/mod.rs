@@ -6,7 +6,7 @@ mod download_archive;
 mod download_executable;
 
 use crate::applications::App;
-use crate::configuration::{self, Version};
+use crate::configuration::{self, ApplicationName, Version};
 use crate::logging::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
@@ -51,8 +51,8 @@ pub enum Method {
 
 impl Method {
   /// provides possible locations of the given executable within the given app folder in the given  yard
-  pub fn executable_paths(&self, app: &dyn App, executable_filename: &ExecutableFileName, version: &Version, yard: &Yard) -> Vec<PathBuf> {
-    let app_folder = yard.app_folder(&app.name(), version);
+  pub fn executable_paths(&self, app_name: &ApplicationName, executable_filename: &ExecutableFileName, version: &Version, yard: &Yard) -> Vec<PathBuf> {
+    let app_folder = yard.app_folder(app_name, version);
     match self {
       Method::DownloadArchive { url: _, bin_folder } => bin_folder.executable_paths(&app_folder, executable_filename),
       Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => vec![app_folder.join(executable_filename)],
