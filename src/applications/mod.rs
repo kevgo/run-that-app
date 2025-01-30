@@ -8,7 +8,7 @@ mod dprint;
 mod exhaustruct;
 mod gh;
 mod ghokin;
-pub mod go;
+pub(crate) mod go;
 mod goda;
 mod gofmt;
 mod gofumpt;
@@ -31,18 +31,52 @@ mod tikibase;
 use crate::configuration::{ApplicationName, Version};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{self, ExecutableNameUnix, ExecutablePath};
+use crate::run::{self, ExecutableArgs, ExecutableNameUnix, ExecutablePath};
 use crate::Log;
+pub use shellcheck::ShellCheck;
 use std::fmt::{Debug, Display};
 use std::slice::Iter;
 
-pub trait App {
+pub(crate) fn all() -> Apps {
+  Apps(vec![
+    Box::new(actionlint::ActionLint {}),
+    Box::new(alphavet::Alphavet {}),
+    Box::new(deadcode::Deadcode {}),
+    Box::new(depth::Depth {}),
+    Box::new(dprint::Dprint {}),
+    Box::new(gh::Gh {}),
+    Box::new(exhaustruct::Exhaustruct {}),
+    Box::new(ghokin::Ghokin {}),
+    Box::new(go::Go {}),
+    Box::new(goda::Goda {}),
+    Box::new(gofmt::Gofmt {}),
+    Box::new(gofumpt::Gofumpt {}),
+    Box::new(golangci_lint::GolangCiLint {}),
+    Box::new(goreleaser::Goreleaser {}),
+    Box::new(govulnchec::Govulncheck {}),
+    Box::new(ireturn::Ireturn {}),
+    Box::new(mdbook::MdBook {}),
+    Box::new(mdbook_linkcheck::MdBookLinkCheck {}),
+    Box::new(nodejs::NodeJS {}),
+    Box::new(node_prune::NodePrune {}),
+    Box::new(npm::Npm {}),
+    Box::new(npx::Npx {}),
+    Box::new(scc::Scc {}),
+    Box::new(shellcheck::ShellCheck {}),
+    Box::new(shfmt::Shfmt {}),
+    Box::new(staticcheck::StaticCheck {}),
+    Box::new(tikibase::Tikibase {}),
+  ])
+}
+
+/// allows definining an application that run-that-app can install
+pub(crate) trait AppDefinition {
   /// the name by which the user can select this application at the run-that-app CLI
-  fn name(&self) -> &'static str;
+  fn name(&self) -> ApplicationName;
 
   /// the filename of the executable that starts this app
   fn default_executable_filename(&self) -> ExecutableNameUnix {
-    ExecutableNameUnix::from(self.name())
+    ExecutableNameUnix::from(self.name().inner())
   }
 
   /// names of other executables that this app provides
@@ -79,39 +113,42 @@ pub trait App {
   }
 
   /// this is necessary because a limitation of Rust does not allow deriving the Clone trait automatically
-  fn clone(&self) -> Box<dyn App>;
+  fn clone(&self) -> Box<dyn AppDefinition>;
 
   /// provides the app that contains the executable for this app,
   /// the name of the executable provided by this app to call,
   /// and arguments to call that executable with.
-  fn carrier(&self, version: &Version, platform: Platform) -> (Box<dyn App>, ExecutableNameUnix, Vec<String>) {
+  fn carrier(&self, version: &Version, platform: Platform) -> (Box<dyn AppDefinition>, ExecutableNameUnix, ExecutableArgs) {
     match self.run_method(version, platform) {
-      run::Method::ThisApp { install_methods: _ } => (self.clone(), self.default_executable_filename(), vec![]),
-      run::Method::OtherAppOtherExecutable { app, executable_name } => (app.clone(), executable_name, vec![]),
-      run::Method::OtherAppDefaultExecutable { app, args } => (app.clone(), app.default_executable_filename(), args),
+      run::Method::ThisApp { install_methods: _ } => (self.clone(), self.default_executable_filename(), ExecutableArgs::None),
+      run::Method::OtherAppOtherExecutable {
+        app_definition,
+        executable_name,
+      } => (app_definition.clone(), executable_name, ExecutableArgs::None),
+      run::Method::OtherAppDefaultExecutable { app_definition, args } => (app_definition.clone(), app_definition.default_executable_filename(), args),
     }
   }
 }
 
-impl Display for dyn App {
+impl Display for dyn AppDefinition {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(self.name())
+    f.write_str(self.name().as_str())
   }
 }
 
-impl PartialEq for dyn App {
+impl PartialEq for dyn AppDefinition {
   fn eq(&self, other: &Self) -> bool {
     self.name() == other.name()
   }
 }
 
-impl Debug for dyn App {
+impl Debug for dyn AppDefinition {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(self.name())
+    f.write_str(self.name().as_str())
   }
 }
 
-pub enum AnalyzeResult {
+pub(crate) enum AnalyzeResult {
   /// the given executable does not belong to this app
   NotIdentified { output: String },
 
@@ -122,51 +159,19 @@ pub enum AnalyzeResult {
   IdentifiedWithVersion(Version),
 }
 
-pub fn all() -> Apps {
-  Apps(vec![
-    Box::new(actionlint::ActionLint {}),
-    Box::new(alphavet::Alphavet {}),
-    Box::new(deadcode::Deadcode {}),
-    Box::new(depth::Depth {}),
-    Box::new(dprint::Dprint {}),
-    Box::new(gh::Gh {}),
-    Box::new(exhaustruct::Exhaustruct {}),
-    Box::new(ghokin::Ghokin {}),
-    Box::new(go::Go {}),
-    Box::new(goda::Goda {}),
-    Box::new(gofmt::Gofmt {}),
-    Box::new(gofumpt::Gofumpt {}),
-    Box::new(golangci_lint::GolangCiLint {}),
-    Box::new(goreleaser::Goreleaser {}),
-    Box::new(govulnchec::Govulncheck {}),
-    Box::new(ireturn::Ireturn {}),
-    Box::new(mdbook::MdBook {}),
-    Box::new(mdbook_linkcheck::MdBookLinkCheck {}),
-    Box::new(nodejs::NodeJS {}),
-    Box::new(node_prune::NodePrune {}),
-    Box::new(npm::Npm {}),
-    Box::new(npx::Npx {}),
-    Box::new(scc::Scc {}),
-    Box::new(shellcheck::ShellCheck {}),
-    Box::new(shfmt::Shfmt {}),
-    Box::new(staticcheck::StaticCheck {}),
-    Box::new(tikibase::Tikibase {}),
-  ])
-}
-
-pub struct Apps(Vec<Box<dyn App>>);
+pub(crate) struct Apps(Vec<Box<dyn AppDefinition>>);
 
 impl Apps {
   /// provides an `Iterator` over the applications
-  pub fn iter(&self) -> Iter<'_, Box<dyn App>> {
+  pub(crate) fn iter(&self) -> Iter<'_, Box<dyn AppDefinition>> {
     self.0.iter()
   }
 
   /// provides the app with the given name
   /// TODO: return the actual Box<dyn App> instead of a reference here
-  pub fn lookup(&self, name: &ApplicationName) -> Result<&dyn App> {
+  pub(crate) fn lookup(&self, name: &ApplicationName) -> Result<&dyn AppDefinition> {
     for app in &self.0 {
-      if app.name() == name.as_str() {
+      if app.name() == name {
         return Ok(app.as_ref());
       }
     }
@@ -174,14 +179,14 @@ impl Apps {
   }
 
   /// provides the length of the name of the app with the longest name
-  pub fn longest_name_length(&self) -> usize {
-    self.iter().map(|app| app.name().len()).max().unwrap_or_default()
+  pub(crate) fn longest_name_length(&self) -> usize {
+    self.iter().map(|app| app.name().as_str().len()).max().unwrap_or_default()
   }
 }
 
 impl IntoIterator for Apps {
-  type Item = Box<dyn App>;
-  type IntoIter = std::vec::IntoIter<Box<dyn App>>;
+  type Item = Box<dyn AppDefinition>;
+  type IntoIter = std::vec::IntoIter<Box<dyn AppDefinition>>;
 
   fn into_iter(self) -> Self::IntoIter {
     self.0.into_iter()
@@ -215,7 +220,7 @@ mod tests {
         let apps = Apps(vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})]);
         let shellcheck = ApplicationName::from("shellcheck");
         let have = apps.lookup(&shellcheck).unwrap();
-        assert_eq!(have.name(), shellcheck.as_str());
+        assert_eq!(have.name(), &shellcheck);
       }
 
       #[test]

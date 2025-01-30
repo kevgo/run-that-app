@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
@@ -7,14 +7,14 @@ use crate::prelude::*;
 use crate::run::ExecutablePath;
 use crate::{regexp, run, Log};
 
-pub struct ShellCheck {}
+pub(crate) struct ShellCheck {}
 
 const ORG: &str = "koalaman";
 const REPO: &str = "shellcheck";
 
-impl App for ShellCheck {
-  fn name(&self) -> &'static str {
-    "shellcheck"
+impl AppDefinition for ShellCheck {
+  fn name(&self) -> ApplicationName {
+    ApplicationName::from("shellcheck")
   }
 
   fn homepage(&self) -> &'static str {
@@ -64,7 +64,7 @@ impl App for ShellCheck {
     }
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -79,7 +79,7 @@ mod tests {
   #[cfg(unix)]
   mod install_methods {
     use crate::applications::shellcheck::ShellCheck;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};

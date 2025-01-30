@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
@@ -11,11 +11,11 @@ use big_s::S;
 const ORG: &str = "dominikh";
 const REPO: &str = "go-tools";
 
-pub struct StaticCheck {}
+pub(crate) struct StaticCheck {}
 
-impl App for StaticCheck {
-  fn name(&self) -> &'static str {
-    "staticcheck"
+impl AppDefinition for StaticCheck {
+  fn name(&self) -> ApplicationName {
+    ApplicationName::from("staticcheck")
   }
 
   fn homepage(&self) -> &'static str {
@@ -61,7 +61,7 @@ impl App for StaticCheck {
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -71,7 +71,7 @@ mod tests {
 
   mod install_methods {
     use crate::applications::staticcheck::StaticCheck;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};

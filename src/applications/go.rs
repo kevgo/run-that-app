@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_tags;
 use crate::installation::{BinFolder, Method};
@@ -9,14 +9,14 @@ use crate::{filesystem, regexp, run, Log};
 use big_s::S;
 use std::path;
 
-pub struct Go {}
+pub(crate) struct Go {}
 
 const ORG: &str = "golang";
 const REPO: &str = "go";
 
-impl App for Go {
-  fn name(&self) -> &'static str {
-    "go"
+impl AppDefinition for Go {
+  fn name(&self) -> ApplicationName {
+    ApplicationName::from("go")
   }
 
   fn homepage(&self) -> &'static str {
@@ -96,7 +96,7 @@ impl App for Go {
     Ok(version_req)
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -114,7 +114,7 @@ mod tests {
 
   mod install_methods {
     use crate::applications::go::Go;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};

@@ -15,13 +15,13 @@ and execution, run-that-app can drastically simplify many technical aspects.
 Run-that-app is minimalistic and completely non-invasive. It ships as a single
 stand-alone binary. Following the principle "perfection is not achieved when
 there is nothing left to add, but when there is nothing left to take away",
-run-that-app uses no magic, no environment variables, no application shims, no
-shell integrations, no dependencies, no plugins, no need to package applications
-into a specific container format, no need to install applications, no
-application repository, no Docker, no WASM, no system daemons, no sudo, no
-emulation, no IDE plugins, no bloat. Applications download in 1-2 seconds from
-their original hosting location, and store very little (just the executables) on
-your hard drive. Applications execute at 100% native speed.
+run-that-app uses no environment variables, no application shims, no shell
+integrations, no dependencies, no plugins, no need to package applications into
+a specific container format, no need to install applications, no application
+repository, no Docker, no WASM, no system daemons, no sudo, no emulation, no IDE
+plugins, no bloat. Applications download in 1-2 seconds from their original
+hosting location, and store very little (just the executables) on your hard
+drive. Applications execute at 100% native speed.
 
 ### quickstart
 
@@ -139,6 +139,16 @@ _Run-that-app_ considers restrictions declared by your code base. If your
 codebase has a file `go.mod` containing `go 1.21` and the externally installed
 Go version is older, _run-that-app_ would not use the external version.
 
+#### Use the version defined by an external config file
+
+Certain applications allow defining the version to use in their own config file.
+An example is Go, which defines the Go version to use in the `go.mod` file. This
+setup makes run-that-app use that version:
+
+```
+go auto
+```
+
 #### Ignore unavailable applications
 
 ShellCheck is just a linter. If it isn't available on a particular platform, the
@@ -163,7 +173,7 @@ rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
 Here is a template for installing and using run-that-app in a `Makefile`:
 
 ```make
-RTA_VERSION = 0.10.3
+RTA_VERSION = 0.10.6
 
 # an example Make target that uses run-that-app
 test: tools/rta@${RTA_VERSION}

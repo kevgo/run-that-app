@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
@@ -8,14 +8,14 @@ use crate::run::ExecutablePath;
 use crate::{regexp, run, Log};
 use big_s::S;
 
-pub struct Dprint {}
+pub(crate) struct Dprint {}
 
 const ORG: &str = "dprint";
 const REPO: &str = "dprint";
 
-impl App for Dprint {
-  fn name(&self) -> &'static str {
-    "dprint"
+impl AppDefinition for Dprint {
+  fn name(&self) -> ApplicationName {
+    ApplicationName::from("dprint")
   }
 
   fn homepage(&self) -> &'static str {
@@ -65,7 +65,7 @@ impl App for Dprint {
     }
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -79,7 +79,7 @@ mod tests {
 
   mod install_methods {
     use super::super::Dprint;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};

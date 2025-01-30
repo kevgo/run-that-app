@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
@@ -7,14 +7,14 @@ use crate::prelude::*;
 use crate::run::{self, ExecutablePath};
 use crate::{regexp, Log};
 
-pub struct Goreleaser {}
+pub(crate) struct Goreleaser {}
 
 const ORG: &str = "goreleaser";
 const REPO: &str = "goreleaser";
 
-impl App for Goreleaser {
-  fn name(&self) -> &'static str {
-    "goreleaser"
+impl AppDefinition for Goreleaser {
+  fn name(&self) -> ApplicationName {
+    ApplicationName::from("goreleaser")
   }
 
   fn homepage(&self) -> &'static str {
@@ -62,7 +62,7 @@ impl App for Goreleaser {
     }
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -76,7 +76,7 @@ mod tests {
 
   mod install_methods {
     use crate::applications::goreleaser::Goreleaser;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};

@@ -3,9 +3,9 @@ use std::fmt::Display;
 
 /// description of the local platform that the binary must be able to execute on
 #[derive(Copy, Clone, Debug, PartialEq)]
-pub struct Platform {
-  pub os: Os,
-  pub cpu: Cpu,
+pub(crate) struct Platform {
+  pub(crate) os: Os,
+  pub(crate) cpu: Cpu,
 }
 
 impl Display for Platform {

@@ -1,5 +1,5 @@
-pub mod github_releases;
-pub mod github_tags;
+pub(crate) mod github_releases;
+pub(crate) mod github_tags;
 
 /// provides the version of this release without "v" in it
 ///

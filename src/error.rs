@@ -6,7 +6,7 @@ use std::path::PathBuf;
 /// errors that are the user's fault and should be displayed to them
 #[derive(Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions)]
-pub enum UserError {
+pub(crate) enum UserError {
   ArchiveCannotExtract {
     reason: String,
   },
@@ -43,10 +43,7 @@ pub enum UserError {
     call: String,
     reason: String,
   },
-  CannotFindExecutable {
-    app: String,
-    executable_name: String,
-  },
+  CannotFindExecutable,
   #[cfg(unix)]
   CannotMakeFileExecutable {
     file: String,
@@ -92,9 +89,6 @@ pub enum UserError {
   },
   GoCompilationFailed,
   GoNoPermission,
-  InternalError {
-    desc: String,
-  },
   InvalidConfigFileFormat {
     line_no: usize,
     text: String,
@@ -139,7 +133,7 @@ pub enum UserError {
 
 impl UserError {
   #[allow(clippy::too_many_lines)]
-  pub fn print(self) {
+  pub(crate) fn print(self) {
     match self {
       UserError::ArchiveCannotExtract { reason } => {
         error(&format!("cannot extract the archive: {reason}"));
@@ -169,8 +163,8 @@ impl UserError {
       UserError::CannotExecuteBinary { call, reason } => {
         error(&format!("cannot execute \"{call}\":\n{reason}"));
       }
-      UserError::CannotFindExecutable { app, executable_name } => {
-        error(&format!("cannot locate executable {executable_name} for app {app}."));
+      UserError::CannotFindExecutable => {
+        error("cannot locate executable for app.");
         desc("Please report this at https://github.com/kevgo/run-that-app/issues/new and try using an older version until this is fixed.");
       }
       #[cfg(unix)]
@@ -226,9 +220,6 @@ impl UserError {
         desc("Please see the error output above and try again with a different version.");
       }
       UserError::GoNoPermission => error("No permission to execute the Go compiler"),
-      UserError::InternalError { desc } => error(&format!(
-        "Internal error: {desc}. Please report this at https://github.com/kevgo/run-that-app/issues/new"
-      )),
       UserError::InvalidConfigFileFormat { line_no, text } => {
         error("Invalid config file format");
         desc(&format!("{}:{line_no}: {text}", configuration::FILE_NAME));

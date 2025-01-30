@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::Method;
@@ -8,14 +8,14 @@ use crate::run::ExecutablePath;
 use crate::{regexp, run, Log};
 use const_format::formatcp;
 
-pub struct Shfmt {}
+pub(crate) struct Shfmt {}
 
 const ORG: &str = "mvdan";
 const REPO: &str = "sh";
 
-impl App for Shfmt {
-  fn name(&self) -> &'static str {
-    "shfmt"
+impl AppDefinition for Shfmt {
+  fn name(&self) -> ApplicationName {
+    ApplicationName::from("shfmt")
   }
 
   fn homepage(&self) -> &'static str {
@@ -67,7 +67,7 @@ impl App for Shfmt {
     }
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -82,7 +82,7 @@ mod tests {
 
   mod install_methods {
     use crate::applications::shfmt::Shfmt;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};

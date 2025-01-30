@@ -3,7 +3,7 @@ use colored::Colorize;
 use std::io::{self, Write};
 
 /// a logger with concise output, for normal production use
-pub fn log(event: Event) {
+pub(crate) fn log(event: Event) {
   #[allow(clippy::match_same_arms)]
   match event {
     Event::AnalyzeExecutableBegin { cmd: _, args: _ } => {}
@@ -54,6 +54,8 @@ pub fn log(event: Event) {
     Event::IntegrationTestDeterminedVersion { version: _ } => {}
     Event::IntegrationTestNewInstallMethod { app, method, version } => eprintln!("\n{}", method.name(app, version).bold()),
 
+    #[cfg(unix)]
+    Event::MakeExecutable { file: _ } => {}
     Event::NotOnline => eprintln!("{}", "not online".red()),
 
     Event::UpdateBegin { app: _ } => {}

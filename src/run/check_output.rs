@@ -7,7 +7,7 @@ use std::sync::mpsc;
 use std::thread;
 
 /// events that can happen with subshells
-pub enum Event {
+pub(crate) enum Event {
   /// a line of output to STDOUT or STDERR terminated by LF
   PermanentLine(Vec<u8>),
   /// a line of output to STDOUT or STDERR terminated by CR
@@ -25,7 +25,7 @@ const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
 
 /// Executes the given executable with the given arguments.
 /// The returned `ExitCode` also indicates failure if there has been any output.
-pub fn check_output(executable_call: &ExecutableCall, args: &[String]) -> Result<ExitCode> {
+pub(crate) fn check_output(executable_call: &ExecutableCall, args: &[String]) -> Result<ExitCode> {
   let (sender, receiver) = mpsc::channel();
   let mut cmd = Command::new(&executable_call.executable_path);
   cmd.args(&executable_call.args);

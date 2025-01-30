@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
@@ -9,14 +9,14 @@ use crate::{regexp, run, Log};
 use big_s::S;
 use std::path;
 
-pub struct Gh {}
+pub(crate) struct Gh {}
 
 const ORG: &str = "cli";
 const REPO: &str = "cli";
 
-impl App for Gh {
-  fn name(&self) -> &'static str {
-    "gh"
+impl AppDefinition for Gh {
+  fn name(&self) -> ApplicationName {
+    ApplicationName::from("gh")
   }
 
   fn homepage(&self) -> &'static str {
@@ -68,7 +68,7 @@ impl App for Gh {
     }
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -82,7 +82,7 @@ mod tests {
 
   mod install_methods {
     use crate::applications::gh::Gh;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};

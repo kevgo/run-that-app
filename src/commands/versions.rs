@@ -3,7 +3,7 @@ use crate::prelude::*;
 use crate::{applications, logging};
 use std::process::ExitCode;
 
-pub fn versions(args: &Args) -> Result<ExitCode> {
+pub(crate) fn versions(args: &Args) -> Result<ExitCode> {
   let apps = &applications::all();
   let app = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
@@ -16,8 +16,8 @@ pub fn versions(args: &Args) -> Result<ExitCode> {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Args {
-  pub app_name: ApplicationName,
-  pub amount: usize,
-  pub verbose: bool,
+pub(crate) struct Args {
+  pub(crate) app_name: ApplicationName,
+  pub(crate) amount: usize,
+  pub(crate) verbose: bool,
 }

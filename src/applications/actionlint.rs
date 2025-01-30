@@ -1,5 +1,5 @@
-use super::{AnalyzeResult, App};
-use crate::configuration::Version;
+use super::{AnalyzeResult, AppDefinition};
+use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
@@ -8,14 +8,14 @@ use crate::run::{self, ExecutablePath};
 use crate::{regexp, Log};
 use const_format::formatcp;
 
-pub struct ActionLint {}
+pub(crate) struct ActionLint {}
 
 const ORG: &str = "rhysd";
 const REPO: &str = "actionlint";
 
-impl App for ActionLint {
-  fn name(&self) -> &'static str {
-    "actionlint"
+impl AppDefinition for ActionLint {
+  fn name(&self) -> ApplicationName {
+    ApplicationName::from("actionlint")
   }
 
   fn homepage(&self) -> &'static str {
@@ -69,7 +69,7 @@ impl App for ActionLint {
     }
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -84,7 +84,7 @@ mod tests {
 
   mod run_method {
     use crate::applications::actionlint::ActionLint;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};

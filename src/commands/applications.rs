@@ -1,7 +1,7 @@
 use crate::applications;
 use std::process::ExitCode;
 
-pub fn long() -> ExitCode {
+pub(crate) fn long() -> ExitCode {
   let apps = applications::all();
   let width = apps.longest_name_length() + 1;
   for app in apps.iter() {
@@ -10,7 +10,7 @@ pub fn long() -> ExitCode {
   ExitCode::SUCCESS
 }
 
-pub fn short() -> ExitCode {
+pub(crate) fn short() -> ExitCode {
   let apps = applications::all();
   for app in apps.iter() {
     println!("{}", app.name());

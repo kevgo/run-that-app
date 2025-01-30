@@ -1,12 +1,49 @@
-use super::ExecutablePath;
+use super::{ExecutableArgs, ExecutablePath};
 use std::fmt::{Display, Write};
+use std::path::Path;
 
-/// all the information needed to call an `App`s executable
-pub struct ExecutableCall {
-  /// the executable to call
-  pub executable_path: ExecutablePath,
-  /// arguments that are part of running the executable itself, not arguments provided by the user
-  pub args: Vec<String>,
+/// information to call an `App`s executable, as it is defined by the user
+#[derive(Clone)]
+pub(crate) struct ExecutableCallDefinition {
+  pub(crate) executable_path: ExecutablePath,
+  pub(crate) args: ExecutableArgs,
+}
+
+impl ExecutableCallDefinition {
+  pub(crate) fn into_executable_call(self, app_folder: &Path) -> Option<ExecutableCall> {
+    match self.args {
+      ExecutableArgs::None => Some(ExecutableCall {
+        executable_path: self.executable_path,
+        args: vec![],
+      }),
+      ExecutableArgs::OneOfTheseInAppFolder { options } => {
+        for option in options {
+          let full_path = app_folder.join(option);
+          if full_path.exists() {
+            return Some(ExecutableCall {
+              executable_path: self.executable_path,
+              args: vec![full_path.to_string_lossy().to_string()],
+            });
+          }
+        }
+        None
+      }
+    }
+  }
+}
+
+impl Display for ExecutableCallDefinition {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.write_str(&self.executable_path.as_str())?;
+    f.write_str(&self.args.to_string())?;
+    Ok(())
+  }
+}
+
+/// information to call an app with file paths adjusted
+pub(crate) struct ExecutableCall {
+  pub(crate) executable_path: ExecutablePath,
+  pub(crate) args: Vec<String>,
 }
 
 impl Display for ExecutableCall {

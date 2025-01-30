@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
@@ -9,14 +9,14 @@ use crate::{regexp, run, Log};
 use big_s::S;
 use const_format::formatcp;
 
-pub struct MdBook {}
+pub(crate) struct MdBook {}
 
 const ORG: &str = "rust-lang";
 const REPO: &str = "mdBook";
 
-impl App for MdBook {
-  fn name(&self) -> &'static str {
-    "mdbook"
+impl AppDefinition for MdBook {
+  fn name(&self) -> ApplicationName {
+    ApplicationName::from("mdbook")
   }
 
   fn homepage(&self) -> &'static str {
@@ -70,7 +70,7 @@ impl App for MdBook {
     }
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -85,7 +85,7 @@ mod tests {
 
   mod install_methods {
     use crate::applications::mdbook::MdBook;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};

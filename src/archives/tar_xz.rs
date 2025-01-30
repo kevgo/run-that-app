@@ -6,8 +6,8 @@ use std::path::Path;
 use xz2::read::XzDecoder;
 
 /// a .tar.xz file downloaded from the internet, containing an application
-pub struct TarXz {
-  pub data: Vec<u8>,
+pub(crate) struct TarXz {
+  pub(crate) data: Vec<u8>,
 }
 
 impl Archive for TarXz {

@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
@@ -8,14 +8,14 @@ use crate::run::ExecutablePath;
 use crate::{run, Log};
 use const_format::formatcp;
 
-pub struct Ireturn {}
+pub(crate) struct Ireturn {}
 
 const ORG: &str = "butuzov";
 const REPO: &str = "ireturn";
 
-impl App for Ireturn {
-  fn name(&self) -> &'static str {
-    "ireturn"
+impl AppDefinition for Ireturn {
+  fn name(&self) -> ApplicationName {
+    ApplicationName::from("ireturn")
   }
 
   fn homepage(&self) -> &'static str {
@@ -65,7 +65,7 @@ impl App for Ireturn {
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -75,7 +75,7 @@ mod tests {
 
   mod install_methods {
     use crate::applications::ireturn::Ireturn;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
