@@ -1,6 +1,6 @@
 use super::go::Go;
 use super::{AnalyzeResult, AppDefinition};
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::run::{ExecutableNameUnix, ExecutablePath};

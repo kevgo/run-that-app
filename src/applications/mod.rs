@@ -33,7 +33,6 @@ use crate::platform::Platform;
 use crate::prelude::*;
 use crate::run::{self, ExecutableArgs, ExecutableNameUnix, ExecutablePath};
 use crate::Log;
-pub(crate) use shellcheck::ShellCheck;
 use std::fmt::{Debug, Display};
 use std::slice::Iter;
 

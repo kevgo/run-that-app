@@ -45,10 +45,3 @@ impl AsRef<Path> for ApplicationName {
     Path::new(&self.0)
   }
 }
-
-impl ApplicationName {
-  /// provides the underlying string value
-  pub(crate) fn inner(self) -> String {
-    self.0
-  }
-}
