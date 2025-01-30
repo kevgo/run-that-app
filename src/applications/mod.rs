@@ -73,6 +73,7 @@ pub(crate) trait AppDefinition {
   /// the name by which the user can select this application at the run-that-app CLI
   fn name(&self) -> &'static str;
 
+  /// type-safe version of self.name, for internal use
   fn app_name(&self) -> ApplicationName {
     ApplicationName::from(self.name())
   }
