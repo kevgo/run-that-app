@@ -88,7 +88,7 @@ pub(crate) trait AppDefinition {
     vec![]
   }
 
-  /// the various ways to install and run this application
+  /// define how to run this application
   fn run_method(&self, version: &Version, platform: Platform) -> run::Method;
 
   /// link to the (human-readable) homepage of the app
