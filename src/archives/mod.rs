@@ -9,7 +9,7 @@ use crate::prelude::*;
 use crate::{filesystem, Log};
 use std::path::Path;
 
-/// An archive is a compressed file containing an application.
+/// An archive is a compressed file containing an executable and other files needed to run a particular application.
 pub(crate) trait Archive {
   /// extracts all files from the given archive data to the given location on disk
   fn extract_all(&self, target_dir: &Path, log: Log) -> Result<()>;
