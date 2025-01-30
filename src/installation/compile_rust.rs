@@ -1,21 +1,19 @@
 use super::Outcome;
-use crate::configuration::{ApplicationName, Version};
 use crate::logging::{Event, Log};
 use crate::prelude::*;
-use crate::yard::Yard;
 use std::io::ErrorKind;
+use std::path::Path;
 use std::process::Command;
 use which::which;
 
 /// installs the given Rust-based application by compiling it from source
-pub(crate) fn run(app_name: &ApplicationName, crate_name: &str, version: &Version, yard: &Yard, log: Log) -> Result<Outcome> {
+pub(crate) fn run(app_folder: &Path, crate_name: &str, log: Log) -> Result<Outcome> {
   let Ok(cargo_path) = which("cargo") else {
     return Err(UserError::RustNotInstalled);
   };
-  let target_folder = yard.create_app_folder(&app_name, version)?;
   let mut cmd = Command::new(&cargo_path);
-  let target_folder_str = &target_folder.to_string_lossy();
-  let args = vec!["install", "--root", &target_folder_str, "--locked", crate_name];
+  let app_folder_str = &app_folder.to_string_lossy();
+  let args = vec!["install", "--root", &app_folder_str, "--locked", crate_name];
   log(Event::CompileRustStart {
     cargo_path: &cargo_path,
     args: &args,
