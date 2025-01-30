@@ -4,7 +4,6 @@ use crate::configuration::Version;
 use crate::logging::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::yard::Yard;
 use crate::{archives, download};
 #[cfg(unix)]
 use std::fs;
@@ -15,19 +14,18 @@ use std::path::Path;
 /// downloads and unpacks the content of an archive file
 pub(crate) fn run(
   app_definition: &dyn AppDefinition,
+  app_folder: &Path,
   version: &Version,
   url: &str,
   bin_folders: &BinFolder,
   optional: bool,
   platform: Platform,
-  yard: &Yard,
   log: Log,
 ) -> Result<Outcome> {
   let (app_to_install, executable_name, _args) = app_definition.carrier(version, platform);
   let Some(artifact) = download::artifact(url, &app_to_install.name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
-  let app_folder = yard.create_app_folder(&app_to_install.name(), version)?;
   let Some(archive) = archives::lookup(&artifact.filename, artifact.data) else {
     return Err(UserError::UnknownArchive(artifact.filename));
   };
