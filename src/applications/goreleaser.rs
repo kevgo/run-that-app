@@ -13,8 +13,8 @@ const ORG: &str = "goreleaser";
 const REPO: &str = "goreleaser";
 
 impl AppDefinition for Goreleaser {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("goreleaser")
+  fn name(&self) -> &'static str {
+    "goreleaser"
   }
 
   fn homepage(&self) -> &'static str {

@@ -14,8 +14,8 @@ const ORG: &str = "rhysd";
 const REPO: &str = "actionlint";
 
 impl AppDefinition for ActionLint {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("actionlint")
+  fn name(&self) -> &'static str {
+    "actionlint"
   }
 
   fn homepage(&self) -> &'static str {

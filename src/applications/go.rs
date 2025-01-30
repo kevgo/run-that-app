@@ -15,8 +15,8 @@ const ORG: &str = "golang";
 const REPO: &str = "go";
 
 impl AppDefinition for Go {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("go")
+  fn name(&self) -> &'static str {
+    "go"
   }
 
   fn homepage(&self) -> &'static str {

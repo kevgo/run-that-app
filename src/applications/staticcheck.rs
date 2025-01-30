@@ -14,8 +14,8 @@ const REPO: &str = "go-tools";
 pub(crate) struct StaticCheck {}
 
 impl AppDefinition for StaticCheck {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("staticcheck")
+  fn name(&self) -> &'static str {
+    "staticcheck"
   }
 
   fn homepage(&self) -> &'static str {

@@ -14,8 +14,8 @@ const ORG: &str = "skx";
 const REPO: &str = "alphavet";
 
 impl AppDefinition for Alphavet {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("alphavet")
+  fn name(&self) -> &'static str {
+    "alphavet"
   }
 
   fn homepage(&self) -> &'static str {

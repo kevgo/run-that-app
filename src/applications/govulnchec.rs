@@ -9,8 +9,8 @@ use crate::Log;
 pub(crate) struct Govulncheck {}
 
 impl AppDefinition for Govulncheck {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("govulncheck")
+  fn name(&self) -> &'static str {
+    "govulncheck"
   }
 
   fn homepage(&self) -> &'static str {

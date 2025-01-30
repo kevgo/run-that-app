@@ -14,8 +14,8 @@ const ORG: &str = "kevgo";
 const REPO: &str = "tikibase";
 
 impl AppDefinition for Tikibase {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("tikibase")
+  fn name(&self) -> &'static str {
+    "tikibase"
   }
 
   fn homepage(&self) -> &'static str {

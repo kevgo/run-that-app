@@ -22,7 +22,7 @@ pub(crate) fn run(
   yard: &Yard,
   log: Log,
 ) -> Result<Outcome> {
-  let target_folder = yard.create_app_folder(&app_definition.name(), version)?;
+  let target_folder = yard.create_app_folder(&app_definition.app_name(), version)?;
   let go_args = vec!["install", &import_path];
   let go_path = if let Ok(system_go_path) = which("go") {
     system_go_path
@@ -57,7 +57,7 @@ pub(crate) fn run(
 
 fn load_rta_go(platform: Platform, optional: bool, config_file: &configuration::File, yard: &Yard, log: Log) -> Result<Option<PathBuf>> {
   let go = applications::go::Go {};
-  let requested_go_versions = if let Some(versions) = config_file.lookup(&go.name()) {
+  let requested_go_versions = if let Some(versions) = config_file.lookup(&go.app_name()) {
     versions
   } else {
     let versions = go.installable_versions(3, log)?;

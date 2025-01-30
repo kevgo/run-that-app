@@ -14,8 +14,8 @@ const ORG: &str = "tj";
 const REPO: &str = "node-prune";
 
 impl AppDefinition for NodePrune {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("node-prune")
+  fn name(&self) -> &'static str {
+    "node-prune"
   }
 
   fn homepage(&self) -> &'static str {

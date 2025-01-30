@@ -13,7 +13,7 @@ pub(crate) fn run(app_definition: &dyn AppDefinition, crate_name: &str, version:
   let Ok(cargo_path) = which("cargo") else {
     return Err(UserError::RustNotInstalled);
   };
-  let target_folder = yard.create_app_folder(&app_definition.name(), version)?;
+  let target_folder = yard.create_app_folder(&app_definition.app_name(), version)?;
   let mut cmd = Command::new(&cargo_path);
   let target_folder_str = &target_folder.to_string_lossy();
   let args = vec!["install", "--root", &target_folder_str, "--locked", crate_name];

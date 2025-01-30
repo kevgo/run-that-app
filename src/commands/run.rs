@@ -133,27 +133,28 @@ fn load_or_install_from_yard(
   log: Log,
 ) -> Result<Option<ExecutableCall>> {
   let (app_to_install, executable_name, executable_args) = app_definition.carrier(version, platform);
+  let app_name = app_to_install.app_name();
   // try to load the app
   if let Some((executable_path, bin_folder)) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
-    let app_folder = yard.app_folder(&app_to_install.name(), version);
+    let app_folder = yard.app_folder(&app_name, version);
     let args = executable_args.locate(&app_folder, &bin_folder)?;
     return Ok(Some(ExecutableCall { executable_path, args }));
   }
   // app not installed --> check if uninstallable
-  if yard.is_not_installable(&app_to_install.name(), version) {
+  if yard.is_not_installable(&app_name, version) {
     return Ok(None);
   }
   // app not installed and installable --> try to install
   match installation::any(app_to_install.as_ref(), version, platform, optional, yard, config_file, log)? {
     Outcome::Installed => {} // we'll load it below
     Outcome::NotInstalled => {
-      yard.mark_not_installable(&app_to_install.name(), version)?;
+      yard.mark_not_installable(&app_name, version)?;
       return Ok(None);
     }
   }
   // load again now that it is installed
   if let Some((executable_path, bin_folder)) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
-    let app_folder = yard.app_folder(&app_to_install.name(), version);
+    let app_folder = yard.app_folder(&app_name, version);
     let args = executable_args.locate(&app_folder, &bin_folder)?;
     return Ok(Some(ExecutableCall { executable_path, args }));
   }

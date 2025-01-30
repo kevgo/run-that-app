@@ -33,7 +33,7 @@ use crate::platform::Platform;
 use crate::prelude::*;
 use crate::run::{self, ExecutableArgs, ExecutableNameUnix, ExecutablePath};
 use crate::Log;
-pub use shellcheck::ShellCheck;
+pub(crate) use shellcheck::ShellCheck;
 use std::fmt::{Debug, Display};
 use std::slice::Iter;
 
@@ -72,11 +72,15 @@ pub(crate) fn all() -> Apps {
 /// allows definining an application that run-that-app can install
 pub(crate) trait AppDefinition {
   /// the name by which the user can select this application at the run-that-app CLI
-  fn name(&self) -> ApplicationName;
+  fn name(&self) -> &'static str;
+
+  fn app_name(&self) -> ApplicationName {
+    ApplicationName::from(self.name())
+  }
 
   /// the filename of the executable that starts this app
   fn default_executable_filename(&self) -> ExecutableNameUnix {
-    ExecutableNameUnix::from(self.name().inner())
+    ExecutableNameUnix::from(self.name())
   }
 
   /// names of other executables that this app provides
@@ -132,7 +136,7 @@ pub(crate) trait AppDefinition {
 
 impl Display for dyn AppDefinition {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(self.name().as_str())
+    f.write_str(self.name())
   }
 }
 
@@ -144,7 +148,7 @@ impl PartialEq for dyn AppDefinition {
 
 impl Debug for dyn AppDefinition {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(self.name().as_str())
+    f.write_str(self.name())
   }
 }
 
@@ -171,7 +175,7 @@ impl Apps {
   /// TODO: return the actual Box<dyn App> instead of a reference here
   pub(crate) fn lookup(&self, name: &ApplicationName) -> Result<&dyn AppDefinition> {
     for app in &self.0 {
-      if app.name() == name {
+      if app.name() == name.as_str() {
         return Ok(app.as_ref());
       }
     }
@@ -180,7 +184,7 @@ impl Apps {
 
   /// provides the length of the name of the app with the longest name
   pub(crate) fn longest_name_length(&self) -> usize {
-    self.iter().map(|app| app.name().as_str().len()).max().unwrap_or_default()
+    self.iter().map(|app| app.name().len()).max().unwrap_or_default()
   }
 }
 
@@ -220,7 +224,7 @@ mod tests {
         let apps = Apps(vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})]);
         let shellcheck = ApplicationName::from("shellcheck");
         let have = apps.lookup(&shellcheck).unwrap();
-        assert_eq!(have.name(), &shellcheck);
+        assert_eq!(have.name(), shellcheck.as_str());
       }
 
       #[test]

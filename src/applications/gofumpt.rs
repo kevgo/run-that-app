@@ -14,8 +14,8 @@ const ORG: &str = "mvdan";
 const REPO: &str = "gofumpt";
 
 impl AppDefinition for Gofumpt {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("gofumpt")
+  fn name(&self) -> &'static str {
+    "gofumpt"
   }
 
   fn homepage(&self) -> &'static str {

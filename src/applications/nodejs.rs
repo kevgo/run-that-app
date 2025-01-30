@@ -14,8 +14,8 @@ pub(crate) const ORG: &str = "nodejs";
 pub(crate) const REPO: &str = "node";
 
 impl AppDefinition for NodeJS {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("node")
+  fn name(&self) -> &'static str {
+    "node"
   }
 
   fn homepage(&self) -> &'static str {

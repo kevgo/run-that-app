@@ -14,8 +14,8 @@ const ORG: &str = "boyter";
 const REPO: &str = "scc";
 
 impl AppDefinition for Scc {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("scc")
+  fn name(&self) -> &'static str {
+    "scc"
   }
 
   fn homepage(&self) -> &'static str {
