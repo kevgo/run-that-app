@@ -14,8 +14,8 @@ const ORG: &str = "KyleBanks";
 const REPO: &str = "depth";
 
 impl App for Depth {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("depth")
+  fn name(&self) -> &'static str {
+    "depth"
   }
 
   fn homepage(&self) -> &'static str {

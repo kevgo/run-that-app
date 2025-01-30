@@ -14,8 +14,8 @@ const ORG: &str = "mvdan";
 const REPO: &str = "sh";
 
 impl App for Shfmt {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("shfmt")
+  fn name(&self) -> &'static str {
+    "shfmt"
   }
 
   fn homepage(&self) -> &'static str {

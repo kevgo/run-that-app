@@ -14,8 +14,8 @@ pub const ORG: &str = "nodejs";
 pub const REPO: &str = "node";
 
 impl App for NodeJS {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("node")
+  fn name(&self) -> &'static str {
+    "node"
   }
 
   fn homepage(&self) -> &'static str {

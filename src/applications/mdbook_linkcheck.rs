@@ -15,8 +15,8 @@ const ORG: &str = "Michael-F-Bryan";
 const REPO: &str = "mdbook-linkcheck";
 
 impl App for MdBookLinkCheck {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("mdbook-linkcheck")
+  fn name(&self) -> &'static str {
+    "mdbook-linkcheck"
   }
 
   fn homepage(&self) -> &'static str {

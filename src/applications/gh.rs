@@ -15,8 +15,8 @@ const ORG: &str = "cli";
 const REPO: &str = "cli";
 
 impl App for Gh {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("gh")
+  fn name(&self) -> &'static str {
+    "gh"
   }
 
   fn homepage(&self) -> &'static str {

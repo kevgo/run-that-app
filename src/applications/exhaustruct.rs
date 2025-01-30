@@ -14,8 +14,8 @@ const ORG: &str = "GaijinEntertainment";
 const REPO: &str = "go-exhaustruct";
 
 impl App for Exhaustruct {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("exhaustruct")
+  fn name(&self) -> &'static str {
+    "exhaustruct"
   }
 
   fn homepage(&self) -> &'static str {

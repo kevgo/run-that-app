@@ -13,8 +13,8 @@ const ORG: &str = "koalaman";
 const REPO: &str = "shellcheck";
 
 impl App for ShellCheck {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("shellcheck")
+  fn name(&self) -> &'static str {
+    "shellcheck"
   }
 
   fn homepage(&self) -> &'static str {

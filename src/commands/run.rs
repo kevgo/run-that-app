@@ -131,7 +131,8 @@ fn load_or_install_from_yard(
     return Ok(Some(ExecutableCall { executable_path, args }));
   }
   // app not installed --> check if uninstallable
-  if yard.is_not_installable(&app.name(), version) {
+  let app_name = ApplicationName::from(app.name());
+  if yard.is_not_installable(&app_name, version) {
     return Ok(None);
   }
   // app not installed and installable --> try to install
@@ -147,7 +148,7 @@ fn load_or_install_from_yard(
       }
     }
     Outcome::NotInstalled => {
-      yard.mark_not_installable(&app.name(), version)?;
+      yard.mark_not_installable(&app_name, version)?;
       Ok(None)
     }
   }

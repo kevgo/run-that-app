@@ -18,7 +18,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
   let config_file = configuration::File::load(&apps)?;
   for app in apps {
     if let Some(start_app_name) = &args.start_at_app {
-      if app.name() != start_app_name {
+      if app.name() != start_app_name.as_str() {
         continue;
       }
       args.start_at_app = None;
@@ -28,7 +28,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
     log(Event::IntegrationTestDeterminedVersion { version: &latest_version });
     for install_method in app.run_method(&latest_version, platform).install_methods() {
       log(Event::IntegrationTestNewInstallMethod {
-        app: app.name().as_str(),
+        app: app.name(),
         method: &install_method,
         version: &latest_version,
       });
@@ -84,7 +84,7 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
         }
         return Ok(ExitCode::FAILURE);
       }
-      let _ = yard.delete_app_folder(&app.name());
+      let _ = yard.delete_app_folder(&ApplicationName::from(app.name()));
     }
   }
   Ok(ExitCode::SUCCESS)

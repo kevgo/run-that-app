@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, App};
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
@@ -14,8 +14,8 @@ const ORG: &str = "rhysd";
 const REPO: &str = "actionlint";
 
 impl App for ActionLint {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("actionlint")
+  fn name(&self) -> &'static str {
+    "actionlint"
   }
 
   fn homepage(&self) -> &'static str {

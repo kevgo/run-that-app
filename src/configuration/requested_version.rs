@@ -85,7 +85,7 @@ mod tests {
         Ok(self.allowed_versions.clone())
       }
 
-      fn name(&self) -> crate::configuration::ApplicationName {
+      fn name(&self) -> &'static str {
         unimplemented!()
       }
       fn default_executable_filename(&self) -> ExecutableNameUnix {

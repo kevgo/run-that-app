@@ -14,8 +14,8 @@ const ORG: &str = "golangci";
 const REPO: &str = "golangci-lint";
 
 impl App for GolangCiLint {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("golangci-lint")
+  fn name(&self) -> &'static str {
+    "golangci-lint"
   }
 
   fn homepage(&self) -> &'static str {

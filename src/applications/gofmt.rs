@@ -9,8 +9,8 @@ use crate::{run, Log};
 pub struct Gofmt {}
 
 impl App for Gofmt {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("gofmt")
+  fn name(&self) -> &'static str {
+    "gofmt"
   }
 
   fn homepage(&self) -> &'static str {

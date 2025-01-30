@@ -9,8 +9,8 @@ use crate::{run, Log};
 pub struct Npm {}
 
 impl App for Npm {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("npm")
+  fn name(&self) -> &'static str {
+    "npm"
   }
 
   fn homepage(&self) -> &'static str {

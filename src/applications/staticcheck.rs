@@ -14,8 +14,8 @@ const REPO: &str = "go-tools";
 pub struct StaticCheck {}
 
 impl App for StaticCheck {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("staticcheck")
+  fn name(&self) -> &'static str {
+    "staticcheck"
   }
 
   fn homepage(&self) -> &'static str {

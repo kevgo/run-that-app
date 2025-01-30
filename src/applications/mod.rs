@@ -38,11 +38,11 @@ use std::slice::Iter;
 
 pub trait App {
   /// the name by which the user can select this application at the run-that-app CLI
-  fn name(&self) -> ApplicationName;
+  fn name(&self) -> &'static str;
 
   /// the filename of the executable that starts this app
   fn default_executable_filename(&self) -> ExecutableNameUnix {
-    ExecutableNameUnix::from(self.name().inner())
+    ExecutableNameUnix::from(self.name())
   }
 
   /// names of other executables that this app provides
@@ -95,7 +95,7 @@ pub trait App {
 
 impl Display for dyn App {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(self.name().as_str())
+    f.write_str(self.name())
   }
 }
 
@@ -107,7 +107,7 @@ impl PartialEq for dyn App {
 
 impl Debug for dyn App {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(self.name().as_str())
+    f.write_str(self.name())
   }
 }
 
@@ -166,7 +166,7 @@ impl Apps {
   /// TODO: return the actual Box<dyn App> instead of a reference here
   pub fn lookup(&self, name: &ApplicationName) -> Result<&dyn App> {
     for app in &self.0 {
-      if app.name() == name {
+      if app.name() == name.as_str() {
         return Ok(app.as_ref());
       }
     }
@@ -175,7 +175,7 @@ impl Apps {
 
   /// provides the length of the name of the app with the longest name
   pub fn longest_name_length(&self) -> usize {
-    self.iter().map(|app| app.name().as_str().len()).max().unwrap_or_default()
+    self.iter().map(|app| app.name().len()).max().unwrap_or_default()
   }
 }
 
@@ -215,7 +215,7 @@ mod tests {
         let apps = Apps(vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})]);
         let shellcheck = ApplicationName::from("shellcheck");
         let have = apps.lookup(&shellcheck).unwrap();
-        assert_eq!(have.name(), &shellcheck);
+        assert_eq!(have.name(), shellcheck.as_str());
       }
 
       #[test]

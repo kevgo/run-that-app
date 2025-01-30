@@ -87,7 +87,7 @@ pub enum Event<'a> {
   },
 
   IntegrationTestNewApp {
-    app: &'a ApplicationName,
+    app: &'static str,
   },
   IntegrationTestDeterminedVersion {
     version: &'a Version,

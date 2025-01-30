@@ -15,8 +15,8 @@ const ORG: &str = "rust-lang";
 const REPO: &str = "mdBook";
 
 impl App for MdBook {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("mdbook")
+  fn name(&self) -> &'static str {
+    "mdbook"
   }
 
   fn homepage(&self) -> &'static str {

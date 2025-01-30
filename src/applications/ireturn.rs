@@ -14,8 +14,8 @@ const ORG: &str = "butuzov";
 const REPO: &str = "ireturn";
 
 impl App for Ireturn {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("ireturn")
+  fn name(&self) -> &'static str {
+    "ireturn"
   }
 
   fn homepage(&self) -> &'static str {

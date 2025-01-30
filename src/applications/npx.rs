@@ -9,8 +9,8 @@ use crate::{run, Log};
 pub struct Npx {}
 
 impl App for Npx {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("npx")
+  fn name(&self) -> &'static str {
+    "npx"
   }
 
   fn homepage(&self) -> &'static str {

@@ -14,8 +14,8 @@ const ORG: &str = "antham";
 const REPO: &str = "ghokin";
 
 impl App for Ghokin {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("ghokin")
+  fn name(&self) -> &'static str {
+    "ghokin"
   }
 
   fn homepage(&self) -> &'static str {

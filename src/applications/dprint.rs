@@ -14,8 +14,8 @@ const ORG: &str = "dprint";
 const REPO: &str = "dprint";
 
 impl App for Dprint {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("dprint")
+  fn name(&self) -> &'static str {
+    "dprint"
   }
 
   fn homepage(&self) -> &'static str {
