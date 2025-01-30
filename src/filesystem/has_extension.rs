@@ -1,4 +1,4 @@
-pub fn has_extension(filename: &str, extension: &str) -> bool {
+pub(crate) fn has_extension(filename: &str, extension: &str) -> bool {
   let filename_len = filename.len();
   filename[filename_len - extension.len()..filename_len].eq_ignore_ascii_case(extension)
 }

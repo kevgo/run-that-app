@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::installation::Method;
 use crate::platform::Platform;
@@ -6,9 +6,9 @@ use crate::prelude::*;
 use crate::run::ExecutablePath;
 use crate::{run, Log};
 
-pub struct Deadcode {}
+pub(crate) struct Deadcode {}
 
-impl App for Deadcode {
+impl AppDefinition for Deadcode {
   fn name(&self) -> ApplicationName {
     ApplicationName::from("deadcode")
   }
@@ -43,7 +43,7 @@ impl App for Deadcode {
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -55,7 +55,7 @@ mod tests {
 
   #[test]
   fn install_methods() {
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};

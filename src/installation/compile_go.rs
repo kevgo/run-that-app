@@ -1,5 +1,5 @@
 use super::Outcome;
-use crate::applications::{self, App};
+use crate::applications::{self, AppDefinition};
 use crate::configuration::{RequestedVersion, RequestedVersions, Version};
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
@@ -12,8 +12,8 @@ use std::process::Command;
 use which::which;
 
 /// installs the given Go-based application by compiling it from source
-pub fn run(
-  app: &dyn App,
+pub(crate) fn run(
+  app_definition: &dyn AppDefinition,
   import_path: &str,
   platform: Platform,
   version: &Version,
@@ -22,7 +22,7 @@ pub fn run(
   yard: &Yard,
   log: Log,
 ) -> Result<Outcome> {
-  let target_folder = yard.create_app_folder(&app.name(), version)?;
+  let target_folder = yard.create_app_folder(&app_definition.name(), version)?;
   let go_args = vec!["install", &import_path];
   let go_path = if let Ok(system_go_path) = which("go") {
     system_go_path

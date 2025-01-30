@@ -3,7 +3,7 @@ use crate::logging::{Event, Log};
 use crate::prelude::*;
 
 /// downloads the artifact at the given URL
-pub fn artifact(url: &str, app: &ApplicationName, optional: bool, log: Log) -> Result<Option<Artifact>> {
+pub(crate) fn artifact(url: &str, app: &ApplicationName, optional: bool, log: Log) -> Result<Option<Artifact>> {
   log(Event::DownloadBegin { app, url });
   let Ok(response) = minreq::get(url).send() else {
     log(Event::NotOnline);
@@ -30,7 +30,7 @@ pub fn artifact(url: &str, app: &ApplicationName, optional: bool, log: Log) -> R
 /// An artifacts is a file containing an application, downloaded from the internet.
 /// An artifact could be an archive containing the application binary (and other files),
 /// or the uncompressed application binary itself.
-pub struct Artifact {
-  pub filename: String,
-  pub data: Vec<u8>,
+pub(crate) struct Artifact {
+  pub(crate) filename: String,
+  pub(crate) data: Vec<u8>,
 }

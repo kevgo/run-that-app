@@ -2,13 +2,13 @@ use crate::configuration::{ApplicationName, Version};
 
 /// a request from the user to run a particular app
 #[derive(Debug, PartialEq)]
-pub struct AppVersion {
-  pub app_name: ApplicationName,
-  pub version: Option<Version>,
+pub(crate) struct AppVersion {
+  pub(crate) app_name: ApplicationName,
+  pub(crate) version: Option<Version>,
 }
 
 impl AppVersion {
-  pub fn new<S: AsRef<str>>(token: S) -> Self {
+  pub(crate) fn new<S: AsRef<str>>(token: S) -> Self {
     let (app_name, version) = token.as_ref().split_once('@').unwrap_or((token.as_ref(), ""));
     let version = if version.is_empty() { None } else { Some(Version::from(version)) };
     AppVersion {

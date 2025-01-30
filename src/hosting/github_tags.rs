@@ -4,7 +4,7 @@ use crate::prelude::*;
 use crate::Log;
 use big_s::S;
 
-pub fn all(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<String>> {
+pub(crate) fn all(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<String>> {
   let url = format!("https://api.github.com/repos/{org}/{repo}/git/refs/tags");
   log(Event::GitHubApiRequestBegin { url: &url });
   let get = minreq::get(&url)

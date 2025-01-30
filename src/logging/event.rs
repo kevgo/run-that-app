@@ -1,11 +1,11 @@
 use crate::configuration::{ApplicationName, Version};
 use crate::installation::Method;
-use crate::run::ExecutableFileName;
+use crate::run::ExecutableNamePlatform;
 use std::borrow::Cow;
 use std::path::Path;
 
 /// the different events that can result in CLI output
-pub enum Event<'a> {
+pub(crate) enum Event<'a> {
   AnalyzeExecutableBegin {
     cmd: &'a str,
     args: &'a [&'a str],
@@ -13,7 +13,6 @@ pub enum Event<'a> {
   AnalyzeExecutableError {
     err: String,
   },
-
   ArchiveExtractBegin {
     archive_type: &'a str,
   },
@@ -21,21 +20,18 @@ pub enum Event<'a> {
   ArchiveExtractFailed {
     err: String,
   },
-
   CompileGoBegin {
     go_path: Cow<'a, str>,
     args: &'a [&'a str],
   },
   CompileGoSuccess,
   CompileGoFailed,
-
   CompileRustStart {
     cargo_path: &'a Path,
     args: &'a [&'a str],
   },
   CompileRustSuccess,
   CompileRustFailed,
-
   DownloadBegin {
     app: &'a ApplicationName,
     url: &'a str,
@@ -47,13 +43,11 @@ pub enum Event<'a> {
   DownloadFail {
     code: i32,
   },
-
   ExecutableInstallSaveBegin,
   ExecutableInstallSaveSuccess,
   ExecutableInstallSaveFail {
     err: String,
   },
-
   GitHubApiRequestBegin {
     url: &'a str,
   },
@@ -61,9 +55,8 @@ pub enum Event<'a> {
     err: String,
   },
   GitHubApiRequestSuccess,
-
   GlobalInstallSearch {
-    binary: &'a ExecutableFileName,
+    binary: &'a ExecutableNamePlatform,
   },
   GlobalInstallFound {
     path: &'a Path,
@@ -78,14 +71,12 @@ pub enum Event<'a> {
   },
   GlobalInstallNotFound,
   GlobalInstallNotIdentified,
-
   IdentifiedCpu {
     architecture: &'static str,
   },
   IdentifiedOs {
     name: &'static str,
   },
-
   IntegrationTestNewApp {
     app: &'a ApplicationName,
   },
@@ -97,9 +88,11 @@ pub enum Event<'a> {
     method: &'a Method,
     version: &'a Version,
   },
-
+  #[cfg(unix)]
+  MakeExecutable {
+    file: &'a Path,
+  },
   NotOnline,
-
   UpdateBegin {
     app: &'a ApplicationName,
   },
@@ -108,7 +101,6 @@ pub enum Event<'a> {
     new_version: &'a Version,
   },
   UpdateAlreadyNewest,
-
   YardCheckExistingAppBegin {
     path: &'a Path,
   },

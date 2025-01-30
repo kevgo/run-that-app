@@ -9,7 +9,7 @@ use colored::Colorize;
 use std::io;
 use std::process::ExitCode;
 
-pub fn test(args: &mut Args) -> Result<ExitCode> {
+pub(crate) fn test(args: &mut Args) -> Result<ExitCode> {
   let apps = applications::all();
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
@@ -46,12 +46,8 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
       {
         continue;
       }
-      let executable_paths = install_method.executable_paths(
-        &app.name(),
-        &app.default_executable_filename().platform_path(platform.os),
-        &latest_version,
-        &yard,
-      );
+      let app_folder = yard.app_folder(&app.name(), &latest_version);
+      let executable_paths = install_method.executable_paths(&app_folder, &app.default_executable_filename().platform_path(platform.os));
       let mut executable_found = true;
       for executable_path in executable_paths {
         if !executable_path.exists() {
@@ -91,8 +87,8 @@ pub fn test(args: &mut Args) -> Result<ExitCode> {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Args {
-  pub optional: bool,
-  pub start_at_app: Option<ApplicationName>,
-  pub verbose: bool,
+pub(crate) struct Args {
+  pub(crate) optional: bool,
+  pub(crate) start_at_app: Option<ApplicationName>,
+  pub(crate) verbose: bool,
 }

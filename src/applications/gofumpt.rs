@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::Method;
@@ -8,12 +8,12 @@ use crate::run::ExecutablePath;
 use crate::{regexp, run, Log};
 use const_format::formatcp;
 
-pub struct Gofumpt {}
+pub(crate) struct Gofumpt {}
 
 const ORG: &str = "mvdan";
 const REPO: &str = "gofumpt";
 
-impl App for Gofumpt {
+impl AppDefinition for Gofumpt {
   fn name(&self) -> ApplicationName {
     ApplicationName::from("gofumpt")
   }
@@ -67,7 +67,7 @@ impl App for Gofumpt {
     }
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -82,7 +82,7 @@ mod tests {
 
   mod install_methods {
     use crate::applications::gofumpt::Gofumpt;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};

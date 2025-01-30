@@ -2,10 +2,10 @@ use super::{normal, verbose, Event};
 
 /// A function that logs the given event to the CLI.
 /// There are several types of loggers at different verbosity levels.
-pub type Log = fn(Event);
+pub(crate) type Log = fn(Event);
 
 /// provides a logger function at the given verbosity level
-pub fn new(verbose: bool) -> Log {
+pub(crate) fn new(verbose: bool) -> Log {
   if verbose {
     verbose::log
   } else {

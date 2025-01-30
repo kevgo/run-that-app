@@ -1,11 +1,11 @@
 use super::Version;
-use crate::applications::App;
+use crate::applications::AppDefinition;
 use crate::prelude::*;
 use std::fmt::Display;
 
 /// an application version requested by the user
 #[derive(Clone, Debug, PartialEq)]
-pub enum RequestedVersion {
+pub(crate) enum RequestedVersion {
   /// the user has requested an externally installed application that matches the given version requirement
   Path(semver::VersionReq),
   /// the user has requested an application in the Yard with the exact version given
@@ -13,10 +13,10 @@ pub enum RequestedVersion {
 }
 
 impl RequestedVersion {
-  pub fn parse(version: &str, app: &dyn App) -> Result<RequestedVersion> {
+  pub(crate) fn parse(version: &str, app_definition: &dyn AppDefinition) -> Result<RequestedVersion> {
     if let Some(system_version) = is_system(version) {
       if system_version == "auto" {
-        return Ok(RequestedVersion::Path(app.allowed_versions()?));
+        return Ok(RequestedVersion::Path(app_definition.allowed_versions()?));
       }
       let version_req = semver::VersionReq::parse(&system_version).map_err(|err| UserError::CannotParseSemverRange {
         expression: system_version.to_string(),
@@ -69,7 +69,7 @@ mod tests {
   use big_s::S;
 
   mod parse {
-    use crate::applications::{AnalyzeResult, App};
+    use crate::applications::{AnalyzeResult, AppDefinition};
     use crate::configuration::Version;
     use crate::logging::Log;
     use crate::platform::Platform;
@@ -80,7 +80,7 @@ mod tests {
     struct TestApp {
       allowed_versions: semver::VersionReq,
     }
-    impl App for TestApp {
+    impl AppDefinition for TestApp {
       fn allowed_versions(&self) -> Result<semver::VersionReq> {
         Ok(self.allowed_versions.clone())
       }
@@ -106,7 +106,7 @@ mod tests {
       fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
         unimplemented!()
       }
-      fn clone(&self) -> Box<dyn App> {
+      fn clone(&self) -> Box<dyn AppDefinition> {
         unimplemented!()
       }
     }

@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_tags;
 use crate::installation::Method;
@@ -8,12 +8,12 @@ use crate::run::ExecutablePath;
 use crate::{run, Log};
 use const_format::formatcp;
 
-pub struct NodePrune {}
+pub(crate) struct NodePrune {}
 
 const ORG: &str = "tj";
 const REPO: &str = "node-prune";
 
-impl App for NodePrune {
+impl AppDefinition for NodePrune {
   fn name(&self) -> ApplicationName {
     ApplicationName::from("node-prune")
   }
@@ -65,7 +65,7 @@ impl App for NodePrune {
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -75,7 +75,7 @@ mod tests {
 
   mod install_methods {
     use crate::applications::node_prune::NodePrune;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};

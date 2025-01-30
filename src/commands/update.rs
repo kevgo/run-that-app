@@ -4,7 +4,7 @@ use crate::logging::{self, Event};
 use crate::prelude::*;
 use std::process::ExitCode;
 
-pub fn update(args: &Args) -> Result<ExitCode> {
+pub(crate) fn update(args: &Args) -> Result<ExitCode> {
   let all_apps = applications::all();
   let mut config = File::load(&all_apps)?;
   let log = logging::new(args.verbose);
@@ -26,6 +26,6 @@ pub fn update(args: &Args) -> Result<ExitCode> {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Args {
-  pub verbose: bool,
+pub(crate) struct Args {
+  pub(crate) verbose: bool,
 }

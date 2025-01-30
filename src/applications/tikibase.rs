@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, App};
+use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::{ApplicationName, Version};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
@@ -8,12 +8,12 @@ use crate::run::ExecutablePath;
 use crate::{regexp, run, Log};
 use const_format::formatcp;
 
-pub struct Tikibase {}
+pub(crate) struct Tikibase {}
 
 const ORG: &str = "kevgo";
 const REPO: &str = "tikibase";
 
-impl App for Tikibase {
+impl AppDefinition for Tikibase {
   fn name(&self) -> ApplicationName {
     ApplicationName::from("tikibase")
   }
@@ -63,7 +63,7 @@ impl App for Tikibase {
     }
   }
 
-  fn clone(&self) -> Box<dyn App> {
+  fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
 }
@@ -78,7 +78,7 @@ mod tests {
 
   mod install_methods {
     use crate::applications::tikibase::Tikibase;
-    use crate::applications::App;
+    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
