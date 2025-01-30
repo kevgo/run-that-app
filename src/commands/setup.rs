@@ -1,9 +1,9 @@
-use crate::configuration::{File, FILE_NAME};
+use crate::configuration;
 use crate::prelude::*;
 use std::process::ExitCode;
 
 pub(crate) fn setup() -> Result<ExitCode> {
-  File::create()?;
-  println!("Created file {FILE_NAME}");
+  configuration::File::create()?;
+  println!("Created file {}", configuration::FILE_NAME);
   Ok(ExitCode::SUCCESS)
 }
