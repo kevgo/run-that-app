@@ -6,7 +6,7 @@ pub(crate) struct ApplicationName<'a>(&'a str);
 
 impl<'a> ApplicationName<'a> {
   pub(crate) fn as_str(&self) -> &str {
-    &self.0
+    self.0
   }
 }
 
@@ -18,7 +18,7 @@ impl<'a> From<&'static str> for ApplicationName<'a> {
 
 impl<'a> Display for ApplicationName<'a> {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(&self.0)
+    f.write_str(self.0)
   }
 }
 
@@ -36,6 +36,6 @@ impl<'a> AsRef<Path> for ApplicationName<'a> {
 
 impl<'a> AsRef<str> for ApplicationName<'a> {
   fn as_ref(&self) -> &str {
-    &self.0
+    self.0
   }
 }

@@ -15,7 +15,7 @@ impl<'a> AppVersion<'a> {
     let app = apps.lookup(app_name)?;
     let version = if version.is_empty() { None } else { Some(Version::from(version)) };
     let app_name: ApplicationName = app.name();
-    Ok(AppVersion { app_name: app_name, version })
+    Ok(AppVersion { app_name, version })
   }
 }
 
