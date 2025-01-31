@@ -241,10 +241,10 @@ mod tests {
         #[test]
         fn normal() {
           let apps = applications::all();
-          let have = parse_args(vec!["rta", "--error-on-output", "app"], &apps);
+          let have = parse_args(vec!["rta", "--error-on-output", "actionlint"], &apps);
           let want = Ok(Arguments {
             command: Command::RunApp(run::Args {
-              app_name: ApplicationName::from("app"),
+              app_name: ApplicationName::from("actionlint"),
               version: None,
               app_args: vec![],
               error_on_output: true,
@@ -360,10 +360,10 @@ mod tests {
         #[test]
         fn long() {
           let apps = applications::all();
-          let have = parse_args(vec!["rta", "--verbose", "app@2"], &apps);
+          let have = parse_args(vec!["rta", "--verbose", "actionlint@2"], &apps);
           let want = Ok(Arguments {
             command: Command::RunApp(run::Args {
-              app_name: ApplicationName::from("app"),
+              app_name: ApplicationName::from("actionlint"),
               version: Some(Version::from("2")),
               app_args: vec![],
               error_on_output: false,
@@ -377,10 +377,10 @@ mod tests {
         #[test]
         fn short() {
           let apps = applications::all();
-          let have = parse_args(vec!["rta", "-v", "app@2"], &apps);
+          let have = parse_args(vec!["rta", "-v", "actionlint@2"], &apps);
           let want = Ok(Arguments {
             command: Command::RunApp(run::Args {
-              app_name: ApplicationName::from("app"),
+              app_name: ApplicationName::from("actionlint"),
               version: Some(Version::from("2")),
               app_args: vec![],
               error_on_output: false,
@@ -411,10 +411,10 @@ mod tests {
       #[test]
       fn optional() {
         let apps = applications::all();
-        let have = parse_args(vec!["rta", "--optional", "app@2", "arg1"], &apps);
+        let have = parse_args(vec!["rta", "--optional", "actionlint@2", "arg1"], &apps);
         let want = Ok(Arguments {
           command: Command::RunApp(run::Args {
-            app_name: ApplicationName::from("app"),
+            app_name: ApplicationName::from("actionlint"),
             version: Some(Version::from("2")),
             app_args: vec![S("arg1")],
             error_on_output: false,
@@ -552,10 +552,10 @@ mod tests {
       #[test]
       fn no_arguments() {
         let apps = applications::all();
-        let have = parse_args(vec!["rta", "app@2"], &apps);
+        let have = parse_args(vec!["rta", "actionlint@2"], &apps);
         let want = Ok(Arguments {
           command: Command::RunApp(run::Args {
-            app_name: ApplicationName::from("app"),
+            app_name: ApplicationName::from("actionlint"),
             version: Some(Version::from("2")),
             app_args: vec![],
             error_on_output: false,
@@ -569,10 +569,10 @@ mod tests {
       #[test]
       fn some_arguments() {
         let apps = applications::all();
-        let have = parse_args(vec!["rta", "app@2", "--arg1", "arg2"], &apps);
+        let have = parse_args(vec!["rta", "actionlint@2", "--arg1", "arg2"], &apps);
         let want = Ok(Arguments {
           command: Command::RunApp(run::Args {
-            app_name: ApplicationName::from("app"),
+            app_name: ApplicationName::from("actionlint"),
             version: Some(Version::from("2")),
             app_args: vec![S("--arg1"), S("arg2")],
             error_on_output: false,
@@ -595,10 +595,10 @@ mod tests {
       #[test]
       fn rta_and_app_arguments() {
         let apps = applications::all();
-        let have = parse_args(vec!["rta", "--verbose", "app@2", "--arg1", "arg2"], &apps);
+        let have = parse_args(vec!["rta", "--verbose", "actionlint@2", "--arg1", "arg2"], &apps);
         let want = Ok(Arguments {
           command: Command::RunApp(run::Args {
-            app_name: ApplicationName::from("app"),
+            app_name: ApplicationName::from("actionlint"),
             version: Some(Version::from("2")),
             app_args: vec![S("--arg1"), S("arg2")],
             error_on_output: false,
@@ -612,10 +612,10 @@ mod tests {
       #[test]
       fn same_arguments_as_run_that_app() {
         let apps = applications::all();
-        let have = parse_args(vec!["rta", "app@2", "--verbose", "--version"], &apps);
+        let have = parse_args(vec!["rta", "actionlint@2", "--verbose", "--version"], &apps);
         let want = Ok(Arguments {
           command: Command::RunApp(run::Args {
-            app_name: ApplicationName::from("app"),
+            app_name: ApplicationName::from("actionlint"),
             version: Some(Version::from("2")),
             app_args: vec![S("--verbose"), S("--version")],
             error_on_output: false,
