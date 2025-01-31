@@ -179,18 +179,20 @@ mod tests {
 
     mod rta_arguments {
       use super::parse_args;
+      use crate::applications;
       use crate::cli::{Arguments, Command};
       use crate::commands::run;
       use crate::configuration::{ApplicationName, Version};
-      use crate::{applications, prelude::*};
+      use crate::prelude::*;
       use big_s::S;
 
       mod available {
         use super::super::parse_args;
+        use crate::applications;
         use crate::cli::{Arguments, Command};
         use crate::commands::available;
         use crate::configuration::ApplicationName;
-        use crate::{applications, prelude::*};
+        use crate::prelude::*;
 
         #[test]
         fn with_app() {
@@ -233,10 +235,11 @@ mod tests {
 
       mod error_on_output {
         use super::super::parse_args;
+        use crate::applications;
         use crate::cli::{Arguments, Command};
         use crate::commands::run;
         use crate::configuration::ApplicationName;
-        use crate::{applications, prelude::*};
+        use crate::prelude::*;
 
         #[test]
         fn normal() {
@@ -352,10 +355,11 @@ mod tests {
 
       mod verbose {
         use super::super::parse_args;
+        use crate::applications;
         use crate::cli::{Arguments, Command};
         use crate::commands::run;
         use crate::configuration::{ApplicationName, Version};
-        use crate::{applications, prelude::*};
+        use crate::prelude::*;
 
         #[test]
         fn long() {
