@@ -8,10 +8,6 @@ impl<'a> ApplicationName<'a> {
   pub(crate) fn as_str(&self) -> &str {
     &self.0
   }
-
-  pub(crate) fn new(name: &'a str) -> ApplicationName<'a> {
-    ApplicationName(name)
-  }
 }
 
 impl<'a> From<&'static str> for ApplicationName<'a> {
@@ -32,14 +28,14 @@ impl<'a> PartialEq<&str> for ApplicationName<'a> {
   }
 }
 
-impl<'a> PartialEq<&ApplicationName> for ApplicationName<'a> {
-  fn eq(&self, other: &ApplicationName) -> bool {
-    self == other
-  }
-}
-
 impl<'a> AsRef<Path> for ApplicationName<'a> {
   fn as_ref(&self) -> &Path {
     Path::new(&self.0)
+  }
+}
+
+impl<'a> AsRef<str> for ApplicationName<'a> {
+  fn as_ref(&self) -> &str {
+    &self.0
   }
 }
