@@ -28,12 +28,13 @@ mod shfmt;
 mod staticcheck;
 mod tikibase;
 
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::run::{self, ExecutableArgs, ExecutableNameUnix, ExecutablePath};
 use crate::Log;
 use std::fmt::{Debug, Display};
+use std::path::Path;
 use std::slice::Iter;
 
 pub(crate) fn all() -> Apps {
@@ -152,6 +153,51 @@ impl Debug for dyn AppDefinition {
   }
 }
 
+#[derive(Debug, PartialEq)]
+pub(crate) struct ApplicationName(String);
+
+impl ApplicationName {
+  pub(crate) fn as_str(&self) -> &str {
+    &self.0
+  }
+
+  pub(crate) fn new(name: String) -> ApplicationName {
+    ApplicationName(name)
+  }
+}
+
+impl From<&str> for ApplicationName {
+  fn from(value: &str) -> Self {
+    assert!(!value.is_empty(), "empty app name");
+    assert!(value.to_lowercase() == value, "app name is not all lowercase");
+    ApplicationName::new(value.to_string())
+  }
+}
+
+impl Display for ApplicationName {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.write_str(&self.0)
+  }
+}
+
+impl PartialEq<&str> for ApplicationName {
+  fn eq(&self, other: &&str) -> bool {
+    self.0 == *other
+  }
+}
+
+impl PartialEq<&ApplicationName> for ApplicationName {
+  fn eq(&self, other: &&ApplicationName) -> bool {
+    self == *other
+  }
+}
+
+impl AsRef<Path> for ApplicationName {
+  fn as_ref(&self) -> &Path {
+    Path::new(&self.0)
+  }
+}
+
 pub(crate) enum AnalyzeResult {
   /// the given executable does not belong to this app
   NotIdentified { output: String },
@@ -214,8 +260,7 @@ mod tests {
     }
 
     mod lookup {
-      use crate::applications::{dprint, shellcheck, Apps};
-      use crate::configuration::ApplicationName;
+      use crate::applications::{dprint, shellcheck, ApplicationName, Apps};
       use crate::prelude::*;
       use big_s::S;
 

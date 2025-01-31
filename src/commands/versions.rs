@@ -1,4 +1,4 @@
-use crate::configuration::ApplicationName;
+use crate::applications::ApplicationName;
 use crate::prelude::*;
 use crate::{applications, logging};
 use std::process::ExitCode;

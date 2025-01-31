@@ -1,5 +1,5 @@
-use crate::applications::{AnalyzeResult, AppDefinition};
-use crate::configuration::{self, ApplicationName, RequestedVersion, RequestedVersions, Version};
+use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName};
+use crate::configuration::{self, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
@@ -48,9 +48,6 @@ pub(crate) struct Args {
 
   /// if true, any output produced by the app is equivalent to an exit code > 0
   pub(crate) error_on_output: bool,
-
-  /// other applications to include into the PATH
-  pub(crate) include: Vec<String>,
 
   /// whether it's okay to not run the app if it cannot be installed
   pub(crate) optional: bool,

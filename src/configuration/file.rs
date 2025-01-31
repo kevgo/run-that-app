@@ -1,5 +1,5 @@
-use super::{AppVersions, ApplicationName, RequestedVersion, RequestedVersions, FILE_NAME};
-use crate::applications::Apps;
+use super::{AppVersions, RequestedVersion, RequestedVersions, FILE_NAME};
+use crate::applications::{ApplicationName, Apps};
 use crate::filesystem;
 use crate::prelude::*;
 use std::fmt::Display;
@@ -136,8 +136,8 @@ mod tests {
 
   mod parse {
     use super::super::parse;
-    use crate::applications;
-    use crate::configuration::{self, AppVersions, ApplicationName, RequestedVersion, RequestedVersions};
+    use crate::applications::{self, ApplicationName};
+    use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersions};
 
     #[test]
     fn normal() {
@@ -184,7 +184,8 @@ mod tests {
   mod parse_line {
     use super::super::parse_line;
     use crate::applications;
-    use crate::configuration::{AppVersions, ApplicationName, RequestedVersion, RequestedVersions};
+    use crate::applications::ApplicationName;
+    use crate::configuration::{AppVersions, RequestedVersion, RequestedVersions};
     use crate::error::UserError;
     use big_s::S;
 

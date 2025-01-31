@@ -1,4 +1,5 @@
-use crate::configuration::{ApplicationName, Version};
+use crate::applications::ApplicationName;
+use crate::configuration::Version;
 use crate::installation::Method;
 use crate::run::ExecutableNamePlatform;
 use std::borrow::Cow;

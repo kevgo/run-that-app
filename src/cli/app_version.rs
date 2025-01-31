@@ -1,4 +1,5 @@
-use crate::configuration::{ApplicationName, Version};
+use crate::applications::ApplicationName;
+use crate::configuration::Version;
 
 /// a request from the user to run a particular app
 #[derive(Debug, PartialEq)]
@@ -21,8 +22,9 @@ impl AppVersion {
 #[cfg(test)]
 mod tests {
   mod parse {
+    use crate::applications::ApplicationName;
     use crate::cli::AppVersion;
-    use crate::configuration::{ApplicationName, Version};
+    use crate::configuration::Version;
 
     #[test]
     fn name_and_version() {

@@ -1,10 +1,9 @@
-use crate::applications::AnalyzeResult;
-use crate::configuration::{self, ApplicationName};
+use crate::applications::{AnalyzeResult, ApplicationName};
 use crate::logging::Event;
 use crate::prelude::*;
 use crate::run::ExecutablePath;
 use crate::yard::Yard;
-use crate::{applications, installation, logging, platform};
+use crate::{applications, configuration, installation, logging, platform};
 use colored::Colorize;
 use std::io;
 use std::process::ExitCode;

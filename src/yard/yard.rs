@@ -1,6 +1,6 @@
 use super::root_path;
-use crate::applications::AppDefinition;
-use crate::configuration::{ApplicationName, Version};
+use crate::applications::{AppDefinition, ApplicationName};
+use crate::configuration::Version;
 use crate::installation::BinFolder;
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
@@ -111,7 +111,8 @@ impl Yard {
 
 #[cfg(test)]
 mod tests {
-  use crate::configuration::{ApplicationName, Version};
+  use crate::applications::ApplicationName;
+  use crate::configuration::Version;
   use crate::yard::Yard;
   use std::path::PathBuf;
 
@@ -134,7 +135,8 @@ mod tests {
   }
 
   mod is_not_installable {
-    use crate::configuration::{ApplicationName, Version};
+    use crate::applications::ApplicationName;
+    use crate::configuration::Version;
     use crate::yard::Yard;
     use std::path::PathBuf;
 

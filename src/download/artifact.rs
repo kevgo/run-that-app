@@ -1,4 +1,4 @@
-use crate::configuration::ApplicationName;
+use crate::applications::ApplicationName;
 use crate::logging::{Event, Log};
 use crate::prelude::*;
 
