@@ -12,7 +12,7 @@ use std::process::ExitCode;
 
 pub(crate) fn run(args: &Args) -> Result<ExitCode> {
   let apps = applications::all();
-  let app = apps.lookup(&args.app_name)?;
+  let app = apps.lookup(args.app_name.as_str())?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
@@ -35,9 +35,9 @@ pub(crate) fn run(args: &Args) -> Result<ExitCode> {
 
 /// data needed to run an executable
 #[derive(Debug, PartialEq)]
-pub(crate) struct Args {
+pub(crate) struct Args<'a> {
   /// name of the app to execute
-  pub(crate) app_name: ApplicationName,
+  pub(crate) app_name: ApplicationName<'a>,
 
   /// possible versions of the app to execute
   pub(crate) version: Option<Version>,

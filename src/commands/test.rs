@@ -16,9 +16,9 @@ pub(crate) fn test(args: &mut Args) -> Result<ExitCode> {
   let temp_folder = tempfile::tempdir().map_err(|err| UserError::CannotCreateTempDir { err: err.to_string() })?;
   let yard = Yard::load_or_create(temp_folder.path())?;
   let config_file = configuration::File::load(&apps)?;
-  for app in apps {
+  for app in apps.iter() {
     if let Some(start_app_name) = &args.start_at_app {
-      if app.name() != start_app_name {
+      if app.name() != *start_app_name {
         continue;
       }
       args.start_at_app = None;
@@ -87,8 +87,8 @@ pub(crate) fn test(args: &mut Args) -> Result<ExitCode> {
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct Args {
+pub(crate) struct Args<'a> {
   pub(crate) optional: bool,
-  pub(crate) start_at_app: Option<ApplicationName>,
+  pub(crate) start_at_app: Option<ApplicationName<'a>>,
   pub(crate) verbose: bool,
 }

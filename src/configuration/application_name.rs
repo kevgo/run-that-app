@@ -14,6 +14,12 @@ impl<'a> ApplicationName<'a> {
   }
 }
 
+impl<'a> From<&'static str> for ApplicationName<'a> {
+  fn from(value: &'static str) -> Self {
+    ApplicationName(value)
+  }
+}
+
 impl<'a> Display for ApplicationName<'a> {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(&self.0)
@@ -26,21 +32,14 @@ impl<'a> PartialEq<&str> for ApplicationName<'a> {
   }
 }
 
-impl<'a> PartialEq<ApplicationName> for ApplicationName<'a> {
-  fn eq(&self, other: &&ApplicationName) -> bool {
-    self == *other
+impl<'a> PartialEq<&ApplicationName> for ApplicationName<'a> {
+  fn eq(&self, other: &ApplicationName) -> bool {
+    self == other
   }
 }
 
-impl AsRef<Path> for ApplicationName<'a> {
+impl<'a> AsRef<Path> for ApplicationName<'a> {
   fn as_ref(&self) -> &Path {
     Path::new(&self.0)
-  }
-}
-
-impl ApplicationName {
-  /// provides the underlying string value
-  pub(crate) fn inner(self) -> String {
-    self.0
   }
 }
