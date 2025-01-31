@@ -33,9 +33,3 @@ impl<'a> AsRef<Path> for ApplicationName<'a> {
     Path::new(&self.0)
   }
 }
-
-impl<'a> AsRef<str> for ApplicationName<'a> {
-  fn as_ref(&self) -> &str {
-    self.0
-  }
-}
