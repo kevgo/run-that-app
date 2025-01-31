@@ -160,17 +160,13 @@ impl ApplicationName {
   pub(crate) fn as_str(&self) -> &str {
     &self.0
   }
-
-  pub(crate) fn new(name: String) -> ApplicationName {
-    ApplicationName(name)
-  }
 }
 
 impl From<&str> for ApplicationName {
   fn from(value: &str) -> Self {
     assert!(!value.is_empty(), "empty app name");
     assert!(value.to_lowercase() == value, "app name is not all lowercase");
-    ApplicationName::new(value.to_string())
+    ApplicationName(value.to_string())
   }
 }
 
