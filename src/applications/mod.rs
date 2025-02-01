@@ -76,7 +76,7 @@ pub(crate) trait AppDefinition {
 
   /// type-safe version of self.name, for internal use
   fn app_name(&self) -> ApplicationName {
-    ApplicationName::from(self.name())
+    ApplicationName(self.name())
   }
 
   /// the filename of the executable that starts this app
@@ -159,12 +159,6 @@ pub(crate) struct ApplicationName(&'static str);
 impl ApplicationName {
   pub(crate) fn as_str(&self) -> &str {
     self.0
-  }
-}
-
-impl From<&'static str> for ApplicationName {
-  fn from(value: &'static str) -> Self {
-    ApplicationName(value)
   }
 }
 

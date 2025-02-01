@@ -1,5 +1,5 @@
-use crate::applications::Apps;
-use crate::configuration::{ApplicationName, Version};
+use crate::applications::{ApplicationName, Apps};
+use crate::configuration::Version;
 use crate::prelude::*;
 
 /// a request from the user to run a particular app
@@ -31,8 +31,9 @@ mod tests {
       let give = "shellcheck@0.9.0";
       let apps = applications::all();
       let have = AppVersion::new(give, &apps);
+      let shellcheck = apps.lookup("shellcheck").unwrap();
       let want = Ok(AppVersion {
-        app_name: ApplicationName::from("shellcheck"),
+        app_name: shellcheck.app_name(),
         version: Some(Version::from("0.9.0")),
       });
       pretty::assert_eq!(have, want);
@@ -42,9 +43,10 @@ mod tests {
     fn name_only() {
       let give = "shellcheck";
       let apps = applications::all();
+      let shellcheck = apps.lookup("shellcheck").unwrap();
       let have = AppVersion::new(give, &apps);
       let want = Ok(AppVersion {
-        app_name: ApplicationName::from("shellcheck"),
+        app_name: shellcheck.app_name(),
         version: None,
       });
       pretty::assert_eq!(have, want);
@@ -54,9 +56,10 @@ mod tests {
     fn empty_version() {
       let give = "shellcheck@";
       let apps = applications::all();
+      let shellcheck = apps.lookup("shellcheck").unwrap();
       let have = AppVersion::new(give, &apps);
       let want = Ok(AppVersion {
-        app_name: ApplicationName::from("shellcheck"),
+        app_name: shellcheck.app_name(),
         version: None,
       });
       pretty::assert_eq!(have, want);

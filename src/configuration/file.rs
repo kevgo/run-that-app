@@ -146,23 +146,27 @@ mod tests {
                         mdbook 3.4.5 6.7.8\n\
                         go system@1.21 1.22.1";
       let apps = applications::all();
+      let actionlint = apps.lookup("actionlint").unwrap();
+      let dprint = apps.lookup("dprint").unwrap();
+      let mdbook = apps.lookup("mdbook").unwrap();
+      let go = apps.lookup("go").unwrap();
       let have = parse(give, &apps).unwrap();
       let want = configuration::File {
         apps: vec![
           AppVersions {
-            app_name: "actionlint".into(),
+            app_name: actionlint.app_name(),
             versions: RequestedVersions::new(vec![RequestedVersion::Yard("1.2.3".into())]),
           },
           AppVersions {
-            app_name: ApplicationName::from("dprint"),
+            app_name: dprint.app_name(),
             versions: RequestedVersions::new(vec![RequestedVersion::Yard("2.3.4".into())]),
           },
           AppVersions {
-            app_name: ApplicationName::from("mdbook"),
+            app_name: mdbook.app_name(),
             versions: RequestedVersions::new(vec![RequestedVersion::Yard("3.4.5".into()), RequestedVersion::Yard("6.7.8".into())]),
           },
           AppVersions {
-            app_name: ApplicationName::from("go"),
+            app_name: go.app_name(),
             versions: RequestedVersions::new(vec![
               RequestedVersion::Path(semver::VersionReq::parse("1.21").unwrap()),
               RequestedVersion::Yard("1.22.1".into()),
