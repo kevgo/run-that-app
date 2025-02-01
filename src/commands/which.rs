@@ -1,5 +1,6 @@
 use super::run::load_or_install;
-use crate::configuration::{self, ApplicationName, RequestedVersions, Version};
+use crate::applications::ApplicationName;
+use crate::configuration::{self, RequestedVersions, Version};
 use crate::prelude::*;
 use crate::yard::Yard;
 use crate::{applications, logging, platform, yard};

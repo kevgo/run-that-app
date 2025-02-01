@@ -1,4 +1,5 @@
-use super::{ApplicationName, File, RequestedVersion, Version};
+use super::{File, RequestedVersion, Version};
+use crate::applications::ApplicationName;
 use crate::prelude::*;
 
 /// a collection of Version instances

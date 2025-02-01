@@ -28,12 +28,13 @@ mod shfmt;
 mod staticcheck;
 mod tikibase;
 
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::run::{self, ExecutableArgs, ExecutableNameUnix, ExecutablePath};
 use crate::Log;
 use std::fmt::{Debug, Display};
+use std::path::Path;
 use std::slice::Iter;
 
 pub(crate) fn all() -> Apps {
@@ -75,7 +76,7 @@ pub(crate) trait AppDefinition {
 
   /// type-safe version of self.name, for internal use
   fn app_name(&self) -> ApplicationName {
-    ApplicationName::from(self.name())
+    ApplicationName(self.name())
   }
 
   /// the filename of the executable that starts this app
@@ -149,6 +150,33 @@ impl PartialEq for dyn AppDefinition {
 impl Debug for dyn AppDefinition {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(self.name())
+  }
+}
+
+#[derive(Debug, PartialEq)]
+pub(crate) struct ApplicationName(&'static str);
+
+impl ApplicationName {
+  pub(crate) fn as_str(&self) -> &str {
+    self.0
+  }
+}
+
+impl Display for ApplicationName {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.write_str(self.0)
+  }
+}
+
+impl AsRef<Path> for ApplicationName {
+  fn as_ref(&self) -> &Path {
+    Path::new(&self.0)
+  }
+}
+
+impl AsRef<str> for ApplicationName {
+  fn as_ref(&self) -> &str {
+    self.0
   }
 }
 

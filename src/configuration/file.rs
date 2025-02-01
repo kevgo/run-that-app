@@ -1,5 +1,5 @@
-use super::{AppVersions, ApplicationName, RequestedVersion, RequestedVersions, FILE_NAME};
-use crate::applications::Apps;
+use super::{AppVersions, RequestedVersion, RequestedVersions, FILE_NAME};
+use crate::applications::{ApplicationName, Apps};
 use crate::filesystem;
 use crate::prelude::*;
 use std::fmt::Display;
@@ -137,7 +137,7 @@ mod tests {
   mod parse {
     use super::super::parse;
     use crate::applications;
-    use crate::configuration::{self, AppVersions, ApplicationName, RequestedVersion, RequestedVersions};
+    use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersions};
 
     #[test]
     fn normal() {
@@ -146,23 +146,27 @@ mod tests {
                         mdbook 3.4.5 6.7.8\n\
                         go system@1.21 1.22.1";
       let apps = applications::all();
+      let actionlint = apps.lookup("actionlint").unwrap();
+      let dprint = apps.lookup("dprint").unwrap();
+      let mdbook = apps.lookup("mdbook").unwrap();
+      let go = apps.lookup("go").unwrap();
       let have = parse(give, &apps).unwrap();
       let want = configuration::File {
         apps: vec![
           AppVersions {
-            app_name: "actionlint".into(),
+            app_name: actionlint.app_name(),
             versions: RequestedVersions::new(vec![RequestedVersion::Yard("1.2.3".into())]),
           },
           AppVersions {
-            app_name: ApplicationName::from("dprint"),
+            app_name: dprint.app_name(),
             versions: RequestedVersions::new(vec![RequestedVersion::Yard("2.3.4".into())]),
           },
           AppVersions {
-            app_name: ApplicationName::from("mdbook"),
+            app_name: mdbook.app_name(),
             versions: RequestedVersions::new(vec![RequestedVersion::Yard("3.4.5".into()), RequestedVersion::Yard("6.7.8".into())]),
           },
           AppVersions {
-            app_name: ApplicationName::from("go"),
+            app_name: go.app_name(),
             versions: RequestedVersions::new(vec![
               RequestedVersion::Path(semver::VersionReq::parse("1.21").unwrap()),
               RequestedVersion::Yard("1.22.1".into()),
@@ -186,17 +190,18 @@ mod tests {
   mod parse_line {
     use super::super::parse_line;
     use crate::applications;
-    use crate::configuration::{AppVersions, ApplicationName, RequestedVersion, RequestedVersions};
+    use crate::configuration::{AppVersions, RequestedVersion, RequestedVersions};
     use crate::error::UserError;
     use big_s::S;
 
     #[test]
     fn normal() {
       let apps = applications::all();
+      let shellcheck = apps.lookup("shellcheck").unwrap();
       let give = "shellcheck 0.9.0";
       let have = parse_line(give, 1, &apps).unwrap();
       let want = Some(AppVersions {
-        app_name: ApplicationName::from("shellcheck"),
+        app_name: shellcheck.app_name(),
         versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]),
       });
       pretty::assert_eq!(have, want);
@@ -205,10 +210,11 @@ mod tests {
     #[test]
     fn multiple_versions() {
       let apps = applications::all();
+      let shellcheck = apps.lookup("shellcheck").unwrap();
       let give = "shellcheck 0.9.0 0.6.0";
       let have = parse_line(give, 1, &apps).unwrap();
       let want = Some(AppVersions {
-        app_name: ApplicationName::from("shellcheck"),
+        app_name: shellcheck.app_name(),
         versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into()), RequestedVersion::Yard("0.6.0".into())]),
       });
       pretty::assert_eq!(have, want);
@@ -217,10 +223,11 @@ mod tests {
     #[test]
     fn normal_with_multiple_spaces() {
       let apps = applications::all();
+      let shellcheck = apps.lookup("shellcheck").unwrap();
       let give = "     shellcheck            0.9.0      ";
       let have = parse_line(give, 1, &apps).unwrap();
       let want = Some(AppVersions {
-        app_name: ApplicationName::from("shellcheck"),
+        app_name: shellcheck.app_name(),
         versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]),
       });
       pretty::assert_eq!(have, want);
@@ -229,10 +236,11 @@ mod tests {
     #[test]
     fn normal_with_tabs() {
       let apps = applications::all();
+      let shellcheck = apps.lookup("shellcheck").unwrap();
       let give = "shellcheck\t0.9.0";
       let have = parse_line(give, 1, &apps).unwrap();
       let want = Some(AppVersions {
-        app_name: ApplicationName::from("shellcheck"),
+        app_name: shellcheck.app_name(),
         versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]),
       });
       pretty::assert_eq!(have, want);
@@ -277,10 +285,11 @@ mod tests {
     #[test]
     fn valid_with_comment_at_end() {
       let apps = applications::all();
+      let shellcheck = apps.lookup("shellcheck").unwrap();
       let give = "shellcheck 0.9.0  # comment";
       let have = parse_line(give, 1, &apps).unwrap();
       let want = Some(AppVersions {
-        app_name: ApplicationName::from("shellcheck"),
+        app_name: shellcheck.app_name(),
         versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]),
       });
       pretty::assert_eq!(have, want);

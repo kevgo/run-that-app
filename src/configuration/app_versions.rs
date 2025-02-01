@@ -1,4 +1,5 @@
-use super::{ApplicationName, RequestedVersions};
+use super::RequestedVersions;
+use crate::applications::ApplicationName;
 
 #[derive(Debug, PartialEq)]
 pub(crate) struct AppVersions {

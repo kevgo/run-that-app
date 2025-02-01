@@ -1,5 +1,5 @@
-use crate::applications::{AnalyzeResult, AppDefinition};
-use crate::configuration::{self, ApplicationName, RequestedVersion, RequestedVersions, Version};
+use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName};
+use crate::configuration::{self, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
