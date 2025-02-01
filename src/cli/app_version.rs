@@ -14,7 +14,10 @@ impl AppVersion {
     let (app_name, version) = token.as_ref().split_once('@').unwrap_or((token.as_ref(), ""));
     let app = apps.lookup(app_name)?;
     let version = if version.is_empty() { None } else { Some(Version::from(version)) };
-    Ok(AppVersion { app_name: app.name(), version })
+    Ok(AppVersion {
+      app_name: app.app_name(),
+      version,
+    })
   }
 }
 

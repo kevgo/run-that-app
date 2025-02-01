@@ -256,16 +256,15 @@ mod tests {
     }
 
     mod lookup {
-      use crate::applications::{dprint, shellcheck, ApplicationName, Apps};
+      use crate::applications::{dprint, shellcheck, Apps};
       use crate::prelude::*;
       use big_s::S;
 
       #[test]
       fn known_app() {
         let apps = Apps(vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})]);
-        let shellcheck = ApplicationName::from("shellcheck");
         let have = apps.lookup("shellcheck").unwrap();
-        assert_eq!(have.name(), shellcheck);
+        assert_eq!(have.name(), "shellcheck");
       }
 
       #[test]
