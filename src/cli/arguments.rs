@@ -3,12 +3,6 @@ use crate::applications::Apps;
 use crate::commands::{self, available, run, test, update, versions};
 use crate::prelude::*;
 
-/// all arguments that can be provided via the CLI
-#[derive(Debug, PartialEq)]
-pub(crate) struct Arguments {
-  pub(crate) command: Command,
-}
-
 #[allow(clippy::too_many_lines)]
 pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Command> {
   let _skipped_binary_name = cli_args.next();
@@ -167,7 +161,7 @@ mod tests {
     mod rta_arguments {
       use super::parse_args;
       use crate::applications;
-      use crate::cli::{Arguments, Command};
+      use crate::cli::Command;
       use crate::commands::run;
       use crate::configuration::{ApplicationName, Version};
       use crate::prelude::*;
@@ -176,7 +170,7 @@ mod tests {
       mod available {
         use super::super::parse_args;
         use crate::applications;
-        use crate::cli::{Arguments, Command};
+        use crate::cli::Command;
         use crate::commands::available;
         use crate::configuration::ApplicationName;
         use crate::prelude::*;
@@ -251,7 +245,7 @@ mod tests {
       mod test {
         use super::super::parse_args;
         use crate::applications;
-        use crate::cli::{Arguments, Command};
+        use crate::cli::Command;
         use crate::commands::test;
         use crate::configuration::ApplicationName;
 
@@ -307,7 +301,7 @@ mod tests {
       mod help_parameter {
         use super::super::parse_args;
         use crate::applications;
-        use crate::cli::{Arguments, Command};
+        use crate::cli::Command;
 
         #[test]
         fn short() {
@@ -329,7 +323,7 @@ mod tests {
       mod verbose {
         use super::super::parse_args;
         use crate::applications;
-        use crate::cli::{Arguments, Command};
+        use crate::cli::Command;
         use crate::commands::run;
         use crate::configuration::{ApplicationName, Version};
         use crate::prelude::*;
@@ -399,14 +393,13 @@ mod tests {
       mod version {
         use super::parse_args;
         use crate::applications;
-        use crate::cli::{arguments, Command};
-        use arguments::Arguments;
+        use crate::cli::Command;
 
         #[test]
         fn short() {
           let apps = applications::all();
           let have = parse_args(vec!["rta", "-V"], &apps);
-          let want = Ok(Arguments { command: Command::Version });
+          let want = Ok(Command::Version);
           pretty::assert_eq!(have, want);
         }
 
@@ -414,7 +407,7 @@ mod tests {
         fn long() {
           let apps = applications::all();
           let have = parse_args(vec!["rta", "--version"], &apps);
-          let want = Ok(Arguments { command: Command::Version });
+          let want = Ok(Command::Version);
           pretty::assert_eq!(have, want);
         }
       }
@@ -422,10 +415,9 @@ mod tests {
       mod versions {
         use super::parse_args;
         use crate::applications;
-        use crate::cli::{arguments, Command};
+        use crate::cli::Command;
         use crate::commands::versions;
         use crate::configuration::ApplicationName;
-        use arguments::Arguments;
 
         #[test]
         fn correct_usage() {
@@ -455,14 +447,14 @@ mod tests {
         fn missing_app() {
           let apps = applications::all();
           let have = parse_args(vec!["rta", "--versions"], &apps);
-          let want = Ok(Arguments { command: Command::DisplayHelp });
+          let want = Ok(Command::DisplayHelp);
           pretty::assert_eq!(have, want);
         }
       }
 
       mod which {
         use super::super::parse_args;
-        use crate::cli::{Arguments, Command};
+        use crate::cli::Command;
         use crate::configuration::ApplicationName;
         use crate::prelude::*;
         use crate::{applications, commands};
@@ -484,14 +476,12 @@ mod tests {
         fn with_all_options() {
           let apps = applications::all();
           let have = parse_args(vec!["rta", "--which", "--verbose", "shellcheck"], &apps);
-          let want = Ok(Arguments {
-            command: Command::Which(commands::which::Args {
-              app_name: ApplicationName::from("shellcheck"),
-              optional: false,
-              version: None,
-              verbose: true,
-            }),
-          });
+          let want = Ok(Command::Which(commands::which::Args {
+            app_name: ApplicationName::from("shellcheck"),
+            optional: false,
+            version: None,
+            verbose: true,
+          }));
           pretty::assert_eq!(have, want);
         }
 
