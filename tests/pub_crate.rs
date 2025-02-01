@@ -19,9 +19,7 @@ fn test_add() -> io::Result<()> {
       }
     }
   }
-  if failure {
-    panic!("found files with unlimited visibility, see above");
-  }
+  assert!(!failure, "found files with unlimited visibility, see above");
   Ok(())
 }
 
