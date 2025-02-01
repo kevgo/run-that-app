@@ -154,25 +154,23 @@ impl Debug for dyn AppDefinition {
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct ApplicationName(String);
+pub(crate) struct ApplicationName(&'static str);
 
 impl ApplicationName {
   pub(crate) fn as_str(&self) -> &str {
-    &self.0
+    self.0
   }
 }
 
-impl From<&str> for ApplicationName {
-  fn from(value: &str) -> Self {
-    assert!(!value.is_empty(), "empty app name");
-    assert!(value.to_lowercase() == value, "app name is not all lowercase");
-    ApplicationName(value.to_string())
+impl From<&'static str> for ApplicationName {
+  fn from(value: &'static str) -> Self {
+    ApplicationName(value)
   }
 }
 
 impl Display for ApplicationName {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(&self.0)
+    f.write_str(self.0)
   }
 }
 
@@ -182,15 +180,15 @@ impl PartialEq<&str> for ApplicationName {
   }
 }
 
-impl PartialEq<&ApplicationName> for ApplicationName {
-  fn eq(&self, other: &&ApplicationName) -> bool {
-    self == *other
-  }
-}
-
 impl AsRef<Path> for ApplicationName {
   fn as_ref(&self) -> &Path {
     Path::new(&self.0)
+  }
+}
+
+impl AsRef<str> for ApplicationName {
+  fn as_ref(&self) -> &str {
+    self.0
   }
 }
 
