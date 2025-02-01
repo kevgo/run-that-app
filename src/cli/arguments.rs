@@ -22,7 +22,6 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
   let mut indicate_available = false;
   let mut update = false;
   let mut optional = false;
-  let mut include: Vec<String> = vec![];
   let mut versions: Option<usize> = None;
   for arg in cli_args {
     if app_version.is_none() {
@@ -72,12 +71,6 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
       }
       if arg.starts_with('-') {
         let (key, value) = arg.split_once('=').unwrap_or((&arg, ""));
-        if key == "--include" {
-          if value.is_empty() {
-            return Err(UserError::MissingApplication);
-          }
-          include.push(value.to_string());
-        }
         if key == "--verbose" || key == "-v" {
           verbose = true;
           continue;
