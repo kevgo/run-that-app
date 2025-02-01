@@ -88,7 +88,7 @@ mod tests {
       fn name(&self) -> &'static str {
         unimplemented!()
       }
-      fn default_executable_filename(&self) -> ExecutableNameUnix {
+      fn executable_filename(&self) -> ExecutableNameUnix {
         unimplemented!()
       }
       fn homepage(&self) -> &'static str {

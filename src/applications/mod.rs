@@ -75,7 +75,7 @@ pub(crate) trait AppDefinition {
   fn name(&self) -> &'static str;
 
   /// the filename of the executable that starts this app
-  fn default_executable_filename(&self) -> ExecutableNameUnix {
+  fn executable_filename(&self) -> ExecutableNameUnix {
     ExecutableNameUnix::from(self.name())
   }
 
@@ -128,12 +128,12 @@ pub(crate) trait AppDefinition {
   /// and arguments to call that executable with.
   fn carrier(&self, version: &Version, platform: Platform) -> (Box<dyn AppDefinition>, ExecutableNameUnix, ExecutableArgs) {
     match self.run_method(version, platform) {
-      run::Method::ThisApp { install_methods: _ } => (self.clone(), self.default_executable_filename(), ExecutableArgs::None),
+      run::Method::ThisApp { install_methods: _ } => (self.clone(), self.executable_filename(), ExecutableArgs::None),
       run::Method::OtherAppOtherExecutable {
         app_definition,
         executable_name,
       } => (app_definition.clone(), executable_name, ExecutableArgs::None),
-      run::Method::OtherAppDefaultExecutable { app_definition, args } => (app_definition.clone(), app_definition.default_executable_filename(), args),
+      run::Method::OtherAppDefaultExecutable { app_definition, args } => (app_definition.clone(), app_definition.executable_filename(), args),
     }
   }
 }
