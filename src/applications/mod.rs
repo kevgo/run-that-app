@@ -215,13 +215,13 @@ impl Apps {
 
   /// provides the app with the given name
   /// TODO: return the actual Box<dyn App> instead of a reference here
-  pub(crate) fn lookup(&self, name: &ApplicationName) -> Result<&dyn AppDefinition> {
+  pub(crate) fn lookup<AS: AsRef<str>>(&self, name: AS) -> Result<&dyn AppDefinition> {
     for app in &self.0 {
-      if app.name() == name.as_str() {
+      if app.name() == name.as_ref() {
         return Ok(app.as_ref());
       }
     }
-    Err(UserError::UnknownApp(name.to_string()))
+    Err(UserError::UnknownApp(name.as_ref().to_string()))
   }
 
   /// provides the length of the name of the app with the longest name
@@ -264,15 +264,15 @@ mod tests {
       fn known_app() {
         let apps = Apps(vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})]);
         let shellcheck = ApplicationName::from("shellcheck");
-        let have = apps.lookup(&shellcheck).unwrap();
-        assert_eq!(have.name(), shellcheck.as_str());
+        let have = apps.lookup("shellcheck").unwrap();
+        assert_eq!(have.name(), shellcheck);
       }
 
       #[test]
       #[allow(clippy::panic)]
       fn unknown_app() {
         let apps = Apps(vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})]);
-        let Err(err) = apps.lookup(&ApplicationName::from("zonk")) else {
+        let Err(err) = apps.lookup("zonk") else {
           panic!("expected an error here");
         };
         assert_eq!(err, UserError::UnknownApp(S("zonk")));

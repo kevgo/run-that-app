@@ -43,7 +43,7 @@ impl File {
   }
 
   pub(crate) fn lookup(&self, app_name: &ApplicationName) -> Option<&RequestedVersions> {
-    self.apps.iter().find(|app| app.app_name == app_name).map(|app_version| &app_version.versions)
+    self.apps.iter().find(|app| &app.app_name == app_name).map(|app_version| &app_version.versions)
   }
 
   pub(crate) fn save(&self) -> Result<()> {
@@ -88,7 +88,7 @@ fn parse_line(line_text: &str, line_no: usize, apps: &Apps) -> Result<Option<App
     // empty or commented out line --> ignore
     return Ok(None);
   };
-  let app = apps.lookup(&name.into())?;
+  let app = apps.lookup(name)?;
   let Some(version) = parts.next() else {
     // line has only one element --> invalid
     return Err(UserError::InvalidConfigFileFormat {
@@ -101,7 +101,7 @@ fn parse_line(line_text: &str, line_no: usize, apps: &Apps) -> Result<Option<App
     versions.push(RequestedVersion::parse(part, app)?);
   }
   Ok(Some(AppVersions {
-    app_name: name.into(),
+    app_name: app.name(),
     versions,
   }))
 }
@@ -145,7 +145,8 @@ mod tests {
                         dprint  2.3.4 # comment\n\
                         mdbook 3.4.5 6.7.8\n\
                         go system@1.21 1.22.1";
-      let have = parse(give, &applications::all()).unwrap();
+      let apps = applications::all();
+      let have = parse(give, &apps).unwrap();
       let want = configuration::File {
         apps: vec![
           AppVersions {
@@ -175,7 +176,8 @@ mod tests {
     #[test]
     fn empty() {
       let give = "";
-      let have = parse(give, &applications::all()).unwrap();
+      let apps = applications::all();
+      let have = parse(give, &apps).unwrap();
       let want = configuration::File { apps: vec![] };
       pretty::assert_eq!(have, want);
     }
@@ -191,8 +193,9 @@ mod tests {
 
     #[test]
     fn normal() {
+      let apps = applications::all();
       let give = "shellcheck 0.9.0";
-      let have = parse_line(give, 1, &applications::all()).unwrap();
+      let have = parse_line(give, 1, &apps).unwrap();
       let want = Some(AppVersions {
         app_name: ApplicationName::from("shellcheck"),
         versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]),
@@ -202,8 +205,9 @@ mod tests {
 
     #[test]
     fn multiple_versions() {
+      let apps = applications::all();
       let give = "shellcheck 0.9.0 0.6.0";
-      let have = parse_line(give, 1, &applications::all()).unwrap();
+      let have = parse_line(give, 1, &apps).unwrap();
       let want = Some(AppVersions {
         app_name: ApplicationName::from("shellcheck"),
         versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into()), RequestedVersion::Yard("0.6.0".into())]),
@@ -213,8 +217,9 @@ mod tests {
 
     #[test]
     fn normal_with_multiple_spaces() {
+      let apps = applications::all();
       let give = "     shellcheck            0.9.0      ";
-      let have = parse_line(give, 1, &applications::all()).unwrap();
+      let have = parse_line(give, 1, &apps).unwrap();
       let want = Some(AppVersions {
         app_name: ApplicationName::from("shellcheck"),
         versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]),
@@ -224,8 +229,9 @@ mod tests {
 
     #[test]
     fn normal_with_tabs() {
+      let apps = applications::all();
       let give = "shellcheck\t0.9.0";
-      let have = parse_line(give, 1, &applications::all()).unwrap();
+      let have = parse_line(give, 1, &apps).unwrap();
       let want = Some(AppVersions {
         app_name: ApplicationName::from("shellcheck"),
         versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]),
@@ -235,8 +241,9 @@ mod tests {
 
     #[test]
     fn missing_version() {
+      let apps = applications::all();
       let give = "shellcheck ";
-      let have = parse_line(give, 1, &applications::all());
+      let have = parse_line(give, 1, &apps);
       let want = Err(UserError::InvalidConfigFileFormat {
         line_no: 1,
         text: S("shellcheck"),
@@ -246,29 +253,33 @@ mod tests {
 
     #[test]
     fn empty_line() {
+      let apps = applications::all();
       let give = "";
-      let have = parse_line(give, 1, &applications::all()).unwrap();
+      let have = parse_line(give, 1, &apps).unwrap();
       assert_eq!(have, None);
     }
 
     #[test]
     fn spaces_only() {
+      let apps = applications::all();
       let give = "              ";
-      let have = parse_line(give, 1, &applications::all()).unwrap();
+      let have = parse_line(give, 1, &apps).unwrap();
       assert_eq!(have, None);
     }
 
     #[test]
     fn completely_commented_out() {
+      let apps = applications::all();
       let give = "# shellcheck 0.9.0";
-      let have = parse_line(give, 1, &applications::all()).unwrap();
+      let have = parse_line(give, 1, &apps).unwrap();
       assert_eq!(have, None);
     }
 
     #[test]
     fn valid_with_comment_at_end() {
+      let apps = applications::all();
       let give = "shellcheck 0.9.0  # comment";
-      let have = parse_line(give, 1, &applications::all()).unwrap();
+      let have = parse_line(give, 1, &apps).unwrap();
       let want = Some(AppVersions {
         app_name: ApplicationName::from("shellcheck"),
         versions: RequestedVersions::new(vec![RequestedVersion::Yard("0.9.0".into())]),
