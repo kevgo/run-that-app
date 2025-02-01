@@ -7,7 +7,7 @@ use std::path::Path;
 use std::{fs, io};
 
 #[test]
-fn test_add() -> io::Result<()> {
+fn pub_crate() -> io::Result<()> {
   let current_dir = std::env::current_dir()?;
   let mut files = Vec::new();
   find_files(&current_dir, &mut files)?;
