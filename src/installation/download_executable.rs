@@ -11,7 +11,7 @@ pub(crate) fn run(app_definition: &dyn AppDefinition, app_folder: &Path, url: &s
   let Some(artifact) = download::artifact(url, &app_definition.app_name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
-  let filepath_on_disk = app_folder.join(app_definition.default_executable_filename().platform_path(platform.os));
+  let filepath_on_disk = app_folder.join(app_definition.executable_filename().platform_path(platform.os));
   filesystem::save_executable(artifact.data, &filepath_on_disk, log)?;
   Ok(Outcome::Installed)
 }
