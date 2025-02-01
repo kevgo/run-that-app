@@ -16,7 +16,7 @@ pub(crate) fn test(args: &mut Args) -> Result<ExitCode> {
   let temp_folder = tempfile::tempdir().map_err(|err| UserError::CannotCreateTempDir { err: err.to_string() })?;
   let yard = Yard::load_or_create(temp_folder.path())?;
   let config_file = configuration::File::load(&apps)?;
-  for app in apps.iter() {
+  for app in apps {
     if let Some(start_app_name) = &args.start_at_app {
       if &app.name() != start_app_name {
         continue;
