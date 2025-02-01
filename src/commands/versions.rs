@@ -16,8 +16,8 @@ pub(crate) fn versions(args: &Args) -> Result<ExitCode> {
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct Args<'a> {
-  pub(crate) app_name: ApplicationName<'a>,
+pub(crate) struct Args {
+  pub(crate) app_name: ApplicationName,
   pub(crate) amount: usize,
   pub(crate) verbose: bool,
 }

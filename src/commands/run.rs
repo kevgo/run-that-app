@@ -35,9 +35,9 @@ pub(crate) fn run(args: &Args) -> Result<ExitCode> {
 
 /// data needed to run an executable
 #[derive(Debug, PartialEq)]
-pub(crate) struct Args<'a> {
+pub(crate) struct Args {
   /// name of the app to execute
-  pub(crate) app_name: ApplicationName<'a>,
+  pub(crate) app_name: ApplicationName,
 
   /// possible versions of the app to execute
   pub(crate) version: Option<Version>,

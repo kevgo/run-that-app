@@ -33,7 +33,7 @@ pub(crate) enum Event<'a> {
   CompileRustSuccess,
   CompileRustFailed,
   DownloadBegin {
-    app: &'a ApplicationName<'a>,
+    app: &'a ApplicationName,
     url: &'a str,
   },
   DownloadSuccess,
@@ -78,7 +78,7 @@ pub(crate) enum Event<'a> {
     name: &'static str,
   },
   IntegrationTestNewApp {
-    app: &'a ApplicationName<'a>,
+    app: &'a ApplicationName,
   },
   IntegrationTestDeterminedVersion {
     version: &'a Version,
@@ -94,7 +94,7 @@ pub(crate) enum Event<'a> {
   },
   NotOnline,
   UpdateBegin {
-    app: &'a ApplicationName<'a>,
+    app: &'a ApplicationName,
   },
   UpdateNewVersion {
     old_version: &'a Version,

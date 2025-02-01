@@ -87,8 +87,8 @@ pub(crate) fn test(args: &mut Args) -> Result<ExitCode> {
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct Args<'a> {
+pub(crate) struct Args {
   pub(crate) optional: bool,
-  pub(crate) start_at_app: Option<ApplicationName<'a>>,
+  pub(crate) start_at_app: Option<ApplicationName>,
   pub(crate) verbose: bool,
 }

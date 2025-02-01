@@ -4,13 +4,13 @@ use crate::prelude::*;
 
 /// a request from the user to run a particular app
 #[derive(Debug, PartialEq)]
-pub(crate) struct AppVersion<'a> {
-  pub(crate) app_name: ApplicationName<'a>,
+pub(crate) struct AppVersion {
+  pub(crate) app_name: ApplicationName,
   pub(crate) version: Option<Version>,
 }
 
-impl<'a> AppVersion<'a> {
-  pub(crate) fn new<S: AsRef<str>>(token: S, apps: &'a Apps) -> Result<Self> {
+impl AppVersion {
+  pub(crate) fn new<S: AsRef<str>>(token: S, apps: &Apps) -> Result<Self> {
     let (app_name, version) = token.as_ref().split_once('@').unwrap_or((token.as_ref(), ""));
     let app = apps.lookup(app_name)?;
     let version = if version.is_empty() { None } else { Some(Version::from(version)) };

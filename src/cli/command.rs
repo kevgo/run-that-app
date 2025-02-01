@@ -2,16 +2,16 @@ use crate::commands::{self, available, run, test, update, versions};
 
 /// the main commands that run-this-app can execute
 #[derive(Debug, PartialEq)]
-pub(crate) enum Command<'a> {
+pub(crate) enum Command {
   AppsLong,
   AppsShort,
-  Available(available::Args<'a>),
-  RunApp(run::Args<'a>),
+  Available(available::Args),
+  RunApp(run::Args),
   DisplayHelp,
   Setup,
-  Test(test::Args<'a>),
-  Which(commands::which::Args<'a>),
+  Test(test::Args),
+  Which(commands::which::Args),
   Update(update::Args),
   Version,
-  Versions(versions::Args<'a>),
+  Versions(versions::Args),
 }

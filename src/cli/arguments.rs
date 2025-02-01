@@ -5,8 +5,8 @@ use crate::prelude::*;
 
 /// all arguments that can be provided via the CLI
 #[derive(Debug, PartialEq)]
-pub(crate) struct Arguments<'a> {
-  pub(crate) command: Command<'a>,
+pub(crate) struct Arguments {
+  pub(crate) command: Command,
 }
 
 #[allow(clippy::too_many_lines)]
@@ -160,7 +160,7 @@ mod tests {
   use crate::prelude::*;
 
   // helper function for tests
-  fn parse_args<'a>(args: Vec<&'static str>, apps: &'a Apps) -> Result<Arguments<'a>> {
+  fn parse_args(args: Vec<&'static str>, apps: &Apps) -> Result<Arguments> {
     super::parse(args.into_iter().map(ToString::to_string), apps)
   }
 

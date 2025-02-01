@@ -8,11 +8,11 @@ use std::io::{ErrorKind, Write};
 use std::str::SplitAsciiWhitespace;
 
 #[derive(Debug, Default, PartialEq)]
-pub(crate) struct File<'a> {
-  pub(crate) apps: Vec<AppVersions<'a>>,
+pub(crate) struct File {
+  pub(crate) apps: Vec<AppVersions>,
 }
 
-impl<'a> File<'a> {
+impl File {
   pub(crate) fn create() -> Result<()> {
     let mut file = match OpenOptions::new().write(true).create_new(true).open(FILE_NAME) {
       Ok(file) => file,
@@ -59,7 +59,7 @@ impl<'a> File<'a> {
   }
 }
 
-impl<'a> Display for File<'a> {
+impl Display for File {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     for AppVersions { app_name, versions } in &self.apps {
       f.write_str(app_name.as_str())?;
@@ -71,7 +71,7 @@ impl<'a> Display for File<'a> {
   }
 }
 
-fn parse<'a>(text: &str, all_apps: &'a Apps) -> Result<File<'a>> {
+fn parse(text: &str, all_apps: &Apps) -> Result<File> {
   let mut apps = vec![];
   for (i, line) in text.lines().enumerate() {
     if let Some(app_version) = parse_line(line, i, all_apps)? {
@@ -81,7 +81,7 @@ fn parse<'a>(text: &str, all_apps: &'a Apps) -> Result<File<'a>> {
   Ok(File { apps })
 }
 
-fn parse_line<'a>(line_text: &str, line_no: usize, apps: &'a Apps) -> Result<Option<AppVersions<'a>>> {
+fn parse_line(line_text: &str, line_no: usize, apps: &Apps) -> Result<Option<AppVersions>> {
   let line_text = line_text.trim();
   let mut parts = LinePartsIterator::from(line_text);
   let Some(name) = parts.next() else {

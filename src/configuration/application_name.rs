@@ -2,39 +2,39 @@ use std::fmt::Display;
 use std::path::Path;
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct ApplicationName<'a>(&'a str);
+pub(crate) struct ApplicationName(&'static str);
 
-impl<'a> ApplicationName<'a> {
+impl ApplicationName {
   pub(crate) fn as_str(&self) -> &str {
     self.0
   }
 }
 
-impl<'a> From<&'static str> for ApplicationName<'a> {
+impl From<&'static str> for ApplicationName {
   fn from(value: &'static str) -> Self {
     ApplicationName(value)
   }
 }
 
-impl<'a> Display for ApplicationName<'a> {
+impl Display for ApplicationName {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(self.0)
   }
 }
 
-impl<'a> PartialEq<&str> for ApplicationName<'a> {
+impl PartialEq<&str> for ApplicationName {
   fn eq(&self, other: &&str) -> bool {
     self.0 == *other
   }
 }
 
-impl<'a> AsRef<Path> for ApplicationName<'a> {
+impl AsRef<Path> for ApplicationName {
   fn as_ref(&self) -> &Path {
     Path::new(&self.0)
   }
 }
 
-impl<'a> AsRef<str> for ApplicationName<'a> {
+impl AsRef<str> for ApplicationName {
   fn as_ref(&self) -> &str {
     self.0
   }

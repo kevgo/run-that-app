@@ -23,8 +23,8 @@ pub(crate) fn which(args: &Args) -> Result<ExitCode> {
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct Args<'a> {
-  pub(crate) app_name: ApplicationName<'a>,
+pub(crate) struct Args {
+  pub(crate) app_name: ApplicationName,
   pub(crate) optional: bool,
   pub(crate) version: Option<Version>,
   pub(crate) verbose: bool,
