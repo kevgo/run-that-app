@@ -22,7 +22,10 @@ fn test_add() -> io::Result<()> {
       }
     }
   }
-  assert!(!failure, "found files with unlimited visibility, see above");
+  assert!(
+    !failure,
+    "found files with unbounded visibility, see above.\nFiles should have at most pub(crate) visibility."
+  );
   Ok(())
 }
 
