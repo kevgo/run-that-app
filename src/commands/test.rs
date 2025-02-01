@@ -18,7 +18,7 @@ pub(crate) fn test(args: &mut Args) -> Result<ExitCode> {
   let config_file = configuration::File::load(&apps)?;
   for app in apps {
     if let Some(start_app_name) = &args.start_at_app {
-      if app.name() != start_app_name.as_str() {
+      if &app.name() != start_app_name {
         continue;
       }
       args.start_at_app = None;
