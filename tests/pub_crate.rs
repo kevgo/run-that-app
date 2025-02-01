@@ -1,8 +1,10 @@
-use std::fs::{self, File};
-use std::io::{self, BufRead};
+use std::fs::File;
+use std::io::BufRead;
 use std::path::Path;
+use std::{fs, io};
 
-fn main() -> io::Result<()> {
+#[test]
+fn test_add() -> std::io::Result<()> {
   let current_dir = std::env::current_dir()?;
   let mut files = Vec::new();
   find_files(&current_dir, &mut files)?;

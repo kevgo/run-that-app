@@ -26,7 +26,6 @@ lint: build  # runs all linters
 setup:  # install development dependencies on this computer
 	rustup toolchain add nightly
 	rustup component add rustfmt --toolchain nightly
-	cargo install -f cargo-task
 
 test: fix unit lint  # runs all tests
 
