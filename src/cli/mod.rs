@@ -5,7 +5,7 @@ mod arguments;
 mod command;
 mod exit;
 
-pub(crate) use app_version::AppVersion;
+use app_version::AppVersion;
 pub(crate) use arguments::parse;
 #[cfg(test)]
 pub(crate) use arguments::Arguments;
