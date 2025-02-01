@@ -1,4 +1,4 @@
-use crate::applications::{AnalyzeResult, ApplicationName};
+use crate::applications::{AnalyzeResult, ApplicationName, Apps};
 use crate::logging::Event;
 use crate::prelude::*;
 use crate::run::ExecutablePath;
@@ -90,4 +90,10 @@ pub(crate) struct Args {
   pub(crate) optional: bool,
   pub(crate) start_at_app: Option<ApplicationName>,
   pub(crate) verbose: bool,
+}
+
+fn find_duplicate_app_names(apps: &Apps) {
+  for app in apps.iter() {
+    //
+  }
 }
