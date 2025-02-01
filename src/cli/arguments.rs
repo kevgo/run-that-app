@@ -21,7 +21,6 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Argume
   let mut indicate_available = false;
   let mut update = false;
   let mut optional = false;
-  let mut include: Vec<String> = vec![];
   let mut versions: Option<usize> = None;
   for arg in cli_args {
     if app_version.is_none() {
@@ -71,12 +70,6 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Argume
       }
       if arg.starts_with('-') {
         let (key, value) = arg.split_once('=').unwrap_or((&arg, ""));
-        if key == "--include" {
-          if value.is_empty() {
-            return Err(UserError::MissingApplication);
-          }
-          include.push(value.to_string());
-        }
         if key == "--verbose" || key == "-v" {
           verbose = true;
           continue;
@@ -142,7 +135,6 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>) -> Result<Argume
           version,
           app_args,
           error_on_output,
-          include,
           optional,
           verbose,
         }),
@@ -248,7 +240,6 @@ mod tests {
               version: None,
               app_args: vec![],
               error_on_output: true,
-              include: vec![],
               optional: false,
               verbose: false,
             }),
@@ -358,7 +349,6 @@ mod tests {
               version: Some(Version::from("2")),
               app_args: vec![],
               error_on_output: false,
-              include: vec![],
               optional: false,
               verbose: true,
             }),
@@ -375,7 +365,6 @@ mod tests {
               version: Some(Version::from("2")),
               app_args: vec![],
               error_on_output: false,
-              include: vec![],
               optional: false,
               verbose: true,
             }),
@@ -407,7 +396,6 @@ mod tests {
             version: Some(Version::from("2")),
             app_args: vec![S("arg1")],
             error_on_output: false,
-            include: vec![],
             optional: true,
             verbose: false,
           }),
@@ -537,7 +525,6 @@ mod tests {
             version: Some(Version::from("2")),
             app_args: vec![],
             error_on_output: false,
-            include: vec![],
             optional: false,
             verbose: false,
           }),
@@ -554,7 +541,6 @@ mod tests {
             version: Some(Version::from("2")),
             app_args: vec![S("--arg1"), S("arg2")],
             error_on_output: false,
-            include: vec![],
             optional: false,
             verbose: false,
           }),
@@ -579,7 +565,6 @@ mod tests {
             version: Some(Version::from("2")),
             app_args: vec![S("--arg1"), S("arg2")],
             error_on_output: false,
-            include: vec![],
             optional: false,
             verbose: true,
           }),
@@ -596,7 +581,6 @@ mod tests {
             version: Some(Version::from("2")),
             app_args: vec![S("--verbose"), S("--version")],
             error_on_output: false,
-            include: vec![],
             optional: false,
             verbose: false,
           }),
