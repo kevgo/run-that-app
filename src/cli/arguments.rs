@@ -138,7 +138,8 @@ fn multiple_true(values: &[bool]) -> bool {
 #[cfg(test)]
 mod tests {
   use crate::applications::Apps;
-  use crate::{prelude::*, Command};
+  use crate::prelude::*;
+  use crate::Command;
 
   // helper function for tests
   fn parse_args(args: Vec<&'static str>, apps: &Apps) -> Result<Command> {
