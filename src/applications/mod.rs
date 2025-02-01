@@ -170,7 +170,7 @@ impl Apps {
   /// TODO: return the actual Box<dyn App> instead of a reference here
   pub(crate) fn lookup<AS: AsRef<str>>(&self, name: AS) -> Result<&dyn AppDefinition> {
     for app in &self.0 {
-      if app.name().as_str() == name.as_ref() {
+      if app.name() == name.as_ref() {
         return Ok(app.as_ref());
       }
     }
