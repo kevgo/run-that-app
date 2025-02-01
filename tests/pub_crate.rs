@@ -1,3 +1,6 @@
+//! This test verifies that all exported symbols are at most visible within the crate scope.
+//! This helps find unused code.
+
 use std::fs::File;
 use std::io::BufRead;
 use std::path::Path;
