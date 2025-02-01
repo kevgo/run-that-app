@@ -75,6 +75,9 @@ pub(crate) enum UserError {
   },
   CompilationInterupted,
   ConfigFileAlreadyExists,
+  DuplicateAppName {
+    name: String,
+  },
   ExecutableCannotExecute {
     executable: ExecutablePath,
     err: String,
@@ -203,6 +206,9 @@ impl UserError {
       UserError::ConfigFileAlreadyExists => {
         error("config file already exists");
         desc(&format!("The file {FILE_NAME} already exists, no changes have been made to it."));
+      }
+      UserError::DuplicateAppName { name } => {
+        error(&format!("duplicate app name found: {name}"));
       }
       UserError::ExecutableCannotExecute { executable, err } => {
         error(&format!("cannot execute {executable}: {err}"));

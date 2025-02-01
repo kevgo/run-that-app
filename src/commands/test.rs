@@ -1,4 +1,4 @@
-use crate::applications::{AnalyzeResult, ApplicationName};
+use crate::applications::{AnalyzeResult, ApplicationName, Apps};
 use crate::logging::Event;
 use crate::prelude::*;
 use crate::run::ExecutablePath;
@@ -10,6 +10,7 @@ use std::process::ExitCode;
 
 pub(crate) fn test(args: &mut Args) -> Result<ExitCode> {
   let apps = applications::all();
+  find_duplicate_app_names(&apps)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
   let temp_folder = tempfile::tempdir().map_err(|err| UserError::CannotCreateTempDir { err: err.to_string() })?;
@@ -90,4 +91,16 @@ pub(crate) struct Args {
   pub(crate) optional: bool,
   pub(crate) start_at_app: Option<ApplicationName>,
   pub(crate) verbose: bool,
+}
+
+fn find_duplicate_app_names(apps: &Apps) -> Result<()> {
+  let mut names: Vec<&'static str> = vec![];
+  for app in apps.iter() {
+    let app_name = app.name();
+    if names.contains(&app_name) {
+      return Err(UserError::DuplicateAppName { name: app_name.to_string() });
+    }
+    names.push(app_name);
+  }
+  Ok(())
 }
