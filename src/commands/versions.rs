@@ -5,7 +5,7 @@ use std::process::ExitCode;
 
 pub(crate) fn versions(args: &Args) -> Result<ExitCode> {
   let apps = &applications::all();
-  let app = apps.lookup(args.app_name.as_str())?;
+  let app = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
   let versions = app.installable_versions(args.amount, log)?;
   println!("{} is available in these versions:", args.app_name);
