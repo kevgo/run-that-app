@@ -168,12 +168,6 @@ impl Display for ApplicationName {
   }
 }
 
-impl PartialEq<&str> for ApplicationName {
-  fn eq(&self, other: &&str) -> bool {
-    self.0 == *other
-  }
-}
-
 impl AsRef<Path> for ApplicationName {
   fn as_ref(&self) -> &Path {
     Path::new(&self.0)
