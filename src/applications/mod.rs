@@ -71,11 +71,16 @@ pub(crate) fn all() -> Apps {
 /// allows definining an application that run-that-app can install
 pub(crate) trait AppDefinition {
   /// the name by which the user can select this application at the run-that-app CLI
-  fn name(&self) -> ApplicationName;
+  fn name(&self) -> &'static str;
+
+  /// type-safe version of self.name, for internal use
+  fn app_name(&self) -> ApplicationName {
+    ApplicationName::from(self.name())
+  }
 
   /// the filename of the executable that starts this app
   fn default_executable_filename(&self) -> ExecutableNameUnix {
-    ExecutableNameUnix::from(self.name().as_str())
+    ExecutableNameUnix::from(self.name())
   }
 
   /// names of other executables that this app provides
@@ -131,7 +136,7 @@ pub(crate) trait AppDefinition {
 
 impl Display for dyn AppDefinition {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(self.name().as_str())
+    f.write_str(self.name())
   }
 }
 
@@ -143,7 +148,7 @@ impl PartialEq for dyn AppDefinition {
 
 impl Debug for dyn AppDefinition {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(self.name().as_str())
+    f.write_str(self.name())
   }
 }
 
@@ -179,7 +184,7 @@ impl Apps {
 
   /// provides the length of the name of the app with the longest name
   pub(crate) fn longest_name_length(&self) -> usize {
-    self.iter().map(|app| app.name().as_str().len()).max().unwrap_or_default()
+    self.iter().map(|app| app.name().len()).max().unwrap_or_default()
   }
 }
 
@@ -210,16 +215,14 @@ mod tests {
 
     mod lookup {
       use crate::applications::{dprint, shellcheck, Apps};
-      use crate::configuration::ApplicationName;
       use crate::prelude::*;
       use big_s::S;
 
       #[test]
       fn known_app() {
         let apps = Apps(vec![Box::new(dprint::Dprint {}), Box::new(shellcheck::ShellCheck {})]);
-        let shellcheck = ApplicationName::from("shellcheck");
         let have = apps.lookup("shellcheck").unwrap();
-        assert_eq!(have.name(), shellcheck);
+        assert_eq!(have.name(), "shellcheck");
       }
 
       #[test]

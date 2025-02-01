@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition};
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
@@ -14,8 +14,8 @@ const ORG: &str = "butuzov";
 const REPO: &str = "ireturn";
 
 impl AppDefinition for Ireturn {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("ireturn")
+  fn name(&self) -> &'static str {
+    "ireturn"
   }
 
   fn homepage(&self) -> &'static str {

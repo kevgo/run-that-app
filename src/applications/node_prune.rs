@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition};
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::hosting::github_tags;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
@@ -14,8 +14,8 @@ const ORG: &str = "tj";
 const REPO: &str = "node-prune";
 
 impl AppDefinition for NodePrune {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("node-prune")
+  fn name(&self) -> &'static str {
+    "node-prune"
   }
 
   fn homepage(&self) -> &'static str {

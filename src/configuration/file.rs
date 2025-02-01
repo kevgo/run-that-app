@@ -101,7 +101,7 @@ fn parse_line(line_text: &str, line_no: usize, apps: &Apps) -> Result<Option<App
     versions.push(RequestedVersion::parse(part, app)?);
   }
   Ok(Some(AppVersions {
-    app_name: app.name(),
+    app_name: app.app_name(),
     versions,
   }))
 }

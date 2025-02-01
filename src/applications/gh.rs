@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition};
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
@@ -15,8 +15,8 @@ const ORG: &str = "cli";
 const REPO: &str = "cli";
 
 impl AppDefinition for Gh {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("gh")
+  fn name(&self) -> &'static str {
+    "gh"
   }
 
   fn homepage(&self) -> &'static str {

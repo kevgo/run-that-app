@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition};
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
@@ -14,8 +14,8 @@ pub(crate) const ORG: &str = "nodejs";
 pub(crate) const REPO: &str = "node";
 
 impl AppDefinition for NodeJS {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("node")
+  fn name(&self) -> &'static str {
+    "node"
   }
 
   fn homepage(&self) -> &'static str {

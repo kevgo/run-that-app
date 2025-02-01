@@ -23,7 +23,8 @@ pub(crate) fn run(
   log: Log,
 ) -> Result<Outcome> {
   let (app_to_install, executable_name, _args) = app_definition.carrier(version, platform);
-  let Some(artifact) = download::artifact(url, &app_to_install.name(), optional, log)? else {
+  let app_name = app_to_install.app_name();
+  let Some(artifact) = download::artifact(url, &app_name, optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
   let Some(archive) = archives::lookup(&artifact.filename, artifact.data) else {

@@ -55,7 +55,7 @@ pub(crate) fn run(
 
 fn load_rta_go(platform: Platform, optional: bool, config_file: &configuration::File, yard: &Yard, log: Log) -> Result<Option<PathBuf>> {
   let go = applications::go::Go {};
-  let requested_go_versions = if let Some(versions) = config_file.lookup(&go.name()) {
+  let requested_go_versions = if let Some(versions) = config_file.lookup(&go.app_name()) {
     versions
   } else {
     let versions = go.installable_versions(3, log)?;

@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition};
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::Platform;
@@ -14,8 +14,8 @@ const ORG: &str = "GaijinEntertainment";
 const REPO: &str = "go-exhaustruct";
 
 impl AppDefinition for Exhaustruct {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("exhaustruct")
+  fn name(&self) -> &'static str {
+    "exhaustruct"
   }
 
   fn homepage(&self) -> &'static str {

@@ -79,7 +79,7 @@ impl Yard {
     log: Log,
   ) -> Option<(ExecutablePath, BinFolder)> {
     let run_method = app_definition.run_method(version, platform);
-    let app_folder = self.app_folder(&app_definition.name(), version);
+    let app_folder = self.app_folder(&app_definition.app_name(), version);
     for installation_method in run_method.install_methods() {
       let fullpaths = installation_method.executable_paths(&app_folder, &executable.clone().platform_path(platform.os));
       for fullpath in fullpaths {

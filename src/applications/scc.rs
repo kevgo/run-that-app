@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition};
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
@@ -14,8 +14,8 @@ const ORG: &str = "boyter";
 const REPO: &str = "scc";
 
 impl AppDefinition for Scc {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("scc")
+  fn name(&self) -> &'static str {
+    "scc"
   }
 
   fn homepage(&self) -> &'static str {

@@ -78,7 +78,7 @@ pub(crate) enum Event<'a> {
     name: &'static str,
   },
   IntegrationTestNewApp {
-    app: &'a ApplicationName,
+    app: &'static str,
   },
   IntegrationTestDeterminedVersion {
     version: &'a Version,

@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition};
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
@@ -13,8 +13,8 @@ const ORG: &str = "koalaman";
 const REPO: &str = "shellcheck";
 
 impl AppDefinition for ShellCheck {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("shellcheck")
+  fn name(&self) -> &'static str {
+    "shellcheck"
   }
 
   fn homepage(&self) -> &'static str {

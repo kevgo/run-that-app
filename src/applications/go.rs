@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition};
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::hosting::github_tags;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
@@ -15,8 +15,8 @@ const ORG: &str = "golang";
 const REPO: &str = "go";
 
 impl AppDefinition for Go {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("go")
+  fn name(&self) -> &'static str {
+    "go"
   }
 
   fn homepage(&self) -> &'static str {

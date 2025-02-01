@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition};
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
@@ -15,8 +15,8 @@ const ORG: &str = "Michael-F-Bryan";
 const REPO: &str = "mdbook-linkcheck";
 
 impl AppDefinition for MdBookLinkCheck {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("mdbook-linkcheck")
+  fn name(&self) -> &'static str {
+    "mdbook-linkcheck"
   }
 
   fn homepage(&self) -> &'static str {

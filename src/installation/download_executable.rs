@@ -8,7 +8,7 @@ use std::path::Path;
 
 /// downloads an uncompressed precompiled binary
 pub(crate) fn run(app_definition: &dyn AppDefinition, app_folder: &Path, url: &str, platform: Platform, optional: bool, log: Log) -> Result<Outcome> {
-  let Some(artifact) = download::artifact(url, &app_definition.name(), optional, log)? else {
+  let Some(artifact) = download::artifact(url, &app_definition.app_name(), optional, log)? else {
     return Ok(Outcome::NotInstalled);
   };
   let filepath_on_disk = app_folder.join(app_definition.default_executable_filename().platform_path(platform.os));

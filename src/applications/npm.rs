@@ -1,6 +1,6 @@
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, AppDefinition};
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::run::{ExecutableArgs, ExecutablePath};
@@ -9,8 +9,8 @@ use crate::{run, Log};
 pub(crate) struct Npm {}
 
 impl AppDefinition for Npm {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("npm")
+  fn name(&self) -> &'static str {
+    "npm"
   }
 
   fn homepage(&self) -> &'static str {

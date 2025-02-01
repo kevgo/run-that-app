@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition};
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
@@ -14,8 +14,8 @@ const ORG: &str = "golangci";
 const REPO: &str = "golangci-lint";
 
 impl AppDefinition for GolangCiLint {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("golangci-lint")
+  fn name(&self) -> &'static str {
+    "golangci-lint"
   }
 
   fn homepage(&self) -> &'static str {

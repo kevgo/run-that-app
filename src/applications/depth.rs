@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition};
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
@@ -14,8 +14,8 @@ const ORG: &str = "KyleBanks";
 const REPO: &str = "depth";
 
 impl AppDefinition for Depth {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("depth")
+  fn name(&self) -> &'static str {
+    "depth"
   }
 
   fn homepage(&self) -> &'static str {

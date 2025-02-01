@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition};
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::Platform;
@@ -14,8 +14,8 @@ const ORG: &str = "loov";
 const REPO: &str = "goda";
 
 impl AppDefinition for Goda {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("goda")
+  fn name(&self) -> &'static str {
+    "goda"
   }
 
   fn homepage(&self) -> &'static str {

@@ -174,7 +174,7 @@ pub(crate) fn install(
   config_file: &configuration::File,
   log: Log,
 ) -> Result<Outcome> {
-  let app_folder = yard.create_app_folder(&app_definition.name(), version)?;
+  let app_folder = yard.create_app_folder(&app_definition.app_name(), version)?;
   match install_method {
     Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &app_folder, version, url, bin_folder, optional, platform, log),
     Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &app_folder, download_url, platform, optional, log),

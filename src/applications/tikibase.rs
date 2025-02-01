@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition};
-use crate::configuration::{ApplicationName, Version};
+use crate::configuration::Version;
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
@@ -14,8 +14,8 @@ const ORG: &str = "kevgo";
 const REPO: &str = "tikibase";
 
 impl AppDefinition for Tikibase {
-  fn name(&self) -> ApplicationName {
-    ApplicationName::from("tikibase")
+  fn name(&self) -> &'static str {
+    "tikibase"
   }
 
   fn homepage(&self) -> &'static str {
