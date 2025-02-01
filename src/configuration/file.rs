@@ -43,7 +43,7 @@ impl File {
   }
 
   pub(crate) fn lookup(&self, app_name: &ApplicationName) -> Option<&RequestedVersions> {
-    self.apps.iter().find(|app| app.app_name == *app_name).map(|app_version| &app_version.versions)
+    self.apps.iter().find(|app| &app.app_name == app_name).map(|app_version| &app_version.versions)
   }
 
   pub(crate) fn save(&self) -> Result<()> {
