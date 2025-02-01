@@ -3,8 +3,9 @@
 mod app_version;
 mod command;
 mod exit;
+mod parse;
 
-#[cfg(test)]
 use app_version::AppVersion;
-pub(crate) use command::{parse, Command};
+pub(crate) use command::Command;
 pub(crate) use exit::exit;
+pub(crate) use parse::parse;
