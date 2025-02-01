@@ -1,5 +1,5 @@
 build:  # compiles this app in debug mode
-	cargo build
+	cargo build --locked
 
 fix: build  # auto-corrects issues
 	cargo +nightly fix --allow-dirty
@@ -28,7 +28,7 @@ setup:  # install development dependencies on this computer
 test: fix unit lint  # runs all tests
 
 unit:  # runs the unit tests
-	cargo test
+	cargo test --locked
 
 update:  # updates the dependencies
 	cargo install cargo-edit cargo-machete
