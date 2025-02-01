@@ -468,10 +468,10 @@ mod tests {
         #[test]
         fn with_app() {
           let apps = applications::all();
-          let actionlint = apps.lookup("actionlint").unwrap();
+          let shellcheck = apps.lookup("shellcheck").unwrap();
           let have = parse_args(vec!["rta", "--which", "shellcheck"], &apps);
           let want = Ok(Command::Which(commands::which::Args {
-            app_name: actionlint.app_name(),
+            app_name: shellcheck.app_name(),
             optional: false,
             version: None,
             verbose: false,
@@ -482,10 +482,10 @@ mod tests {
         #[test]
         fn with_all_options() {
           let apps = applications::all();
-          let actionlint = apps.lookup("actionlint").unwrap();
+          let shellcheck = apps.lookup("shellcheck").unwrap();
           let have = parse_args(vec!["rta", "--which", "--verbose", "shellcheck"], &apps);
           let want = Ok(Command::Which(commands::which::Args {
-            app_name: actionlint.app_name(),
+            app_name: shellcheck.app_name(),
             optional: false,
             version: None,
             verbose: true,
