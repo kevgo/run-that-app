@@ -18,12 +18,12 @@ pub(crate) fn test(args: &mut Args) -> Result<ExitCode> {
   let config_file = configuration::File::load(&apps)?;
   for app in apps {
     if let Some(start_app_name) = &args.start_at_app {
-      if &app.name() != start_app_name {
+      if &app.app_name() != start_app_name {
         continue;
       }
       args.start_at_app = None;
     }
-    log(Event::IntegrationTestNewApp { app: &app.name() });
+    log(Event::IntegrationTestNewApp { app: app.name() });
     let latest_version = app.latest_installable_version(log)?;
     log(Event::IntegrationTestDeterminedVersion { version: &latest_version });
     for install_method in app.run_method(&latest_version, platform).install_methods() {
