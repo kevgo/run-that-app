@@ -1,23 +1,32 @@
-use std::fs::{self, File};
-use std::io::{self, BufRead};
-use std::path::Path;
+//! This test verifies that all exported symbols are at most visible within the crate scope.
+//! This helps find unused code.
 
-fn main() -> io::Result<()> {
+use std::fs::File;
+use std::io::BufRead;
+use std::path::Path;
+use std::{fs, io};
+
+#[test]
+fn test_add() -> io::Result<()> {
   let current_dir = std::env::current_dir()?;
   let mut files = Vec::new();
   find_files(&current_dir, &mut files)?;
-  let mut exit_code = 0;
+  let mut failure = false;
   for file in files {
     for (index, line) in lines_in_file(&file)?.enumerate() {
       if let Ok(line_content) = line {
         if line_content.trim_start().starts_with("pub ") {
           println!("{}:{} {}", file.to_string_lossy(), index + 1, line_content);
-          exit_code = 1;
+          failure = true;
         }
       }
     }
   }
-  std::process::exit(exit_code);
+  assert!(
+    !failure,
+    "found files with unbounded visibility, see above.\nFiles should have at most pub(crate) visibility."
+  );
+  Ok(())
 }
 
 fn find_files(dir: &Path, result: &mut Vec<std::path::PathBuf>) -> io::Result<()> {
@@ -26,7 +35,7 @@ fn find_files(dir: &Path, result: &mut Vec<std::path::PathBuf>) -> io::Result<()
   }
   for entry in fs::read_dir(dir)? {
     let path = entry?.path();
-    if path.ends_with("target") || path.ends_with("cargo_task_util") {
+    if path.ends_with("target") {
       continue;
     }
     if path.is_dir() {
