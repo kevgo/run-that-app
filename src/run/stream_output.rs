@@ -1,6 +1,7 @@
-use super::executable_path::add_path;
-use super::{exit_status_to_code, format_call, ExecutableCall, ExecutableCallDefinition};
+use super::executable_path::add_paths;
+use super::{exit_status_to_code, format_call, ExecutableCall};
 use crate::prelude::*;
+use std::path::PathBuf;
 use std::process::{Command, ExitCode};
 
 /// Runs the given executable with the given arguments.
@@ -10,7 +11,15 @@ pub(crate) fn stream_output(executable_call: &ExecutableCall, args: &[String], a
   let mut cmd = Command::new(&executable_call.executable_path);
   cmd.args(&executable_call.args);
   cmd.args(args);
-  add_path(&mut cmd, executable_call.executable_path.as_path().parent().unwrap());
+  let mut paths_to_include = vec![executable_call.executable_path.as_path().parent().unwrap()];
+  let pathbufs: Vec<PathBuf> = apps_to_include
+    .into_iter()
+    .map(|executable_call| executable_call.executable_path.inner())
+    .collect();
+  for pathbuf in &pathbufs {
+    paths_to_include.push(pathbuf);
+  }
+  add_paths(&mut cmd, &paths_to_include);
   let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
     call: format_call(executable_call, args),
     reason: err.to_string(),

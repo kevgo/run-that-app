@@ -28,7 +28,7 @@ impl ExecutablePath {
     let mut cmd = Command::new(self);
     cmd.arg(arg);
     #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
-    add_path(&mut cmd, self.0.parent().unwrap());
+    add_paths(&mut cmd, &[self.0.parent().unwrap()]);
     log(Event::AnalyzeExecutableBegin {
       cmd: &self.as_str(),
       args: &[arg],
@@ -55,7 +55,7 @@ impl ExecutablePath {
     let mut cmd = Command::new(self);
     cmd.args(args);
     #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
-    add_path(&mut cmd, self.0.parent().unwrap());
+    add_paths(&mut cmd, &[self.0.parent().unwrap()]);
     let output = match cmd.output() {
       Ok(output) => output,
       Err(err) => {
@@ -99,15 +99,28 @@ impl From<&Path> for ExecutablePath {
   }
 }
 
-/// adds the given dir to the PATH env variable of the given cmd
-pub(crate) fn add_path(cmd: &mut Command, dir: &Path) {
+/// adds the given dirs to the PATH env variable of the given cmd
+pub(crate) fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
   cmd.envs(env::vars_os());
   let new_path = if let Some(mut path) = env::var_os("PATH") {
-    path.push(":");
-    path.push(dir.as_os_str());
+    // PATH env var is set to something here, could be empty string
+    for dir in dirs {
+      if !path.is_empty() {
+        path.push(":");
+      }
+      path.push(dir.as_os_str());
+    }
     path
   } else {
-    OsString::from(dir)
+    // PATH env var is empty here
+    let mut path = OsString::new();
+    for dir in dirs {
+      if !path.is_empty() {
+        path.push(":");
+      }
+      path.push(dir);
+    }
+    path
   };
   cmd.env("PATH", new_path);
 }
