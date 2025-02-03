@@ -1,12 +1,12 @@
 use super::executable_path::add_path;
-use super::{exit_status_to_code, format_call, ExecutableCall};
+use super::{exit_status_to_code, format_call, ExecutableCall, ExecutableCallDefinition};
 use crate::prelude::*;
 use std::process::{Command, ExitCode};
 
 /// Runs the given executable with the given arguments.
 /// Streams output to the user's terminal.
 #[allow(clippy::unwrap_used)]
-pub(crate) fn stream_output(executable_call: &ExecutableCall, args: &[String]) -> Result<ExitCode> {
+pub(crate) fn stream_output(executable_call: &ExecutableCall, args: &[String], apps_to_include: Vec<ExecutableCall>) -> Result<ExitCode> {
   let mut cmd = Command::new(&executable_call.executable_path);
   cmd.args(&executable_call.args);
   cmd.args(args);
@@ -45,6 +45,7 @@ mod tests {
           args: vec![],
         },
         &[],
+        vec![],
       )
       .unwrap();
       // HACK: is there a better way to compare ExitCode?
@@ -63,7 +64,7 @@ mod tests {
         executable_path: ExecutablePath::from(executable_path),
         args: vec![],
       };
-      let have = stream_output(&executable_call, &[]).unwrap();
+      let have = stream_output(&executable_call, &[], vec![]).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(3))"));
     }
