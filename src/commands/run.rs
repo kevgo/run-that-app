@@ -19,7 +19,7 @@ pub(crate) fn run(args: Args) -> Result<ExitCode> {
   let config_file = configuration::File::load(&apps)?;
   let include_app_versions = config_file.lookup_many(args.include_apps);
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
-  if let Some(executable_call) = load_or_install_app(app, requested_versions, platform, args.optional, &yard, &config_file, log)? {
+  if let Some(executable_call) = load_or_install_app(app_to_run, requested_versions, platform, args.optional, &yard, &config_file, log)? {
     if args.error_on_output {
       return run::check_output(&executable_call, &args.app_args);
     }
