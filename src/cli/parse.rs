@@ -53,6 +53,10 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
         update = true;
         continue;
       }
+      if &arg == "--verbose" || &arg == "-v" {
+        verbose = true;
+        continue;
+      }
       if &arg == "--version" || &arg == "-V" {
         return Ok(Command::Version);
       }
@@ -66,10 +70,6 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
       }
       if arg.starts_with('-') {
         let (key, value) = arg.split_once('=').unwrap_or((&arg, ""));
-        if key == "--verbose" || key == "-v" {
-          verbose = true;
-          continue;
-        }
         if key == "--versions" {
           versions = Some(value.parse().map_err(|_| UserError::InvalidNumber)?);
           continue;
