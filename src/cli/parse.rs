@@ -1,5 +1,5 @@
 use super::{AppVersion, Command};
-use crate::applications::Apps;
+use crate::applications::{ApplicationName, Apps};
 use crate::commands::{self, available, run, test, update, versions};
 use crate::prelude::*;
 
@@ -10,6 +10,7 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
   let mut verbose = false;
   let mut app_args: Vec<String> = vec![];
   let mut error_on_output = false;
+  let mut include_apps: Vec<ApplicationName> = vec![];
   let mut which = false;
   let mut setup = false;
   let mut test = false;
@@ -119,6 +120,7 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
         version,
         app_args,
         error_on_output,
+        include_apps,
         optional,
         verbose,
       }))

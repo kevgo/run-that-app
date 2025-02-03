@@ -1,6 +1,5 @@
 use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::cli::AppVersion;
-use crate::configuration::{self, RequestedVersion, RequestedVersions, Version};
+use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
@@ -52,7 +51,7 @@ pub(crate) struct Args {
   pub(crate) error_on_output: bool,
 
   /// other applications to include into the PATH
-  pub(crate) include_apps: Vec<AppVersion>,
+  pub(crate) include_apps: Vec<ApplicationName>,
 
   /// whether it's okay to not run the app if it cannot be installed
   pub(crate) optional: bool,
