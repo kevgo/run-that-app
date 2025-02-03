@@ -1,4 +1,5 @@
 use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName};
+use crate::cli::AppVersion;
 use crate::configuration::{self, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
@@ -12,14 +13,15 @@ use std::process::ExitCode;
 
 pub(crate) fn run(args: &Args) -> Result<ExitCode> {
   let apps = applications::all();
-  let app = apps.lookup(&args.app_name)?;
+  let app_to_run = apps.lookup(&args.app_name)?;
+  let apps_to_include = apps.lookup_many(&args.include_apps);
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
   let config_file = configuration::File::load(&apps)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   for requested_version in requested_versions {
-    if let Some(executable_call) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
+    if let Some(executable_call) = load_or_install(app_to_run, &requested_version, platform, args.optional, &yard, &config_file, log)? {
       if args.error_on_output {
         return run::check_output(&executable_call, &args.app_args);
       }
@@ -48,6 +50,9 @@ pub(crate) struct Args {
 
   /// if true, any output produced by the app is equivalent to an exit code > 0
   pub(crate) error_on_output: bool,
+
+  /// other applications to include into the PATH
+  pub(crate) include_apps: Vec<AppVersion>,
 
   /// whether it's okay to not run the app if it cannot be installed
   pub(crate) optional: bool,
