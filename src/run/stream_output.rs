@@ -6,12 +6,12 @@ use std::process::{Command, ExitCode};
 /// Runs the given executable with the given arguments.
 /// Streams output to the user's terminal.
 #[allow(clippy::unwrap_used)]
-pub(crate) fn stream_output(executable_call: &ExecutableCall, args: &[String], apps_to_include: Vec<ExecutableCall>) -> Result<ExitCode> {
+pub(crate) fn stream_output(executable_call: &ExecutableCall, args: &[String], apps_to_include: &[ExecutableCall]) -> Result<ExitCode> {
   let mut cmd = Command::new(&executable_call.executable_path);
   cmd.args(&executable_call.args);
   cmd.args(args);
   let mut paths_to_include = vec![executable_call.executable_path.as_path().parent().unwrap()];
-  for app_to_include in &apps_to_include {
+  for app_to_include in apps_to_include {
     paths_to_include.push(app_to_include.executable_path.as_path());
   }
   add_paths(&mut cmd, &paths_to_include);
@@ -49,7 +49,7 @@ mod tests {
           args: vec![],
         },
         &[],
-        vec![],
+        &[],
       )
       .unwrap();
       // HACK: is there a better way to compare ExitCode?
@@ -68,7 +68,7 @@ mod tests {
         executable_path: ExecutablePath::from(executable_path),
         args: vec![],
       };
-      let have = stream_output(&executable_call, &[], vec![]).unwrap();
+      let have = stream_output(&executable_call, &[], &[]).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(3))"));
     }

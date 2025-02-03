@@ -24,7 +24,7 @@ pub(crate) fn run(args: Args) -> Result<ExitCode> {
     if args.error_on_output {
       return run::check_output(&executable_call, &args.app_args);
     }
-    return run::stream_output(&executable_call, &args.app_args, include_apps);
+    return run::stream_output(&executable_call, &args.app_args, &include_apps);
   }
   if args.optional {
     Ok(ExitCode::SUCCESS)
