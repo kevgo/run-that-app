@@ -51,7 +51,7 @@ impl File {
     for app_name in app_names {
       if let Some(versions) = self.lookup(&app_name) {
         result.push(AppVersions {
-          app_name: app_name,
+          app_name,
           versions: versions.into(),
         });
       }

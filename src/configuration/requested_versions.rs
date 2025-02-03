@@ -88,7 +88,7 @@ impl From<RequestedVersion> for RequestedVersions {
 
 impl From<&RequestedVersions> for RequestedVersions {
   fn from(value: &RequestedVersions) -> Self {
-    RequestedVersions(value.0.iter().map(|r| r.to_owned()).collect())
+    RequestedVersions(value.0.iter().map(std::borrow::ToOwned::to_owned).collect())
   }
 }
 
