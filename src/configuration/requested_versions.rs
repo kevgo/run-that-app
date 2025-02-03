@@ -3,7 +3,7 @@ use crate::applications::ApplicationName;
 use crate::prelude::*;
 
 /// a collection of Version instances
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub(crate) struct RequestedVersions(pub Vec<RequestedVersion>);
 
 impl RequestedVersions {

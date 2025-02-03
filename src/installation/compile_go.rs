@@ -55,16 +55,14 @@ pub(crate) fn run(
 
 fn load_rta_go(platform: Platform, optional: bool, config_file: &configuration::File, yard: &Yard, log: Log) -> Result<Option<PathBuf>> {
   let go = applications::go::Go {};
-  let requested_go_versions = if let Some(versions) = config_file.lookup(&go.app_name()) {
-    versions
+  let requested_go_versions: RequestedVersions = if let Some(versions) = config_file.lookup(&go.app_name()) {
+    (*versions).clone()
   } else {
     let versions = go.installable_versions(3, log)?;
-    &RequestedVersions::new(versions.into_iter().map(RequestedVersion::from).collect())
+    RequestedVersions::new(versions.into_iter().map(RequestedVersion::from).collect())
   };
-  for requested_go_version in &requested_go_versions.0 {
-    if let Some(executable_call) = commands::run::load_or_install(&go, requested_go_version, platform, optional, yard, config_file, log)? {
-      return Ok(Some(executable_call.executable_path.inner()));
-    }
+  if let Some(executable_call) = commands::run::load_or_install_app(&go, requested_go_versions, platform, optional, yard, config_file, log)? {
+    return Ok(Some(executable_call.executable_path.inner()));
   }
   Ok(None)
 }
