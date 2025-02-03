@@ -332,12 +332,11 @@ mod tests {
       }
 
       mod include_apps {
-        use big_s::S;
-
         use super::super::parse_args;
         use crate::commands::run;
         use crate::configuration::Version;
         use crate::{applications, Command, UserError};
+        use big_s::S;
 
         #[test]
         fn valid() {
@@ -352,7 +351,7 @@ mod tests {
             error_on_output: false,
             include_apps: vec![gh.app_name()],
             optional: false,
-            verbose: true,
+            verbose: false,
           }));
           pretty::assert_eq!(have, want);
         }
