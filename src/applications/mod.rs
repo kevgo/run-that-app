@@ -213,12 +213,6 @@ impl Apps {
     Err(UserError::UnknownApp(name.as_ref().to_string()))
   }
 
-  /// provides the app with the given name
-  /// TODO: return the actual Box<dyn App> instead of a reference here
-  pub(crate) fn lookup_many(&self, names: &[ApplicationName]) -> Result<Vec<&dyn AppDefinition>> {
-    names.into_iter().map(|name| self.lookup(name)).collect()
-  }
-
   /// provides the length of the name of the app with the longest name
   pub(crate) fn longest_name_length(&self) -> usize {
     self.iter().map(|app| app.name().len()).max().unwrap_or_default()

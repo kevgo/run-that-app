@@ -1,5 +1,5 @@
 use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersions, Version};
+use crate::configuration::{self, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
@@ -57,6 +57,23 @@ pub(crate) struct Args {
   pub(crate) optional: bool,
 
   pub(crate) verbose: bool,
+}
+
+pub(crate) fn load_or_install_app(
+  app_definition: &dyn AppDefinition,
+  requested_versions: RequestedVersions,
+  platform: Platform,
+  optional: bool,
+  yard: &Yard,
+  config_file: &configuration::File,
+  log: Log,
+) -> Result<Option<ExecutableCall>> {
+  for requested_version in requested_versions.0 {
+    if let Some(executable_call) = load_or_install(app_definition, &requested_version, platform, optional, &yard, &config_file, log)? {
+      return Ok(Some(executable_call));
+    }
+  }
+  Ok(None)
 }
 
 pub(crate) fn load_or_install(
