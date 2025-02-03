@@ -357,7 +357,7 @@ mod tests {
         }
 
         #[test]
-        fn invvalid() {
+        fn invalid() {
           let apps = applications::all();
           let have = parse_args(vec!["rta", "--include=zonk", "actionlint@2"], &apps);
           let want = Err(UserError::UnknownApp(S("zonk")));
