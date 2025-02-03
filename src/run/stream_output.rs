@@ -83,7 +83,7 @@ mod tests {
         executable_path: ExecutablePath::from(executable_path),
         args: vec![],
       };
-      let have = stream_output(&executable_call, &[]).unwrap();
+      let have = stream_output(&executable_call, &[], &[]).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(0))"));
     }
@@ -98,7 +98,7 @@ mod tests {
         executable_path: ExecutablePath::from(executable_path),
         args: vec![],
       };
-      let have = stream_output(&executable_call, &[]).unwrap();
+      let have = stream_output(&executable_call, &[], &[]).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(3))"));
     }
