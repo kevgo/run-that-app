@@ -40,6 +40,12 @@ impl Display for RequestedVersion {
   }
 }
 
+impl From<&RequestedVersion> for RequestedVersion {
+  fn from(value: &RequestedVersion) -> Self {
+    value.to_owned()
+  }
+}
+
 impl From<Version> for RequestedVersion {
   fn from(value: Version) -> Self {
     RequestedVersion::Yard(value)

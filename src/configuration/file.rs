@@ -46,13 +46,13 @@ impl File {
     self.apps.iter().find(|app| &app.app_name == app_name).map(|app_version| &app_version.versions)
   }
 
-  pub(crate) fn lookup_many(&self, apps: Vec<ApplicationName>) -> Vec<AppVersions> {
-    let result = vec![];
-    for app in apps {
-      if let Some(versions) = self.lookup(&app) {
+  pub(crate) fn lookup_many(&self, app_names: Vec<ApplicationName>) -> Vec<AppVersions> {
+    let mut result = vec![];
+    for app_name in app_names {
+      if let Some(versions) = self.lookup(&app_name) {
         result.push(AppVersions {
-          app_name: app,
-          versions: versions.to_owned(),
+          app_name: app_name,
+          versions: versions.into(),
         });
       }
     }

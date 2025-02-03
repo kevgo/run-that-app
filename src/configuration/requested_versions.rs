@@ -86,6 +86,12 @@ impl From<RequestedVersion> for RequestedVersions {
   }
 }
 
+impl From<&RequestedVersions> for RequestedVersions {
+  fn from(value: &RequestedVersions) -> Self {
+    RequestedVersions(value.0.iter().map(|r| r.to_owned()).collect())
+  }
+}
+
 impl From<Version> for RequestedVersions {
   fn from(version: Version) -> Self {
     RequestedVersions(vec![RequestedVersion::from(version)])
