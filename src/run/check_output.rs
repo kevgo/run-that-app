@@ -34,7 +34,7 @@ pub(crate) fn check_output(executable_call: &ExecutableCall, args: &[String], ap
   cmd.args(args);
   let mut paths_to_include = vec![executable_call.executable_path.as_path().parent().unwrap()];
   for app_to_include in apps_to_include {
-    paths_to_include.push(app_to_include.executable_path.as_path());
+    paths_to_include.push(app_to_include.executable_path.as_path().parent().unwrap());
   }
   add_paths(&mut cmd, &paths_to_include);
   cmd.stdout(Stdio::piped());
