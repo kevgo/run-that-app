@@ -49,7 +49,12 @@ impl File {
   pub(crate) fn lookup_many(&self, apps: Vec<ApplicationName>) -> Vec<AppVersions> {
     let result = vec![];
     for app in apps {
-      let versions = self.lookup(&app);
+      if let Some(versions) = self.lookup(&app) {
+        result.push(AppVersions {
+          app_name: app,
+          versions: versions.to_owned(),
+        });
+      }
     }
     result
   }
