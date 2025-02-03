@@ -1,4 +1,4 @@
-use super::run::load_or_install;
+use super::run::load_or_install_app;
 use crate::applications::ApplicationName;
 use crate::configuration::{self, RequestedVersions, Version};
 use crate::prelude::*;
@@ -14,11 +14,9 @@ pub(crate) fn which(args: &Args) -> Result<ExitCode> {
   let platform = platform::detect(log)?;
   let config_file = configuration::File::load(&apps)?;
   let versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
-  for version in versions {
-    if let Some(executable) = load_or_install(app, &version, platform, args.optional, &yard, &config_file, log)? {
-      println!("{executable}");
-      return Ok(ExitCode::SUCCESS);
-    }
+  if let Some(executable) = load_or_install_app(app, versions, platform, args.optional, &yard, &config_file, log)? {
+    println!("{executable}");
+    return Ok(ExitCode::SUCCESS);
   }
   Ok(ExitCode::FAILURE)
 }
