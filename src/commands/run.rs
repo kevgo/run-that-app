@@ -13,11 +13,11 @@ use std::process::ExitCode;
 pub(crate) fn run(args: &Args) -> Result<ExitCode> {
   let apps = applications::all();
   let app_to_run = apps.lookup(&args.app_name)?;
-  let apps_to_include = apps.lookup_many(&args.include_apps);
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
   let config_file = configuration::File::load(&apps)?;
+  let include_app_versions = config_file.lookup_many(app_name) apps.lookup_many(&args.include_apps);
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   for requested_version in requested_versions {
     if let Some(executable_call) = load_or_install(app_to_run, &requested_version, platform, args.optional, &yard, &config_file, log)? {

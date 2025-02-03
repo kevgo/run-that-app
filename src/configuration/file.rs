@@ -46,6 +46,14 @@ impl File {
     self.apps.iter().find(|app| &app.app_name == app_name).map(|app_version| &app_version.versions)
   }
 
+  pub(crate) fn lookup_many(&self, apps: Vec<ApplicationName>) -> Vec<AppVersions> {
+    let result = vec![];
+    for app in apps {
+      let versions = self.lookup(&app);
+    }
+    result
+  }
+
   pub(crate) fn save(&self) -> Result<()> {
     let mut file = OpenOptions::new()
       .write(true)
