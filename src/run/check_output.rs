@@ -1,3 +1,4 @@
+use super::executable_path::add_paths;
 use super::{exit_status_to_code, format_call, ExecutableCall};
 use crate::cli;
 use crate::prelude::*;
@@ -25,11 +26,16 @@ const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
 
 /// Executes the given executable with the given arguments.
 /// The returned `ExitCode` also indicates failure if there has been any output.
-pub(crate) fn check_output(executable_call: &ExecutableCall, args: &[String]) -> Result<ExitCode> {
+pub(crate) fn check_output(executable_call: &ExecutableCall, args: &[String], apps_to_include: &[ExecutableCall]) -> Result<ExitCode> {
   let (sender, receiver) = mpsc::channel();
   let mut cmd = Command::new(&executable_call.executable_path);
   cmd.args(&executable_call.args);
   cmd.args(args);
+  let mut paths_to_include = vec![executable_call.executable_path.as_path().parent().unwrap()];
+  for app_to_include in apps_to_include {
+    paths_to_include.push(app_to_include.executable_path.as_path());
+  }
+  add_paths(&mut cmd, &paths_to_include);
   cmd.stdout(Stdio::piped());
   cmd.stderr(Stdio::piped());
   let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
