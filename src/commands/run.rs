@@ -18,13 +18,11 @@ pub(crate) fn run(args: &Args) -> Result<ExitCode> {
   let yard = Yard::load_or_create(&yard::production_location()?)?;
   let config_file = configuration::File::load(&apps)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
-  for requested_version in requested_versions {
-    if let Some(executable_call) = load_or_install(app, &requested_version, platform, args.optional, &yard, &config_file, log)? {
-      if args.error_on_output {
-        return run::check_output(&executable_call, &args.app_args);
-      }
-      return run::stream_output(&executable_call, &args.app_args);
+  if let Some(executable_call) = load_or_install_app(app, requested_versions, platform, args.optional, &yard, &config_file, log)? {
+    if args.error_on_output {
+      return run::check_output(&executable_call, &args.app_args);
     }
+    return run::stream_output(&executable_call, &args.app_args);
   }
   if args.optional {
     Ok(ExitCode::SUCCESS)
@@ -53,6 +51,23 @@ pub(crate) struct Args {
   pub(crate) optional: bool,
 
   pub(crate) verbose: bool,
+}
+
+pub(crate) fn load_or_install_app(
+  app_definition: &dyn AppDefinition,
+  requested_versions: RequestedVersions,
+  platform: Platform,
+  optional: bool,
+  yard: &Yard,
+  config_file: &configuration::File,
+  log: Log,
+) -> Result<Option<ExecutableCall>> {
+  for requested_version in requested_versions {
+    if let Some(executable_call) = load_or_install(app_definition, &requested_version, platform, optional, yard, config_file, log)? {
+      return Ok(Some(executable_call));
+    }
+  }
+  Ok(None)
 }
 
 pub(crate) fn load_or_install(
