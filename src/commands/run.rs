@@ -94,7 +94,7 @@ pub(crate) fn load_or_install_app(
   Ok(None)
 }
 
-pub(crate) fn load_or_install(
+fn load_or_install(
   app_definition: &dyn AppDefinition,
   requested_version: &RequestedVersion,
   platform: Platform,
