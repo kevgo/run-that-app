@@ -74,6 +74,37 @@ mod tests {
     }
 
     #[test]
+    #[cfg(unix)]
+    fn unix_include() {
+      use std::io::Write;
+      use std::os::unix::fs::PermissionsExt;
+      use std::path::PathBuf;
+      use std::thread;
+      use std::time::Duration;
+      let tempdir = tempfile::tempdir().unwrap();
+      let executable_path = tempdir.path().join("executable");
+      let mut file = fs::File::create(&executable_path).unwrap();
+      file.write_all(b"#!/bin/sh\necho $PATH").unwrap();
+      file.set_permissions(fs::Permissions::from_mode(0o744)).unwrap();
+      drop(file);
+      thread::sleep(Duration::from_millis(10)); // give the OS time to close the file to avoid a flaky test
+      let have = stream_output(
+        &ExecutableCall {
+          executable_path: ExecutablePath::from(executable_path),
+          args: vec![],
+        },
+        &[],
+        &[ExecutableCall {
+          executable_path: ExecutablePath::from(PathBuf::from("additional")),
+          args: vec![],
+        }],
+      )
+      .unwrap();
+      // HACK: is there a better way to compare ExitCode?
+      assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(0))"));
+    }
+
+    #[test]
     #[cfg(windows)]
     fn windows_success() {
       let tempdir = tempfile::tempdir().unwrap();
