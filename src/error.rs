@@ -268,7 +268,7 @@ impl UserError {
         desc("Please install Rust via https://rustup.rs and try again.");
       }
       UserError::UnknownApp(app_name) => {
-        error(&format!("Unknown app: {app_name}"));
+        error(&format!("Unknown application: {app_name}"));
         // help::print_installable_apps();
       }
       UserError::UnknownArchive(filename) => {
