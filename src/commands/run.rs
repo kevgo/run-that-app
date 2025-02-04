@@ -1,5 +1,5 @@
-use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::configuration::{self, RequestedVersion, RequestedVersions, Version};
+use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps};
+use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersions, Version};
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
@@ -10,19 +10,21 @@ use crate::yard::Yard;
 use crate::{applications, installation, yard};
 use std::process::ExitCode;
 
-pub(crate) fn run(args: &Args) -> Result<ExitCode> {
+pub(crate) fn run(args: Args) -> Result<ExitCode> {
   let apps = applications::all();
-  let app = apps.lookup(&args.app_name)?;
+  let app_to_run = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
   let config_file = configuration::File::load(&apps)?;
+  let include_app_versions = config_file.lookup_many(args.include_apps);
+  let include_apps = load_or_install_apps(include_app_versions, &apps, platform, args.optional, &yard, &config_file, log)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
-  if let Some(executable_call) = load_or_install_app(app, requested_versions, platform, args.optional, &yard, &config_file, log)? {
+  if let Some(executable_call) = load_or_install_app(app_to_run, requested_versions, platform, args.optional, &yard, &config_file, log)? {
     if args.error_on_output {
-      return run::check_output(&executable_call, &args.app_args);
+      return run::check_output(&executable_call, &args.app_args, &include_apps);
     }
-    return run::stream_output(&executable_call, &args.app_args);
+    return run::stream_output(&executable_call, &args.app_args, &include_apps);
   }
   if args.optional {
     Ok(ExitCode::SUCCESS)
@@ -47,10 +49,32 @@ pub(crate) struct Args {
   /// if true, any output produced by the app is equivalent to an exit code > 0
   pub(crate) error_on_output: bool,
 
+  /// other applications to include into the PATH
+  pub(crate) include_apps: Vec<ApplicationName>,
+
   /// whether it's okay to not run the app if it cannot be installed
   pub(crate) optional: bool,
 
   pub(crate) verbose: bool,
+}
+
+fn load_or_install_apps(
+  app_versions: Vec<AppVersions>,
+  apps: &Apps,
+  platform: Platform,
+  optional: bool,
+  yard: &Yard,
+  config_file: &configuration::File,
+  log: Log,
+) -> Result<Vec<ExecutableCall>> {
+  let mut result = vec![];
+  for app_version in app_versions {
+    let app = apps.lookup(app_version.app_name)?;
+    if let Some(executable_call) = load_or_install_app(app, app_version.versions, platform, optional, yard, config_file, log)? {
+      result.push(executable_call);
+    }
+  }
+  Ok(result)
 }
 
 pub(crate) fn load_or_install_app(

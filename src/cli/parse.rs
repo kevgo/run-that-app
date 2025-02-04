@@ -1,5 +1,5 @@
 use super::{AppVersion, Command};
-use crate::applications::Apps;
+use crate::applications::{ApplicationName, Apps};
 use crate::commands::{self, available, run, test, update, versions};
 use crate::prelude::*;
 
@@ -10,6 +10,7 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
   let mut verbose = false;
   let mut app_args: Vec<String> = vec![];
   let mut error_on_output = false;
+  let mut include_apps: Vec<ApplicationName> = vec![];
   let mut which = false;
   let mut setup = false;
   let mut test = false;
@@ -69,6 +70,11 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
       }
       if arg.starts_with('-') {
         let (key, value) = arg.split_once('=').unwrap_or((&arg, ""));
+        if key == "--include" {
+          let app = apps.lookup(value)?;
+          include_apps.push(app.app_name());
+          continue;
+        }
         if key == "--versions" {
           versions = Some(value.parse().map_err(|_| UserError::InvalidNumber)?);
           continue;
@@ -119,6 +125,7 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
         version,
         app_args,
         error_on_output,
+        include_apps,
         optional,
         verbose,
       }))
@@ -229,6 +236,7 @@ mod tests {
             version: None,
             app_args: vec![],
             error_on_output: true,
+            include_apps: vec![],
             optional: false,
             verbose: false,
           }));
@@ -323,6 +331,40 @@ mod tests {
         }
       }
 
+      mod include_apps {
+        use super::super::parse_args;
+        use crate::commands::run;
+        use crate::configuration::Version;
+        use crate::{applications, Command, UserError};
+        use big_s::S;
+
+        #[test]
+        fn valid() {
+          let apps = applications::all();
+          let actionlint = apps.lookup("actionlint").unwrap();
+          let gh = apps.lookup("gh").unwrap();
+          let have = parse_args(vec!["rta", "--include=gh", "actionlint@2"], &apps);
+          let want = Ok(Command::RunApp(run::Args {
+            app_name: actionlint.app_name(),
+            version: Some(Version::from("2")),
+            app_args: vec![],
+            error_on_output: false,
+            include_apps: vec![gh.app_name()],
+            optional: false,
+            verbose: false,
+          }));
+          pretty::assert_eq!(have, want);
+        }
+
+        #[test]
+        fn invalid() {
+          let apps = applications::all();
+          let have = parse_args(vec!["rta", "--include=zonk", "actionlint@2"], &apps);
+          let want = Err(UserError::UnknownApp(S("zonk")));
+          pretty::assert_eq!(have, want);
+        }
+      }
+
       mod verbose {
         use super::super::parse_args;
         use crate::applications;
@@ -341,6 +383,7 @@ mod tests {
             version: Some(Version::from("2")),
             app_args: vec![],
             error_on_output: false,
+            include_apps: vec![],
             optional: false,
             verbose: true,
           }));
@@ -357,6 +400,7 @@ mod tests {
             version: Some(Version::from("2")),
             app_args: vec![],
             error_on_output: false,
+            include_apps: vec![],
             optional: false,
             verbose: true,
           }));
@@ -390,6 +434,7 @@ mod tests {
           version: Some(Version::from("2")),
           app_args: vec![S("arg1")],
           error_on_output: false,
+          include_apps: vec![],
           optional: true,
           verbose: false,
         }));
@@ -521,6 +566,7 @@ mod tests {
           version: Some(Version::from("2")),
           app_args: vec![],
           error_on_output: false,
+          include_apps: vec![],
           optional: false,
           verbose: false,
         }));
@@ -537,6 +583,7 @@ mod tests {
           version: Some(Version::from("2")),
           app_args: vec![S("--arg1"), S("arg2")],
           error_on_output: false,
+          include_apps: vec![],
           optional: false,
           verbose: false,
         }));
@@ -562,6 +609,7 @@ mod tests {
           version: Some(Version::from("2")),
           app_args: vec![S("--arg1"), S("arg2")],
           error_on_output: false,
+          include_apps: vec![],
           optional: false,
           verbose: true,
         }));
@@ -578,6 +626,7 @@ mod tests {
           version: Some(Version::from("2")),
           app_args: vec![S("--verbose"), S("--version")],
           error_on_output: false,
+          include_apps: vec![],
           optional: false,
           verbose: false,
         }));
