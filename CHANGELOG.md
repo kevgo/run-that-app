@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+### 0.11.0 (2025-02-03)
+
+#### New Features
+
+- `--include` option to include other files into the PATH
+
 ### 0.10.6 (2025-01-27)
 
 #### Bug Fixes
