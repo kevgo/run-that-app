@@ -34,6 +34,7 @@ update:  # updates the dependencies
 	cargo install cargo-edit cargo-machete
 	cargo machete
 	cargo upgrade
+	cargo run -- --update
 
 
 .DEFAULT_GOAL := help
