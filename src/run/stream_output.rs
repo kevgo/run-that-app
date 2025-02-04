@@ -34,15 +34,14 @@ mod tests {
     fn unix_success() {
       use std::io::Write;
       use std::os::unix::fs::PermissionsExt;
-      use std::thread;
-      use std::time::Duration;
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable");
       let mut file = fs::File::create(&executable_path).unwrap();
       file.write_all(b"#!/bin/sh\necho hello").unwrap();
       file.set_permissions(fs::Permissions::from_mode(0o744)).unwrap();
+      file.flush().unwrap();
       drop(file);
-      thread::sleep(Duration::from_millis(10)); // give the OS time to close the file to avoid a flaky test
+      // NOTE: if the test is flaky, wait 10 ms here.
       let have = stream_output(
         &ExecutableCall {
           executable_path: ExecutablePath::from(executable_path),
