@@ -40,6 +40,7 @@ mod tests {
       file.write_all(b"#!/bin/sh\necho hello").unwrap();
       file.set_permissions(fs::Permissions::from_mode(0o744)).unwrap();
       file.flush().unwrap();
+      drop(file);
       // NOTE: if the test is flaky, wait 10 ms here.
       let have = stream_output(
         &ExecutableCall {
