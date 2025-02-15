@@ -22,6 +22,7 @@ mod node_prune;
 mod nodejs;
 mod npm;
 mod npx;
+mod ripgrep;
 mod scc;
 mod shellcheck;
 mod shfmt;
@@ -61,6 +62,7 @@ pub(crate) fn all() -> Apps {
     Box::new(node_prune::NodePrune {}),
     Box::new(npm::Npm {}),
     Box::new(npx::Npx {}),
+    Box::new(ripgrep::RipGrep {}),
     Box::new(scc::Scc {}),
     Box::new(shellcheck::ShellCheck {}),
     Box::new(shfmt::Shfmt {}),
