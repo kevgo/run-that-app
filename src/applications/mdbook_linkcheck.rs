@@ -89,7 +89,6 @@ mod tests {
     use big_s::S;
 
     #[test]
-    #[cfg(unix)]
     fn linux_arm() {
       let have = (MdBookLinkCheck {}).run_method(
         &Version::from("0.7.8"),
@@ -114,7 +113,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(windows)]
     fn windows_intel() {
       let have = (MdBookLinkCheck {}).run_method(
         &Version::from("0.7.8"),

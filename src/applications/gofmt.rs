@@ -62,7 +62,6 @@ mod tests {
     use crate::run::{self, ExecutableNameUnix};
 
     #[test]
-    #[cfg(unix)]
     fn macos() {
       let have = (Gofmt {}).run_method(
         &Version::from("1.23.4"),
@@ -79,7 +78,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(windows)]
     fn windows() {
       let have = (Gofmt {}).run_method(
         &Version::from("1.23.4"),
