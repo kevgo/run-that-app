@@ -1,0 +1,152 @@
+use super::{AnalyzeResult, AppDefinition};
+use crate::configuration::Version;
+use crate::hosting::github_releases;
+use crate::installation::{BinFolder, Method};
+use crate::platform::{Cpu, Os, Platform};
+use crate::prelude::*;
+use crate::run::ExecutablePath;
+use crate::{regexp, run, Log};
+use const_format::formatcp;
+
+pub(crate) struct RipGrep {}
+
+const ORG: &str = "BurntSushi";
+const REPO: &str = "ripgrep";
+
+impl AppDefinition for RipGrep {
+  fn name(&self) -> &'static str {
+    "ripgrep"
+  }
+
+  fn homepage(&self) -> &'static str {
+    formatcp!("https://github.com/{ORG}/{REPO}")
+  }
+
+  fn executable_filename(&self) -> run::ExecutableNameUnix {
+    run::ExecutableNameUnix::from("rg")
+  }
+
+  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "aarch64",
+      Cpu::Intel64 => "x86_64",
+    };
+    let os = match platform.os {
+      Os::Linux => "unknown-linux-gnu",
+      Os::MacOS => "apple-darwin",
+      Os::Windows => "pc-windows-msvc",
+    };
+    let ext = match platform.os {
+      Os::Linux | Os::MacOS => "tar.gz",
+      Os::Windows => "zip",
+    };
+    run::Method::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ripgrep-{version}-{cpu}-_{os}.{ext}"),
+        bin_folder: BinFolder::Root,
+      }],
+    }
+  }
+
+  fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
+    github_releases::versions(ORG, REPO, amount, log)
+  }
+
+  fn latest_installable_version(&self, log: Log) -> Result<Version> {
+    github_releases::latest(ORG, REPO, log)
+  }
+
+  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
+    let output = executable.run_output("-h", log)?;
+    if !output.contains("ripgrep") {
+      return Ok(AnalyzeResult::NotIdentified { output });
+    }
+    match extract_version(&output) {
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
+    }
+  }
+
+  fn clone(&self) -> Box<dyn AppDefinition> {
+    Box::new(Self {})
+  }
+}
+
+fn extract_version(output: &str) -> Result<&str> {
+  regexp::first_capture(output, r"ripgrep (\d+\.\d+\.\d+)")
+}
+
+#[cfg(test)]
+mod tests {
+  use crate::UserError;
+
+  mod install_methods {
+    use crate::applications::tikibase::Tikibase;
+    use crate::applications::AppDefinition;
+    use crate::configuration::Version;
+    use crate::installation::{BinFolder, Method};
+    use crate::platform::{Cpu, Os, Platform};
+    use crate::run;
+    use big_s::S;
+
+    #[test]
+    fn macos_arm() {
+      let have = (Tikibase {}).run_method(
+        &Version::from("14.1.1"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-apple-darwin.tar.gz"),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_arm() {
+      let have = (Tikibase {}).run_method(
+        &Version::from("0.6.2"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-i686-unknown-linux-gnu.tar.gz"),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_intel() {
+      let have = (Tikibase {}).run_method(
+        &Version::from("0.6.2"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_windows_intel64.zip"),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+  }
+
+  #[test]
+  fn extract_version() {
+    assert_eq!(super::extract_version("tikibase 0.6.2"), Ok("0.6.2"));
+    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
+  }
+}

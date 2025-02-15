@@ -22,6 +22,7 @@ mod node_prune;
 mod nodejs;
 mod npm;
 mod npx;
+mod ripgrep;
 mod scc;
 mod shellcheck;
 mod shfmt;
