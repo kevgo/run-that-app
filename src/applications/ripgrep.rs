@@ -32,6 +32,7 @@ impl AppDefinition for RipGrep {
       Cpu::Intel64 => "x86_64",
     };
     let os = match platform.os {
+      Os::Linux if platform.cpu == Cpu::Intel64 => "unknown-linux-musl",
       Os::Linux => "unknown-linux-gnu",
       Os::MacOS => "apple-darwin",
       Os::Windows => "pc-windows-msvc",
@@ -42,7 +43,7 @@ impl AppDefinition for RipGrep {
     };
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ripgrep-{version}-{cpu}-_{os}.{ext}"),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/ripgrep-{version}-{cpu}-{os}.{ext}"),
         bin_folder: BinFolder::Root,
       }],
     }
@@ -81,7 +82,7 @@ mod tests {
   use crate::UserError;
 
   mod install_methods {
-    use crate::applications::tikibase::Tikibase;
+    use crate::applications::ripgrep::RipGrep;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
@@ -91,7 +92,7 @@ mod tests {
 
     #[test]
     fn macos_arm() {
-      let have = (Tikibase {}).run_method(
+      let have = (RipGrep {}).run_method(
         &Version::from("14.1.1"),
         Platform {
           os: Os::MacOS,
@@ -109,8 +110,8 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      let have = (Tikibase {}).run_method(
-        &Version::from("0.6.2"),
+      let have = (RipGrep {}).run_method(
+        &Version::from("14.1.1"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Arm64,
@@ -118,7 +119,25 @@ mod tests {
       );
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-i686-unknown-linux-gnu.tar.gz"),
+          url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-unknown-linux-gnu.tar.gz"),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (RipGrep {}).run_method(
+        &Version::from("14.1.1"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = run::Method::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz"),
           bin_folder: BinFolder::Root,
         }],
       };
@@ -127,8 +146,8 @@ mod tests {
 
     #[test]
     fn windows_intel() {
-      let have = (Tikibase {}).run_method(
-        &Version::from("0.6.2"),
+      let have = (RipGrep {}).run_method(
+        &Version::from("14.1.1"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
@@ -136,7 +155,7 @@ mod tests {
       );
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_windows_intel64.zip"),
+          url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip"),
           bin_folder: BinFolder::Root,
         }],
       };
@@ -146,7 +165,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("tikibase 0.6.2"), Ok("0.6.2"));
+    assert_eq!(super::extract_version("ripgrep 14.1.1"), Ok("14.1.1"));
     assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
