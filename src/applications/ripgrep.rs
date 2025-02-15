@@ -44,7 +44,9 @@ impl AppDefinition for RipGrep {
     run::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/ripgrep-{version}-{cpu}-{os}.{ext}"),
-        bin_folder: BinFolder::Root,
+        bin_folder: BinFolder::Subfolder {
+          path: format!("ripgrep-{version}-{cpu}-{os}"),
+        },
       }],
     }
   }
