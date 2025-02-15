@@ -104,7 +104,9 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-apple-darwin.tar.gz"),
-          bin_folder: BinFolder::Root,
+          bin_folder: BinFolder::Subfolder {
+            path: S("ripgrep-14.1.1-aarch64-apple-darwin"),
+          },
         }],
       };
       assert_eq!(have, want);
@@ -122,7 +124,9 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-unknown-linux-gnu.tar.gz"),
-          bin_folder: BinFolder::Root,
+          bin_folder: BinFolder::Subfolder {
+            path: S("ripgrep-14.1.1-aarch64-unknown-linux-gnu"),
+          },
         }],
       };
       assert_eq!(have, want);
@@ -140,7 +144,9 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz"),
-          bin_folder: BinFolder::Root,
+          bin_folder: BinFolder::Subfolder {
+            path: S("ripgrep-14.1.1-x86_64-unknown-linux-musl"),
+          },
         }],
       };
       assert_eq!(have, want);
@@ -158,7 +164,9 @@ mod tests {
       let want = run::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip"),
-          bin_folder: BinFolder::Root,
+          bin_folder: BinFolder::Subfolder {
+            path: S("ripgrep-14.1.1-x86_64-pc-windows-msvc"),
+          },
         }],
       };
       assert_eq!(have, want);
