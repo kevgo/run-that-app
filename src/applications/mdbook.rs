@@ -93,7 +93,6 @@ mod tests {
     use big_s::S;
 
     #[test]
-    #[cfg(unix)]
     fn linux_arm() {
       let have = (MdBook {}).run_method(
         &Version::from("0.4.37"),
@@ -118,7 +117,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(windows)]
     fn windows_intel() {
       let have = (MdBook {}).run_method(
         &Version::from("0.4.37"),
