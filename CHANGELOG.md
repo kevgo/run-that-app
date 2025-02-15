@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+### 0.12.0 (2025-02-15)
+
+#### New Features
+
+- added ripgrep
+
 ### 0.11.0 (2025-02-03)
 
 #### New Features
