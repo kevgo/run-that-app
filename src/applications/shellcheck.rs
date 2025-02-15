@@ -76,7 +76,6 @@ fn extract_version(output: &str) -> Result<&str> {
 #[cfg(test)]
 mod tests {
 
-  #[cfg(unix)]
   mod install_methods {
     use crate::applications::shellcheck::ShellCheck;
     use crate::applications::AppDefinition;
