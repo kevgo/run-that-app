@@ -82,7 +82,6 @@ mod tests {
     use big_s::S;
 
     #[test]
-    #[cfg(unix)]
     fn linux_arm() {
       let have = (GolangCiLint {}).run_method(
         &Version::from("1.55.2"),
@@ -103,7 +102,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(windows)]
     fn windows_intel() {
       let have = (GolangCiLint {}).run_method(
         &Version::from("1.55.2"),

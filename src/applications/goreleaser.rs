@@ -84,7 +84,6 @@ mod tests {
     use big_s::S;
 
     #[test]
-    #[cfg(unix)]
     fn linux_arm() {
       let have = (Goreleaser {}).run_method(
         &Version::from("1.22.1"),
@@ -103,7 +102,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(windows)]
     fn windows_intel() {
       let have = (Goreleaser {}).run_method(
         &Version::from("1.22.1"),
