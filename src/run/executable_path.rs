@@ -24,7 +24,7 @@ impl ExecutablePath {
   /// runs this executable with the given args and returns the output it produced
   pub(crate) fn run_output(&self, args: &[&str], log: Log) -> Result<String> {
     log(Event::AnalyzeExecutableBegin { cmd: &self.as_str(), args });
-    subshell::capture_output(&self.0, args)
+    subshell::capture_output(&self, args)
   }
 
   pub(crate) fn inner(self) -> PathBuf {
