@@ -20,23 +20,23 @@ pub(crate) fn run(args: Args) -> Result<ExitCode> {
   let include_app_versions = config_file.lookup_many(args.include_apps);
   let include_apps = load_or_install_apps(include_app_versions, &apps, platform, args.optional, &yard, &config_file, log)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
-  if let Some(executable_call) = load_or_install_app(app_to_run, requested_versions, platform, args.optional, &yard, &config_file, log)? {
-    if args.error_on_output {
-      let (has_output, exit_code) = subshell::copy_output(&executable_call, &args.app_args, &include_apps)?;
-      if has_output {
-        return Err(UserError::ProcessEmittedOutput {
-          cmd: executable_call.format_with_extra_args(&args.app_args),
-        });
-      } else {
-        return Ok(exit_code);
-      }
+  let Some(executable_call) = load_or_install_app(app_to_run, requested_versions, platform, args.optional, &yard, &config_file, log)? else {
+    if args.optional {
+      return Ok(ExitCode::SUCCESS);
     }
-    return subshell::stream_output(&executable_call, &args.app_args, &include_apps);
-  }
-  if args.optional {
-    Ok(ExitCode::SUCCESS)
+    return Err(UserError::UnsupportedPlatform);
+  };
+  if args.error_on_output {
+    let (has_output, exit_code) = subshell::detect_output(&executable_call, &args.app_args, &include_apps)?;
+    if has_output {
+      Err(UserError::ProcessEmittedOutput {
+        cmd: executable_call.format_with_extra_args(&args.app_args),
+      })
+    } else {
+      Ok(exit_code)
+    }
   } else {
-    Err(UserError::UnsupportedPlatform)
+    subshell::stream_output(&executable_call, &args.app_args, &include_apps)
   }
 }
 

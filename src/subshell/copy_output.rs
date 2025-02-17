@@ -10,7 +10,7 @@ use std::thread;
 /// Executes the given executable with the given arguments.
 /// The returned `ExitCode` also indicates failure if there has been any output.
 #[allow(clippy::unwrap_used)]
-pub(crate) fn copy_output(executable: &ExecutableCall, args: &[String], apps_to_include: &[ExecutableCall]) -> Result<(bool, ExitCode)> {
+pub(crate) fn detect_output(executable: &ExecutableCall, args: &[String], apps_to_include: &[ExecutableCall]) -> Result<(bool, ExitCode)> {
   let (sender, receiver) = mpsc::channel();
   let mut cmd = Command::new(&executable.executable_path);
   cmd.args(&executable.args);

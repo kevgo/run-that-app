@@ -8,7 +8,7 @@ mod copy_output;
 mod stream_output;
 
 pub(crate) use capture_output::capture_output;
-pub(crate) use copy_output::copy_output;
+pub(crate) use copy_output::detect_output;
 pub(crate) use stream_output::stream_output;
 
 /// adds the given dirs to the PATH env variable of the given cmd
