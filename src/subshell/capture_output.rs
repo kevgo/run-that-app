@@ -3,6 +3,7 @@ use crate::prelude::*;
 use std::path::Path;
 use std::process::Command;
 
+/// executes the given executable with the given args, returns the captured output (STDOUT and STDERR)
 pub(crate) fn capture_output(executable: &Path, args: &[&str]) -> Result<String> {
   let mut cmd = Command::new(executable);
   cmd.args(args);

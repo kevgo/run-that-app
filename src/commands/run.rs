@@ -22,7 +22,15 @@ pub(crate) fn run(args: Args) -> Result<ExitCode> {
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   if let Some(executable_call) = load_or_install_app(app_to_run, requested_versions, platform, args.optional, &yard, &config_file, log)? {
     if args.error_on_output {
-      return subshell::copy_output(&executable_call, &args.app_args, &include_apps);
+      match subshell::copy_output(&executable_call, &args.app_args, &include_apps)? {
+        (true, _) => {
+          let executable = executable_call.executable_path.as_path().file_name().unwrap().to_string_lossy().to_string();
+          let mut call = vec![executable];
+          call.extend(args.app_args);
+          return Err(UserError::ProcessEmittedOutput { cmd: call.join(" ") });
+        }
+        (false, exit_code) => return Ok(exit_code),
+      }
     }
     return subshell::stream_output(&executable_call, &args.app_args, &include_apps);
   }
