@@ -1,5 +1,5 @@
 use super::executable_path::add_paths;
-use super::{exit_status_to_code, format_call, ExecutableCall};
+use super::{exit_status_to_code, ExecutableCall};
 use crate::cli;
 use crate::prelude::*;
 use std::io::{self, BufRead, BufReader, Read, Write};
@@ -40,7 +40,7 @@ pub(crate) fn check_output(executable_call: &ExecutableCall, args: &[String], ap
   cmd.stdout(Stdio::piped());
   cmd.stderr(Stdio::piped());
   let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
-    call: format_call(executable_call, args),
+    call: executable_call.format_call(args),
     reason: err.to_string(),
   })?;
   let Some(stdout) = process.stdout.take() else {
