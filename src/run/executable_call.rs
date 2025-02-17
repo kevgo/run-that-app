@@ -47,7 +47,7 @@ pub(crate) struct ExecutableCall {
 }
 
 impl ExecutableCall {
-  /// provides the data to call this ExecutableCall with the given arguments
+  /// provides the data to call this `ExecutableCall` with the given arguments
   pub(crate) fn with_args(self, mut args: Vec<String>) -> (ExecutablePath, Vec<String>) {
     let mut result_args = self.args;
     result_args.append(&mut args);

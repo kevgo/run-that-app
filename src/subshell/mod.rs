@@ -7,11 +7,10 @@ mod capture_output;
 mod detect_output;
 mod stream_output;
 
+use crate::run::ExecutablePath;
 pub(crate) use capture_output::capture_output;
 pub(crate) use detect_output::detect_output;
 pub(crate) use stream_output::stream_output;
-
-use crate::run::ExecutablePath;
 
 /// adds the given dirs to the PATH env variable of the given cmd
 pub(crate) fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
@@ -64,16 +63,15 @@ pub(crate) fn render_call(executable: &ExecutablePath, args: &[String]) -> Strin
 
 #[cfg(test)]
 mod tests {
-  use std::path::Path;
-
   use crate::run::ExecutablePath;
   use crate::subshell::render_call;
   use big_s::S;
+  use std::path::Path;
 
   #[test]
   fn format_with_extra_args() {
     let executable = ExecutablePath::from(Path::new("executable"));
-    let have = render_call(&executable, &vec![S("arg3")]);
+    let have = render_call(&executable, &[S("arg3")]);
     let want = S("executable arg1 arg2 arg3");
     assert_eq!(have, want);
   }

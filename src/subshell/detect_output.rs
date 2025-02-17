@@ -1,9 +1,7 @@
-use super::render_call;
-use super::{add_paths, exit_status_to_code};
+use super::{add_paths, exit_status_to_code, render_call};
 use crate::cli;
 use crate::prelude::*;
-use crate::run::ExecutableCall;
-use crate::run::ExecutablePath;
+use crate::run::{ExecutableCall, ExecutablePath};
 use std::io::{self, BufRead, BufReader, Read};
 use std::process::{self, Child, Command, ExitCode, Stdio};
 use std::sync::mpsc;
@@ -14,7 +12,7 @@ use std::thread;
 #[allow(clippy::unwrap_used)]
 pub(crate) fn detect_output(executable: &ExecutablePath, args: &[String], apps_to_include: &[ExecutableCall]) -> Result<ExitCode> {
   let (sender, receiver) = mpsc::channel();
-  let mut cmd = Command::new(&executable);
+  let mut cmd = Command::new(executable);
   cmd.args(args);
   let mut paths_to_include = vec![executable.as_path().parent().unwrap()];
   for app_to_include in apps_to_include {
