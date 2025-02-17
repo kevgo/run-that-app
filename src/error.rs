@@ -1,5 +1,4 @@
 use crate::configuration::{self, FILE_NAME};
-use crate::run::ExecutablePath;
 use colored::Colorize;
 use std::path::PathBuf;
 
@@ -79,7 +78,7 @@ pub(crate) enum UserError {
     name: String,
   },
   ExecutableCannotExecute {
-    executable: ExecutablePath,
+    executable: String,
     err: String,
   },
   GitHubReleasesApiProblem {

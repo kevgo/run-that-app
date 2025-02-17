@@ -84,10 +84,9 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn unix_success() {
+      use crate::subshell;
       use std::io::Write;
       use std::os::unix::fs::PermissionsExt;
-
-      use crate::subshell;
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable");
       let mut file = fs::File::create(&executable_path).unwrap();

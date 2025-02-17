@@ -1,11 +1,11 @@
+use super::{add_paths, exit_status_to_code};
+use crate::cli;
+use crate::prelude::*;
 use crate::run::ExecutableCall;
-use crate::{cli, prelude::*};
 use std::io::{self, BufRead, BufReader, Read};
 use std::process::{self, Child, Command, ExitCode, Stdio};
 use std::sync::mpsc;
 use std::thread;
-
-use super::{add_paths, exit_status_to_code};
 
 /// Executes the given executable with the given arguments.
 /// The returned `ExitCode` also indicates failure if there has been any output.
