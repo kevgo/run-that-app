@@ -1,7 +1,7 @@
 use super::{add_paths, exit_status_to_code, render_call};
 use crate::cli;
 use crate::prelude::*;
-use crate::run::{ExecutableCall, Executable};
+use crate::run::{Executable, ExecutableCall};
 use std::io::{self, BufRead, BufReader, Read};
 use std::process::{self, Child, Command, ExitCode, Stdio};
 use std::sync::mpsc;
@@ -16,7 +16,7 @@ pub(crate) fn detect_output(executable: &Executable, args: &[String], apps_to_in
   cmd.args(args);
   let mut paths_to_include = vec![executable.as_path().parent().unwrap()];
   for app_to_include in apps_to_include {
-    paths_to_include.push(app_to_include.executable_path.as_path().parent().unwrap());
+    paths_to_include.push(app_to_include.executable.as_path().parent().unwrap());
   }
   add_paths(&mut cmd, &paths_to_include);
   cmd.stdout(Stdio::piped());

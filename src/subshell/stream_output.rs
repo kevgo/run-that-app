@@ -11,7 +11,7 @@ pub(crate) fn stream_output(executable: &Executable, args: &[String], apps_to_in
   cmd.args(args);
   let mut paths_to_include = vec![executable.as_path().parent().unwrap()];
   for app_to_include in apps_to_include {
-    paths_to_include.push(app_to_include.executable_path.as_path().parent().unwrap());
+    paths_to_include.push(app_to_include.executable.as_path().parent().unwrap());
   }
   add_paths(&mut cmd, &paths_to_include);
   let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {

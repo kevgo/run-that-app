@@ -108,7 +108,7 @@ fn load_or_install(
   match requested_version {
     RequestedVersion::Path(version) => {
       if let Some(executable_call_def) = load_from_path(app_definition, version, platform, log)? {
-        if let Some(app_folder) = executable_call_def.executable_path.clone().as_path().parent() {
+        if let Some(app_folder) = executable_call_def.executable.clone().as_path().parent() {
           if let Some(executable_call) = executable_call_def.into_executable_call(app_folder) {
             return Ok(Some(executable_call));
           }
@@ -124,11 +124,11 @@ fn load_or_install(
 fn load_from_path(app_to_run: &dyn AppDefinition, range: &semver::VersionReq, platform: Platform, log: Log) -> Result<Option<ExecutableCallDefinition>> {
   let (app_to_install, executable_name, executable_args) = app_to_run.carrier(&Version::from(""), platform);
   let executable_filename = executable_name.platform_path(platform.os);
-  let Some(executable_path) = find_global_install(&executable_filename, log) else {
+  let Some(executable) = find_global_install(&executable_filename, log) else {
     log(Event::GlobalInstallNotFound);
     return Ok(None);
   };
-  match app_to_install.analyze_executable(&executable_path, log)? {
+  match app_to_install.analyze_executable(&executable, log)? {
     AnalyzeResult::NotIdentified { output: _ } => {
       log(Event::GlobalInstallNotIdentified);
       Ok(None)
@@ -136,7 +136,7 @@ fn load_from_path(app_to_run: &dyn AppDefinition, range: &semver::VersionReq, pl
     AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
       log(Event::GlobalInstallMatchingVersion { range, version: None });
       Ok(Some(ExecutableCallDefinition {
-        executable_path,
+        executable,
         args: executable_args,
       }))
     }
@@ -150,7 +150,7 @@ fn load_from_path(app_to_run: &dyn AppDefinition, range: &semver::VersionReq, pl
         version: Some(&version),
       });
       Ok(Some(ExecutableCallDefinition {
-        executable_path,
+        executable,
         args: executable_args,
       }))
     }
@@ -176,10 +176,10 @@ fn load_or_install_from_yard(
   let (app_to_install, executable_name, executable_args) = app_definition.carrier(version, platform);
   let app_name = app_to_install.app_name();
   // try to load the app
-  if let Some((executable_path, bin_folder)) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
+  if let Some((executable, bin_folder)) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
     let app_folder = yard.app_folder(&app_name, version);
     let args = executable_args.locate(&app_folder, &bin_folder)?;
-    return Ok(Some(ExecutableCall { executable_path, args }));
+    return Ok(Some(ExecutableCall { executable, args }));
   }
   // app not installed --> check if uninstallable
   if yard.is_not_installable(&app_name, version) {
@@ -194,10 +194,10 @@ fn load_or_install_from_yard(
     }
   }
   // load again now that it is installed
-  if let Some((executable_path, bin_folder)) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
+  if let Some((executable, bin_folder)) = yard.load_executable(app_to_install.as_ref(), &executable_name, version, platform, log) {
     let app_folder = yard.app_folder(&app_name, version);
     let args = executable_args.locate(&app_folder, &bin_folder)?;
-    return Ok(Some(ExecutableCall { executable_path, args }));
+    return Ok(Some(ExecutableCall { executable, args }));
   }
   Err(UserError::CannotFindExecutable)
 }

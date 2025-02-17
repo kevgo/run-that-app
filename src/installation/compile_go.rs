@@ -62,7 +62,7 @@ fn load_rta_go(platform: Platform, optional: bool, config_file: &configuration::
     RequestedVersions::new(versions.into_iter().map(RequestedVersion::from).collect())
   };
   if let Some(executable_call) = commands::run::load_or_install_app(&go, requested_go_versions, platform, optional, yard, config_file, log)? {
-    return Ok(Some(executable_call.executable_path.inner()));
+    return Ok(Some(executable_call.executable.inner()));
   }
   Ok(None)
 }

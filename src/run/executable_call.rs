@@ -5,7 +5,7 @@ use std::path::Path;
 /// information to call an `App`s executable, as it is defined by the user
 #[derive(Clone)]
 pub(crate) struct ExecutableCallDefinition {
-  pub(crate) executable_path: Executable,
+  pub(crate) executable: Executable,
   pub(crate) args: ExecutableArgs,
 }
 
@@ -13,7 +13,7 @@ impl ExecutableCallDefinition {
   pub(crate) fn into_executable_call(self, app_folder: &Path) -> Option<ExecutableCall> {
     match self.args {
       ExecutableArgs::None => Some(ExecutableCall {
-        executable_path: self.executable_path,
+        executable: self.executable,
         args: vec![],
       }),
       ExecutableArgs::OneOfTheseInAppFolder { options } => {
@@ -21,7 +21,7 @@ impl ExecutableCallDefinition {
           let full_path = app_folder.join(option);
           if full_path.exists() {
             return Some(ExecutableCall {
-              executable_path: self.executable_path,
+              executable: self.executable,
               args: vec![full_path.to_string_lossy().to_string()],
             });
           }
@@ -34,7 +34,7 @@ impl ExecutableCallDefinition {
 
 impl Display for ExecutableCallDefinition {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(&self.executable_path.as_str())?;
+    f.write_str(&self.executable.as_str())?;
     f.write_str(&self.args.to_string())?;
     Ok(())
   }
@@ -42,7 +42,7 @@ impl Display for ExecutableCallDefinition {
 
 /// information to call an app with file paths adjusted
 pub(crate) struct ExecutableCall {
-  pub(crate) executable_path: Executable,
+  pub(crate) executable: Executable,
   pub(crate) args: Vec<String>,
 }
 
@@ -51,13 +51,13 @@ impl ExecutableCall {
   pub(crate) fn with_args(self, mut args: Vec<String>) -> (Executable, Vec<String>) {
     let mut result_args = self.args;
     result_args.append(&mut args);
-    (self.executable_path, result_args)
+    (self.executable, result_args)
   }
 }
 
 impl Display for ExecutableCall {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(&self.executable_path.as_str())?;
+    f.write_str(&self.executable.as_str())?;
     for arg in &self.args {
       f.write_char(' ')?;
       f.write_str(arg)?;
@@ -140,7 +140,7 @@ mod tests {
   #[test]
   fn to_string() {
     let call = ExecutableCall {
-      executable_path: Executable::from(Path::new("executable")),
+      executable: Executable::from(Path::new("executable")),
       args: vec![S("arg1"), S("arg2")],
     };
     let have = call.to_string();
