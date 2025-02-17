@@ -71,17 +71,17 @@ impl Display for ExecutableCall {
 
 #[cfg(test)]
 mod tests {
-  use std::path::PathBuf;
-
   use super::ExecutableCall;
   use crate::run::ExecutablePath;
   use big_s::S;
+  use std::path::Path;
 
   #[test]
   fn format_with_extra_args() {
     let call = ExecutableCall {
-      executable_path: ExecutablePath::from(PathBuf::from("executable").as_path()),
+      executable_path: ExecutablePath::from(Path::new("executable")),
       args: vec![S("arg1"), S("arg2")],
     };
+    let have = call.format_with_extra_args(&[S("arg3")]);
   }
 }
