@@ -1,5 +1,5 @@
 use super::executable_path::add_paths;
-use super::{exit_status_to_code, format_call, ExecutableCall};
+use super::{exit_status_to_code, ExecutableCall};
 use crate::prelude::*;
 use std::process::{Command, ExitCode};
 
@@ -16,7 +16,7 @@ pub(crate) fn stream_output(executable_call: &ExecutableCall, args: &[String], a
   }
   add_paths(&mut cmd, &paths_to_include);
   let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
-    call: format_call(executable_call, args),
+    call: executable_call.format_call(args),
     reason: err.to_string(),
   })?;
   Ok(exit_status_to_code(exit_status))

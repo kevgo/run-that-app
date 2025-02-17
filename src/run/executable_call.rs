@@ -46,6 +46,23 @@ pub(crate) struct ExecutableCall {
   pub(crate) args: Vec<String>,
 }
 
+impl ExecutableCall {
+  /// provides a printable version of the given executable invocation
+  // TODO: move into the upcoming CallSignature
+  pub(crate) fn format_call(&self, args: &[String]) -> String {
+    let mut result = String::from(self.executable_path.as_str());
+    for arg in &self.args {
+      result.push(' ');
+      result.push_str(arg);
+    }
+    for arg in args {
+      result.push(' ');
+      result.push_str(arg);
+    }
+    result
+  }
+}
+
 impl Display for ExecutableCall {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(&self.executable_path.as_str())?;
