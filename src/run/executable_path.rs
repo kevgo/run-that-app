@@ -29,10 +29,7 @@ impl ExecutablePath {
     cmd.args(args);
     #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
     add_paths(&mut cmd, &[self.0.parent().unwrap()]);
-    log(Event::AnalyzeExecutableBegin {
-      cmd: &self.as_str(),
-      args: args,
-    });
+    log(Event::AnalyzeExecutableBegin { cmd: &self.as_str(), args });
     let output = match cmd.output() {
       Ok(output) => output,
       Err(err) => {
