@@ -11,9 +11,6 @@ pub(crate) enum Event<'a> {
     cmd: &'a str,
     args: &'a [&'a str],
   },
-  AnalyzeExecutableError {
-    err: String,
-  },
   ArchiveExtractBegin {
     archive_type: &'a str,
   },

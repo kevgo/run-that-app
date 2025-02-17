@@ -1,11 +1,10 @@
-use super::executable_call::add_paths;
+use super::capture_output;
 use crate::logging::{Event, Log};
 use crate::prelude::*;
 use std::borrow::Cow;
 use std::ffi::OsStr;
 use std::fmt::Display;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 /// the full path to an executable that RTA can execute
 #[derive(Clone, Debug, PartialEq)]
@@ -23,27 +22,9 @@ impl ExecutablePath {
   }
 
   /// runs this executable with the given args and returns the output it produced
-  // TODO: use ExecutableCall internally?
   pub(crate) fn run_output(&self, args: &[&str], log: Log) -> Result<String> {
-    let mut cmd = Command::new(self);
-    cmd.args(args);
-    #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
-    add_paths(&mut cmd, &[self.0.parent().unwrap()]);
     log(Event::AnalyzeExecutableBegin { cmd: &self.as_str(), args });
-    let output = match cmd.output() {
-      Ok(output) => output,
-      Err(err) => {
-        log(Event::AnalyzeExecutableError { err: err.to_string() });
-        return Err(UserError::ExecutableCannotExecute {
-          executable: self.clone(),
-          err: err.to_string(),
-        });
-      }
-    };
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let stderr = String::from_utf8_lossy(&output.stderr);
-    let output = format!("{stdout}{stderr}");
-    Ok(output)
+    capture_output(self, args)
   }
 
   pub(crate) fn inner(self) -> PathBuf {
