@@ -75,13 +75,13 @@ mod tests {
 
   mod stream_output {
     use crate::run::ExecutablePath;
+    use crate::subshell;
     use big_s::S;
     use std::fs;
 
     #[test]
     #[cfg(unix)]
     fn unix_success() {
-      use crate::subshell;
       use std::io::Write;
       use std::os::unix::fs::PermissionsExt;
       let tempdir = tempfile::tempdir().unwrap();
@@ -102,7 +102,6 @@ mod tests {
     #[cfg(unix)]
     fn unix_error() {
       use crate::filesystem::make_file_executable;
-      use crate::subshell;
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable");
       fs::write(&executable_path, b"#!/bin/sh\nexit 3").unwrap();
@@ -116,8 +115,6 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn windows_success() {
-      use crate::subshell;
-
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable.cmd");
       fs::write(&executable_path, b"echo hello").unwrap();
