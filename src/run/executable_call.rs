@@ -77,11 +77,24 @@ mod tests {
   use std::path::Path;
 
   #[test]
+  fn to_string() {
+    let call = ExecutableCall {
+      executable_path: ExecutablePath::from(Path::new("executable")),
+      args: vec![S("arg1"), S("arg2")],
+    };
+    let have = call.to_string();
+    let want = S("executable arg1 arg2");
+    assert_eq!(have, want);
+  }
+
+  #[test]
   fn format_with_extra_args() {
     let call = ExecutableCall {
       executable_path: ExecutablePath::from(Path::new("executable")),
       args: vec![S("arg1"), S("arg2")],
     };
     let have = call.format_with_extra_args(&[S("arg3")]);
+    let want = S("executable arg1 arg2 arg3");
+    assert_eq!(have, want);
   }
 }
