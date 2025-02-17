@@ -1,5 +1,6 @@
 //! all the logic around running applications
 
+mod capture_output;
 mod check_output;
 mod executable_args;
 mod executable_call;
@@ -10,6 +11,7 @@ mod exit_status_to_code;
 mod method;
 mod stream_output;
 
+pub(self) use capture_output::capture_output;
 pub(crate) use check_output::check_output;
 pub(crate) use executable_args::ExecutableArgs;
 pub(crate) use executable_call::{ExecutableCall, ExecutableCallDefinition};

@@ -7,7 +7,6 @@ pub(crate) fn log(event: Event) {
   #[allow(clippy::match_same_arms)]
   match event {
     Event::AnalyzeExecutableBegin { cmd: _, args: _ } => {}
-    Event::AnalyzeExecutableError { err: _ } => {}
 
     Event::ArchiveExtractBegin { archive_type: _ } => eprintf!("extracting ... "),
     Event::ArchiveExtractSuccess => eprintln!("{}", "ok".green()),
