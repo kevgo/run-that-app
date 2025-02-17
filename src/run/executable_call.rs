@@ -1,6 +1,7 @@
 use super::executable_path::add_paths;
 use super::{exit_status_to_code, ExecutableArgs, ExecutablePath};
-use crate::{cli, prelude::*};
+use crate::cli;
+use crate::prelude::*;
 use std::fmt::{Display, Write};
 use std::io::{self, BufRead, BufReader, Read};
 use std::path::Path;
@@ -162,6 +163,65 @@ impl Display for ExecutableCall {
   }
 }
 
+/// escape sequence to print red output on the shell
+const BASH_RED: &[u8] = "\x1B[0;31m".as_bytes();
+/// escape sequence to reset the output color on the shell
+const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
+
+/// events that can happen with subshells
+pub(crate) enum Event {
+  /// a line of output to STDOUT or STDERR terminated by LF
+  PermanentLine(Vec<u8>),
+  /// a line of output to STDOUT or STDERR terminated by CR
+  TempLine(Vec<u8>),
+  /// a line of output to STDOUT or STDERR without a CR or LF at the end
+  UnterminatedLine(Vec<u8>),
+  /// the process has ended with the given exit code
+  Ended { exit_status: process::ExitStatus },
+}
+
+/// starts a thread that monitors the given STDOUT or STDERR stream
+fn monitor_output<R: 'static + Read + Send>(stream: R, sender: mpsc::Sender<Event>) {
+  let mut reader = BufReader::new(stream);
+  thread::spawn(move || loop {
+    let buffer = match reader.fill_buf() {
+      Ok(buffer) => buffer,
+      Err(err) => cli::exit(format!("cannot write subshell output into buffer: {err}")),
+    };
+    if buffer.is_empty() {
+      break;
+    }
+    let consumed = buffer.iter().take_while(|c| **c != b'\n' && **c != b'\x0D').count();
+    let total = if consumed < buffer.len() {
+      // stopped at one of the EOL characters
+      consumed + 1
+    } else {
+      // found no EOL character
+      consumed
+    };
+    let line = buffer[0..total].to_owned();
+    reader.consume(total);
+    let event = match line.get(consumed) {
+      Some(b'\n') => Event::PermanentLine(line),
+      Some(b'\x0D') => Event::TempLine(line),
+      _ => Event::UnterminatedLine(line),
+    };
+    if let Err(err) = sender.send(event) {
+      eprintln!("cannot send subshell output through internal pipe: {err}");
+    }
+  });
+}
+
+/// starts the thread that monitors for process exit
+fn monitor_exit(mut process: Child, sender: mpsc::Sender<Event>) {
+  thread::spawn(move || {
+    let exit_status = process.wait().unwrap_or_default();
+    if let Err(err) = sender.send(Event::Ended { exit_status }) {
+      cli::exit(format!("cannot send exit signal through internal pipe: {err}"));
+    }
+  });
+}
+
 #[cfg(test)]
 mod tests {
   use super::ExecutableCall;
@@ -265,63 +325,4 @@ mod tests {
     let want = S("executable arg1 arg2");
     assert_eq!(have, want);
   }
-}
-
-/// escape sequence to print red output on the shell
-const BASH_RED: &[u8] = "\x1B[0;31m".as_bytes();
-/// escape sequence to reset the output color on the shell
-const BASH_CLEAR: &[u8] = "\x1B[0m".as_bytes();
-
-/// events that can happen with subshells
-pub(crate) enum Event {
-  /// a line of output to STDOUT or STDERR terminated by LF
-  PermanentLine(Vec<u8>),
-  /// a line of output to STDOUT or STDERR terminated by CR
-  TempLine(Vec<u8>),
-  /// a line of output to STDOUT or STDERR without a CR or LF at the end
-  UnterminatedLine(Vec<u8>),
-  /// the process has ended with the given exit code
-  Ended { exit_status: process::ExitStatus },
-}
-
-/// starts a thread that monitors the given STDOUT or STDERR stream
-fn monitor_output<R: 'static + Read + Send>(stream: R, sender: mpsc::Sender<Event>) {
-  let mut reader = BufReader::new(stream);
-  thread::spawn(move || loop {
-    let buffer = match reader.fill_buf() {
-      Ok(buffer) => buffer,
-      Err(err) => cli::exit(format!("cannot write subshell output into buffer: {err}")),
-    };
-    if buffer.is_empty() {
-      break;
-    }
-    let consumed = buffer.iter().take_while(|c| **c != b'\n' && **c != b'\x0D').count();
-    let total = if consumed < buffer.len() {
-      // stopped at one of the EOL characters
-      consumed + 1
-    } else {
-      // found no EOL character
-      consumed
-    };
-    let line = buffer[0..total].to_owned();
-    reader.consume(total);
-    let event = match line.get(consumed) {
-      Some(b'\n') => Event::PermanentLine(line),
-      Some(b'\x0D') => Event::TempLine(line),
-      _ => Event::UnterminatedLine(line),
-    };
-    if let Err(err) = sender.send(event) {
-      eprintln!("cannot send subshell output through internal pipe: {err}");
-    }
-  });
-}
-
-/// starts the thread that monitors for process exit
-fn monitor_exit(mut process: Child, sender: mpsc::Sender<Event>) {
-  thread::spawn(move || {
-    let exit_status = process.wait().unwrap_or_default();
-    if let Err(err) = sender.send(Event::Ended { exit_status }) {
-      cli::exit(format!("cannot send exit signal through internal pipe: {err}"));
-    }
-  });
 }
