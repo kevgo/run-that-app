@@ -47,9 +47,9 @@ pub(crate) struct ExecutableCall {
 }
 
 impl ExecutableCall {
-  /// provides a printable version of this ExecutableCall when called with additional arguments
+  /// provides a printable version of this `ExecutableCall` when called with additional arguments
   pub(crate) fn format_with_extra_args(&self, args: &[String]) -> String {
-    let mut result = String::from(self.to_string());
+    let mut result = self.to_string();
     for arg in args {
       result.push(' ');
       result.push_str(arg);
