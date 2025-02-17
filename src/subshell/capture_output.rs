@@ -1,5 +1,6 @@
-use super::{add_paths, ExecutablePath};
+use super::add_paths;
 use crate::prelude::*;
+use crate::run::ExecutablePath;
 use std::process::Command;
 
 pub(crate) fn capture_output(executable_path: &ExecutablePath, args: &[&str]) -> Result<String> {

@@ -7,7 +7,7 @@ use crate::platform::{self, Platform};
 use crate::prelude::*;
 use crate::run::{ExecutableCall, ExecutableCallDefinition};
 use crate::yard::Yard;
-use crate::{applications, installation, yard};
+use crate::{applications, installation, subshell, yard};
 use std::process::ExitCode;
 
 pub(crate) fn run(args: Args) -> Result<ExitCode> {
@@ -22,9 +22,9 @@ pub(crate) fn run(args: Args) -> Result<ExitCode> {
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   if let Some(executable_call) = load_or_install_app(app_to_run, requested_versions, platform, args.optional, &yard, &config_file, log)? {
     if args.error_on_output {
-      return executable_call.check_output(&args.app_args, &include_apps);
+      return subshell::copy_output(&executable_call, &args.app_args, &include_apps);
     }
-    return executable_call.stream_output(&args.app_args, &include_apps);
+    return subshell::stream_output(&executable_call, &args.app_args, &include_apps);
   }
   if args.optional {
     Ok(ExitCode::SUCCESS)
