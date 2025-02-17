@@ -3,7 +3,7 @@ use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{ExecutableNameUnix, Executable};
+use crate::run::{Executable, ExecutableNameUnix};
 use crate::{run, Log};
 
 pub(crate) struct Gofmt {}

@@ -32,7 +32,7 @@ mod tikibase;
 use crate::configuration::Version;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{self, ExecutableArgs, ExecutableNameUnix, Executable};
+use crate::run::{self, Executable, ExecutableArgs, ExecutableNameUnix};
 use crate::Log;
 use std::fmt::{Debug, Display};
 use std::path::Path;
