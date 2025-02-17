@@ -1,9 +1,9 @@
 use super::capture_output;
+use super::executable_call::add_paths;
 use crate::logging::{Event, Log};
 use crate::prelude::*;
 use std::borrow::Cow;
-use std::env;
-use std::ffi::{OsStr, OsString};
+use std::ffi::OsStr;
 use std::fmt::Display;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -54,30 +54,4 @@ impl From<&Path> for ExecutablePath {
   fn from(value: &Path) -> Self {
     ExecutablePath(value.to_path_buf())
   }
-}
-
-/// adds the given dirs to the PATH env variable of the given cmd
-pub(crate) fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
-  cmd.envs(env::vars_os());
-  let new_path = if let Some(mut path) = env::var_os("PATH") {
-    // PATH env var is set to something here, could be empty string
-    for dir in dirs {
-      if !path.is_empty() {
-        path.push(":");
-      }
-      path.push(dir.as_os_str());
-    }
-    path
-  } else {
-    // PATH env var is empty here
-    let mut path = OsString::new();
-    for dir in dirs {
-      if !path.is_empty() {
-        path.push(":");
-      }
-      path.push(dir);
-    }
-    path
-  };
-  cmd.env("PATH", new_path);
 }
