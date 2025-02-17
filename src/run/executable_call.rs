@@ -47,14 +47,11 @@ pub(crate) struct ExecutableCall {
 }
 
 impl ExecutableCall {
-  /// provides a printable version of this `ExecutableCall` when called with additional arguments
-  pub(crate) fn format_with_extra_args(&self, args: &[String]) -> String {
-    let mut result = self.to_string();
-    for arg in args {
-      result.push(' ');
-      result.push_str(arg);
-    }
-    result
+  /// provides the data to call this ExecutableCall with the given arguments
+  pub(crate) fn with_args(self, mut args: Vec<String>) -> (ExecutablePath, Vec<String>) {
+    let mut result_args = self.args;
+    result_args.append(&mut args);
+    (self.executable_path, result_args)
   }
 }
 
@@ -153,17 +150,6 @@ mod tests {
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(3))"));
     }
-  }
-
-  #[test]
-  fn format_with_extra_args() {
-    let call = ExecutableCall {
-      executable_path: ExecutablePath::from(Path::new("executable")),
-      args: vec![S("arg1"), S("arg2")],
-    };
-    let have = call.format_with_extra_args(&[S("arg3")]);
-    let want = S("executable arg1 arg2 arg3");
-    assert_eq!(have, want);
   }
 
   #[test]

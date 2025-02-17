@@ -27,14 +27,8 @@ pub(crate) fn run(args: Args) -> Result<ExitCode> {
     return Err(UserError::UnsupportedPlatform);
   };
   if args.error_on_output {
-    let (has_output, exit_code) = subshell::detect_output(&executable_call, &args.app_args, &include_apps)?;
-    if has_output {
-      Err(UserError::ProcessEmittedOutput {
-        cmd: executable_call.format_with_extra_args(&args.app_args),
-      })
-    } else {
-      Ok(exit_code)
-    }
+    let (executable, mut args) = executable_call.with_args(args.app_args);
+    subshell::detect_output(&executable, &mut args, &include_apps)
   } else {
     subshell::stream_output(&executable_call, &args.app_args, &include_apps)
   }

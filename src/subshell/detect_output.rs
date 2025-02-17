@@ -1,21 +1,22 @@
+use super::render_call;
 use super::{add_paths, exit_status_to_code};
 use crate::cli;
 use crate::prelude::*;
 use crate::run::ExecutableCall;
+use crate::run::ExecutablePath;
 use std::io::{self, BufRead, BufReader, Read};
 use std::process::{self, Child, Command, ExitCode, Stdio};
 use std::sync::mpsc;
 use std::thread;
 
-/// Executes the given executable with the given arguments.
-/// The returned `ExitCode` also indicates failure if there has been any output.
+/// Executes the given executable with the given arguments, streaming the output to the terminal while monitoring it.
+/// Any output results in an Err value.
 #[allow(clippy::unwrap_used)]
-pub(crate) fn detect_output(executable: &ExecutableCall, args: &[String], apps_to_include: &[ExecutableCall]) -> Result<(bool, ExitCode)> {
+pub(crate) fn detect_output(executable: &ExecutablePath, args: &[String], apps_to_include: &[ExecutableCall]) -> Result<ExitCode> {
   let (sender, receiver) = mpsc::channel();
-  let mut cmd = Command::new(&executable.executable_path);
-  cmd.args(&executable.args);
+  let mut cmd = Command::new(&executable);
   cmd.args(args);
-  let mut paths_to_include = vec![executable.executable_path.as_path().parent().unwrap()];
+  let mut paths_to_include = vec![executable.as_path().parent().unwrap()];
   for app_to_include in apps_to_include {
     paths_to_include.push(app_to_include.executable_path.as_path().parent().unwrap());
   }
@@ -23,7 +24,7 @@ pub(crate) fn detect_output(executable: &ExecutableCall, args: &[String], apps_t
   cmd.stdout(Stdio::piped());
   cmd.stderr(Stdio::piped());
   let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
-    call: executable.format_with_extra_args(args),
+    call: render_call(executable, args),
     reason: err.to_string(),
   })?;
   let Some(stdout) = process.stdout.take() else {
@@ -67,7 +68,13 @@ pub(crate) fn detect_output(executable: &ExecutableCall, args: &[String], apps_t
       }
     }
   }
-  Ok((encountered_output, exit_code))
+
+  if encountered_output {
+    return Err(UserError::ProcessEmittedOutput {
+      cmd: render_call(executable, args),
+    });
+  }
+  Ok(exit_code)
 }
 
 /// starts a thread that monitors the given STDOUT or STDERR stream

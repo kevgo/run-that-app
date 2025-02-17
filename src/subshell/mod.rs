@@ -4,12 +4,14 @@ use std::path::Path;
 use std::process::{Command, ExitCode, ExitStatus};
 
 mod capture_output;
-mod copy_output;
+mod detect_output;
 mod stream_output;
 
 pub(crate) use capture_output::capture_output;
-pub(crate) use copy_output::detect_output;
+pub(crate) use detect_output::detect_output;
 pub(crate) use stream_output::stream_output;
+
+use crate::run::ExecutablePath;
 
 /// adds the given dirs to the PATH env variable of the given cmd
 pub(crate) fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
@@ -47,5 +49,32 @@ pub(crate) fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
   match u8::try_from(big_code) {
     Ok(small_code) => ExitCode::from(small_code),
     Err(_) => ExitCode::from(255),
+  }
+}
+
+/// provides a printable version of this `ExecutableCall` when called with additional arguments
+pub(crate) fn render_call(executable: &ExecutablePath, args: &[String]) -> String {
+  let mut result = executable.to_string();
+  for arg in args {
+    result.push(' ');
+    result.push_str(arg);
+  }
+  result
+}
+
+#[cfg(test)]
+mod tests {
+  use std::path::Path;
+
+  use crate::run::ExecutablePath;
+  use crate::subshell::render_call;
+  use big_s::S;
+
+  #[test]
+  fn format_with_extra_args() {
+    let executable = ExecutablePath::from(Path::new("executable"));
+    let have = render_call(&executable, &vec![S("arg3")]);
+    let want = S("executable arg1 arg2 arg3");
+    assert_eq!(have, want);
   }
 }
