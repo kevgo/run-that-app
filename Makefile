@@ -27,6 +27,9 @@ setup:  # install development dependencies on this computer
 
 test: fix unit lint  # runs all tests
 
+todo:  # displays all TODO items
+	@git grep --color=always --line-number TODO ':!target' | grep -v Makefile
+
 unit:  # runs the unit tests
 	cargo test --locked
 
