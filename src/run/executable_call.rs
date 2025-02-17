@@ -48,7 +48,6 @@ pub(crate) struct ExecutableCall {
 
 impl ExecutableCall {
   /// provides a printable version of the given executable invocation
-  // TODO: move into the upcoming CallSignature
   pub(crate) fn format_call(&self, args: &[String]) -> String {
     let mut result = String::from(self.executable_path.as_str());
     for arg in &self.args {
