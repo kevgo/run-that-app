@@ -66,7 +66,6 @@ pub(crate) fn detect_output(executable: &ExecutablePath, args: &[String], apps_t
       }
     }
   }
-
   if encountered_output {
     return Err(UserError::ProcessEmittedOutput {
       cmd: render_call(executable, args),
