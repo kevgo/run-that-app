@@ -1,12 +1,10 @@
 use super::capture_output;
-use super::executable_call::add_paths;
 use crate::logging::{Event, Log};
 use crate::prelude::*;
 use std::borrow::Cow;
 use std::ffi::OsStr;
 use std::fmt::Display;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 /// the full path to an executable that RTA can execute
 #[derive(Clone, Debug, PartialEq)]

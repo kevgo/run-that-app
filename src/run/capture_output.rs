@@ -1,4 +1,4 @@
-use super::executable_path::add_paths;
+use super::add_paths;
 use super::ExecutablePath;
 use crate::prelude::*;
 use std::process::Command;
