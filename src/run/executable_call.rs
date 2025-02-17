@@ -47,13 +47,9 @@ pub(crate) struct ExecutableCall {
 }
 
 impl ExecutableCall {
-  /// provides a printable version of the given executable invocation
-  pub(crate) fn format_call(&self, args: &[String]) -> String {
-    let mut result = String::from(self.executable_path.as_str());
-    for arg in &self.args {
-      result.push(' ');
-      result.push_str(arg);
-    }
+  /// provides a printable version of this ExecutableCall when called with additional arguments
+  pub(crate) fn format_with_extra_args(&self, args: &[String]) -> String {
+    let mut result = String::from(self.to_string());
     for arg in args {
       result.push(' ');
       result.push_str(arg);
@@ -70,5 +66,22 @@ impl Display for ExecutableCall {
       f.write_str(arg)?;
     }
     Ok(())
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use std::path::PathBuf;
+
+  use super::ExecutableCall;
+  use crate::run::ExecutablePath;
+  use big_s::S;
+
+  #[test]
+  fn format_with_extra_args() {
+    let call = ExecutableCall {
+      executable_path: ExecutablePath::from(PathBuf::from("executable").as_path()),
+      args: vec![S("arg1"), S("arg2")],
+    };
   }
 }

@@ -16,7 +16,7 @@ pub(crate) fn stream_output(executable_call: &ExecutableCall, args: &[String], a
   }
   add_paths(&mut cmd, &paths_to_include);
   let exit_status = cmd.status().map_err(|err| UserError::CannotExecuteBinary {
-    call: executable_call.format_call(args),
+    call: executable_call.format_with_extra_args(args),
     reason: err.to_string(),
   })?;
   Ok(exit_status_to_code(exit_status))
