@@ -53,7 +53,7 @@ impl AppDefinition for Ghokin {
   }
 
   fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output("-h", log)?;
+    let output = executable.run_output(&["-h"], log)?;
     if !output.contains("Clean and/or apply transformation on gherkin files") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

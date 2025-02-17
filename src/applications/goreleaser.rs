@@ -52,7 +52,7 @@ impl AppDefinition for Goreleaser {
   }
 
   fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output("-v", log)?;
+    let output = executable.run_output(&["-v"], log)?;
     if !output.contains("https://goreleaser.com") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
