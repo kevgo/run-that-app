@@ -30,7 +30,8 @@ pub(crate) fn run(args: Args) -> Result<ExitCode> {
     let (executable, mut args) = executable_call.with_args(args.app_args);
     subshell::detect_output(&executable, &mut args, &include_apps)
   } else {
-    subshell::stream_output(&executable_call, &args.app_args, &include_apps)
+    let (executable, args) = executable_call.with_args(args.app_args);
+    subshell::stream_output(&executable, &args, &include_apps)
   }
 }
 
