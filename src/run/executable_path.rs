@@ -1,6 +1,6 @@
-use super::capture_output;
 use crate::logging::{Event, Log};
 use crate::prelude::*;
+use crate::subshell;
 use std::borrow::Cow;
 use std::ffi::OsStr;
 use std::fmt::Display;
@@ -24,7 +24,7 @@ impl ExecutablePath {
   /// runs this executable with the given args and returns the output it produced
   pub(crate) fn run_output(&self, args: &[&str], log: Log) -> Result<String> {
     log(Event::AnalyzeExecutableBegin { cmd: &self.as_str(), args });
-    capture_output(self, args)
+    subshell::capture_output(self, args)
   }
 
   pub(crate) fn inner(self) -> PathBuf {

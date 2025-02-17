@@ -1,17 +1,19 @@
-use super::{add_paths, ExecutablePath};
+use super::add_paths;
 use crate::prelude::*;
+use crate::run::ExecutablePath;
 use std::process::Command;
 
-pub(crate) fn capture_output(executable_path: &ExecutablePath, args: &[&str]) -> Result<String> {
-  let mut cmd = Command::new(executable_path);
+/// executes the given executable with the given args, returns the captured output (STDOUT and STDERR)
+pub(crate) fn capture_output(executable: &ExecutablePath, args: &[&str]) -> Result<String> {
+  let mut cmd = Command::new(executable);
   cmd.args(args);
   #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
-  add_paths(&mut cmd, &[executable_path.as_path().parent().unwrap()]);
+  add_paths(&mut cmd, &[executable.as_path().parent().unwrap()]);
   let output = match cmd.output() {
     Ok(output) => output,
     Err(err) => {
       return Err(UserError::ExecutableCannotExecute {
-        executable: executable_path.clone(),
+        executable: executable.to_string(),
         err: err.to_string(),
       });
     }

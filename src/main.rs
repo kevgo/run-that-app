@@ -13,6 +13,7 @@ mod platform;
 mod prelude;
 mod regexp;
 mod run;
+mod subshell;
 mod yard;
 
 use cli::Command;
