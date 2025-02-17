@@ -16,6 +16,12 @@ impl ExecutableNameUnix {
   }
 }
 
+impl AsRef<str> for ExecutableNameUnix {
+  fn as_ref(&self) -> &str {
+    &self.0
+  }
+}
+
 impl Display for ExecutableNameUnix {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(&self.0)

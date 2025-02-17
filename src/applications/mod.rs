@@ -212,6 +212,11 @@ impl Apps {
         return Ok(app.as_ref());
       }
     }
+    for app in &self.0 {
+      if app.executable_filename().as_ref() == name.as_ref() {
+        return Ok(app.as_ref());
+      }
+    }
     Err(UserError::UnknownApp(name.as_ref().to_string()))
   }
 
