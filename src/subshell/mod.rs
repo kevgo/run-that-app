@@ -71,7 +71,7 @@ mod tests {
   #[test]
   fn format_with_extra_args() {
     let executable = ExecutablePath::from(Path::new("executable"));
-    let have = render_call(&executable, &[S("arg3")]);
+    let have = render_call(&executable, &[S("arg1"), S("arg2"), S("arg3")]);
     let want = S("executable arg1 arg2 arg3");
     assert_eq!(have, want);
   }
