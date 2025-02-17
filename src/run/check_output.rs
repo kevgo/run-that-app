@@ -40,7 +40,7 @@ pub(crate) fn check_output(executable_call: &ExecutableCall, args: &[String], ap
   cmd.stdout(Stdio::piped());
   cmd.stderr(Stdio::piped());
   let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
-    call: executable_call.format_call(args),
+    call: executable_call.format_with_extra_args(args),
     reason: err.to_string(),
   })?;
   let Some(stdout) = process.stdout.take() else {
