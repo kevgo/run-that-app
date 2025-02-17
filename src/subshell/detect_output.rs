@@ -8,7 +8,7 @@ use std::sync::mpsc;
 use std::thread;
 
 /// Executes the given executable with the given arguments, streaming the output to the terminal while monitoring it.
-/// Any output results in an Err value.
+/// Any output results in an Err.
 #[allow(clippy::unwrap_used)]
 pub(crate) fn detect_output(executable: &ExecutablePath, args: &[String], apps_to_include: &[ExecutableCall]) -> Result<ExitCode> {
   let (sender, receiver) = mpsc::channel();
