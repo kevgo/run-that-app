@@ -4,7 +4,7 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::run::ExecutablePath;
+use crate::run::Executable;
 use crate::{regexp, run, Log};
 use big_s::S;
 use std::path;
@@ -57,7 +57,7 @@ impl AppDefinition for Gh {
     github_releases::latest(ORG, REPO, log)
   }
 
-  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
     if !output.contains("Work seamlessly with GitHub from the command line") {
       return Ok(AnalyzeResult::NotIdentified { output });

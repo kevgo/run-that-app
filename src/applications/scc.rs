@@ -4,7 +4,7 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::run::ExecutablePath;
+use crate::run::Executable;
 use crate::{regexp, run, Log};
 use const_format::formatcp;
 
@@ -53,7 +53,7 @@ impl AppDefinition for Scc {
     github_releases::versions(ORG, REPO, amount, log)
   }
 
-  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
     if !output.contains("Count lines of code in a directory with complexity estimation") {
       return Ok(AnalyzeResult::NotIdentified { output });

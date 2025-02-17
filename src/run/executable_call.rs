@@ -1,11 +1,11 @@
-use super::{ExecutableArgs, ExecutablePath};
+use super::{Executable, ExecutableArgs};
 use std::fmt::{Display, Write};
 use std::path::Path;
 
 /// information to call an `App`s executable, as it is defined by the user
 #[derive(Clone)]
 pub(crate) struct ExecutableCallDefinition {
-  pub(crate) executable_path: ExecutablePath,
+  pub(crate) executable_path: Executable,
   pub(crate) args: ExecutableArgs,
 }
 
@@ -42,13 +42,13 @@ impl Display for ExecutableCallDefinition {
 
 /// information to call an app with file paths adjusted
 pub(crate) struct ExecutableCall {
-  pub(crate) executable_path: ExecutablePath,
+  pub(crate) executable_path: Executable,
   pub(crate) args: Vec<String>,
 }
 
 impl ExecutableCall {
   /// provides the data to call this `ExecutableCall` with the given arguments
-  pub(crate) fn with_args(self, mut args: Vec<String>) -> (ExecutablePath, Vec<String>) {
+  pub(crate) fn with_args(self, mut args: Vec<String>) -> (Executable, Vec<String>) {
     let mut result_args = self.args;
     result_args.append(&mut args);
     (self.executable_path, result_args)
@@ -69,12 +69,12 @@ impl Display for ExecutableCall {
 #[cfg(test)]
 mod tests {
   use super::ExecutableCall;
-  use crate::run::ExecutablePath;
+  use crate::run::Executable;
   use big_s::S;
   use std::path::Path;
 
   mod stream_output {
-    use crate::run::ExecutablePath;
+    use crate::run::Executable;
     use crate::subshell;
     use big_s::S;
     use std::fs;
@@ -92,7 +92,7 @@ mod tests {
       file.flush().unwrap();
       drop(file);
       // NOTE: if the test is flaky, wait 10 ms here.
-      let executable = ExecutablePath::from(executable_path);
+      let executable = Executable::from(executable_path);
       let have = subshell::stream_output(&executable, &[], &[]).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(0))"));
@@ -106,7 +106,7 @@ mod tests {
       let executable_path = tempdir.path().join("executable");
       fs::write(&executable_path, b"#!/bin/sh\nexit 3").unwrap();
       make_file_executable(&executable_path).unwrap();
-      let executable = ExecutablePath::from(executable_path);
+      let executable = Executable::from(executable_path);
       let have = subshell::stream_output(&executable, &[], &[]).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(3))"));
@@ -118,7 +118,7 @@ mod tests {
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable.cmd");
       fs::write(&executable_path, b"echo hello").unwrap();
-      let executable = ExecutablePath::from(executable_path);
+      let executable = Executable::from(executable_path);
       let have = subshell::stream_output(&executable, &[], &[]).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(0))"));
@@ -130,7 +130,7 @@ mod tests {
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable.cmd");
       fs::write(&executable_path, b"EXIT 3").unwrap();
-      let executable = ExecutablePath::from(executable_path);
+      let executable = Executable::from(executable_path);
       let have = subshell::stream_output(&executable, &[], &[]).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(3))"));
@@ -140,7 +140,7 @@ mod tests {
   #[test]
   fn to_string() {
     let call = ExecutableCall {
-      executable_path: ExecutablePath::from(Path::new("executable")),
+      executable_path: Executable::from(Path::new("executable")),
       args: vec![S("arg1"), S("arg2")],
     };
     let have = call.to_string();

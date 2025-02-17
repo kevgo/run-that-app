@@ -3,7 +3,7 @@ use crate::configuration::Version;
 use crate::installation::Method;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{self, ExecutablePath};
+use crate::run::{self, Executable};
 use crate::Log;
 
 pub(crate) struct Govulncheck {}
@@ -34,7 +34,7 @@ impl AppDefinition for Govulncheck {
     Ok(vec![Version::from("1.1.4"), Version::from("1.1.3")])
   }
 
-  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
     if !output.contains("Govulncheck reports known vulnerabilities in dependencies") {
       return Ok(AnalyzeResult::NotIdentified { output });
