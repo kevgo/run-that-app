@@ -9,7 +9,7 @@ mod executable_path;
 mod exit_status_to_code;
 mod method;
 
-pub(self) use capture_output::capture_output;
+use capture_output::capture_output;
 pub(crate) use executable_args::ExecutableArgs;
 pub(crate) use executable_call::{add_paths, ExecutableCall, ExecutableCallDefinition};
 pub(crate) use executable_name_platform::ExecutableNamePlatform;
