@@ -56,11 +56,11 @@ impl AppDefinition for MdBookLinkCheck {
   }
 
   fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output("-h", log)?;
+    let output = executable.run_output(&["-h"], log)?;
     if !output.contains("mdbook-linkcheck") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output("-V", log)?) {
+    match extract_version(&executable.run_output(&["-V"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }

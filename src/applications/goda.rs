@@ -39,7 +39,7 @@ impl AppDefinition for Goda {
   }
 
   fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output("help", log)?;
+    let output = executable.run_output(&["help"], log)?;
     if !output.contains("Print dependency graph") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

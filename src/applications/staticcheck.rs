@@ -54,7 +54,7 @@ impl AppDefinition for StaticCheck {
   }
 
   fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output("-h", log)?;
+    let output = executable.run_output(&["-h"], log)?;
     if !output.contains("Usage: staticcheck [flags] [packages]") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

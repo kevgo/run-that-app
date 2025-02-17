@@ -55,11 +55,11 @@ impl AppDefinition for Dprint {
   }
 
   fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output("-h", log)?;
+    let output = executable.run_output(&["-h"], log)?;
     if !output.contains("Auto-formats source code based on the specified plugins") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output("--version", log)?) {
+    match extract_version(&executable.run_output(&["--version"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }

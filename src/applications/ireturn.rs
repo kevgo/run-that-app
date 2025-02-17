@@ -58,7 +58,7 @@ impl AppDefinition for Ireturn {
   }
 
   fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output("-h", log)?;
+    let output = executable.run_output(&["-h"], log)?;
     if !output.contains("ireturn: Accept Interfaces, Return Concrete Types") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

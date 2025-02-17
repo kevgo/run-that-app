@@ -54,7 +54,7 @@ impl AppDefinition for ShellCheck {
   }
 
   fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output("--version", log)?;
+    let output = executable.run_output(&["--version"], log)?;
     if !output.contains("ShellCheck - shell script analysis tool") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

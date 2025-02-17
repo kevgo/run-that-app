@@ -58,11 +58,11 @@ impl AppDefinition for ActionLint {
   }
 
   fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output("-h", log)?;
+    let output = executable.run_output(&["-h"], log)?;
     if !output.contains("actionlint is a linter for GitHub Actions workflow files") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    let output = executable.run_output("--version", log)?;
+    let output = executable.run_output(&["--version"], log)?;
     match extract_version(&output) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::NotIdentified { output }),

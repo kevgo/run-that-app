@@ -57,7 +57,7 @@ impl AppDefinition for Depth {
   }
 
   fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output("-h", log)?;
+    let output = executable.run_output(&["-h"], log)?;
     if !output.contains("resolves dependencies of internal (stdlib) packages.") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
