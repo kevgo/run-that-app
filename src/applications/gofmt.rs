@@ -37,8 +37,10 @@ impl AppDefinition for Gofmt {
     if !output.contains("report all errors (not just the first 10 on different lines)") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    // TODO: return the version of Go here
-    Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+    let go = Go {};
+    #[allow(clippy::unwrap_used)]
+    let go_path = executable.as_path().parent().unwrap().join(go.executable_filename().as_ref());
+    go.analyze_executable(&ExecutablePath::from(go_path), log)
   }
 
   fn clone(&self) -> Box<dyn AppDefinition> {
