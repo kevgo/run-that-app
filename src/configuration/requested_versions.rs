@@ -25,8 +25,7 @@ impl RequestedVersions {
   }
 
   /// provides the largest yard version contained in this collection
-  /// TODO: rename to `largest_yard`
-  fn largest_non_system(&self) -> Option<&Version> {
+  fn largest_yard(&self) -> Option<&Version> {
     let mut result = None;
     for version in &self.0 {
       let RequestedVersion::Yard(version) = version else {
@@ -52,7 +51,7 @@ impl RequestedVersions {
   /// Updates the largest non-system version in this collection with the given value.
   /// Returns the value that was replaced.
   pub(crate) fn update_largest_with(&mut self, value: &Version) -> Option<Version> {
-    let largest = self.largest_non_system()?;
+    let largest = self.largest_yard()?;
     if largest == value {
       return None;
     }
@@ -149,7 +148,7 @@ mod tests {
         RequestedVersion::Yard("1.2".into()),
         RequestedVersion::Yard("1.1".into()),
       ]);
-      let have = versions.largest_non_system();
+      let have = versions.largest_yard();
       let want = Version::from("1.2");
       assert_eq!(have, Some(&want));
     }
@@ -157,14 +156,14 @@ mod tests {
     #[test]
     fn system_no_versions() {
       let versions = RequestedVersions::new(vec![RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap())]);
-      let have = versions.largest_non_system();
+      let have = versions.largest_yard();
       assert_eq!(have, None);
     }
 
     #[test]
     fn empty() {
       let versions = RequestedVersions::new(vec![]);
-      let have = versions.largest_non_system();
+      let have = versions.largest_yard();
       assert_eq!(have, None);
     }
   }
