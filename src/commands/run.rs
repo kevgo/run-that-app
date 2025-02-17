@@ -24,10 +24,9 @@ pub(crate) fn run(args: Args) -> Result<ExitCode> {
     if args.error_on_output {
       match subshell::copy_output(&executable_call, &args.app_args, &include_apps)? {
         (true, _) => {
-          let executable = executable_call.executable_path.as_path().file_name().unwrap().to_string_lossy().to_string();
-          let mut call = vec![executable];
-          call.extend(args.app_args);
-          return Err(UserError::ProcessEmittedOutput { cmd: call.join(" ") });
+          return Err(UserError::ProcessEmittedOutput {
+            cmd: executable_call.format_with_extra_args(&args.app_args),
+          });
         }
         (false, exit_code) => return Ok(exit_code),
       }
