@@ -6,7 +6,7 @@ use std::ffi::OsStr;
 use std::fmt::Display;
 use std::path::{Path, PathBuf};
 
-/// the full path to an executable that RTA can execute
+/// the full path to an executable that RTA knows exists and that it can execute
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Executable(PathBuf);
 
