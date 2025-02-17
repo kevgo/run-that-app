@@ -23,13 +23,16 @@ impl ExecutablePath {
   }
 
   /// runs this executable with the given args and returns the output it produced
-  // TODO: move this into ExecutableCall
+  // TODO: use ExecutableCall internally?
   pub(crate) fn run_output(&self, args: &[&str], log: Log) -> Result<String> {
     let mut cmd = Command::new(self);
     cmd.args(args);
     #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
     add_paths(&mut cmd, &[self.0.parent().unwrap()]);
-    log(Event::AnalyzeExecutableBegin { cmd: &self.as_str(), args });
+    log(Event::AnalyzeExecutableBegin {
+      cmd: &self.as_str(),
+      args: args,
+    });
     let output = match cmd.output() {
       Ok(output) => output,
       Err(err) => {
