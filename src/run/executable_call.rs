@@ -1,13 +1,13 @@
-use super::executable_path::add_paths;
 use super::{exit_status_to_code, ExecutableArgs, ExecutablePath};
 use crate::cli;
 use crate::prelude::*;
+use std::ffi::OsString;
 use std::fmt::{Display, Write};
 use std::io::{self, BufRead, BufReader, Read};
 use std::path::Path;
 use std::process::{self, Child, Command, ExitCode, Stdio};
 use std::sync::mpsc;
-use std::thread;
+use std::{env, thread};
 
 /// information to call an `App`s executable, as it is defined by the user
 #[derive(Clone)]
@@ -220,6 +220,32 @@ fn monitor_exit(mut process: Child, sender: mpsc::Sender<Event>) {
       cli::exit(format!("cannot send exit signal through internal pipe: {err}"));
     }
   });
+}
+
+/// adds the given dirs to the PATH env variable of the given cmd
+pub(crate) fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
+  cmd.envs(env::vars_os());
+  let new_path = if let Some(mut path) = env::var_os("PATH") {
+    // PATH env var is set to something here, could be empty string
+    for dir in dirs {
+      if !path.is_empty() {
+        path.push(":");
+      }
+      path.push(dir.as_os_str());
+    }
+    path
+  } else {
+    // PATH env var is empty here
+    let mut path = OsString::new();
+    for dir in dirs {
+      if !path.is_empty() {
+        path.push(":");
+      }
+      path.push(dir);
+    }
+    path
+  };
+  cmd.env("PATH", new_path);
 }
 
 #[cfg(test)]
