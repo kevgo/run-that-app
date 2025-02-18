@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
+use crate::executables::{self, Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::executables::{self, Executable};
 use crate::{regexp, Log};
 
 pub(crate) struct Goreleaser {}
@@ -21,7 +21,7 @@ impl AppDefinition for Goreleaser {
     "https://goreleaser.com"
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> executables::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
     let os = match platform.os {
       Os::Linux => "Linux",
       Os::MacOS => "Darwin",
@@ -35,7 +35,7 @@ impl AppDefinition for Goreleaser {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    executables::Method::ThisApp {
+    RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}"),
         bin_folder: BinFolder::Root,
@@ -78,9 +78,9 @@ mod tests {
     use crate::applications::goreleaser::Goreleaser;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
+    use crate::executables::{self, RunMethod};
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use crate::executables;
     use big_s::S;
 
     #[test]
@@ -92,7 +92,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = executables::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz"),
           bin_folder: BinFolder::Root,
@@ -110,7 +110,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = executables::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Windows_x86_64.zip"),
           bin_folder: BinFolder::Root,

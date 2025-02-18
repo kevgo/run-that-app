@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
+use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::executables::Executable;
 use crate::{executables, Log};
 use const_format::formatcp;
 
@@ -22,7 +22,7 @@ impl AppDefinition for Ireturn {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> executables::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -36,7 +36,7 @@ impl AppDefinition for Ireturn {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    executables::Method::ThisApp {
+    RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ireturn_{os}_{cpu}.{ext}"),
@@ -77,9 +77,9 @@ mod tests {
     use crate::applications::ireturn::Ireturn;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
+    use crate::executables::{self, RunMethod};
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use crate::executables;
     use big_s::S;
 
     #[test]
@@ -91,7 +91,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = executables::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_linux_x86_64.tar.gz"),
@@ -114,7 +114,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = executables::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_windows_x86_64.zip"),

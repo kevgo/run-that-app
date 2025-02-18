@@ -1,9 +1,9 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
+use crate::executables::{self, Executable, RunMethod};
 use crate::installation::Method;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::executables::{self, Executable};
 use crate::Log;
 
 pub(crate) struct Govulncheck {}
@@ -17,8 +17,8 @@ impl AppDefinition for Govulncheck {
     "https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck"
   }
 
-  fn run_method(&self, version: &Version, _platform: Platform) -> executables::Method {
-    executables::Method::ThisApp {
+  fn run_method(&self, version: &Version, _platform: Platform) -> RunMethod {
+    RunMethod::ThisApp {
       install_methods: vec![Method::CompileGoSource {
         import_path: format!("golang.org/x/vuln/cmd/govulncheck@v{version}"),
       }],
@@ -46,11 +46,38 @@ impl AppDefinition for Govulncheck {
   fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
   }
+
+  fn executable_filename(&self) -> executables::ExecutableNameUnix {
+    executables::ExecutableNameUnix::from(self.name())
+  }
+
+  fn additional_executables(&self) -> Vec<executables::ExecutableNameUnix> {
+    std::vec![]
+  }
+
+  fn allowed_versions(&self) -> Result<semver::VersionReq> {
+    Ok(semver::VersionReq::STAR)
+  }
+
+  fn app_name(&self) -> super::ApplicationName {
+    super::ApplicationName(self.name())
+  }
+
+  fn carrier(&self, version: &Version, platform: Platform) -> (Box<dyn AppDefinition>, executables::ExecutableNameUnix, executables::ExecutableArgs) {
+    match self.run_method(version, platform) {
+      RunMethod::ThisApp { install_methods: _ } => (self.clone(), self.executable_filename(), executables::ExecutableArgs::None),
+      RunMethod::OtherAppOtherExecutable {
+        app_definition,
+        executable_name,
+      } => (app_definition.clone(), executable_name, executables::ExecutableArgs::None),
+      RunMethod::OtherAppDefaultExecutable { app_definition, args } => (app_definition.clone(), app_definition.executable_filename(), args),
+    }
+  }
 }
 
 #[cfg(test)]
 mod tests {
-  use crate::executables;
+  use crate::executables::{self, RunMethod};
 
   #[test]
   fn install_methods() {
@@ -68,7 +95,7 @@ mod tests {
         cpu: Cpu::Arm64,
       },
     );
-    let want = executables::Method::ThisApp {
+    let want = RunMethod::ThisApp {
       install_methods: vec![Method::CompileGoSource {
         import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
       }],

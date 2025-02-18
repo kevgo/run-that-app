@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
+use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::executables::Executable;
-use crate::{regexp, executables, Log};
+use crate::{regexp, Log};
 use big_s::S;
 
 pub(crate) struct Dprint {}
@@ -22,7 +22,7 @@ impl AppDefinition for Dprint {
     "https://dprint.dev"
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> executables::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
     let cpu = match platform.cpu {
       Cpu::Arm64 => "aarch64",
       Cpu::Intel64 => "x86_64",
@@ -32,7 +32,7 @@ impl AppDefinition for Dprint {
       Os::MacOS => "apple-darwin",
       Os::Windows => "pc-windows-msvc",
     };
-    executables::Method::ThisApp {
+    RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip"),
@@ -81,9 +81,9 @@ mod tests {
     use super::super::Dprint;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
+    use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use crate::executables;
     use big_s::S;
 
     #[test]
@@ -95,7 +95,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = executables::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-apple-darwin.zip"),
@@ -119,7 +119,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = executables::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-unknown-linux-gnu.zip"),

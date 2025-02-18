@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
-use crate::executables::{self, Executable};
+use crate::executables::{self, Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
@@ -26,7 +26,7 @@ impl AppDefinition for ActionLint {
     github_releases::latest(ORG, REPO, log)
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> executables::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
     let cpu = match platform.cpu {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "amd64",
@@ -40,7 +40,7 @@ impl AppDefinition for ActionLint {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    executables::Method::ThisApp {
+    RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}"),
@@ -86,7 +86,7 @@ mod tests {
     use crate::applications::actionlint::ActionLint;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
-    use crate::executables;
+    use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
@@ -100,7 +100,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = executables::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_linux_arm64.tar.gz"),
@@ -123,7 +123,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = executables::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_windows_amd64.zip"),

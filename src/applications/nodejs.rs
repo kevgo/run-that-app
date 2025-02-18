@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
+use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::executables::Executable;
-use crate::{regexp, executables, Log};
+use crate::{executables, regexp, Log};
 use std::path;
 
 pub(crate) struct NodeJS {}
@@ -22,12 +22,12 @@ impl AppDefinition for NodeJS {
     "https://nodejs.org"
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> executables::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
     let os = os_text(platform.os);
     let cpu = cpu_text(platform.cpu);
     let ext = ext_text(platform.os);
     let sep = path::MAIN_SEPARATOR;
-    executables::Method::ThisApp {
+    RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",),
         bin_folder: BinFolder::RootOrSubfolders {
@@ -96,14 +96,16 @@ mod tests {
     use crate::applications::nodejs::NodeJS;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
+    use crate::executables;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use crate::executables;
     use big_s::S;
 
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
+      use crate::executables::RunMethod;
+
       let have = (NodeJS {}).run_method(
         &Version::from("20.10.0"),
         Platform {
@@ -111,7 +113,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = executables::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz"),
           bin_folder: BinFolder::RootOrSubfolders {
@@ -132,7 +134,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = executables::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip"),
           bin_folder: BinFolder::RootOrSubfolders {
