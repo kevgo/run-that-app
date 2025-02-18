@@ -1,4 +1,4 @@
-//! This module implements the locally installed applications.
+//! This module manages the locally installed applications.
 
 #[allow(clippy::module_inception)] // I can't come up with a better name for this
 mod yard;
