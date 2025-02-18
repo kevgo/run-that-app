@@ -1,4 +1,4 @@
-//! This module implements logic around executables of applications.
+//! This module implements logic to run the various forms of executables that applications can have.
 
 mod executable;
 mod executable_call;
