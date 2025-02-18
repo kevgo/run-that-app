@@ -1,3 +1,5 @@
+//! This module implements the business logic for each top-level command that run-that-app understands.
+
 pub(crate) mod applications;
 pub(crate) mod available;
 mod help;

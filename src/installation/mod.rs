@@ -1,4 +1,4 @@
-//! the different ways to install an application
+//! This module implements the different ways to download and install an application.
 
 mod compile_go;
 mod compile_rust;

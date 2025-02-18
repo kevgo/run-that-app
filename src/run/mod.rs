@@ -1,4 +1,4 @@
-//! all the logic around running applications
+//! This module implements high-level logic around running applications.
 
 mod executable;
 mod executable_call;

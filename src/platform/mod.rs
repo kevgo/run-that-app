@@ -1,3 +1,5 @@
+//! This module implements detection of the local hardware and software.
+
 mod cpu;
 mod detect;
 mod os;

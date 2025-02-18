@@ -1,4 +1,4 @@
-//! Output to the user
+//! This module implements a flexible logging mechanism.
 
 mod event;
 #[macro_use]
