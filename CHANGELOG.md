@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.13.0 (2025-02-17)
+
+- can now call applications by application name: `rg@14.1.1` instead of `ripgrep@14.1.1`
+
 ### 0.12.0 (2025-02-15)
 
 #### New Features
