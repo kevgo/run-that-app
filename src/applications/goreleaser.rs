@@ -4,7 +4,7 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::run::{self, ExecutablePath};
+use crate::run::{self, Executable};
 use crate::{regexp, Log};
 
 pub(crate) struct Goreleaser {}
@@ -51,7 +51,7 @@ impl AppDefinition for Goreleaser {
     github_releases::versions(ORG, REPO, amount, log)
   }
 
-  fn analyze_executable(&self, executable: &ExecutablePath, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-v"], log)?;
     if !output.contains("https://goreleaser.com") {
       return Ok(AnalyzeResult::NotIdentified { output });

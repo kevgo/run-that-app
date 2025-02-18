@@ -6,17 +6,17 @@ use std::ffi::OsStr;
 use std::fmt::Display;
 use std::path::{Path, PathBuf};
 
-/// the full path to an executable that RTA can execute
+/// the full path to an executable that RTA knows exists and that it can execute
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) struct ExecutablePath(PathBuf);
+pub(crate) struct Executable(PathBuf);
 
-impl AsRef<OsStr> for ExecutablePath {
+impl AsRef<OsStr> for Executable {
   fn as_ref(&self) -> &OsStr {
     self.0.as_os_str()
   }
 }
 
-impl ExecutablePath {
+impl Executable {
   pub(crate) fn as_str(&self) -> Cow<'_, str> {
     self.0.to_string_lossy()
   }
@@ -36,20 +36,20 @@ impl ExecutablePath {
   }
 }
 
-impl Display for ExecutablePath {
+impl Display for Executable {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(&self.0.to_string_lossy())
   }
 }
 
-impl From<PathBuf> for ExecutablePath {
+impl From<PathBuf> for Executable {
   fn from(value: PathBuf) -> Self {
-    ExecutablePath(value)
+    Executable(value)
   }
 }
 
-impl From<&Path> for ExecutablePath {
+impl From<&Path> for Executable {
   fn from(value: &Path) -> Self {
-    ExecutablePath(value.to_path_buf())
+    Executable(value.to_path_buf())
   }
 }
