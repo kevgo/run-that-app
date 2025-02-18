@@ -3,7 +3,7 @@ use crate::configuration::Version;
 use crate::installation::Method;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::executable::{self, ExecutableFile};
+use crate::executables::{self, Executable};
 use crate::Log;
 
 pub(crate) struct Govulncheck {}
@@ -17,8 +17,8 @@ impl AppDefinition for Govulncheck {
     "https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck"
   }
 
-  fn run_method(&self, version: &Version, _platform: Platform) -> executable::Method {
-    executable::Method::ThisApp {
+  fn run_method(&self, version: &Version, _platform: Platform) -> executables::Method {
+    executables::Method::ThisApp {
       install_methods: vec![Method::CompileGoSource {
         import_path: format!("golang.org/x/vuln/cmd/govulncheck@v{version}"),
       }],
@@ -34,7 +34,7 @@ impl AppDefinition for Govulncheck {
     Ok(vec![Version::from("1.1.4"), Version::from("1.1.3")])
   }
 
-  fn analyze_executable(&self, executable: &ExecutableFile, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
     if !output.contains("Govulncheck reports known vulnerabilities in dependencies") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -50,7 +50,7 @@ impl AppDefinition for Govulncheck {
 
 #[cfg(test)]
 mod tests {
-  use crate::executable;
+  use crate::executables;
 
   #[test]
   fn install_methods() {
@@ -68,7 +68,7 @@ mod tests {
         cpu: Cpu::Arm64,
       },
     );
-    let want = executable::Method::ThisApp {
+    let want = executables::Method::ThisApp {
       install_methods: vec![Method::CompileGoSource {
         import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
       }],

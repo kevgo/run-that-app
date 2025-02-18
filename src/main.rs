@@ -12,7 +12,7 @@ mod logging;
 mod platform;
 mod prelude;
 mod regexp;
-mod executable;
+mod executables;
 mod subshell;
 mod yard;
 

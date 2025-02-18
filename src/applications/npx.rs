@@ -3,8 +3,8 @@ use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::executable::{ExecutableFile, ExecutableArgs};
-use crate::{executable, Log};
+use crate::executables::{Executable, ExecutableArgs};
+use crate::{executables, Log};
 
 pub(crate) struct Npx {}
 
@@ -17,8 +17,8 @@ impl AppDefinition for Npx {
     "https://www.npmjs.com"
   }
 
-  fn run_method(&self, _version: &Version, _platform: Platform) -> executable::Method {
-    executable::Method::OtherAppDefaultExecutable {
+  fn run_method(&self, _version: &Version, _platform: Platform) -> executables::Method {
+    executables::Method::OtherAppDefaultExecutable {
       app_definition: Box::new(app_to_install()),
       args: ExecutableArgs::OneOfTheseInAppFolder {
         options: vec!["node_modules/npm/bin/npx-cli.js", "lib/node_modules/npm/bin/npx-cli.js"],
@@ -34,7 +34,7 @@ impl AppDefinition for Npx {
     app_to_install().installable_versions(amount, log)
   }
 
-  fn analyze_executable(&self, executable: &ExecutableFile, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
     if !output.contains("Run a command from a local or remote npm package") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -61,7 +61,7 @@ mod tests {
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
-    use crate::executable::{self, ExecutableArgs};
+    use crate::executables::{self, ExecutableArgs};
 
     #[test]
     #[cfg(unix)]
@@ -73,7 +73,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = executable::Method::OtherAppDefaultExecutable {
+      let want = executables::Method::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
           options: vec!["node_modules/npm/bin/npx-cli.js", "lib/node_modules/npm/bin/npx-cli.js"],
@@ -92,7 +92,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = executable::Method::OtherAppDefaultExecutable {
+      let want = executables::Method::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
           options: vec!["node_modules/npm/bin/npx-cli.js", "lib/node_modules/npm/bin/npx-cli.js"],

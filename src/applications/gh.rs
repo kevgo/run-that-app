@@ -4,8 +4,8 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::executable::ExecutableFile;
-use crate::{regexp, executable, Log};
+use crate::executables::Executable;
+use crate::{regexp, executables, Log};
 use big_s::S;
 use std::path;
 
@@ -23,7 +23,7 @@ impl AppDefinition for Gh {
     "https://cli.github.com"
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> executable::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> executables::Method {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "macOS",
@@ -38,7 +38,7 @@ impl AppDefinition for Gh {
       Os::Windows | Os::MacOS => "zip",
     };
     let sep = path::MAIN_SEPARATOR;
-    executable::Method::ThisApp {
+    executables::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}"),
         bin_folder: BinFolder::Subfolders {
@@ -57,7 +57,7 @@ impl AppDefinition for Gh {
     github_releases::latest(ORG, REPO, log)
   }
 
-  fn analyze_executable(&self, executable: &ExecutableFile, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
     if !output.contains("Work seamlessly with GitHub from the command line") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -86,7 +86,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use crate::executable;
+    use crate::executables;
     use big_s::S;
 
     #[test]
@@ -99,7 +99,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = executable::Method::ThisApp {
+      let want = executables::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz"),
           bin_folder: BinFolder::Subfolders {
@@ -120,7 +120,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = executable::Method::ThisApp {
+      let want = executables::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip"),
           bin_folder: BinFolder::Subfolders {

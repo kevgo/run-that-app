@@ -3,8 +3,8 @@ use crate::configuration::Version;
 use crate::installation::Method;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::executable::ExecutableFile;
-use crate::{executable, Log};
+use crate::executables::Executable;
+use crate::{executables, Log};
 
 pub(crate) struct Deadcode {}
 
@@ -17,8 +17,8 @@ impl AppDefinition for Deadcode {
     "https://pkg.go.dev/golang.org/x/tools/cmd/deadcode"
   }
 
-  fn run_method(&self, version: &Version, _platform: Platform) -> executable::Method {
-    executable::Method::ThisApp {
+  fn run_method(&self, version: &Version, _platform: Platform) -> executables::Method {
+    executables::Method::ThisApp {
       install_methods: vec![Method::CompileGoSource {
         import_path: format!("golang.org/x/tools/cmd/deadcode@v{version}"),
       }],
@@ -34,7 +34,7 @@ impl AppDefinition for Deadcode {
     Ok(vec![Version::from("0.16.1")])
   }
 
-  fn analyze_executable(&self, executable: &ExecutableFile, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
     if !output.contains("The deadcode command reports unreachable functions in Go programs") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -51,7 +51,7 @@ impl AppDefinition for Deadcode {
 #[cfg(test)]
 mod tests {
   use crate::applications::deadcode::Deadcode;
-  use crate::executable;
+  use crate::executables;
 
   #[test]
   fn install_methods() {
@@ -68,7 +68,7 @@ mod tests {
         cpu: Cpu::Arm64,
       },
     );
-    let want = executable::Method::ThisApp {
+    let want = executables::Method::ThisApp {
       install_methods: vec![Method::CompileGoSource {
         import_path: S("golang.org/x/tools/cmd/deadcode@v0.16.1"),
       }],

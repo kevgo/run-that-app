@@ -4,8 +4,8 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::executable::ExecutableFile;
-use crate::{regexp, executable, Log};
+use crate::executables::Executable;
+use crate::{regexp, executables, Log};
 
 pub(crate) struct ShellCheck {}
 
@@ -21,7 +21,7 @@ impl AppDefinition for ShellCheck {
     "https://www.shellcheck.net"
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> executable::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> executables::Method {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -35,7 +35,7 @@ impl AppDefinition for ShellCheck {
       Os::Linux | Os::MacOS => "tar.xz",
       Os::Windows => "zip",
     };
-    executable::Method::ThisApp {
+    executables::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}"),
         bin_folder: BinFolder::Subfolder {
@@ -53,7 +53,7 @@ impl AppDefinition for ShellCheck {
     github_releases::versions(ORG, REPO, amount, log)
   }
 
-  fn analyze_executable(&self, executable: &ExecutableFile, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["--version"], log)?;
     if !output.contains("ShellCheck - shell script analysis tool") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -82,7 +82,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use crate::executable;
+    use crate::executables;
     use big_s::S;
 
     #[test]
@@ -94,7 +94,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = executable::Method::ThisApp {
+      let want = executables::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.linux.x86_64.tar.xz"),
           bin_folder: BinFolder::Subfolder { path: S("shellcheck-v0.9.0") },
@@ -112,7 +112,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = executable::Method::ThisApp {
+      let want = executables::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.darwin.aarch64.tar.xz"),
           bin_folder: BinFolder::Subfolder { path: S("shellcheck-v0.10.0") },

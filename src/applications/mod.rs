@@ -32,7 +32,7 @@ mod tikibase;
 use crate::configuration::Version;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::executable::{self, ExecutableFile, ExecutableArgs, ExecutableNameUnix};
+use crate::executables::{self, Executable, ExecutableArgs, ExecutableNameUnix};
 use crate::Log;
 use std::fmt::{Debug, Display};
 use std::path::Path;
@@ -87,7 +87,7 @@ pub(crate) trait AppDefinition {
   }
 
   /// define how to run this application
-  fn run_method(&self, version: &Version, platform: Platform) -> executable::Method;
+  fn run_method(&self, version: &Version, platform: Platform) -> executables::Method;
 
   /// link to the (human-readable) homepage of the app
   fn homepage(&self) -> &'static str;
@@ -99,7 +99,7 @@ pub(crate) trait AppDefinition {
   fn latest_installable_version(&self, log: Log) -> Result<Version>;
 
   /// ensures that the given executable belongs to this app and if yes returns its version
-  fn analyze_executable(&self, executable: &ExecutableFile, log: Log) -> Result<AnalyzeResult>;
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult>;
 
   /// Apps can override this method to provide version restrictions
   /// defined by config files in the working directory.
@@ -130,12 +130,12 @@ pub(crate) trait AppDefinition {
   /// and arguments to call that executable with.
   fn carrier(&self, version: &Version, platform: Platform) -> (Box<dyn AppDefinition>, ExecutableNameUnix, ExecutableArgs) {
     match self.run_method(version, platform) {
-      executable::Method::ThisApp { install_methods: _ } => (self.clone(), self.executable_filename(), ExecutableArgs::None),
-      executable::Method::OtherAppOtherExecutable {
+      executables::Method::ThisApp { install_methods: _ } => (self.clone(), self.executable_filename(), ExecutableArgs::None),
+      executables::Method::OtherAppOtherExecutable {
         app_definition,
         executable_name,
       } => (app_definition.clone(), executable_name, ExecutableArgs::None),
-      executable::Method::OtherAppDefaultExecutable { app_definition, args } => (app_definition.clone(), app_definition.executable_filename(), args),
+      executables::Method::OtherAppDefaultExecutable { app_definition, args } => (app_definition.clone(), app_definition.executable_filename(), args),
     }
   }
 }

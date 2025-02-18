@@ -4,8 +4,8 @@ use crate::hosting::github_tags;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::executable::ExecutableFile;
-use crate::{filesystem, regexp, executable, Log};
+use crate::executables::Executable;
+use crate::{filesystem, regexp, executables, Log};
 use big_s::S;
 use std::path;
 
@@ -23,7 +23,7 @@ impl AppDefinition for Go {
     "https://go.dev"
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> executable::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> executables::Method {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -39,7 +39,7 @@ impl AppDefinition for Go {
     };
     let sep = path::MAIN_SEPARATOR;
     let version_str = version.as_str().trim_start_matches("go");
-    executable::Method::ThisApp {
+    executables::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}"),
         bin_folder: BinFolder::Subfolder { path: format!("go{sep}bin") },
@@ -70,7 +70,7 @@ impl AppDefinition for Go {
     Ok(go_tags.into_iter().map(Version::from).collect())
   }
 
-  fn analyze_executable(&self, executable: &ExecutableFile, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     if let Ok(version) = extract_version(&executable.run_output(&["version"], log)?) {
       return Ok(AnalyzeResult::IdentifiedWithVersion(version.into()));
     }
@@ -118,7 +118,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use crate::executable;
+    use crate::executables;
     use big_s::S;
 
     #[test]
@@ -131,7 +131,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = executable::Method::ThisApp {
+      let want = executables::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz"),
           bin_folder: BinFolder::Subfolder { path: S("go/bin") },
@@ -150,7 +150,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = executable::Method::ThisApp {
+      let want = executables::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://go.dev/dl/go1.21.5.windows-amd64.zip"),
           bin_folder: BinFolder::Subfolder { path: S("go\\bin") },

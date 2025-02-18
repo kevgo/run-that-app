@@ -8,15 +8,15 @@ use std::path::{Path, PathBuf};
 
 /// the full path to an executable that RTA knows exists and that it can execute
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) struct ExecutableFile(PathBuf);
+pub(crate) struct Executable(PathBuf);
 
-impl AsRef<OsStr> for ExecutableFile {
+impl AsRef<OsStr> for Executable {
   fn as_ref(&self) -> &OsStr {
     self.0.as_os_str()
   }
 }
 
-impl ExecutableFile {
+impl Executable {
   pub(crate) fn as_str(&self) -> Cow<'_, str> {
     self.0.to_string_lossy()
   }
@@ -36,20 +36,20 @@ impl ExecutableFile {
   }
 }
 
-impl Display for ExecutableFile {
+impl Display for Executable {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(&self.0.to_string_lossy())
   }
 }
 
-impl From<PathBuf> for ExecutableFile {
+impl From<PathBuf> for Executable {
   fn from(value: PathBuf) -> Self {
-    ExecutableFile(value)
+    Executable(value)
   }
 }
 
-impl From<&Path> for ExecutableFile {
+impl From<&Path> for Executable {
   fn from(value: &Path) -> Self {
-    ExecutableFile(value.to_path_buf())
+    Executable(value.to_path_buf())
   }
 }

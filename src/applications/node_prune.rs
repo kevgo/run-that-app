@@ -4,8 +4,8 @@ use crate::hosting::github_tags;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::executable::ExecutableFile;
-use crate::{executable, Log};
+use crate::executables::Executable;
+use crate::{executables, Log};
 use const_format::formatcp;
 
 pub(crate) struct NodePrune {}
@@ -30,7 +30,7 @@ impl AppDefinition for NodePrune {
     Ok(Version::from(tag))
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> executable::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> executables::Method {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -40,7 +40,7 @@ impl AppDefinition for NodePrune {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "amd64",
     };
-    executable::Method::ThisApp {
+    executables::Method::ThisApp {
       install_methods: vec![
         Method::DownloadExecutable {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/node-prune_{version}_{os}_{cpu}.tar.gz"),
@@ -57,7 +57,7 @@ impl AppDefinition for NodePrune {
     Ok(tags.into_iter().map(Version::from).collect())
   }
 
-  fn analyze_executable(&self, executable: &ExecutableFile, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
     if !output.contains("Glob of files that should not be pruned") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -79,7 +79,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
-    use crate::executable;
+    use crate::executables;
     use big_s::S;
 
     #[test]
@@ -91,7 +91,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = executable::Method::ThisApp {
+      let want = executables::Method::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
             url: S("https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_linux_amd64.tar.gz"),
@@ -113,7 +113,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = executable::Method::ThisApp {
+      let want = executables::Method::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
             url: S("https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_windows_amd64.tar.gz"),

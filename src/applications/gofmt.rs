@@ -3,8 +3,8 @@ use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::executable::{ExecutableFile, ExecutableNameUnix};
-use crate::{executable, Log};
+use crate::executables::{Executable, ExecutableNameUnix};
+use crate::{executables, Log};
 
 pub(crate) struct Gofmt {}
 
@@ -17,8 +17,8 @@ impl AppDefinition for Gofmt {
     "https://go.dev"
   }
 
-  fn run_method(&self, _version: &Version, _platform: Platform) -> executable::Method {
-    executable::Method::OtherAppOtherExecutable {
+  fn run_method(&self, _version: &Version, _platform: Platform) -> executables::Method {
+    executables::Method::OtherAppOtherExecutable {
       app_definition: Box::new(app_to_install()),
       executable_name: ExecutableNameUnix::from("gofmt"),
     }
@@ -32,7 +32,7 @@ impl AppDefinition for Gofmt {
     app_to_install().installable_versions(amount, log)
   }
 
-  fn analyze_executable(&self, executable: &ExecutableFile, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
     if !output.contains("report all errors (not just the first 10 on different lines)") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -40,7 +40,7 @@ impl AppDefinition for Gofmt {
     let go = Go {};
     #[allow(clippy::unwrap_used)]
     let go_path = executable.as_path().parent().unwrap().join(go.executable_filename().as_ref());
-    go.analyze_executable(&ExecutableFile::from(go_path), log)
+    go.analyze_executable(&Executable::from(go_path), log)
   }
 
   fn clone(&self) -> Box<dyn AppDefinition> {
@@ -61,7 +61,7 @@ mod tests {
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
-    use crate::executable::{self, ExecutableNameUnix};
+    use crate::executables::{self, ExecutableNameUnix};
 
     #[test]
     fn macos() {
@@ -72,7 +72,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = executable::Method::OtherAppOtherExecutable {
+      let want = executables::Method::OtherAppOtherExecutable {
         app_definition: Box::new(Go {}),
         executable_name: ExecutableNameUnix::from("gofmt"),
       };
@@ -88,7 +88,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = executable::Method::OtherAppOtherExecutable {
+      let want = executables::Method::OtherAppOtherExecutable {
         app_definition: Box::new(Go {}),
         executable_name: ExecutableNameUnix::from("gofmt"),
       };

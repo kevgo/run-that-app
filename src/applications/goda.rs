@@ -4,8 +4,8 @@ use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::executable::ExecutableFile;
-use crate::{executable, Log};
+use crate::executables::Executable;
+use crate::{executables, Log};
 use const_format::formatcp;
 
 pub(crate) struct Goda {}
@@ -22,8 +22,8 @@ impl AppDefinition for Goda {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_method(&self, version: &Version, _platform: Platform) -> executable::Method {
-    executable::Method::ThisApp {
+  fn run_method(&self, version: &Version, _platform: Platform) -> executables::Method {
+    executables::Method::ThisApp {
       install_methods: vec![Method::CompileGoSource {
         import_path: format!("github.com/{ORG}/{REPO}@v{version}"),
       }],
@@ -38,7 +38,7 @@ impl AppDefinition for Goda {
     github_releases::versions(ORG, REPO, amount, log)
   }
 
-  fn analyze_executable(&self, executable: &ExecutableFile, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["help"], log)?;
     if !output.contains("Print dependency graph") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -54,7 +54,7 @@ impl AppDefinition for Goda {
 
 #[cfg(test)]
 mod tests {
-  use crate::executable;
+  use crate::executables;
 
   #[test]
   fn install_methods() {
@@ -72,7 +72,7 @@ mod tests {
         cpu: Cpu::Intel64,
       },
     );
-    let want = executable::Method::ThisApp {
+    let want = executables::Method::ThisApp {
       install_methods: vec![Method::CompileGoSource {
         import_path: S("github.com/loov/goda@v0.5.9"),
       }],
