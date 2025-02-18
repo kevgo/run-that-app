@@ -76,7 +76,7 @@ mod tests {
     use crate::applications::golangci_lint::GolangCiLint;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
-    use crate::executables::{self, RunMethod};
+    use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;

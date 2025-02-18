@@ -5,6 +5,7 @@ mod commands;
 mod configuration;
 mod download;
 mod error;
+mod executables;
 mod filesystem;
 mod hosting;
 mod installation;
@@ -12,7 +13,6 @@ mod logging;
 mod platform;
 mod prelude;
 mod regexp;
-mod executables;
 mod subshell;
 mod yard;
 

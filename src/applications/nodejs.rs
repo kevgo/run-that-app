@@ -5,7 +5,7 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::{executables, regexp, Log};
+use crate::{regexp, Log};
 use std::path;
 
 pub(crate) struct NodeJS {}
@@ -96,7 +96,6 @@ mod tests {
     use crate::applications::nodejs::NodeJS;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
-    use crate::executables;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;

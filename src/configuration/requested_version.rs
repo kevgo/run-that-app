@@ -71,7 +71,7 @@ mod tests {
   mod parse {
     use crate::applications::{AnalyzeResult, AppDefinition};
     use crate::configuration::Version;
-    use crate::executables::{self, Executable, ExecutableNameUnix, RunMethod};
+    use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
     use crate::logging::Log;
     use crate::platform::Platform;
     use crate::prelude::*;

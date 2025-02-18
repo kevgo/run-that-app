@@ -30,7 +30,7 @@ mod staticcheck;
 mod tikibase;
 
 use crate::configuration::Version;
-use crate::executables::{self, Executable, ExecutableArgs, ExecutableNameUnix, RunMethod};
+use crate::executables::{Executable, ExecutableArgs, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
 use crate::prelude::*;
 use crate::Log;

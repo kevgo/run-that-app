@@ -77,7 +77,7 @@ impl AppDefinition for Govulncheck {
 
 #[cfg(test)]
 mod tests {
-  use crate::executables::{self, RunMethod};
+  use crate::executables::RunMethod;
 
   #[test]
   fn install_methods() {

@@ -5,7 +5,7 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::{executables, regexp, Log};
+use crate::{regexp, Log};
 
 pub(crate) struct ShellCheck {}
 
@@ -80,7 +80,7 @@ mod tests {
     use crate::applications::shellcheck::ShellCheck;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
-    use crate::executables::{self, RunMethod};
+    use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;

@@ -5,7 +5,7 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::{executables, regexp, Log};
+use crate::{regexp, Log};
 use big_s::S;
 use const_format::formatcp;
 
@@ -87,7 +87,7 @@ mod tests {
     use crate::applications::mdbook::MdBook;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
-    use crate::executables::{self, RunMethod};
+    use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;

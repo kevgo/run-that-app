@@ -1,5 +1,5 @@
-use crate::logging::{Event, Log};
 use crate::executables::{Executable, ExecutableNamePlatform};
+use crate::logging::{Event, Log};
 use which::which_global;
 
 pub(crate) fn find_global_install(binary_name: &ExecutableNamePlatform, log: Log) -> Option<Executable> {

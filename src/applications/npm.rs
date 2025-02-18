@@ -4,7 +4,7 @@ use crate::configuration::Version;
 use crate::executables::{Executable, ExecutableArgs, RunMethod};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::{executables, Log};
+use crate::Log;
 
 pub(crate) struct Npm {}
 
@@ -60,7 +60,6 @@ mod tests {
     use crate::applications::npm::Npm;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
-    use crate::executables;
     use crate::executables::ExecutableArgs;
     use crate::platform::{Cpu, Os, Platform};
 

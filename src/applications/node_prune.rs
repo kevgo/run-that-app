@@ -5,7 +5,7 @@ use crate::hosting::github_tags;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::{executables, Log};
+use crate::Log;
 use const_format::formatcp;
 
 pub(crate) struct NodePrune {}
@@ -77,7 +77,7 @@ mod tests {
     use crate::applications::node_prune::NodePrune;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
-    use crate::executables::{self, RunMethod};
+    use crate::executables::RunMethod;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
