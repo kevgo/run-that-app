@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
-use crate::executables::{self, Executable, RunMethod};
+use crate::executables::{Executable, RunMethod};
 use crate::installation::Method;
 use crate::platform::Platform;
 use crate::prelude::*;
@@ -45,33 +45,6 @@ impl AppDefinition for Govulncheck {
 
   fn clone(&self) -> Box<dyn AppDefinition> {
     Box::new(Self {})
-  }
-
-  fn executable_filename(&self) -> executables::ExecutableNameUnix {
-    executables::ExecutableNameUnix::from(self.name())
-  }
-
-  fn additional_executables(&self) -> Vec<executables::ExecutableNameUnix> {
-    std::vec![]
-  }
-
-  fn allowed_versions(&self) -> Result<semver::VersionReq> {
-    Ok(semver::VersionReq::STAR)
-  }
-
-  fn app_name(&self) -> super::ApplicationName {
-    super::ApplicationName(self.name())
-  }
-
-  fn carrier(&self, version: &Version, platform: Platform) -> (Box<dyn AppDefinition>, executables::ExecutableNameUnix, executables::ExecutableArgs) {
-    match self.run_method(version, platform) {
-      RunMethod::ThisApp { install_methods: _ } => (self.clone(), self.executable_filename(), executables::ExecutableArgs::None),
-      RunMethod::OtherAppOtherExecutable {
-        app_definition,
-        executable_name,
-      } => (app_definition.clone(), executable_name, executables::ExecutableArgs::None),
-      RunMethod::OtherAppDefaultExecutable { app_definition, args } => (app_definition.clone(), app_definition.executable_filename(), args),
-    }
   }
 }
 
