@@ -96,6 +96,7 @@ mod tests {
     use crate::applications::nodejs::NodeJS;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
+    use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
@@ -103,8 +104,6 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::executables::RunMethod;
-
       let have = (NodeJS {}).run_method(
         &Version::from("20.10.0"),
         Platform {

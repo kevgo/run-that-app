@@ -116,6 +116,7 @@ mod tests {
     use crate::applications::go::Go;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
+    use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
@@ -123,8 +124,6 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use crate::executables::RunMethod;
-
       let have = (Go {}).run_method(
         &Version::from("1.21.5"),
         Platform {
