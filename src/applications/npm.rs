@@ -60,8 +60,7 @@ mod tests {
     use crate::applications::npm::Npm;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
-    use crate::executables::ExecutableArgs;
-    use crate::executables::RunMethod;
+    use crate::executables::{ExecutableArgs, RunMethod};
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
