@@ -4,8 +4,8 @@ use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::run::Executable;
-use crate::{regexp, run, Log};
+use crate::executable::Executable;
+use crate::{regexp, executable, Log};
 use const_format::formatcp;
 
 pub(crate) struct Gofumpt {}
@@ -22,7 +22,7 @@ impl AppDefinition for Gofumpt {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> executable::Method {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -36,7 +36,7 @@ impl AppDefinition for Gofumpt {
       Os::Windows => ".exe",
       Os::Linux | Os::MacOS => "",
     };
-    run::Method::ThisApp {
+    executable::Method::ThisApp {
       install_methods: vec![
         Method::DownloadExecutable {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}{ext}"),
@@ -86,7 +86,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run;
+    use crate::executable;
     use big_s::S;
 
     #[test]
@@ -98,7 +98,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = executable::Method::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
             url: S("https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_darwin_arm64"),
@@ -120,7 +120,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = executable::Method::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
             url: S("https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_windows_amd64.exe"),

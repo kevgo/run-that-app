@@ -4,8 +4,8 @@ use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::run::Executable;
-use crate::{run, Log};
+use crate::executable::Executable;
+use crate::{executable, Log};
 use const_format::formatcp;
 
 pub(crate) struct Depth {}
@@ -22,7 +22,7 @@ impl AppDefinition for Depth {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> executable::Method {
     let cpu = match platform.cpu {
       Cpu::Arm64 => "aarch64", // the "arm" binaries don't run on Apple Silicon
       Cpu::Intel64 => "amd64",
@@ -36,7 +36,7 @@ impl AppDefinition for Depth {
       Os::Windows => ".exe",
       Os::Linux | Os::MacOS => "",
     };
-    run::Method::ThisApp {
+    executable::Method::ThisApp {
       install_methods: vec![
         Method::DownloadExecutable {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}{ext}"),
@@ -79,7 +79,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run;
+    use crate::executable;
     use big_s::S;
 
     #[test]
@@ -91,7 +91,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = executable::Method::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
             url: S("https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_linux_aarch64"),
@@ -113,7 +113,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = executable::Method::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
             url: S("https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_windows_amd64.exe"),

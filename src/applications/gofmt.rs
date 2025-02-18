@@ -3,8 +3,8 @@ use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{Executable, ExecutableNameUnix};
-use crate::{run, Log};
+use crate::executable::{Executable, ExecutableNameUnix};
+use crate::{executable, Log};
 
 pub(crate) struct Gofmt {}
 
@@ -17,8 +17,8 @@ impl AppDefinition for Gofmt {
     "https://go.dev"
   }
 
-  fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
-    run::Method::OtherAppOtherExecutable {
+  fn run_method(&self, _version: &Version, _platform: Platform) -> executable::Method {
+    executable::Method::OtherAppOtherExecutable {
       app_definition: Box::new(app_to_install()),
       executable_name: ExecutableNameUnix::from("gofmt"),
     }
@@ -61,7 +61,7 @@ mod tests {
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run::{self, ExecutableNameUnix};
+    use crate::executable::{self, ExecutableNameUnix};
 
     #[test]
     fn macos() {
@@ -72,7 +72,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::OtherAppOtherExecutable {
+      let want = executable::Method::OtherAppOtherExecutable {
         app_definition: Box::new(Go {}),
         executable_name: ExecutableNameUnix::from("gofmt"),
       };
@@ -88,7 +88,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::OtherAppOtherExecutable {
+      let want = executable::Method::OtherAppOtherExecutable {
         app_definition: Box::new(Go {}),
         executable_name: ExecutableNameUnix::from("gofmt"),
       };

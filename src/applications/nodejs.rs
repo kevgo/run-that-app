@@ -4,8 +4,8 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::run::Executable;
-use crate::{regexp, run, Log};
+use crate::executable::Executable;
+use crate::{regexp, executable, Log};
 use std::path;
 
 pub(crate) struct NodeJS {}
@@ -22,12 +22,12 @@ impl AppDefinition for NodeJS {
     "https://nodejs.org"
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> executable::Method {
     let os = os_text(platform.os);
     let cpu = cpu_text(platform.cpu);
     let ext = ext_text(platform.os);
     let sep = path::MAIN_SEPARATOR;
-    run::Method::ThisApp {
+    executable::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",),
         bin_folder: BinFolder::RootOrSubfolders {
@@ -98,7 +98,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run;
+    use crate::executable;
     use big_s::S;
 
     #[test]
@@ -111,7 +111,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = executable::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz"),
           bin_folder: BinFolder::RootOrSubfolders {
@@ -132,7 +132,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = executable::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip"),
           bin_folder: BinFolder::RootOrSubfolders {

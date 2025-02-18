@@ -4,8 +4,8 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::run::Executable;
-use crate::{run, Log};
+use crate::executable::Executable;
+use crate::{executable, Log};
 use const_format::formatcp;
 
 pub(crate) struct Ghokin {}
@@ -22,7 +22,7 @@ impl AppDefinition for Ghokin {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> executable::Method {
     let cpu = match platform.cpu {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "amd64",
@@ -32,7 +32,7 @@ impl AppDefinition for Ghokin {
       Os::MacOS => "darwin",
       Os::Windows => "windows",
     };
-    run::Method::ThisApp {
+    executable::Method::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz"),
@@ -75,7 +75,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run;
+    use crate::executable;
     use big_s::S;
 
     #[test]
@@ -87,7 +87,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = executable::Method::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_amd64.tar.gz"),
@@ -110,7 +110,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = executable::Method::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/antham/ghokin/releases/download/v3.7.0/ghokin_3.7.0_windows_amd64.tar.gz"),

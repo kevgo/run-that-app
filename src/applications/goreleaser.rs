@@ -4,7 +4,7 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::run::{self, Executable};
+use crate::executable::{self, Executable};
 use crate::{regexp, Log};
 
 pub(crate) struct Goreleaser {}
@@ -21,7 +21,7 @@ impl AppDefinition for Goreleaser {
     "https://goreleaser.com"
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> executable::Method {
     let os = match platform.os {
       Os::Linux => "Linux",
       Os::MacOS => "Darwin",
@@ -35,7 +35,7 @@ impl AppDefinition for Goreleaser {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    run::Method::ThisApp {
+    executable::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}"),
         bin_folder: BinFolder::Root,
@@ -80,7 +80,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run;
+    use crate::executable;
     use big_s::S;
 
     #[test]
@@ -92,7 +92,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = executable::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz"),
           bin_folder: BinFolder::Root,
@@ -110,7 +110,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = executable::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Windows_x86_64.zip"),
           bin_folder: BinFolder::Root,

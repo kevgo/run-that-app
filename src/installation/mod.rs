@@ -10,7 +10,7 @@ use crate::configuration::{self, Version};
 use crate::logging::Log;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::ExecutableNamePlatform;
+use crate::executable::ExecutableNamePlatform;
 use crate::yard::Yard;
 use std::fmt::{Debug, Display};
 use std::path::{Path, PathBuf};

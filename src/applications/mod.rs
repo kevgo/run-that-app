@@ -32,7 +32,7 @@ mod tikibase;
 use crate::configuration::Version;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{self, Executable, ExecutableArgs, ExecutableNameUnix};
+use crate::executable::{self, Executable, ExecutableArgs, ExecutableNameUnix};
 use crate::Log;
 use std::fmt::{Debug, Display};
 use std::path::Path;
@@ -87,7 +87,7 @@ pub(crate) trait AppDefinition {
   }
 
   /// define how to run this application
-  fn run_method(&self, version: &Version, platform: Platform) -> run::Method;
+  fn run_method(&self, version: &Version, platform: Platform) -> executable::Method;
 
   /// link to the (human-readable) homepage of the app
   fn homepage(&self) -> &'static str;
@@ -130,12 +130,12 @@ pub(crate) trait AppDefinition {
   /// and arguments to call that executable with.
   fn carrier(&self, version: &Version, platform: Platform) -> (Box<dyn AppDefinition>, ExecutableNameUnix, ExecutableArgs) {
     match self.run_method(version, platform) {
-      run::Method::ThisApp { install_methods: _ } => (self.clone(), self.executable_filename(), ExecutableArgs::None),
-      run::Method::OtherAppOtherExecutable {
+      executable::Method::ThisApp { install_methods: _ } => (self.clone(), self.executable_filename(), ExecutableArgs::None),
+      executable::Method::OtherAppOtherExecutable {
         app_definition,
         executable_name,
       } => (app_definition.clone(), executable_name, ExecutableArgs::None),
-      run::Method::OtherAppDefaultExecutable { app_definition, args } => (app_definition.clone(), app_definition.executable_filename(), args),
+      executable::Method::OtherAppDefaultExecutable { app_definition, args } => (app_definition.clone(), app_definition.executable_filename(), args),
     }
   }
 }

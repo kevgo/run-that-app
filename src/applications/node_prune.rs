@@ -4,8 +4,8 @@ use crate::hosting::github_tags;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::run::Executable;
-use crate::{run, Log};
+use crate::executable::Executable;
+use crate::{executable, Log};
 use const_format::formatcp;
 
 pub(crate) struct NodePrune {}
@@ -30,7 +30,7 @@ impl AppDefinition for NodePrune {
     Ok(Version::from(tag))
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> executable::Method {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -40,7 +40,7 @@ impl AppDefinition for NodePrune {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "amd64",
     };
-    run::Method::ThisApp {
+    executable::Method::ThisApp {
       install_methods: vec![
         Method::DownloadExecutable {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/node-prune_{version}_{os}_{cpu}.tar.gz"),
@@ -79,7 +79,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run;
+    use crate::executable;
     use big_s::S;
 
     #[test]
@@ -91,7 +91,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = executable::Method::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
             url: S("https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_linux_amd64.tar.gz"),
@@ -113,7 +113,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = executable::Method::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
             url: S("https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_windows_amd64.tar.gz"),

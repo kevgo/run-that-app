@@ -1,7 +1,7 @@
 use crate::applications::ApplicationName;
 use crate::configuration::Version;
 use crate::installation::Method;
-use crate::run::ExecutableNamePlatform;
+use crate::executable::ExecutableNamePlatform;
 use std::borrow::Cow;
 use std::path::Path;
 

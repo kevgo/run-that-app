@@ -4,8 +4,8 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::run::Executable;
-use crate::{regexp, run, Log};
+use crate::executable::Executable;
+use crate::{regexp, executable, Log};
 use const_format::formatcp;
 
 pub(crate) struct RipGrep {}
@@ -22,11 +22,11 @@ impl AppDefinition for RipGrep {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn executable_filename(&self) -> run::ExecutableNameUnix {
-    run::ExecutableNameUnix::from("rg")
+  fn executable_filename(&self) -> executable::ExecutableNameUnix {
+    executable::ExecutableNameUnix::from("rg")
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> executable::Method {
     let cpu = match platform.cpu {
       Cpu::Arm64 => "aarch64",
       Cpu::Intel64 => "x86_64",
@@ -41,7 +41,7 @@ impl AppDefinition for RipGrep {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    run::Method::ThisApp {
+    executable::Method::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/ripgrep-{version}-{cpu}-{os}.{ext}"),
         bin_folder: BinFolder::Subfolder {
@@ -89,7 +89,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run;
+    use crate::executable;
     use big_s::S;
 
     #[test]
@@ -101,7 +101,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = executable::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-apple-darwin.tar.gz"),
           bin_folder: BinFolder::Subfolder {
@@ -121,7 +121,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = executable::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-unknown-linux-gnu.tar.gz"),
           bin_folder: BinFolder::Subfolder {
@@ -141,7 +141,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = executable::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz"),
           bin_folder: BinFolder::Subfolder {
@@ -161,7 +161,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = executable::Method::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip"),
           bin_folder: BinFolder::Subfolder {

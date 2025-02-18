@@ -5,7 +5,7 @@ use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
-use crate::run::{ExecutableCall, ExecutableCallDefinition};
+use crate::executable::{ExecutableCall, ExecutableCallDefinition};
 use crate::yard::Yard;
 use crate::{applications, installation, subshell, yard};
 use std::process::ExitCode;

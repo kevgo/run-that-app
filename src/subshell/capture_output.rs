@@ -1,6 +1,6 @@
 use super::add_paths;
 use crate::prelude::*;
-use crate::run::Executable;
+use crate::executable::Executable;
 use std::process::Command;
 
 /// executes the given executable with the given args, returns the captured output (STDOUT and STDERR)

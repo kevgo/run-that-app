@@ -74,7 +74,7 @@ mod tests {
     use crate::logging::Log;
     use crate::platform::Platform;
     use crate::prelude::*;
-    use crate::run::{self, Executable, ExecutableNameUnix};
+    use crate::executable::{self, Executable, ExecutableNameUnix};
 
     /// an App instance that allows to mock the system version restrictions
     struct TestApp {
@@ -103,7 +103,7 @@ mod tests {
       fn analyze_executable(&self, _path: &Executable, _log: Log) -> Result<AnalyzeResult> {
         unimplemented!()
       }
-      fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
+      fn run_method(&self, _version: &Version, _platform: Platform) -> executable::Method {
         unimplemented!()
       }
       fn clone(&self) -> Box<dyn AppDefinition> {
