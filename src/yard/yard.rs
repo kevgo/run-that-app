@@ -14,6 +14,7 @@ pub(crate) struct Yard {
 }
 
 /// stores executables of and metadata about applications
+// Named after rail yards, i.e. locations where passenger cars of trains are stored, sorted, and repaired.
 impl Yard {
   pub(crate) fn app_folder(&self, app_name: &ApplicationName, app_version: &Version) -> PathBuf {
     self.root.join("apps").join(app_name).join(app_version)

@@ -1,4 +1,4 @@
-//! functionality for the `.tool-versions` file
+//! This module implements reading the `.tool-versions` file.
 
 mod app_versions;
 mod file;

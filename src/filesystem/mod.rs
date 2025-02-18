@@ -1,3 +1,5 @@
+//! This module implements accessing the local filesystem.
+
 mod find_global_install;
 mod has_extension;
 mod make_file_executable;

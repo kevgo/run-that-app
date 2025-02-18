@@ -1,3 +1,5 @@
+//! This module implements various ways to execute work in subshells.
+
 use std::env;
 use std::ffi::OsString;
 use std::path::Path;
