@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
-use crate::executable::{self, Executable};
+use crate::executable::{self, ExecutableFile};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
@@ -57,7 +57,7 @@ impl AppDefinition for ActionLint {
     github_releases::versions(ORG, REPO, amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutableFile, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
     if !output.contains("actionlint is a linter for GitHub Actions workflow files") {
       return Ok(AnalyzeResult::NotIdentified { output });

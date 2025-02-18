@@ -3,7 +3,7 @@ use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::executable::{Executable, ExecutableNameUnix};
+use crate::executable::{ExecutableFile, ExecutableNameUnix};
 use crate::{executable, Log};
 
 pub(crate) struct Gofmt {}
@@ -32,7 +32,7 @@ impl AppDefinition for Gofmt {
     app_to_install().installable_versions(amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutableFile, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
     if !output.contains("report all errors (not just the first 10 on different lines)") {
       return Ok(AnalyzeResult::NotIdentified { output });
@@ -40,7 +40,7 @@ impl AppDefinition for Gofmt {
     let go = Go {};
     #[allow(clippy::unwrap_used)]
     let go_path = executable.as_path().parent().unwrap().join(go.executable_filename().as_ref());
-    go.analyze_executable(&Executable::from(go_path), log)
+    go.analyze_executable(&ExecutableFile::from(go_path), log)
   }
 
   fn clone(&self) -> Box<dyn AppDefinition> {

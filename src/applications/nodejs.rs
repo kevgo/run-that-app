@@ -4,7 +4,7 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::executable::Executable;
+use crate::executable::ExecutableFile;
 use crate::{regexp, executable, Log};
 use std::path;
 
@@ -45,7 +45,7 @@ impl AppDefinition for NodeJS {
     github_releases::versions(ORG, REPO, amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutableFile, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
     if !output.contains("Documentation can be found at https://nodejs.org") {
       return Ok(AnalyzeResult::NotIdentified { output });

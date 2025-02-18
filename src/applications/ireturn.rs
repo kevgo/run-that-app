@@ -4,7 +4,7 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::executable::Executable;
+use crate::executable::ExecutableFile;
 use crate::{executable, Log};
 use const_format::formatcp;
 
@@ -57,7 +57,7 @@ impl AppDefinition for Ireturn {
     github_releases::latest(ORG, REPO, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutableFile, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
     if !output.contains("ireturn: Accept Interfaces, Return Concrete Types") {
       return Ok(AnalyzeResult::NotIdentified { output });

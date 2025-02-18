@@ -4,7 +4,7 @@ use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::executable::Executable;
+use crate::executable::ExecutableFile;
 use crate::{regexp, executable, Log};
 use const_format::formatcp;
 
@@ -56,7 +56,7 @@ impl AppDefinition for Gofumpt {
     github_releases::latest(ORG, REPO, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+  fn analyze_executable(&self, executable: &ExecutableFile, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
     if !output.contains("display diffs instead of rewriting files") {
       return Ok(AnalyzeResult::NotIdentified { output });

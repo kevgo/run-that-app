@@ -5,7 +5,7 @@ use crate::installation::BinFolder;
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::executable::{Executable, ExecutableNameUnix};
+use crate::executable::{ExecutableFile, ExecutableNameUnix};
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
 
@@ -78,7 +78,7 @@ impl Yard {
     version: &Version,
     platform: Platform,
     log: Log,
-  ) -> Option<(Executable, BinFolder)> {
+  ) -> Option<(ExecutableFile, BinFolder)> {
     let run_method = app_definition.run_method(version, platform);
     let app_folder = self.app_folder(&app_definition.app_name(), version);
     for installation_method in run_method.install_methods() {
@@ -88,7 +88,7 @@ impl Yard {
         if executable_path.exists() {
           log(Event::YardCheckExistingAppFound);
           let bin_folder = installation_method.bin_folder();
-          return Some((Executable::from(executable_path), bin_folder));
+          return Some((ExecutableFile::from(executable_path), bin_folder));
         }
       }
     }

@@ -1,7 +1,7 @@
 use crate::applications::{AnalyzeResult, ApplicationName, Apps};
+use crate::executable::ExecutableFile;
 use crate::logging::Event;
 use crate::prelude::*;
-use crate::executable::Executable;
 use crate::yard::Yard;
 use crate::{applications, configuration, installation, logging, platform};
 use colored::Colorize;
@@ -54,7 +54,7 @@ pub(crate) fn test(args: &mut Args) -> Result<ExitCode> {
           continue;
         }
         executable_found = true;
-        let executable = Executable::from(executable_path);
+        let executable = ExecutableFile::from(executable_path);
         match app.analyze_executable(&executable, log)? {
           AnalyzeResult::NotIdentified { output } => {
             println!("executable {executable} not identified based on this output:\n\"{output}\"\nOUTPUT END");
