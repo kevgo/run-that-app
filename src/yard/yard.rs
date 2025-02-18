@@ -1,11 +1,11 @@
 use super::root_path;
 use crate::applications::{AppDefinition, ApplicationName};
 use crate::configuration::Version;
+use crate::executables::{Executable, ExecutableNameUnix};
 use crate::installation::BinFolder;
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{Executable, ExecutableNameUnix};
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
 

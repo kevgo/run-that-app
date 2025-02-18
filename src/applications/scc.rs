@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
+use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::run::Executable;
-use crate::{regexp, run, Log};
+use crate::{regexp, Log};
 use const_format::formatcp;
 
 pub(crate) struct Scc {}
@@ -22,7 +22,7 @@ impl AppDefinition for Scc {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
     let os = match platform.os {
       Os::Linux => "Linux",
       Os::MacOS => "Darwin",
@@ -32,7 +32,7 @@ impl AppDefinition for Scc {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "x86_64",
     };
-    run::Method::ThisApp {
+    RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/scc_{os}_{cpu}.tar.gz"),
@@ -81,9 +81,9 @@ mod tests {
     use crate::applications::scc::Scc;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
+    use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run;
     use big_s::S;
 
     #[test]
@@ -95,7 +95,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/boyter/scc/releases/download/v3.2.0/scc_Darwin_arm64.tar.gz"),
@@ -118,7 +118,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/boyter/scc/releases/download/v3.2.0/scc_Windows_x86_64.tar.gz"),

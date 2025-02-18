@@ -71,10 +71,10 @@ mod tests {
   mod parse {
     use crate::applications::{AnalyzeResult, AppDefinition};
     use crate::configuration::Version;
+    use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
     use crate::logging::Log;
     use crate::platform::Platform;
     use crate::prelude::*;
-    use crate::run::{self, Executable, ExecutableNameUnix};
 
     /// an App instance that allows to mock the system version restrictions
     struct TestApp {
@@ -103,7 +103,7 @@ mod tests {
       fn analyze_executable(&self, _path: &Executable, _log: Log) -> Result<AnalyzeResult> {
         unimplemented!()
       }
-      fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
+      fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {
         unimplemented!()
       }
       fn clone(&self) -> Box<dyn AppDefinition> {

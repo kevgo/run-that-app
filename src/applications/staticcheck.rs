@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
+use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::run::Executable;
-use crate::{run, Log};
+use crate::Log;
 use big_s::S;
 
 const ORG: &str = "dominikh";
@@ -22,7 +22,7 @@ impl AppDefinition for StaticCheck {
     "https://staticcheck.dev"
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -32,7 +32,7 @@ impl AppDefinition for StaticCheck {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "amd64",
     };
-    run::Method::ThisApp {
+    RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/staticcheck_{os}_{cpu}.tar.gz"),
@@ -73,9 +73,9 @@ mod tests {
     use crate::applications::staticcheck::StaticCheck;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
+    use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run;
     use big_s::S;
 
     #[test]
@@ -87,7 +87,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_darwin_arm64.tar.gz"),
@@ -110,7 +110,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_windows_amd64.tar.gz"),

@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
+use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::run::Executable;
-use crate::{regexp, run, Log};
+use crate::{regexp, Log};
 use const_format::formatcp;
 
 pub(crate) struct Tikibase {}
@@ -22,7 +22,7 @@ impl AppDefinition for Tikibase {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
     let cpu = match platform.cpu {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "intel64",
@@ -36,7 +36,7 @@ impl AppDefinition for Tikibase {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    run::Method::ThisApp {
+    RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/tikibase_{os}_{cpu}.{ext}"),
         bin_folder: BinFolder::Root,
@@ -80,9 +80,9 @@ mod tests {
     use crate::applications::tikibase::Tikibase;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
+    use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run;
     use big_s::S;
 
     #[test]
@@ -94,7 +94,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_macos_arm64.tar.gz"),
           bin_folder: BinFolder::Root,
@@ -112,7 +112,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_windows_intel64.zip"),
           bin_folder: BinFolder::Root,

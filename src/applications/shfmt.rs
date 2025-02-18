@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
+use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::run::Executable;
-use crate::{regexp, run, Log};
+use crate::{regexp, Log};
 use const_format::formatcp;
 
 pub(crate) struct Shfmt {}
@@ -22,7 +22,7 @@ impl AppDefinition for Shfmt {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
@@ -36,7 +36,7 @@ impl AppDefinition for Shfmt {
       Os::Linux | Os::MacOS => "",
       Os::Windows => ".exe",
     };
-    run::Method::ThisApp {
+    RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadExecutable {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}"),
@@ -84,9 +84,9 @@ mod tests {
     use crate::applications::shfmt::Shfmt;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
+    use crate::executables::RunMethod;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run;
     use big_s::S;
 
     #[test]
@@ -98,7 +98,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
             url: S("https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_arm64"),
@@ -120,7 +120,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
             url: S("https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_windows_amd64.exe"),

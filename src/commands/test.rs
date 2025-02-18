@@ -1,7 +1,7 @@
 use crate::applications::{AnalyzeResult, ApplicationName, Apps};
+use crate::executables::Executable;
 use crate::logging::Event;
 use crate::prelude::*;
-use crate::run::Executable;
 use crate::yard::Yard;
 use crate::{applications, configuration, installation, logging, platform};
 use colored::Colorize;

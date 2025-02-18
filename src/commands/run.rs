@@ -1,11 +1,11 @@
 use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps};
 use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersions, Version};
+use crate::executables::{ExecutableCall, ExecutableCallDefinition};
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
-use crate::run::{ExecutableCall, ExecutableCallDefinition};
 use crate::yard::Yard;
 use crate::{applications, installation, subshell, yard};
 use std::process::ExitCode;

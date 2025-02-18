@@ -1,6 +1,6 @@
 use super::{add_paths, exit_status_to_code, render_call};
+use crate::executables::{Executable, ExecutableCall};
 use crate::prelude::*;
-use crate::run::{Executable, ExecutableCall};
 use std::process::{Command, ExitCode};
 
 /// Runs the given executable with the given arguments.

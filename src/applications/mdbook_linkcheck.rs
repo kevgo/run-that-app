@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
+use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::run::Executable;
-use crate::{regexp, run, Log};
+use crate::{regexp, Log};
 use big_s::S;
 use const_format::formatcp;
 
@@ -23,7 +23,7 @@ impl AppDefinition for MdBookLinkCheck {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_method(&self, version: &Version, platform: Platform) -> run::Method {
+  fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
     let os = match platform.os {
       Os::Linux => "unknown-linux-gnu",
       Os::MacOS => "apple-darwin",
@@ -33,7 +33,7 @@ impl AppDefinition for MdBookLinkCheck {
       Cpu::Arm64 => "aarch64",
       Cpu::Intel64 => "x86_64",
     };
-    run::Method::ThisApp {
+    RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-linkcheck.{cpu}-{os}.zip"),
@@ -83,9 +83,9 @@ mod tests {
     use crate::applications::mdbook_linkcheck::MdBookLinkCheck;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
+    use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run;
     use big_s::S;
 
     #[test]
@@ -97,7 +97,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-apple-darwin.zip"),
@@ -121,7 +121,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::ThisApp {
+      let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-pc-windows-msvc.zip"),

@@ -1,9 +1,9 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
+use crate::executables::{Executable, RunMethod};
 use crate::installation::Method;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{self, Executable};
 use crate::Log;
 
 pub(crate) struct Govulncheck {}
@@ -17,8 +17,8 @@ impl AppDefinition for Govulncheck {
     "https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck"
   }
 
-  fn run_method(&self, version: &Version, _platform: Platform) -> run::Method {
-    run::Method::ThisApp {
+  fn run_method(&self, version: &Version, _platform: Platform) -> RunMethod {
+    RunMethod::ThisApp {
       install_methods: vec![Method::CompileGoSource {
         import_path: format!("golang.org/x/vuln/cmd/govulncheck@v{version}"),
       }],
@@ -50,7 +50,7 @@ impl AppDefinition for Govulncheck {
 
 #[cfg(test)]
 mod tests {
-  use crate::run;
+  use crate::executables::RunMethod;
 
   #[test]
   fn install_methods() {
@@ -68,7 +68,7 @@ mod tests {
         cpu: Cpu::Arm64,
       },
     );
-    let want = run::Method::ThisApp {
+    let want = RunMethod::ThisApp {
       install_methods: vec![Method::CompileGoSource {
         import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
       }],

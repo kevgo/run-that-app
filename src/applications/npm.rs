@@ -1,10 +1,10 @@
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
+use crate::executables::{Executable, ExecutableArgs, RunMethod};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::{Executable, ExecutableArgs};
-use crate::{run, Log};
+use crate::Log;
 
 pub(crate) struct Npm {}
 
@@ -17,8 +17,8 @@ impl AppDefinition for Npm {
     "https://www.npmjs.com"
   }
 
-  fn run_method(&self, _version: &Version, _platform: Platform) -> run::Method {
-    run::Method::OtherAppDefaultExecutable {
+  fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {
+    RunMethod::OtherAppDefaultExecutable {
       app_definition: Box::new(NodeJS {}),
       args: ExecutableArgs::OneOfTheseInAppFolder {
         options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
@@ -60,9 +60,8 @@ mod tests {
     use crate::applications::npm::Npm;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
+    use crate::executables::{ExecutableArgs, RunMethod};
     use crate::platform::{Cpu, Os, Platform};
-    use crate::run;
-    use crate::run::ExecutableArgs;
 
     #[test]
     #[cfg(unix)]
@@ -74,7 +73,7 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = run::Method::OtherAppDefaultExecutable {
+      let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
           options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
@@ -93,7 +92,7 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = run::Method::OtherAppDefaultExecutable {
+      let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
           options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],

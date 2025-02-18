@@ -117,12 +117,12 @@ impl Display for ExecutableCall {
 #[cfg(test)]
 mod tests {
   use super::ExecutableCall;
-  use crate::run::Executable;
+  use crate::executables::Executable;
   use big_s::S;
   use std::path::Path;
 
   mod stream_output {
-    use crate::run::Executable;
+    use crate::executables::Executable;
     use crate::subshell;
     use big_s::S;
     use std::fs;

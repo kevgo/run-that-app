@@ -9,7 +9,7 @@ mod capture_output;
 mod detect_output;
 mod stream_output;
 
-use crate::run::Executable;
+use crate::executables::Executable;
 pub(crate) use capture_output::capture_output;
 pub(crate) use detect_output::detect_output;
 pub(crate) use stream_output::stream_output;
@@ -65,7 +65,7 @@ pub(crate) fn render_call(executable: &Executable, args: &[String]) -> String {
 
 #[cfg(test)]
 mod tests {
-  use crate::run::Executable;
+  use crate::executables::Executable;
   use crate::subshell::render_call;
   use big_s::S;
   use std::path::Path;

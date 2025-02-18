@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
+use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::run::Executable;
-use crate::{run, Log};
+use crate::Log;
 use const_format::formatcp;
 
 pub(crate) struct Exhaustruct {}
@@ -26,8 +26,8 @@ impl AppDefinition for Exhaustruct {
     github_releases::latest(ORG, REPO, log)
   }
 
-  fn run_method(&self, version: &Version, _platform: Platform) -> run::Method {
-    run::Method::ThisApp {
+  fn run_method(&self, version: &Version, _platform: Platform) -> RunMethod {
+    RunMethod::ThisApp {
       install_methods: vec![Method::CompileGoSource {
         import_path: format!("github.com/{ORG}/{REPO}/v3/cmd/exhaustruct@v{version}"),
       }],
@@ -54,7 +54,7 @@ impl AppDefinition for Exhaustruct {
 #[cfg(test)]
 mod tests {
   use crate::applications::exhaustruct::Exhaustruct;
-  use crate::run;
+  use crate::executables::RunMethod;
 
   #[test]
   fn install_methods() {
@@ -71,7 +71,7 @@ mod tests {
         cpu: Cpu::Arm64,
       },
     );
-    let want = run::Method::ThisApp {
+    let want = RunMethod::ThisApp {
       install_methods: vec![Method::CompileGoSource {
         import_path: S("github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct@v3.3.0"),
       }],
