@@ -35,11 +35,15 @@ impl File {
       .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
   }
 
-  pub(crate) fn load(apps: &Apps) -> Result<File> {
+  pub(crate) fn read(apps: &Apps) -> Result<Option<File>> {
     match filesystem::read_file(FILE_NAME)? {
-      Some(text) => parse(&text, apps),
-      None => Ok(File::default()),
+      Some(text) => Ok(Some(parse(&text, apps)?)),
+      None => Ok(None),
     }
+  }
+
+  pub(crate) fn load(apps: &Apps) -> Result<File> {
+    Ok(Self::read(apps)?.unwrap_or_default())
   }
 
   pub(crate) fn lookup(&self, app_name: &ApplicationName) -> Option<&RequestedVersions> {

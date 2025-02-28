@@ -4,7 +4,7 @@ use crate::commands::{self, available, run, test, update, versions};
 /// the main commands that run-this-app can execute
 #[derive(Debug, PartialEq)]
 pub(crate) enum Command {
-  Add(ApplicationName),
+  Add(commands::add::Args),
   AppsLong,
   AppsShort,
   Available(available::Args),
