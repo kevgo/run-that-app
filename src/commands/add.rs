@@ -9,7 +9,7 @@ pub(crate) fn add(args: Args) -> Result<ExitCode> {
   let apps = applications::all();
   let log = logging::new(args.verbose);
   // determine the latest version of the app
-  let app = apps.lookup(args.app_name)?;
+  let app = apps.lookup(args.app_name)?.clone();
   let version = app.latest_installable_version(log)?;
   // install the app
   // create config file if necessary
@@ -18,7 +18,7 @@ pub(crate) fn add(args: Args) -> Result<ExitCode> {
   } else {
     configuration::File::create(app.app_name(), version.clone())?;
   }
-  println!("added {app}@{version} to {}", configuration::FILE_NAME);
+  println!("added {}@{} to {}", &app, &version, configuration::FILE_NAME);
   Ok(ExitCode::SUCCESS)
 }
 
