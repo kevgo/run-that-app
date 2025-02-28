@@ -40,7 +40,7 @@ fn inner() -> prelude::Result<ExitCode> {
     Command::Available(args) => commands::available(&args),
     Command::RunApp(args) => commands::run(args),
     Command::DisplayHelp => Ok(commands::help()),
-    Command::Setup => commands::setup(),
+    Command::Add(app_name) => commands::add(app_name),
     Command::Test(mut args) => commands::test(&mut args),
     Command::Which(args) => commands::which(&args),
     Command::Update(args) => commands::update(&args),

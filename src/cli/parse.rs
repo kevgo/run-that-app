@@ -91,7 +91,7 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
   if multiple_true(&[which, indicate_available, setup, test, update, versions.is_some()]) {
     return Err(UserError::MultipleCommandsGiven);
   } else if setup {
-    return Ok(Command::Setup);
+    return Ok(Command::Add);
   } else if update {
     return Ok(Command::Update(update::Args { verbose }));
   }
