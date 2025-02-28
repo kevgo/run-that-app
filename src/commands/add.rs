@@ -14,9 +14,9 @@ pub(crate) fn add(args: Args) -> Result<ExitCode> {
   // install the app
   // create config file if necessary
   if let Some(config_file) = configuration::File::read(&apps)? {
-    config_file.add(app, version)?;
+    config_file.add(app.app_name(), version.clone())?;
   } else {
-    configuration::File::create(app.app_name(), version)?;
+    configuration::File::create(app.app_name(), version.clone())?;
   }
   println!("added {app}@{version} to {}", configuration::FILE_NAME);
   Ok(ExitCode::SUCCESS)
