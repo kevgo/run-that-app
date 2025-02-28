@@ -1,7 +1,6 @@
 use super::{AppVersion, Command};
 use crate::applications::{ApplicationName, Apps};
-use crate::commands::add::{self, Args};
-use crate::commands::{self, available, run, test, update, versions};
+use crate::commands::{self, add, available, run, test, update, versions};
 use crate::prelude::*;
 
 #[allow(clippy::too_many_lines)]

@@ -1,4 +1,3 @@
-use crate::applications::ApplicationName;
 use crate::commands::{self, available, run, test, update, versions};
 
 /// the main commands that run-this-app can execute
