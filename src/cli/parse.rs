@@ -1,5 +1,5 @@
 use super::{AppVersion, Command};
-use crate::applications::{ApplicationName, Apps};
+use crate::applications::{AppDefinition, ApplicationName, Apps};
 use crate::commands::{self, available, run, test, update, versions};
 use crate::prelude::*;
 
@@ -12,7 +12,7 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
   let mut error_on_output = false;
   let mut include_apps: Vec<ApplicationName> = vec![];
   let mut which = false;
-  let mut setup = false;
+  let mut add: Option<&dyn AppDefinition> = None;
   let mut test = false;
   let mut indicate_available = false;
   let mut update = false;
@@ -41,10 +41,6 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
         optional = true;
         continue;
       }
-      if &arg == "--setup" {
-        setup = true;
-        continue;
-      }
       if &arg == "--test" {
         test = true;
         continue;
@@ -70,6 +66,11 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
       }
       if arg.starts_with('-') {
         let (key, value) = arg.split_once('=').unwrap_or((&arg, ""));
+        if key == "--add" {
+          let app = apps.lookup(value)?;
+          add = Some(app);
+          continue;
+        }
         if key == "--include" {
           let app = apps.lookup(value)?;
           include_apps.push(app.app_name());
@@ -88,9 +89,9 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
       app_args.push(arg);
     }
   }
-  if multiple_true(&[which, indicate_available, setup, test, update, versions.is_some()]) {
+  if multiple_true(&[which, indicate_available, test, update, versions.is_some()]) {
     return Err(UserError::MultipleCommandsGiven);
-  } else if setup {
+  } else if add {
     return Ok(Command::Add);
   } else if update {
     return Ok(Command::Update(update::Args { verbose }));
