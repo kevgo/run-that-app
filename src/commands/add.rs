@@ -1,8 +1,6 @@
-use crate::applications;
 use crate::applications::ApplicationName;
-use crate::configuration;
-use crate::logging;
 use crate::prelude::*;
+use crate::{applications, configuration, logging};
 use std::process::ExitCode;
 
 pub(crate) fn add(args: Args) -> Result<ExitCode> {
@@ -16,7 +14,7 @@ pub(crate) fn add(args: Args) -> Result<ExitCode> {
   if let Some(config_file) = configuration::File::read(&apps)? {
     config_file.add(app.app_name(), version.clone())?;
   } else {
-    configuration::File::create(app.app_name(), version.clone())?;
+    configuration::File::create(&app.app_name(), &version.clone())?;
   }
   println!("added {}@{} to {}", &app, &version, configuration::FILE_NAME);
   Ok(ExitCode::SUCCESS)

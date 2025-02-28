@@ -21,7 +21,7 @@ impl File {
     self.save()
   }
 
-  pub(crate) fn create(app: ApplicationName, version: Version) -> Result<()> {
+  pub(crate) fn create(app: &ApplicationName, version: &Version) -> Result<()> {
     let mut file = match OpenOptions::new().write(true).create_new(true).open(FILE_NAME) {
       Ok(file) => file,
       Err(err) => {
