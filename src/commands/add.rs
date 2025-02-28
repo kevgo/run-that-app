@@ -11,6 +11,7 @@ pub(crate) fn add(args: Args) -> Result<ExitCode> {
   // determine the latest version of the app
   let app = apps.lookup(args.app_name)?;
   let version = app.latest_installable_version(log)?;
+  // install the app
   // create config file if necessary
   if let Some(config_file) = configuration::File::read(&apps)? {
     config_file.add(app, version)?;

@@ -13,6 +13,14 @@ pub(crate) struct File {
 }
 
 impl File {
+  pub(crate) fn add(mut self, app_name: ApplicationName, version: Version) -> Result<()> {
+    self.apps.push(AppVersions {
+      app_name,
+      versions: RequestedVersions::new(vec![RequestedVersion::Yard(version)]),
+    });
+    self.save()
+  }
+
   pub(crate) fn create(app: ApplicationName, version: Version) -> Result<()> {
     let mut file = match OpenOptions::new().write(true).create_new(true).open(FILE_NAME) {
       Ok(file) => file,
@@ -26,10 +34,7 @@ impl File {
         });
       }
     };
-    let content = "\
-# actionlint 1.2.26
-# gh 2.39.1
-";
+    let content = format!("{app} {version}");
     file
       .write_all(content.as_bytes())
       .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
