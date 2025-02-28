@@ -1,4 +1,4 @@
-use super::{AppVersions, RequestedVersion, RequestedVersions, FILE_NAME};
+use super::{AppVersions, RequestedVersion, RequestedVersions, Version, FILE_NAME};
 use crate::applications::{ApplicationName, Apps};
 use crate::filesystem;
 use crate::prelude::*;
@@ -13,7 +13,7 @@ pub(crate) struct File {
 }
 
 impl File {
-  pub(crate) fn create() -> Result<()> {
+  pub(crate) fn create(app: ApplicationName, version: Version) -> Result<()> {
     let mut file = match OpenOptions::new().write(true).create_new(true).open(FILE_NAME) {
       Ok(file) => file,
       Err(err) => {

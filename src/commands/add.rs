@@ -12,9 +12,12 @@ pub(crate) fn add(args: Args) -> Result<ExitCode> {
   let app = apps.lookup(args.app_name)?;
   let version = app.latest_installable_version(log)?;
   // create config file if necessary
-  let config_file = configuration::File::read(&apps)?;
-  // add the app to the config file
-  println!("Created file {}", configuration::FILE_NAME);
+  if let Some(config_file) = configuration::File::read(&apps)? {
+    config_file.add(app, version)?;
+  } else {
+    configuration::File::create(app.app_name(), version)?;
+  }
+  println!("added {app}@{version} to {}", configuration::FILE_NAME);
   Ok(ExitCode::SUCCESS)
 }
 
