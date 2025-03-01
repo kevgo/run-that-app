@@ -1,4 +1,4 @@
-use super::{AppVersions, RequestedVersion, RequestedVersions, FILE_NAME};
+use super::{AppVersions, RequestedVersion, RequestedVersions, Version, FILE_NAME};
 use crate::applications::{ApplicationName, Apps};
 use crate::filesystem;
 use crate::prelude::*;
@@ -13,7 +13,15 @@ pub(crate) struct File {
 }
 
 impl File {
-  pub(crate) fn create() -> Result<()> {
+  pub(crate) fn add(mut self, app_name: ApplicationName, version: Version) -> Result<()> {
+    self.apps.push(AppVersions {
+      app_name,
+      versions: RequestedVersions::new(vec![RequestedVersion::Yard(version)]),
+    });
+    self.save()
+  }
+
+  pub(crate) fn create(app: &ApplicationName, version: &Version) -> Result<()> {
     let mut file = match OpenOptions::new().write(true).create_new(true).open(FILE_NAME) {
       Ok(file) => file,
       Err(err) => {
@@ -26,20 +34,21 @@ impl File {
         });
       }
     };
-    let content = "\
-# actionlint 1.2.26
-# gh 2.39.1
-";
+    let content = format!("{app} {version}");
     file
       .write_all(content.as_bytes())
       .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
   }
 
-  pub(crate) fn load(apps: &Apps) -> Result<File> {
+  pub(crate) fn read(apps: &Apps) -> Result<Option<File>> {
     match filesystem::read_file(FILE_NAME)? {
-      Some(text) => parse(&text, apps),
-      None => Ok(File::default()),
+      Some(text) => Ok(Some(parse(&text, apps)?)),
+      None => Ok(None),
     }
+  }
+
+  pub(crate) fn load(apps: &Apps) -> Result<File> {
+    Ok(Self::read(apps)?.unwrap_or_default())
   }
 
   pub(crate) fn lookup(&self, app_name: &ApplicationName) -> Option<&RequestedVersions> {

@@ -1,6 +1,6 @@
 use super::{AppVersion, Command};
 use crate::applications::{ApplicationName, Apps};
-use crate::commands::{self, available, run, test, update, versions};
+use crate::commands::{self, add, available, run, test, update, versions};
 use crate::prelude::*;
 
 #[allow(clippy::too_many_lines)]
@@ -12,7 +12,7 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
   let mut error_on_output = false;
   let mut include_apps: Vec<ApplicationName> = vec![];
   let mut which = false;
-  let mut setup = false;
+  let mut add = false;
   let mut test = false;
   let mut indicate_available = false;
   let mut update = false;
@@ -20,6 +20,10 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
   let mut versions: Option<usize> = None;
   for arg in cli_args {
     if app_version.is_none() {
+      if &arg == "--add" {
+        add = true;
+        continue;
+      }
       if &arg == "--apps" {
         return Ok(Command::AppsLong);
       }
@@ -39,10 +43,6 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
       }
       if &arg == "--optional" {
         optional = true;
-        continue;
-      }
-      if &arg == "--setup" {
-        setup = true;
         continue;
       }
       if &arg == "--test" {
@@ -88,11 +88,8 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
       app_args.push(arg);
     }
   }
-  if multiple_true(&[which, indicate_available, setup, test, update, versions.is_some()]) {
+  if multiple_true(&[which, indicate_available, test, update, versions.is_some()]) {
     return Err(UserError::MultipleCommandsGiven);
-  }
-  if setup {
-    return Ok(Command::Setup);
   }
   if update {
     return Ok(Command::Update(update::Args { verbose }));
@@ -105,6 +102,9 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
     }));
   }
   if let Some(AppVersion { app_name, version }) = app_version {
+    if add {
+      return Ok(Command::Add(add::Args { app_name, verbose }));
+    }
     if indicate_available {
       return Ok(Command::Available(available::Args {
         app_name,

@@ -34,15 +34,15 @@ fn main() -> ExitCode {
 
 fn inner() -> prelude::Result<ExitCode> {
   match cli::parse(std::env::args(), &applications::all())? {
+    Command::Add(args) => commands::add(args),
     Command::AppsLong => Ok(commands::applications::long()),
     Command::AppsShort => Ok(commands::applications::short()),
     Command::Available(args) => commands::available(&args),
-    Command::RunApp(args) => commands::run(args),
     Command::DisplayHelp => Ok(commands::help()),
-    Command::Setup => commands::setup(),
+    Command::RunApp(args) => commands::run(args),
     Command::Test(mut args) => commands::test(&mut args),
-    Command::Which(args) => commands::which(&args),
     Command::Update(args) => commands::update(&args),
+    Command::Which(args) => commands::which(&args),
     Command::Version => Ok(commands::version()),
     Command::Versions(args) => commands::versions(&args),
   }
