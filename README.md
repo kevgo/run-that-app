@@ -93,6 +93,7 @@ CLI arguments after the application name are passed to the application.
 
 Run-that-app Arguments:
 
+- `--add <app>`: add
 - `--apps` or `-a`: display all installable applications
 - `--available <app>`: signal via exit code whether an app is available on the
   local platform
@@ -100,7 +101,6 @@ Run-that-app Arguments:
   condition
 - `--help` or `-h`: show help screen
 - `--optional`: if an app is not available for the current platform, do nothing
-- `--setup`: scaffold a config file to specify app versions
 - `--update`: updates the versions in `.tool-versions`
 - `--which <app>`: displays the path to the installed executable of the given
   application
