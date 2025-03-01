@@ -106,37 +106,38 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
   }
   if let Some(AppVersion { app_name, version }) = app_version {
     if indicate_available {
-      Ok(Command::Available(available::Args {
+      return Ok(Command::Available(available::Args {
         app_name,
         optional,
         version,
         verbose,
-      }))
-    } else if which {
-      Ok(Command::Which(commands::which::Args {
-        app_name,
-        optional,
-        version,
-        verbose,
-      }))
-    } else if let Some(amount) = versions {
-      Ok(Command::Versions(versions::Args { app_name, amount, verbose }))
-    } else {
-      Ok(Command::RunApp(run::Args {
-        app_name,
-        version,
-        app_args,
-        error_on_output,
-        include_apps,
-        optional,
-        verbose,
-      }))
+      }));
     }
-  } else if error_on_output || optional || verbose || which || indicate_available {
-    Err(UserError::MissingApplication)
-  } else {
-    Ok(Command::DisplayHelp)
+    if which {
+      return Ok(Command::Which(commands::which::Args {
+        app_name,
+        optional,
+        version,
+        verbose,
+      }));
+    }
+    if let Some(amount) = versions {
+      return Ok(Command::Versions(versions::Args { app_name, amount, verbose }));
+    }
+    return Ok(Command::RunApp(run::Args {
+      app_name,
+      version,
+      app_args,
+      error_on_output,
+      include_apps,
+      optional,
+      verbose,
+    }));
   }
+  if error_on_output || optional || verbose || which || indicate_available {
+    return Err(UserError::MissingApplication);
+  }
+  Ok(Command::DisplayHelp)
 }
 
 /// indicates whether the given values contain two or more true values
