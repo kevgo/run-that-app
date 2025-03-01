@@ -79,7 +79,7 @@ numbers:
 rta actionlint
 ```
 
-Executing `rta --setup` creates a template of this file for you.
+Executing `rta --add=<app name>` creates this file for you.
 
 ### usage
 
