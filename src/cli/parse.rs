@@ -102,8 +102,8 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
       verbose,
     }));
   }
-  if let Some(app) = add {
-    return Ok(Command::Add(add::Args { app_name: app, verbose }));
+  if let Some(app_name) = add {
+    return Ok(Command::Add(add::Args { app_name, verbose }));
   }
   if let Some(AppVersion { app_name, version }) = app_version {
     if indicate_available {
