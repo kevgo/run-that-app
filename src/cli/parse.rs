@@ -12,7 +12,7 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
   let mut error_on_output = false;
   let mut include_apps: Vec<ApplicationName> = vec![];
   let mut which = false;
-  let mut add = None;
+  let mut add = false;
   let mut test = false;
   let mut indicate_available = false;
   let mut update = false;
@@ -20,6 +20,10 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
   let mut versions: Option<usize> = None;
   for arg in cli_args {
     if app_version.is_none() {
+      if &arg == "--add" {
+        add = true;
+        continue;
+      }
       if &arg == "--apps" {
         return Ok(Command::AppsLong);
       }
@@ -66,11 +70,6 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
       }
       if arg.starts_with('-') {
         let (key, value) = arg.split_once('=').unwrap_or((&arg, ""));
-        if key == "--add" {
-          let app = apps.lookup(value)?;
-          add = Some(app.app_name());
-          continue;
-        }
         if key == "--include" {
           let app = apps.lookup(value)?;
           include_apps.push(app.app_name());
@@ -102,10 +101,10 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
       verbose,
     }));
   }
-  if let Some(app_name) = add {
-    return Ok(Command::Add(add::Args { app_name, verbose }));
-  }
   if let Some(AppVersion { app_name, version }) = app_version {
+    if add {
+      return Ok(Command::Add(add::Args { app_name, verbose }));
+    }
     if indicate_available {
       return Ok(Command::Available(available::Args {
         app_name,
