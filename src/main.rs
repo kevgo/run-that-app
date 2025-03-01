@@ -33,8 +33,7 @@ fn main() -> ExitCode {
 }
 
 fn inner() -> prelude::Result<ExitCode> {
-  let apps = applications::all();
-  match cli::parse(std::env::args(), &apps)? {
+  match cli::parse(std::env::args(), &applications::all())? {
     Command::AppsLong => Ok(commands::applications::long()),
     Command::AppsShort => Ok(commands::applications::short()),
     Command::Available(args) => commands::available(&args),
