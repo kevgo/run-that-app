@@ -1,12 +1,13 @@
 {
+  "$schema": "https://raw.githubusercontent.com/contest-framework/server/refs/heads/main/documentation/schema.json",
   "actions": [
     {
-      "type": "testAll",
+      "type": "test-all",
       "run": "make test"
     },
 
     {
-      "type": "testFile",
+      "type": "test-file",
       "files": "**/*.rs",
       "vars": [
         {
@@ -19,7 +20,7 @@
     },
 
     {
-      "type": "testFileLine",
+      "type": "test-file-line",
       "files": "**/*.rs",
       "vars": [
         {
