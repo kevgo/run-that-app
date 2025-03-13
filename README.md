@@ -79,7 +79,7 @@ numbers:
 rta actionlint
 ```
 
-Executing `rta --setup` creates a template of this file for you.
+Executing `rta --add <app name>` creates this file for you.
 
 ### usage
 
@@ -93,6 +93,7 @@ CLI arguments after the application name are passed to the application.
 
 Run-that-app Arguments:
 
+- `--add <app>`: add
 - `--apps` or `-a`: display all installable applications
 - `--available <app>`: signal via exit code whether an app is available on the
   local platform
@@ -100,7 +101,6 @@ Run-that-app Arguments:
   condition
 - `--help` or `-h`: show help screen
 - `--optional`: if an app is not available for the current platform, do nothing
-- `--setup`: scaffold a config file to specify app versions
 - `--update`: updates the versions in `.tool-versions`
 - `--which <app>`: displays the path to the installed executable of the given
   application
@@ -173,7 +173,7 @@ rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
 Here is a template for installing and using run-that-app in a `Makefile`:
 
 ```make
-RTA_VERSION = 0.13.0
+RTA_VERSION = 0.14.0
 
 # an example Make target that uses run-that-app
 test: tools/rta@${RTA_VERSION}
