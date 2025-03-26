@@ -9,7 +9,7 @@ fix: build  # auto-corrects issues
 	target/debug/rta shfmt -f . | xargs target/debug/rta shfmt -w
 
 install:  # installs this tool locally for testing
-	cargo install --path .
+	cargo install --locked --path .
 
 help:  # shows all available Make commands
 	cat Makefile | grep '^[^ ]*:' | grep -v '.PHONY' | grep -v '.SILENT:' | grep '#' | grep -v help | sed 's/:.*#/#/' | column -s "#" -t
