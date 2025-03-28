@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.14.1 (2025-03-28)
+
+- improves compatibility with older libc versions
+
 ### 0.14.0 (2025-02-28)
 
 #### New Features
