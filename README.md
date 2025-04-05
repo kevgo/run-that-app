@@ -1,6 +1,6 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="doc/logo_800_dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="doc/logo_800_light.png">
+  <!-- <source media="(prefers-color-scheme: dark)" srcset="doc/logo_800_dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="doc/logo_800_light.png"> -->
   <img alt="Run that app" src="docs/logo.png">
 </picture>
 
