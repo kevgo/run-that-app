@@ -1,6 +1,6 @@
-<center>
+<div align="center">
 <img alt="Run that app logo" src="docs/logo.png" width="604" height="148" align="center">
-</center>
+</div>
 
 <br><br>
 
