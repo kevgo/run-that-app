@@ -78,7 +78,7 @@ fn parse_versions_response(text: &str) -> Result<Vec<Version>> {
   for release in releases {
     if let Some(release_tag) = release["tag_name"].as_str() {
       result.push(strip_leading_v(release_tag).into());
-    };
+    }
   }
   Ok(result)
 }
