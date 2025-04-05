@@ -1,4 +1,4 @@
-<img alt="Run that app" src="docs/logo.png">
+<img alt="Run that app logo" src="docs/logo.png" width="902" height="222">
 
 <br><br>
 
