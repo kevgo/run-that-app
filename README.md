@@ -4,7 +4,7 @@
   <img alt="Run that app" src="docs/logo.png">
 </picture>
 
-<br>
+<br><br><br>
 
 _Run-that-app_ is a minimalistic cross-platform application runner. It executes
 native CLI applications on Linux, Windows, macOS, and BSD without the need to
