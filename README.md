@@ -1,4 +1,8 @@
-# Run That App!
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="doc/logo_800_dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="doc/logo_800_light.png">
+  <img alt="Run that app" src="docs/logo.png">
+</picture>
 
 [![linux](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml)
 [![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
