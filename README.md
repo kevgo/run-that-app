@@ -12,8 +12,9 @@ need to install them first.
 Installation of small developer tools at specific versions across all possible
 operating systems is a complex and nuanced problem without a good solution.
 Run-that-app bypasses this problem. You don't really want to install
-applications, what you really want is running them. By integrating installation
-and execution, run-that-app can drastically simplify many technical aspects.
+applications; what you really want is running them as part of your development
+workflows. By integrating installation and execution, run-that-app can
+drastically simplify many technical aspects.
 
 Run-that-app is minimalistic and completely non-invasive. It ships as a single
 stand-alone binary. Following the principle "perfection is not achieved when
