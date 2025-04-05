@@ -1,5 +1,5 @@
 <div align="center">
-<img alt="Run that app logo" src="docs/logo.png" width="604" height="148" align="center">
+<img alt="Run that app logo" src="docs/logo.png" width="725" height="177" align="center">
 </div>
 
 <br><br>
