@@ -6,9 +6,6 @@
 
 <br>
 
-[![linux](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml)
-[![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
-
 > Minimalistic cross-platform application runner
 
 _Run-that-app_ executes native CLI applications on Linux, Windows, macOS, and
@@ -28,6 +25,9 @@ repository, no Docker, no WASM, no system daemons, no sudo, no emulation, no IDE
 plugins, no bloat. Applications download in 1-2 seconds from their original
 hosting location, and store very little (just the executables) on your hard
 drive. Applications execute at 100% native speed.
+
+[![linux](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml)
+[![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
 
 ### quickstart
 
