@@ -1,16 +1,20 @@
-# Run That App!
+<br>
+<div align="center">
+<img alt="Run that app logo" src="docs/logo.png" width="725" height="177" align="center">
+</div>
 
-[![linux](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml)
-[![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
+<br><br>
 
-> Minimalistic cross-platform application runner
+**_Run-that-app_ is a minimalistic cross-platform application runner.** It
+executes native CLI applications on Linux, macOS, Windows, and BSD without the
+need to install them first.
 
-_Run-that-app_ executes native CLI applications on Linux, Windows, macOS, and
-BSD without the need to install them first. Installation across all possible
+Installation of small developer tools at specific versions across all possible
 operating systems is a complex and nuanced problem without a good solution.
 Run-that-app bypasses this problem. You don't really want to install
-applications, what you really want is running them. By integrating installation
-and execution, run-that-app can drastically simplify many technical aspects.
+applications, what you really want is running them as part of your development
+workflows. By integrating installation and execution, run-that-app can
+drastically simplify many technical aspects.
 
 Run-that-app is minimalistic and completely non-invasive. It ships as a single
 stand-alone binary. Following the principle "perfection is not achieved when
@@ -22,6 +26,9 @@ repository, no Docker, no WASM, no system daemons, no sudo, no emulation, no IDE
 plugins, no bloat. Applications download in 1-2 seconds from their original
 hosting location, and store very little (just the executables) on your hard
 drive. Applications execute at 100% native speed.
+
+[![linux](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml)
+[![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
 
 ### quickstart
 
