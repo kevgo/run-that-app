@@ -19,11 +19,6 @@ impl RequestedVersions {
     }
   }
 
-  pub(crate) fn join(&self, sep: &str) -> String {
-    let strings: Vec<String> = self.0.iter().map(RequestedVersion::to_string).collect();
-    strings.join(sep)
-  }
-
   /// provides the largest yard version contained in this collection
   fn largest_yard(&self) -> Option<&Version> {
     let mut result = None;
@@ -79,6 +74,15 @@ impl IntoIterator for RequestedVersions {
   }
 }
 
+impl<'a> IntoIterator for &'a RequestedVersions {
+  type Item = &'a RequestedVersion;
+  type IntoIter = std::slice::Iter<'a, RequestedVersion>;
+
+  fn into_iter(self) -> Self::IntoIter {
+    self.0.iter()
+  }
+}
+
 impl From<RequestedVersion> for RequestedVersions {
   fn from(requested_version: RequestedVersion) -> Self {
     RequestedVersions(vec![requested_version])
@@ -105,38 +109,6 @@ impl From<&Version> for RequestedVersions {
 
 #[cfg(test)]
 mod tests {
-
-  mod join {
-    use crate::configuration::{RequestedVersion, RequestedVersions};
-
-    #[test]
-    fn multiple() {
-      let versions = RequestedVersions::new(vec![
-        RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap()),
-        RequestedVersion::Yard("1.2".into()),
-        RequestedVersion::Yard("1.1".into()),
-      ]);
-      let have = versions.join(", ");
-      let want = "system@^1.2, 1.2, 1.1";
-      assert_eq!(have, want);
-    }
-
-    #[test]
-    fn one() {
-      let versions = RequestedVersions::new(vec![RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap())]);
-      let have = versions.join(", ");
-      let want = "system@^1.2";
-      assert_eq!(have, want);
-    }
-
-    #[test]
-    fn zero() {
-      let versions = RequestedVersions::new(vec![]);
-      let have = versions.join(", ");
-      let want = "";
-      assert_eq!(have, want);
-    }
-  }
 
   mod largest_non_system {
     use crate::configuration::{RequestedVersion, RequestedVersions, Version};
