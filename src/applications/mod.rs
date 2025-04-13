@@ -36,7 +36,6 @@ use crate::prelude::*;
 use crate::Log;
 use std::fmt::{Debug, Display};
 use std::path::Path;
-use std::slice::Iter;
 
 pub(crate) fn all() -> Apps {
   Apps(vec![
@@ -199,11 +198,6 @@ pub(crate) enum AnalyzeResult {
 pub(crate) struct Apps(Vec<Box<dyn AppDefinition>>);
 
 impl Apps {
-  /// provides an `Iterator` over the applications
-  pub(crate) fn iter(&self) -> Iter<'_, Box<dyn AppDefinition>> {
-    self.0.iter()
-  }
-
   /// provides the app with the given name
   pub(crate) fn lookup<AS: AsRef<str>>(&self, name: AS) -> Result<&dyn AppDefinition> {
     for app in &self.0 {
@@ -219,7 +213,7 @@ impl Apps {
 
   /// provides the length of the name of the app with the longest name
   pub(crate) fn longest_name_length(&self) -> usize {
-    self.iter().map(|app| app.name().len()).max().unwrap_or_default()
+    self.into_iter().map(|app| app.name().len()).max().unwrap_or_default()
   }
 }
 
@@ -229,6 +223,15 @@ impl IntoIterator for Apps {
 
   fn into_iter(self) -> Self::IntoIter {
     self.0.into_iter()
+  }
+}
+
+impl<'a> IntoIterator for &'a Apps {
+  type Item = &'a Box<dyn AppDefinition + 'a>;
+  type IntoIter = std::slice::Iter<'a, Box<dyn AppDefinition + 'a>>;
+
+  fn into_iter(self) -> Self::IntoIter {
+    self.0.iter()
   }
 }
 

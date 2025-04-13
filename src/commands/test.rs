@@ -95,7 +95,7 @@ pub(crate) struct Args {
 
 fn find_duplicate_app_names(apps: &Apps) -> Result<()> {
   let mut names: Vec<&'static str> = vec![];
-  for app in apps.iter() {
+  for app in apps {
     let app_name = app.name();
     if names.contains(&app_name) {
       return Err(UserError::DuplicateAppName { name: app_name.to_string() });
