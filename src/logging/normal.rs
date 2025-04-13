@@ -58,8 +58,8 @@ pub(crate) fn log(event: Event) {
     Event::NotOnline => eprintln!("{}", "not online".red()),
 
     Event::UpdateBegin { app: _ } => {}
-    Event::UpdateNewVersion { old_version, new_version } => eprintln!("{} -> {}", old_version.as_str().green(), new_version.as_str().green()),
-    Event::UpdateAlreadyNewest => eprintln!("{}", "up to date".green()),
+    Event::UpdateNewVersion { app, old_version, new_version } => eprintln!("{app}  {} -> {}", old_version.as_str().green(), new_version.as_str().green()),
+    Event::UpdateAlreadyNewest { app } => eprintln!("{app}  {}", "up to date".green()),
 
     Event::YardCheckExistingAppBegin { path: _ } => {}
     Event::YardCheckExistingAppFound => {}
