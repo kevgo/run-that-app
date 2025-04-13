@@ -95,10 +95,13 @@ pub(crate) enum Event<'a> {
     app: &'a ApplicationName,
   },
   UpdateNewVersion {
+    app: &'a str,
     old_version: &'a Version,
     new_version: &'a Version,
   },
-  UpdateAlreadyNewest,
+  UpdateAlreadyNewest {
+    app: &'a str,
+  },
   YardCheckExistingAppBegin {
     path: &'a Path,
   },
