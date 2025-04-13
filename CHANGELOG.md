@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.14.2 (2025-04-13)
+
+- no longer break config file format while updating versions
+
 ### 0.14.1 (2025-03-28)
 
 - improves compatibility with older libc versions
