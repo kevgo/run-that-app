@@ -33,7 +33,7 @@ impl Display for RequestedVersion {
     match self {
       RequestedVersion::Path(version) => {
         f.write_str("system@")?;
-        f.write_str(&version.to_string())
+        version.fmt(f)
       }
       RequestedVersion::Yard(version) => f.write_str(version.as_str()),
     }
