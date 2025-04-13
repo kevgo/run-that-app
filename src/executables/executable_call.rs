@@ -37,7 +37,7 @@ impl ExecutableCallDefinition {
 impl Display for ExecutableCallDefinition {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(&self.executable.as_str())?;
-    f.write_str(&self.args.to_string())?;
+    self.args.fmt(f)?;
     Ok(())
   }
 }
