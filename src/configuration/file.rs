@@ -85,8 +85,10 @@ impl Display for File {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     for AppVersions { app_name, versions } in &self.apps {
       f.write_str(app_name.as_str())?;
-      f.write_str(" ")?;
-      f.write_str(&versions.join(", "))?;
+      for version in versions {
+        f.write_str(" ")?;
+        version.fmt(f)?;
+      }
       f.write_str("\n")?;
     }
     Ok(())
