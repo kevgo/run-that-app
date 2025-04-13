@@ -87,7 +87,7 @@ impl Display for File {
       f.write_str(app_name.as_str())?;
       for version in versions {
         f.write_str(" ")?;
-        f.write_str(&version.to_string())?;
+        version.fmt(f)?;
       }
       f.write_str("\n")?;
     }
