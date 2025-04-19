@@ -9,9 +9,9 @@ big_s = "1.0.2"
 colored = "2.2.0"
 const_format = "0.2.34"
 dirs = "5.0.1"
-flate2 = "1.1.0"
+flate2 = "1.1.1"
 human-sort = "0.2.2"
-minreq = { version = "2.13.3", features = ["https"] }
+minreq = { version = "2.13.4", features = ["https"] }
 regex = "1.11.1"
 semver = "1.0.26"
 serde_json = "1.0.140"
