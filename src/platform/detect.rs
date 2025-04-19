@@ -1,6 +1,6 @@
-use super::{cpu, os, Platform};
-use crate::prelude::*;
+use super::{Platform, cpu, os};
 use crate::Log;
+use crate::prelude::*;
 
 /// detects the platform this binary is running on
 pub(crate) fn detect(log: Log) -> Result<Platform> {

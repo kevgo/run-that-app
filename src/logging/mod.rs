@@ -8,4 +8,4 @@ mod normal;
 mod verbose;
 
 pub(crate) use event::Event;
-pub(crate) use log::{new, Log};
+pub(crate) use log::{Log, new};

@@ -77,31 +77,33 @@ pub(crate) fn detect_output(executable: &Executable, args: &[String], apps_to_in
 /// starts a thread that monitors the given STDOUT or STDERR stream
 fn monitor_output<R: 'static + Read + Send>(stream: R, sender: mpsc::Sender<Event>) {
   let mut reader = BufReader::new(stream);
-  thread::spawn(move || loop {
-    let buffer = match reader.fill_buf() {
-      Ok(buffer) => buffer,
-      Err(err) => cli::exit(format!("cannot write subshell output into buffer: {err}")),
-    };
-    if buffer.is_empty() {
-      break;
-    }
-    let consumed = buffer.iter().take_while(|c| **c != b'\n' && **c != b'\x0D').count();
-    let total = if consumed < buffer.len() {
-      // stopped at one of the EOL characters
-      consumed + 1
-    } else {
-      // found no EOL character
-      consumed
-    };
-    let line = buffer[0..total].to_owned();
-    reader.consume(total);
-    let event = match line.get(consumed) {
-      Some(b'\n') => Event::PermanentLine(line),
-      Some(b'\x0D') => Event::TempLine(line),
-      _ => Event::UnterminatedLine(line),
-    };
-    if let Err(err) = sender.send(event) {
-      eprintln!("cannot send subshell output through internal pipe: {err}");
+  thread::spawn(move || {
+    loop {
+      let buffer = match reader.fill_buf() {
+        Ok(buffer) => buffer,
+        Err(err) => cli::exit(format!("cannot write subshell output into buffer: {err}")),
+      };
+      if buffer.is_empty() {
+        break;
+      }
+      let consumed = buffer.iter().take_while(|c| **c != b'\n' && **c != b'\x0D').count();
+      let total = if consumed < buffer.len() {
+        // stopped at one of the EOL characters
+        consumed + 1
+      } else {
+        // found no EOL character
+        consumed
+      };
+      let line = buffer[0..total].to_owned();
+      reader.consume(total);
+      let event = match line.get(consumed) {
+        Some(b'\n') => Event::PermanentLine(line),
+        Some(b'\x0D') => Event::TempLine(line),
+        _ => Event::UnterminatedLine(line),
+      };
+      if let Err(err) = sender.send(event) {
+        eprintln!("cannot send subshell output through internal pipe: {err}");
+      }
     }
   });
 }

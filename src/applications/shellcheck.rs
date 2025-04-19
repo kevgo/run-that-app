@@ -5,7 +5,7 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::{regexp, Log};
+use crate::{Log, regexp};
 
 pub(crate) struct ShellCheck {}
 
@@ -77,8 +77,8 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
 
   mod install_methods {
-    use crate::applications::shellcheck::ShellCheck;
     use crate::applications::AppDefinition;
+    use crate::applications::shellcheck::ShellCheck;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
@@ -123,8 +123,8 @@ mod tests {
   }
 
   mod extract_version {
-    use crate::applications::shellcheck::extract_version;
     use crate::UserError;
+    use crate::applications::shellcheck::extract_version;
 
     #[test]
     fn success() {

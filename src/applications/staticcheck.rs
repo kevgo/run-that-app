@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, AppDefinition};
+use crate::Log;
 use crate::configuration::Version;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::Log;
 use big_s::S;
 
 const ORG: &str = "dominikh";
@@ -70,8 +70,8 @@ impl AppDefinition for StaticCheck {
 mod tests {
 
   mod install_methods {
-    use crate::applications::staticcheck::StaticCheck;
     use crate::applications::AppDefinition;
+    use crate::applications::staticcheck::StaticCheck;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};

@@ -5,7 +5,7 @@ use crate::hosting::github_tags;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::{filesystem, regexp, Log};
+use crate::{Log, filesystem, regexp};
 use big_s::S;
 use std::path;
 
@@ -113,8 +113,8 @@ fn parse_go_mod(text: &str) -> Result<&str> {
 mod tests {
 
   mod install_methods {
-    use crate::applications::go::Go;
     use crate::applications::AppDefinition;
+    use crate::applications::go::Go;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
@@ -169,8 +169,8 @@ mod tests {
   }
 
   mod parse_go_mod {
-    use crate::applications::go::parse_go_mod;
     use crate::UserError;
+    use crate::applications::go::parse_go_mod;
 
     #[test]
     fn with_version() {

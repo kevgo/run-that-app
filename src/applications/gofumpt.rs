@@ -5,7 +5,7 @@ use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::{regexp, Log};
+use crate::{Log, regexp};
 use const_format::formatcp;
 
 pub(crate) struct Gofumpt {}
@@ -81,8 +81,8 @@ mod tests {
   use crate::UserError;
 
   mod install_methods {
-    use crate::applications::gofumpt::Gofumpt;
     use crate::applications::AppDefinition;
+    use crate::applications::gofumpt::Gofumpt;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::Method;

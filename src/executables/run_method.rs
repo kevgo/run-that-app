@@ -1,5 +1,5 @@
-use super::executable_call::ExecutableArgs;
 use super::ExecutableNameUnix;
+use super::executable_call::ExecutableArgs;
 use crate::applications::AppDefinition;
 use crate::installation;
 

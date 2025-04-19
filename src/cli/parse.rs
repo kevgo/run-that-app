@@ -153,9 +153,9 @@ fn multiple_true(values: &[bool]) -> bool {
 
 #[cfg(test)]
 mod tests {
+  use crate::Command;
   use crate::applications::Apps;
   use crate::prelude::*;
-  use crate::Command;
 
   // helper function for tests
   fn parse_args(args: Vec<&'static str>, apps: &Apps) -> Result<Command> {
@@ -265,7 +265,7 @@ mod tests {
       mod from_source {
         use crate::cli::parse::tests::parse_args;
         use crate::commands::run;
-        use crate::{applications, Command};
+        use crate::{Command, applications};
 
         #[test]
         fn flag() {
@@ -369,7 +369,7 @@ mod tests {
         use super::super::parse_args;
         use crate::commands::run;
         use crate::configuration::Version;
-        use crate::{applications, Command, UserError};
+        use crate::{Command, UserError, applications};
         use big_s::S;
 
         #[test]
