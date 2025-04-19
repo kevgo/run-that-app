@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.15.0 (2025-04-19)
+
+- adds `--from-source` flag to always install an app from source
+
 ### 0.14.2 (2025-04-13)
 
 - no longer break config file format while updating versions
