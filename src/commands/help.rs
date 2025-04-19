@@ -16,8 +16,9 @@ pub(crate) fn print_options() {
     "OPTIONS:
 
 --apps, -a                  display all installable applications
---available <app>           indicates via the exit code whether the given application is available on this platform
+--available <app>           signal via exit code whether the given application is available on this platform
 --error-on-output           treat all output of the executed app as an error
+--from-source               force installation from source, even if precompiled binaries are available
 --help, -h                  display this help screen
 --optional                  if an app is not available for the current platform, do nothing
 --setup                     scaffold a config file to specify app versions
