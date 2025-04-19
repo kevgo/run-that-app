@@ -102,10 +102,12 @@ Run-that-app Arguments:
 
 - `--add <app>`: add
 - `--apps` or `-a`: display all installable applications
-- `--available <app>`: signal via exit code whether an app is available on the
-  local platform
+- `--available <app>`: signal via exit code whether the given app is available
+  on the local platform
 - `--error-on-output`: treat all output of the executed application as an error
   condition
+- `--from-source`: force installation from source, even if precompiled binaries
+  are available
 - `--help` or `-h`: show help screen
 - `--optional`: if an app is not available for the current platform, do nothing
 - `--update`: updates the versions in `.tool-versions`
