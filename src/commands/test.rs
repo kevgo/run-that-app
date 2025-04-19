@@ -40,6 +40,7 @@ pub(crate) fn test(args: &mut Args) -> Result<ExitCode> {
         args.optional,
         &yard,
         &config_file,
+        false,
         log,
       )?
       .success()

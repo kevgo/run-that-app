@@ -10,6 +10,7 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
   let mut verbose = false;
   let mut app_args: Vec<String> = vec![];
   let mut error_on_output = false;
+  let mut from_source = false;
   let mut include_apps: Vec<ApplicationName> = vec![];
   let mut which = false;
   let mut add = false;
@@ -32,6 +33,10 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
       }
       if &arg == "--available" {
         indicate_available = true;
+        continue;
+      }
+      if &arg == "--from-source" {
+        from_source = true;
         continue;
       }
       if &arg == "--help" || &arg == "-h" {
@@ -129,6 +134,7 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
       version,
       app_args,
       error_on_output,
+      from_source,
       include_apps,
       optional,
       verbose,
@@ -239,6 +245,7 @@ mod tests {
             version: None,
             app_args: vec![],
             error_on_output: true,
+            from_source: false,
             include_apps: vec![],
             optional: false,
             verbose: false,
@@ -251,6 +258,30 @@ mod tests {
           let apps = applications::all();
           let have = parse_args(vec!["rta", "--error-on-output"], &apps);
           let want = Err(UserError::MissingApplication);
+          pretty::assert_eq!(have, want);
+        }
+      }
+
+      mod from_source {
+        use crate::cli::parse::tests::parse_args;
+        use crate::commands::run;
+        use crate::{applications, Command};
+
+        #[test]
+        fn flag() {
+          let apps = applications::all();
+          let have = parse_args(vec!["rta", "--from-source", "actionlint"], &apps);
+          let actionlint = apps.lookup("actionlint").unwrap();
+          let want = Ok(Command::RunApp(run::Args {
+            app_name: actionlint.app_name(),
+            version: None,
+            app_args: vec![],
+            error_on_output: false,
+            from_source: true,
+            include_apps: vec![],
+            optional: false,
+            verbose: false,
+          }));
           pretty::assert_eq!(have, want);
         }
       }
@@ -352,6 +383,7 @@ mod tests {
             version: Some(Version::from("2")),
             app_args: vec![],
             error_on_output: false,
+            from_source: false,
             include_apps: vec![gh.app_name()],
             optional: false,
             verbose: false,
@@ -386,6 +418,7 @@ mod tests {
             version: Some(Version::from("2")),
             app_args: vec![],
             error_on_output: false,
+            from_source: false,
             include_apps: vec![],
             optional: false,
             verbose: true,
@@ -403,6 +436,7 @@ mod tests {
             version: Some(Version::from("2")),
             app_args: vec![],
             error_on_output: false,
+            from_source: false,
             include_apps: vec![],
             optional: false,
             verbose: true,
@@ -437,6 +471,7 @@ mod tests {
           version: Some(Version::from("2")),
           app_args: vec![S("arg1")],
           error_on_output: false,
+          from_source: false,
           include_apps: vec![],
           optional: true,
           verbose: false,
@@ -569,6 +604,7 @@ mod tests {
           version: Some(Version::from("2")),
           app_args: vec![],
           error_on_output: false,
+          from_source: false,
           include_apps: vec![],
           optional: false,
           verbose: false,
@@ -586,6 +622,7 @@ mod tests {
           version: Some(Version::from("2")),
           app_args: vec![S("--arg1"), S("arg2")],
           error_on_output: false,
+          from_source: false,
           include_apps: vec![],
           optional: false,
           verbose: false,
@@ -612,6 +649,7 @@ mod tests {
           version: Some(Version::from("2")),
           app_args: vec![S("--arg1"), S("arg2")],
           error_on_output: false,
+          from_source: false,
           include_apps: vec![],
           optional: false,
           verbose: true,
@@ -629,6 +667,7 @@ mod tests {
           version: Some(Version::from("2")),
           app_args: vec![S("--verbose"), S("--version")],
           error_on_output: false,
+          from_source: false,
           include_apps: vec![],
           optional: false,
           verbose: false,
