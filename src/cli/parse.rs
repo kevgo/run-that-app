@@ -262,6 +262,30 @@ mod tests {
         }
       }
 
+      mod from_source {
+        use crate::cli::parse::tests::parse_args;
+        use crate::commands::run;
+        use crate::{applications, Command};
+
+        #[test]
+        fn flag() {
+          let apps = applications::all();
+          let have = parse_args(vec!["rta", "--from-source", "actionlint"], &apps);
+          let actionlint = apps.lookup("actionlint").unwrap();
+          let want = Ok(Command::RunApp(run::Args {
+            app_name: actionlint.app_name(),
+            version: None,
+            app_args: vec![],
+            error_on_output: false,
+            from_source: true,
+            include_apps: vec![],
+            optional: false,
+            verbose: false,
+          }));
+          pretty::assert_eq!(have, want);
+        }
+      }
+
       mod test {
         use super::super::parse_args;
         use crate::applications;
