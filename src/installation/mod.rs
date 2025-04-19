@@ -72,6 +72,13 @@ impl Method {
     }
   }
 
+  pub(crate) fn is_from_source(&self) -> bool {
+    match self {
+      Method::DownloadArchive { url: _, bin_folder: _ } | Method::DownloadExecutable { url: _ } => false,
+      Method::CompileGoSource { import_path: _ } | Method::CompileRustSource { crate_name: _, bin_folder: _ } => true,
+    }
+  }
+
   pub(crate) fn name(&self, app: &str, version: &Version) -> String {
     match self {
       Method::DownloadArchive { url: _, bin_folder: _ } => format!("download archive for {app}@{version}"),
@@ -152,10 +159,24 @@ pub(crate) fn any(
   optional: bool,
   yard: &Yard,
   config_file: &configuration::File,
+  from_source: bool,
   log: Log,
 ) -> Result<Outcome> {
   for install_method in app_definition.run_method(version, platform).install_methods() {
-    let outcome = install(app_definition, &install_method, version, platform, optional, yard, config_file, log)?;
+    if from_source && !install_method.is_from_source() {
+      continue;
+    }
+    let outcome = install(
+      app_definition,
+      &install_method,
+      version,
+      platform,
+      optional,
+      yard,
+      config_file,
+      from_source,
+      log,
+    )?;
     if outcome.success() {
       return Ok(outcome);
     }
@@ -172,13 +193,14 @@ pub(crate) fn install(
   optional: bool,
   yard: &Yard,
   config_file: &configuration::File,
+  from_source: bool,
   log: Log,
 ) -> Result<Outcome> {
   let app_folder = yard.create_app_folder(&app_definition.app_name(), version)?;
   match install_method {
     Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &app_folder, version, url, bin_folder, optional, platform, log),
     Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &app_folder, download_url, platform, optional, log),
-    Method::CompileGoSource { import_path } => compile_go::run(&app_folder, import_path, platform, optional, config_file, yard, log),
+    Method::CompileGoSource { import_path } => compile_go::run(&app_folder, import_path, platform, optional, config_file, yard, from_source, log),
     Method::CompileRustSource { crate_name, bin_folder: _ } => compile_rust::run(&app_folder, crate_name, log),
   }
 }

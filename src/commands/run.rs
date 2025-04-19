@@ -2,12 +2,12 @@ use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps};
 use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersions, Version};
 use crate::executables::{ExecutableCall, ExecutableCallDefinition};
 use crate::filesystem::find_global_install;
-use crate::installation::Outcome;
+use crate::installation::{self, Outcome};
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
 use crate::prelude::*;
 use crate::yard::Yard;
-use crate::{applications, installation, subshell, yard};
+use crate::{applications, subshell, yard};
 use std::process::ExitCode;
 
 pub(crate) fn run(args: Args) -> Result<ExitCode> {
@@ -18,9 +18,19 @@ pub(crate) fn run(args: Args) -> Result<ExitCode> {
   let yard = Yard::load_or_create(&yard::production_location()?)?;
   let config_file = configuration::File::load(&apps)?;
   let include_app_versions = config_file.lookup_many(args.include_apps);
-  let include_apps = load_or_install_apps(include_app_versions, &apps, platform, args.optional, &yard, &config_file, log)?;
+  let include_apps = load_or_install_apps(include_app_versions, &apps, platform, args.optional, &yard, &config_file, args.from_source, log)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
-  let Some(executable_call) = load_or_install_app(app_to_run, requested_versions, platform, args.optional, &yard, &config_file, log)? else {
+  let Some(executable_call) = load_or_install_app(
+    app_to_run,
+    requested_versions,
+    platform,
+    args.optional,
+    &yard,
+    &config_file,
+    args.from_source,
+    log,
+  )?
+  else {
     if args.optional {
       return Ok(ExitCode::SUCCESS);
     }
@@ -37,6 +47,7 @@ pub(crate) fn run(args: Args) -> Result<ExitCode> {
 
 /// data needed to run an executable
 #[derive(Debug, PartialEq)]
+#[allow(clippy::struct_excessive_bools)]
 pub(crate) struct Args {
   /// name of the app to execute
   pub(crate) app_name: ApplicationName,
@@ -50,6 +61,9 @@ pub(crate) struct Args {
 
   /// if true, any output produced by the app is equivalent to an exit code > 0
   pub(crate) error_on_output: bool,
+
+  /// if true, install only from source
+  pub(crate) from_source: bool,
 
   /// other applications to include into the PATH
   pub(crate) include_apps: Vec<ApplicationName>,
@@ -67,12 +81,13 @@ fn load_or_install_apps(
   optional: bool,
   yard: &Yard,
   config_file: &configuration::File,
+  from_source: bool,
   log: Log,
 ) -> Result<Vec<ExecutableCall>> {
   let mut result = vec![];
   for app_version in app_versions {
     let app = apps.lookup(app_version.app_name)?;
-    if let Some(executable_call) = load_or_install_app(app, app_version.versions, platform, optional, yard, config_file, log)? {
+    if let Some(executable_call) = load_or_install_app(app, app_version.versions, platform, optional, yard, config_file, from_source, log)? {
       result.push(executable_call);
     }
   }
@@ -86,10 +101,11 @@ pub(crate) fn load_or_install_app(
   optional: bool,
   yard: &Yard,
   config_file: &configuration::File,
+  from_source: bool,
   log: Log,
 ) -> Result<Option<ExecutableCall>> {
   for requested_version in requested_versions {
-    if let Some(executable_call) = load_or_install(app_definition, &requested_version, platform, optional, yard, config_file, log)? {
+    if let Some(executable_call) = load_or_install(app_definition, &requested_version, platform, optional, yard, config_file, from_source, log)? {
       return Ok(Some(executable_call));
     }
   }
@@ -103,6 +119,7 @@ fn load_or_install(
   optional: bool,
   yard: &Yard,
   config_file: &configuration::File,
+  from_source: bool,
   log: Log,
 ) -> Result<Option<ExecutableCall>> {
   match requested_version {
@@ -116,7 +133,7 @@ fn load_or_install(
       }
       Ok(None)
     }
-    RequestedVersion::Yard(version) => load_or_install_from_yard(app_definition, version, platform, optional, yard, config_file, log),
+    RequestedVersion::Yard(version) => load_or_install_from_yard(app_definition, version, platform, optional, yard, config_file, from_source, log),
   }
 }
 
@@ -171,6 +188,7 @@ fn load_or_install_from_yard(
   optional: bool,
   yard: &Yard,
   config_file: &configuration::File,
+  from_source: bool,
   log: Log,
 ) -> Result<Option<ExecutableCall>> {
   let (app_to_install, executable_name, executable_args) = app_definition.carrier(version, platform);
@@ -186,7 +204,7 @@ fn load_or_install_from_yard(
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  match installation::any(app_to_install.as_ref(), version, platform, optional, yard, config_file, log)? {
+  match installation::any(app_to_install.as_ref(), version, platform, optional, yard, config_file, from_source, log)? {
     Outcome::Installed => {} // we'll load it below
     Outcome::NotInstalled => {
       yard.mark_not_installable(&app_name, version)?;
