@@ -9,11 +9,7 @@ pub(crate) mod github_tags;
 /// The way this function is used in this app, it's better to consume and provides an entire String.
 /// This saves an allocation if the string doesn't have a leading v.
 fn strip_leading_v(name: &str) -> &str {
-  if let Some(stripped) = name.strip_prefix('v') {
-    stripped
-  } else {
-    name
-  }
+  if let Some(stripped) = name.strip_prefix('v') { stripped } else { name }
 }
 
 #[cfg(test)]

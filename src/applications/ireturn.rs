@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, AppDefinition};
+use crate::Log;
 use crate::configuration::Version;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::Log;
 use const_format::formatcp;
 
 pub(crate) struct Ireturn {}
@@ -74,8 +74,8 @@ impl AppDefinition for Ireturn {
 mod tests {
 
   mod install_methods {
-    use crate::applications::ireturn::Ireturn;
     use crate::applications::AppDefinition;
+    use crate::applications::ireturn::Ireturn;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};

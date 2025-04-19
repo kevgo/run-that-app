@@ -1,10 +1,10 @@
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, AppDefinition};
+use crate::Log;
 use crate::configuration::Version;
 use crate::executables::{Executable, ExecutableArgs, RunMethod};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::Log;
 
 pub(crate) struct Npx {}
 
@@ -56,9 +56,9 @@ fn app_to_install() -> NodeJS {
 mod tests {
 
   mod install_methods {
+    use crate::applications::AppDefinition;
     use crate::applications::nodejs::NodeJS;
     use crate::applications::npx::Npx;
-    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::executables::{ExecutableArgs, RunMethod};
     use crate::platform::{Cpu, Os, Platform};

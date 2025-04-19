@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, AppDefinition};
+use crate::Log;
 use crate::configuration::Version;
 use crate::executables::{Executable, RunMethod};
 use crate::installation::Method;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::Log;
 
 pub(crate) struct Govulncheck {}
 
@@ -54,8 +54,8 @@ mod tests {
 
   #[test]
   fn install_methods() {
-    use crate::applications::govulnchec::Govulncheck;
     use crate::applications::AppDefinition;
+    use crate::applications::govulnchec::Govulncheck;
     use crate::configuration::Version;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};

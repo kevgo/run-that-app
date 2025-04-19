@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, AppDefinition};
+use crate::Log;
 use crate::configuration::Version;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::Log;
 use const_format::formatcp;
 
 pub(crate) struct Exhaustruct {}

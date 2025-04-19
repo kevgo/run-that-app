@@ -1,10 +1,10 @@
 use super::go::Go;
 use super::{AnalyzeResult, AppDefinition};
+use crate::Log;
 use crate::configuration::Version;
 use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::Log;
 
 pub(crate) struct Gofmt {}
 
@@ -56,9 +56,9 @@ fn app_to_install() -> Go {
 mod tests {
 
   mod install_methods {
+    use crate::applications::AppDefinition;
     use crate::applications::go::Go;
     use crate::applications::gofmt::Gofmt;
-    use crate::applications::AppDefinition;
     use crate::configuration::Version;
     use crate::executables::{ExecutableNameUnix, RunMethod};
     use crate::platform::{Cpu, Os, Platform};

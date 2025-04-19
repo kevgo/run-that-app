@@ -5,7 +5,7 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::{regexp, Log};
+use crate::{Log, regexp};
 
 pub(crate) struct Goreleaser {}
 
@@ -75,8 +75,8 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
 
   mod install_methods {
-    use crate::applications::goreleaser::Goreleaser;
     use crate::applications::AppDefinition;
+    use crate::applications::goreleaser::Goreleaser;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};

@@ -5,7 +5,7 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::{regexp, Log};
+use crate::{Log, regexp};
 use big_s::S;
 use std::path;
 
@@ -81,8 +81,8 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
 
   mod install_methods {
-    use crate::applications::gh::Gh;
     use crate::applications::AppDefinition;
+    use crate::applications::gh::Gh;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};

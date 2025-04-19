@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, AppDefinition};
+use crate::Log;
 use crate::configuration::Version;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_tags;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::Log;
 use const_format::formatcp;
 
 pub(crate) struct NodePrune {}
@@ -74,8 +74,8 @@ impl AppDefinition for NodePrune {
 mod tests {
 
   mod install_methods {
-    use crate::applications::node_prune::NodePrune;
     use crate::applications::AppDefinition;
+    use crate::applications::node_prune::NodePrune;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::Method;

@@ -29,11 +29,11 @@ mod shfmt;
 mod staticcheck;
 mod tikibase;
 
+use crate::Log;
 use crate::configuration::Version;
 use crate::executables::{Executable, ExecutableArgs, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
 use crate::prelude::*;
-use crate::Log;
 use std::fmt::{Debug, Display};
 use std::path::Path;
 
@@ -238,7 +238,7 @@ impl<'a> IntoIterator for &'a Apps {
 #[cfg(test)]
 mod tests {
   mod apps {
-    use crate::applications::{actionlint, dprint, shellcheck, Apps};
+    use crate::applications::{Apps, actionlint, dprint, shellcheck};
 
     #[test]
     fn longest_name_length() {
@@ -252,7 +252,7 @@ mod tests {
     }
 
     mod lookup {
-      use crate::applications::{dprint, shellcheck, Apps};
+      use crate::applications::{Apps, dprint, shellcheck};
       use crate::prelude::*;
       use big_s::S;
 

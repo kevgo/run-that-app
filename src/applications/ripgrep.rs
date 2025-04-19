@@ -5,7 +5,7 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::prelude::*;
-use crate::{executables, regexp, Log};
+use crate::{Log, executables, regexp};
 use const_format::formatcp;
 
 pub(crate) struct RipGrep {}
@@ -84,8 +84,8 @@ mod tests {
   use crate::UserError;
 
   mod install_methods {
-    use crate::applications::ripgrep::RipGrep;
     use crate::applications::AppDefinition;
+    use crate::applications::ripgrep::RipGrep;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};

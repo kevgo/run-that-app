@@ -1,4 +1,4 @@
-use super::{AppVersions, RequestedVersion, RequestedVersions, Version, FILE_NAME};
+use super::{AppVersions, FILE_NAME, RequestedVersion, RequestedVersions, Version};
 use crate::applications::{ApplicationName, Apps};
 use crate::filesystem;
 use crate::prelude::*;
