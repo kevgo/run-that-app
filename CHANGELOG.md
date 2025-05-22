@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.15.1 (2025-05-22)
+
+- reduced binary size
+
 ### 0.15.0 (2025-04-19)
 
 - adds `--from-source` flag to always install an app from source
