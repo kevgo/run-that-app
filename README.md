@@ -71,7 +71,9 @@ execute the installer from there.
 ### configuration
 
 You can configure the versions of applications that run-that-app should use in a
-`.app-versions` file that follows the [asdf format](https://asdf-vm.com/manage/configuration.html)  and that looks like this:
+`.app-versions` file that follows the
+[asdf format](https://asdf-vm.com/manage/configuration.html) and that looks like
+this:
 
 ```
 actionlint 1.6.26
@@ -87,7 +89,8 @@ rta actionlint
 
 Executing `rta --add <app name>` creates this file for you.
 
-RTA uses a different name for the configuration file to avoid interference with other app runners like asdf or mise.
+RTA uses a different name for the configuration file to avoid interference with
+other app runners like asdf or mise.
 
 ### usage
 
