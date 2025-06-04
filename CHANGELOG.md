@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.16.0 (2025-06-04)
+
+- renamed config file from .tools-versions to .app-versions
+
 ### 0.15.1 (2025-05-22)
 
 - reduced binary size
@@ -18,8 +22,6 @@
 
 ### 0.14.0 (2025-02-28)
 
-#### New Features
-
 - "add" command
 
 ### 0.13.0 (2025-02-17)
@@ -28,33 +30,21 @@
 
 ### 0.12.0 (2025-02-15)
 
-#### New Features
-
 - added ripgrep
 
 ### 0.11.0 (2025-02-03)
-
-#### New Features
 
 - `--include` option to include other files into the PATH
 
 ### 0.10.6 (2025-01-27)
 
-#### Bug Fixes
-
 - extracting archives makes executables properly executable
 
 ### 0.10.5 (2025-01-27)
 
-#### Bug Fixes
-
 - npm and npm: run correctly on first run
 
 ### 0.10.4 (2025-01-24)
-
-Lots of bug fixes, especially around running on Windows.
-
-#### Bug Fixes
 
 - npm and npx: run correctly on Windows
 - depth: fix Windows download
@@ -71,36 +61,23 @@ Lots of bug fixes, especially around running on Windows.
 
 ### 0.10.3 (2025-01-13)
 
-#### Bug Fixes
-
 - fix the filepath of the Windows archive for mdbook
 
 ### 0.10.2 (2025-01-13)
-
-#### Bug Fixes
 
 - makes the executable file of an application executable if needed after extracting from archive
 
 ### 0.10.1 (2025-01-13)
 
-#### Bug Fixes
-
 - fixes the path to the mdbook-linkcheck executable when installing from source
 
 ### 0.10.0 (2025-01-13
-
-#### New Features
 
 - apps: mdbook-linkcheck
 
 ### 0.9.0 (2024-12-28)
 
-#### New Features
-
 - Can now compile Go-based tools using an RTA-installed Go toolchain ([#237](https://github.com/kevgo/run-that-app/issues/237)).
-
-#### Bug Fixes
-
 - Adds executables of the application to run to the PATH of the subshell ([#298](https://github.com/kevgo/run-that-app/issues/298)).
 
 ### 0.8.1 (2024-10-19)
@@ -114,13 +91,9 @@ Lots of bug fixes, especially around running on Windows.
 
 ### 0.7.1 (2024-09-15)
 
-#### Bug Fixes
-
 - finds the mdbook executable in a subfolder after installation from source
 
 ### 0.7.0 (2024-09-15)
-
-#### New Features
 
 - apps: govulncheck, staticcheck
 
@@ -132,13 +105,9 @@ Lots of bug fixes, especially around running on Windows.
 
 ### 0.6.0 (2024-05-05)
 
-#### New Features
-
 - apps: exhaustruct, ireturn
 
 ### 0.5.0 (2024-03-14)
-
-#### New Features
 
 The `.tool-versions` file can now define multiple versions. RTA tries versions from left to right until it finds one that it can run on your hardware.
 
@@ -153,13 +122,9 @@ End-to-end tests: run `cargo run -- --test` to verify that all installation meth
 
 ### 0.4.1 (2024-02-29)
 
-#### Bug Fixes
-
 - fixed installation of `scc` from source
 
 ### 0.4.0 (2024-02-11)
-
-#### New Features
 
 - can now execute in subfolders of the folder that contains the `.tools-versions` file
 - `--error-on-output` option
@@ -168,25 +133,16 @@ End-to-end tests: run `cargo run -- --test` to verify that all installation meth
 
 ### 0.3.0 (2023-12-18)
 
-#### BREAKING CHANGES
-
 - renames the executable from `run-that-app` to `rta`
 - renames `--show-path` to `--which`
-
-#### New Features
-
 - prints the name of the app being installed
 - apps: Node.js, npm, deadcode
 
 ### 0.2.1 (2023-12-05)
 
-#### Bug Fixes
-
 - updates to the release marked as latest on GitHub
 
 ### 0.2.0 (2023-12-05)
-
-#### New Features
 
 - `run-that-app --update` updates the versions in `.tool-versions`
 
@@ -196,16 +152,11 @@ End-to-end tests: run `cargo run -- --test` to verify that all installation meth
 
 ### 0.1.0 (2023-11-30)
 
-#### New Features
-
 - `--available` command indicates via the exit code whether an application is available
 - `--show-path` command displays the path of the executable instead of running it
 - `--optional` parameter makes the app do nothing if the app isn't available
 - `--include-global` parameter runs a globally installed app if the app cannot be installed
 - config file (.tool-versions) for defining the versions of tools to run
-
-#### Bug Fixes
-
 - bugfix: install from Go source
 - bugfix: install alphavet from source
 
