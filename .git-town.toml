@@ -1,0 +1,11 @@
+
+[branches]
+main = "main"
+
+[ship]
+delete-tracking-branch = true
+
+[sync]
+upstream = true
+feature-strategy = "merge"
+perennial-strategy = "rebase"
