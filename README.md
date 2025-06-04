@@ -71,8 +71,9 @@ execute the installer from there.
 ### configuration
 
 You can configure the versions of applications that run-that-app should use in a
-[.tool-versions](https://asdf-vm.com/manage/configuration.html) file that looks
-like this:
+`.app-versions` file that follows the
+[asdf format](https://asdf-vm.com/manage/configuration.html) and that looks like
+this:
 
 ```
 actionlint 1.6.26
@@ -87,6 +88,9 @@ rta actionlint
 ```
 
 Executing `rta --add <app name>` creates this file for you.
+
+RTA uses a different name for the configuration file to avoid interference with
+other app runners like asdf or mise.
 
 ### usage
 
@@ -110,7 +114,7 @@ Run-that-app Arguments:
   are available
 - `--help` or `-h`: show help screen
 - `--optional`: if an app is not available for the current platform, do nothing
-- `--update`: updates the versions in `.tool-versions`
+- `--update`: updates the versions in `.app-versions`
 - `--which <app>`: displays the path to the installed executable of the given
   application
 - `--verbose` or `-v`: display more details
@@ -135,7 +139,7 @@ rta shellcheck@0.9.0 --color=always myscript.sh
 #### Use globally installed applications
 
 If your system already has certain apps installed, _run-that-app_ can use them.
-Consider this `.tool-versions` file:
+Consider this `.app-versions` file:
 
 ```
 go system 1.21.3
@@ -206,7 +210,7 @@ Node.js installation. Hence, to install them, you need to provide the Node
 version. To use already installed executables in your PATH, you need to provide
 the versions of `npm` and `npx`.
 
-Example _.tool-versions_ for npm:
+Example _.app-versions_ for npm:
 
 ```asdf
 npm system@10.2 20.10.0
