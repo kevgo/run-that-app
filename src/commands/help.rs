@@ -22,7 +22,7 @@ pub(crate) fn print_options() {
 --help, -h                  display this help screen
 --optional                  if an app is not available for the current platform, do nothing
 --setup                     scaffold a config file to specify app versions
---update                    updates the versions in .app-versions to the latest available
+--update                    updates the versions in .run-that-app to the latest available
 --which <app>               displays the path to the installed executable of the given application
 --verbose, -v               display more details
 --version, -V               displays the version of run-that-app

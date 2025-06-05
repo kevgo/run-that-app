@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.17.0 (2025-06-05)
+
+- renamed config file from .app-versions to .run-that-app
+
 ### 0.16.0 (2025-06-04)
 
 - renamed config file from .tools-versions to .app-versions
