@@ -15,7 +15,7 @@ const REPO: &str = "funcorder";
 
 impl AppDefinition for FuncOrder {
   fn name(&self) -> &'static str {
-    "funcorder"
+    REPO
   }
 
   fn homepage(&self) -> &'static str {
