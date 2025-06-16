@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.18.0 (2025-06-16)
+
+- app: funcorder
+
 ### 0.17.0 (2025-06-05)
 
 - renamed config file from .app-versions to .run-that-app
