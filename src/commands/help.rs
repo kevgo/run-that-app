@@ -15,13 +15,13 @@ pub(crate) fn print_options() {
   println!(
     "OPTIONS:
 
+--add <app>                 add the given application to the configuration file
 --apps, -a                  display all installable applications
 --available <app>           signal via exit code whether the given application is available on this platform
 --error-on-output           treat all output of the executed app as an error
 --from-source               force installation from source, even if precompiled binaries are available
 --help, -h                  display this help screen
 --optional                  if an app is not available for the current platform, do nothing
---setup                     scaffold a config file to specify app versions
 --update                    updates the versions in .run-that-app to the latest available
 --which <app>               displays the path to the installed executable of the given application
 --verbose, -v               display more details
