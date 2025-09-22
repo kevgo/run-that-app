@@ -87,10 +87,10 @@ numbers:
 rta actionlint
 ```
 
-Executing `rta --add <app name>` creates this file for you.
+Executing `rta --add <app>` creates this file for you.
 
 RTA uses a different name for the configuration file to avoid interference with
-other app runners like asdf or mise.
+other app runners like [asdf](#asdf) or [mise](#mise)
 
 ### usage
 
@@ -261,15 +261,16 @@ installed by package managers:
 #### Why not use Docker?
 
 Docker is a standardized container format for distributing complex applications
-along with their runtime environments. Its benefits are often likened to those
-of standardized shipping containers in maritime transport: a reliable,
-consistent, and portable way to package and deliver goods—or, in this case,
-software.
+along with their runtime environments and dependencies. Its benefits are often
+likened to those of standardized shipping containers in maritime transport: a
+reliable, consistent, and portable way to package and deliver goods, or, in this
+case, software.
 
 However, just as companies rarely manufacture goods inside shipping containers,
 you likely don't need to "manufacture" your software inside a container either.
-Your development machine already has a capable operating system—there’s no need
-to layer additional OS environments just to write and debug code.
+Your development machine already has a capable operating system, there’s no need
+to layer additional OS environments just to write and debug code if the required
+tooling is available for your native operating system.
 
 Consider the implications: on macOS or Windows, which lack native Docker
 support, you end up running a full Linux instance inside a virtual machine,
@@ -280,8 +281,8 @@ storage and RAM, adding unnecessary complexity and overhead to your workflow.
 Moreover, Docker falls short in key areas. It doesn’t resolve compatibility
 issues with different CPU architectures (Intel, ARM, RISC-V). Using Docker in CI
 can introduce the infamous "Docker-in-Docker" problem. And if you need to
-install arbitrary executables from GitHub Releases, Docker won’t make that
-process any easier.
+install arbitrary executables from GitHub Releases, for which there are no
+Docker images available, Docker won’t make that process any easier.
 
 #### Why not quickly write a small Bash script that downloads the executable?
 
@@ -295,12 +296,13 @@ You also need to write a Powershell script since Bash isn't available
 out-of-the-box on Windows. Even if Bash is installed on Windows, it executes in
 an emulated environment that behaves different than a real Linux or Unix system.
 
-Run-that-app saves you from these headaches.
+Run-that-app saves you from these headaches. Think about it as a cross-platform
+Bash script, written in a strongly typed language that guarantees correctness.
 
 #### What if an app does not distribute binaries for my platform?
 
 Run-that-app can compile applications from source. If that doesn't work, it can
-skip non-essential applications like linters via the `--optional` switch.
+skip non-essential applications like linters via the `--optional` flag.
 
 #### What if I compile an app myself?
 
@@ -331,11 +333,12 @@ installed somewhere in your PATH, _run-that-app_ would execute it.
 
 #### What about apps is written in NodeJS, Python, or Ruby?
 
-Use the package managers of those frameworks to run that app!
+Use the package managers of those frameworks to run that app.
 
 #### What if my app has more complex dependencies that run-that-app cannot support?
 
-Use Docker or WASI.
+Please open a ticket to discuss your use case. Run-that-app can install these
+dependencies.
 
 #### Why does run-that-app not have a marketplace that I can submit my application to?
 
@@ -344,21 +347,20 @@ advantages.
 
 1. You don't need to articulate complex installation and execution requirements
    and dependencies in some data format like JSON or YML, but can use a proper
-   programming language. This gives you really strong type checking (not just
+   strongly-typed programming language. This gives you type checking (not just
    basic JSON-Schema linting), intelligent auto-completion, much more
    flexibility in how you implement downloading and unpacking archives or
    installing an application in other ways, and the ability to verify the
    installation using automated tests.
 
-2. Having a separate marketplace would result in two separate codebases that are
+2. Having a separate marketplace would result in two separate systems that are
    versioned independently of each other: the version of _run-that-app_ and the
-   version of the marketplace. Two separate versions lead to fun problems like
-   an older versions of _run-that-app_ not able to work with newer versions of
-   the marketplace. This severely limits how the data format of the marketplace
-   can evolve. An embedded marketplace does not have this problem.
-   _Run-that-app_ can make as many breaking changes to the marketplace data as
-   it wants, older versions of it will keep working because they have their own
-   marketplace embedded.
+   version of the marketplace. Two separate versions lead to problems like an
+   older versions of _run-that-app_ not able to work with newer versions of the
+   marketplace. This severely limits how the data format of the marketplace can
+   evolve. An embedded marketplace does not have this problem. _Run-that-app_
+   can make breaking changes to the marketplace data at any time, and older
+   installations will keep working.
 
 3. If _run-that-app_ would use an external marketplace, it needs to sync its
    local replica of that marketplace at each invocation, and sometimes download
