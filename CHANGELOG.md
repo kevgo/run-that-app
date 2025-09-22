@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.19.0 (2025-09-22)
+
+- app: keep-sorted
+
 ### 0.18.0 (2025-06-16)
 
 - app: funcorder
