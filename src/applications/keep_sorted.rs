@@ -34,7 +34,6 @@ impl AppDefinition for KeepSorted {
     github_releases::versions(ORG, REPO, amount, log)
   }
 
-
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
     github_releases::latest(ORG, REPO, log)
   }
