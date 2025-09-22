@@ -17,6 +17,7 @@ mod golangci_lint;
 mod goreleaser;
 mod govulnchec;
 mod ireturn;
+mod keep_sorted;
 mod mdbook;
 mod mdbook_linkcheck;
 mod node_prune;
@@ -57,6 +58,7 @@ pub(crate) fn all() -> Apps {
     Box::new(goreleaser::Goreleaser {}),
     Box::new(govulnchec::Govulncheck {}),
     Box::new(ireturn::Ireturn {}),
+    Box::new(keep_sorted::KeepSorted {}),
     Box::new(mdbook::MdBook {}),
     Box::new(mdbook_linkcheck::MdBookLinkCheck {}),
     Box::new(nodejs::NodeJS {}),
