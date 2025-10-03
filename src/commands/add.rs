@@ -4,7 +4,6 @@ use crate::{configuration, logging};
 use std::process::ExitCode;
 
 pub(crate) fn add(args: Args, apps: Apps) -> Result<ExitCode> {
-  let apps = applications::all();
   let log = logging::new(args.verbose);
   let app = apps.lookup(args.app_name)?.clone();
   let version = app.latest_installable_version(log)?;
