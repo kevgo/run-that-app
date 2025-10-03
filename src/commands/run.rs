@@ -15,9 +15,9 @@ pub(crate) fn run(args: Args, apps: &Apps) -> Result<ExitCode> {
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
-  let config_file = configuration::File::load(&apps)?;
+  let config_file = configuration::File::load(apps)?;
   let include_app_versions = config_file.lookup_many(args.include_apps);
-  let include_apps = load_or_install_apps(include_app_versions, &apps, platform, args.optional, &yard, &config_file, args.from_source, log)?;
+  let include_apps = load_or_install_apps(include_app_versions, apps, platform, args.optional, &yard, &config_file, args.from_source, log)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   let Some(executable_call) = load_or_install_app(
     app_to_run,
