@@ -12,6 +12,7 @@ pub(crate) fn add(args: Args, apps: &Apps) -> Result<ExitCode> {
   } else {
     configuration::File::create(&app.app_name(), &version.clone())?;
   }
+  println!("added {}@{} to {}", app.name(), &version, configuration::FILE_NAME);
   Ok(ExitCode::SUCCESS)
 }
 
