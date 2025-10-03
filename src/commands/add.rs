@@ -1,9 +1,9 @@
-use crate::applications::ApplicationName;
+use crate::applications::{ApplicationName, Apps};
 use crate::prelude::*;
-use crate::{applications, configuration, logging};
+use crate::{configuration, logging};
 use std::process::ExitCode;
 
-pub(crate) fn add(args: Args, apps: Apps) -> Result<ExitCode> {
+pub(crate) fn add(args: Args, apps: &Apps) -> Result<ExitCode> {
   println!("ADD");
   let log = logging::new(args.verbose);
   let app = apps.lookup(args.app_name)?.clone();
@@ -15,7 +15,7 @@ pub(crate) fn add(args: Args, apps: Apps) -> Result<ExitCode> {
     println!("NO CONFIG FILE");
     configuration::File::create(&app.app_name(), &version.clone())?;
   }
-  println!("added {}@{} to {}", &app, &version, configuration::FILE_NAME);
+  println!("added {}@{} to {}", app.name(), &version, configuration::FILE_NAME);
   Ok(ExitCode::SUCCESS)
 }
 

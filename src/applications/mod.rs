@@ -143,12 +143,6 @@ pub(crate) trait AppDefinition {
   }
 }
 
-impl Display for dyn AppDefinition {
-  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(self.name())
-  }
-}
-
 impl PartialEq for dyn AppDefinition {
   fn eq(&self, other: &Self) -> bool {
     self.name() == other.name()
