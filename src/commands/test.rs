@@ -3,19 +3,18 @@ use crate::executables::Executable;
 use crate::logging::Event;
 use crate::prelude::*;
 use crate::yard::Yard;
-use crate::{applications, configuration, installation, logging, platform};
+use crate::{configuration, installation, logging, platform};
 use colored::Colorize;
 use std::io;
 use std::process::ExitCode;
 
-pub(crate) fn test(args: &mut Args) -> Result<ExitCode> {
-  let apps = applications::all();
-  find_duplicate_app_names(&apps)?;
+pub(crate) fn test(args: &mut Args, apps: &Apps) -> Result<ExitCode> {
+  find_duplicate_app_names(apps)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
   let temp_folder = tempfile::tempdir().map_err(|err| UserError::CannotCreateTempDir { err: err.to_string() })?;
   let yard = Yard::load_or_create(temp_folder.path())?;
-  let config_file = configuration::File::load(&apps)?;
+  let config_file = configuration::File::load(apps)?;
   for app in apps {
     if let Some(start_app_name) = &args.start_at_app {
       if &app.app_name() != start_app_name {
@@ -74,7 +73,7 @@ pub(crate) fn test(args: &mut Args) -> Result<ExitCode> {
         }
       }
       if !executable_found {
-        println!("executable for {app} not found, press ENTER after inspecting the yard");
+        println!("executable for {} not found, press ENTER after inspecting the yard", app.name());
         let mut buffer = String::new();
         if let Err(err) = io::stdin().read_line(&mut buffer) {
           eprintln!("Error: {err}");
