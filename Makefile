@@ -22,6 +22,7 @@ lint: build  # runs all linters
 	target/debug/rta --optional shellcheck download.sh
 
 setup:  # install development dependencies on this computer
+	rustup component add clippy
 	rustup toolchain add nightly
 	rustup component add rustfmt --toolchain nightly
 
