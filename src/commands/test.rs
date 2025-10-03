@@ -8,7 +8,7 @@ use colored::Colorize;
 use std::io;
 use std::process::ExitCode;
 
-pub(crate) fn test(args: &mut Args, apps: Apps) -> Result<ExitCode> {
+pub(crate) fn test(args: &mut Args, apps: &Apps) -> Result<ExitCode> {
   find_duplicate_app_names(&apps)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
@@ -73,7 +73,7 @@ pub(crate) fn test(args: &mut Args, apps: Apps) -> Result<ExitCode> {
         }
       }
       if !executable_found {
-        println!("executable for {app} not found, press ENTER after inspecting the yard");
+        println!("executable for {} not found, press ENTER after inspecting the yard", app.name());
         let mut buffer = String::new();
         if let Err(err) = io::stdin().read_line(&mut buffer) {
           eprintln!("Error: {err}");
