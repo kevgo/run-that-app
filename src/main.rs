@@ -33,17 +33,18 @@ fn main() -> ExitCode {
 }
 
 fn inner() -> prelude::Result<ExitCode> {
-  match cli::parse(std::env::args(), &applications::all())? {
-    Command::Add(args) => commands::add(args),
-    Command::AppsLong => Ok(commands::applications::long()),
-    Command::AppsShort => Ok(commands::applications::short()),
-    Command::Available(args) => commands::available(&args),
+  let apps = applications::all();
+  match cli::parse(std::env::args(), &apps)? {
+    Command::Add(args) => commands::add(args, apps),
+    Command::AppsLong => Ok(commands::applications::long(apps)),
+    Command::AppsShort => Ok(commands::applications::short(apps)),
+    Command::Available(args) => commands::available(&args, apps),
     Command::DisplayHelp => Ok(commands::help()),
-    Command::RunApp(args) => commands::run(args),
-    Command::Test(mut args) => commands::test(&mut args),
-    Command::Update(args) => commands::update(&args),
-    Command::Which(args) => commands::which(&args),
+    Command::RunApp(args) => commands::run(args, apps),
+    Command::Test(mut args) => commands::test(&mut args, apps),
+    Command::Update(args) => commands::update(&args, apps),
+    Command::Which(args) => commands::which(&args, apps),
     Command::Version => Ok(commands::version()),
-    Command::Versions(args) => commands::versions(&args),
+    Command::Versions(args) => commands::versions(&args, apps),
   }
 }

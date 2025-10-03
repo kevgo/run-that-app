@@ -3,13 +3,12 @@ use crate::executables::Executable;
 use crate::logging::Event;
 use crate::prelude::*;
 use crate::yard::Yard;
-use crate::{applications, configuration, installation, logging, platform};
+use crate::{configuration, installation, logging, platform};
 use colored::Colorize;
 use std::io;
 use std::process::ExitCode;
 
-pub(crate) fn test(args: &mut Args) -> Result<ExitCode> {
-  let apps = applications::all();
+pub(crate) fn test(args: &mut Args, apps: Apps) -> Result<ExitCode> {
   find_duplicate_app_names(&apps)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;

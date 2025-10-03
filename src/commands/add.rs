@@ -1,9 +1,9 @@
-use crate::applications::ApplicationName;
+use crate::applications::{ApplicationName, Apps};
 use crate::prelude::*;
-use crate::{applications, configuration, logging};
+use crate::{configuration, logging};
 use std::process::ExitCode;
 
-pub(crate) fn add(args: Args) -> Result<ExitCode> {
+pub(crate) fn add(args: Args, apps: Apps) -> Result<ExitCode> {
   let apps = applications::all();
   let log = logging::new(args.verbose);
   let app = apps.lookup(args.app_name)?.clone();
