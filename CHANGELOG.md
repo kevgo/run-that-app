@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.19.1 (2025-10-03)
+
+- fix wrong message when config file not found
+
 ### 0.19.0 (2025-09-22)
 
 - app: keep-sorted
