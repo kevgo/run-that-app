@@ -3,7 +3,7 @@ use crate::logging;
 use crate::prelude::*;
 use std::process::ExitCode;
 
-pub(crate) fn versions(args: &Args, apps: Apps) -> Result<ExitCode> {
+pub(crate) fn versions(args: &Args, apps: &Apps) -> Result<ExitCode> {
   let app = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
   let versions = app.installable_versions(args.amount, log)?;

@@ -4,7 +4,7 @@ use crate::logging::{self, Event};
 use crate::prelude::*;
 use std::process::ExitCode;
 
-pub(crate) fn update(args: &Args, all_apps: Apps) -> Result<ExitCode> {
+pub(crate) fn update(args: &Args, all_apps: &Apps) -> Result<ExitCode> {
   let mut config = File::load(&all_apps)?;
   let log = logging::new(args.verbose);
   for old_app in &mut config.apps {

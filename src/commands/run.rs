@@ -10,7 +10,7 @@ use crate::yard::Yard;
 use crate::{subshell, yard};
 use std::process::ExitCode;
 
-pub(crate) fn run(args: Args, apps: Apps) -> Result<ExitCode> {
+pub(crate) fn run(args: Args, apps: &Apps) -> Result<ExitCode> {
   let app_to_run = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;

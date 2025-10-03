@@ -6,7 +6,7 @@ use crate::yard::Yard;
 use crate::{logging, platform, yard};
 use std::process::ExitCode;
 
-pub(crate) fn available(args: &Args, apps: Apps) -> Result<ExitCode> {
+pub(crate) fn available(args: &Args, apps: &Apps) -> Result<ExitCode> {
   let app = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
