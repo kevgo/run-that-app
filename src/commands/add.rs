@@ -4,18 +4,14 @@ use crate::{configuration, logging};
 use std::process::ExitCode;
 
 pub(crate) fn add(args: Args, apps: &Apps) -> Result<ExitCode> {
-  println!("ADD");
   let log = logging::new(args.verbose);
   let app = apps.lookup(args.app_name)?.clone();
   let version = app.latest_installable_version(log)?;
   if let Some(config_file) = configuration::File::read(apps)? {
-    println!("FOUND CONFIG FILE");
     config_file.add(app.app_name(), version.clone())?;
   } else {
-    println!("NO CONFIG FILE");
     configuration::File::create(&app.app_name(), &version.clone())?;
   }
-  println!("added {}@{} to {}", app.name(), &version, configuration::FILE_NAME);
   Ok(ExitCode::SUCCESS)
 }
 

@@ -22,7 +22,6 @@ impl File {
   }
 
   pub(crate) fn create(app: &ApplicationName, version: &Version) -> Result<()> {
-    println!("111111111111111111111");
     let mut file = match OpenOptions::new().write(true).create_new(true).open(FILE_NAME) {
       Ok(file) => file,
       Err(err) => {

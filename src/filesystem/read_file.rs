@@ -1,5 +1,6 @@
 use crate::prelude::*;
-use std::{env, fs, io};
+use std::io::ErrorKind;
+use std::{env, fs};
 
 /// looks for the file with the given name in the current or parent folders, and provides its content if it finds one
 pub(crate) fn read_file(name: &str) -> Result<Option<String>> {
@@ -10,13 +11,18 @@ pub(crate) fn read_file(name: &str) -> Result<Option<String>> {
     match fs::read_to_string(file_path) {
       Ok(text) => return Ok(Some(text)),
       Err(err) => match err.kind() {
-        io::ErrorKind::NotFound => {}
+        ErrorKind::NotFound => {
+          dir = match dir.parent() {
+            Some(parent) => parent,
+            None => return Ok(None),
+          };
+        }
+        ErrorKind::IsADirectory => {
+          // we have reached the ".run-that-app" folder in the home directory
+          return Ok(None);
+        }
         _ => return Err(UserError::CannotAccessConfigFile(err.to_string())),
       },
     }
-    dir = match dir.parent() {
-      Some(parent) => parent,
-      None => return Ok(None),
-    };
   }
 }
