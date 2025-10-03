@@ -12,13 +12,14 @@ pub(crate) fn read_file(name: &str) -> Result<Option<String>> {
       Ok(text) => return Ok(Some(text)),
       Err(err) => match err.kind() {
         ErrorKind::NotFound => {
+          // config file not found --> look in the parent folder
           dir = match dir.parent() {
             Some(parent) => parent,
             None => return Ok(None),
           };
         }
         ErrorKind::IsADirectory => {
-          // we have reached the ".run-that-app" folder in the home directory
+          // we have reached the ".run-that-app" folder in the home directory --> give up looking
           return Ok(None);
         }
         _ => return Err(UserError::CannotAccessConfigFile(err.to_string())),
