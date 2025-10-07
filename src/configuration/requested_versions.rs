@@ -15,7 +15,7 @@ impl RequestedVersions {
     }
     match config_file.lookup(app) {
       Some(versions) => Ok(RequestedVersions(versions.0.clone())),
-      None => Err(UserError::RunRequestMissingVersion),
+      None => Err(UserError::RunRequestMissingVersion { app: app.to_string() }),
     }
   }
 
