@@ -69,7 +69,7 @@ mod tests {
   use big_s::S;
 
   mod parse {
-    use crate::applications::{AnalyzeResult, AppDefinition};
+    use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName};
     use crate::configuration::Version;
     use crate::error::Result;
     use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
@@ -86,7 +86,7 @@ mod tests {
         Ok(self.allowed_versions.clone())
       }
 
-      fn name(&self) -> &'static str {
+      fn name(&self) -> ApplicationName {
         unimplemented!()
       }
       fn executable_filename(&self) -> ExecutableNameUnix {

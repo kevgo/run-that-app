@@ -24,24 +24,24 @@ pub(crate) fn test(args: &mut Args, apps: &Apps) -> Result<ExitCode> {
   };
   for app in apps {
     if let Some(start_app_name) = &args.start_at_app {
-      if &app.app_name() != start_app_name {
+      if &app.name() != start_app_name {
         continue;
       }
       args.start_at_app = None;
     }
-    log(Event::IntegrationTestNewApp { app: app.name() });
+    log(Event::IntegrationTestNewApp { app: &app.name() });
     let latest_version = app.latest_installable_version(log)?;
     log(Event::IntegrationTestDeterminedVersion { version: &latest_version });
     for install_method in app.run_method(&latest_version, platform).install_methods() {
       log(Event::IntegrationTestNewInstallMethod {
-        app: app.name(),
+        app: &app.name(),
         method: &install_method,
         version: &latest_version,
       });
       if !installation::install(app.as_ref(), &install_method, &latest_version, args.optional, false, &ctx)?.success() {
         continue;
       }
-      let app_folder = yard.app_folder(&app.app_name(), &latest_version);
+      let app_folder = yard.app_folder(&app.name(), &latest_version);
       let executable_paths = install_method.executable_paths(&app_folder, &app.executable_filename().platform_path(platform.os));
       let mut executable_found = true;
       for executable_path in executable_paths {
@@ -75,7 +75,7 @@ pub(crate) fn test(args: &mut Args, apps: &Apps) -> Result<ExitCode> {
         }
         return Ok(ExitCode::FAILURE);
       }
-      let _ = yard.delete_app_folder(&app.app_name());
+      let _ = yard.delete_app_folder(&app.name());
     }
   }
   Ok(ExitCode::SUCCESS)
@@ -89,7 +89,7 @@ pub(crate) struct Args {
 }
 
 fn find_duplicate_app_names(apps: &Apps) -> Result<()> {
-  let mut names: Vec<&'static str> = vec![];
+  let mut names: Vec<ApplicationName> = vec![];
   for app in apps {
     let app_name = app.name();
     if names.contains(&app_name) {

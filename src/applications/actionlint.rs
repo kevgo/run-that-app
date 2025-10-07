@@ -1,4 +1,5 @@
 use super::{AnalyzeResult, AppDefinition};
+use crate::applications::ApplicationName;
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
@@ -15,8 +16,8 @@ const ORG: &str = "rhysd";
 const REPO: &str = "actionlint";
 
 impl AppDefinition for ActionLint {
-  fn name(&self) -> &'static str {
-    "actionlint"
+  fn name(&self) -> ApplicationName {
+    "actionlint".into()
   }
 
   fn homepage(&self) -> &'static str {

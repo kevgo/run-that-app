@@ -76,13 +76,13 @@ pub(crate) enum Event<'a> {
     name: &'static str,
   },
   IntegrationTestNewApp {
-    app: &'static str,
+    app: &'a ApplicationName,
   },
   IntegrationTestDeterminedVersion {
     version: &'a Version,
   },
   IntegrationTestNewInstallMethod {
-    app: &'a str,
+    app: &'a ApplicationName,
     method: &'a Method,
     version: &'a Version,
   },
@@ -95,12 +95,12 @@ pub(crate) enum Event<'a> {
     app: &'a ApplicationName,
   },
   UpdateNewVersion {
-    app: &'a str,
+    app: &'a ApplicationName,
     old_version: &'a Version,
     new_version: &'a Version,
   },
   UpdateAlreadyNewest {
-    app: &'a str,
+    app: &'a ApplicationName,
   },
   YardCheckExistingAppBegin {
     path: &'a Path,

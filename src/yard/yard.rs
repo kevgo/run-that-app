@@ -79,7 +79,7 @@ impl Yard {
     ctx: &RuntimeContext,
   ) -> Option<(Executable, BinFolder)> {
     let run_method = app_definition.run_method(version, ctx.platform);
-    let app_folder = self.app_folder(&app_definition.app_name(), version);
+    let app_folder = self.app_folder(&app_definition.name(), version);
     for installation_method in run_method.install_methods() {
       let executable_paths = installation_method.executable_paths(&app_folder, &executable.clone().platform_path(ctx.platform.os));
       for executable_path in executable_paths {
@@ -121,7 +121,7 @@ mod tests {
     let yard = Yard { root: PathBuf::from("/root") };
     let apps = applications::all();
     let shellcheck = apps.lookup("shellcheck").unwrap();
-    let have = yard.app_folder(&shellcheck.app_name(), &Version::from("0.9.0")).join("shellcheck.exe");
+    let have = yard.app_folder(&shellcheck.name(), &Version::from("0.9.0")).join("shellcheck.exe");
     let want = PathBuf::from("/root/apps/shellcheck/0.9.0/shellcheck.exe");
     assert_eq!(have, want);
   }
@@ -131,7 +131,7 @@ mod tests {
     let apps = applications::all();
     let shellcheck = apps.lookup("shellcheck").unwrap();
     let yard = Yard { root: PathBuf::from("/root") };
-    let have = yard.app_folder(&shellcheck.app_name(), &Version::from("0.9.0"));
+    let have = yard.app_folder(&shellcheck.name(), &Version::from("0.9.0"));
     let want = PathBuf::from("/root/apps/shellcheck/0.9.0");
     assert_eq!(have, want);
   }
@@ -148,7 +148,7 @@ mod tests {
       let shellcheck = apps.lookup("shellcheck").unwrap();
       let tempdir = tempfile::tempdir().unwrap();
       let yard = Yard::create(tempdir.path()).unwrap();
-      let app_name = shellcheck.app_name();
+      let app_name = shellcheck.name();
       let version = Version::from("0.9.0");
       yard.mark_not_installable(&app_name, &version).unwrap();
       let have = yard.is_not_installable(&app_name, &version);
@@ -160,7 +160,7 @@ mod tests {
       let apps = applications::all();
       let shellcheck = apps.lookup("shellcheck").unwrap();
       let yard = Yard { root: PathBuf::from("/root") };
-      let app_name = shellcheck.app_name();
+      let app_name = shellcheck.name();
       let version = Version::from("0.9.0");
       let have = yard.is_not_installable(&app_name, &version);
       assert!(!have);
@@ -172,7 +172,7 @@ mod tests {
     let apps = applications::all();
     let shellcheck = apps.lookup("shellcheck").unwrap();
     let yard = Yard { root: PathBuf::from("/root") };
-    let have = yard.not_installable_path(&shellcheck.app_name(), &Version::from("0.9.0"));
+    let have = yard.not_installable_path(&shellcheck.name(), &Version::from("0.9.0"));
     let want = PathBuf::from("/root/apps/shellcheck/0.9.0/not_installable");
     assert_eq!(have, want);
   }

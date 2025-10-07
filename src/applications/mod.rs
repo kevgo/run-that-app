@@ -80,7 +80,7 @@ pub(crate) fn all() -> Apps {
 /// all the information about an application that run-that-app can install
 pub(crate) trait AppDefinition: DynClone {
   /// the name by which the user can select this application at the run-that-app CLI
-  fn name(&self) -> &'static str;
+  fn name(&self) -> ApplicationName;
 
   /// the filename of the executable that starts this app
   fn executable_filename(&self) -> ExecutableNameUnix {
@@ -119,14 +119,6 @@ pub(crate) trait AppDefinition: DynClone {
   fn allowed_versions(&self) -> Result<semver::VersionReq> {
     Ok(semver::VersionReq::STAR)
   }
-
-  // --------------------------------------------------------------------------------------------------
-  // Below are convenience methods, AppDefinition instances should not override these.
-
-  /// type-safe version of self.name, for internal use
-  fn app_name(&self) -> ApplicationName {
-    ApplicationName(self.name())
-  }
 }
 
 dyn_clone::clone_trait_object!(AppDefinition);
@@ -159,7 +151,7 @@ impl PartialEq for dyn AppDefinition {
 
 impl Debug for dyn AppDefinition {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(self.name())
+    f.write_str(self.name().as_ref())
   }
 }
 
@@ -167,8 +159,14 @@ impl Debug for dyn AppDefinition {
 pub(crate) struct ApplicationName(&'static str);
 
 impl ApplicationName {
-  pub(crate) fn as_str(&self) -> &str {
+  pub fn as_str(&self) -> &str {
     self.0
+  }
+}
+
+impl From<&'static str> for ApplicationName {
+  fn from(value: &'static str) -> Self {
+    ApplicationName(value)
   }
 }
 

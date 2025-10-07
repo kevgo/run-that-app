@@ -13,12 +13,12 @@ pub(crate) fn update(args: &Args, all_apps: &Apps) -> Result<ExitCode> {
     let latest = app.latest_installable_version(log)?;
     if let Some(previous) = &old_app.versions.update_largest_with(&latest) {
       log(Event::UpdateNewVersion {
-        app: app.name(),
+        app: &app.name(),
         old_version: previous,
         new_version: &latest,
       });
     } else {
-      log(Event::UpdateAlreadyNewest { app: app.name() });
+      log(Event::UpdateAlreadyNewest { app: &app.name() });
     }
   }
   config.save()?;

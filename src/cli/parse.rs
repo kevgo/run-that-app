@@ -77,7 +77,7 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
         let (key, value) = arg.split_once('=').unwrap_or((&arg, ""));
         if key == "--include" {
           let app = apps.lookup(value)?;
-          include_apps.push(app.app_name());
+          include_apps.push(app.name());
           continue;
         }
         if key == "--versions" {
@@ -197,7 +197,7 @@ mod tests {
           let shellcheck = apps.lookup("shellcheck").unwrap();
           let have = parse_args(vec!["rta", "--available", "shellcheck"], &apps);
           let want = Ok(Command::Available(available::Args {
-            app_name: shellcheck.app_name(),
+            app_name: shellcheck.name(),
             optional: false,
             version: None,
             verbose: false,
@@ -211,7 +211,7 @@ mod tests {
           let shellcheck = apps.lookup("shellcheck").unwrap();
           let have = parse_args(vec!["rta", "--available", "--verbose", "shellcheck"], &apps);
           let want = Ok(Command::Available(available::Args {
-            app_name: shellcheck.app_name(),
+            app_name: shellcheck.name(),
             optional: false,
             version: None,
             verbose: true,
@@ -241,7 +241,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let have = parse_args(vec!["rta", "--error-on-output", "actionlint"], &apps);
           let want = Ok(Command::RunApp(run::Args {
-            app_name: actionlint.app_name(),
+            app_name: actionlint.name(),
             version: None,
             app_args: vec![],
             error_on_output: true,
@@ -273,7 +273,7 @@ mod tests {
           let have = parse_args(vec!["rta", "--from-source", "actionlint"], &apps);
           let actionlint = apps.lookup("actionlint").unwrap();
           let want = Ok(Command::RunApp(run::Args {
-            app_name: actionlint.app_name(),
+            app_name: actionlint.name(),
             version: None,
             app_args: vec![],
             error_on_output: false,
@@ -323,7 +323,7 @@ mod tests {
           let have = parse_args(vec!["rta", "--test", "actionlint"], &apps);
           let want = Ok(Command::Test(test::Args {
             optional: false,
-            start_at_app: Some(actionlint.app_name()),
+            start_at_app: Some(actionlint.name()),
             verbose: false,
           }));
           pretty::assert_eq!(have, want);
@@ -336,7 +336,7 @@ mod tests {
           let have = parse_args(vec!["rta", "--test", "--verbose", "actionlint"], &apps);
           let want = Ok(Command::Test(test::Args {
             optional: false,
-            start_at_app: Some(actionlint.app_name()),
+            start_at_app: Some(actionlint.name()),
             verbose: true,
           }));
           pretty::assert_eq!(have, want);
@@ -379,12 +379,12 @@ mod tests {
           let gh = apps.lookup("gh").unwrap();
           let have = parse_args(vec!["rta", "--include=gh", "actionlint@2"], &apps);
           let want = Ok(Command::RunApp(run::Args {
-            app_name: actionlint.app_name(),
+            app_name: actionlint.name(),
             version: Some(Version::from("2")),
             app_args: vec![],
             error_on_output: false,
             from_source: false,
-            include_apps: vec![gh.app_name()],
+            include_apps: vec![gh.name()],
             optional: false,
             verbose: false,
           }));
@@ -414,7 +414,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let have = parse_args(vec!["rta", "--verbose", "actionlint@2"], &apps);
           let want = Ok(Command::RunApp(run::Args {
-            app_name: actionlint.app_name(),
+            app_name: actionlint.name(),
             version: Some(Version::from("2")),
             app_args: vec![],
             error_on_output: false,
@@ -432,7 +432,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let have = parse_args(vec!["rta", "-v", "actionlint@2"], &apps);
           let want = Ok(Command::RunApp(run::Args {
-            app_name: actionlint.app_name(),
+            app_name: actionlint.name(),
             version: Some(Version::from("2")),
             app_args: vec![],
             error_on_output: false,
@@ -467,7 +467,7 @@ mod tests {
         let actionlint = apps.lookup("actionlint").unwrap();
         let have = parse_args(vec!["rta", "--optional", "actionlint@2", "arg1"], &apps);
         let want = Ok(Command::RunApp(run::Args {
-          app_name: actionlint.app_name(),
+          app_name: actionlint.name(),
           version: Some(Version::from("2")),
           app_args: vec![S("arg1")],
           error_on_output: false,
@@ -513,7 +513,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let have = parse_args(vec!["rta", "--versions", "actionlint"], &apps);
           let want = Ok(Command::Versions(versions::Args {
-            app_name: actionlint.app_name(),
+            app_name: actionlint.name(),
             amount: 10,
             verbose: false,
           }));
@@ -526,7 +526,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let have = parse_args(vec!["rta", "--versions=20", "actionlint"], &apps);
           let want = Ok(Command::Versions(versions::Args {
-            app_name: actionlint.app_name(),
+            app_name: actionlint.name(),
             amount: 20,
             verbose: false,
           }));
@@ -554,7 +554,7 @@ mod tests {
           let shellcheck = apps.lookup("shellcheck").unwrap();
           let have = parse_args(vec!["rta", "--which", "shellcheck"], &apps);
           let want = Ok(Command::Which(commands::which::Args {
-            app_name: shellcheck.app_name(),
+            app_name: shellcheck.name(),
             optional: false,
             version: None,
             verbose: false,
@@ -568,7 +568,7 @@ mod tests {
           let shellcheck = apps.lookup("shellcheck").unwrap();
           let have = parse_args(vec!["rta", "--which", "--verbose", "shellcheck"], &apps);
           let want = Ok(Command::Which(commands::which::Args {
-            app_name: shellcheck.app_name(),
+            app_name: shellcheck.name(),
             optional: false,
             version: None,
             verbose: true,
@@ -600,7 +600,7 @@ mod tests {
         let actionlint = apps.lookup("actionlint").unwrap();
         let have = parse_args(vec!["rta", "actionlint@2"], &apps);
         let want = Ok(Command::RunApp(run::Args {
-          app_name: actionlint.app_name(),
+          app_name: actionlint.name(),
           version: Some(Version::from("2")),
           app_args: vec![],
           error_on_output: false,
@@ -618,7 +618,7 @@ mod tests {
         let actionlint = apps.lookup("actionlint").unwrap();
         let have = parse_args(vec!["rta", "actionlint@2", "--arg1", "arg2"], &apps);
         let want = Ok(Command::RunApp(run::Args {
-          app_name: actionlint.app_name(),
+          app_name: actionlint.name(),
           version: Some(Version::from("2")),
           app_args: vec![S("--arg1"), S("arg2")],
           error_on_output: false,
@@ -645,7 +645,7 @@ mod tests {
         let actionlint = apps.lookup("actionlint").unwrap();
         let have = parse_args(vec!["rta", "--verbose", "actionlint@2", "--arg1", "arg2"], &apps);
         let want = Ok(Command::RunApp(run::Args {
-          app_name: actionlint.app_name(),
+          app_name: actionlint.name(),
           version: Some(Version::from("2")),
           app_args: vec![S("--arg1"), S("arg2")],
           error_on_output: false,
@@ -663,7 +663,7 @@ mod tests {
         let actionlint = apps.lookup("actionlint").unwrap();
         let have = parse_args(vec!["rta", "actionlint@2", "--verbose", "--version"], &apps);
         let want = Ok(Command::RunApp(run::Args {
-          app_name: actionlint.app_name(),
+          app_name: actionlint.name(),
           version: Some(Version::from("2")),
           app_args: vec![S("--verbose"), S("--version")],
           error_on_output: false,

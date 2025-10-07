@@ -1,5 +1,6 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::Log;
+use crate::applications::ApplicationName;
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
@@ -10,8 +11,8 @@ use crate::platform::Platform;
 pub(crate) struct Deadcode {}
 
 impl AppDefinition for Deadcode {
-  fn name(&self) -> &'static str {
-    "deadcode"
+  fn name(&self) -> ApplicationName {
+    "deadcode".into()
   }
 
   fn homepage(&self) -> &'static str {
