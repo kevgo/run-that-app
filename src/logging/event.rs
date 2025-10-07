@@ -1,6 +1,6 @@
 use crate::applications::ApplicationName;
 use crate::configuration::Version;
-use crate::download::URL;
+use crate::download::Url;
 use crate::executables::ExecutableNamePlatform;
 use crate::installation::Method;
 use std::borrow::Cow;
@@ -33,7 +33,7 @@ pub(crate) enum Event<'a> {
   CompileRustFailed,
   DownloadBegin {
     app: &'a ApplicationName,
-    url: &'a URL,
+    url: &'a Url,
   },
   DownloadSuccess,
   DownloadNotFound {

@@ -1,34 +1,34 @@
 use std::fmt::Display;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct URL(String);
+pub(crate) struct Url(String);
 
-impl AsRef<str> for URL {
+impl AsRef<str> for Url {
   fn as_ref(&self) -> &str {
     &self.0
   }
 }
 
-impl Into<String> for URL {
-  fn into(self) -> String {
-    self.0
+impl From<Url> for String {
+  fn from(val: Url) -> Self {
+    val.0
   }
 }
 
-impl Display for URL {
+impl Display for Url {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(&self.0)
   }
 }
 
-impl From<String> for URL {
+impl From<String> for Url {
   fn from(value: String) -> Self {
-    URL(value)
+    Url(value)
   }
 }
 
-impl From<&str> for URL {
+impl From<&str> for Url {
   fn from(value: &str) -> Self {
-    URL(value.to_string())
+    Url(value.to_string())
   }
 }

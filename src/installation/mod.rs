@@ -8,7 +8,7 @@ mod download_executable;
 use crate::applications::{AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::context::RuntimeContext;
-use crate::download::URL;
+use crate::download::Url;
 use crate::error::Result;
 use crate::executables::ExecutableNamePlatform;
 use std::fmt::{Debug, Display};
@@ -20,7 +20,7 @@ pub(crate) enum Method {
   /// installs the application by downloading and extracting an archive containing the application executable from the internet
   DownloadArchive {
     /// the URL of the archive to download
-    url: URL,
+    url: Url,
     /// The possible folders within the archive that might contain the executable files.
     /// Multiple options exist because for some apps, the Windows archive contains a different folder structure than the Linux or macOS archive.
     /// Provide all possible folders here. If the executables are in the root folder of the archive, leave this empty.
@@ -30,7 +30,7 @@ pub(crate) enum Method {
   /// installs the application by downloading the pre-compiled executable from the internet
   DownloadExecutable {
     /// the URL of the executable to download
-    url: URL,
+    url: Url,
   },
 
   /// installs the applications by compiling it from its source written in Go
