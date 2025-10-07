@@ -8,7 +8,7 @@ pub(crate) fn make_file_executable(file: &Path) -> Result<()> {
   use std::fs;
   use std::os::unix::prelude::PermissionsExt;
   fs::set_permissions(file, fs::Permissions::from_mode(0o744)).map_err(|err| UserError::CannotMakeFileExecutable {
-    file: file.to_string_lossy().to_string(),
+    file: file.to_path_buf(),
     reason: err.to_string(),
   })
 }

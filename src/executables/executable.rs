@@ -53,3 +53,9 @@ impl From<&Path> for Executable {
     Executable(value.to_path_buf())
   }
 }
+
+impl Into<PathBuf> for Executable {
+  fn into(self) -> PathBuf {
+    self.0
+  }
+}
