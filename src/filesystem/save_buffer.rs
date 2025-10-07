@@ -1,6 +1,6 @@
+use crate::error::Result;
 use crate::executables::Executable;
 use crate::logging::{Event, Log};
-use crate::error::Result;
 use std::fs;
 use std::path::Path;
 

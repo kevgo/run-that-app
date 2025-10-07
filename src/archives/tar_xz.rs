@@ -1,6 +1,6 @@
 use super::Archive;
-use crate::logging::{Event, Log};
 use crate::error::{Result, UserError};
+use crate::logging::{Event, Log};
 use std::io::Cursor;
 use std::path::Path;
 use xz2::read::XzDecoder;

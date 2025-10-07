@@ -2,9 +2,9 @@ use super::nodejs::NodeJS;
 use super::{AnalyzeResult, AppDefinition};
 use crate::Log;
 use crate::configuration::Version;
+use crate::error::Result;
 use crate::executables::{Executable, ExecutableArgs, RunMethod};
 use crate::platform::Platform;
-use crate::error::Result;
 
 pub(crate) struct Npx {}
 

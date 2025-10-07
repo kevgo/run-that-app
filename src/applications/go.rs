@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::configuration::Version;
+use crate::error::{Result, UserError};
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_tags;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
-use crate::error::{Result, UserError};
 use crate::{Log, filesystem, regexp};
 use big_s::S;
 use std::path;

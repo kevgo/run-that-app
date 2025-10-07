@@ -1,6 +1,6 @@
 use crate::applications::ApplicationName;
-use crate::logging::{Event, Log};
 use crate::error::{Result, UserError};
+use crate::logging::{Event, Log};
 
 /// downloads the artifact at the given URL
 pub(crate) fn artifact(url: &str, app: &ApplicationName, optional: bool, log: Log) -> Result<Option<Artifact>> {

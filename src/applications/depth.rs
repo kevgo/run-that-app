@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::Log;
 use crate::configuration::Version;
+use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
-use crate::error::Result;
 use const_format::formatcp;
 
 pub(crate) struct Depth {}

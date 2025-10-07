@@ -1,6 +1,6 @@
 use super::Executable;
-use crate::installation::BinFolder;
 use crate::error::{Result, UserError};
+use crate::installation::BinFolder;
 use std::fmt::{Display, Write};
 use std::path::Path;
 

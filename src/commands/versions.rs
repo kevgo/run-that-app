@@ -1,6 +1,6 @@
 use crate::applications::{ApplicationName, Apps};
-use crate::logging;
 use crate::error::Result;
+use crate::logging;
 use std::process::ExitCode;
 
 pub(crate) fn versions(args: &Args, apps: &Apps) -> Result<ExitCode> {

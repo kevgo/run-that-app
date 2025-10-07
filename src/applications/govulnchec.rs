@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::Log;
 use crate::configuration::Version;
+use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::installation::Method;
 use crate::platform::Platform;
-use crate::error::Result;
 
 pub(crate) struct Govulncheck {}
 
