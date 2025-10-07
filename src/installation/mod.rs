@@ -142,7 +142,7 @@ impl Display for BinFolder {
     f.write_str("BinFolder: ")?;
     match self {
       BinFolder::Root => write!(f, "root"),
-      BinFolder::Subfolder { path } => write!(f, "subfolder {path}"),
+      BinFolder::Subfolder { path } => write!(f, "subfolder {}", path.to_string_lossy()),
       BinFolder::Subfolders { options } => write!(f, "subfolders {}", options.join(", ")),
       BinFolder::RootOrSubfolders { options } => write!(f, "root or subfolders {}", options.join(", ")),
     }
