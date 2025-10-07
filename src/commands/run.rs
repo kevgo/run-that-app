@@ -1,4 +1,4 @@
-use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps};
+use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps, carrier};
 use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersions, Version};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
@@ -119,7 +119,7 @@ fn load_or_install(
 
 // finds the app in the PATH and verifies it has the correct version
 fn load_from_path(app_to_run: &dyn AppDefinition, range: &semver::VersionReq, ctx: &RuntimeContext) -> Result<Option<ExecutableCallDefinition>> {
-  let (app_to_install, executable_name, executable_args) = app_to_run.carrier(&Version::from(""), ctx.platform);
+  let (app_to_install, executable_name, executable_args) = carrier(app_to_run, &Version::from(""), ctx.platform);
   let executable_filename = executable_name.platform_path(ctx.platform.os);
   let Some(executable) = find_global_install(&executable_filename, ctx.log) else {
     (ctx.log)(Event::GlobalInstallNotFound);
@@ -168,7 +168,7 @@ fn load_or_install_from_yard(
   from_source: bool,
   ctx: &RuntimeContext,
 ) -> Result<Option<ExecutableCall>> {
-  let (app_to_install, executable_name, executable_args) = app_definition.carrier(version, ctx.platform);
+  let (app_to_install, executable_name, executable_args) = carrier(app_definition, version, ctx.platform);
   let app_name = app_to_install.app_name();
   // try to load the app
   if let Some((executable, bin_folder)) = ctx.yard.load_executable(app_to_install.as_ref(), &executable_name, version, ctx) {

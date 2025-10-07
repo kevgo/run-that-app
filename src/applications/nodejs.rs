@@ -8,6 +8,7 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, regexp};
 use std::path;
 
+#[derive(Clone)]
 pub(crate) struct NodeJS {}
 
 pub(crate) const ORG: &str = "nodejs";
@@ -54,10 +55,6 @@ impl AppDefinition for NodeJS {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

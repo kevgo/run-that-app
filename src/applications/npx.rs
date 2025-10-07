@@ -6,6 +6,7 @@ use crate::error::Result;
 use crate::executables::{Executable, ExecutableArgs, RunMethod};
 use crate::platform::Platform;
 
+#[derive(Clone)]
 pub(crate) struct Npx {}
 
 impl AppDefinition for Npx {
@@ -41,10 +42,6 @@ impl AppDefinition for Npx {
     }
     // Npx is versioned together with NodeJS. The actual version of npm is therefore not relevant here.
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

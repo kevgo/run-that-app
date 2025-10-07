@@ -6,6 +6,7 @@ use crate::executables::{Executable, RunMethod};
 use crate::installation::Method;
 use crate::platform::Platform;
 
+#[derive(Clone)]
 pub(crate) struct Deadcode {}
 
 impl AppDefinition for Deadcode {
@@ -41,10 +42,6 @@ impl AppDefinition for Deadcode {
     }
     // as of 0.16.1 deadcode does not display the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

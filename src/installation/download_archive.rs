@@ -1,5 +1,5 @@
 use super::{BinFolder, Outcome};
-use crate::applications::AppDefinition;
+use crate::applications::{AppDefinition, carrier};
 use crate::configuration::Version;
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
@@ -21,7 +21,7 @@ pub(crate) fn run(
   optional: bool,
   ctx: &RuntimeContext,
 ) -> Result<Outcome> {
-  let (app_to_install, executable_name, _args) = app_definition.carrier(version, ctx.platform);
+  let (app_to_install, executable_name, _args) = carrier(app_definition, version, ctx.platform);
   let app_name = app_to_install.app_name();
   let Some(artifact) = download::artifact(url, &app_name, optional, ctx.log)? else {
     return Ok(Outcome::NotInstalled);

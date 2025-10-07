@@ -8,6 +8,7 @@ use crate::installation::Method;
 use crate::platform::Platform;
 use const_format::formatcp;
 
+#[derive(Clone)]
 pub(crate) struct Alphavet {}
 
 const ORG: &str = "skx";
@@ -45,10 +46,6 @@ impl AppDefinition for Alphavet {
     }
     // as of 0.1.0 the -V switch of alphavet is broken
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

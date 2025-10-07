@@ -8,6 +8,7 @@ use crate::installation::Method;
 use crate::platform::Platform;
 use const_format::formatcp;
 
+#[derive(Clone)]
 pub(crate) struct Goda {}
 
 const ORG: &str = "loov";
@@ -45,10 +46,6 @@ impl AppDefinition for Goda {
     }
     // as of 0.5.7 goda has no way to determine the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

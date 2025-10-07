@@ -8,6 +8,7 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, regexp};
 use const_format::formatcp;
 
+#[derive(Clone)]
 pub(crate) struct ActionLint {}
 
 const ORG: &str = "rhysd";
@@ -67,10 +68,6 @@ impl AppDefinition for ActionLint {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::NotIdentified { output }),
     }
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

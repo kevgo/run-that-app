@@ -8,6 +8,7 @@ use crate::platform::Platform;
 use crate::{Log, regexp};
 use const_format::formatcp;
 
+#[derive(Clone)]
 pub(crate) struct KeepSorted {}
 
 const ORG: &str = "google";
@@ -47,10 +48,6 @@ impl AppDefinition for KeepSorted {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

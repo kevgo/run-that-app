@@ -9,6 +9,7 @@ use crate::{Log, regexp};
 use big_s::S;
 use std::path;
 
+#[derive(Clone)]
 pub(crate) struct Gh {}
 
 const ORG: &str = "cli";
@@ -66,10 +67,6 @@ impl AppDefinition for Gh {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

@@ -11,6 +11,7 @@ use big_s::S;
 const ORG: &str = "dominikh";
 const REPO: &str = "go-tools";
 
+#[derive(Clone)]
 pub(crate) struct StaticCheck {}
 
 impl AppDefinition for StaticCheck {
@@ -59,10 +60,6 @@ impl AppDefinition for StaticCheck {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 
