@@ -155,7 +155,7 @@ fn multiple_true(values: &[bool]) -> bool {
 mod tests {
   use crate::Command;
   use crate::applications::Apps;
-  use crate::error::{Result, UserError};
+  use crate::error::Result;
 
   // helper function for tests
   fn parse_args(args: Vec<&'static str>, apps: &Apps) -> Result<Command> {
@@ -181,7 +181,7 @@ mod tests {
       use crate::cli::Command;
       use crate::commands::run;
       use crate::configuration::Version;
-      use crate::error::{Result, UserError};
+      use crate::error::UserError;
       use big_s::S;
 
       mod available {
@@ -189,7 +189,7 @@ mod tests {
         use crate::applications;
         use crate::cli::Command;
         use crate::commands::available;
-        use crate::error::{Result, UserError};
+        use crate::error::UserError;
 
         #[test]
         fn with_app() {
@@ -233,7 +233,7 @@ mod tests {
         use crate::applications;
         use crate::cli::Command;
         use crate::commands::run;
-        use crate::error::{Result, UserError};
+        use crate::error::UserError;
 
         #[test]
         fn normal() {
@@ -406,7 +406,7 @@ mod tests {
         use crate::cli::Command;
         use crate::commands::run;
         use crate::configuration::Version;
-        use crate::error::{Result, UserError};
+        use crate::error::UserError;
 
         #[test]
         fn long() {
@@ -545,7 +545,7 @@ mod tests {
       mod which {
         use super::super::parse_args;
         use crate::cli::Command;
-        use crate::error::{Result, UserError};
+        use crate::error::UserError;
         use crate::{applications, commands};
 
         #[test]
