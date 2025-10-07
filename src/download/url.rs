@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct URL(String);
 
 impl AsRef<str> for URL {
