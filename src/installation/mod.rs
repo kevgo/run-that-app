@@ -6,12 +6,10 @@ mod download_archive;
 mod download_executable;
 
 use crate::applications::AppDefinition;
-use crate::configuration::{self, Version};
+use crate::configuration::Version;
+use crate::context::RuntimeContext;
 use crate::error::Result;
 use crate::executables::ExecutableNamePlatform;
-use crate::logging::Log;
-use crate::platform::Platform;
-use crate::yard::Yard;
 use std::fmt::{Debug, Display};
 use std::path::{Path, PathBuf};
 
@@ -152,31 +150,12 @@ impl Display for BinFolder {
 }
 
 /// installs the given app using the first of the given installation methods that works
-pub(crate) fn any(
-  app_definition: &dyn AppDefinition,
-  version: &Version,
-  platform: Platform,
-  optional: bool,
-  yard: &Yard,
-  config_file: &configuration::File,
-  from_source: bool,
-  log: Log,
-) -> Result<Outcome> {
-  for install_method in app_definition.run_method(version, platform).install_methods() {
+pub(crate) fn any(app_definition: &dyn AppDefinition, version: &Version, optional: bool, from_source: bool, ctx: &RuntimeContext) -> Result<Outcome> {
+  for install_method in app_definition.run_method(version, ctx.platform).install_methods() {
     if from_source && !install_method.is_from_source() {
       continue;
     }
-    let outcome = install(
-      app_definition,
-      &install_method,
-      version,
-      platform,
-      optional,
-      yard,
-      config_file,
-      from_source,
-      log,
-    )?;
+    let outcome = install(app_definition, &install_method, version, optional, from_source, ctx)?;
     if outcome.success() {
       return Ok(outcome);
     }
@@ -189,19 +168,16 @@ pub(crate) fn install(
   app_definition: &dyn AppDefinition,
   install_method: &Method,
   version: &Version,
-  platform: Platform,
   optional: bool,
-  yard: &Yard,
-  config_file: &configuration::File,
   from_source: bool,
-  log: Log,
+  ctx: &RuntimeContext,
 ) -> Result<Outcome> {
-  let app_folder = yard.create_app_folder(&app_definition.app_name(), version)?;
+  let app_folder = ctx.yard.create_app_folder(&app_definition.app_name(), version)?;
   match install_method {
-    Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &app_folder, version, url, bin_folder, optional, platform, log),
-    Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &app_folder, download_url, platform, optional, log),
-    Method::CompileGoSource { import_path } => compile_go::run(&app_folder, import_path, platform, optional, config_file, yard, from_source, log),
-    Method::CompileRustSource { crate_name, bin_folder: _ } => compile_rust::run(&app_folder, crate_name, log),
+    Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &app_folder, version, url, bin_folder, optional, ctx.platform, ctx.log),
+    Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &app_folder, download_url, ctx.platform, optional, ctx.log),
+    Method::CompileGoSource { import_path } => compile_go::run(&app_folder, import_path, optional, from_source, ctx),
+    Method::CompileRustSource { crate_name, bin_folder: _ } => compile_rust::run(&app_folder, crate_name, ctx.log),
   }
 }
 

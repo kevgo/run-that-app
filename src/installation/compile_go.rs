@@ -1,37 +1,27 @@
 use super::Outcome;
-use crate::applications::{self, AppDefinition};
+use crate::applications;
 use crate::configuration::RequestedVersions;
+use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::logging::{Event, Log};
-use crate::platform::Platform;
-use crate::yard::Yard;
-use crate::{commands, configuration};
+use crate::logging::Event;
+use crate::commands;
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use which::which;
 
 /// installs the given Go-based application by compiling it from source
-pub(crate) fn run(
-  app_folder: &Path,
-  import_path: &str,
-  platform: Platform,
-  optional: bool,
-  config_file: &configuration::File,
-  yard: &Yard,
-  from_source: bool,
-  log: Log,
-) -> Result<Outcome> {
+pub(crate) fn run(app_folder: &Path, import_path: &str, optional: bool, from_source: bool, ctx: &RuntimeContext) -> Result<Outcome> {
   let go_args = vec!["install", &import_path];
   let go_path = if let Ok(system_go_path) = which("go") {
     system_go_path
   } else {
-    let Some(rta_path) = load_rta_go(platform, optional, config_file, yard, from_source, log)? else {
+    let Some(rta_path) = load_rta_go(optional, from_source, ctx)? else {
       return Ok(Outcome::NotInstalled);
     };
     rta_path
   };
-  log(Event::CompileGoBegin {
+  (ctx.log)(Event::CompileGoBegin {
     go_path: go_path.to_string_lossy(),
     args: &go_args,
   });
@@ -47,22 +37,23 @@ pub(crate) fn run(
     },
   };
   if !status.success() {
-    log(Event::CompileGoFailed);
+    (ctx.log)(Event::CompileGoFailed);
     return Err(UserError::GoCompilationFailed);
   }
-  log(Event::CompileGoSuccess);
+  (ctx.log)(Event::CompileGoSuccess);
   Ok(Outcome::Installed)
 }
 
-fn load_rta_go(platform: Platform, optional: bool, config_file: &configuration::File, yard: &Yard, from_source: bool, log: Log) -> Result<Option<PathBuf>> {
+fn load_rta_go(optional: bool, from_source: bool, ctx: &RuntimeContext) -> Result<Option<PathBuf>> {
+  use crate::applications::AppDefinition;
   let go = applications::go::Go {};
-  let requested_go_versions: RequestedVersions = if let Some(versions) = config_file.lookup(&go.app_name()) {
+  let requested_go_versions: RequestedVersions = if let Some(versions) = ctx.config_file.lookup(&go.app_name()) {
     (*versions).clone()
   } else {
-    let versions = go.installable_versions(3, log)?;
+    let versions = go.installable_versions(3, ctx.log)?;
     RequestedVersions::from(versions)
   };
-  if let Some(executable_call) = commands::run::load_or_install_app(&go, requested_go_versions, platform, optional, yard, config_file, from_source, log)? {
+  if let Some(executable_call) = commands::run::load_or_install_app(&go, requested_go_versions, optional, from_source, ctx)? {
     return Ok(Some(executable_call.executable.inner()));
   }
   Ok(None)

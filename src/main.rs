@@ -3,6 +3,7 @@ mod archives;
 mod cli;
 mod commands;
 mod configuration;
+mod context;
 mod download;
 mod error;
 mod executables;

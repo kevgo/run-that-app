@@ -1,4 +1,5 @@
 use crate::applications::{AnalyzeResult, ApplicationName, Apps};
+use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::Executable;
 use crate::logging::Event;
@@ -15,6 +16,7 @@ pub(crate) fn test(args: &mut Args, apps: &Apps) -> Result<ExitCode> {
   let temp_folder = tempfile::tempdir().map_err(|err| UserError::CannotCreateTempDir { err: err.to_string() })?;
   let yard = Yard::load_or_create(temp_folder.path())?;
   let config_file = configuration::File::load(apps)?;
+  let ctx = RuntimeContext::new(platform, &yard, &config_file, log);
   for app in apps {
     if let Some(start_app_name) = &args.start_at_app {
       if &app.app_name() != start_app_name {
@@ -31,19 +33,7 @@ pub(crate) fn test(args: &mut Args, apps: &Apps) -> Result<ExitCode> {
         method: &install_method,
         version: &latest_version,
       });
-      if !installation::install(
-        app.as_ref(),
-        &install_method,
-        &latest_version,
-        platform,
-        args.optional,
-        &yard,
-        &config_file,
-        false,
-        log,
-      )?
-      .success()
-      {
+      if !installation::install(app.as_ref(), &install_method, &latest_version, args.optional, false, &ctx)?.success() {
         continue;
       }
       let app_folder = yard.app_folder(&app.app_name(), &latest_version);
