@@ -17,7 +17,12 @@ pub(crate) fn run(args: Args, apps: &Apps) -> Result<ExitCode> {
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
   let config_file = configuration::File::load(apps)?;
-  let ctx = RuntimeContext::new(platform, &yard, &config_file, log);
+  let ctx = RuntimeContext {
+    platform,
+    yard: &yard,
+    config_file: &config_file,
+    log,
+  };
   let include_app_versions = config_file.lookup_many(args.include_apps);
   let include_apps = load_or_install_apps(include_app_versions, apps, args.optional, args.from_source, &ctx)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
@@ -65,13 +70,7 @@ pub(crate) struct Args {
   pub(crate) verbose: bool,
 }
 
-fn load_or_install_apps(
-  app_versions: Vec<AppVersions>,
-  apps: &Apps,
-  optional: bool,
-  from_source: bool,
-  ctx: &RuntimeContext,
-) -> Result<Vec<ExecutableCall>> {
+fn load_or_install_apps(app_versions: Vec<AppVersions>, apps: &Apps, optional: bool, from_source: bool, ctx: &RuntimeContext) -> Result<Vec<ExecutableCall>> {
   let mut result = vec![];
   for app_version in app_versions {
     let app = apps.lookup(app_version.app_name)?;
@@ -173,7 +172,10 @@ fn load_or_install_from_yard(
   let (app_to_install, executable_name, executable_args) = app_definition.carrier(version, ctx.platform);
   let app_name = app_to_install.app_name();
   // try to load the app
-  if let Some((executable, bin_folder)) = ctx.yard.load_executable(app_to_install.as_ref(), &executable_name, version, ctx.platform, ctx.log) {
+  if let Some((executable, bin_folder)) = ctx
+    .yard
+    .load_executable(app_to_install.as_ref(), &executable_name, version, ctx.platform, ctx.log)
+  {
     let app_folder = ctx.yard.app_folder(&app_name, version);
     let args = executable_args.locate(&app_folder, &bin_folder)?;
     return Ok(Some(ExecutableCall { executable, args }));
@@ -191,7 +193,10 @@ fn load_or_install_from_yard(
     }
   }
   // load again now that it is installed
-  if let Some((executable, bin_folder)) = ctx.yard.load_executable(app_to_install.as_ref(), &executable_name, version, ctx.platform, ctx.log) {
+  if let Some((executable, bin_folder)) = ctx
+    .yard
+    .load_executable(app_to_install.as_ref(), &executable_name, version, ctx.platform, ctx.log)
+  {
     let app_folder = ctx.yard.app_folder(&app_name, version);
     let args = executable_args.locate(&app_folder, &bin_folder)?;
     return Ok(Some(ExecutableCall { executable, args }));

@@ -13,7 +13,12 @@ pub(crate) fn which(args: &Args, apps: &Apps) -> Result<ExitCode> {
   let yard = Yard::load_or_create(&yard::production_location()?)?;
   let platform = platform::detect(log)?;
   let config_file = configuration::File::load(apps)?;
-  let ctx = RuntimeContext::new(platform, &yard, &config_file, log);
+  let ctx = RuntimeContext {
+    platform,
+    yard: &yard,
+    config_file: &config_file,
+    log,
+  };
   let versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   if let Some(executable) = load_or_install_app(app, versions, args.optional, false, &ctx)? {
     println!("{executable}");
