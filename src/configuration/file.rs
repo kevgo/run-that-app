@@ -126,7 +126,7 @@ fn parse_line(line_text: &str, line_no: usize, apps: &Apps) -> Result<Option<App
     versions.push(RequestedVersion::parse(part, app)?);
   }
   Ok(Some(AppVersions {
-    app_name: app.app_name(),
+    app_name: app.name(),
     versions,
   }))
 }
@@ -179,19 +179,19 @@ mod tests {
       let want = configuration::File {
         apps: vec![
           AppVersions {
-            app_name: actionlint.app_name(),
+            app_name: actionlint.name(),
             versions: RequestedVersions::from(vec![RequestedVersion::Yard("1.2.3".into())]),
           },
           AppVersions {
-            app_name: dprint.app_name(),
+            app_name: dprint.name(),
             versions: RequestedVersions::from(vec![RequestedVersion::Yard("2.3.4".into())]),
           },
           AppVersions {
-            app_name: mdbook.app_name(),
+            app_name: mdbook.name(),
             versions: RequestedVersions::from(vec![RequestedVersion::Yard("3.4.5".into()), RequestedVersion::Yard("6.7.8".into())]),
           },
           AppVersions {
-            app_name: go.app_name(),
+            app_name: go.name(),
             versions: RequestedVersions::from(vec![
               RequestedVersion::Path(semver::VersionReq::parse("1.21").unwrap()),
               RequestedVersion::Yard("1.22.1".into()),
@@ -226,7 +226,7 @@ mod tests {
       let give = "shellcheck 0.9.0";
       let have = parse_line(give, 1, &apps).unwrap();
       let want = Some(AppVersions {
-        app_name: shellcheck.app_name(),
+        app_name: shellcheck.name(),
         versions: RequestedVersions::from(vec![RequestedVersion::Yard("0.9.0".into())]),
       });
       pretty::assert_eq!(have, want);
@@ -239,7 +239,7 @@ mod tests {
       let give = "shellcheck 0.9.0 0.6.0";
       let have = parse_line(give, 1, &apps).unwrap();
       let want = Some(AppVersions {
-        app_name: shellcheck.app_name(),
+        app_name: shellcheck.name(),
         versions: RequestedVersions::from(vec![RequestedVersion::Yard("0.9.0".into()), RequestedVersion::Yard("0.6.0".into())]),
       });
       pretty::assert_eq!(have, want);
@@ -252,7 +252,7 @@ mod tests {
       let give = "     shellcheck            0.9.0      ";
       let have = parse_line(give, 1, &apps).unwrap();
       let want = Some(AppVersions {
-        app_name: shellcheck.app_name(),
+        app_name: shellcheck.name(),
         versions: RequestedVersions::from(vec![RequestedVersion::Yard("0.9.0".into())]),
       });
       pretty::assert_eq!(have, want);
@@ -265,7 +265,7 @@ mod tests {
       let give = "shellcheck\t0.9.0";
       let have = parse_line(give, 1, &apps).unwrap();
       let want = Some(AppVersions {
-        app_name: shellcheck.app_name(),
+        app_name: shellcheck.name(),
         versions: RequestedVersions::from(vec![RequestedVersion::Yard("0.9.0".into())]),
       });
       pretty::assert_eq!(have, want);
@@ -314,7 +314,7 @@ mod tests {
       let give = "shellcheck 0.9.0  # comment";
       let have = parse_line(give, 1, &apps).unwrap();
       let want = Some(AppVersions {
-        app_name: shellcheck.app_name(),
+        app_name: shellcheck.name(),
         versions: RequestedVersions::from(vec![RequestedVersion::Yard("0.9.0".into())]),
       });
       pretty::assert_eq!(have, want);

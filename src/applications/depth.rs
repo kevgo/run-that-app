@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
 use crate::configuration::Version;
 use crate::error::Result;
@@ -15,8 +15,8 @@ const ORG: &str = "KyleBanks";
 const REPO: &str = "depth";
 
 impl AppDefinition for Depth {
-  fn name(&self) -> &'static str {
-    "depth"
+  fn name(&self) -> ApplicationName {
+    "depth".into()
   }
 
   fn homepage(&self) -> &'static str {

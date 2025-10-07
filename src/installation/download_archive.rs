@@ -22,7 +22,7 @@ pub(crate) fn run(
   ctx: &RuntimeContext,
 ) -> Result<Outcome> {
   let (app_to_install, executable_name, _args) = carrier(app_definition, version, ctx.platform);
-  let app_name = app_to_install.app_name();
+  let app_name = app_to_install.name();
   let Some(artifact) = download::artifact(url, &app_name, optional, ctx.log)? else {
     return Ok(Outcome::NotInstalled);
   };

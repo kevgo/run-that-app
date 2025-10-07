@@ -46,7 +46,7 @@ pub(crate) fn run(app_folder: &Path, import_path: &str, optional: bool, from_sou
 fn load_rta_go(optional: bool, from_source: bool, ctx: &RuntimeContext) -> Result<Option<PathBuf>> {
   use crate::applications::AppDefinition;
   let go = applications::go::Go {};
-  let requested_go_versions: RequestedVersions = if let Some(versions) = ctx.config_file.lookup(&go.app_name()) {
+  let requested_go_versions: RequestedVersions = if let Some(versions) = ctx.config_file.lookup(&go.name()) {
     (*versions).clone()
   } else {
     let versions = go.installable_versions(3, ctx.log)?;

@@ -5,7 +5,7 @@ mod compile_rust;
 mod download_archive;
 mod download_executable;
 
-use crate::applications::AppDefinition;
+use crate::applications::{AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::context::RuntimeContext;
 use crate::error::Result;
@@ -77,7 +77,7 @@ impl Method {
     }
   }
 
-  pub(crate) fn name(&self, app: &str, version: &Version) -> String {
+  pub(crate) fn name(&self, app: &ApplicationName, version: &Version) -> String {
     match self {
       Method::DownloadArchive { url: _, bin_folder: _ } => format!("download archive for {app}@{version}"),
       Method::DownloadExecutable { url: _ } => format!("download executable for {app}@{version}"),
@@ -172,7 +172,7 @@ pub(crate) fn install(
   from_source: bool,
   ctx: &RuntimeContext,
 ) -> Result<Outcome> {
-  let app_folder = ctx.yard.create_app_folder(&app_definition.app_name(), version)?;
+  let app_folder = ctx.yard.create_app_folder(&app_definition.name(), version)?;
   match install_method {
     Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &app_folder, version, url, bin_folder, optional, ctx),
     Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &app_folder, download_url, optional, ctx),

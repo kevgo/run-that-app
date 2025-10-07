@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
 use crate::configuration::Version;
 use crate::error::Result;
@@ -15,8 +15,8 @@ const ORG: &str = "loov";
 const REPO: &str = "goda";
 
 impl AppDefinition for Goda {
-  fn name(&self) -> &'static str {
-    "goda"
+  fn name(&self) -> ApplicationName {
+    "goda".into()
   }
 
   fn homepage(&self) -> &'static str {

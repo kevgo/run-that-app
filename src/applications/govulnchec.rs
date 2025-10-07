@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
 use crate::configuration::Version;
 use crate::error::Result;
@@ -10,8 +10,8 @@ use crate::platform::Platform;
 pub(crate) struct Govulncheck {}
 
 impl AppDefinition for Govulncheck {
-  fn name(&self) -> &'static str {
-    "govulncheck"
+  fn name(&self) -> ApplicationName {
+    "govulncheck".into()
   }
 
   fn homepage(&self) -> &'static str {

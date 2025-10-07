@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
 use crate::configuration::Version;
 use crate::error::Result;
@@ -15,8 +15,8 @@ const ORG: &str = "GaijinEntertainment";
 const REPO: &str = "go-exhaustruct";
 
 impl AppDefinition for Exhaustruct {
-  fn name(&self) -> &'static str {
-    "exhaustruct"
+  fn name(&self) -> ApplicationName {
+    "exhaustruct".into()
   }
 
   fn homepage(&self) -> &'static str {

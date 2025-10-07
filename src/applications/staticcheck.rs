@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
 use crate::configuration::Version;
 use crate::error::Result;
@@ -15,8 +15,8 @@ const REPO: &str = "go-tools";
 pub(crate) struct StaticCheck {}
 
 impl AppDefinition for StaticCheck {
-  fn name(&self) -> &'static str {
-    "staticcheck"
+  fn name(&self) -> ApplicationName {
+    "staticcheck".into()
   }
 
   fn homepage(&self) -> &'static str {

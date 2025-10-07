@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
@@ -14,8 +14,8 @@ const ORG: &str = "koalaman";
 const REPO: &str = "shellcheck";
 
 impl AppDefinition for ShellCheck {
-  fn name(&self) -> &'static str {
-    "shellcheck"
+  fn name(&self) -> ApplicationName {
+    "shellcheck".into()
   }
 
   fn homepage(&self) -> &'static str {

@@ -1,5 +1,5 @@
 use super::nodejs::NodeJS;
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
 use crate::configuration::Version;
 use crate::error::Result;
@@ -10,8 +10,8 @@ use crate::platform::Platform;
 pub(crate) struct Npx {}
 
 impl AppDefinition for Npx {
-  fn name(&self) -> &'static str {
-    "npx"
+  fn name(&self) -> ApplicationName {
+    "npx".into()
   }
 
   fn homepage(&self) -> &'static str {

@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
@@ -16,8 +16,8 @@ const ORG: &str = "rust-lang";
 const REPO: &str = "mdBook";
 
 impl AppDefinition for MdBook {
-  fn name(&self) -> &'static str {
-    "mdbook"
+  fn name(&self) -> ApplicationName {
+    "mdbook".into()
   }
 
   fn homepage(&self) -> &'static str {

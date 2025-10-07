@@ -1,4 +1,5 @@
 use super::{AnalyzeResult, AppDefinition};
+use crate::applications::ApplicationName;
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
@@ -15,8 +16,8 @@ const ORG: &str = "contest-framework";
 const REPO: &str = "server";
 
 impl AppDefinition for Contest {
-  fn name(&self) -> &'static str {
-    "contest"
+  fn name(&self) -> ApplicationName {
+    "contest".into()
   }
 
   fn homepage(&self) -> &'static str {

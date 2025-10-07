@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
 use crate::configuration::Version;
 use crate::error::Result;
@@ -15,8 +15,8 @@ const ORG: &str = "manuelarte";
 const REPO: &str = "funcorder";
 
 impl AppDefinition for FuncOrder {
-  fn name(&self) -> &'static str {
-    REPO
+  fn name(&self) -> ApplicationName {
+    REPO.into()
   }
 
   fn homepage(&self) -> &'static str {

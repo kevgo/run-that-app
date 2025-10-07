@@ -169,7 +169,7 @@ fn load_or_install_from_yard(
   ctx: &RuntimeContext,
 ) -> Result<Option<ExecutableCall>> {
   let (app_to_install, executable_name, executable_args) = carrier(app_definition, version, ctx.platform);
-  let app_name = app_to_install.app_name();
+  let app_name = app_to_install.name();
   // try to load the app
   if let Some((executable, bin_folder)) = ctx.yard.load_executable(app_to_install.as_ref(), &executable_name, version, ctx) {
     let app_folder = ctx.yard.app_folder(&app_name, version);

@@ -1,5 +1,6 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::Log;
+use crate::applications::ApplicationName;
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
@@ -15,8 +16,8 @@ const ORG: &str = "skx";
 const REPO: &str = "alphavet";
 
 impl AppDefinition for Alphavet {
-  fn name(&self) -> &'static str {
-    "alphavet"
+  fn name(&self) -> ApplicationName {
+    "alphavet".into()
   }
 
   fn homepage(&self) -> &'static str {

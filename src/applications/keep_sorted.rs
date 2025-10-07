@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
@@ -15,8 +15,8 @@ const ORG: &str = "google";
 const REPO: &str = "keep-sorted";
 
 impl AppDefinition for KeepSorted {
-  fn name(&self) -> &'static str {
-    "keep-sorted"
+  fn name(&self) -> ApplicationName {
+    "keep-sorted".into()
   }
 
   fn homepage(&self) -> &'static str {

@@ -1,3 +1,4 @@
+use crate::applications::ApplicationName;
 use crate::platform::Os;
 use std::fmt::Display;
 use std::path::Path;
@@ -25,6 +26,12 @@ impl AsRef<str> for ExecutableNameUnix {
 impl Display for ExecutableNameUnix {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(&self.0)
+  }
+}
+
+impl From<ApplicationName> for ExecutableNameUnix {
+  fn from(value: ApplicationName) -> Self {
+    ExecutableNameUnix(value.to_string())
   }
 }
 

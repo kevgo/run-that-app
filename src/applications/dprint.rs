@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
@@ -15,8 +15,8 @@ const ORG: &str = "dprint";
 const REPO: &str = "dprint";
 
 impl AppDefinition for Dprint {
-  fn name(&self) -> &'static str {
-    "dprint"
+  fn name(&self) -> ApplicationName {
+    "dprint".into()
   }
 
   fn homepage(&self) -> &'static str {

@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
 use crate::configuration::Version;
 use crate::error::Result;
@@ -15,8 +15,8 @@ const ORG: &str = "butuzov";
 const REPO: &str = "ireturn";
 
 impl AppDefinition for Ireturn {
-  fn name(&self) -> &'static str {
-    "ireturn"
+  fn name(&self) -> ApplicationName {
+    "ireturn".into()
   }
 
   fn homepage(&self) -> &'static str {
