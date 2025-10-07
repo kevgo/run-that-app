@@ -1,5 +1,6 @@
 use super::RequestedVersions;
 use crate::applications::ApplicationName;
+use std::cmp::Ordering;
 
 #[derive(Debug, PartialEq)]
 pub(crate) struct AppVersions {
@@ -17,12 +18,8 @@ impl PartialOrd for AppVersions {
 
 impl Ord for AppVersions {
   fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-    // Sort first by app name
     match self.app_name.as_str().cmp(other.app_name.as_str()) {
-      std::cmp::Ordering::Equal => {
-        // Then sort by versions
-        self.versions.cmp(&other.versions)
-      }
+      Ordering::Equal => self.versions.cmp(&other.versions),
       other => other,
     }
   }
