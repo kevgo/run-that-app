@@ -186,7 +186,7 @@ rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
 Here is a template for installing and using run-that-app in a `Makefile`:
 
 ```make
-RTA_VERSION = 0.19.1
+RTA_VERSION = 0.20.0
 
 # an example Make target that uses run-that-app
 test: tools/rta@${RTA_VERSION}
