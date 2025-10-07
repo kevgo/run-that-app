@@ -1,9 +1,9 @@
 use super::{BinFolder, Outcome};
 use crate::applications::AppDefinition;
 use crate::configuration::Version;
+use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::logging::Log;
-use crate::platform::Platform;
 use crate::{archives, download};
 #[cfg(unix)]
 use std::fs;
@@ -19,28 +19,27 @@ pub(crate) fn run(
   url: &str,
   bin_folders: &BinFolder,
   optional: bool,
-  platform: Platform,
-  log: Log,
+  ctx: &RuntimeContext,
 ) -> Result<Outcome> {
-  let (app_to_install, executable_name, _args) = app_definition.carrier(version, platform);
+  let (app_to_install, executable_name, _args) = app_definition.carrier(version, ctx.platform);
   let app_name = app_to_install.app_name();
-  let Some(artifact) = download::artifact(url, &app_name, optional, log)? else {
+  let Some(artifact) = download::artifact(url, &app_name, optional, ctx.log)? else {
     return Ok(Outcome::NotInstalled);
   };
   let Some(archive) = archives::lookup(&artifact.filename, artifact.data) else {
     return Err(UserError::UnknownArchive(artifact.filename));
   };
   // extract the archive
-  archive.extract_all(app_folder, log)?;
-  let executable_filename = executable_name.platform_path(platform.os);
+  archive.extract_all(app_folder, ctx.log)?;
+  let executable_filename = executable_name.platform_path(ctx.platform.os);
   // verify that all executables that should be there exist and are executable
   for executable_path in bin_folders.executable_paths(app_folder, &executable_filename) {
-    make_executable(&executable_path, log);
+    make_executable(&executable_path, ctx.log);
     // set the executable bit of all executable files that this app provides
     for other_executable in app_definition.additional_executables() {
-      let other_executable_filename = other_executable.platform_path(platform.os);
+      let other_executable_filename = other_executable.platform_path(ctx.platform.os);
       for other_executable_path in bin_folders.executable_paths(app_folder, &other_executable_filename) {
-        make_executable(&other_executable_path, log);
+        make_executable(&other_executable_path, ctx.log);
       }
     }
   }
