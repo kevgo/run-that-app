@@ -41,7 +41,7 @@ impl AppDefinition for GolangCiLint {
     // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
     vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}"),
-        bin_folder: BinFolder::Subfolder { path:  format!("golangci-lint-{version}-{os}-{cpu}").into()},
+        bin_folder: BinFolder::Subfolder { path: format!("golangci-lint-{version}-{os}-{cpu}").into()},
     }]}
   }
 
