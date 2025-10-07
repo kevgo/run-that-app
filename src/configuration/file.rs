@@ -18,6 +18,7 @@ impl File {
       app_name,
       versions: RequestedVersions::from(vec![RequestedVersion::Yard(version)]),
     });
+    self.apps.sort();
     self.save()
   }
 

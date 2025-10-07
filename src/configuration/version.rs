@@ -7,14 +7,22 @@ use std::path::Path;
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Version(String);
 
+impl Eq for Version {}
+
 impl PartialOrd for Version {
   fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+    Some(self.cmp(other))
+  }
+}
+
+impl Ord for Version {
+  fn cmp(&self, other: &Self) -> Ordering {
     let result = compare_semver(self, other);
-    if result.is_some() {
-      return result;
+    if let Some(ordering) = result {
+      return ordering;
     }
     // no conclusive semver order --> compare alphabetically
-    self.as_str().partial_cmp(other.as_str())
+    self.as_str().cmp(other.as_str())
   }
 }
 
