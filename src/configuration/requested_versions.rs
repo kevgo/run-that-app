@@ -16,29 +16,24 @@ impl PartialOrd for RequestedVersions {
 
 impl Ord for RequestedVersions {
   fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-    // Compare length first
-    match self.0.len().cmp(&other.0.len()) {
-      std::cmp::Ordering::Equal => {
-        // If same length, compare element by element
-        for (a, b) in self.0.iter().zip(other.0.iter()) {
-          let cmp = match (a, b) {
-            (RequestedVersion::Yard(v1), RequestedVersion::Yard(v2)) => {
-              // Use PartialOrd, fallback to string comparison if PartialOrd returns None
-              v1.partial_cmp(v2).unwrap_or_else(|| v1.as_str().cmp(v2.as_str()))
-            }
-            (RequestedVersion::Path(v1), RequestedVersion::Path(v2)) => v1.to_string().cmp(&v2.to_string()),
-            // Path comes before Yard in ordering
-            (RequestedVersion::Path(_), RequestedVersion::Yard(_)) => std::cmp::Ordering::Less,
-            (RequestedVersion::Yard(_), RequestedVersion::Path(_)) => std::cmp::Ordering::Greater,
-          };
-          if cmp != std::cmp::Ordering::Equal {
-            return cmp;
-          }
+    // Compare element by element lexicographically
+    for (a, b) in self.0.iter().zip(other.0.iter()) {
+      let cmp = match (a, b) {
+        (RequestedVersion::Yard(v1), RequestedVersion::Yard(v2)) => {
+          // Use PartialOrd, fallback to string comparison if PartialOrd returns None
+          v1.partial_cmp(v2).unwrap_or_else(|| v1.as_str().cmp(v2.as_str()))
         }
-        std::cmp::Ordering::Equal
+        (RequestedVersion::Path(v1), RequestedVersion::Path(v2)) => v1.to_string().cmp(&v2.to_string()),
+        // Path comes before Yard in ordering
+        (RequestedVersion::Path(_), RequestedVersion::Yard(_)) => std::cmp::Ordering::Less,
+        (RequestedVersion::Yard(_), RequestedVersion::Path(_)) => std::cmp::Ordering::Greater,
+      };
+      if cmp != std::cmp::Ordering::Equal {
+        return cmp;
       }
-      other => other,
     }
+    // If all compared elements are equal, compare by length
+    self.0.len().cmp(&other.0.len())
   }
 }
 
