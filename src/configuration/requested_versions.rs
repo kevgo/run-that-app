@@ -19,10 +19,7 @@ impl Ord for RequestedVersions {
     // Compare element by element lexicographically
     for (a, b) in self.0.iter().zip(other.0.iter()) {
       let cmp = match (a, b) {
-        (RequestedVersion::Yard(v1), RequestedVersion::Yard(v2)) => {
-          // Use PartialOrd, fallback to string comparison if PartialOrd returns None
-          v1.partial_cmp(v2).unwrap_or_else(|| v1.as_str().cmp(v2.as_str()))
-        }
+        (RequestedVersion::Yard(v1), RequestedVersion::Yard(v2)) => v1.cmp(v2),
         (RequestedVersion::Path(v1), RequestedVersion::Path(v2)) => v1.to_string().cmp(&v2.to_string()),
         // Path comes before Yard in ordering
         (RequestedVersion::Path(_), RequestedVersion::Yard(_)) => std::cmp::Ordering::Less,
