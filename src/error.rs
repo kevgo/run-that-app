@@ -107,7 +107,6 @@ pub(crate) enum UserError {
     regex: String,
     err: String,
   },
-  InvalidUrl(String),
   MissingApplication,
   MultipleCommandsGiven,
   NotOnline,
@@ -241,7 +240,6 @@ impl UserError {
         error("Invalid number given");
       }
       UserError::InvalidRegex { regex, err } => error(&format!("invalid regex '{regex}': {err}")),
-      UserError::InvalidUrl(content) => error(&format!("invalid URL: {content}")),
       UserError::MissingApplication => {
         error("missing application");
         desc("Please provide the application to execute");
