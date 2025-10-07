@@ -213,16 +213,16 @@ pub(crate) struct Apps(Vec<Box<dyn AppDefinition>>);
 
 impl Apps {
   /// provides the app with the given name
-  pub(crate) fn lookup<AS: AsRef<str>>(&self, name: AS) -> Result<&dyn AppDefinition> {
+  pub(crate) fn lookup(&self, name: &str) -> Result<&dyn AppDefinition> {
     for app in &self.0 {
-      if app.name() == name.as_ref() {
+      if &app.name().as_str() == &name {
         return Ok(app.as_ref());
       }
-      if app.executable_filename().as_ref() == name.as_ref() {
+      if app.executable_filename().as_ref() == name {
         return Ok(app.as_ref());
       }
     }
-    Err(UserError::UnknownApp(name.as_ref().to_string()))
+    Err(UserError::UnknownApp(name.to_string()))
   }
 
   /// provides the length of the name of the app with the longest name

@@ -8,7 +8,7 @@ use crate::{logging, platform, yard};
 use std::process::ExitCode;
 
 pub(crate) fn which(args: &Args, apps: &Apps) -> Result<ExitCode> {
-  let app = apps.lookup(&args.app_name)?;
+  let app = apps.lookup(args.app_name.as_ref())?;
   let log = logging::new(args.verbose);
   let yard = Yard::load_or_create(&yard::production_location()?)?;
   let platform = platform::detect(log)?;

@@ -4,7 +4,7 @@ use crate::logging;
 use std::process::ExitCode;
 
 pub(crate) fn versions(args: &Args, apps: &Apps) -> Result<ExitCode> {
-  let app = apps.lookup(&args.app_name)?;
+  let app = apps.lookup(args.app_name.as_ref())?;
   let log = logging::new(args.verbose);
   let versions = app.installable_versions(args.amount, log)?;
   println!("{} is available in these versions:", args.app_name);

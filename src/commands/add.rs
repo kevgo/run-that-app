@@ -5,7 +5,7 @@ use std::process::ExitCode;
 
 pub(crate) fn add(args: Args, apps: &Apps) -> Result<ExitCode> {
   let log = logging::new(args.verbose);
-  let app = apps.lookup(args.app_name)?;
+  let app = apps.lookup(args.app_name.as_str())?;
   let version = app.latest_installable_version(log)?;
   if let Some(config_file) = configuration::File::read(apps)? {
     config_file.add(app.name(), version.clone())?;

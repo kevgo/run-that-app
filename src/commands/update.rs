@@ -8,7 +8,7 @@ pub(crate) fn update(args: &Args, all_apps: &Apps) -> Result<ExitCode> {
   let mut config = File::load(all_apps)?;
   let log = logging::new(args.verbose);
   for old_app in &mut config.apps {
-    let app = all_apps.lookup(&old_app.app_name)?;
+    let app = all_apps.lookup(old_app.app_name.as_ref())?;
     log(Event::UpdateBegin { app: &old_app.app_name });
     let latest = app.latest_installable_version(log)?;
     if let Some(previous) = &old_app.versions.update_largest_with(&latest) {

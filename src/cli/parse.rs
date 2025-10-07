@@ -84,7 +84,7 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
           versions = Some(value.parse().map_err(|_| UserError::InvalidNumber)?);
           continue;
         }
-        return Err(UserError::UnknownCliOption(arg));
+        return Err(UserError::UnknownCliOption(arg.to_string()));
       }
     }
     if app_version.is_none() {

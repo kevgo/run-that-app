@@ -11,7 +11,7 @@ use crate::{platform, subshell, yard};
 use std::process::ExitCode;
 
 pub(crate) fn run(args: Args, apps: &Apps) -> Result<ExitCode> {
-  let app_to_run = apps.lookup(&args.app_name)?;
+  let app_to_run = apps.lookup(args.app_name.as_ref())?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
@@ -72,7 +72,7 @@ pub(crate) struct Args {
 fn load_or_install_apps(app_versions: Vec<AppVersions>, apps: &Apps, optional: bool, from_source: bool, ctx: &RuntimeContext) -> Result<Vec<ExecutableCall>> {
   let mut result = vec![];
   for app_version in app_versions {
-    let app = apps.lookup(app_version.app_name)?;
+    let app = apps.lookup(app_version.app_name.as_ref())?;
     if let Some(executable_call) = load_or_install_app(app, app_version.versions, optional, from_source, ctx)? {
       result.push(executable_call);
     }
