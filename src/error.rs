@@ -14,7 +14,7 @@ pub(crate) enum UserError {
   },
   #[cfg(unix)]
   ArchiveDoesNotContainExecutable {
-    expected: String,
+    expected: PathBuf,
   },
   CannotAccessConfigFile(String),
   CannotCompileRustSource {
@@ -147,7 +147,7 @@ impl UserError {
       }
       #[cfg(unix)]
       UserError::ArchiveDoesNotContainExecutable { expected } => {
-        error(&format!("archive does not contain the expected executable: {expected}"));
+        error(&format!("archive does not contain the expected executable: {}", expected.to_string_lossy()));
       }
       UserError::CannotAccessConfigFile(reason) => {
         error(&format!("cannot read the config file: {reason}"));

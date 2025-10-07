@@ -65,7 +65,7 @@ fn make_executable_unix(filepath: &Path, log: Log) -> Result<()> {
   log(Event::MakeExecutable { file: filepath });
   let Ok(executable_file) = fs::File::open(filepath) else {
     return Err(UserError::ArchiveDoesNotContainExecutable {
-      expected: filepath.to_string_lossy().to_string(),
+      expected: filepath.to_path_buf(),
     });
   };
   let metadata = match executable_file.metadata() {
