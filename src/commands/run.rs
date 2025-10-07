@@ -171,10 +171,7 @@ fn load_or_install_from_yard(
   let (app_to_install, executable_name, executable_args) = app_definition.carrier(version, ctx.platform);
   let app_name = app_to_install.app_name();
   // try to load the app
-  if let Some((executable, bin_folder)) = ctx
-    .yard
-    .load_executable(app_to_install.as_ref(), &executable_name, version, ctx.platform, ctx.log)
-  {
+  if let Some((executable, bin_folder)) = ctx.yard.load_executable(app_to_install.as_ref(), &executable_name, version, ctx) {
     let app_folder = ctx.yard.app_folder(&app_name, version);
     let args = executable_args.locate(&app_folder, &bin_folder)?;
     return Ok(Some(ExecutableCall { executable, args }));
@@ -192,10 +189,7 @@ fn load_or_install_from_yard(
     }
   }
   // load again now that it is installed
-  if let Some((executable, bin_folder)) = ctx
-    .yard
-    .load_executable(app_to_install.as_ref(), &executable_name, version, ctx.platform, ctx.log)
-  {
+  if let Some((executable, bin_folder)) = ctx.yard.load_executable(app_to_install.as_ref(), &executable_name, version, ctx) {
     let app_folder = ctx.yard.app_folder(&app_name, version);
     let args = executable_args.locate(&app_folder, &bin_folder)?;
     return Ok(Some(ExecutableCall { executable, args }));
