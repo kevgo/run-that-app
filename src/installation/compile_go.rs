@@ -1,10 +1,9 @@
 use super::Outcome;
-use crate::applications;
 use crate::configuration::RequestedVersions;
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::logging::Event;
-use crate::commands;
+use crate::{applications, commands};
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 use std::process::Command;

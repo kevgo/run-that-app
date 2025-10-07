@@ -174,7 +174,9 @@ pub(crate) fn install(
 ) -> Result<Outcome> {
   let app_folder = ctx.yard.create_app_folder(&app_definition.app_name(), version)?;
   match install_method {
-    Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &app_folder, version, url, bin_folder, optional, ctx.platform, ctx.log),
+    Method::DownloadArchive { url, bin_folder } => {
+      download_archive::run(app_definition, &app_folder, version, url, bin_folder, optional, ctx.platform, ctx.log)
+    }
     Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &app_folder, download_url, ctx.platform, optional, ctx.log),
     Method::CompileGoSource { import_path } => compile_go::run(&app_folder, import_path, optional, from_source, ctx),
     Method::CompileRustSource { crate_name, bin_folder: _ } => compile_rust::run(&app_folder, crate_name, ctx.log),
