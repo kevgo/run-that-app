@@ -1,5 +1,10 @@
 # run-that-app changelog
 
+### 0.20.0 (2025-10-07)
+
+- sorts the config file when adding new apps
+- says for which app the version is missing
+
 ### 0.19.1 (2025-10-03)
 
 - fix wrong message when config file not found
