@@ -7,7 +7,7 @@ use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, filesystem, regexp};
 use big_s::S;
-use std::path::{self, PathBuf};
+use std::path;
 
 #[derive(Clone)]
 pub(crate) struct Go {}
@@ -44,7 +44,7 @@ impl AppDefinition for Go {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}"),
         bin_folder: BinFolder::Subfolder {
-          path: PathBuf::from(format!("go{sep}bin")),
+          path: format!("go{sep}bin").into(),
         },
       }],
     }
@@ -123,7 +123,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
-      use std::path::{self, PathBuf};
+      use std::path;
 
       let have = (Go {}).run_method(
         &Version::from("1.21.5"),
@@ -137,7 +137,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz"),
           bin_folder: BinFolder::Subfolder {
-            path: PathBuf::from(format!("go{sep}bin")),
+            path: format!("go{sep}bin").into(),
           },
         }],
       };

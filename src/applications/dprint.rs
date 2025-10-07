@@ -6,7 +6,6 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, regexp};
-use std::path::PathBuf;
 
 #[derive(Clone)]
 pub(crate) struct Dprint {}
@@ -41,7 +40,7 @@ impl AppDefinition for Dprint {
         },
         Method::CompileRustSource {
           crate_name: "dprint",
-          bin_folder: BinFolder::Subfolder { path: PathBuf::from("bin") },
+          bin_folder: BinFolder::Subfolder { path: "bin".into() },
         },
       ],
     }
@@ -82,7 +81,6 @@ mod tests {
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
-    use std::path::PathBuf;
 
     #[test]
     fn macos_arm() {
@@ -101,7 +99,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "dprint",
-            bin_folder: BinFolder::Subfolder { path: PathBuf::from("bin") },
+            bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
       };
@@ -125,7 +123,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "dprint",
-            bin_folder: BinFolder::Subfolder { path: PathBuf::from("bin") },
+            bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
       };

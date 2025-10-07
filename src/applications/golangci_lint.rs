@@ -7,7 +7,6 @@ use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, regexp};
 use const_format::formatcp;
-use std::path::PathBuf;
 
 #[derive(Clone)]
 pub(crate) struct GolangCiLint {}
@@ -42,7 +41,7 @@ impl AppDefinition for GolangCiLint {
     // install from source not recommended, see https://golangci-lint.run/usage/install/#install-from-source
     vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/golangci-lint-{version}-{os}-{cpu}.{ext}"),
-        bin_folder: BinFolder::Subfolder { path: PathBuf::from( format!("golangci-lint-{version}-{os}-{cpu}"))},
+        bin_folder: BinFolder::Subfolder { path:  format!("golangci-lint-{version}-{os}-{cpu}").into()},
     }]}
   }
 
@@ -78,7 +77,6 @@ mod tests {
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
-    use std::path::PathBuf;
 
     #[test]
     fn linux_arm() {
@@ -93,7 +91,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-darwin-arm64.tar.gz"),
           bin_folder: BinFolder::Subfolder {
-            path: PathBuf::from("golangci-lint-1.55.2-darwin-arm64"),
+            path: "golangci-lint-1.55.2-darwin-arm64".into(),
           },
         }],
       };
@@ -113,7 +111,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-windows-amd64.zip"),
           bin_folder: BinFolder::Subfolder {
-            path: PathBuf::from("golangci-lint-1.55.2-windows-amd64"),
+            path: "golangci-lint-1.55.2-windows-amd64".into(),
           },
         }],
       };

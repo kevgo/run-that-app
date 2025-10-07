@@ -7,7 +7,6 @@ use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, regexp};
 use const_format::formatcp;
-use std::path::PathBuf;
 
 #[derive(Clone)]
 pub(crate) struct MdBook {}
@@ -46,7 +45,7 @@ impl AppDefinition for MdBook {
         },
         Method::CompileRustSource {
           crate_name: "mdbook",
-          bin_folder: BinFolder::Subfolder { path: PathBuf::from("bin") },
+          bin_folder: BinFolder::Subfolder { path: "bin".into() },
         },
       ],
     }
@@ -88,7 +87,6 @@ mod tests {
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
-    use std::path::PathBuf;
 
     #[test]
     fn linux_arm() {
@@ -107,7 +105,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "mdbook",
-            bin_folder: BinFolder::Subfolder { path: PathBuf::from("bin") },
+            bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
       };
@@ -131,7 +129,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "mdbook",
-            bin_folder: BinFolder::Subfolder { path: PathBuf::from("bin") },
+            bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
       };

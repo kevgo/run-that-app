@@ -6,7 +6,6 @@ use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
-use std::path::PathBuf;
 
 const ORG: &str = "dominikh";
 const REPO: &str = "go-tools";
@@ -37,9 +36,7 @@ impl AppDefinition for StaticCheck {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/staticcheck_{os}_{cpu}.tar.gz"),
-          bin_folder: BinFolder::Subfolder {
-            path: PathBuf::from("staticcheck"),
-          },
+          bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
         },
         Method::CompileGoSource {
           import_path: format!("honnef.co/go/tools/cmd/staticcheck@{version}"),
@@ -76,7 +73,6 @@ mod tests {
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
-    use std::path::PathBuf;
 
     #[test]
     fn linux_arm() {
@@ -91,9 +87,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_darwin_arm64.tar.gz"),
-            bin_folder: BinFolder::Subfolder {
-              path: PathBuf::from("staticcheck"),
-            },
+            bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
           },
           Method::CompileGoSource {
             import_path: S("honnef.co/go/tools/cmd/staticcheck@3.7.0"),
@@ -116,9 +110,7 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: S("https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_windows_amd64.tar.gz"),
-            bin_folder: BinFolder::Subfolder {
-              path: PathBuf::from("staticcheck"),
-            },
+            bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
           },
           Method::CompileGoSource {
             import_path: S("honnef.co/go/tools/cmd/staticcheck@3.7.0"),
