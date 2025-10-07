@@ -46,7 +46,7 @@ impl AppDefinition for RipGrep {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/ripgrep-{version}-{cpu}-{os}.{ext}"),
         bin_folder: BinFolder::Subfolder {
-          path: format!("ripgrep-{version}-{cpu}-{os}"),
+          path: format!("ripgrep-{version}-{cpu}-{os}").into(),
         },
       }],
     }
@@ -102,7 +102,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-apple-darwin.tar.gz"),
           bin_folder: BinFolder::Subfolder {
-            path: S("ripgrep-14.1.1-aarch64-apple-darwin"),
+            path: "ripgrep-14.1.1-aarch64-apple-darwin".into(),
           },
         }],
       };
@@ -122,7 +122,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-unknown-linux-gnu.tar.gz"),
           bin_folder: BinFolder::Subfolder {
-            path: S("ripgrep-14.1.1-aarch64-unknown-linux-gnu"),
+            path: "ripgrep-14.1.1-aarch64-unknown-linux-gnu".into(),
           },
         }],
       };
@@ -142,7 +142,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz"),
           bin_folder: BinFolder::Subfolder {
-            path: S("ripgrep-14.1.1-x86_64-unknown-linux-musl"),
+            path: "ripgrep-14.1.1-x86_64-unknown-linux-musl".into(),
           },
         }],
       };
@@ -162,7 +162,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip"),
           bin_folder: BinFolder::Subfolder {
-            path: S("ripgrep-14.1.1-x86_64-pc-windows-msvc"),
+            path: "ripgrep-14.1.1-x86_64-pc-windows-msvc".into(),
           },
         }],
       };

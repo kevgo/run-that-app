@@ -43,7 +43,9 @@ impl AppDefinition for Go {
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}"),
-        bin_folder: BinFolder::Subfolder { path: format!("go{sep}bin") },
+        bin_folder: BinFolder::Subfolder {
+          path: format!("go{sep}bin").into(),
+        },
       }],
     }
   }
@@ -121,6 +123,8 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn linux_arm() {
+      use std::path;
+
       let have = (Go {}).run_method(
         &Version::from("1.21.5"),
         Platform {
@@ -128,10 +132,13 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
+      let sep = path::MAIN_SEPARATOR;
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz"),
-          bin_folder: BinFolder::Subfolder { path: S("go/bin") },
+          bin_folder: BinFolder::Subfolder {
+            path: format!("go{sep}bin").into(),
+          },
         }],
       };
       assert_eq!(have, want);
@@ -150,7 +157,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://go.dev/dl/go1.21.5.windows-amd64.zip"),
-          bin_folder: BinFolder::Subfolder { path: S("go\\bin") },
+          bin_folder: BinFolder::Subfolder { path: "go\\bin".into() },
         }],
       };
       assert_eq!(have, want);

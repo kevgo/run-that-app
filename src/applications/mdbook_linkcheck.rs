@@ -6,7 +6,6 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, regexp};
-use big_s::S;
 use const_format::formatcp;
 
 #[derive(Clone)]
@@ -42,7 +41,7 @@ impl AppDefinition for MdBookLinkCheck {
         },
         Method::CompileRustSource {
           crate_name: "mdbook-linkcheck",
-          bin_folder: BinFolder::Subfolder { path: S("bin") },
+          bin_folder: BinFolder::Subfolder { path: "bin".into() },
         },
       ],
     }
@@ -102,7 +101,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "mdbook-linkcheck",
-            bin_folder: BinFolder::Subfolder { path: S("bin") },
+            bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
       };
@@ -126,7 +125,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "mdbook-linkcheck",
-            bin_folder: BinFolder::Subfolder { path: S("bin") },
+            bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
       };
