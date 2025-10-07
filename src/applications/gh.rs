@@ -6,7 +6,6 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, regexp};
-use big_s::S;
 use std::path;
 
 #[derive(Clone)]
@@ -43,7 +42,7 @@ impl AppDefinition for Gh {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}"),
         bin_folder: BinFolder::Subfolders {
-          options: vec![S("bin"), format!("gh_{version}_{os}_{cpu}{sep}bin")],
+          options: vec!["bin".into(), format!("gh_{version}_{os}_{cpu}{sep}bin").into()],
         },
       }],
     }
@@ -100,7 +99,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz"),
           bin_folder: BinFolder::Subfolders {
-            options: vec![S("bin"), S("gh_2.39.1_linux_arm64/bin")],
+            options: vec!["bin".into(), "gh_2.39.1_linux_arm64/bin".into()],
           },
         }],
       };
@@ -121,7 +120,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip"),
           bin_folder: BinFolder::Subfolders {
-            options: vec![S("bin"), S("gh_2.39.1_windows_amd64\\bin")],
+            options: vec!["bin".into(), "gh_2.39.1_windows_amd64\\bin".into()],
           },
         }],
       };
