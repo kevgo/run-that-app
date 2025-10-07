@@ -3,7 +3,7 @@
 #[allow(clippy::module_inception)] // I can't come up with a better name for this
 mod yard;
 
-use crate::prelude::*;
+use crate::error::{Result, UserError};
 use std::path::{Path, PathBuf};
 pub(crate) use yard::Yard;
 

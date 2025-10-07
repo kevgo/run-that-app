@@ -1,8 +1,8 @@
 use super::Outcome;
 use crate::applications::AppDefinition;
+use crate::error::Result;
 use crate::logging::Log;
 use crate::platform::Platform;
-use crate::prelude::*;
 use crate::{download, filesystem};
 use std::path::Path;
 

@@ -7,10 +7,10 @@ mod download_executable;
 
 use crate::applications::AppDefinition;
 use crate::configuration::{self, Version};
+use crate::error::Result;
 use crate::executables::ExecutableNamePlatform;
 use crate::logging::Log;
 use crate::platform::Platform;
-use crate::prelude::*;
 use crate::yard::Yard;
 use std::fmt::{Debug, Display};
 use std::path::{Path, PathBuf};

@@ -1,6 +1,6 @@
 use super::{File, RequestedVersion, Version};
 use crate::applications::ApplicationName;
-use crate::prelude::*;
+use crate::error::{Result, UserError};
 
 /// a collection of Version instances
 #[derive(Clone, Debug, PartialEq)]

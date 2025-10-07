@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use crate::error::{Result, UserError};
 use std::path::Path;
 
 #[cfg(unix)]

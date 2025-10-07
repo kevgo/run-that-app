@@ -1,6 +1,6 @@
 use crate::applications::{ApplicationName, Apps};
 use crate::configuration::Version;
-use crate::prelude::*;
+use crate::error::Result;
 
 /// a request from the user to run a particular app
 #[derive(Debug, PartialEq)]

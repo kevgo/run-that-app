@@ -1,5 +1,5 @@
 use crate::applications::{ApplicationName, Apps};
-use crate::prelude::*;
+use crate::error::Result;
 use crate::{configuration, logging};
 use std::process::ExitCode;
 

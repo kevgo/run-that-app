@@ -34,9 +34,9 @@ mod tikibase;
 
 use crate::Log;
 use crate::configuration::Version;
+use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableArgs, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
-use crate::prelude::*;
 use std::fmt::{Debug, Display};
 use std::path::Path;
 
@@ -253,7 +253,7 @@ mod tests {
 
     mod lookup {
       use crate::applications::{Apps, dprint, shellcheck};
-      use crate::prelude::*;
+      use crate::error::UserError;
       use big_s::S;
 
       #[test]

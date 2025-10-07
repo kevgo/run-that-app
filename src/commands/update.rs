@@ -1,7 +1,7 @@
 use crate::applications::Apps;
 use crate::configuration::File;
+use crate::error::Result;
 use crate::logging::{self, Event};
-use crate::prelude::*;
 use std::process::ExitCode;
 
 pub(crate) fn update(args: &Args, all_apps: &Apps) -> Result<ExitCode> {
