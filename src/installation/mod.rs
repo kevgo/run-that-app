@@ -95,9 +95,9 @@ pub(crate) enum BinFolder {
   /// the executables are in the given subfolder
   Subfolder { path: PathBuf },
   /// the executables are in one of the given subfolders
-  Subfolders { options: Vec<String> },
+  Subfolders { options: Vec<PathBuf> },
   /// the executables are either directly in the app folder or in one of the given subfolders
-  RootOrSubfolders { options: Vec<String> },
+  RootOrSubfolders { options: Vec<PathBuf> },
 }
 
 impl BinFolder {
@@ -144,8 +144,14 @@ impl Display for BinFolder {
     match self {
       BinFolder::Root => write!(f, "root"),
       BinFolder::Subfolder { path } => write!(f, "subfolder {}", path.to_string_lossy()),
-      BinFolder::Subfolders { options } => write!(f, "subfolders {}", options.join(", ")),
-      BinFolder::RootOrSubfolders { options } => write!(f, "root or subfolders {}", options.join(", ")),
+      BinFolder::Subfolders { options } => {
+        let paths: Vec<_> = options.iter().map(|p| p.to_string_lossy()).collect();
+        write!(f, "subfolders {}", paths.join(", "))
+      }
+      BinFolder::RootOrSubfolders { options } => {
+        let paths: Vec<_> = options.iter().map(|p| p.to_string_lossy()).collect();
+        write!(f, "root or subfolders {}", paths.join(", "))
+      }
     }
   }
 }
