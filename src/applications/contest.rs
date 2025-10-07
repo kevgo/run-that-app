@@ -1,0 +1,130 @@
+use super::{AnalyzeResult, AppDefinition};
+use crate::configuration::Version;
+use crate::executables::{Executable, RunMethod};
+use crate::hosting::github_releases;
+use crate::installation::{BinFolder, Method};
+use crate::platform::{Cpu, Os, Platform};
+use crate::prelude::*;
+use crate::{Log, regexp};
+use const_format::formatcp;
+
+pub(crate) struct Contest {}
+
+const ORG: &str = "contest-framework";
+const REPO: &str = "server";
+
+impl AppDefinition for Contest {
+  fn name(&self) -> &'static str {
+    "contest"
+  }
+
+  fn homepage(&self) -> &'static str {
+    formatcp!("https://github.com/{ORG}/{REPO}")
+  }
+
+  fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "arm_64",
+      Cpu::Intel64 => "intel_64",
+    };
+    let os = match platform.os {
+      Os::Linux => "linux",
+      Os::MacOS => "macos",
+      Os::Windows => "windows",
+    };
+    let ext = match platform.os {
+      Os::Linux | Os::MacOS => "tar.gz",
+      Os::Windows => "zip",
+    };
+    RunMethod::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/contest_{os}_{cpu}.{ext}"),
+        bin_folder: BinFolder::Root,
+      }],
+    }
+  }
+
+  fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
+    github_releases::versions(ORG, REPO, amount, log)
+  }
+
+  fn latest_installable_version(&self, log: Log) -> Result<Version> {
+    github_releases::latest(ORG, REPO, log)
+  }
+
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+    let output = executable.run_output(&["-h"], log)?;
+    if !output.contains("server component for the continuous testing framework") {
+      return Ok(AnalyzeResult::NotIdentified { output });
+    }
+    match extract_version(&executable.run_output(&["--version"], log)?) {
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
+    }
+  }
+
+  fn clone(&self) -> Box<dyn AppDefinition> {
+    Box::new(Self {})
+  }
+}
+
+fn extract_version(output: &str) -> Result<&str> {
+  regexp::first_capture(output, r"contest (\d+\.\d+\.\d+)")
+}
+
+#[cfg(test)]
+mod tests {
+  use crate::UserError;
+
+  mod install_methods {
+    use crate::applications::AppDefinition;
+    use crate::applications::contest::Contest;
+    use crate::configuration::Version;
+    use crate::executables::RunMethod;
+    use crate::installation::{BinFolder, Method};
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    #[test]
+    fn linux_arm() {
+      let have = (Contest {}).run_method(
+        &Version::from("0.4.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/contest-framework/server/releases/download/v0.4.0/contest_macos_arm_64.tar.gz"),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_intel() {
+      let have = (Contest {}).run_method(
+        &Version::from("0.4.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: S("https://github.com/contest-framework/server/releases/download/v0.4.0/contest_linux_intel_64.tar.gz"),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+  }
+
+  #[test]
+  fn extract_version() {
+    assert_eq!(super::extract_version("contest 0.4.0"), Ok("0.4.0"));
+    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
+  }
+}

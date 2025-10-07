@@ -2,6 +2,7 @@
 
 mod actionlint;
 mod alphavet;
+mod contest;
 mod deadcode;
 mod depth;
 mod dprint;
@@ -43,6 +44,7 @@ pub(crate) fn all() -> Apps {
   Apps(vec![
     Box::new(actionlint::ActionLint {}),
     Box::new(alphavet::Alphavet {}),
+    Box::new(contest::Contest {}),
     Box::new(deadcode::Deadcode {}),
     Box::new(depth::Depth {}),
     Box::new(dprint::Dprint {}),
