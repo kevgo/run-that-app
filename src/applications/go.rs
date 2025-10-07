@@ -155,7 +155,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://go.dev/dl/go1.21.5.windows-amd64.zip"),
+          url: "https://go.dev/dl/go1.21.5.windows-amd64.zip".into(),
           bin_folder: BinFolder::Subfolder { path: "go\\bin".into() },
         }],
       };
