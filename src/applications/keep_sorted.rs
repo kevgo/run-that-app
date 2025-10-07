@@ -4,7 +4,7 @@ use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::Platform;
-use crate::prelude::*;
+use crate::error::Result;
 use crate::{Log, regexp};
 use const_format::formatcp;
 

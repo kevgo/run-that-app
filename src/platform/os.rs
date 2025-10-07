@@ -1,5 +1,5 @@
 use crate::logging::{Event, Log};
-use crate::prelude::*;
+use crate::error::{Result, UserError};
 use std::env;
 use std::fmt::Display;
 

@@ -1,5 +1,5 @@
 use crate::logging::{Event, Log};
-use crate::prelude::*;
+use crate::error::Result;
 use crate::subshell;
 use std::borrow::Cow;
 use std::ffi::OsStr;

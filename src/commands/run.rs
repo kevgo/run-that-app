@@ -5,7 +5,7 @@ use crate::filesystem::find_global_install;
 use crate::installation::{self, Outcome};
 use crate::logging::{self, Event, Log};
 use crate::platform::{self, Platform};
-use crate::prelude::*;
+use crate::error::{Result, UserError};
 use crate::yard::Yard;
 use crate::{subshell, yard};
 use std::process::ExitCode;

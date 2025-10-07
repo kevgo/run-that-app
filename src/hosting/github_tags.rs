@@ -1,7 +1,7 @@
 use super::strip_leading_v;
 use crate::Log;
 use crate::logging::Event;
-use crate::prelude::*;
+use crate::error::{Result, UserError};
 use big_s::S;
 
 pub(crate) fn all(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<String>> {

@@ -3,7 +3,7 @@ use crate::applications::{self, AppDefinition};
 use crate::configuration::RequestedVersions;
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
-use crate::prelude::*;
+use crate::error::{Result, UserError};
 use crate::yard::Yard;
 use crate::{commands, configuration};
 use std::io::ErrorKind;

@@ -11,7 +11,6 @@ mod hosting;
 mod installation;
 mod logging;
 mod platform;
-mod prelude;
 mod regexp;
 mod subshell;
 mod yard;
@@ -32,7 +31,7 @@ fn main() -> ExitCode {
   }
 }
 
-fn inner() -> prelude::Result<ExitCode> {
+fn inner() -> error::Result<ExitCode> {
   let apps = applications::all();
   match cli::parse(std::env::args(), &apps)? {
     Command::Add(args) => commands::add(args, &apps),

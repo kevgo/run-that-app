@@ -3,7 +3,7 @@ use crate::applications::AppDefinition;
 use crate::configuration::Version;
 use crate::logging::Log;
 use crate::platform::Platform;
-use crate::prelude::*;
+use crate::error::{Result, UserError};
 use crate::{archives, download};
 #[cfg(unix)]
 use std::fs;

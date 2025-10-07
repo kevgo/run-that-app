@@ -4,7 +4,7 @@ use crate::configuration::Version;
 use crate::executables::{Executable, RunMethod};
 use crate::installation::Method;
 use crate::platform::Platform;
-use crate::prelude::*;
+use crate::error::Result;
 
 pub(crate) struct Govulncheck {}
 

@@ -1,6 +1,6 @@
 use super::Outcome;
 use crate::logging::{Event, Log};
-use crate::prelude::*;
+use crate::error::{Result, UserError};
 use std::io::ErrorKind;
 use std::path::Path;
 use std::process::Command;

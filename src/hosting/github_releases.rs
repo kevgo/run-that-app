@@ -2,7 +2,7 @@ use super::strip_leading_v;
 use crate::Log;
 use crate::configuration::Version;
 use crate::logging::Event;
-use crate::prelude::*;
+use crate::error::{Result, UserError};
 use big_s::S;
 
 /// provides the latest official version of the given application on GitHub Releases

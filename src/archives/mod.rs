@@ -5,7 +5,7 @@ mod zip;
 use self::tar_gz::TarGz;
 use self::tar_xz::TarXz;
 use self::zip::Zip;
-use crate::prelude::*;
+use crate::error::Result;
 use crate::{Log, filesystem};
 use std::path::Path;
 

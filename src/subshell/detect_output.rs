@@ -1,7 +1,7 @@
 use super::{add_paths, exit_status_to_code, render_call};
 use crate::cli;
 use crate::executables::{Executable, ExecutableCall};
-use crate::prelude::*;
+use crate::error::{Result, UserError};
 use std::io::{self, BufRead, BufReader, Read};
 use std::process::{self, Child, Command, ExitCode, Stdio};
 use std::sync::mpsc;

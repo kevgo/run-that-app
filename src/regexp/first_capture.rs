@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use crate::error::{Result, UserError};
 use regex::Regex;
 
 /// provides the first capture of the given regex in the given text

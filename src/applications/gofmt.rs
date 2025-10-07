@@ -4,7 +4,7 @@ use crate::Log;
 use crate::configuration::Version;
 use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
-use crate::prelude::*;
+use crate::error::Result;
 
 pub(crate) struct Gofmt {}
 

@@ -1,6 +1,6 @@
 use super::Version;
 use crate::applications::AppDefinition;
-use crate::prelude::*;
+use crate::error::{Result, UserError};
 use std::fmt::Display;
 
 /// an application version requested by the user
@@ -74,7 +74,7 @@ mod tests {
     use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
     use crate::logging::Log;
     use crate::platform::Platform;
-    use crate::prelude::*;
+    use crate::error::{Result, UserError};
 
     /// an App instance that allows to mock the system version restrictions
     struct TestApp {

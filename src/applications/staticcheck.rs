@@ -5,7 +5,7 @@ use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
-use crate::prelude::*;
+use crate::error::Result;
 use big_s::S;
 
 const ORG: &str = "dominikh";

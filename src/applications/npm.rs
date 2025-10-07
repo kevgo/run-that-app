@@ -4,7 +4,7 @@ use crate::Log;
 use crate::configuration::Version;
 use crate::executables::{Executable, ExecutableArgs, RunMethod};
 use crate::platform::Platform;
-use crate::prelude::*;
+use crate::error::Result;
 
 pub(crate) struct Npm {}
 

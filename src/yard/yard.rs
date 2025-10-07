@@ -5,7 +5,7 @@ use crate::executables::{Executable, ExecutableNameUnix};
 use crate::installation::BinFolder;
 use crate::logging::{Event, Log};
 use crate::platform::Platform;
-use crate::prelude::*;
+use crate::error::{Result, UserError};
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
 

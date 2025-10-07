@@ -2,7 +2,7 @@ use super::Outcome;
 use crate::applications::AppDefinition;
 use crate::logging::Log;
 use crate::platform::Platform;
-use crate::prelude::*;
+use crate::error::Result;
 use crate::{download, filesystem};
 use std::path::Path;
 
