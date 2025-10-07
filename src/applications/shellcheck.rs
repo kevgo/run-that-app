@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
@@ -40,7 +42,7 @@ impl AppDefinition for ShellCheck {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}"),
         bin_folder: BinFolder::Subfolder {
-          path: format!("shellcheck-v{version}"),
+          path: PathBuf::from(format!("shellcheck-v{version}")),
         },
       }],
     }
@@ -74,6 +76,8 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
 
   mod install_methods {
+    use std::path::PathBuf;
+
     use crate::applications::AppDefinition;
     use crate::applications::shellcheck::ShellCheck;
     use crate::configuration::Version;
@@ -94,7 +98,9 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.linux.x86_64.tar.xz"),
-          bin_folder: BinFolder::Subfolder { path: S("shellcheck-v0.9.0") },
+          bin_folder: BinFolder::Subfolder {
+            path: PathBuf::from("shellcheck-v0.9.0"),
+          },
         }],
       };
       assert_eq!(have, want);
@@ -112,7 +118,9 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.darwin.aarch64.tar.xz"),
-          bin_folder: BinFolder::Subfolder { path: S("shellcheck-v0.10.0") },
+          bin_folder: BinFolder::Subfolder {
+            path: PathBuf::from("shellcheck-v0.10.0"),
+          },
         }],
       };
       assert_eq!(have, want);

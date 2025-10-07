@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
@@ -6,7 +8,6 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, regexp};
-use big_s::S;
 use const_format::formatcp;
 
 #[derive(Clone)]
@@ -42,7 +43,7 @@ impl AppDefinition for MdBookLinkCheck {
         },
         Method::CompileRustSource {
           crate_name: "mdbook-linkcheck",
-          bin_folder: BinFolder::Subfolder { path: S("bin") },
+          bin_folder: BinFolder::Subfolder { path: PathBuf::from("bin") },
         },
       ],
     }
@@ -77,6 +78,8 @@ mod tests {
   use crate::UserError;
 
   mod install_methods {
+    use std::path::PathBuf;
+
     use crate::applications::AppDefinition;
     use crate::applications::mdbook_linkcheck::MdBookLinkCheck;
     use crate::configuration::Version;
@@ -102,7 +105,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "mdbook-linkcheck",
-            bin_folder: BinFolder::Subfolder { path: S("bin") },
+            bin_folder: BinFolder::Subfolder { path: PathBuf::from("bin") },
           },
         ],
       };
@@ -126,7 +129,7 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "mdbook-linkcheck",
-            bin_folder: BinFolder::Subfolder { path: S("bin") },
+            bin_folder: BinFolder::Subfolder { path: PathBuf::from("bin") },
           },
         ],
       };

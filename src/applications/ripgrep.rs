@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
@@ -46,7 +48,7 @@ impl AppDefinition for RipGrep {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/ripgrep-{version}-{cpu}-{os}.{ext}"),
         bin_folder: BinFolder::Subfolder {
-          path: format!("ripgrep-{version}-{cpu}-{os}"),
+          path: PathBuf::from(format!("ripgrep-{version}-{cpu}-{os}")),
         },
       }],
     }
@@ -81,6 +83,8 @@ mod tests {
   use crate::UserError;
 
   mod install_methods {
+    use std::path::PathBuf;
+
     use crate::applications::AppDefinition;
     use crate::applications::ripgrep::RipGrep;
     use crate::configuration::Version;
@@ -102,7 +106,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-apple-darwin.tar.gz"),
           bin_folder: BinFolder::Subfolder {
-            path: S("ripgrep-14.1.1-aarch64-apple-darwin"),
+            path: PathBuf::from("ripgrep-14.1.1-aarch64-apple-darwin"),
           },
         }],
       };
@@ -122,7 +126,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-unknown-linux-gnu.tar.gz"),
           bin_folder: BinFolder::Subfolder {
-            path: S("ripgrep-14.1.1-aarch64-unknown-linux-gnu"),
+            path: PathBuf::from("ripgrep-14.1.1-aarch64-unknown-linux-gnu"),
           },
         }],
       };
@@ -142,7 +146,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz"),
           bin_folder: BinFolder::Subfolder {
-            path: S("ripgrep-14.1.1-x86_64-unknown-linux-musl"),
+            path: PathBuf::from("ripgrep-14.1.1-x86_64-unknown-linux-musl"),
           },
         }],
       };
@@ -162,7 +166,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip"),
           bin_folder: BinFolder::Subfolder {
-            path: S("ripgrep-14.1.1-x86_64-pc-windows-msvc"),
+            path: PathBuf::from("ripgrep-14.1.1-x86_64-pc-windows-msvc"),
           },
         }],
       };
