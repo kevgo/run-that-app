@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
@@ -16,8 +16,8 @@ const ORG: &str = "cli";
 const REPO: &str = "cli";
 
 impl AppDefinition for Gh {
-  fn name(&self) -> &'static str {
-    "gh"
+  fn name(&self) -> ApplicationName {
+    "gh".into()
   }
 
   fn homepage(&self) -> &'static str {

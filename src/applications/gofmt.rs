@@ -1,5 +1,5 @@
 use super::go::Go;
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
 use crate::configuration::Version;
 use crate::error::Result;
@@ -10,8 +10,8 @@ use crate::platform::Platform;
 pub(crate) struct Gofmt {}
 
 impl AppDefinition for Gofmt {
-  fn name(&self) -> &'static str {
-    "gofmt"
+  fn name(&self) -> ApplicationName {
+    "gofmt".into()
   }
 
   fn homepage(&self) -> &'static str {

@@ -162,6 +162,10 @@ impl ApplicationName {
   pub fn as_str(&self) -> &str {
     self.0
   }
+
+  pub fn len(&self) -> usize {
+    self.0.len()
+  }
 }
 
 impl From<&'static str> for ApplicationName {
@@ -185,6 +189,12 @@ impl AsRef<Path> for ApplicationName {
 impl AsRef<str> for ApplicationName {
   fn as_ref(&self) -> &str {
     self.0
+  }
+}
+
+impl PartialEq<&str> for ApplicationName {
+  fn eq(&self, other: &&str) -> bool {
+    self.0 == *other
   }
 }
 

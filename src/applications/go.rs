@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, RunMethod};
@@ -16,8 +16,8 @@ const ORG: &str = "golang";
 const REPO: &str = "go";
 
 impl AppDefinition for Go {
-  fn name(&self) -> &'static str {
-    "go"
+  fn name(&self) -> ApplicationName {
+    "go".into()
   }
 
   fn homepage(&self) -> &'static str {

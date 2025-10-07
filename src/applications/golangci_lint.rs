@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
@@ -15,8 +15,8 @@ const ORG: &str = "golangci";
 const REPO: &str = "golangci-lint";
 
 impl AppDefinition for GolangCiLint {
-  fn name(&self) -> &'static str {
-    "golangci-lint"
+  fn name(&self) -> ApplicationName {
+    "golangci-lint".into()
   }
 
   fn homepage(&self) -> &'static str {

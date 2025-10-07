@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
 use crate::configuration::Version;
 use crate::error::{Result, UserError};
@@ -15,8 +15,8 @@ const ORG: &str = "tj";
 const REPO: &str = "node-prune";
 
 impl AppDefinition for NodePrune {
-  fn name(&self) -> &'static str {
-    "node-prune"
+  fn name(&self) -> ApplicationName {
+    "node-prune".into()
   }
 
   fn homepage(&self) -> &'static str {

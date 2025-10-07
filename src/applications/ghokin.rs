@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
 use crate::configuration::Version;
 use crate::error::Result;
@@ -15,8 +15,8 @@ const ORG: &str = "antham";
 const REPO: &str = "ghokin";
 
 impl AppDefinition for Ghokin {
-  fn name(&self) -> &'static str {
-    "ghokin"
+  fn name(&self) -> ApplicationName {
+    "ghokin".into()
   }
 
   fn homepage(&self) -> &'static str {

@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
@@ -15,8 +15,8 @@ const ORG: &str = "BurntSushi";
 const REPO: &str = "ripgrep";
 
 impl AppDefinition for RipGrep {
-  fn name(&self) -> &'static str {
-    "ripgrep"
+  fn name(&self) -> ApplicationName {
+    "ripgrep".into()
   }
 
   fn homepage(&self) -> &'static str {

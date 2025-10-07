@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
@@ -15,8 +15,8 @@ const ORG: &str = "kevgo";
 const REPO: &str = "tikibase";
 
 impl AppDefinition for Tikibase {
-  fn name(&self) -> &'static str {
-    "tikibase"
+  fn name(&self) -> ApplicationName {
+    "tikibase".into()
   }
 
   fn homepage(&self) -> &'static str {

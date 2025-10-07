@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
@@ -15,8 +15,8 @@ pub(crate) const ORG: &str = "nodejs";
 pub(crate) const REPO: &str = "node";
 
 impl AppDefinition for NodeJS {
-  fn name(&self) -> &'static str {
-    "node"
+  fn name(&self) -> ApplicationName {
+    "node".into()
   }
 
   fn homepage(&self) -> &'static str {

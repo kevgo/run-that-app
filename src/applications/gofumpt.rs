@@ -1,4 +1,4 @@
-use super::{AnalyzeResult, AppDefinition};
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
@@ -15,8 +15,8 @@ const ORG: &str = "mvdan";
 const REPO: &str = "gofumpt";
 
 impl AppDefinition for Gofumpt {
-  fn name(&self) -> &'static str {
-    "gofumpt"
+  fn name(&self) -> ApplicationName {
+    "gofumpt".into()
   }
 
   fn homepage(&self) -> &'static str {
