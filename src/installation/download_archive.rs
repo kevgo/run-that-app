@@ -5,6 +5,7 @@ use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::logging::Log;
 use crate::{archives, download};
+use minreq::URL;
 #[cfg(unix)]
 use std::fs;
 #[cfg(unix)]
@@ -16,7 +17,7 @@ pub(crate) fn run(
   app_definition: &dyn AppDefinition,
   app_folder: &Path,
   version: &Version,
-  url: &str,
+  url: &URL,
   bin_folders: &BinFolder,
   optional: bool,
   ctx: &RuntimeContext,

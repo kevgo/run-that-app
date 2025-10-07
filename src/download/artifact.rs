@@ -1,9 +1,10 @@
 use crate::applications::ApplicationName;
 use crate::error::{Result, UserError};
 use crate::logging::{Event, Log};
+use minreq::URL;
 
 /// downloads the artifact at the given URL
-pub(crate) fn artifact(url: &str, app: &ApplicationName, optional: bool, log: Log) -> Result<Option<Artifact>> {
+pub(crate) fn artifact(url: &URL, app: &ApplicationName, optional: bool, log: Log) -> Result<Option<Artifact>> {
   log(Event::DownloadBegin { app, url });
   let Ok(response) = minreq::get(url).send() else {
     log(Event::NotOnline);
