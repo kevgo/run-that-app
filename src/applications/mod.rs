@@ -159,11 +159,11 @@ impl Debug for dyn AppDefinition {
 pub(crate) struct ApplicationName(&'static str);
 
 impl ApplicationName {
-  pub fn as_str(&self) -> &str {
+  pub(crate) fn as_str(&self) -> &str {
     self.0
   }
 
-  pub fn len(&self) -> usize {
+  pub(crate) fn len(&self) -> usize {
     self.0.len()
   }
 }
