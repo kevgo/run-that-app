@@ -7,6 +7,7 @@ use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, regexp};
 
+#[derive(Clone)]
 pub(crate) struct ShellCheck {}
 
 const ORG: &str = "koalaman";
@@ -62,10 +63,6 @@ impl AppDefinition for ShellCheck {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

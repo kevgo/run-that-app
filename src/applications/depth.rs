@@ -8,6 +8,7 @@ use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use const_format::formatcp;
 
+#[derive(Clone)]
 pub(crate) struct Depth {}
 
 const ORG: &str = "KyleBanks";
@@ -63,10 +64,6 @@ impl AppDefinition for Depth {
     }
     // as of 1.2.1 depth doesn't display the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

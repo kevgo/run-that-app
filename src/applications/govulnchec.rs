@@ -6,6 +6,7 @@ use crate::executables::{Executable, RunMethod};
 use crate::installation::Method;
 use crate::platform::Platform;
 
+#[derive(Clone)]
 pub(crate) struct Govulncheck {}
 
 impl AppDefinition for Govulncheck {
@@ -41,10 +42,6 @@ impl AppDefinition for Govulncheck {
     }
     // govulncheck does not display the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

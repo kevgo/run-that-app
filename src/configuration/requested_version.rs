@@ -77,6 +77,7 @@ mod tests {
     use crate::platform::Platform;
 
     /// an App instance that allows to mock the system version restrictions
+    #[derive(Clone)]
     struct TestApp {
       allowed_versions: semver::VersionReq,
     }
@@ -104,9 +105,6 @@ mod tests {
         unimplemented!()
       }
       fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {
-        unimplemented!()
-      }
-      fn clone(&self) -> Box<dyn AppDefinition> {
         unimplemented!()
       }
     }

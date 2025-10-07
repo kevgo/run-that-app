@@ -37,6 +37,7 @@ use crate::configuration::Version;
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableArgs, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
+use dyn_clone::DynClone;
 use std::fmt::{Debug, Display};
 use std::path::Path;
 
@@ -77,7 +78,7 @@ pub(crate) fn all() -> Apps {
 }
 
 /// all the information about an application that run-that-app can install
-pub(crate) trait AppDefinition {
+pub(crate) trait AppDefinition: DynClone {
   /// the name by which the user can select this application at the run-that-app CLI
   fn name(&self) -> &'static str;
 
@@ -119,9 +120,6 @@ pub(crate) trait AppDefinition {
     Ok(semver::VersionReq::STAR)
   }
 
-  /// this is necessary because a limitation of Rust does not allow deriving the Clone trait automatically
-  fn clone(&self) -> Box<dyn AppDefinition>;
-
   // --------------------------------------------------------------------------------------------------
   // Below are convenience methods, AppDefinition instances should not override these.
 
@@ -129,18 +127,26 @@ pub(crate) trait AppDefinition {
   fn app_name(&self) -> ApplicationName {
     ApplicationName(self.name())
   }
+}
 
-  /// provides the app that contains the executable for this app,
-  /// the name of the executable provided by this app to call,
-  /// and arguments to call that executable with.
-  fn carrier(&self, version: &Version, platform: Platform) -> (Box<dyn AppDefinition>, ExecutableNameUnix, ExecutableArgs) {
-    match self.run_method(version, platform) {
-      RunMethod::ThisApp { install_methods: _ } => (self.clone(), self.executable_filename(), ExecutableArgs::None),
-      RunMethod::OtherAppOtherExecutable {
-        app_definition,
-        executable_name,
-      } => (app_definition.clone(), executable_name, ExecutableArgs::None),
-      RunMethod::OtherAppDefaultExecutable { app_definition, args } => (app_definition.clone(), app_definition.executable_filename(), args),
+dyn_clone::clone_trait_object!(AppDefinition);
+
+/// provides the app that contains the executable for the given app,
+/// the name of the executable provided by this app to call,
+/// and arguments to call that executable with.
+pub(crate) fn carrier<'a>(
+  app: &'a dyn AppDefinition,
+  version: &Version,
+  platform: Platform,
+) -> (Box<dyn AppDefinition + 'a>, ExecutableNameUnix, ExecutableArgs) {
+  match app.run_method(version, platform) {
+    RunMethod::ThisApp { install_methods: _ } => (dyn_clone::clone_box(app), app.executable_filename(), ExecutableArgs::None),
+    RunMethod::OtherAppOtherExecutable {
+      app_definition,
+      executable_name,
+    } => (dyn_clone::clone_box(app_definition.as_ref()), executable_name, ExecutableArgs::None),
+    RunMethod::OtherAppDefaultExecutable { app_definition, args } => {
+      (dyn_clone::clone_box(app_definition.as_ref()), app_definition.executable_filename(), args)
     }
   }
 }

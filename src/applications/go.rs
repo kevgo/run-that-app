@@ -9,6 +9,7 @@ use crate::{Log, filesystem, regexp};
 use big_s::S;
 use std::path;
 
+#[derive(Clone)]
 pub(crate) struct Go {}
 
 const ORG: &str = "golang";
@@ -94,10 +95,6 @@ impl AppDefinition for Go {
       reason: err.to_string(),
     })?;
     Ok(version_req)
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

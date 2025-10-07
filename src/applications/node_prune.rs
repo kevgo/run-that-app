@@ -8,6 +8,7 @@ use crate::installation::Method;
 use crate::platform::{Cpu, Os, Platform};
 use const_format::formatcp;
 
+#[derive(Clone)]
 pub(crate) struct NodePrune {}
 
 const ORG: &str = "tj";
@@ -63,10 +64,6 @@ impl AppDefinition for NodePrune {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

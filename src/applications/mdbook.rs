@@ -9,6 +9,7 @@ use crate::{Log, regexp};
 use big_s::S;
 use const_format::formatcp;
 
+#[derive(Clone)]
 pub(crate) struct MdBook {}
 
 const ORG: &str = "rust-lang";
@@ -68,10 +69,6 @@ impl AppDefinition for MdBook {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

@@ -8,6 +8,7 @@ use crate::installation::Method;
 use crate::platform::Platform;
 use const_format::formatcp;
 
+#[derive(Clone)]
 pub(crate) struct FuncOrder {}
 
 const ORG: &str = "manuelarte";
@@ -44,9 +45,5 @@ impl AppDefinition for FuncOrder {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }

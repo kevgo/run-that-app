@@ -9,6 +9,7 @@ use crate::{Log, regexp};
 use big_s::S;
 use const_format::formatcp;
 
+#[derive(Clone)]
 pub(crate) struct MdBookLinkCheck {}
 
 const ORG: &str = "Michael-F-Bryan";
@@ -64,10 +65,6 @@ impl AppDefinition for MdBookLinkCheck {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

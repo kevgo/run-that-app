@@ -6,6 +6,7 @@ use crate::error::Result;
 use crate::executables::{Executable, ExecutableArgs, RunMethod};
 use crate::platform::Platform;
 
+#[derive(Clone)]
 pub(crate) struct Npm {}
 
 impl AppDefinition for Npm {
@@ -41,10 +42,6 @@ impl AppDefinition for Npm {
     }
     // Npm is versioned together with NodeJS. The actual version of npm is therefore not relevant here.
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

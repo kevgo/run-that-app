@@ -8,6 +8,7 @@ use crate::installation::Method;
 use crate::platform::Platform;
 use const_format::formatcp;
 
+#[derive(Clone)]
 pub(crate) struct Exhaustruct {}
 
 const ORG: &str = "GaijinEntertainment";
@@ -44,10 +45,6 @@ impl AppDefinition for Exhaustruct {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

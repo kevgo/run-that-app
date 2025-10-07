@@ -8,6 +8,7 @@ use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use const_format::formatcp;
 
+#[derive(Clone)]
 pub(crate) struct Ghokin {}
 
 const ORG: &str = "antham";
@@ -59,10 +60,6 @@ impl AppDefinition for Ghokin {
     }
     // as of 3.4.0 ghokin's "version" command prints nothing
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

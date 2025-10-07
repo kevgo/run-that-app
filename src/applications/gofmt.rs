@@ -6,6 +6,7 @@ use crate::error::Result;
 use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
 
+#[derive(Clone)]
 pub(crate) struct Gofmt {}
 
 impl AppDefinition for Gofmt {
@@ -41,10 +42,6 @@ impl AppDefinition for Gofmt {
     #[allow(clippy::unwrap_used)]
     let go_path = executable.as_path().parent().unwrap().join(go.executable_filename().as_ref());
     go.analyze_executable(&Executable::from(go_path), log)
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 

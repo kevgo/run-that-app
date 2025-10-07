@@ -8,6 +8,7 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, regexp};
 use big_s::S;
 
+#[derive(Clone)]
 pub(crate) struct Dprint {}
 
 const ORG: &str = "dprint";
@@ -63,10 +64,6 @@ impl AppDefinition for Dprint {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
-  }
-
-  fn clone(&self) -> Box<dyn AppDefinition> {
-    Box::new(Self {})
   }
 }
 
