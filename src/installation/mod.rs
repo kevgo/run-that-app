@@ -143,8 +143,14 @@ impl Display for BinFolder {
     match self {
       BinFolder::Root => write!(f, "root"),
       BinFolder::Subfolder { path } => write!(f, "subfolder {}", path.to_string_lossy()),
-      BinFolder::Subfolders { options } => write!(f, "subfolders {}", options.join(", ")),
-      BinFolder::RootOrSubfolders { options } => write!(f, "root or subfolders {}", options.join(", ")),
+      BinFolder::Subfolders { options } => {
+        let paths: Vec<_> = options.iter().map(|p| p.to_string_lossy()).collect();
+        write!(f, "subfolders {}", paths.join(", "))
+      }
+      BinFolder::RootOrSubfolders { options } => {
+        let paths: Vec<_> = options.iter().map(|p| p.to_string_lossy()).collect();
+        write!(f, "root or subfolders {}", paths.join(", "))
+      }
     }
   }
 }
