@@ -30,7 +30,7 @@ impl AppDefinition for NodeJS {
     let sep = path::MAIN_SEPARATOR;
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",),
+        url: format!("https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}").into(),
         bin_folder: BinFolder::RootOrSubfolders {
           options: vec![format!("node-v{version}-{os}-{cpu}"), format!("node-v{version}-{os}-{cpu}{sep}bin")],
         },
@@ -110,7 +110,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz"),
+          url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz".into(),
           bin_folder: BinFolder::RootOrSubfolders {
             options: vec![S("node-v20.10.0-darwin-arm64"), S("node-v20.10.0-darwin-arm64/bin")],
           },

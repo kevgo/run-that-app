@@ -44,7 +44,7 @@ impl AppDefinition for RipGrep {
     };
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/ripgrep-{version}-{cpu}-{os}.{ext}"),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/ripgrep-{version}-{cpu}-{os}.{ext}").into(),
         bin_folder: BinFolder::Subfolder {
           path: format!("ripgrep-{version}-{cpu}-{os}").into(),
         },
@@ -87,7 +87,6 @@ mod tests {
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use big_s::S;
 
     #[test]
     fn macos_arm() {
@@ -100,7 +99,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-apple-darwin.tar.gz"),
+          url: "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-apple-darwin.tar.gz".into(),
           bin_folder: BinFolder::Subfolder {
             path: "ripgrep-14.1.1-aarch64-apple-darwin".into(),
           },
@@ -120,7 +119,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-unknown-linux-gnu.tar.gz"),
+          url: "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-unknown-linux-gnu.tar.gz".into(),
           bin_folder: BinFolder::Subfolder {
             path: "ripgrep-14.1.1-aarch64-unknown-linux-gnu".into(),
           },
@@ -140,7 +139,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz"),
+          url: "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz".into(),
           bin_folder: BinFolder::Subfolder {
             path: "ripgrep-14.1.1-x86_64-unknown-linux-musl".into(),
           },
@@ -160,7 +159,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip"),
+          url: "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip".into(),
           bin_folder: BinFolder::Subfolder {
             path: "ripgrep-14.1.1-x86_64-pc-windows-msvc".into(),
           },

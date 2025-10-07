@@ -36,7 +36,7 @@ impl AppDefinition for MdBookLinkCheck {
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-linkcheck.{cpu}-{os}.zip"),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-linkcheck.{cpu}-{os}.zip").into(),
           bin_folder: BinFolder::Root,
         },
         Method::CompileRustSource {
