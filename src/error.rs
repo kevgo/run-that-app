@@ -1,6 +1,6 @@
 use crate::configuration::{self, FILE_NAME};
+use crate::download::URL;
 use colored::Colorize;
-use minreq::URL;
 use std::path::PathBuf;
 
 /// a Result that always has a `UserError` as the error and therefore doesn't require to specify it at each call point

@@ -1,9 +1,9 @@
 use super::Outcome;
 use crate::applications::AppDefinition;
 use crate::context::RuntimeContext;
+use crate::download::URL;
 use crate::error::Result;
 use crate::{download, filesystem};
-use minreq::URL;
 use std::path::Path;
 
 /// downloads an uncompressed precompiled binary

@@ -35,7 +35,7 @@ impl AppDefinition for Dprint {
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip"),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip").into(),
           bin_folder: BinFolder::Root,
         },
         Method::CompileRustSource {
@@ -94,7 +94,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: S("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-apple-darwin.zip"),
+            url: "https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-apple-darwin.zip".into(),
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {
@@ -118,7 +118,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: S("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-unknown-linux-gnu.zip"),
+            url: "https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-unknown-linux-gnu.zip".into(),
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {

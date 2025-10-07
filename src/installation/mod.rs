@@ -8,9 +8,9 @@ mod download_executable;
 use crate::applications::{AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::context::RuntimeContext;
+use crate::download::URL;
 use crate::error::Result;
 use crate::executables::ExecutableNamePlatform;
-use minreq::URL;
 use std::fmt::{Debug, Display};
 use std::path::{Path, PathBuf};
 

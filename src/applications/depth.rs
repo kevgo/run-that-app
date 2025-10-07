@@ -40,7 +40,7 @@ impl AppDefinition for Depth {
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadExecutable {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}{ext}"),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}{ext}").into(),
         },
         Method::CompileGoSource {
           import_path: format!("github.com/{ORG}/{REPO}/cmd/depth@v{version}"),
@@ -91,7 +91,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
-            url: S("https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_linux_aarch64"),
+            url: "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_linux_aarch64".into(),
           },
           Method::CompileGoSource {
             import_path: S("github.com/KyleBanks/depth/cmd/depth@v1.2.1"),
@@ -113,7 +113,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
-            url: S("https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_windows_amd64.exe"),
+            url: "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_windows_amd64.exe".into(),
           },
           Method::CompileGoSource {
             import_path: S("github.com/KyleBanks/depth/cmd/depth@v1.2.1"),

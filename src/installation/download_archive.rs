@@ -2,10 +2,10 @@ use super::{BinFolder, Outcome};
 use crate::applications::{AppDefinition, carrier};
 use crate::configuration::Version;
 use crate::context::RuntimeContext;
+use crate::download::URL;
 use crate::error::{Result, UserError};
 use crate::logging::Log;
 use crate::{archives, download};
-use minreq::URL;
 #[cfg(unix)]
 use std::fs;
 #[cfg(unix)]

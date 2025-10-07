@@ -40,7 +40,7 @@ impl AppDefinition for Contest {
     };
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/contest_{os}_{cpu}.{ext}"),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/contest_{os}_{cpu}.{ext}").into(),
         bin_folder: BinFolder::Root,
       }],
     }
@@ -81,7 +81,6 @@ mod tests {
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use big_s::S;
 
     #[test]
     fn linux_arm() {
@@ -94,7 +93,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://github.com/contest-framework/server/releases/download/v0.4.0/contest_macos_arm_64.tar.gz"),
+          url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_macos_arm_64.tar.gz".into(),
           bin_folder: BinFolder::Root,
         }],
       };
@@ -112,7 +111,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://github.com/contest-framework/server/releases/download/v0.4.0/contest_linux_intel_64.tar.gz"),
+          url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_linux_intel_64.tar.gz".into(),
           bin_folder: BinFolder::Root,
         }],
       };

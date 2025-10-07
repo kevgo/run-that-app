@@ -40,7 +40,7 @@ impl AppDefinition for Shfmt {
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadExecutable {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}"),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}").into(),
         },
         Method::CompileGoSource {
           import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}"),
