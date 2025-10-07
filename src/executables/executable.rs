@@ -54,8 +54,8 @@ impl From<&Path> for Executable {
   }
 }
 
-impl Into<PathBuf> for Executable {
-  fn into(self) -> PathBuf {
-    self.0
+impl From<Executable> for PathBuf {
+  fn from(val: Executable) -> Self {
+    val.0
   }
 }
