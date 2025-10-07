@@ -14,7 +14,7 @@ pub(crate) enum UserError {
   },
   #[cfg(unix)]
   ArchiveDoesNotContainExecutable {
-    expected: String,
+    expected: PathBuf,
   },
   CannotAccessConfigFile(String),
   CannotCompileRustSource {
@@ -32,7 +32,7 @@ pub(crate) enum UserError {
     err: String,
   },
   CannotDeleteFolder {
-    folder: String,
+    folder: PathBuf,
     err: String,
   },
   CannotDetermineCurrentDirectory(String),
@@ -48,7 +48,7 @@ pub(crate) enum UserError {
   CannotFindExecutable,
   #[cfg(unix)]
   CannotMakeFileExecutable {
-    file: String,
+    file: PathBuf,
     reason: String,
   },
   CannotOpenSubshellStream,
@@ -69,7 +69,7 @@ pub(crate) enum UserError {
   },
   #[cfg(unix)]
   CannotSetFilePermissions {
-    path: String,
+    path: PathBuf,
     err: String,
   },
   CompilationError {
@@ -81,7 +81,7 @@ pub(crate) enum UserError {
     name: String,
   },
   ExecutableCannotExecute {
-    executable: String,
+    executable: PathBuf,
     err: String,
   },
   GitHubReleasesApiProblem {
@@ -147,14 +147,14 @@ impl UserError {
       }
       #[cfg(unix)]
       UserError::ArchiveDoesNotContainExecutable { expected } => {
-        error(&format!("archive does not contain the expected executable: {expected}"));
+        error(&format!("archive does not contain the expected executable: {}", expected.to_string_lossy()));
       }
       UserError::CannotAccessConfigFile(reason) => {
         error(&format!("cannot read the config file: {reason}"));
         desc(&format!("please make sure {} is a file and accessible to you", configuration::FILE_NAME));
       }
       UserError::CannotCompileRustSource { err } => error(&format!("cannot compile Rust source: {err}")),
-      UserError::CannotDeleteFolder { folder, err } => error(&format!("cannot delete folder {folder}: {err}")),
+      UserError::CannotDeleteFolder { folder, err } => error(&format!("cannot delete folder {}: {err}", folder.to_string_lossy())),
       UserError::CannotDetermineCurrentDirectory(reason) => error(&format!("cannot determine the current directory: {reason}")),
       UserError::CannotCreateFile { filename, err } => error(&format!("cannot create file {filename}: {err}")),
       UserError::CannotCreateFolder { folder, reason } => {
@@ -176,7 +176,7 @@ impl UserError {
       }
       #[cfg(unix)]
       UserError::CannotMakeFileExecutable { file, reason } => {
-        error(&format!("Cannot make file {file} executable: {reason}"));
+        error(&format!("Cannot make file {} executable: {reason}", file.to_string_lossy()));
         desc("Please check access permissions and try again.");
       }
       UserError::CannotOpenSubshellStream => error("cannot open subshell stream"),
@@ -198,7 +198,7 @@ impl UserError {
       UserError::CannotReadZipFile { err } => error(&format!("cannot read ZIP file: {err}")),
       #[cfg(unix)]
       UserError::CannotSetFilePermissions { path, err } => {
-        error(&format!("cannot write permissions for file {path}: {err}"));
+        error(&format!("cannot write permissions for file {}: {err}", path.to_string_lossy()));
         desc("This is an issue with your operating system permissions. Please allow the current user to change permissions for the given path and try again.");
       }
       UserError::CompilationError { reason } => {
@@ -215,7 +215,7 @@ impl UserError {
         error(&format!("duplicate app name found: {name}"));
       }
       UserError::ExecutableCannotExecute { executable, err } => {
-        error(&format!("cannot execute {executable}: {err}"));
+        error(&format!("cannot execute {}: {err}", executable.to_string_lossy()));
       }
       UserError::GitHubReleasesApiProblem { problem, payload } => {
         error(&format!("Problem with the GitHub Releases API: {problem}"));

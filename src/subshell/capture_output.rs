@@ -13,7 +13,7 @@ pub(crate) fn capture_output(executable: &Executable, args: &[&str]) -> Result<S
     Ok(output) => output,
     Err(err) => {
       return Err(UserError::ExecutableCannotExecute {
-        executable: executable.to_string(),
+        executable: executable.into(),
         err: err.to_string(),
       });
     }

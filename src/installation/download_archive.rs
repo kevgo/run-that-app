@@ -65,7 +65,7 @@ fn make_executable_unix(filepath: &Path, log: Log) -> Result<()> {
   log(Event::MakeExecutable { file: filepath });
   let Ok(executable_file) = fs::File::open(filepath) else {
     return Err(UserError::ArchiveDoesNotContainExecutable {
-      expected: filepath.to_string_lossy().to_string(),
+      expected: filepath.to_path_buf(),
     });
   };
   let metadata = match executable_file.metadata() {
@@ -79,7 +79,7 @@ fn make_executable_unix(filepath: &Path, log: Log) -> Result<()> {
     permissions.set_mode(0o744);
     if let Err(err) = fs::set_permissions(filepath, permissions) {
       return Err(UserError::CannotSetFilePermissions {
-        path: filepath.to_string_lossy().to_string(),
+        path: filepath.to_path_buf(),
         err: err.to_string(),
       });
     }
