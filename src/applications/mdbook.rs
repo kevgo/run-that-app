@@ -81,8 +81,6 @@ mod tests {
   use crate::UserError;
 
   mod install_methods {
-    use std::path::PathBuf;
-
     use crate::applications::AppDefinition;
     use crate::applications::mdbook::MdBook;
     use crate::configuration::Version;
@@ -90,6 +88,7 @@ mod tests {
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
+    use std::path::PathBuf;
 
     #[test]
     fn linux_arm() {

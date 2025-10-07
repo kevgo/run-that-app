@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
@@ -9,6 +7,7 @@ use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, regexp};
 use const_format::formatcp;
+use std::path::PathBuf;
 
 #[derive(Clone)]
 pub(crate) struct GolangCiLint {}
@@ -72,8 +71,6 @@ mod tests {
   use crate::UserError;
 
   mod install_methods {
-    use std::path::PathBuf;
-
     use crate::applications::AppDefinition;
     use crate::applications::golangci_lint::GolangCiLint;
     use crate::configuration::Version;
@@ -81,6 +78,7 @@ mod tests {
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
+    use std::path::PathBuf;
 
     #[test]
     fn linux_arm() {

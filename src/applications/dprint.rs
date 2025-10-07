@@ -75,8 +75,6 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
 
   mod install_methods {
-    use std::path::PathBuf;
-
     use super::super::Dprint;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
@@ -84,6 +82,7 @@ mod tests {
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
+    use std::path::PathBuf;
 
     #[test]
     fn macos_arm() {

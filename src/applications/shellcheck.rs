@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
@@ -8,6 +6,7 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, regexp};
+use std::path::PathBuf;
 
 #[derive(Clone)]
 pub(crate) struct ShellCheck {}
@@ -76,8 +75,6 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
 
   mod install_methods {
-    use std::path::PathBuf;
-
     use crate::applications::AppDefinition;
     use crate::applications::shellcheck::ShellCheck;
     use crate::configuration::Version;
@@ -85,6 +82,7 @@ mod tests {
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
+    use std::path::PathBuf;
 
     #[test]
     fn linux_arm() {
