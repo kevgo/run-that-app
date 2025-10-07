@@ -6,6 +6,42 @@ use crate::prelude::*;
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct RequestedVersions(pub Vec<RequestedVersion>);
 
+impl Eq for RequestedVersions {}
+
+impl PartialOrd for RequestedVersions {
+  fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+    Some(self.cmp(other))
+  }
+}
+
+impl Ord for RequestedVersions {
+  fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+    // Compare length first
+    match self.0.len().cmp(&other.0.len()) {
+      std::cmp::Ordering::Equal => {
+        // If same length, compare element by element
+        for (a, b) in self.0.iter().zip(other.0.iter()) {
+          let cmp = match (a, b) {
+            (RequestedVersion::Yard(v1), RequestedVersion::Yard(v2)) => {
+              // Use PartialOrd, fallback to string comparison if PartialOrd returns None
+              v1.partial_cmp(v2).unwrap_or_else(|| v1.as_str().cmp(v2.as_str()))
+            }
+            (RequestedVersion::Path(v1), RequestedVersion::Path(v2)) => v1.to_string().cmp(&v2.to_string()),
+            // Path comes before Yard in ordering
+            (RequestedVersion::Path(_), RequestedVersion::Yard(_)) => std::cmp::Ordering::Less,
+            (RequestedVersion::Yard(_), RequestedVersion::Path(_)) => std::cmp::Ordering::Greater,
+          };
+          if cmp != std::cmp::Ordering::Equal {
+            return cmp;
+          }
+        }
+        std::cmp::Ordering::Equal
+      }
+      other => other,
+    }
+  }
+}
+
 impl RequestedVersions {
   /// Provides the version to use: if the user provided a version to use via CLI, use it.
   /// Otherwise provide the versions from the config file.

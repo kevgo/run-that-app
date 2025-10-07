@@ -1,4 +1,4 @@
-use super::{RequestedVersion, RequestedVersions};
+use super::RequestedVersions;
 use crate::applications::ApplicationName;
 
 #[derive(Debug, PartialEq)]
@@ -21,29 +21,7 @@ impl Ord for AppVersions {
     match self.app_name.as_str().cmp(other.app_name.as_str()) {
       std::cmp::Ordering::Equal => {
         // Then sort by versions
-        // Compare length first
-        match self.versions.0.len().cmp(&other.versions.0.len()) {
-          std::cmp::Ordering::Equal => {
-            // If same length, compare element by element
-            for (a, b) in self.versions.0.iter().zip(other.versions.0.iter()) {
-              let cmp = match (a, b) {
-                (RequestedVersion::Yard(v1), RequestedVersion::Yard(v2)) => {
-                  // Use PartialOrd, fallback to string comparison if PartialOrd returns None
-                  v1.partial_cmp(v2).unwrap_or_else(|| v1.as_str().cmp(v2.as_str()))
-                }
-                (RequestedVersion::Path(v1), RequestedVersion::Path(v2)) => v1.to_string().cmp(&v2.to_string()),
-                // Path comes before Yard in ordering
-                (RequestedVersion::Path(_), RequestedVersion::Yard(_)) => std::cmp::Ordering::Less,
-                (RequestedVersion::Yard(_), RequestedVersion::Path(_)) => std::cmp::Ordering::Greater,
-              };
-              if cmp != std::cmp::Ordering::Equal {
-                return cmp;
-              }
-            }
-            std::cmp::Ordering::Equal
-          }
-          other => other,
-        }
+        self.versions.cmp(&other.versions)
       }
       other => other,
     }
