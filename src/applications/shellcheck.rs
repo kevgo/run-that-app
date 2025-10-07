@@ -38,7 +38,7 @@ impl AppDefinition for ShellCheck {
     };
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}"),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shellcheck-v{version}.{os}.{cpu}.{ext}").into(),
         bin_folder: BinFolder::Subfolder {
           path: format!("shellcheck-v{version}").into(),
         },

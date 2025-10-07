@@ -98,7 +98,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
-            url: S("https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_arm64"),
+            url: "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_arm64".into(),
           },
           Method::CompileGoSource {
             import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
@@ -120,7 +120,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
-            url: S("https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_windows_amd64.exe"),
+            url: "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_windows_amd64.exe".into(),
           },
           Method::CompileGoSource {
             import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),

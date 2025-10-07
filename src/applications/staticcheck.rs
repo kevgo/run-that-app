@@ -35,7 +35,7 @@ impl AppDefinition for StaticCheck {
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/staticcheck_{os}_{cpu}.tar.gz"),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/staticcheck_{os}_{cpu}.tar.gz").into(),
           bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
         },
         Method::CompileGoSource {
@@ -86,7 +86,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: S("https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_darwin_arm64.tar.gz"),
+            url: "https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_darwin_arm64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
           },
           Method::CompileGoSource {
@@ -109,7 +109,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: S("https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_windows_amd64.tar.gz"),
+            url: "https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_windows_amd64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
           },
           Method::CompileGoSource {
