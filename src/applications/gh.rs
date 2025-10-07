@@ -120,7 +120,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip"),
           bin_folder: BinFolder::Subfolders {
-            options: vec![S("bin"), S("gh_2.39.1_windows_amd64\\bin")],
+            options: vec!["bin".into(), "gh_2.39.1_windows_amd64\\bin".into()],
           },
         }],
       };
