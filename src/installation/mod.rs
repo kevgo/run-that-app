@@ -94,9 +94,9 @@ pub(crate) enum BinFolder {
   /// the executables are in the given subfolder
   Subfolder { path: PathBuf },
   /// the executables are in one of the given subfolders
-  Subfolders { options: Vec<String> },
+  Subfolders { options: Vec<PathBuf> },
   /// the executables are either directly in the app folder or in one of the given subfolders
-  RootOrSubfolders { options: Vec<String> },
+  RootOrSubfolders { options: Vec<PathBuf> },
 }
 
 impl BinFolder {

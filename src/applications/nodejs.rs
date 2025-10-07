@@ -32,7 +32,10 @@ impl AppDefinition for NodeJS {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",),
         bin_folder: BinFolder::RootOrSubfolders {
-          options: vec![format!("node-v{version}-{os}-{cpu}"), format!("node-v{version}-{os}-{cpu}{sep}bin")],
+          options: vec![
+            format!("node-v{version}-{os}-{cpu}").into(),
+            format!("node-v{version}-{os}-{cpu}{sep}bin").into(),
+          ],
         },
       }],
     }
@@ -112,7 +115,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz"),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec![S("node-v20.10.0-darwin-arm64"), S("node-v20.10.0-darwin-arm64/bin")],
+            options: vec!["node-v20.10.0-darwin-arm64".into(), "node-v20.10.0-darwin-arm64/bin".into()],
           },
         }],
       };
