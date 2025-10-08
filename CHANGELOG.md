@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.21.0 (2025-10-07)
+
+- app: contest
+
 ### 0.20.0 (2025-10-07)
 
 - sorts the config file when adding new apps
