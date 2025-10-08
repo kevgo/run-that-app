@@ -1,4 +1,4 @@
-//! This module implements reading the `.run-that-app` file.
+//! This module implements reading the `run-that-app` file.
 
 mod app_versions;
 mod file;
@@ -12,4 +12,4 @@ pub(crate) use requested_version::RequestedVersion;
 pub(crate) use requested_versions::RequestedVersions;
 pub(crate) use version::Version;
 
-pub(crate) const FILE_NAME: &str = ".run-that-app";
+pub(crate) const FILE_NAME: &str = "run-that-app";

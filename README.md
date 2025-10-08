@@ -71,7 +71,7 @@ execute the installer from there.
 ### configuration
 
 You can configure the versions of applications that run-that-app should use in a
-`.run-that-app` file that follows the
+`run-that-app` file that follows the
 [asdf format](https://asdf-vm.com/manage/configuration.html) and that looks like
 this:
 
@@ -114,7 +114,7 @@ Run-that-app Arguments:
   are available
 - `--help` or `-h`: show help screen
 - `--optional`: if an app is not available for the current platform, do nothing
-- `--update`: updates the versions in `.run-that-app`
+- `--update`: updates the versions in `run-that-app`
 - `--which <app>`: displays the path to the installed executable of the given
   application
 - `--verbose` or `-v`: display more details
@@ -139,7 +139,7 @@ rta shellcheck@0.9.0 --color=always myscript.sh
 #### Use globally installed applications
 
 If your system already has certain apps installed, _run-that-app_ can use them.
-Consider this `.run-that-app` file:
+Consider this `run-that-app` file:
 
 ```
 go system 1.21.3
@@ -210,7 +210,7 @@ Node.js installation. Hence, to install them, you need to provide the Node
 version. To use already installed executables in your PATH, you need to provide
 the versions of `npm` and `npx`.
 
-Example _.run-that-app_ for npm:
+Example _run-that-app_ for npm:
 
 ```asdf
 npm system@10.2 20.10.0
