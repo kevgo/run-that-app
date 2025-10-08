@@ -1,6 +1,6 @@
 # run-that-app changelog
 
-### 0.20.1 (2025-10-07)
+### 0.21.0 (2025-10-07)
 
 - app: contest
 
