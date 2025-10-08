@@ -40,7 +40,7 @@ impl AppDefinition for Gh {
     let sep = path::MAIN_SEPARATOR;
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}"),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gh_{version}_{os}_{cpu}.{ext}").into(),
         bin_folder: BinFolder::Subfolders {
           options: vec!["bin".into(), format!("gh_{version}_{os}_{cpu}{sep}bin").into()],
         },
@@ -83,7 +83,6 @@ mod tests {
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use big_s::S;
 
     #[test]
     #[cfg(unix)]
@@ -97,7 +96,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz"),
+          url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz".into(),
           bin_folder: BinFolder::Subfolders {
             options: vec!["bin".into(), "gh_2.39.1_linux_arm64/bin".into()],
           },
@@ -118,7 +117,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip"),
+          url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip".into(),
           bin_folder: BinFolder::Subfolders {
             options: vec!["bin".into(), "gh_2.39.1_windows_amd64\\bin".into()],
           },

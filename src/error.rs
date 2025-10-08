@@ -1,4 +1,5 @@
 use crate::configuration::{self, FILE_NAME};
+use crate::download::Url;
 use colored::Colorize;
 use std::path::PathBuf;
 
@@ -38,7 +39,7 @@ pub(crate) enum UserError {
   CannotDetermineCurrentDirectory(String),
   CannotDetermineHomeDirectory,
   CannotDownload {
-    url: String,
+    url: Url,
     reason: String,
   },
   CannotExecuteBinary {

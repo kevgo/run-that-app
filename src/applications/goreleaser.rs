@@ -38,7 +38,7 @@ impl AppDefinition for Goreleaser {
     };
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}"),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/goreleaser_{os}_{cpu}.{ext}").into(),
         bin_folder: BinFolder::Root,
       }],
     }
@@ -78,7 +78,6 @@ mod tests {
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use big_s::S;
 
     #[test]
     fn linux_arm() {
@@ -91,7 +90,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz"),
+          url: "https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz".into(),
           bin_folder: BinFolder::Root,
         }],
       };
@@ -109,7 +108,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Windows_x86_64.zip"),
+          url: "https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Windows_x86_64.zip".into(),
           bin_folder: BinFolder::Root,
         }],
       };

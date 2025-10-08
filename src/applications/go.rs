@@ -42,7 +42,7 @@ impl AppDefinition for Go {
     let version_str = version.as_str().trim_start_matches("go");
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}"),
+        url: format!("https://go.dev/dl/go{version_str}.{os}-{cpu}.{ext}").into(),
         bin_folder: BinFolder::Subfolder {
           path: format!("go{sep}bin").into(),
         },
@@ -118,7 +118,6 @@ mod tests {
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use big_s::S;
 
     #[test]
     #[cfg(unix)]
@@ -135,7 +134,7 @@ mod tests {
       let sep = path::MAIN_SEPARATOR;
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz"),
+          url: "https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz".into(),
           bin_folder: BinFolder::Subfolder {
             path: format!("go{sep}bin").into(),
           },
@@ -156,7 +155,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://go.dev/dl/go1.21.5.windows-amd64.zip"),
+          url: "https://go.dev/dl/go1.21.5.windows-amd64.zip".into(),
           bin_folder: BinFolder::Subfolder { path: "go\\bin".into() },
         }],
       };

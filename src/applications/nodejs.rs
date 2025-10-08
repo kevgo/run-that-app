@@ -30,7 +30,7 @@ impl AppDefinition for NodeJS {
     let sep = path::MAIN_SEPARATOR;
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}",),
+        url: format!("https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}").into(),
         bin_folder: BinFolder::RootOrSubfolders {
           options: vec![
             format!("node-v{version}-{os}-{cpu}").into(),
@@ -99,7 +99,6 @@ mod tests {
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use big_s::S;
 
     #[test]
     #[cfg(unix)]
@@ -113,7 +112,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz"),
+          url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz".into(),
           bin_folder: BinFolder::RootOrSubfolders {
             options: vec!["node-v20.10.0-darwin-arm64".into(), "node-v20.10.0-darwin-arm64/bin".into()],
           },
@@ -134,7 +133,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip"),
+          url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip".into(),
           bin_folder: BinFolder::RootOrSubfolders {
             options: vec!["node-v20.10.0-win-x64".into(), "node-v20.10.0-win-x64\\bin".into()],
           },

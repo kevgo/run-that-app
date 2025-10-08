@@ -1,12 +1,13 @@
 use super::Outcome;
 use crate::applications::AppDefinition;
 use crate::context::RuntimeContext;
+use crate::download::Url;
 use crate::error::Result;
 use crate::{download, filesystem};
 use std::path::Path;
 
 /// downloads an uncompressed precompiled binary
-pub(crate) fn run(app_definition: &dyn AppDefinition, app_folder: &Path, url: &str, optional: bool, ctx: &RuntimeContext) -> Result<Outcome> {
+pub(crate) fn run(app_definition: &dyn AppDefinition, app_folder: &Path, url: &Url, optional: bool, ctx: &RuntimeContext) -> Result<Outcome> {
   let Some(artifact) = download::artifact(url, &app_definition.name(), optional, ctx.log)? else {
     return Ok(Outcome::NotInstalled);
   };

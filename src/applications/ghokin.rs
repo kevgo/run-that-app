@@ -36,7 +36,7 @@ impl AppDefinition for Ghokin {
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz"),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz").into(),
           bin_folder: BinFolder::Root,
         },
         Method::CompileGoSource {
@@ -87,7 +87,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: S("https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_amd64.tar.gz"),
+            url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_amd64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
           Method::CompileGoSource {
@@ -110,7 +110,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: S("https://github.com/antham/ghokin/releases/download/v3.7.0/ghokin_3.7.0_windows_amd64.tar.gz"),
+            url: "https://github.com/antham/ghokin/releases/download/v3.7.0/ghokin_3.7.0_windows_amd64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
           Method::CompileGoSource {

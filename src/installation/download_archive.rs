@@ -2,6 +2,7 @@ use super::{BinFolder, Outcome};
 use crate::applications::{AppDefinition, carrier};
 use crate::configuration::Version;
 use crate::context::RuntimeContext;
+use crate::download::Url;
 use crate::error::{Result, UserError};
 use crate::logging::Log;
 use crate::{archives, download};
@@ -16,7 +17,7 @@ pub(crate) fn run(
   app_definition: &dyn AppDefinition,
   app_folder: &Path,
   version: &Version,
-  url: &str,
+  url: &Url,
   bin_folders: &BinFolder,
   optional: bool,
   ctx: &RuntimeContext,
