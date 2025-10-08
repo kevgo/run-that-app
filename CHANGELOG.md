@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.22.0 (2025-10-08)
+
+- config file now has name `run-that-app` (no longer hidden)
+
 ### 0.21.0 (2025-10-07)
 
 - app: contest
