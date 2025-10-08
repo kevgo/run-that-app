@@ -133,7 +133,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: S("https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip"),
+          url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip".into(),
           bin_folder: BinFolder::RootOrSubfolders {
             options: vec!["node-v20.10.0-win-x64".into(), "node-v20.10.0-win-x64\\bin".into()],
           },
