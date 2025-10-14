@@ -4,7 +4,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-Set-Variable -Name "version" -Value $Version -Option Constant
+Set-Variable -Name "version" -Value $Version
 
 function Welcome() {
   Write-Output "RUN-THAT-APP DOWNLOAD SCRIPT"
