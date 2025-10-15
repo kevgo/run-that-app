@@ -3,6 +3,7 @@
 mod actionlint;
 mod alphavet;
 mod contest;
+mod cucumber_sort;
 mod deadcode;
 mod depth;
 mod dprint;
@@ -46,6 +47,7 @@ pub(crate) fn all() -> Apps {
     Box::new(actionlint::ActionLint {}),
     Box::new(alphavet::Alphavet {}),
     Box::new(contest::Contest {}),
+    Box::new(cucumber_sort::CucumberSort {}),
     Box::new(deadcode::Deadcode {}),
     Box::new(depth::Depth {}),
     Box::new(dprint::Dprint {}),
