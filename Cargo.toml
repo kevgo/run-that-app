@@ -16,6 +16,7 @@ minreq = { version = "2.13.4", features = ["https"] }
 regex = "1.11.1"
 semver = "1.0.26"
 serde_json = "1.0.140"
+shell-words = "1.1.0"
 tar = "0.4.44"
 tempfile = "3.20.0"
 which = "5.0.0"

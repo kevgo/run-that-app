@@ -1,6 +1,6 @@
 use super::{AppVersion, Command};
 use crate::applications::{ApplicationName, Apps};
-use crate::commands::{self, add, available, run, test, update, versions};
+use crate::commands::{self, add, available, concurrent, run, test, update, versions};
 use crate::error::{Result, UserError};
 
 #[allow(clippy::too_many_lines)]
@@ -20,8 +20,9 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
   let mut update = false;
   let mut optional = false;
   let mut versions: Option<usize> = None;
+  let mut concurrent = false;
   for arg in cli_args {
-    if app_version.is_none() {
+    if app_version.is_none() && !concurrent {
       if &arg == "--add" {
         add = true;
         continue;
@@ -34,6 +35,10 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
       }
       if &arg == "--available" {
         indicate_available = true;
+        continue;
+      }
+      if &arg == "--concurrent" {
+        concurrent = true;
         continue;
       }
       if &arg == "--from-source" {
@@ -92,14 +97,23 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
         return Err(UserError::UnknownCliOption(arg));
       }
     }
-    if app_version.is_none() {
+    if app_version.is_none() && !concurrent {
       app_version = Some(AppVersion::new(arg, apps)?);
     } else {
       app_args.push(arg);
     }
   }
-  if multiple_true(&[which, indicate_available, install, test, update, versions.is_some()]) {
+  if multiple_true(&[which, indicate_available, install, test, update, versions.is_some(), concurrent]) {
     return Err(UserError::MultipleCommandsGiven);
+  }
+  if concurrent {
+    return Ok(Command::Concurrent(concurrent::Args {
+      commands: app_args,
+      from_source,
+      include_apps,
+      optional,
+      verbose,
+    }));
   }
   if update {
     return Ok(Command::Update(update::Args { verbose }));

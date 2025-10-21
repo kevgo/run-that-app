@@ -89,6 +89,7 @@ impl Display for ExecutableArgs {
 }
 
 /// information to call an app with file paths adjusted
+#[derive(Clone)]
 pub(crate) struct ExecutableCall {
   pub(crate) executable: Executable,
   pub(crate) args: Vec<String>,

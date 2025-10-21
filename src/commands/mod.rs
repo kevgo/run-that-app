@@ -3,6 +3,7 @@
 pub(crate) mod add;
 pub(crate) mod applications;
 pub(crate) mod available;
+pub(crate) mod concurrent;
 mod help;
 pub(crate) mod install;
 pub(crate) mod run;
@@ -14,6 +15,7 @@ pub(crate) mod which;
 
 pub(crate) use add::add;
 pub(crate) use available::available;
+pub(crate) use concurrent::concurrent;
 pub(crate) use help::help;
 pub(crate) use install::install;
 pub(crate) use run::run;

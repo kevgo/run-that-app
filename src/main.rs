@@ -39,6 +39,7 @@ fn inner() -> error::Result<ExitCode> {
     Command::AppsLong => Ok(commands::applications::long(&apps)),
     Command::AppsShort => Ok(commands::applications::short(&apps)),
     Command::Available(args) => commands::available(&args, &apps),
+    Command::Concurrent(args) => commands::concurrent(args, &apps),
     Command::DisplayHelp => Ok(commands::help()),
     Command::Install(args) => commands::install(args, &apps),
     Command::RunApp(args) => commands::run(args, &apps),

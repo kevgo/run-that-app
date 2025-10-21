@@ -95,6 +95,7 @@ pub(crate) enum UserError {
   },
   GoCompilationFailed,
   GoNoPermission,
+  InvalidCommandString(String),
   InvalidConfigFileFormat {
     line_no: usize,
     text: String,
@@ -231,6 +232,10 @@ impl UserError {
         desc("Please see the error output above and try again with a different version.");
       }
       UserError::GoNoPermission => error("No permission to execute the Go compiler"),
+      UserError::InvalidCommandString(cmd) => {
+        error(&format!("invalid command string: {cmd}"));
+        desc("The command string could not be parsed. Please check for unmatched quotes or invalid escape sequences.");
+      }
       UserError::InvalidConfigFileFormat { line_no, text } => {
         error("Invalid config file format");
         desc(&format!("{}:{line_no}: {text}", configuration::FILE_NAME));
