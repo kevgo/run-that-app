@@ -7,11 +7,11 @@ pub(crate) enum Command {
   AppsLong,
   AppsShort,
   Available(available::Args),
-  RunApp(run::Args),
   DisplayHelp,
+  RunApp(run::Args),
   Test(test::Args),
-  Which(which::Args),
   Update(update::Args),
   Version,
   Versions(versions::Args),
+  Which(which::Args),
 }

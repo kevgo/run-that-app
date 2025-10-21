@@ -43,8 +43,8 @@ fn inner() -> error::Result<ExitCode> {
     Command::RunApp(args) => commands::run(args, &apps),
     Command::Test(mut args) => commands::test(&mut args, &apps),
     Command::Update(args) => commands::update(&args, &apps),
-    Command::Which(args) => commands::which(&args, &apps),
     Command::Version => Ok(commands::version()),
     Command::Versions(args) => commands::versions(&args, &apps),
+    Command::Which(args) => commands::which(&args, &apps),
   }
 }
