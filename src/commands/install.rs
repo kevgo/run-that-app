@@ -2,9 +2,8 @@ use crate::applications::{ApplicationName, Apps};
 use crate::configuration::{self, RequestedVersions, Version};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::logging;
 use crate::yard::Yard;
-use crate::{commands, platform, yard};
+use crate::{commands, logging, platform, yard};
 use std::process::ExitCode;
 
 pub(crate) fn install(args: Args, apps: &Apps) -> Result<ExitCode> {
