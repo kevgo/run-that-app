@@ -69,7 +69,13 @@ pub(crate) struct Args {
   pub(crate) verbose: bool,
 }
 
-fn load_or_install_apps(app_versions: Vec<AppVersions>, apps: &Apps, optional: bool, from_source: bool, ctx: &RuntimeContext) -> Result<Vec<ExecutableCall>> {
+pub(crate) fn load_or_install_apps(
+  app_versions: Vec<AppVersions>,
+  apps: &Apps,
+  optional: bool,
+  from_source: bool,
+  ctx: &RuntimeContext,
+) -> Result<Vec<ExecutableCall>> {
   let mut result = vec![];
   for app_version in app_versions {
     let app = apps.lookup(app_version.app_name)?;

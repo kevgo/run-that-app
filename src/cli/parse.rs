@@ -14,6 +14,7 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
   let mut include_apps: Vec<ApplicationName> = vec![];
   let mut which = false;
   let mut add = false;
+  let mut install = false;
   let mut test = false;
   let mut indicate_available = false;
   let mut update = false;
@@ -44,6 +45,10 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
       }
       if &arg == "--error-on-output" {
         error_on_output = true;
+        continue;
+      }
+      if &arg == "--install" {
+        install = true;
         continue;
       }
       if &arg == "--optional" {
@@ -93,7 +98,7 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
       app_args.push(arg);
     }
   }
-  if multiple_true(&[which, indicate_available, test, update, versions.is_some()]) {
+  if multiple_true(&[which, indicate_available, install, test, update, versions.is_some()]) {
     return Err(UserError::MultipleCommandsGiven);
   }
   if update {
@@ -115,6 +120,16 @@ pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> 
         app_name,
         optional,
         version,
+        verbose,
+      }));
+    }
+    if install {
+      return Ok(Command::Install(commands::install::Args {
+        app_name,
+        version,
+        from_source,
+        include_apps,
+        optional,
         verbose,
       }));
     }

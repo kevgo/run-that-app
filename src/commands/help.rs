@@ -21,6 +21,7 @@ pub(crate) fn print_options() {
 --error-on-output           treat all output of the executed app as an error
 --from-source               force installation from source, even if precompiled binaries are available
 --help, -h                  display this help screen
+--install <app>             install the given application without running it
 --optional                  if an app is not available for the current platform, do nothing
 --update                    updates the versions in run-that-app to the latest available
 --which <app>               displays the path to the installed executable of the given application
