@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.24.0 (2025-10-21)
+
+- `--install` command
+
 ### 0.23.0 (2025-10-14)
 
 - app: cucumber-sort
