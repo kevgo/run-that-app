@@ -40,10 +40,10 @@ fn find_files(dir: &Path, result: &mut Vec<std::path::PathBuf>) -> io::Result<()
     }
     if path.is_dir() {
       find_files(&path, result)?;
-    } else if let Some(extension) = path.extension() {
-      if extension == "rs" {
-        result.push(path);
-      }
+    } else if let Some(extension) = path.extension()
+      && extension == "rs"
+    {
+      result.push(path);
     }
   }
   Ok(())
