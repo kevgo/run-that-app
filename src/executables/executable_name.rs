@@ -53,7 +53,7 @@ pub(crate) struct ExecutableNamePlatform(String);
 
 impl From<String> for ExecutableNamePlatform {
   fn from(value: String) -> Self {
-    ExecutableNamePlatform(value.to_string())
+    ExecutableNamePlatform(value.clone())
   }
 }
 
