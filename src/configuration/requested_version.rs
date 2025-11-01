@@ -19,7 +19,7 @@ impl RequestedVersion {
         return Ok(RequestedVersion::Path(app_definition.allowed_versions()?));
       }
       let version_req = semver::VersionReq::parse(&system_version).map_err(|err| UserError::CannotParseSemverRange {
-        expression: system_version.to_string(),
+        expression: system_version.clone(),
         reason: err.to_string(),
       })?;
       return Ok(RequestedVersion::Path(version_req));
