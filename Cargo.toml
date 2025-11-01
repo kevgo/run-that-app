@@ -2,7 +2,7 @@
 name = "rta"
 version = "0.24.0"
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.91"
 
 [dependencies]
 big_s = "1.0.2"
