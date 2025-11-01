@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.24.1 (2025-11-1)
+
+- support exhaustruct versions other than 3
+
 ### 0.24.0 (2025-10-21)
 
 - `--install` command
