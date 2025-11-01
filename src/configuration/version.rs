@@ -31,6 +31,11 @@ impl Version {
     &self.0
   }
 
+  pub(crate) fn major_version(&self) -> Option<&str> {
+    let first_part = self.0.split('.').next()?;
+    if first_part.is_empty() { None } else { Some(first_part) }
+  }
+
   pub(crate) fn semver(&self) -> Result<semver::Version> {
     semver::Version::parse(&self.0).map_err(|err| UserError::CannotParseSemverVersion {
       expression: self.0.clone(),
@@ -104,6 +109,34 @@ mod tests {
       let pre_release = Version::from("1.2.3-alpha");
       let final_release = Version::from("1.2.3");
       assert!(pre_release < final_release);
+    }
+  }
+
+  mod major_version {
+    use crate::configuration::Version;
+
+    #[test]
+    fn semantic_version() {
+      let version = Version::from("3.10.2");
+      assert_eq!(version.major_version(), Some("3"));
+    }
+
+    #[test]
+    fn single_digit() {
+      let version = Version::from("4");
+      assert_eq!(version.major_version(), Some("4"));
+    }
+
+    #[test]
+    fn empty_string() {
+      let version = Version::from("");
+      assert_eq!(version.major_version(), None);
+    }
+
+    #[test]
+    fn no_dots() {
+      let version = Version::from("v2");
+      assert_eq!(version.major_version(), Some("v2"));
     }
   }
 }
