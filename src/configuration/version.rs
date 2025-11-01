@@ -33,7 +33,7 @@ impl Version {
 
   pub(crate) fn semver(&self) -> Result<semver::Version> {
     semver::Version::parse(&self.0).map_err(|err| UserError::CannotParseSemverVersion {
-      expression: self.0.to_string(),
+      expression: self.0.clone(),
       reason: err.to_string(),
     })
   }
