@@ -33,11 +33,7 @@ impl Version {
 
   pub(crate) fn major_version(&self) -> Option<&str> {
     let first_part = self.0.split('.').next()?;
-    if first_part.is_empty() {
-      None
-    } else {
-      Some(first_part)
-    }
+    if first_part.is_empty() { None } else { Some(first_part) }
   }
 
   pub(crate) fn semver(&self) -> Result<semver::Version> {
