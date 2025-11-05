@@ -33,7 +33,7 @@ impl AppDefinition for Exhaustruct {
         format!("dev.gaijin.team/go/exhaustruct/v{version}")
     } else {
         format!("github.com/{ORG}/{REPO}/v{major_version}/cmd/exhaustruct@v{version}")
-    }
+    };
     RunMethod::ThisApp {
       install_methods: vec![Method::CompileGoSource { import_path }],
     }
