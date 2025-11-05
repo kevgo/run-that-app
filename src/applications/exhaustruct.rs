@@ -28,7 +28,7 @@ impl AppDefinition for Exhaustruct {
   }
 
   fn run_method(&self, version: &Version, _platform: Platform) -> RunMethod {
-    let major_version = version.major_version().unwrap_or("3");
+    let major_version = version.major_version().unwrap_or(3);
     RunMethod::ThisApp {
       install_methods: vec![Method::CompileGoSource {
         import_path: format!("github.com/{ORG}/{REPO}/v{major_version}/cmd/exhaustruct@v{version}"),
