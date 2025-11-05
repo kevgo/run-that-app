@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.24.2 (2025-11-5)
+
+- support for exhaustruct v4 and higher
+
 ### 0.24.1 (2025-11-1)
 
 - support exhaustruct versions other than 3
