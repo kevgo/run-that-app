@@ -31,9 +31,14 @@ impl Version {
     &self.0
   }
 
-  pub(crate) fn major_version(&self) -> Option<&str> {
+  pub(crate) fn major_version(&self) -> Option<usize> {
     let first_part = self.0.split('.').next()?;
-    if first_part.is_empty() { None } else { Some(first_part) }
+    if first_part.is_empty() {
+      return None;
+    }
+    // Strip leading 'v' prefix if present (e.g., "v2" -> "2")
+    let numeric_part = first_part.strip_prefix('v').unwrap_or(first_part);
+    numeric_part.parse().ok()
   }
 
   pub(crate) fn semver(&self) -> Result<semver::Version> {
@@ -118,13 +123,13 @@ mod tests {
     #[test]
     fn semantic_version() {
       let version = Version::from("3.10.2");
-      assert_eq!(version.major_version(), Some("3"));
+      assert_eq!(version.major_version(), Some(3));
     }
 
     #[test]
     fn single_digit() {
       let version = Version::from("4");
-      assert_eq!(version.major_version(), Some("4"));
+      assert_eq!(version.major_version(), Some(4));
     }
 
     #[test]
@@ -136,7 +141,7 @@ mod tests {
     #[test]
     fn no_dots() {
       let version = Version::from("v2");
-      assert_eq!(version.major_version(), Some("v2"));
+      assert_eq!(version.major_version(), Some(2));
     }
   }
 }
