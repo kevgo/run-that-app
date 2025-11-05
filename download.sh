@@ -9,7 +9,7 @@ print_welcome() {
 	echo
 }
 
-VERSION="${1:-0.24.1}" # the version of run-that-app to download
+VERSION="${1:-0.24.2}" # the version of run-that-app to download
 TMP_DIR=./run_that_app_install
 
 main() {
