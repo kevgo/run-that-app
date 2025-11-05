@@ -14,11 +14,11 @@ fn pub_crate() -> io::Result<()> {
   let mut failure = false;
   for file in files {
     for (index, line) in lines_in_file(&file)?.enumerate() {
-      if let Ok(line_content) = line {
-        if line_content.trim_start().starts_with("pub ") {
-          println!("{}:{} {}", file.to_string_lossy(), index + 1, line_content);
-          failure = true;
-        }
+      if let Ok(line_content) = line
+        && line_content.trim_start().starts_with("pub ")
+      {
+        println!("{}:{} {}", file.to_string_lossy(), index + 1, line_content);
+        failure = true;
       }
     }
   }
@@ -40,10 +40,10 @@ fn find_files(dir: &Path, result: &mut Vec<std::path::PathBuf>) -> io::Result<()
     }
     if path.is_dir() {
       find_files(&path, result)?;
-    } else if let Some(extension) = path.extension() {
-      if extension == "rs" {
-        result.push(path);
-      }
+    } else if let Some(extension) = path.extension()
+      && extension == "rs"
+    {
+      result.push(path);
     }
   }
   Ok(())
