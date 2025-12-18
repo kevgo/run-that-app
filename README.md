@@ -90,7 +90,7 @@ rta actionlint
 Executing `rta --add <app>` creates this file for you.
 
 RTA uses a different name for the configuration file to avoid interference with
-other app runners like [asdf](#asdf) or [mise](#mise)
+other app runners like [asdf](#asdf) or [mise](#mise).
 
 ### usage
 
