@@ -195,7 +195,7 @@ _Run-that-app_ considers restrictions declared by your code base. If your
 codebase has a file `go.mod` containing `go 1.21` and the externally installed
 Go version is older, _run-that-app_ would not use the external version.
 
-## use external config files
+### use externally defined versions
 
 Certain applications allow defining the version to use in their own config file.
 An example is Go, which defines the Go version to use in the `go.mod` file.
