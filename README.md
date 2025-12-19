@@ -297,8 +297,8 @@ If it works for you, do it. In practice, package managers introduce issues:
 - Different OSes use different package managers. You would need to support
   Homebrew, Nix, Scoop, Chocolatey, winget, DNF, pacman, apt, pkg, snap, zypper,
   xbps, portage, etc.
-- Some environments like Windows or bare-bones Docker images have a package
-  manager.
+- Some environments like Windows or bare-bones Docker images don't have a
+  package manager.
 - Not all tools are packaged everywhere.
 - Packaged application versions are often out of your control.
 - Different projects often require different tool versions that would need to be
