@@ -7,7 +7,8 @@
 
 _Run-that-app_ is a minimalistic cross-platform application runner. It executes
 native CLI applications on Linux, macOS, Windows, and BSD without the need to
-install them first.
+install them first. The intended use case is running developer tools like
+linters in scripts.
 
 #### run instead of install
 
