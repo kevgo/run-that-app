@@ -48,8 +48,7 @@ Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kev
 ```
 
 The installer script places the run-that-app executable into the current
-directory. To install in another directory, change into that directory and then
-execute the installer from there.
+directory. To install in another directory, execute the installer inside it.
 
 ## usage
 
