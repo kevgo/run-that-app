@@ -284,87 +284,58 @@ Add `tools/rta*` to `.gitignore`.
 
 ### Run-that-app does not support an application I need
 
-It's super easy to add a new application to _run-that-app_! See the
-[developer documentation](docs/DEVELOPMENT.md) for details.
+Adding a new application is straightforward. See the
+[developer documentation](docs/DEVELOPMENT.md).
 
-### Why not use the package manager of my system to install third-party applications?
+### Why not use the package manager?
 
-If it works then do it. We have found many challenges with using executables
-installed by package managers:
+If it works for you, do it. In practice, package managers introduce issues:
 
-- Other people might use other operating systems that have other package
-  managers. You would have to support Homebrew, Nix, Scoop, Chocolatey, winget,
-  DNF, pacman, apt, pkg, snap, zypper, xbps, portage, etc.
-- Some environments like Windows or bare-bones Docker images might not have a
-  package manager available.
-- Some of the tools you use might not be available via every package manager. An
-  example are tools distributed via GitHub Releases.
-- You might need a different version of an application than the one provided by
-  your or other people's package manager. A best practice for reproducible
-  builds is using tooling at an exactly specified version instead of whatever
-  version your package manager gives you on a particular day.
-- You might work on several projects, each project requiring different versions
-  of tools.
+- Different OSes use different package managers. You would need to support
+  Homebrew, Nix, Scoop, Chocolatey, winget, DNF, pacman, apt, pkg, snap, zypper,
+  xbps, portage, etc.
+- Some environments like Windows or bare-bones Docker images have a package
+  manager.
+- Not all tools are packaged everywhere.
+- Packaged application versions are often out of your control.
+- Different projects often require different tool versions that would need to be
+  installed in parallel.
 
 ### Why not use Docker?
 
-Docker is a standardized container format for distributing complex applications
-along with their runtime environments and dependencies. Its benefits are often
-likened to those of standardized shipping containers in the transportation
-industry: a reliable, consistent, and portable way to package and deliver goods,
-or, in this case, software.
+Docker solves a different problem: shipping full runtime environments. For
+development tooling, it often adds unnecessary complexity and bloat:
 
-However, just as companies rarely manufacture goods inside shipping containers,
-you likely don't need to "manufacture" your software inside a container either.
-Your development machine already has a capable operating system, there’s no need
-to layer additional OS environments just to write and debug code if the required
-tooling is available for your native operating system.
-
-Consider the implications: on macOS or Windows, which lack native Docker
-support, you end up running a full Linux instance inside a virtual machine,
-which then runs another Linux environment inside Docker. That’s two and a half
-operating systems in play! Each additional OS layer consumes gigabytes of
-storage and RAM, adding unnecessary complexity and overhead to your workflow.
-
-Moreover, Docker falls short in key areas. It doesn’t resolve compatibility
-issues with different CPU architectures (Intel, ARM, RISC-V). Using Docker for
-development tooling can introduce the infamous "Docker-in-Docker" problem on
-your CI server. And if you need to install arbitrary executables from GitHub
-Releases, for which there are no Docker images available, Docker won’t make that
-process any easier.
+- extra OS layers (especially on Windows and macOS)
+- significant storage and memory overhead
+- Docker-in-Docker issues on CI
+- no help with CPU architecture mismatches
+- no solution for binaries hosted on GitHub releases
 
 ### Why not quickly write a small Bash script that downloads the executable?
 
-These Bash scripts tend to become complex if you want them to work well on a
-variety of operating systems. They require additional applications like `curl`,
-`gzip`, and `tar`, which must exist on all machines that your Bash script runs
-on. Bash itself as well as these external dependencies come in a variety of
-versions and flavors that sometimes aren't as compatible as one might think.
+Cross-platform Bash scripts quickly become fragile:
 
-You also need to write a Powershell script since Bash isn't available
-out-of-the-box on Windows. Even if Bash is installed on Windows, it executes in
-an emulated environment that behaves different than a real Linux or Unix system.
+- they depend on external tools (`curl`, `tar`, `zip`)
+- they and the external tools can behave differently across systems
+- they don't work natively on Windows
 
-Run-that-app saves you from these headaches. Think about it as a cross-platform
-Bash script, written in a proper, strongly typed programming language that
-guarantees correctness.
+Run-that-app is effectively a cross-platform Bash script, written in a strongly
+typed programming language with predictable behavior.
 
 ### An app is not available for my platform
 
-If binaries are not available for your platform, _run-that-app_ can compile
-applications from source. If that doesn't work, it can
+_Run-that-app_ can compile from source. If that fails, it can
 [gracefully degrade](#graceful-degredation).
 
-### What about apps is written in NodeJS, Python, or Ruby?
+### What about NodeJS, Python, or Ruby tools?
 
-Use the package managers and runtimes of those languages to install and run the
-respective tool. You can use _run-that-app_ to run those package managers and
-runtimes.
+_Run-that-app_ can execute the package managers and runtimes for these
+ecosystems, which you can then use to execute tools written in these languages.
 
-### An app has complex dependencies that run-that-app cannot support
+### An app has complex dependencies
 
-Please open a ticket to discuss your use case and determine whether
-_run-that-app_ can install these dependencies. Pretty much anything is possible!
+Open an issue. Many cases are solvable.
 
 ### Why does run-that-app not have a marketplace that I can submit my application to?
 
