@@ -70,7 +70,7 @@ To install elsewhere, execute the installer from that directory.
 ## usage
 
 ```sh
-rta [run-that-app arguments] <app name>[@<app version override>] [app arguments]
+rta [run-that-app arguments] <app name>[@<app version>] [app arguments]
 ```
 
 Run [actionlint](https://github.com/rhysd/actionlint) at version `1.6.26`:
