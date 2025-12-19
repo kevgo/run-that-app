@@ -12,12 +12,12 @@ linters in scripts.
 
 #### run instead of install
 
-Installation of small developer tools at multiple specific versions across all
-possible operating systems is a complex problem without a good solution.
-Run-that-app bypasses this problem. You don't really want to install
-applications, what you really want is running them as part of your development
-workflows. By integrating installation and execution, run-that-app radically
-simplifies many technical aspects.
+Installation of small developer tools at specific version(s) across all possible
+operating systems is a complex problem without a good solution. Run-that-app
+bypasses this problem. You don't really want to install applications, what you
+really want is running them as part of your development workflows. By
+integrating installation and execution, run-that-app radically simplifies many
+technical aspects.
 
 #### radically minimalistic
 
