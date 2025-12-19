@@ -391,6 +391,10 @@ advantages.
    can make breaking changes to the marketplace data at any time, and older
    installations will keep working.
 
+   This makes _run-that-app_ a great tool to distribute third-party applications
+   in locked-down environments. Only the hard-coded applications and versions
+   can be installed.
+
 3. If _run-that-app_ would use an external marketplace, it needs to sync its
    local replica of that marketplace at each invocation, and sometimes download
    updates. This introduces delays that might be acceptable for package managers
