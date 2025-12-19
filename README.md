@@ -10,14 +10,12 @@ native CLI applications on Linux, macOS, Windows, and BSD without the need to
 install them first. The intended use case is running developer tools like
 linters in scripts.
 
-#### run instead of install
+#### no more separation between installation and execution
 
-Installation of small developer tools at specific version(s) across all possible
+Installation of small developer tools at specific versions across all possible
 operating systems is a complex problem without a good solution. Run-that-app
-bypasses this problem. You don't really want to install applications, what you
-really want is running them as part of your development workflows. By
-integrating installation and execution, run-that-app radically simplifies many
-technical aspects.
+bypasses this problem. You don't really want to _install_ applications, what you
+actually want is to _run_ them in your development workflows.
 
 #### radically minimalistic
 
