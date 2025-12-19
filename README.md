@@ -260,7 +260,7 @@ This installs Go 1.21.6 and uses its bundled `gofmt`.
 
 ## Usage in a Makefile
 
-Here is a template for installing and using _run-that-app_ in a `Makefile`:
+Example Makefile integration:
 
 ```make
 RTA_VERSION = 0.24.2  # version of run-that-app to use
@@ -278,7 +278,7 @@ tools/rta@${RTA_VERSION}:
 	@ln -s rta@${RUN_THAT_APP_VERSION} tools/rta
 ```
 
-You would have to `.gitignore` the files `tools/rta*`.
+Add `tools/rta*` to `.gitignore`.
 
 ### Q&A
 
