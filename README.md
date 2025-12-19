@@ -251,12 +251,12 @@ gofmt 1.21.6
 
 This installs Go 1.21.6 and calls the gofmt contained in this installation.
 
-### Usage in a Makefile
+## Usage in a Makefile
 
 Here is a template for installing and using run-that-app in a `Makefile`:
 
 ```make
-RTA_VERSION = 0.24.2
+RTA_VERSION = 0.24.2  # version of run-that-app to use
 
 # an example Make target that uses run-that-app
 test: tools/rta@${RTA_VERSION}
