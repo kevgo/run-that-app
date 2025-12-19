@@ -86,9 +86,9 @@ _Run-that-app_ arguments must appear before the name of the application to run.
 The application name is the first argument that does not start with a dash. All
 following arguments are passed through to the application.
 
-> [!TIP]
-> run [ShellCheck](https://shellcheck.net) version `0.9.0` with arguments
-> `--color=always myscript.sh`:
+> [!NOTE]
+> run [ShellCheck](https://shellcheck.net) version `0.9.0` with
+> arguments `--color=always myscript.sh`:
 >
 > ```bash
 > rta shellcheck@0.9.0 --color=always myscript.sh
