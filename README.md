@@ -366,8 +366,8 @@ runtimes.
 
 ### What if my app has more complex dependencies that run-that-app cannot support?
 
-Please open a ticket to discuss your use case. _Run-that-app_ can install these
-dependencies.
+Please open a ticket to discuss your use case and determine whether
+_run-that-app_ can install these dependencies. Pretty much anything is possible!
 
 ### Why does run-that-app not have a marketplace that I can submit my application to?
 
