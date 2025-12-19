@@ -194,7 +194,8 @@ This makes _run-that-app_ try to use the already installed Go version on your
 computer. If it doesn't find Go in the PATH, it would install and run Go version
 1.21.3.
 
-You can restrict the acceptable versions of the globally installed applications:
+You can restrict the acceptable versions for the globally installed
+applications:
 
 ```asdf
 go system@1.21.* 1.21.3
