@@ -181,21 +181,30 @@ rta --update
 
 ### globally installed applications
 
-If your system already has certain apps installed, _run-that-app_ can use them.
-Consider this `run-that-app` file:
+_Run-that-app_ can use applications that are installed on your system, for
+example via your package manager or because you have compiled them yourself.
+Make sure they are in the PATH and use `system` as the version in the
+configuration file:
 
 ```
 go system 1.21.3
 ```
 
-If your computer has Go installed, _run-that-app_ would try to run it. Only if
-that fails would it install and run Go version 1.21.3.
+This makes _run-that-app_ try to use the already installed Go version on your
+computer. If it doesn't find Go in the PATH, it would install and run Go version
+1.21.3.
 
-_Run-that-app_ considers restrictions declared by your code base. If your
-codebase has a file `go.mod` containing `go 1.21` and the externally installed
-Go version is older, _run-that-app_ would not use the external version.
+You can restrict the acceptable versions of the globally installed applications:
 
-### use externally defined versions
+```asdf
+go system@1.21.* 1.21.3
+```
+
+This uses the globally installed Go only if it matches version `1.21.*`. If no
+or an incompatible version is installed, _run-that-app_ would install and run Go
+version `1.21.3`.
+
+### reuse externally version declarations
 
 Certain applications allow defining the version to use in their own config file.
 An example is Go, which defines the Go version to use in the `go.mod` file.
@@ -347,33 +356,6 @@ guarantees correctness.
 If binaries are not available for your platform, _run-that-app_ can compile
 applications from source. If that doesn't work, it can
 [gracefully degrade](#graceful-degredation).
-
-### I prefer to compile an app myself
-
-Add the app that you compiled to the PATH and add a "system" version in the
-configuration file that looks like this:
-
-```asdf
-acme 1.2.3 system
-```
-
-This tries to first install and run the app named `acme` at version 1.2.3. If
-this is not successful, _run-that-app_ looks for an application named `acme` in
-the PATH and executes it instead. In this case _run-that-app_ does not guarantee
-that the app has the correct version.
-
-You can restrict the acceptable versions of the globally installed applications
-like this:
-
-```asdf
-acme 1.2.3 system@1.2.*
-```
-
-This tries to first install and run the app named `acme` at version 1.2.3. If
-this is not successful, _run-that-app_ looks for an application named `acme` in
-the PATH, determines its version, and if that version matches the given semver
-restrictions, executes it. For example, if you have `acme` at version 1.2.1
-installed somewhere in your PATH, _run-that-app_ would execute it.
 
 ### What about apps is written in NodeJS, Python, or Ruby?
 
