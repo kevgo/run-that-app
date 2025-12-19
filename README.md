@@ -179,9 +179,7 @@ to the latest version:
 rta --update
 ```
 
-## examples
-
-### Use globally installed applications
+### globally installed applications
 
 If your system already has certain apps installed, _run-that-app_ can use them.
 Consider this `run-that-app` file:
@@ -197,39 +195,23 @@ _Run-that-app_ considers restrictions declared by your code base. If your
 codebase has a file `go.mod` containing `go 1.21` and the externally installed
 Go version is older, _run-that-app_ would not use the external version.
 
-### Use the version defined by an external config file
+## use external config files
 
 Certain applications allow defining the version to use in their own config file.
-An example is Go, which defines the Go version to use in the `go.mod` file. This
-config file entry makes _run-that-app_ use that version:
+An example is Go, which defines the Go version to use in the `go.mod` file.
+Setting the version to `auto` makes _run-that-app_ auto-detect these versions.
+Example config file entry:
 
 ```
 go auto
 ```
 
-### Usage in a Makefile
+## bundled applications
 
-Here is a template for installing and using run-that-app in a `Makefile`:
+Some tools are shipped bundled with other tools. When running them, provide the
+version of the bundling application.
 
-```make
-RTA_VERSION = 0.24.2
-
-# an example Make target that uses run-that-app
-test: tools/rta@${RTA_VERSION}
-	tools/rta actionlint
-
-# this Make target installs run-that-app if it isn't installed or has the wrong version
-tools/rta@${RTA_VERSION}:
-	@rm -f tools/rta*
-	@mkdir -p tools
-	@(cd tools && curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh)
-	@mv tools/rta tools/rta@${RUN_THAT_APP_VERSION}
-	@ln -s rta@${RUN_THAT_APP_VERSION} tools/rta
-```
-
-You would have to `.gitignore` the files `tools/rta*`.
-
-## npm and npx
+### npm and npx
 
 _Run-that-app_ executes the `npm` and `npx` executables that come with the
 Node.js installation. Hence, to install them, you need to provide the Node
@@ -257,6 +239,28 @@ gofmt 1.21.6
 ```
 
 This installs Go 1.21.6 and calls the gofmt contained in this installation.
+
+### Usage in a Makefile
+
+Here is a template for installing and using run-that-app in a `Makefile`:
+
+```make
+RTA_VERSION = 0.24.2
+
+# an example Make target that uses run-that-app
+test: tools/rta@${RTA_VERSION}
+	tools/rta actionlint
+
+# this Make target installs run-that-app if it isn't installed or has the wrong version
+tools/rta@${RTA_VERSION}:
+	@rm -f tools/rta*
+	@mkdir -p tools
+	@(cd tools && curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh)
+	@mv tools/rta tools/rta@${RUN_THAT_APP_VERSION}
+	@ln -s rta@${RUN_THAT_APP_VERSION} tools/rta
+```
+
+You would have to `.gitignore` the files `tools/rta*`.
 
 ### Q&A
 
