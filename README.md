@@ -226,7 +226,7 @@ If you already have `npm` installed in your PATH, provide the versions of `npm`
 and `npx` themselves.
 
 ```asdf
-npm system@10.2 20.10.0
+npm system@10.2
 ```
 
 You can also combine these two declarations:
