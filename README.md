@@ -208,7 +208,7 @@ go system 1.21.3
 This prefers the system-installed Go. If none is found, Go 1.21.3 is installed
 and used.
 
-You can restrict acceptable versions for globally installed app:
+You can restrict acceptable versions for the externally installed app:
 
 ```asdf
 go system@1.21.* 1.21.3
