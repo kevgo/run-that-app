@@ -251,7 +251,7 @@ higher. If your machine has no npm installed, _run-that-app_ installs Node
 
 ### gofmt
 
-_Gofmt_ is distributed as part of a Go installation. So please provide the Go
+_Gofmt_ is distributed as part of a Go installation. Please provide the Go
 version when specifying the desired gofmt version. Example _run-that-app_ config
 file:
 
