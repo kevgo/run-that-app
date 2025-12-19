@@ -195,36 +195,26 @@ rta --update
 
 ### globally installed applications
 
-_Run-that-app_ can use applications that are already installed on your system,
-for example via your package manager or when you compiled them yourself. Make
-sure they are in the PATH and use `system` as the version in the configuration
-file:
+_Run-that-app_ can reuse tools already installed on your system. The executable
+must be present in PATH, and the version must be declared as `system`.
 
 ```
 go system 1.21.3
 ```
 
-This makes _run-that-app_ try to use the already installed Go version on your
-computer. If it doesn't find Go in the PATH, it would install and run Go version
-1.21.3.
+This prefers the system-installed Go. If none is found, Go 1.21.3 is installed
+and used.
 
-You can restrict the acceptable versions for the globally installed
-applications:
+You can restrict acceptable versions for globally installed app:
 
 ```asdf
 go system@1.21.* 1.21.3
 ```
 
-This uses the globally installed Go only if it matches version `1.21.*`. If no
-or an incompatible version is installed, _run-that-app_ would install and run Go
-version `1.21.3`.
+### external version declarations
 
-### reuse externally version declarations
-
-Certain applications allow defining the version to use in their own config file.
-An example is Go, which defines the Go version to use in the `go.mod` file.
-Setting the version to `auto` makes _run-that-app_ auto-detect these versions.
-Example config file entry:
+Some tools define their version in project files (e.g. Go via `go.mod`). Setting
+the version to `auto` enables automatic detection:
 
 ```
 go auto
@@ -232,48 +222,41 @@ go auto
 
 ## bundled applications
 
-Some tools are shipped bundled with other tools. When running them, provide the
-version of the bundling application.
+Some tools are distributed as part of another toolchain. In thes cases, specify
+the version of the _bundling_ application.
 
 ### npm and npx
 
-_Run-that-app_ executes the `npm` and `npx` executables that come with the
-Node.js installation. To use them, provide the Node version.
-
-Example _run-that-app_ config file for npm bundled with Node 20.10.0:
+`npm` and `npx` are provided by Node.js. To use them, specify a Node version:
 
 ```asdf
 npm 20.10.0
 ```
 
-If you already have `npm` installed in your PATH, provide the versions of `npm`
-and `npx` themselves.
+To run an `npm` that is already installed, provide its own version:
 
 ```asdf
 npm system@10.2
 ```
 
-You can combine these two declarations:
+You can combine both declarations:
 
 ```asdf
 npm system@10.2 20.10.0
 ```
 
-This tries to use an existing npm installation as long as it has version 10.2 or
-higher. If your machine has no npm installed, _run-that-app_ installs Node
-20.10.0 and uses the npm version that comes with it.
+This prefers an existing `npm` ≥ 10.2, otherwise installs Node 20.10.0 and uses
+the npm version that comes with it.
 
 ### gofmt
 
-_Gofmt_ is distributed as part of a Go installation. Please provide the Go
-version when specifying the desired gofmt version. Example _run-that-app_ config
-file:
+_Gofmt_ is bundled with Go. Specify the Go version:
 
 ```asdf
 gofmt 1.21.6
 ```
 
-This installs Go 1.21.6 and calls the gofmt contained in this installation.
+This installs Go 1.21.6 and uses its bundled `gofmt`.
 
 ## Usage in a Makefile
 
