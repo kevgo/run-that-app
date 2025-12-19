@@ -35,13 +35,13 @@ drive. Applications execute at 100% native speed.
 
 ## installation
 
-On Linux and macOS:
+Linux and macOS:
 
 ```bash
 curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh
 ```
 
-On Windows (Powershell):
+Windows (Powershell):
 
 ```powershell
 Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kevgo/run-that-app/main/download.ps1" -UseBasicParsing).Content
