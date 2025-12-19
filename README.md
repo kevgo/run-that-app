@@ -135,8 +135,8 @@ rta --versions=3 actionlint
 
 If the application you want to run provides precompiled binaries, for example on
 GitHub releases, _run-that-app_ tries to download and use them. If no binaries
-are available for your platform, _run-that-app_ can also compile tools from
-source.
+are available for your platform, _run-that-app_ can also compile applications
+from source.
 
 You can enforce compilation from source with the `--from-source` flag.
 
@@ -158,8 +158,8 @@ numbers:
 rta actionlint
 ```
 
-RTA uses a different name for the configuration file to avoid interference with
-other app runners like [asdf](#asdf) or [mise](#mise).
+_Run-that-app_ uses a different name for the configuration file to avoid
+interference with other app runners like [asdf](#asdf) or [mise](#mise).
 
 ### add an application
 
