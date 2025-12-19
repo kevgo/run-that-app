@@ -344,8 +344,9 @@ guarantees correctness.
 
 ### An app is not available for my platform
 
-Run-that-app can compile applications from source. If that doesn't work, it can
-skip non-essential applications like linters via the `--optional` flag.
+If binaries are not available for your platform, _run-that-app_ can compile
+applications from source. If that doesn't work, it can
+[gracefully degrade](#graceful-degredation).
 
 ### I prefer to compile an app myself
 
