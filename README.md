@@ -10,7 +10,7 @@ native CLI applications on Linux, macOS, Windows, and BSD without the need to
 install them first. The intended use case is running developer tools like
 linters in scripts.
 
-#### no more separation between installation and execution
+#### integrating installation and execution
 
 Installation of small developer tools at specific versions across all possible
 operating systems is a complex problem without a good solution. Run-that-app
