@@ -162,7 +162,7 @@ rta --from-source <app>
 
 ## configuration
 
-_Run-that-app_ supports a configuration file name `run-that-app`, using the
+_Run-that-app_ supports a configuration file named `run-that-app`, using the
 [asdf version file format](https://asdf-vm.com/manage/configuration.html):
 
 ```
