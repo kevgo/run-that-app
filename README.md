@@ -320,7 +320,7 @@ development tooling, it often adds unnecessary complexity and bloat:
 Cross-platform Bash scripts quickly become fragile:
 
 - they depend on external tools (`curl`, `tar`, `zip`)
-- they and the external tools can behave differently across systems
+- they and the external tools they use can behave differently across systems
 - they don't work natively on Windows
 
 Run-that-app is effectively a cross-platform Bash script, written in a strongly
