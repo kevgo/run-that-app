@@ -101,10 +101,12 @@ rta --apps
 
 ### graceful degredation
 
-Not all applications support all platforms. The `--optional` flag skips
-unsupported applications without failing the command.
+Not all applications support all platforms. If binaries aren't distributed for
+your platform, _run-that-app_ can compile applications from source. If that
+doesn't work, the `--optional` flag skips unsupported applications without
+failing the command.
 
-Run ShellCheck only if it is available on the current platform:
+Example: run ShellCheck only if it is available on the current platform:
 
 ```bash
 rta --optional shellcheck@0.9.0 myscript.sh
