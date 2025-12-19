@@ -201,7 +201,7 @@ Go version is older, _run-that-app_ would not use the external version.
 
 Certain applications allow defining the version to use in their own config file.
 An example is Go, which defines the Go version to use in the `go.mod` file. This
-setup makes run-that-app use that version:
+config file entry makes _run-that-app_ use that version:
 
 ```
 go auto
