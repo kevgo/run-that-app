@@ -154,7 +154,7 @@ rta --versions=3 actionlint
 If precompiled binaries are available (e.g. via GitHub releases), _run-that-app_
 use them. If not, it can compile applications from source.
 
-You enforce compilation from source even when binaries exist:
+To enforce compilation from source even when binaries exist:
 
 ```sh
 rta --from-source <app>
