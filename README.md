@@ -360,7 +360,9 @@ applications from source. If that doesn't work, it can
 
 ### What about apps is written in NodeJS, Python, or Ruby?
 
-Use the package managers of those frameworks to run that app.
+Use the package managers and runtimes of those languages to install and run the
+respective tool. You can use _run-that-app_ to run those package managers and
+runtimes.
 
 ### What if my app has more complex dependencies that run-that-app cannot support?
 
