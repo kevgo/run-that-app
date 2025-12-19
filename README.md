@@ -342,12 +342,12 @@ Run-that-app saves you from these headaches. Think about it as a cross-platform
 Bash script, written in a proper, strongly typed programming language that
 guarantees correctness.
 
-### What if an app does not distribute binaries for my platform?
+### An app is not available for my platform
 
 Run-that-app can compile applications from source. If that doesn't work, it can
 skip non-essential applications like linters via the `--optional` flag.
 
-### What if I compile an app myself?
+### I prefer to compile an app myself
 
 Add the app that you compiled to the PATH and add a "system" version in the
 configuration file that looks like this:
