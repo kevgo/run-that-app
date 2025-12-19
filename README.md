@@ -199,7 +199,7 @@ rta --update
 ### globally installed applications
 
 _Run-that-app_ can reuse tools already installed on your system. The executable
-must be present in PATH, and the version must be declared as `system`.
+must be present in the PATH, and the version must be declared as `system`.
 
 ```
 go system 1.21.3
