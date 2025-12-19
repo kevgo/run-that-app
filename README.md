@@ -303,9 +303,9 @@ installed by package managers:
 
 Docker is a standardized container format for distributing complex applications
 along with their runtime environments and dependencies. Its benefits are often
-likened to those of standardized shipping containers in maritime transport: a
-reliable, consistent, and portable way to package and deliver goods, or, in this
-case, software.
+likened to those of standardized shipping containers in the transportation
+industry: a reliable, consistent, and portable way to package and deliver goods,
+or, in this case, software.
 
 However, just as companies rarely manufacture goods inside shipping containers,
 you likely don't need to "manufacture" your software inside a container either.
