@@ -275,12 +275,12 @@ You would have to `.gitignore` the files `tools/rta*`.
 
 ### Q&A
 
-#### Run-that-app does not support an application I need
+### Run-that-app does not support an application I need
 
 It's super easy to add a new application to _run-that-app_! See `DEVELOPMENT.md`
 for details.
 
-#### Why not use the package manager of my system to install third-party applications?
+### Why not use the package manager of my system to install third-party applications?
 
 If it works then do it. We have found many challenges with using executables
 installed by package managers:
@@ -299,7 +299,7 @@ installed by package managers:
 - You might work on several projects, each project requiring different versions
   of tools.
 
-#### Why not use Docker?
+### Why not use Docker?
 
 Docker is a standardized container format for distributing complex applications
 along with their runtime environments and dependencies. Its benefits are often
@@ -325,7 +325,7 @@ can introduce the infamous "Docker-in-Docker" problem. And if you need to
 install arbitrary executables from GitHub Releases, for which there are no
 Docker images available, Docker won’t make that process any easier.
 
-#### Why not quickly write a small Bash script that downloads the executable?
+### Why not quickly write a small Bash script that downloads the executable?
 
 These Bash scripts tend to become complex if you want them to work well on a
 variety of operating systems. They require additional applications like `curl`,
@@ -340,12 +340,12 @@ an emulated environment that behaves different than a real Linux or Unix system.
 Run-that-app saves you from these headaches. Think about it as a cross-platform
 Bash script, written in a strongly typed language that guarantees correctness.
 
-#### What if an app does not distribute binaries for my platform?
+### What if an app does not distribute binaries for my platform?
 
 Run-that-app can compile applications from source. If that doesn't work, it can
 skip non-essential applications like linters via the `--optional` flag.
 
-#### What if I compile an app myself?
+### What if I compile an app myself?
 
 Add the app that you compiled to the PATH and add a "system" version in the
 configuration file that looks like this:
@@ -372,16 +372,16 @@ the PATH, determines its version, and if that version matches the given semver
 restrictions, executes it. For example, if you have `acme` at version 1.2.1
 installed somewhere in your PATH, _run-that-app_ would execute it.
 
-#### What about apps is written in NodeJS, Python, or Ruby?
+### What about apps is written in NodeJS, Python, or Ruby?
 
 Use the package managers of those frameworks to run that app.
 
-#### What if my app has more complex dependencies that run-that-app cannot support?
+### What if my app has more complex dependencies that run-that-app cannot support?
 
 Please open a ticket to discuss your use case. Run-that-app can install these
 dependencies.
 
-#### Why does run-that-app not have a marketplace that I can submit my application to?
+### Why does run-that-app not have a marketplace that I can submit my application to?
 
 That marketplace is _run-that-app's_ source code on GitHub. This has several
 advantages.
@@ -413,12 +413,12 @@ advantages.
    _run-that-app_ executable regularly. So why not just do that and save
    yourself the hassle to also update a separate marketplace.
 
-### Related solutions
+## Related solutions
 
 These other cross-platform package managers might be a better fit for your use
 case.
 
-#### asdf
+### asdf
 
 [Asdf](https://asdf-vm.com) is the classic cross-platform application runner. It
 is a mature and stable platform that installs a large variety of applications.
@@ -431,7 +431,7 @@ Compared to asdf, run-that-app also supports Windows, offers conditional
 execution, allows writing application installation logic in a robust programming
 language that eliminates most runtime errors, and is faster.
 
-#### mise
+### mise
 
 [Mise](https://github.com/jdx/mise) is a rewrite of asdf in Rust. It allows
 installing applications, sets up shims and shell integration. It also runs tasks
@@ -440,7 +440,7 @@ and manages your environment variables.
 Compared to mise, run-that-app is much simpler and focused on doing one thing
 well.
 
-#### pkgx
+### pkgx
 
 [Pkgx](https://pkgx.sh) is a more full-fledged alternative to run-that-app with
 more bells and whistles, a better user experience, better shell integration, and
