@@ -236,7 +236,7 @@ the version of the _bundling_ application.
 npm 20.10.0
 ```
 
-To run an `npm` that is already installed, provide its own version:
+To run an `npm` that was installed externally, provide its own version:
 
 ```asdf
 npm system@10.2
