@@ -333,8 +333,8 @@ _Run-that-app_ can compile from source. If that fails, it can
 
 ### What about NodeJS, Python, or Ruby tools?
 
-_Run-that-app_ can execute the package managers and runtimes for these
-ecosystems, which you can then use to execute tools written in these languages.
+_Run-that-app_ can run the package managers and runtimes for these ecosystems,
+which then run the respective tool.
 
 ### An app has complex dependencies
 
