@@ -77,7 +77,7 @@ rta --apps
 Not all applications support all platforms. The `--optional` flag skips such
 applications without causing errors.
 
-This runs ShellCheck only if it is available on a developer machine:
+This runs ShellCheck only if it is available on your machine:
 
 ```bash
 rta --optional shellcheck@0.9.0 myscript.sh
