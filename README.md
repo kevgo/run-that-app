@@ -54,7 +54,7 @@ with no runtime overhead.
 
 Linux and macOS:
 
-```bash
+```sh
 curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh
 ```
 
@@ -69,13 +69,13 @@ To install elsewhere, execute the installer from that directory.
 
 ## usage
 
-```bash
+```sh
 rta [run-that-app arguments] <app name>[@<app version override>] [app arguments]
 ```
 
 Run [actionlint](https://github.com/rhysd/actionlint) at version `1.6.26`:
 
-```bash
+```sh
 ./rta actionlint@1.6.26
 ```
 
@@ -93,7 +93,7 @@ Run [ShellCheck](https://shellcheck.net) version `0.9.0` with arguments
 rta shellcheck@0.9.0 --color=always myscript.sh
 ```
 
-### see all runnable applications
+### list all runnable applications
 
 ```sh
 rta --apps
@@ -101,62 +101,62 @@ rta --apps
 
 ### graceful degredation
 
-Not all applications support all platforms. The `--optional` flag skips such
-applications without causing errors.
+Not all applications support all platforms. The `--optional` flag skips
+unsupported applications without failing the command.
 
-This runs ShellCheck only if it is available on your machine:
+Run ShellCheck only if it is available on the current platform:
 
 ```bash
 rta --optional shellcheck@0.9.0 myscript.sh
 ```
 
-The `--available` command indicates via exit code whether an application is
-available on the current platform.
+The `--available` command reports availability via its exit code.
 
 ### get the path to the installed executable
 
-The `--which` command returns the path to the installed executable.
+The `--which` command prints the path to the resolved executable.
 
-Here we call `go vet` with `alphavet` as a custom vet tool. If `alphavet` is
-unavailable for the current platform, do nothing.
+Example: run `go vet` with `alphavet` as a custom vet tool, but only if
+`alphavet` is available:
 
-```bash
+```sh
 rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
 ```
 
-### error-on-output
+### monitor output
 
-Some linters like [deadcode](https://pkg.go.dev/golang.org/x/tools/cmd/deadcode)
-print findings but don't signal failure with an exit code. In this case, the
-`--error-on-output` flag makes _run-that-app_ monitor the output of the
-application it calls and exit will an error if there is any.
+Some tools (e.g. [deadcode](https://pkg.go.dev/golang.org/x/tools/cmd/deadcode))
+report findings via stdout but exit with status code 0. The `--error-on-output`
+treats any output as failure.
 
-```
+```sh
 rta --error-on-output deadcode
 ```
 
-### see available versions
+### list available versions
 
-To see which versions of an applications you can install:
+Show the 10 most recent versions of an application:
 
-```
+```sh
 rta --versions actionlint
 ```
 
-This prints the 10 most recent versions. To see a different number:
+Limit the output to a specific number:
 
-```
+```sh
 rta --versions=3 actionlint
 ```
 
 ### force installation from source
 
-If the application you want to run provides precompiled binaries, for example on
-GitHub releases, _run-that-app_ tries to download and use them. If no binaries
-are available for your platform, _run-that-app_ can also compile applications
-from source.
+If precompiled binaries are available (e.g. via GitHub releases), _run-that-app_
+use them. If not, it can compile applications from source.
 
-You can enforce compilation from source with the `--from-source` flag.
+You enforce compilation from source even when binaries exist:
+
+```sh
+rta --from-source <app>
+```
 
 ## configuration
 
@@ -165,8 +165,7 @@ You can configure the versions of applications to use in a file called
 [asdf format](https://asdf-vm.com/manage/configuration.html):
 
 ```
-actionlint 1.6.26
-shellcheck 0.9.0
+actionlint 1.6.26 shellcheck 0.9.0
 ```
 
 Now you can run the listed applications without having to provide their version
