@@ -332,7 +332,7 @@ These Bash scripts tend to become complex if you want them to work well on a
 variety of operating systems. They require additional applications like `curl`,
 `gzip`, and `tar`, which must exist on all machines that your Bash script runs
 on. Bash itself as well as these external dependencies come in a variety of
-versions and flavors that sometimes aren't compatible with each other.
+versions and flavors that sometimes aren't as compatible as one might think.
 
 You also need to write a Powershell script since Bash isn't available
 out-of-the-box on Windows. Even if Bash is installed on Windows, it executes in
