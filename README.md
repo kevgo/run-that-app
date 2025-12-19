@@ -125,7 +125,7 @@ rta --versions=3 actionlint
 ### force installation from source
 
 If the application you want to run provides precompiled binaries, for example on
-GitHub releases, _run-that-app_ tries to download and use them. You can enforce
+GitHub releases, _run-that-app_ tries to download and use them.
 
 If no binaries are available for your platform, _run-that-app_ can also compile
 tools from source.
