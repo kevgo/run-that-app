@@ -35,41 +35,29 @@ drive. Applications execute at 100% native speed.
 
 ## installation
 
-### Linux and macOS
+On Linux and macOS:
 
-1. Install the run-that-app executable:
+```bash
+curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh
+```
 
-   ```bash
-   curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh
-   ```
+On Windows (Powershell):
 
-2. Run an app (in this case [actionlint](https://github.com/rhysd/actionlint) at
-   version 1.6.26)
-
-   ```bash
-   ./rta actionlint@1.6.26
-   ```
-
-### Windows (Powershell)
-
-1. Download the run-that-app executable:
-
-   ```powershell
-   Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kevgo/run-that-app/main/download.ps1" -UseBasicParsing).Content
-   ```
-
-2. Run an app (in this case [actionlint](https://github.com/rhysd/actionlint) at
-   version 1.6.26)
-
-   ```batchfile
-   .\rta actionlint@1.6.26
-   ```
-
-### install into a specific directory
+```powershell
+Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kevgo/run-that-app/main/download.ps1" -UseBasicParsing).Content
+```
 
 The installer script places the run-that-app executable into the current
 directory. To install in another directory, change into that directory and then
 execute the installer from there.
+
+## usage
+
+Run [actionlint](https://github.com/rhysd/actionlint) at version 1.6.26:
+
+```bash
+./rta actionlint@1.6.26
+```
 
 ## configuration
 
