@@ -5,9 +5,9 @@
 
 <br><br>
 
-**_Run-that-app_ is a minimalistic cross-platform application runner.** It
-executes native CLI applications on Linux, macOS, Windows, and BSD without the
-need to install them first.
+_Run-that-app_ is a minimalistic cross-platform application runner. It executes
+native CLI applications on Linux, macOS, Windows, and BSD without the need to
+install them first.
 
 Installation of small developer tools at specific versions across all possible
 operating systems is a complex and nuanced problem without a good solution.
