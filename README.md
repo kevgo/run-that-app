@@ -225,7 +225,7 @@ go auto
 
 ## bundled applications
 
-Some tools are distributed as part of another toolchain. In thes cases, specify
+Some tools are distributed as part of another toolchain. In these cases, specify
 the version of the _bundling_ application.
 
 ### npm and npx
