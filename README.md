@@ -429,13 +429,13 @@ language that eliminates most runtime errors, and is faster.
 installing applications, sets up shims and shell integration. It also runs tasks
 and manages your environment variables.
 
-Compared to mise, _run-that-app_ is much simpler, works in locked-down
+Compared to mise, _run-that-app_ is much simpler, works better in locked-down
 environments, and focuses on doing one thing well.
 
 ### pkgx
 
 [Pkgx](https://pkgx.sh) is a more full-fledged alternative to _run-that-app_
-with more bells and whistles, a better user experience, better shell
+with additional bells and whistles, a better user experience, better shell
 integration, and more polished design. It comes with its own
 [app store](https://tea.xyz) that apps need to be listed in to be installable.
 There is (or at least used to be) a blockchain component to this.
