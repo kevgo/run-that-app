@@ -76,7 +76,7 @@ rta [run-that-app arguments] <app name>[@<app version>] [app arguments]
 Run [actionlint](https://github.com/rhysd/actionlint) at version `1.6.26`:
 
 ```sh
-./rta actionlint@1.6.26
+rta actionlint@1.6.26
 ```
 
 The app version should contain only the version number (e.g. `1.6.26`), even if
