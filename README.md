@@ -57,13 +57,23 @@ rta [run-that-app arguments] <app name>[@<app version override>] [app arguments]
 ```
 
 Arguments for run-that-app come before the name of the application to run. The
-application name is the first CLI argument that doesn't start with a dash. All
-CLI arguments after the application name are passed to the application.
+application name is the first CLI argument that doesn't start with a dash.
 
 Run [actionlint](https://github.com/rhysd/actionlint) at version 1.6.26:
 
 ```bash
 ./rta actionlint@1.6.26
+```
+
+The app version should consist of just the version number, i.e. `1.6.26`, even
+if the Git tag is `v1.6.26`.
+
+All CLI arguments after the application name are passed to the application. Here
+we run [ShellCheck](https://shellcheck.net) version 0.9.0 with the arguments
+`--color=always myscript.sh`.
+
+```bash
+rta shellcheck@0.9.0 --color=always myscript.sh
 ```
 
 ### see all runnable applications
@@ -154,35 +164,23 @@ other app runners like [asdf](#asdf) or [mise](#mise).
 
 ### add an application
 
+This command creates the _run-that-app_ configuration file if necessary and adds
+the `actionlint` application at the latest version:
+
 ```
-rta --add <app>`
+rta --add actionlint
 ```
 
-- `--from-source`: force installation from source, even if precompiled binaries
-  are available
-- `--help` or `-h`: show help screen
-- `--optional`: if an app is not available for the current platform, do nothing
-- `--update`: updates the versions in `run-that-app`
-- `--which <app>`: displays the path to the installed executable of the given
-  application
-- `--verbose` or `-v`: display more details
-- `--version` or `-V`: displays the installed version of run-that-app
-- `--versions <app>`: displays the 10 most recent available versions of the
-  given app
-- `--versions=<number> <app>`: displays the given amount of installable versions
-  of the given app
+### update all applications
 
-The app version override should consist of just the version number, i.e.
-`1.6.26`. Even if the Git tag is `v1.6.26`.
+The `--update` command updates all applications listed in the configuration file
+to the latest version:
+
+```
+rta --update
+```
 
 ## examples
-
-Runs [ShellCheck](https://shellcheck.net) version 0.9.0 with the arguments
-`--color=always myscript.sh`.
-
-```bash
-rta shellcheck@0.9.0 --color=always myscript.sh
-```
 
 ### Use globally installed applications
 
