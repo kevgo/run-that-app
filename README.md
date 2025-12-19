@@ -160,28 +160,26 @@ rta --from-source <app>
 
 ## configuration
 
-You can configure the versions of applications to use in a file called
-`run-that-app` that follows the
-[asdf format](https://asdf-vm.com/manage/configuration.html):
+_Run-that-app_ supports a configuration file name `run-that-app`, using the
+[asdf version file format](https://asdf-vm.com/manage/configuration.html):
 
 ```
 actionlint 1.6.26 shellcheck 0.9.0
 ```
 
-Now you can run the listed applications without having to provide their version
-numbers:
+With this file in place, you no longer need to be specify the version
+explicitly:
 
 ```bash
 rta actionlint
 ```
 
-_Run-that-app_ uses a different name for the configuration file to avoid
-interference with other app runners like [asdf](#asdf) or [mise](#mise).
+The file name intentionally differs from [asdf](#asdf) and [mise](#mise) to
+avoid interference.
 
 ### add an application
 
-This command creates the _run-that-app_ configuration file if necessary and adds
-the `actionlint` application at the latest version:
+Add an application at its latest version (creates the config file if needed):
 
 ```
 rta --add actionlint
@@ -189,8 +187,7 @@ rta --add actionlint
 
 ### update all applications
 
-The `--update` command updates all applications listed in the configuration file
-to the latest version:
+Update all configured applications to their latest versions:
 
 ```
 rta --update
