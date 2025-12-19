@@ -102,7 +102,7 @@ rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
 Some linters like [deadcode](https://pkg.go.dev/golang.org/x/tools/cmd/deadcode)
 print findings but don't signal failure with an exit code. In this case, the
 `--error-on-output` flag makes _run-that-app_ monitor the output of the
-application it calls and exit will an error if there is any output.
+application it calls and exit will an error if there is any.
 
 ```
 rta --error-on-output deadcode
