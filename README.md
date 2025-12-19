@@ -277,8 +277,8 @@ You would have to `.gitignore` the files `tools/rta*`.
 
 ### Run-that-app does not support an application I need
 
-It's super easy to add a new application to _run-that-app_! See `DEVELOPMENT.md`
-for details.
+It's super easy to add a new application to _run-that-app_! See
+[DEVELOPMENT.md](docs/DEVELOPMENT.md) for details.
 
 ### Why not use the package manager of my system to install third-party applications?
 
