@@ -320,10 +320,11 @@ operating systems in play! Each additional OS layer consumes gigabytes of
 storage and RAM, adding unnecessary complexity and overhead to your workflow.
 
 Moreover, Docker falls short in key areas. It doesn’t resolve compatibility
-issues with different CPU architectures (Intel, ARM, RISC-V). Using Docker in CI
-can introduce the infamous "Docker-in-Docker" problem. And if you need to
-install arbitrary executables from GitHub Releases, for which there are no
-Docker images available, Docker won’t make that process any easier.
+issues with different CPU architectures (Intel, ARM, RISC-V). Using Docker for
+development tooling can introduce the infamous "Docker-in-Docker" problem on
+your CI server. And if you need to install arbitrary executables from GitHub
+Releases, for which there are no Docker images available, Docker won’t make that
+process any easier.
 
 ### Why not quickly write a small Bash script that downloads the executable?
 
