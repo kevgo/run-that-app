@@ -30,9 +30,9 @@ drive. Applications execute at 100% native speed.
 [![linux](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml)
 [![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
 
-### quickstart
+## installation
 
-#### on Linux or macOS
+### Linux and macOS
 
 1. Install the run-that-app executable:
 
@@ -47,7 +47,7 @@ drive. Applications execute at 100% native speed.
    ./rta actionlint@1.6.26
    ```
 
-#### on Windows (Powershell)
+### Windows (Powershell)
 
 1. Download the run-that-app executable:
 
@@ -62,13 +62,13 @@ drive. Applications execute at 100% native speed.
    .\rta actionlint@1.6.26
    ```
 
-#### installing the run-that-app executable into a specific directory
+### install into a specific directory
 
 The installer script places the run-that-app executable into the current
 directory. To install in another directory, change into that directory and then
 execute the installer from there.
 
-### configuration
+## configuration
 
 You can configure the versions of applications that run-that-app should use in a
 `run-that-app` file that follows the
@@ -92,7 +92,7 @@ Executing `rta --add <app>` creates this file for you.
 RTA uses a different name for the configuration file to avoid interference with
 other app runners like [asdf](#asdf) or [mise](#mise).
 
-### usage
+## usage
 
 ```bash
 rta [run-that-app arguments] <app name>[@<app version override>] [app arguments]
@@ -127,7 +127,7 @@ Run-that-app Arguments:
 The app version override should consist of just the version number, i.e.
 `1.6.26`. Even if the Git tag is `v1.6.26`.
 
-### examples
+## examples
 
 Runs [ShellCheck](https://shellcheck.net) version 0.9.0 with the arguments
 `--color=always myscript.sh`.
@@ -136,7 +136,7 @@ Runs [ShellCheck](https://shellcheck.net) version 0.9.0 with the arguments
 rta shellcheck@0.9.0 --color=always myscript.sh
 ```
 
-#### Use globally installed applications
+### Use globally installed applications
 
 If your system already has certain apps installed, _run-that-app_ can use them.
 Consider this `run-that-app` file:
@@ -152,7 +152,7 @@ _Run-that-app_ considers restrictions declared by your code base. If your
 codebase has a file `go.mod` containing `go 1.21` and the externally installed
 Go version is older, _run-that-app_ would not use the external version.
 
-#### Use the version defined by an external config file
+### Use the version defined by an external config file
 
 Certain applications allow defining the version to use in their own config file.
 An example is Go, which defines the Go version to use in the `go.mod` file. This
@@ -162,7 +162,7 @@ setup makes run-that-app use that version:
 go auto
 ```
 
-#### Ignore unavailable applications
+### Ignore unavailable applications
 
 ShellCheck is just a linter. If it isn't available on a particular platform, the
 tooling shouldn't abort with an error but simply skip ShellCheck.
@@ -171,7 +171,7 @@ tooling shouldn't abort with an error but simply skip ShellCheck.
 rta --optional shellcheck@0.9.0 --color=always myscript.sh
 ```
 
-#### Access the installed executables
+### Access the installed executables
 
 This example calls `go vet` with `alphavet` as a custom vet tool. Also, if
 `alphavet` is unavailable for the current platform, run-that-app is instructed
@@ -181,7 +181,7 @@ to do nothing.
 rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
 ```
 
-#### Usage in a Makefile
+### Usage in a Makefile
 
 Here is a template for installing and using run-that-app in a `Makefile`:
 
@@ -203,7 +203,7 @@ tools/rta@${RTA_VERSION}:
 
 You would have to `.gitignore` the files `tools/rta*`.
 
-### npm and npx
+## npm and npx
 
 _Run-that-app_ executes the `npm` and `npx` executables that come with the
 Node.js installation. Hence, to install them, you need to provide the Node
