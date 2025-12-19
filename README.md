@@ -166,7 +166,8 @@ _Run-that-app_ supports a configuration file named `run-that-app`, using the
 [asdf version file format](https://asdf-vm.com/manage/configuration.html):
 
 ```
-actionlint 1.6.26 shellcheck 0.9.0
+actionlint 1.6.26
+shellcheck 0.9.0
 ```
 
 With this file in place, you no longer need to be specify the version
