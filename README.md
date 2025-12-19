@@ -229,7 +229,7 @@ and `npx` themselves.
 npm system@10.2
 ```
 
-You can also combine these two declarations:
+You can combine these two declarations:
 
 ```asdf
 npm system@10.2 20.10.0
