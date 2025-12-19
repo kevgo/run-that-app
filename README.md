@@ -339,7 +339,8 @@ out-of-the-box on Windows. Even if Bash is installed on Windows, it executes in
 an emulated environment that behaves different than a real Linux or Unix system.
 
 Run-that-app saves you from these headaches. Think about it as a cross-platform
-Bash script, written in a strongly typed language that guarantees correctness.
+Bash script, written in a proper, strongly typed programming language that
+guarantees correctness.
 
 ### What if an app does not distribute binaries for my platform?
 
