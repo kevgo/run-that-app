@@ -52,38 +52,6 @@ directory. To install in another directory, execute the installer inside it.
 
 ## usage
 
-Run [actionlint](https://github.com/rhysd/actionlint) at version 1.6.26:
-
-```bash
-./rta actionlint@1.6.26
-```
-
-## configuration
-
-You can configure the versions of applications that run-that-app should use in a
-`run-that-app` file that follows the
-[asdf format](https://asdf-vm.com/manage/configuration.html) and that looks like
-this:
-
-```
-actionlint 1.6.26
-shellcheck 0.9.0
-```
-
-Now you can run these applications without having to provide their version
-numbers:
-
-```bash
-rta actionlint
-```
-
-Executing `rta --add <app>` creates this file for you.
-
-RTA uses a different name for the configuration file to avoid interference with
-other app runners like [asdf](#asdf) or [mise](#mise).
-
-## usage
-
 ```bash
 rta [run-that-app arguments] <app name>[@<app version override>] [app arguments]
 ```
@@ -92,14 +60,104 @@ Arguments for run-that-app come before the name of the application to run. The
 application name is the first CLI argument that doesn't start with a dash. All
 CLI arguments after the application name are passed to the application.
 
-Run-that-app Arguments:
+Run [actionlint](https://github.com/rhysd/actionlint) at version 1.6.26:
 
-- `--add <app>`: add
-- `--apps` or `-a`: display all installable applications
-- `--available <app>`: signal via exit code whether the given app is available
-  on the local platform
-- `--error-on-output`: treat all output of the executed application as an error
-  condition
+```bash
+./rta actionlint@1.6.26
+```
+
+### see all runnable applications
+
+```sh
+rta --apps
+```
+
+### graceful degredation
+
+Not all applications support all platforms. The `--optional` flag skips such
+applications without causing errors.
+
+This runs ShellCheck only if it is available on a developer machine:
+
+```bash
+rta --optional shellcheck@0.9.0 myscript.sh
+```
+
+The `--available` command indicates via exit code whether an application is
+available on the current platform.
+
+### get the path to the installed executable
+
+The `--which` command returns the path to the installed executable.
+
+Here we call `go vet` with `alphavet` as a custom vet tool. If `alphavet` is
+unavailable for the current platform, do nothing.
+
+```bash
+rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
+```
+
+### error-on-output
+
+Some linters like [deadcode](https://pkg.go.dev/golang.org/x/tools/cmd/deadcode)
+print findings but don't signal failure with an exit code. In this case, the
+`--error-on-output` flag will exit with an error if there is any output.
+
+```
+rta --error-on-output deadcode
+```
+
+### see available versions
+
+To see which versions of an applications you can install:
+
+```
+rta --versions actionlint
+```
+
+This prints the 10 most recent versions. To see a different number:
+
+```
+rta --versions=3 actionlint
+```
+
+### force installation from source
+
+If the application you want to run provides precompiled binaries, for example on
+GitHub releases, _run-that-app_ tries to download and use them. You can enforce
+
+If no binaries are available for your platform, _run-that-app_ can also compile
+tools from source.
+
+You can enforce compilation from source with the `--from-source` flag.
+
+## configuration
+
+You can configure the versions of applications to use in a file called
+`run-that-app` that follows the
+[asdf format](https://asdf-vm.com/manage/configuration.html):
+
+```
+actionlint 1.6.26
+shellcheck 0.9.0
+```
+
+Now you can run the listed applications without having to provide their version
+numbers:
+
+```bash
+rta actionlint
+```
+
+RTA uses a different name for the configuration file to avoid interference with
+other app runners like [asdf](#asdf) or [mise](#mise).
+
+### add an application
+
+```
+rta --add <app>`
+```
+
 - `--from-source`: force installation from source, even if precompiled binaries
   are available
 - `--help` or `-h`: show help screen
@@ -150,25 +208,6 @@ setup makes run-that-app use that version:
 
 ```
 go auto
-```
-
-### Ignore unavailable applications
-
-ShellCheck is just a linter. If it isn't available on a particular platform, the
-tooling shouldn't abort with an error but simply skip ShellCheck.
-
-```bash
-rta --optional shellcheck@0.9.0 --color=always myscript.sh
-```
-
-### Access the installed executables
-
-This example calls `go vet` with `alphavet` as a custom vet tool. Also, if
-`alphavet` is unavailable for the current platform, run-that-app is instructed
-to do nothing.
-
-```bash
-rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
 ```
 
 ### Usage in a Makefile
