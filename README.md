@@ -56,9 +56,6 @@ directory. To install in another directory, execute the installer inside it.
 rta [run-that-app arguments] <app name>[@<app version override>] [app arguments]
 ```
 
-Arguments for run-that-app come before the name of the application to run. The
-application name is the first CLI argument that doesn't start with a dash.
-
 Run [actionlint](https://github.com/rhysd/actionlint) at version 1.6.26:
 
 ```bash
@@ -68,8 +65,10 @@ Run [actionlint](https://github.com/rhysd/actionlint) at version 1.6.26:
 The app version should consist of just the version number, i.e. `1.6.26`, even
 if the Git tag is `v1.6.26`.
 
-All CLI arguments after the application name are passed to the application. Here
-we run [ShellCheck](https://shellcheck.net) version 0.9.0 with the arguments
+Arguments for run-that-app come before the name of the application to run. The
+application name is the first CLI argument that doesn't start with a dash. All
+CLI arguments after the application name are passed to the application. Here we
+run [ShellCheck](https://shellcheck.net) version 0.9.0 with the arguments
 `--color=always myscript.sh`.
 
 ```bash
