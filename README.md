@@ -337,41 +337,15 @@ ecosystems, which you can then use to execute tools written in these languages.
 
 Open an issue. Many cases are solvable.
 
-### Why does run-that-app not have a marketplace that I can submit my application to?
+### Why no marketplace?
 
-That marketplace is _run-that-app's_ source code on GitHub. This has several
-advantages.
+That marketplace is in the source code. This avoids:
 
-1. You don't need to articulate complex installation and execution requirements
-   and dependencies in some data format like JSON or YML, but can use a proper
-   strongly-typed programming language. This gives you type checking (not just
-   basic JSON-Schema linting), intelligent auto-completion, much more
-   flexibility in how you implement downloading and unpacking archives or
-   installing an application in other ways, and the ability to verify the
-   installation using automated tests.
+- weak schema-based configuration languages
+- version skew between runner and marketplace
+- synchronization overhead at runtime
 
-2. Having a separate marketplace would result in two separate systems that are
-   versioned independently of each other: the version of _run-that-app_ and the
-   version of the marketplace. Two separate versions lead to problems like an
-   older versions of _run-that-app_ not able to work with newer versions of the
-   marketplace. This severely limits how the data format of the marketplace can
-   evolve. An embedded marketplace does not have this problem. _Run-that-app_
-   can make breaking changes to the marketplace data at any time, and older
-   installations will keep working.
-
-   This makes _run-that-app_ a great tool to distribute third-party applications
-   in locked-down environments. Only the hard-coded applications and versions
-   can be installed.
-
-3. If _run-that-app_ would use an external marketplace, it needs to sync its
-   local replica of that marketplace at each invocation, and sometimes download
-   updates. This introduces delays that might be acceptable for package managers
-   that get called once to install an app, but not for an app runner that gets
-   called a lot to execute the apps directly.
-
-4. Even with an external marketplace, you would still need to update the
-   _run-that-app_ executable regularly. So why not just do that and save
-   yourself the hassle to also update a separate marketplace.
+It also enables fully deterministic tooling in locked-down environments.
 
 ## Related solutions
 
@@ -380,34 +354,22 @@ case.
 
 ### asdf
 
-[Asdf](https://asdf-vm.com) is the classic cross-platform application runner. It
-is a mature and stable platform that installs a large variety of applications.
-You load asdf plugins that tell asdf how to install applications. It can create
-global or local shims for installed applications. Downsides of asdf are that it
-is written in Bash, which makes it
-[slow](https://github.com/asdf-vm/asdf/issues/290) and non-portable to Windows.
+[Asdf](https://asdf-vm.com) is a mature cross-platform tool runner based on Bash
+(now also Go). It relies on plugins and shims and does not support Windows well.
 
-Compared to asdf, _run-that-app_ also supports Windows, offers conditional
-execution, allows writing application installation logic in a robust programming
-language that eliminates most runtime errors, and is faster.
+_Run-that-app_ is faster, simpler, and Windows-native.
 
 ### mise
 
-[Mise](https://github.com/jdx/mise) is a rewrite of asdf in Rust. It allows
-installing applications, sets up shims and shell integration. It also runs tasks
-and manages your environment variables.
+[Mise](https://github.com/jdx/mise) is a Rust-based successor to asdf with
+broader scope (env vars, tasks, shell integration).
 
-Compared to mise, _run-that-app_ is much simpler, works better in locked-down
-environments, and focuses on doing one thing well.
+_Run-that-app_ is much simpler and focuses on doing one thing well.
 
 ### pkgx
 
-[Pkgx](https://pkgx.sh) is a more full-fledged alternative to _run-that-app_
-with additional bells and whistles, a better user experience, better shell
-integration, and more polished design. It comes with its own
-[app store](https://tea.xyz) that apps need to be listed in to be installable.
-There is (or at least used to be) a blockchain component to this.
+[Pkgx](https://pkgx.sh) provides a polished UX, shell integration, and an
+[app store](https://tea.xyz).
 
-Compared to pkgx, _run-that-app_ is focused on doing one thing well, offers
-additional features like the ability to compile from source, optional execution,
-and checking whether an application is available for your platform.
+_Run-that-app_ trades polish for simplicity, determinism, and flexibility,
+including source builds and conditional execution.
