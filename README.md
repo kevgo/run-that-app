@@ -6,29 +6,46 @@
 <br><br>
 
 _Run-that-app_ is a minimalistic cross-platform application runner. It executes
-native CLI applications on Linux, macOS, Windows, and BSD without the need to
-install them first. The intended use case is running developer tools like
-linters in scripts.
+native CLI tools on Linux, macOS, Windows, and BSD without requiring a prior
+installation. The primary use case is running developer tools (linters,
+analyzers, formatters, etc) in scripts and CI pipelines.
 
 #### integrating installation and execution
 
-Installation of small developer tools at specific versions across all possible
-operating systems is a complex problem without a good solution. Run-that-app
-bypasses this problem. You don't really want to _install_ applications, what you
-actually want is to _run_ them in your development workflows.
+Installing small developer tools at pinned versions across multiple operating
+systems is a surprisingly hard problem without a good solution.
+
+Run-that-app sidesteps the problem entirely: instead of _installing_ tools, it
+focuses on _running_ them. For most development workflows, that's what you
+actually care about.
 
 #### radically minimalistic
 
-Run-that-app is minimalistic and completely non-invasive. It ships as a single
-stand-alone binary. Following the principle "perfection is not achieved when
-there is nothing left to add, but when there is nothing left to take away",
-run-that-app uses no environment variables, no application shims, no shell
-integrations, no dependencies, no plugins, no need to package applications into
-a specific container format, no need to install applications, no application
-repository, no Docker, no WASM, no system daemons, no sudo, no emulation, no IDE
-plugins, no bloat. Applications download in 1-2 seconds from their original
-hosting location, and store very little (just the executables) on your hard
-drive. Applications execute at 100% native speed.
+Run-that-app is intentionally minimalistic and non-invasive. It ships as a
+single stand-alone binary.
+
+Following the principle "perfection is achieved not when there is nothing left
+to add, but when there is nothing left to take away", run-that-app avoids:
+
+- environment variables
+- application shims
+- shell integrations
+- dependencies
+- plugins
+- custom packaging and container formats
+- a dedicated install step
+- application repositories
+- Docker
+- WASM
+- system daemons
+- sudo
+- emulation
+- IDE plugins
+- any other kind of bloat
+
+Applications are downloaded directly their original hosting location, typically
+in 1-2 seconds. Only the executable is stored on disk. Execution is 100% native,
+with no runtime overhead.
 
 [![linux](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml)
 [![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
