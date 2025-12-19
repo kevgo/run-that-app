@@ -214,19 +214,30 @@ version of the bundling application.
 ### npm and npx
 
 _Run-that-app_ executes the `npm` and `npx` executables that come with the
-Node.js installation. Hence, to install them, you need to provide the Node
-version. To use already installed executables in your PATH, you need to provide
-the versions of `npm` and `npx`.
+Node.js installation. To use them, provide the Node version.
 
-Example _run-that-app_ for npm:
+Example _run-that-app_ for npm bundled with Node 20.10.0:
+
+```asdf
+npm 20.10.0
+```
+
+If you already have `npm` installed in your PATH, provide the versions of `npm`
+and `npx` themselves.
+
+```asdf
+npm system@10.2 20.10.0
+```
+
+You can also combine these two declarations:
 
 ```asdf
 npm system@10.2 20.10.0
 ```
 
 This tries to use an existing npm installation as long as it has version 10.2 or
-higher. If your machine has no npm installed, this installs Node 20.10.0 and
-uses the npm version that comes with it.
+higher. If your machine has no npm installed, _run-that-app_ installs Node
+20.10.0 and uses the npm version that comes with it.
 
 ### gofmt
 
