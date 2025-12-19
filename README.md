@@ -429,8 +429,8 @@ language that eliminates most runtime errors, and is faster.
 installing applications, sets up shims and shell integration. It also runs tasks
 and manages your environment variables.
 
-Compared to mise, _run-that-app_ is much simpler and focused on doing one thing
-well.
+Compared to mise, _run-that-app_ is much simpler, works in locked-down
+environments, and focuses on doing one thing well.
 
 ### pkgx
 
