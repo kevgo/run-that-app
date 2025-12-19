@@ -216,7 +216,7 @@ version of the bundling application.
 _Run-that-app_ executes the `npm` and `npx` executables that come with the
 Node.js installation. To use them, provide the Node version.
 
-Example _run-that-app_ for npm bundled with Node 20.10.0:
+Example _run-that-app_ config file for npm bundled with Node 20.10.0:
 
 ```asdf
 npm 20.10.0
@@ -242,7 +242,8 @@ higher. If your machine has no npm installed, _run-that-app_ installs Node
 ### gofmt
 
 _Gofmt_ is distributed as part of a Go installation. So please provide the Go
-version when specifying the desired gofmt version.
+version when specifying the desired gofmt version. Example _run-that-app_ config
+file:
 
 ```asdf
 gofmt 1.21.6
