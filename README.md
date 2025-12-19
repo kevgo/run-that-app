@@ -181,10 +181,10 @@ rta --update
 
 ### globally installed applications
 
-_Run-that-app_ can use applications that are installed on your system, for
-example via your package manager or because you have compiled them yourself.
-Make sure they are in the PATH and use `system` as the version in the
-configuration file:
+_Run-that-app_ can use applications that are already installed on your system,
+for example via your package manager or when you compiled them yourself. Make
+sure they are in the PATH and use `system` as the version in the configuration
+file:
 
 ```
 go system 1.21.3
