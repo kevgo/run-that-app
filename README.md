@@ -64,8 +64,8 @@ Windows (Powershell):
 Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kevgo/run-that-app/main/download.ps1" -UseBasicParsing).Content
 ```
 
-The installer script places the _run-that-app_ executable into the current
-directory. To install in another directory, execute the installer inside it.
+The installer places the _run-that-app_ executable into the current directory.
+To install elsewhere, execute the installer from that directory.
 
 ## usage
 
@@ -73,24 +73,25 @@ directory. To install in another directory, execute the installer inside it.
 rta [run-that-app arguments] <app name>[@<app version override>] [app arguments]
 ```
 
-Run [actionlint](https://github.com/rhysd/actionlint) at version 1.6.26:
+Run [actionlint](https://github.com/rhysd/actionlint) at version `1.6.26`:
 
 ```bash
 ./rta actionlint@1.6.26
 ```
 
-The app version should consist of just the version number, i.e. `1.6.26`, even
-if the Git tag is `v1.6.26`.
+The app version should contain only the version number (e.g. `1.6.26`), even if
+the Git tag is prefixed (e.g. `v1.6.26`).
 
-Arguments for _run-that-app_ come before the name of the application to run. The
-application name is the first CLI argument that doesn't start with a dash. All
-CLI arguments after the application name are passed to the application. Here we
-run [ShellCheck](https://shellcheck.net) version 0.9.0 with the arguments
-`--color=always myscript.sh`.
+_Run-that-app_ arguments must appear before the name of the application to run.
+The application name is the first argument that does not start with a dash. All
+following arguments are passed through to the application.
 
-```bash
-rta shellcheck@0.9.0 --color=always myscript.sh
-```
+> [!TIP] run [ShellCheck](https://shellcheck.net) version `0.9.0` with arguments
+> `--color=always myscript.sh`:
+>
+> ```bash
+> rta shellcheck@0.9.0 --color=always myscript.sh
+> ```
 
 ### see all runnable applications
 
