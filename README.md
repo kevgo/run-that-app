@@ -364,7 +364,7 @@ Use the package managers and runtimes of those languages to install and run the
 respective tool. You can use _run-that-app_ to run those package managers and
 runtimes.
 
-### What if my app has more complex dependencies that run-that-app cannot support?
+### An app has complex dependencies that run-that-app cannot support
 
 Please open a ticket to discuss your use case and determine whether
 _run-that-app_ can install these dependencies. Pretty much anything is possible!
