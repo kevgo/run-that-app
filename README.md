@@ -47,7 +47,7 @@ Windows (Powershell):
 Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kevgo/run-that-app/main/download.ps1" -UseBasicParsing).Content
 ```
 
-The installer script places the run-that-app executable into the current
+The installer script places the _run-that-app_ executable into the current
 directory. To install in another directory, execute the installer inside it.
 
 ## usage
@@ -65,7 +65,7 @@ Run [actionlint](https://github.com/rhysd/actionlint) at version 1.6.26:
 The app version should consist of just the version number, i.e. `1.6.26`, even
 if the Git tag is `v1.6.26`.
 
-Arguments for run-that-app come before the name of the application to run. The
+Arguments for _run-that-app_ come before the name of the application to run. The
 application name is the first CLI argument that doesn't start with a dash. All
 CLI arguments after the application name are passed to the application. Here we
 run [ShellCheck](https://shellcheck.net) version 0.9.0 with the arguments
@@ -263,7 +263,7 @@ This installs Go 1.21.6 and calls the gofmt contained in this installation.
 
 ## Usage in a Makefile
 
-Here is a template for installing and using run-that-app in a `Makefile`:
+Here is a template for installing and using _run-that-app_ in a `Makefile`:
 
 ```make
 RTA_VERSION = 0.24.2  # version of run-that-app to use
@@ -364,7 +364,7 @@ Use the package managers of those frameworks to run that app.
 
 ### What if my app has more complex dependencies that run-that-app cannot support?
 
-Please open a ticket to discuss your use case. Run-that-app can install these
+Please open a ticket to discuss your use case. _Run-that-app_ can install these
 dependencies.
 
 ### Why does run-that-app not have a marketplace that I can submit my application to?
@@ -413,7 +413,7 @@ global or local shims for installed applications. Downsides of asdf are that it
 is written in Bash, which makes it
 [slow](https://github.com/asdf-vm/asdf/issues/290) and non-portable to Windows.
 
-Compared to asdf, run-that-app also supports Windows, offers conditional
+Compared to asdf, _run-that-app_ also supports Windows, offers conditional
 execution, allows writing application installation logic in a robust programming
 language that eliminates most runtime errors, and is faster.
 
@@ -423,17 +423,17 @@ language that eliminates most runtime errors, and is faster.
 installing applications, sets up shims and shell integration. It also runs tasks
 and manages your environment variables.
 
-Compared to mise, run-that-app is much simpler and focused on doing one thing
+Compared to mise, _run-that-app_ is much simpler and focused on doing one thing
 well.
 
 ### pkgx
 
-[Pkgx](https://pkgx.sh) is a more full-fledged alternative to run-that-app with
-more bells and whistles, a better user experience, better shell integration, and
-more polished design. It comes with its own [app store](https://tea.xyz) that
-apps need to be listed in to be installable. There is (or at least used to be) a
-blockchain component to this.
+[Pkgx](https://pkgx.sh) is a more full-fledged alternative to _run-that-app_
+with more bells and whistles, a better user experience, better shell
+integration, and more polished design. It comes with its own
+[app store](https://tea.xyz) that apps need to be listed in to be installable.
+There is (or at least used to be) a blockchain component to this.
 
-Compared to pkgx, run-that-app is focused on doing one thing well, offers
+Compared to pkgx, _run-that-app_ is focused on doing one thing well, offers
 additional features like the ability to compile from source, optional execution,
 and checking whether an application is available for your platform.
