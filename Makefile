@@ -9,8 +9,6 @@ fix: build  # auto-corrects issues
 	target/debug/rta shfmt -f . | xargs target/debug/rta shfmt -w
 	target/debug/rta keep-sorted $(shell target/debug/rta ripgrep -l 'keep-sorted end' ./ --glob '!Makefile')
 
-
-
 install:  # installs this tool locally for testing
 	cargo install --locked --path .
 
