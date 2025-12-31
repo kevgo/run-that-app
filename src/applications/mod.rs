@@ -33,6 +33,7 @@ mod shellcheck;
 mod shfmt;
 mod staticcheck;
 mod tikibase;
+mod uv;
 
 use crate::Log;
 use crate::configuration::Version;
@@ -79,6 +80,7 @@ pub(crate) fn all() -> Apps {
     Box::new(shfmt::Shfmt {}),
     Box::new(staticcheck::StaticCheck {}),
     Box::new(tikibase::Tikibase {}),
+    Box::new(uv::Uv {}),
     // keep-sorted end
   ])
 }
