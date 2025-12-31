@@ -2,21 +2,21 @@ use crate::error::Result;
 use std::path::Path;
 
 /// Makes a file executable by setting appropriate permissions
-pub(crate) fn make_executable(filepath: &Path) -> Result<()> {
+pub(crate) fn set_executable_bit(filepath: &Path) -> Result<()> {
   #[cfg(unix)]
-  return make_executable_unix(filepath);
+  return set_executable_bit_unix(filepath);
   #[cfg(windows)]
-  return make_executable_windows(filepath, log);
+  return set_executable_bit_windows(filepath, log);
 }
 
 #[cfg(windows)]
-fn make_executable_windows(_filepath: &Path, _log: Log) -> Result<()> {
+fn set_executable_bit_windows(_filepath: &Path, _log: Log) -> Result<()> {
   // Windows does not have file permissions --> nothing to do here
   Ok(())
 }
 
 #[cfg(unix)]
-fn make_executable_unix(filepath: &Path) -> Result<()> {
+fn set_executable_bit_unix(filepath: &Path) -> Result<()> {
   use crate::error::UserError;
   use std::fs;
   use std::os::unix::fs::PermissionsExt;
