@@ -1,5 +1,7 @@
 actionlint 1.7.7
 contest 0.5.0
 dprint 0.50.0
+keep-sorted 0.7.1
+ripgrep 15.1.0
 shellcheck 0.10.0
 shfmt 3.11.0
