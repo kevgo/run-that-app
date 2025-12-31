@@ -1,10 +1,11 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::Log;
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
+use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
+use crate::{Log, regexp};
 
 #[derive(Clone)]
 pub(crate) struct Rclone {}
@@ -41,23 +42,29 @@ impl AppDefinition for Rclone {
     }
   }
 
-  fn latest_installable_version(&self, _log: Log) -> Result<Version> {
-    // TODO: remove this file once govulncheck is integrated into golangci-lint
-    Ok(Version::from("1.1.4"))
+  fn latest_installable_version(&self, log: Log) -> Result<Version> {
+    github_releases::latest(ORG, REPO, log)
   }
 
-  fn installable_versions(&self, _amount: usize, _log: Log) -> Result<Vec<Version>> {
-    Ok(vec![Version::from("1.1.4"), Version::from("1.1.3")])
+  fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
+    github_releases::versions(ORG, REPO, amount, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
-    if !output.contains("Govulncheck reports known vulnerabilities in dependencies") {
+    if !output.contains("Rclone syncs files to and from cloud storage providers") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    // govulncheck does not display the version of the installed executable
-    Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+    let output = executable.run_output(&["version"], log)?;
+    match extract_version(&output) {
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
+    }
   }
+}
+
+fn extract_version(output: &str) -> Result<&str> {
+  regexp::first_capture(output, r"rclone v(\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
