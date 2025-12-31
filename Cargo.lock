@@ -604,7 +604,7 @@ dependencies = [
 
 [[package]]
 name = "rta"
-version = "0.24.2"
+version = "0.25.0"
 dependencies = [
  "big_s",
  "colored",
