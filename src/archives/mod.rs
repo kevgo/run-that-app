@@ -24,7 +24,7 @@ pub(crate) fn lookup(filepath: &str, data: Vec<u8>) -> Option<Box<dyn Archive>> 
     () if filesystem::has_extension(filepath, ".tar.gz") => Some(Box::new(TarGz { data })),
     () if filesystem::has_extension(filepath, ".tar.xz") => Some(Box::new(TarXz { data })),
     () if filesystem::has_extension(filepath, ".zip") => Some(Box::new(Zip { data })),
-    () if filesystem::has_extension(filepath, ".gz") => Some(Box::new(Gz { data })),
+    () if filesystem::has_extension(filepath, ".gz") => Some(Box::new(Gz { data })), // this must come after .tar.gz to prevent .tar.gz being mistaken for a .gz file
     () => None,
   }
 }
