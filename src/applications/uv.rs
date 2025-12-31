@@ -95,7 +95,9 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/uv/releases/download/0.9.21/uv-aarch64-apple-darwin.tar.gz".into(),
-          bin_folder: BinFolder::Root,
+          bin_folder: BinFolder::Subfolder {
+            path: "uv-aarch64-apple-darwin".into(),
+          },
         }],
       };
       assert_eq!(have, want);
@@ -113,7 +115,9 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/uv/releases/download/0.9.21/uv-aarch64-unknown-linux-gnu.tar.gz".into(),
-          bin_folder: BinFolder::Root,
+          bin_folder: BinFolder::Subfolder {
+            path: "uv-aarch64-unknown-linux-gnu".into(),
+          },
         }],
       };
       assert_eq!(have, want);
@@ -131,7 +135,9 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/uv/releases/download/0.9.21/uv-x86_64-pc-windows-msvc.zip".into(),
-          bin_folder: BinFolder::Root,
+          bin_folder: BinFolder::Subfolder {
+            path: "uv-x86_64-pc-windows-msvc".into(),
+          },
         }],
       };
       assert_eq!(have, want);
@@ -140,7 +146,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("tikibase 0.6.2"), Ok("0.6.2"));
+    assert_eq!(super::extract_version("uv 0.6.2"), Ok("0.6.2"));
     assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
