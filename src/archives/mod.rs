@@ -18,9 +18,9 @@ pub(crate) trait Archive {
 /// provides the archive that can extract the given file path
 pub(crate) fn lookup(filepath: &str, data: Vec<u8>) -> Option<Box<dyn Archive>> {
   match () {
-    () if filesystem::has_extension(filepath, ".zip") => Some(Box::new(Zip { data })),
     () if filesystem::has_extension(filepath, ".tar.gz") => Some(Box::new(TarGz { data })),
     () if filesystem::has_extension(filepath, ".tar.xz") => Some(Box::new(TarXz { data })),
+    () if filesystem::has_extension(filepath, ".zip") => Some(Box::new(Zip { data })),
     () => None,
   }
 }
