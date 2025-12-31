@@ -20,7 +20,6 @@ fn make_executable_unix(filepath: &Path) -> Result<()> {
   use crate::error::UserError;
   use std::fs;
   use std::os::unix::fs::PermissionsExt;
-
   let Ok(executable_file) = fs::File::open(filepath) else {
     return Err(UserError::ArchiveDoesNotContainExecutable {
       expected: filepath.to_path_buf(),
