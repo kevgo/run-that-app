@@ -1,4 +1,5 @@
 use super::Archive;
+use crate::applications::ApplicationName;
 use crate::error::{Result, UserError};
 use crate::logging::{Event, Log};
 use std::io::Cursor;
@@ -11,7 +12,7 @@ pub(crate) struct TarXz {
 }
 
 impl Archive for TarXz {
-  fn extract_all(&self, target_dir: &Path, log: Log) -> Result<()> {
+  fn extract_all(&self, target_dir: &Path, log: Log, _: &ApplicationName) -> Result<()> {
     log(Event::ArchiveExtractBegin { archive_type: "tar.xz" });
     let decompressor = XzDecoder::new(Cursor::new(&self.data));
     let mut archive = tar::Archive::new(decompressor);

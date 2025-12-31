@@ -26,7 +26,7 @@ pub(crate) fn run(
     return Err(UserError::UnknownArchive(artifact.filename));
   };
   // extract the archive
-  archive.extract_all(app_folder, ctx.log)?;
+  archive.extract_all(app_folder, ctx.log, &app_name)?;
   let executable_filename = executable_name.platform_path(ctx.platform.os);
   // verify that all executables that should be there exist and are executable
   for executable_path in bin_folders.executable_paths(app_folder, &executable_filename) {

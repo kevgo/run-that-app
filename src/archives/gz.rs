@@ -1,34 +1,21 @@
 use super::Archive;
+use crate::applications::ApplicationName;
 use crate::error::{Result, UserError};
 use crate::logging::{Event, Log};
 use flate2::read::GzDecoder;
 use std::fs::File;
 use std::io;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 /// a .gz file downloaded from the internet, containing a single executable
 pub(crate) struct Gz {
   pub(crate) data: Vec<u8>,
-  pub(crate) filename: String,
 }
 
 impl Archive for Gz {
-  fn extract_all(&self, target_dir: &Path, log: Log) -> Result<()> {
+  fn extract_all(&self, target_dir: &Path, log: Log, app: &ApplicationName) -> Result<()> {
     log(Event::ArchiveExtractBegin { archive_type: "gz" });
-
-    // determine output filename by removing .gz extension
-    let filename_path = PathBuf::from(&self.filename);
-    let output_filename = filename_path
-      .file_name()
-      .and_then(|name| name.to_str())
-      .and_then(|name| name.strip_suffix(".gz"))
-      .ok_or_else(|| UserError::ArchiveCannotExtract {
-        reason: format!("Cannot determine output filename from: {}", self.filename),
-      })?;
-
-    let output_path = target_dir.join(output_filename);
-
-    // stream decompressed data directly to file
+    let output_path = target_dir.join(app);
     let mut gz_decoder = GzDecoder::new(io::Cursor::new(&self.data));
     match File::create(&output_path) {
       Ok(mut file) => {
