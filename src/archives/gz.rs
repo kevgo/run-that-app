@@ -2,7 +2,7 @@ use super::Archive;
 use crate::error::{Result, UserError};
 use crate::logging::{Event, Log};
 use flate2::read::GzDecoder;
-use std::fs::{self, File};
+use std::fs::File;
 use std::io;
 use std::path::{Path, PathBuf};
 
@@ -37,7 +37,7 @@ impl Archive for Gz {
           return Err(UserError::ArchiveCannotExtract { reason: err.to_string() });
         }
         drop(file); // close file before setting permissions
-        make_executable(&output_path, log)?;
+        super::make_executable(&output_path, log)?;
         log(Event::ArchiveExtractSuccess);
         Ok(())
       }
@@ -47,27 +47,4 @@ impl Archive for Gz {
       }
     }
   }
-}
-
-#[cfg(unix)]
-fn make_executable(filepath: &Path, log: Log) -> Result<()> {
-  use std::os::unix::fs::PermissionsExt;
-
-  log(Event::MakeExecutable { file: filepath });
-  let metadata = fs::metadata(filepath).map_err(|err| UserError::CannotReadFileMetadata { err: err.to_string() })?;
-  let mut permissions = metadata.permissions();
-  if permissions.mode() & 0o100 == 0 {
-    permissions.set_mode(0o744);
-    fs::set_permissions(filepath, permissions).map_err(|err| UserError::CannotSetFilePermissions {
-      path: filepath.to_path_buf(),
-      err: err.to_string(),
-    })?;
-  }
-  Ok(())
-}
-
-#[cfg(windows)]
-fn make_executable(_filepath: &Path, _log: Log) -> Result<()> {
-  // Windows does not have file permissions --> nothing to do here
-  Ok(())
 }
