@@ -32,14 +32,13 @@ fn make_executable_unix(filepath: &Path) -> Result<()> {
     }
   };
   let mut permissions = metadata.permissions();
-  if permissions.mode() & 0o100 == 0 {
-    permissions.set_mode(0o744);
-    if let Err(err) = fs::set_permissions(filepath, permissions) {
-      return Err(UserError::CannotSetFilePermissions {
-        path: filepath.to_path_buf(),
-        err: err.to_string(),
-      });
-    }
+  if permissions.mode() & 0o100 != 0 {
+    // file is already executable
+    return Ok(());
   }
-  Ok(())
+  permissions.set_mode(0o744);
+  fs::set_permissions(filepath, permissions).map_err(|err| UserError::CannotSetFilePermissions {
+    path: filepath.to_path_buf(),
+    err: err.to_string(),
+  })
 }
