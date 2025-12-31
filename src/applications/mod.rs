@@ -45,6 +45,7 @@ use std::path::Path;
 
 pub(crate) fn all() -> Apps {
   Apps(vec![
+    // keep-sorted start
     Box::new(actionlint::ActionLint {}),
     Box::new(alphavet::Alphavet {}),
     Box::new(contest::Contest {}),
@@ -78,6 +79,7 @@ pub(crate) fn all() -> Apps {
     Box::new(shfmt::Shfmt {}),
     Box::new(staticcheck::StaticCheck {}),
     Box::new(tikibase::Tikibase {}),
+    // keep-sorted end
   ])
 }
 
