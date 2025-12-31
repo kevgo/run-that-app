@@ -149,11 +149,11 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn unix_error() {
-      use crate::filesystem::make_file_executable;
+      use crate::filesystem;
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable");
       fs::write(&executable_path, b"#!/bin/sh\nexit 3").unwrap();
-      make_file_executable(&executable_path).unwrap();
+      filesystem::make_executable(&executable_path);
       let executable = Executable::from(executable_path);
       let have = subshell::stream_output(&executable, &[], &[]).unwrap();
       // HACK: is there a better way to compare ExitCode?
