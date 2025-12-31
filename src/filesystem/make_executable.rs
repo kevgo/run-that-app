@@ -1,5 +1,6 @@
 use crate::error::Result;
 #[cfg(unix)]
+use crate::error::UserError;
 use std::path::Path;
 
 /// Makes a file executable by setting appropriate permissions
