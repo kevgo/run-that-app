@@ -3,6 +3,7 @@ mod tar_gz;
 mod tar_xz;
 mod zip;
 
+use self::gz::Gz;
 use self::tar_gz::TarGz;
 use self::tar_xz::TarXz;
 use self::zip::Zip;
@@ -19,7 +20,10 @@ pub(crate) trait Archive {
 /// provides the archive that can extract the given file path
 pub(crate) fn lookup(filepath: &str, data: Vec<u8>) -> Option<Box<dyn Archive>> {
   match () {
-    () if filesystem::has_extension(filepath, ".gz") => Some(Box::new(Gz { data })),
+    () if filesystem::has_extension(filepath, ".gz") => Some(Box::new(Gz {
+      data,
+      filename: filepath.to_string(),
+    })),
     () if filesystem::has_extension(filepath, ".tar.gz") => Some(Box::new(TarGz { data })),
     () if filesystem::has_extension(filepath, ".tar.xz") => Some(Box::new(TarXz { data })),
     () if filesystem::has_extension(filepath, ".zip") => Some(Box::new(Zip { data })),
