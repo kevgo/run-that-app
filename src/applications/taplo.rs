@@ -72,7 +72,7 @@ impl AppDefinition for Taplo {
 }
 
 fn extract_version(output: &str) -> Result<&str> {
-  regexp::first_capture(output, r"mdbook-linkcheck (\d+\.\d+\.\d+)")
+  regexp::first_capture(output, r"taplo (\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
