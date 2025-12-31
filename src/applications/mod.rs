@@ -32,6 +32,7 @@ mod scc;
 mod shellcheck;
 mod shfmt;
 mod staticcheck;
+mod taplo;
 mod tikibase;
 mod uv;
 
@@ -79,6 +80,7 @@ pub(crate) fn all() -> Apps {
     Box::new(shellcheck::ShellCheck {}),
     Box::new(shfmt::Shfmt {}),
     Box::new(staticcheck::StaticCheck {}),
+    Box::new(taplo::Taplo {}),
     Box::new(tikibase::Tikibase {}),
     Box::new(uv::Uv {}),
     // keep-sorted end
