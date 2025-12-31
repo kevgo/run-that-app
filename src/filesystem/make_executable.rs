@@ -3,11 +3,12 @@ use crate::error::Result;
 use crate::error::UserError;
 use std::path::Path;
 
-pub(crate) fn make_executable(filepath: &Path) {
+/// Makes a file executable by setting appropriate permissions
+pub(crate) fn make_executable(filepath: &Path) -> Result<()> {
   #[cfg(unix)]
-  make_executable_unix(filepath)
+  return make_executable_unix(filepath);
   #[cfg(windows)]
-  make_executable_windows(filepath, log);
+  return make_executable_windows(filepath, log);
 }
 
 #[cfg(windows)]

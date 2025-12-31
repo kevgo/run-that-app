@@ -30,12 +30,12 @@ pub(crate) fn run(
   let executable_filename = executable_name.platform_path(ctx.platform.os);
   // verify that all executables that should be there exist and are executable
   for executable_path in bin_folders.executable_paths(app_folder, &executable_filename) {
-    filesystem::make_executable(&executable_path);
+    filesystem::make_executable(&executable_path)?;
     // set the executable bit of all executable files that this app provides
     for other_executable in app_definition.additional_executables() {
       let other_executable_filename = other_executable.platform_path(ctx.platform.os);
       for other_executable_path in bin_folders.executable_paths(app_folder, &other_executable_filename) {
-        filesystem::make_executable(&other_executable_path);
+        filesystem::make_executable(&other_executable_path)?;
       }
     }
   }
