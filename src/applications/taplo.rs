@@ -151,7 +151,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {
-            crate_name: "taplo",
+            crate_name: "taplo-cli",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
