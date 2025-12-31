@@ -1,6 +1,4 @@
 use crate::error::Result;
-#[cfg(unix)]
-use crate::error::UserError;
 use std::path::Path;
 
 /// Makes a file executable by setting appropriate permissions
@@ -19,6 +17,7 @@ fn make_executable_windows(_filepath: &Path, _log: Log) -> Result<()> {
 
 #[cfg(unix)]
 fn make_executable_unix(filepath: &Path) -> Result<()> {
+  use crate::error::UserError;
   use std::fs;
   use std::os::unix::fs::PermissionsExt;
   let Ok(executable_file) = fs::File::open(filepath) else {
