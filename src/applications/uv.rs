@@ -75,7 +75,7 @@ mod tests {
 
   mod install_methods {
     use crate::applications::AppDefinition;
-    use crate::applications::tikibase::Tikibase;
+    use crate::applications::uv::Uv;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
@@ -83,8 +83,8 @@ mod tests {
 
     #[test]
     fn macos_arm() {
-      let have = (Tikibase {}).run_method(
-        &Version::from("0.6.2"),
+      let have = (Uv {}).run_method(
+        &Version::from("0.9.21"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
@@ -101,8 +101,8 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      let have = (Tikibase {}).run_method(
-        &Version::from("0.6.2"),
+      let have = (Uv {}).run_method(
+        &Version::from("0.9.21"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Arm64,
@@ -119,8 +119,8 @@ mod tests {
 
     #[test]
     fn windows_intel() {
-      let have = (Tikibase {}).run_method(
-        &Version::from("0.6.2"),
+      let have = (Uv {}).run_method(
+        &Version::from("0.9.21"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
