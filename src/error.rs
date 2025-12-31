@@ -47,11 +47,6 @@ pub(crate) enum UserError {
     reason: String,
   },
   CannotFindExecutable,
-  #[cfg(unix)]
-  CannotMakeFileExecutable {
-    file: PathBuf,
-    reason: String,
-  },
   CannotOpenSubshellStream,
   CannotParseSemverVersion {
     expression: String,
@@ -174,11 +169,6 @@ impl UserError {
       UserError::CannotFindExecutable => {
         error("cannot locate executable for app.");
         desc("Please report this at https://github.com/kevgo/run-that-app/issues/new and try using an older version until this is fixed.");
-      }
-      #[cfg(unix)]
-      UserError::CannotMakeFileExecutable { file, reason } => {
-        error(&format!("Cannot make file {} executable: {reason}", file.to_string_lossy()));
-        desc("Please check access permissions and try again.");
       }
       UserError::CannotOpenSubshellStream => error("cannot open subshell stream"),
       UserError::CannotParseSemverVersion { expression, reason } => {

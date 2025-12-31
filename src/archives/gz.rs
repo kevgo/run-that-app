@@ -1,6 +1,7 @@
 use super::Archive;
 use crate::applications::ApplicationName;
 use crate::error::{Result, UserError};
+use crate::filesystem;
 use crate::logging::{Event, Log};
 use flate2::read::GzDecoder;
 use std::fs::File;
@@ -24,7 +25,7 @@ impl Archive for Gz {
           return Err(UserError::ArchiveCannotExtract { reason: err.to_string() });
         }
         drop(file); // close file before setting permissions
-        super::make_executable(&output_path, log)?;
+        filesystem::make_executable(&output_path)?;
         log(Event::ArchiveExtractSuccess);
         Ok(())
       }

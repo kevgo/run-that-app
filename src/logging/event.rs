@@ -87,10 +87,6 @@ pub(crate) enum Event<'a> {
     method: &'a Method,
     version: &'a Version,
   },
-  #[cfg(unix)]
-  MakeExecutable {
-    file: &'a Path,
-  },
   NotOnline,
   UpdateBegin {
     app: &'a ApplicationName,
