@@ -150,7 +150,6 @@ mod tests {
     #[cfg(unix)]
     fn unix_error() {
       use crate::filesystem;
-
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable");
       fs::write(&executable_path, b"#!/bin/sh\nexit 3").unwrap();
