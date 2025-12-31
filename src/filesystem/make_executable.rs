@@ -12,8 +12,9 @@ pub(crate) fn make_executable(filepath: &Path) -> Result<()> {
 }
 
 #[cfg(windows)]
-fn make_executable_windows(_filepath: &Path, _log: Log) {
+fn make_executable_windows(_filepath: &Path, _log: Log) -> Result<()> {
   // Windows does not have file permissions --> nothing to do here
+  Ok(())
 }
 
 #[cfg(unix)]
