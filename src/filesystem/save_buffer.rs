@@ -12,6 +12,6 @@ pub(crate) fn save_executable(data: Vec<u8>, path_on_disk: &Path, log: Log) -> R
     Ok(()) => log(Event::ExecutableInstallSaveSuccess),
     Err(err) => log(Event::ExecutableInstallSaveFail { err: err.to_string() }),
   }
-  filesystem::make_executable(path_on_disk)?;
+  filesystem::set_executable_bit(path_on_disk)?;
   Ok(Executable::from(path_on_disk))
 }

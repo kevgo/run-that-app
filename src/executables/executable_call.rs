@@ -153,7 +153,7 @@ mod tests {
       let tempdir = tempfile::tempdir().unwrap();
       let executable_path = tempdir.path().join("executable");
       fs::write(&executable_path, b"#!/bin/sh\nexit 3").unwrap();
-      filesystem::make_executable(&executable_path).unwrap();
+      filesystem::set_executable_bit(&executable_path).unwrap();
       let executable = Executable::from(executable_path);
       let have = subshell::stream_output(&executable, &[], &[]).unwrap();
       // HACK: is there a better way to compare ExitCode?
