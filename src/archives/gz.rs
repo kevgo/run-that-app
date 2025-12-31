@@ -16,7 +16,7 @@ impl Archive for Gz {
   fn extract_all(&self, target_dir: &Path, log: Log) -> Result<()> {
     log(Event::ArchiveExtractBegin { archive_type: "gz" });
 
-    // Decompress the gzip data
+    // decompress the gzip data
     let mut gz_decoder = GzDecoder::new(io::Cursor::new(&self.data));
     let mut decompressed_data = Vec::new();
 
@@ -25,7 +25,7 @@ impl Archive for Gz {
       return Err(UserError::ArchiveCannotExtract { reason: err.to_string() });
     }
 
-    // Determine output filename by removing .gz extension
+    // determine output filename by removing .gz extension
     let filename_path = PathBuf::from(&self.filename);
     let output_filename = filename_path
       .file_name()
@@ -37,7 +37,7 @@ impl Archive for Gz {
 
     let output_path = target_dir.join(output_filename);
 
-    // Write decompressed data to file
+    // write decompressed data to file
     match File::create(&output_path) {
       Ok(mut file) => {
         if let Err(err) = file.write_all(&decompressed_data) {
