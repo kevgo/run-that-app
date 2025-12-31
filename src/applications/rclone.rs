@@ -90,7 +90,9 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/rclone/rclone/releases/download/v1.72.1/rclone-v1.72.1-linux-arm64.zip".into(),
-          bin_folder: BinFolder::Root,
+          bin_folder: BinFolder::Subfolder {
+            path: "rclone-v1.72.1-linux-arm64".into(),
+          },
         }],
       };
       assert_eq!(have, want);
@@ -108,7 +110,9 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/rclone/rclone/releases/download/v1.72.1/rclone-v1.72.1-windows-amd64.zip".into(),
-          bin_folder: BinFolder::Root,
+          bin_folder: BinFolder::Subfolder {
+            path: "rclone-v1.72.1-windows-amd64".into(),
+          },
         }],
       };
       assert_eq!(have, want);
