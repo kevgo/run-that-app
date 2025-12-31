@@ -40,7 +40,9 @@ impl AppDefinition for Uv {
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/uv-{cpu}-{os}.{ext}").into(),
-        bin_folder: BinFolder::Root,
+        bin_folder: BinFolder::Subfolder {
+          path: format!("uv-{cpu}-{os}").into(),
+        },
       }],
     }
   }
@@ -55,7 +57,7 @@ impl AppDefinition for Uv {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
-    if !output.contains("Linter for Markdown-based knowledge databases") {
+    if !output.contains("An extremely fast Python package manager") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output(&["--version"], log)?) {
@@ -66,7 +68,7 @@ impl AppDefinition for Uv {
 }
 
 fn extract_version(output: &str) -> Result<&str> {
-  regexp::first_capture(output, r"tikibase (\d+\.\d+\.\d+)")
+  regexp::first_capture(output, r"uv (\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
