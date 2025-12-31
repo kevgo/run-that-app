@@ -34,7 +34,9 @@ impl AppDefinition for Rclone {
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/rclone-v{version}-{os}-{cpu}.zip").into(),
-        bin_folder: BinFolder::Root,
+        bin_folder: BinFolder::Subfolder {
+          path: format!("rclone-v{version}-{os}-{cpu}").into(),
+        },
       }],
     }
   }
