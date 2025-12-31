@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.25.0
+
+- apps: uv, rclone
+
 ### 0.24.2 (2025-11-5)
 
 - support for exhaustruct v4 and higher
