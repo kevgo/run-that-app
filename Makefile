@@ -7,7 +7,9 @@ fix: build  # auto-corrects issues
 	cargo +nightly fmt
 	target/debug/rta dprint fmt
 	target/debug/rta shfmt -f . | xargs target/debug/rta shfmt -w
-	target/debug/rta keep-sorted sort
+	target/debug/rta keep-sorted $(shell target/debug/rta ripgrep -l 'keep-sorted end' ./ --glob '!Makefile')
+
+
 
 install:  # installs this tool locally for testing
 	cargo install --locked --path .
