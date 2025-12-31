@@ -61,7 +61,7 @@ impl AppDefinition for Taplo {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
-    if !output.contains("taplo") {
+    if !output.contains("Lint TOML documents") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output(&["-V"], log)?) {
@@ -162,7 +162,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("taplo 0.7.7"), Ok("0.7.7"));
+    assert_eq!(super::extract_version("taplo 0.10.0"), Ok("0.10.0"));
     assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
