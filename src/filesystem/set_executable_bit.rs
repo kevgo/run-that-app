@@ -6,11 +6,11 @@ pub(crate) fn set_executable_bit(filepath: &Path) -> Result<()> {
   #[cfg(unix)]
   return set_executable_bit_unix(filepath);
   #[cfg(windows)]
-  return set_executable_bit_windows(filepath, log);
+  return set_executable_bit_windows(filepath);
 }
 
 #[cfg(windows)]
-fn set_executable_bit_windows(_filepath: &Path, _log: Log) -> Result<()> {
+fn set_executable_bit_windows(_filepath: &Path) -> Result<()> {
   // Windows does not have file permissions --> nothing to do here
   Ok(())
 }
