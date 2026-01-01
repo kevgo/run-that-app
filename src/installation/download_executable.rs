@@ -12,6 +12,6 @@ pub(crate) fn run(app_definition: &dyn AppDefinition, app_folder: &Path, url: &U
     return Ok(Outcome::NotInstalled);
   };
   let filepath_on_disk = app_folder.join(app_definition.executable_filename().platform_path(ctx.platform.os));
-  filesystem::save_executable(artifact.data, &filepath_on_disk, ctx.log)?;
+  filesystem::save_executable(artifact.data, &filepath_on_disk, ctx.log);
   Ok(Outcome::Installed)
 }
