@@ -29,7 +29,7 @@ impl AppDefinition for Deadcode {
 
   fn latest_installable_version(&self, _log: Log) -> Result<Version> {
     // TODO: remove this file once deadcode is integrated into golangci-lint
-    Ok(Version::from("0.16.1"))
+    Ok(Version::from("0.40.0"))
   }
 
   fn installable_versions(&self, _amount: usize, _log: Log) -> Result<Vec<Version>> {
