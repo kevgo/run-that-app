@@ -1,20 +1,26 @@
-use crate::error::Result;
+use crate::configuration::Version;
+use crate::error::{Result, UserError};
 use crate::executables::Executable;
 use crate::subshell;
 
-pub(crate) fn all(pkg_name: &str, amount: usize) -> Result<Vec<String>> {
-  // run "go list -m -versions golang.org/x/tools" in a subprocess
+pub(crate) fn all(pkg_name: &str) -> Result<Vec<Version>> {
   let output = subshell::capture_output(&Executable::from("go"), &["list", "-m", "-versions", pkg_name])?;
-
-  // parse the response
   Ok(parse_output(&output))
 }
 
-fn parse_output(output: &str) -> Vec<String> {
+pub(crate) fn latest(pkg_name: &str) -> Result<Version> {
+  let tags = all(pkg_name)?;
+  let Some(tag) = tags.into_iter().nth(0) else {
+    return Err(UserError::NoVersionsFound { app: pkg_name.to_string() });
+  };
+  Ok(tag)
+}
+
+fn parse_output(output: &str) -> Vec<Version> {
   output
     .split_whitespace()
-    .skip(1) // Skip the package name
-    .map(|s| s.strip_prefix('v').unwrap_or(s).to_string())
+    .skip(1) // skip the package name
+    .map(|s| s.strip_prefix('v').unwrap_or(s).into())
     .collect()
 }
 

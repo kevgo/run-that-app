@@ -4,6 +4,7 @@ use crate::applications::ApplicationName;
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
+use crate::hosting::pkg_go_dev;
 use crate::installation::Method;
 use crate::platform::Platform;
 
@@ -28,12 +29,11 @@ impl AppDefinition for Deadcode {
   }
 
   fn latest_installable_version(&self, _log: Log) -> Result<Version> {
-    // TODO: remove this file once deadcode is integrated into golangci-lint
-    Ok(Version::from("0.16.1"))
+    pkg_go_dev::latest("golang.org/x/tools")
   }
 
   fn installable_versions(&self, _amount: usize, _log: Log) -> Result<Vec<Version>> {
-    Ok(vec![Version::from("0.16.1")])
+    pkg_go_dev::all("golang.org/x/tools")
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
