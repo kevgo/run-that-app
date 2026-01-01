@@ -10,100 +10,43 @@ pub(crate) type Result<T> = core::result::Result<T, UserError>;
 #[derive(Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions)]
 pub(crate) enum UserError {
-  ArchiveCannotExtract {
-    reason: String,
-  },
-  #[cfg(unix)]
+  ArchiveCannotExtract { reason: String },
   CannotAccessConfigFile(String),
-  CannotCompileRustSource {
-    err: String,
-  },
-  CannotCreateFile {
-    filename: &'static str,
-    err: String,
-  },
-  CannotCreateFolder {
-    folder: PathBuf,
-    reason: String,
-  },
-  CannotCreateTempDir {
-    err: String,
-  },
-  CannotDeleteFolder {
-    folder: PathBuf,
-    err: String,
-  },
+  CannotCompileRustSource { err: String },
+  CannotCreateFile { filename: &'static str, err: String },
+  CannotCreateFolder { folder: PathBuf, reason: String },
+  CannotCreateTempDir { err: String },
+  CannotDeleteFolder { folder: PathBuf, err: String },
   CannotDetermineCurrentDirectory(String),
   CannotDetermineHomeDirectory,
-  CannotDownload {
-    url: Url,
-    reason: String,
-  },
-  CannotExecuteBinary {
-    call: String,
-    reason: String,
-  },
+  CannotDownload { url: Url, reason: String },
+  CannotExecuteBinary { call: String, reason: String },
   CannotFindExecutable,
   CannotOpenSubshellStream,
-  CannotParseSemverVersion {
-    expression: String,
-    reason: String,
-  },
-  CannotParseSemverRange {
-    expression: String,
-    reason: String,
-  },
-  CannotReadZipFile {
-    err: String,
-  },
-  CompilationError {
-    reason: String,
-  },
+  CannotParseSemverVersion { expression: String, reason: String },
+  CannotParseSemverRange { expression: String, reason: String },
+  CannotReadZipFile { err: String },
+  CompilationError { reason: String },
   CompilationInterupted,
   ConfigFileAlreadyExists,
-  DuplicateAppName {
-    name: String,
-  },
-  ExecutableCannotExecute {
-    executable: PathBuf,
-    err: String,
-  },
-  GitHubReleasesApiProblem {
-    problem: String,
-    payload: String,
-  },
-  GitHubTagsApiProblem {
-    problem: String,
-    payload: String,
-  },
+  DuplicateAppName { name: String },
+  ExecutableCannotExecute { executable: PathBuf, err: String },
+  GitHubReleasesApiProblem { problem: String, payload: String },
+  GitHubTagsApiProblem { problem: String, payload: String },
   GoCompilationFailed,
   GoNoPermission,
-  InvalidConfigFileFormat {
-    line_no: usize,
-    text: String,
-  },
+  InvalidConfigFileFormat { line_no: usize, text: String },
   InvalidNumber,
-  InvalidGitHubAPIResponse {
-    err: String,
-  },
-  InvalidRegex {
-    regex: String,
-    err: String,
-  },
+  InvalidGitHubAPIResponse { err: String },
+  InvalidRegex { regex: String, err: String },
   MissingApplication,
   MultipleCommandsGiven,
   NotOnline,
-  NoVersionsFound {
-    app: String,
-  },
-  ProcessEmittedOutput {
-    cmd: String,
-  },
+  NoVersionsFound { app: String },
+  ProcessEmittedOutput { cmd: String },
   RegexDoesntMatch,
   RegexHasNoCaptures,
-  RunRequestMissingVersion {
-    app: String,
-  },
+  RunRequestMissingVersion { app: String },
   RustCompilationFailed,
   RustNotInstalled,
   RustNoPermission,
@@ -113,13 +56,8 @@ pub(crate) enum UserError {
   UnsupportedPlatform,
   UnsupportedCPU(String),
   UnsupportedOS(String),
-  YardRootIsNotFolder {
-    root: PathBuf,
-  },
-  YardAccessDenied {
-    msg: String,
-    path: PathBuf,
-  },
+  YardRootIsNotFolder { root: PathBuf },
+  YardAccessDenied { msg: String, path: PathBuf },
 }
 
 impl UserError {
