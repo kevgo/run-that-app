@@ -14,7 +14,7 @@ fn parse_output(output: &str) -> Vec<String> {
   output
     .split_whitespace()
     .skip(1) // Skip the package name
-    .map(|s| s.to_string())
+    .map(|s| s.strip_prefix('v').unwrap_or(s).to_string())
     .collect()
 }
 
