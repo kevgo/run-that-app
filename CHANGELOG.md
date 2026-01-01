@@ -1,5 +1,10 @@
 # run-that-app changelog
 
+### 0.26.0
+
+- apps: taplo
+- does now print correct versions for deadcode
+
 ### 0.25.0
 
 - apps: uv, rclone
