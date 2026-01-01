@@ -2,6 +2,7 @@
 
 pub(crate) mod github_releases;
 pub(crate) mod github_tags;
+pub(crate) mod pkg_go_dev;
 
 /// provides the version of this release without "v" in it
 ///
