@@ -1,6 +1,7 @@
 use std::path::Path;
 
-/// Makes a file executable by setting appropriate permissions
+/// Makes the given file executable by setting appropriate permissions.
+/// Ignores non-existing files.
 pub(crate) fn set_executable_bit(filepath: &Path) {
   #[cfg(unix)]
   return set_executable_bit_unix(filepath);
@@ -9,10 +10,8 @@ pub(crate) fn set_executable_bit(filepath: &Path) {
 }
 
 #[cfg(windows)]
-#[allow(clippy::unnecessary_wraps)]
-fn set_executable_bit_windows(_filepath: &Path) -> Result<()> {
+fn set_executable_bit_windows(_filepath: &Path) {
   // Windows does not have file permissions --> nothing to do here
-  Ok(())
 }
 
 #[cfg(unix)]
