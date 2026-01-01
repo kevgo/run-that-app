@@ -25,7 +25,7 @@ impl Archive for Gz {
           return Err(UserError::ArchiveCannotExtract { reason: err.to_string() });
         }
         drop(file); // close file before setting permissions
-        filesystem::make_executable(&output_path)?;
+        filesystem::set_executable_bit(&output_path);
         log(Event::ArchiveExtractSuccess);
         Ok(())
       }
