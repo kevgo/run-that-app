@@ -10,112 +10,43 @@ pub(crate) type Result<T> = core::result::Result<T, UserError>;
 #[derive(Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions)]
 pub(crate) enum UserError {
-  ArchiveCannotExtract {
-    reason: String,
-  },
-  #[cfg(unix)]
-  ArchiveDoesNotContainExecutable {
-    expected: PathBuf,
-  },
+  ArchiveCannotExtract { reason: String },
   CannotAccessConfigFile(String),
-  CannotCompileRustSource {
-    err: String,
-  },
-  CannotCreateFile {
-    filename: &'static str,
-    err: String,
-  },
-  CannotCreateFolder {
-    folder: PathBuf,
-    reason: String,
-  },
-  CannotCreateTempDir {
-    err: String,
-  },
-  CannotDeleteFolder {
-    folder: PathBuf,
-    err: String,
-  },
+  CannotCompileRustSource { err: String },
+  CannotCreateFile { filename: &'static str, err: String },
+  CannotCreateFolder { folder: PathBuf, reason: String },
+  CannotCreateTempDir { err: String },
+  CannotDeleteFolder { folder: PathBuf, err: String },
   CannotDetermineCurrentDirectory(String),
   CannotDetermineHomeDirectory,
-  CannotDownload {
-    url: Url,
-    reason: String,
-  },
-  CannotExecuteBinary {
-    call: String,
-    reason: String,
-  },
+  CannotDownload { url: Url, reason: String },
+  CannotExecuteBinary { call: String, reason: String },
   CannotFindExecutable,
   CannotOpenSubshellStream,
-  CannotParseSemverVersion {
-    expression: String,
-    reason: String,
-  },
-  CannotParseSemverRange {
-    expression: String,
-    reason: String,
-  },
-  #[cfg(unix)]
-  CannotReadFileMetadata {
-    err: String,
-  },
-  CannotReadZipFile {
-    err: String,
-  },
-  #[cfg(unix)]
-  CannotSetFilePermissions {
-    path: PathBuf,
-    err: String,
-  },
-  CompilationError {
-    reason: String,
-  },
+  CannotParseSemverVersion { expression: String, reason: String },
+  CannotParseSemverRange { expression: String, reason: String },
+  CannotReadZipFile { err: String },
+  CompilationError { reason: String },
   CompilationInterupted,
   ConfigFileAlreadyExists,
-  DuplicateAppName {
-    name: String,
-  },
-  ExecutableCannotExecute {
-    executable: PathBuf,
-    err: String,
-  },
-  GitHubReleasesApiProblem {
-    problem: String,
-    payload: String,
-  },
-  GitHubTagsApiProblem {
-    problem: String,
-    payload: String,
-  },
+  DuplicateAppName { name: String },
+  ExecutableCannotExecute { executable: PathBuf, err: String },
+  GitHubReleasesApiProblem { problem: String, payload: String },
+  GitHubTagsApiProblem { problem: String, payload: String },
   GoCompilationFailed,
   GoNoPermission,
-  InvalidConfigFileFormat {
-    line_no: usize,
-    text: String,
-  },
+  InvalidConfigFileFormat { line_no: usize, text: String },
   InvalidNumber,
-  InvalidGitHubAPIResponse {
-    err: String,
-  },
-  InvalidRegex {
-    regex: String,
-    err: String,
-  },
+  InvalidGitHubAPIResponse { err: String },
+  InvalidRegex { regex: String, err: String },
   MissingApplication,
   MultipleCommandsGiven,
   NotOnline,
-  NoVersionsFound {
-    app: String,
-  },
-  ProcessEmittedOutput {
-    cmd: String,
-  },
+  NoVersionsFound { app: String },
+  ProcessEmittedOutput { cmd: String },
   RegexDoesntMatch,
   RegexHasNoCaptures,
-  RunRequestMissingVersion {
-    app: String,
-  },
+  RunRequestMissingVersion { app: String },
   RustCompilationFailed,
   RustNotInstalled,
   RustNoPermission,
@@ -125,13 +56,8 @@ pub(crate) enum UserError {
   UnsupportedPlatform,
   UnsupportedCPU(String),
   UnsupportedOS(String),
-  YardRootIsNotFolder {
-    root: PathBuf,
-  },
-  YardAccessDenied {
-    msg: String,
-    path: PathBuf,
-  },
+  YardRootIsNotFolder { root: PathBuf },
+  YardAccessDenied { msg: String, path: PathBuf },
 }
 
 impl UserError {
@@ -140,10 +66,6 @@ impl UserError {
     match self {
       UserError::ArchiveCannotExtract { reason } => {
         error(&format!("cannot extract the archive: {reason}"));
-      }
-      #[cfg(unix)]
-      UserError::ArchiveDoesNotContainExecutable { expected } => {
-        error(&format!("archive does not contain the expected executable: {}", expected.to_string_lossy()));
       }
       UserError::CannotAccessConfigFile(reason) => {
         error(&format!("cannot read the config file: {reason}"));
@@ -179,19 +101,7 @@ impl UserError {
         error(&format!("semver range \"{expression}\" is incorrect: {reason}"));
         desc("Please use formats described at https://devhints.io/semver.");
       }
-      #[cfg(unix)]
-      UserError::CannotReadFileMetadata { err } => {
-        error(&format!("cannot read file metadata: {err}"));
-        desc(
-          "This is an issue with your operating system permissions. Please allow the current user to read file permissions for the given path and try again.",
-        );
-      }
       UserError::CannotReadZipFile { err } => error(&format!("cannot read ZIP file: {err}")),
-      #[cfg(unix)]
-      UserError::CannotSetFilePermissions { path, err } => {
-        error(&format!("cannot write permissions for file {}: {err}", path.to_string_lossy()));
-        desc("This is an issue with your operating system permissions. Please allow the current user to change permissions for the given path and try again.");
-      }
       UserError::CompilationError { reason } => {
         error(&format!("Compilation error: {reason}"));
       }
