@@ -11,6 +11,8 @@ use crate::platform::Platform;
 #[derive(Clone)]
 pub(crate) struct Deadcode {}
 
+const PKG_NAME: &str = "golang.org/x/tools";
+
 impl AppDefinition for Deadcode {
   fn name(&self) -> ApplicationName {
     "deadcode".into()
@@ -29,11 +31,11 @@ impl AppDefinition for Deadcode {
   }
 
   fn latest_installable_version(&self, _log: Log) -> Result<Version> {
-    pkg_go_dev::latest("golang.org/x/tools")
+    pkg_go_dev::latest(PKG_NAME)
   }
 
   fn installable_versions(&self, amount: usize, _log: Log) -> Result<Vec<Version>> {
-    pkg_go_dev::versions("golang.org/x/tools", amount)
+    pkg_go_dev::versions(PKG_NAME, amount)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
