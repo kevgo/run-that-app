@@ -33,7 +33,7 @@ impl AppDefinition for Deadcode {
   }
 
   fn installable_versions(&self, _amount: usize, _log: Log) -> Result<Vec<Version>> {
-    Ok(vec![Version::from("0.16.1")])
+    Ok(vec![Version::from("0.40.0")])
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
