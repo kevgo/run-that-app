@@ -32,8 +32,8 @@ impl AppDefinition for Deadcode {
     pkg_go_dev::latest("golang.org/x/tools")
   }
 
-  fn installable_versions(&self, _amount: usize, _log: Log) -> Result<Vec<Version>> {
-    pkg_go_dev::all("golang.org/x/tools")
+  fn installable_versions(&self, amount: usize, _log: Log) -> Result<Vec<Version>> {
+    pkg_go_dev::versions("golang.org/x/tools", amount)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
