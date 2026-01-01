@@ -10,6 +10,7 @@ pub(crate) fn set_executable_bit(filepath: &Path) -> Result<()> {
 }
 
 #[cfg(windows)]
+#[allow(clippy::unnecessary_wraps)]
 fn set_executable_bit_windows(_filepath: &Path) -> Result<()> {
   // Windows does not have file permissions --> nothing to do here
   Ok(())
