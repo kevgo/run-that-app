@@ -24,13 +24,13 @@ executable.
 Run all end-to-end tests:
 
 ```zsh
-rta --test [--verbose]
+cargo run --release -- --test [--verbose]
 ```
 
 Start the end-to-end test suite at a particular application:
 
 ```zsh
-rta --test [--verbose] <app-name>
+cargo run --release -- --test [--verbose] <app-name>
 ```
 
 Running an end-to-end while actively developing the RTA executable:

@@ -29,9 +29,6 @@ setup:  # install development dependencies on this computer
 
 test: fix unit lint  # runs all tests
 
-test-installation:  # tries to install all apps
-	cargo run --release -- --test
-
 todo:  # displays all TODO items
 	@git grep --color=always --line-number TODO ':!target' | grep -v Makefile
 
