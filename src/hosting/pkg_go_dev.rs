@@ -7,11 +7,11 @@ pub(crate) fn all(pkg_name: &str, amount: usize) -> Result<Vec<String>> {
   let output = subshell::capture_output(&Executable::from("go"), &["list", "-m", "-versions", pkg_name])?;
 
   // parse the response
-  parse_output(output)
+  Ok(parse_output(&output))
 }
 
-fn parse_output(output: String) -> Result<Vec<String>> {
-  Ok(vec![])
+fn parse_output(output: &str) -> Vec<String> {
+  vec![]
 }
 
 #[cfg(test)]
