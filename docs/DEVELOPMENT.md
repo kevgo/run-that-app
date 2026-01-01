@@ -36,7 +36,7 @@ cargo run --release -- --test [--verbose] <app-name>
 Running an end-to-end while actively developing the RTA executable:
 
 ```zsh
-cargo run -- --test [--verbose] [app name]
+cargo run -- --test [--verbose] <app name>
 ```
 
 The end-to-end test tests each install operation in a new Yard in a temporary
