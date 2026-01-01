@@ -4,11 +4,11 @@ use crate::executables::Executable;
 use crate::subshell;
 
 pub(crate) fn latest(pkg_name: &str) -> Result<Version> {
-  let tags = versions(pkg_name, 1)?;
-  let Some(tag) = tags.into_iter().next() else {
+  let versions = versions(pkg_name, 1)?;
+  let Some(first) = versions.into_iter().next() else {
     return Err(UserError::NoVersionsFound { app: pkg_name.to_string() });
   };
-  Ok(tag)
+  Ok(first)
 }
 
 pub(crate) fn versions(pkg_name: &str, amount: usize) -> Result<Vec<Version>> {
