@@ -30,7 +30,7 @@ pub(crate) fn run(
   // extract the archive
   archive.extract_all(app_folder, ctx.log)?;
   let executable_filename = executable_name.platform_path(ctx.platform.os);
-  // verify that all executables that should be there exist and are executable
+  // set permission bits on all executables
   for executable_path in bin_folders.executable_paths(app_folder, &executable_filename) {
     filesystem::set_executable_bit(&executable_path);
     // set the executable bit of all executable files that this app provides
