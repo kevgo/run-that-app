@@ -28,12 +28,11 @@ pub(crate) fn run(
     return Err(UserError::UnknownArchive(artifact.filename));
   };
   // extract the archive
-  archive.extract_all(app_folder, ctx.log)?;
+  archive.extract_all(app_folder, ctx.log, &app_name)?;
   let executable_filename = executable_name.platform_path(ctx.platform.os);
   // set permission bits on all executables
   for executable_path in bin_folders.executable_paths(app_folder, &executable_filename) {
     filesystem::set_executable_bit(&executable_path);
-    // set the executable bit of all executable files that this app provides
     for other_executable in app_definition.additional_executables() {
       let other_executable_filename = other_executable.platform_path(ctx.platform.os);
       for other_executable_path in bin_folders.executable_paths(app_folder, &other_executable_filename) {

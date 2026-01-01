@@ -1,10 +1,13 @@
+mod gz;
 mod tar_gz;
 mod tar_xz;
 mod zip;
 
+use self::gz::Gz;
 use self::tar_gz::TarGz;
 use self::tar_xz::TarXz;
 use self::zip::Zip;
+use crate::applications::ApplicationName;
 use crate::error::Result;
 use crate::{Log, filesystem};
 use std::path::Path;
@@ -12,7 +15,7 @@ use std::path::Path;
 /// An archive is a compressed file containing an executable and other files needed to run a particular application.
 pub(crate) trait Archive {
   /// extracts all files from the given archive data to the given location on disk
-  fn extract_all(&self, target_dir: &Path, log: Log) -> Result<()>;
+  fn extract_all(&self, target_dir: &Path, log: Log, app: &ApplicationName) -> Result<()>;
 }
 
 /// provides the archive that can extract the given file path
@@ -21,6 +24,7 @@ pub(crate) fn lookup(filepath: &str, data: Vec<u8>) -> Option<Box<dyn Archive>> 
     () if filesystem::has_extension(filepath, ".tar.gz") => Some(Box::new(TarGz { data })),
     () if filesystem::has_extension(filepath, ".tar.xz") => Some(Box::new(TarXz { data })),
     () if filesystem::has_extension(filepath, ".zip") => Some(Box::new(Zip { data })),
+    () if filesystem::has_extension(filepath, ".gz") => Some(Box::new(Gz { data })), // this must come after .tar.gz to prevent .tar.gz being mistaken for a .gz file
     () => None,
   }
 }
