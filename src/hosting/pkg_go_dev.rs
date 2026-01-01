@@ -11,7 +11,11 @@ pub(crate) fn all(pkg_name: &str, amount: usize) -> Result<Vec<String>> {
 }
 
 fn parse_output(output: &str) -> Vec<String> {
-  vec![]
+  output
+    .split_whitespace()
+    .skip(1) // Skip the package name
+    .map(|s| s.to_string())
+    .collect()
 }
 
 #[cfg(test)]
@@ -83,7 +87,7 @@ mod tests {
       S("v0.39.0"),
       S("v0.40.0"),
     ];
-    let have = parse_output(give).unwrap();
+    let have = parse_output(give);
     assert_eq!(have, want);
   }
 }
