@@ -54,6 +54,12 @@ impl From<&Path> for Executable {
   }
 }
 
+impl From<&str> for Executable {
+  fn from(value: &str) -> Self {
+    Executable(PathBuf::from(value.to_string()))
+  }
+}
+
 impl From<Executable> for PathBuf {
   fn from(val: Executable) -> Self {
     val.0
