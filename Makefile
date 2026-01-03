@@ -30,7 +30,7 @@ setup:  # install development dependencies on this computer
 	rustup toolchain add nightly
 	rustup component add rustfmt --toolchain nightly
 
-test: fix unit lint  # runs all tests
+test: fix unit lint doc  # runs all tests
 
 todo:  # displays all TODO items
 	@git grep --color=always --line-number TODO ':!target' | grep -v Makefile
