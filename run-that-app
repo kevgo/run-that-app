@@ -2,7 +2,7 @@ actionlint 1.7.10
 contest 0.5.0
 dprint 0.51.1
 keep-sorted 0.7.1
-npm 25.2.1
+npm 24.10.0
 ripgrep 15.1.0
 shellcheck 0.11.0
 shfmt 3.12.0
