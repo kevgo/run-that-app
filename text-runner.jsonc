@@ -1,0 +1,16 @@
+{
+  // link to the JSON schema that defines this document
+  "$schema": "https://raw.githubusercontent.com/kevgo/text-runner/refs/heads/main/documentation/text-runner.schema.json",
+
+  // white-list for files to test
+  // This is a glob expression, see https://github.com/isaacs/node-glob#glob-primer
+  // The folder "node_modules" is already excluded.
+  // To exclude the "vendor" folder: '{,!(vendor)/**/}*.md'
+  "files": "**/*.md",
+
+  // the formatter to use (detailed, dot, progress, summary)
+  "format": "dot",
+
+  // whether to verify online files/links (warning: this makes tests flaky)
+  "online": false
+}

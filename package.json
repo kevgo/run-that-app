@@ -1,0 +1,12 @@
+{
+  "name": "internal",
+  "version": "0.0.0",
+  "description": "internal tooling",
+  "private": true,
+  "scripts": {
+    "doc": "text-runner"
+  },
+  "devDependencies": {
+    "text-runner": "7.4.0"
+  }
+}
