@@ -1,7 +1,7 @@
 build:  # compiles this app in debug mode
 	cargo build --locked
 
-doc: build  # test the documentation
+doc: build node_modules  # test the documentation
 	target/debug/rta npm exec text-runner
 
 fix: build  # auto-corrects issues
@@ -45,5 +45,13 @@ update:  # updates the dependencies
 	cargo run -- --update
 
 
+# --- HELPER TARGETS --------------------------------------------------------------------------------------------------------------------------------
+
 .DEFAULT_GOAL := help
 .SILENT:
+
+node_modules: build package-lock.json
+	@echo "Installing Node based tools"
+	target/debug/rta npm ci
+	@touch package-lock.json  # update timestamp so that Make doesn't re-install it on every command
+	@touch node_modules  # update timestamp so that Make doesn't re-install it on every command
