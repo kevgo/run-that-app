@@ -1,7 +1,7 @@
 build:  # compiles this app in debug mode
 	cargo build --locked
 
-doc: node_modules  # test the documentation
+doc: build node_modules  # test the documentation
 	target/debug/rta npm exec text-runner
 
 fix: build  # auto-corrects issues
