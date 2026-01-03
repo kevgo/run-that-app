@@ -51,7 +51,6 @@ update:  # updates the dependencies
 .SILENT:
 
 node_modules: package-lock.json
-	@echo "Installing Node based tools"
 	target/debug/rta npm ci
 	@touch package-lock.json  # update timestamp so that Make doesn't re-install it on every command
 	@touch node_modules  # update timestamp so that Make doesn't re-install it on every command
