@@ -50,7 +50,7 @@ update:  # updates the dependencies
 .DEFAULT_GOAL := help
 .SILENT:
 
-node_modules: build package-lock.json
+node_modules: package-lock.json
 	@echo "Installing Node based tools"
 	target/debug/rta npm ci
 	@touch package-lock.json  # update timestamp so that Make doesn't re-install it on every command
