@@ -1,6 +1,9 @@
 build:  # compiles this app in debug mode
 	cargo build --locked
 
+doc: build  # test the documentation
+	target/debug/rta npm exec text-runner
+
 fix: build  # auto-corrects issues
 	cargo +nightly fix --allow-dirty
 	cargo clippy --fix --allow-dirty
