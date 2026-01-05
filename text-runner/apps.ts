@@ -16,12 +16,12 @@ export class App {
 
 function loadDocumentedApps(region: textRunner.ast.NodeList): App[] {
 	const result = []
-	for (const liNode of region.nodesOfTypes("list_item_open")) {
-		const appNodes = region.nodesFor(liNode)
-		const linkNode = appNodes.nodeOfTypes("link_open")
+	for (const listItemOpener of region.nodesOfTypes("list_item_open")) {
+		const listItemNodes = region.nodesFor(listItemOpener)
+		const linkOpener = listItemNodes.nodeOfTypes("link_open")
 		result.push({
-			name: appNodes.nodesFor(linkNode).text(),
-			url: linkNode.attributes["href"],
+			name: listItemNodes.nodesFor(linkOpener).text(),
+			url: linkOpener.attributes["href"],
 		})
 	}
 	return result
