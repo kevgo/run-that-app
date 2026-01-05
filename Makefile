@@ -38,7 +38,7 @@ test: fix unit lint doc  # runs all tests
 todo:  # displays all TODO items
 	@git grep --color=always --line-number TODO ':!target' | grep -v Makefile
 
-unit:  # runs the unit tests
+unit: node_modules  # runs the unit tests
 	cargo test --locked
 	echo 333333333333333
 	pwd
