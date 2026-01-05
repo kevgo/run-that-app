@@ -4,9 +4,9 @@ import * as textRunner from "text-runner";
 
 export function apps(action: textRunner.actions.Args) {
 	action.name("verify installable applications")
-	const supportedApps = loadSupportedApps();
+	const installableApps = loadInstallableApps();
 	const documentedApps = loadDocumentedApps(action.region);
-	deepEqual(supportedApps, documentedApps);
+	deepEqual(installableApps, documentedApps);
 }
 
 export class App {
@@ -27,7 +27,7 @@ function loadDocumentedApps(region: textRunner.ast.NodeList): App[] {
 	return result
 }
 
-function loadSupportedApps(): App[] {
+function loadInstallableApps(): App[] {
 	return parseApps(queryApps());
 }
 
