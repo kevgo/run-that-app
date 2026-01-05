@@ -3,7 +3,7 @@ build:  # compiles this app in debug mode
 
 doc: build node_modules  # test the documentation
 	target/debug/rta node@22.21.1 -v
-	target/debug/rta npm exec text-runner
+	target/debug/rta node node_modules/.bin/text-runner
 
 fix: build  # auto-corrects issues
 	cargo +nightly fix --allow-dirty
