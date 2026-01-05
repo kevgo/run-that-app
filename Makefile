@@ -1,6 +1,9 @@
 build:  # compiles this app in debug mode
 	cargo build --locked
 
+doc: build node_modules  # test the documentation
+	target/debug/rta node node_modules/text-runner/dist/start.js
+
 fix: build  # auto-corrects issues
 	cargo +nightly fix --allow-dirty
 	cargo clippy --fix --allow-dirty
@@ -27,7 +30,7 @@ setup:  # install development dependencies on this computer
 	rustup toolchain add nightly
 	rustup component add rustfmt --toolchain nightly
 
-test: fix unit lint  # runs all tests
+test: fix unit lint doc  # runs all tests
 
 todo:  # displays all TODO items
 	@git grep --color=always --line-number TODO ':!target' | grep -v Makefile
@@ -42,5 +45,14 @@ update:  # updates the dependencies
 	cargo run -- --update
 
 
+# --- HELPER TARGETS --------------------------------------------------------------------------------------------------------------------------------
+
 .DEFAULT_GOAL := help
 .SILENT:
+
+node_modules: package.json package-lock.json
+	target/debug/rta npm ci
+	@touch node_modules  # update timestamp so that Make doesn't re-install it on every command
+
+target/debug/rta: Cargo.toml Cargo.lock
+	cargo build --locked
