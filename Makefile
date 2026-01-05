@@ -1,6 +1,9 @@
 build:  # compiles this app in debug mode
 	cargo build --locked
 
+contest: build
+	target/debug/rta contest
+
 doc: build node_modules  # test the documentation
 	target/debug/rta node node_modules/text-runner/dist/start.js
 
