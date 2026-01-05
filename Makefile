@@ -40,6 +40,7 @@ todo:  # displays all TODO items
 
 unit:  # runs the unit tests
 	cargo test --locked
+	node --test 'text-runner/**/*.test.ts'
 
 update:  # updates the dependencies
 	cargo install cargo-edit cargo-machete

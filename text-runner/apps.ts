@@ -8,7 +8,7 @@ export function apps(action: textRunner.actions.Args) {
 	deepEqual(supportedApps, documentedApps, "options section");
 }
 
-interface App {
+export class App {
 	name: string;
 	url: string;
 }
@@ -34,7 +34,7 @@ function parseApps(output: string): App[] {
 	return output.split("\n").map(parseLine);
 }
 
-function parseLine(line: string): App {
+export function parseLine(line: string): App {
 	const [name, url] = line.split(" ");
 	return { name, url };
 }
