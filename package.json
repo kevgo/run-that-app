@@ -4,6 +4,6 @@
   "description": "internal tooling",
   "private": true,
   "devDependencies": {
-    "text-runner": "7.4.0"
+    "text-runner": "7.5.0"
   }
 }
