@@ -30,7 +30,20 @@
         }
       ],
       "run": "cargo test {{ test_name }}"
+    },
+
+    {
+      "type": "test-file",
+      "files": "text-runner/apps.ts",
+      "run": "make doc"
+    },
+
+    {
+      "type": "test-file",
+      "files": "README.md",
+      "run": "make doc"
     }
+
   ],
   "options": {
     "beforeRun": {
