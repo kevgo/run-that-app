@@ -31,7 +31,7 @@ function loadSupportedApps() {
 }
 
 export function parseApps(output: string): App[] {
-	return output.split("\n").map(parseLine);
+	return output.trim().split("\n").map(parseLine);
 }
 
 export function parseLine(line: string): App {
@@ -40,5 +40,5 @@ export function parseLine(line: string): App {
 }
 
 function queryApps(): string {
-	return execSync("cargo run -- --apps", { encoding: "utf-8" }).trim();
+	return execSync("cargo run -- --apps", { encoding: "utf-8" })
 }

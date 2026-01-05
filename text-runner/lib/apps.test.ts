@@ -4,7 +4,10 @@ import { suite, test } from "node:test"
 
 suite("parseApps", () => {
 	test("many apps", () => {
-		const give = "actionlint https://github.com/actionlint/actionlint\nalphavet https://github.com/alphavet/alphavet"
+		const give = `
+actionlint https://github.com/actionlint/actionlint
+alphavet https://github.com/alphavet/alphavet
+`.substring(1);
 		const have = parseApps(give);
 		const want: App[] = [
 			{
