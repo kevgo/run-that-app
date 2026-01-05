@@ -19,7 +19,7 @@ function loadDocumentedApps(region: textRunner.ast.NodeList): App[] {
 		const appNodes = region.nodesFor(liNode)
 		const linkNode = appNodes.nodeOfTypes("link_open")
 		const url = linkNode.attributes["href"]
-		const linkNodes = region.nodesFor(linkNode)
+		const linkNodes = appNodes.nodesFor(linkNode)
 		const name = linkNodes.text()
 		result.push({ name, url })
 	}
