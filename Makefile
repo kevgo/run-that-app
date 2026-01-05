@@ -40,10 +40,7 @@ todo:  # displays all TODO items
 
 unit: node_modules  # runs the unit tests
 	cargo test --locked
-	echo 333333333333333
-	pwd
 	target/debug/rta node --test 'text-runner/**/*.test.ts'
-	echo 444444444444444
 
 update:  # updates the dependencies
 	cargo install cargo-edit cargo-machete
