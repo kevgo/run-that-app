@@ -68,6 +68,12 @@ Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kev
 The installer places the _run-that-app_ executable into the current directory.
 To install elsewhere, execute the installer from that directory.
 
+Compile from source:
+
+```
+cargo install --git https://github.com/kevgo/run-that-app
+```
+
 ## usage
 
 ```sh
