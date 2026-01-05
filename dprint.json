@@ -2,6 +2,9 @@
   "markdown": {
     "textWrap": "always"
   },
+  "jsonc": {
+    "trailingCommas": "never"
+  },
   "excludes": [
     "CHANGELOG.md"
   ],
