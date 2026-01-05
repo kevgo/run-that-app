@@ -5,7 +5,6 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "node": "22.21.1",
-    "text-runner": "7.4.0"
+    "text-runner": "7.5.0"
   }
 }
