@@ -7,7 +7,7 @@ suite("parseApps", () => {
 		const give = `
 actionlint https://github.com/actionlint/actionlint
 alphavet https://github.com/alphavet/alphavet
-`.substring(1);
+`
 		const have = parseApps(give);
 		const want: App[] = [
 			{
