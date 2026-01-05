@@ -55,7 +55,7 @@ with no runtime overhead.
 
 <a type="apps">
 
-- eueu
+- [actionlint](https://rhysd.github.io/actionlint)
 
 </a>
 
