@@ -2,7 +2,7 @@
   "markdown": {
     "textWrap": "always"
   },
-  "jsonc": {
+  "json": {
     "trailingCommas": "never"
   },
   "excludes": [
