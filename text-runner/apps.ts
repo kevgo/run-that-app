@@ -3,10 +3,7 @@ import { execSync } from "node:child_process";
 import * as textRunner from "text-runner";
 
 export function apps(action: textRunner.actions.Args) {
-	// get the actually supported apps
 	const supportedApps = loadSupportedApps();
-
-	// get the documented apps
 	const documentedApps = loadDocumentedApps(action.region);
 	deepEqual(supportedApps, documentedApps, "options section");
 }
