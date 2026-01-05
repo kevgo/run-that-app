@@ -41,7 +41,7 @@ todo:  # displays all TODO items
 unit:  # runs the unit tests
 	cargo test --locked
 	echo 333333333333333
-	node --test text-runner/**/*.test.ts
+	target/debug/rta node --test text-runner/**/*.test.ts
 	echo 444444444444444
 
 update:  # updates the dependencies
