@@ -43,7 +43,6 @@
       "files": "README.md",
       "run": "make doc"
     }
-
   ],
   "options": {
     "beforeRun": {
