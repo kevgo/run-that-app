@@ -5,9 +5,7 @@ contest: build
 	target/debug/rta contest
 
 doc: build node_modules  # test the documentation
-	echo 1111111111111
 	target/debug/rta npm exec text-runner
-	echo 222222222222222
 
 fix: build  # auto-corrects issues
 	cargo +nightly fix --allow-dirty
