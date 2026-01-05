@@ -33,6 +33,7 @@ pub(crate) enum Event<'a> {
   CompileRustFailed,
   DownloadBegin {
     app: &'a ApplicationName,
+    version: &'a Version,
     url: &'a Url,
   },
   DownloadSuccess,

@@ -20,7 +20,7 @@ pub(crate) fn run(
   let (app_to_install, executable_name, _args) = carrier(app_definition, version, ctx.platform);
   let app_name = app_to_install.name();
   // download the archive file
-  let Some(artifact) = download::artifact(url, &app_name, optional, ctx.log)? else {
+  let Some(artifact) = download::artifact(url, &app_name, version, optional, ctx.log)? else {
     return Ok(Outcome::NotInstalled);
   };
   // determine the archive type
