@@ -5,7 +5,7 @@ import * as textRunner from "text-runner";
 export function apps(action: textRunner.actions.Args) {
 	const supportedApps = loadSupportedApps();
 	const documentedApps = loadDocumentedApps(action.region);
-	deepEqual(supportedApps, documentedApps, "options section");
+	deepEqual(supportedApps, documentedApps);
 }
 
 export class App {
