@@ -5,7 +5,7 @@ contest: build
 	target/debug/rta contest
 
 doc: build node_modules  # test the documentation
-	target/debug/rta node node_modules/.bin/text-runner
+	target/debug/rta node node_modules/text-runner/dist/start.js
 
 fix: build  # auto-corrects issues
 	cargo +nightly fix --allow-dirty
