@@ -12,5 +12,5 @@
   "format": "dot",
 
   // whether to verify online files/links (warning: this makes tests flaky)
-  "online": false,
+  "online": false
 }
