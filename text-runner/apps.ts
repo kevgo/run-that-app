@@ -3,6 +3,7 @@ import { execSync } from "node:child_process";
 import * as textRunner from "text-runner";
 
 export function apps(action: textRunner.actions.Args) {
+	action.name("verify installable applications")
 	const supportedApps = loadSupportedApps();
 	const documentedApps = loadDocumentedApps(action.region);
 	deepEqual(supportedApps, documentedApps);
