@@ -13,7 +13,7 @@ export class App {
 	url: string;
 }
 
-function loadDocumentedApps(region: textRunner.ast.NodeList) {
+function loadDocumentedApps(region: textRunner.ast.NodeList): App[] {
 	const result = []
 	for (const liNode of region.nodesOfTypes("list_item_open")) {
 		const appNodes = region.nodesFor(liNode)
@@ -26,7 +26,7 @@ function loadDocumentedApps(region: textRunner.ast.NodeList) {
 	return result
 }
 
-function loadSupportedApps() {
+function loadSupportedApps(): App[] {
 	return parseApps(queryApps());
 }
 
