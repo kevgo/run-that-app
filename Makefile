@@ -2,7 +2,7 @@ build:  # compiles this app in debug mode
 	cargo build --locked
 
 doc: build node_modules  # test the documentation
-	target/debug/rta node@24.10.0 -v
+	target/debug/rta node@22.21.0 -v
 	target/debug/rta npm exec text-runner
 
 fix: build  # auto-corrects issues
