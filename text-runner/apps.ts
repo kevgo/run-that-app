@@ -17,8 +17,9 @@ function loadDocumentedApps(region: textRunner.ast.NodeList): App[] {
 	const result = []
 	for (const liNode of region.nodesOfTypes("list_item_open")) {
 		const appNodes = region.nodesFor(liNode)
-		const url = appNodes.nodeOfTypes("link_open").attributes["href"]
-		const name = appNodes.nodesFor(appNodes.nodeOfTypes("link_open")).text()
+		const linkNode = appNodes.nodeOfTypes("link_open")
+		const url = linkNode.attributes["href"]
+		const name = appNodes.nodesFor(linkNode).text()
 		result.push({ name, url })
 	}
 	return result
