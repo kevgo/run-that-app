@@ -20,7 +20,7 @@ pub(crate) fn log(event: Event) {
     Event::CompileRustSuccess => eprintln!("{}", "Rust compilation successful".green()),
     Event::CompileRustFailed => eprintln!("{}", "Rust compilation failed".red()),
 
-    Event::DownloadBegin { app: _, url } => eprintf!("downloading {} ... ", url.as_ref().cyan()),
+    Event::DownloadBegin { app: _, version: _, url } => eprintf!("downloading {} ... ", url.as_ref().cyan()),
     Event::DownloadSuccess => eprintln!("{}", "ok".green()),
     Event::DownloadFail { code } => eprintln!("{}", code.to_string().red()),
     Event::DownloadNotFound { is_optional } => {
