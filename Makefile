@@ -2,7 +2,9 @@ build:  # compiles this app in debug mode
 	cargo build --locked
 
 doc: build node_modules  # test the documentation
-	target/debug/rta npm exec text-runner
+	@echo "1111111111111111111111111111111111111111111111111111111111111"
+	target/debug/rta node -v
+	npm exec text-runner
 
 fix: build  # auto-corrects issues
 	cargo +nightly fix --allow-dirty
