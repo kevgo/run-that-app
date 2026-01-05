@@ -22,14 +22,15 @@ actually care about.
 #### radically minimalistic
 
 Run-that-app is intentionally minimalistic and non-invasive. It ships as a
-single stand-alone binary.
+single stand-alone binary. Following the principle "perfection is achieved not
+when there is nothing left to add, but when there is nothing left to take away",
+run-that-app works without:
 
-Following the principle "perfection is achieved not when there is nothing left
-to add, but when there is nothing left to take away", run-that-app avoids:
-
-- environment variables
 - application shims
 - shell integrations
+- hard links
+- environment variables
+- configuration files and settings
 - dependencies
 - plugins
 - custom packaging and container formats
