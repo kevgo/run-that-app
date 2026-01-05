@@ -30,7 +30,7 @@ function loadSupportedApps() {
 	return parseApps(queryApps());
 }
 
-function parseApps(output: string): App[] {
+export function parseApps(output: string): App[] {
 	return output.split("\n").map(parseLine);
 }
 
