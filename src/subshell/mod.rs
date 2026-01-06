@@ -17,15 +17,18 @@ pub(crate) use stream_output::stream_output;
 /// adds the given dirs to the PATH env variable of the given cmd
 pub(crate) fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
   cmd.envs(env::vars_os());
-  let new_path = if let Some(mut path) = env::var_os("PATH") {
+  let new_path = if let Some(path) = env::var_os("PATH") {
     // PATH env var is set to something here, could be empty string
+    let mut prepend = OsString::new();
     for dir in dirs {
-      if !path.is_empty() {
-        path.push(":");
+      if !prepend.is_empty() {
+        prepend.push(":");
       }
-      path.push(dir.as_os_str());
+      prepend.push(dir.as_os_str());
     }
-    path
+    prepend.push(":");
+    prepend.push(path);
+    prepend
   } else {
     // PATH env var is empty here
     let mut path = OsString::new();
