@@ -42,5 +42,5 @@ export function parseLine(line: string): App {
 }
 
 function queryApps(): string {
-  return execSync("cargo run -- --apps", { encoding: "utf-8" });
+  return execSync("target/debug/rta --apps", { encoding: "utf-8" });
 }
