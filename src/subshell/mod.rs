@@ -74,7 +74,6 @@ mod tests {
   use crate::executables::Executable;
   use crate::subshell::render_call;
   use big_s::S;
-  use std::ffi::OsString;
   use std::path::Path;
 
   #[test]
@@ -85,12 +84,41 @@ mod tests {
     assert_eq!(have, want);
   }
 
-  #[test]
-  fn join_paths() {
-    let give = [Path::new("path1"), Path::new("path2")];
-    let have = super::join_paths(&give);
-    let want = OsString::from("path1:path2");
-    assert_eq!(have, want);
+  mod join_paths {
+    use std::ffi::OsString;
+    use std::path::Path;
+
+    #[test]
+    fn zero() {
+      let give = [];
+      let have = super::super::join_paths(&give);
+      let want = OsString::from("");
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn one() {
+      let give = [Path::new("path1")];
+      let have = super::super::join_paths(&give);
+      let want = OsString::from("path1");
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn two() {
+      let give = [Path::new("path1"), Path::new("path2")];
+      let have = super::super::join_paths(&give);
+      let want = OsString::from("path1:path2");
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn three() {
+      let give = [Path::new("path1"), Path::new("path2"), Path::new("path3")];
+      let have = super::super::join_paths(&give);
+      let want = OsString::from("path1:path2:path3");
+      assert_eq!(have, want);
+    }
   }
 
   mod join_path_expressions {
