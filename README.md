@@ -272,6 +272,15 @@ the version to `auto` enables automatic detection:
 go auto
 ```
 
+### configure color output
+
+_Run-that-app_ follows standard Unix settings for color output. It prints colors
+if STDOUT and STDERR are a TTY. You can customize this by setting environment
+variables:
+
+- `CLICOLOR_FORCE=1` always displays colors
+- `NO_COLOR=1` never displays colors
+
 ## bundled applications
 
 Some tools are distributed as part of another toolchain. In these cases, specify
