@@ -1,5 +1,7 @@
 import { deepEqual } from "node:assert/strict";
 import { execSync } from "node:child_process";
+import * as process from 'node:process';
+
 import * as textRunner from "text-runner";
 
 export function apps(action: textRunner.actions.Args) {
@@ -42,5 +44,6 @@ export function parseLine(line: string): App {
 }
 
 function queryApps(): string {
-  return execSync("target/debug/rta --apps", { encoding: "utf-8" });
+  const cwd = process.cwd();
+  return execSync(`${cwd}/../target/debug/rta --apps`, { encoding: "utf-8" });
 }
