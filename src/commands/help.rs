@@ -21,6 +21,7 @@ pub(crate) fn print_options() {
 --error-on-output           treat all output of the executed app as an error
 --from-source               force installation from source, even if precompiled binaries are available
 --help, -h                  display this help screen
+--include=<app>             include the given application in the PATH
 --install <app>             install the given application without running it
 --optional                  if an app is not available for the current platform, do nothing
 --update                    updates the versions in run-that-app to the latest available
@@ -29,6 +30,7 @@ pub(crate) fn print_options() {
 --version, -V               displays the version of run-that-app
 --versions <app>            displays the 10 most recent available versions of the given app
 --versions=<number> <app>   displays the given number of most recent available versions of the given app
+--which <app>               displays the path to the installed executable of the given application
 ",
   );
 }
