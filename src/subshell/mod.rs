@@ -120,6 +120,9 @@ mod tests {
     fn two() {
       let give = [Path::new("path1"), Path::new("path2")];
       let have = super::super::join_paths(&give);
+      #[cfg(windows)]
+      let want = OsString::from("path1;path2");
+      #[cfg(not(windows))]
       let want = OsString::from("path1:path2");
       assert_eq!(have, want);
     }
@@ -128,6 +131,9 @@ mod tests {
     fn three() {
       let give = [Path::new("path1"), Path::new("path2"), Path::new("path3")];
       let have = super::super::join_paths(&give);
+      #[cfg(windows)]
+      let want = OsString::from("path1;path2;path3");
+      #[cfg(not(windows))]
       let want = OsString::from("path1:path2:path3");
       assert_eq!(have, want);
     }
@@ -137,6 +143,17 @@ mod tests {
     use std::ffi::OsString;
 
     #[test]
+    #[cfg(windows)]
+    fn both_non_empty() {
+      let first = OsString::from("path1;path2");
+      let second = OsString::from("path3;path4");
+      let have = super::super::join_path_expressions(&first, &second);
+      let want = OsString::from("path1;path2;path3;path4");
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    #[cfg(not(windows))]
     fn both_non_empty() {
       let first = OsString::from("path1:path2");
       let second = OsString::from("path3:path4");
@@ -146,6 +163,17 @@ mod tests {
     }
 
     #[test]
+    #[cfg(windows)]
+    fn first_empty() {
+      let first = OsString::from("");
+      let second = OsString::from("path3;path4");
+      let have = super::super::join_path_expressions(&first, &second);
+      let want = OsString::from("path3;path4");
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    #[cfg(not(windows))]
     fn first_empty() {
       let first = OsString::from("");
       let second = OsString::from("path3:path4");
@@ -155,6 +183,17 @@ mod tests {
     }
 
     #[test]
+    #[cfg(windows)]
+    fn second_empty() {
+      let first = OsString::from("path1;path2");
+      let second = OsString::from("");
+      let have = super::super::join_path_expressions(&first, &second);
+      let want = OsString::from("path1;path2");
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    #[cfg(not(windows))]
     fn second_empty() {
       let first = OsString::from("path1:path2");
       let second = OsString::from("");
