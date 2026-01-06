@@ -17,29 +17,35 @@ pub(crate) use stream_output::stream_output;
 /// adds the given dirs to the PATH env variable of the given cmd
 pub(crate) fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
   cmd.envs(env::vars_os());
-  let new_path = if let Some(mut path) = env::var_os("PATH") {
-    // PATH env var is set to something here, could be empty string
-    for dir in dirs {
-      if !path.is_empty() {
-        path.push(":");
-      }
-      path.push(dir.as_os_str());
-    }
-    path
-  } else {
-    // PATH env var is empty here
-    let mut path = OsString::new();
-    for dir in dirs {
-      if !path.is_empty() {
-        path.push(":");
-      }
-      path.push(dir);
-    }
-    path
-  };
-  cmd.env("PATH", new_path);
+  cmd.env("PATH", join_path_expressions(&join_paths(dirs), &env::var_os("PATH").unwrap_or_default()));
 }
 
+/// joins the given PATH expressions (containing multiple paths) into a single PATH expression
+fn join_path_expressions(first: &OsString, second: &OsString) -> OsString {
+  let mut new_path = OsString::with_capacity(first.len() + second.len() + 1);
+  if !first.is_empty() {
+    new_path.push(first);
+  }
+  if !second.is_empty() {
+    if !new_path.is_empty() {
+      new_path.push(":");
+    }
+    new_path.push(second);
+  }
+  new_path
+}
+
+/// joins the given paths into a single PATH expression
+fn join_paths(paths: &[&Path]) -> OsString {
+  let mut result = OsString::new();
+  for path in paths {
+    if !result.is_empty() {
+      result.push(":");
+    }
+    result.push(path.as_os_str());
+  }
+  result
+}
 pub(crate) fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
   if exit_status.success() {
     return ExitCode::SUCCESS;
@@ -76,5 +82,82 @@ mod tests {
     let have = render_call(&executable, &[S("arg1"), S("arg2"), S("arg3")]);
     let want = S("executable arg1 arg2 arg3");
     assert_eq!(have, want);
+  }
+
+  mod join_paths {
+    use std::ffi::OsString;
+    use std::path::Path;
+
+    #[test]
+    fn zero() {
+      let give = [];
+      let have = super::super::join_paths(&give);
+      let want = OsString::from("");
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn one() {
+      let give = [Path::new("path1")];
+      let have = super::super::join_paths(&give);
+      let want = OsString::from("path1");
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn two() {
+      let give = [Path::new("path1"), Path::new("path2")];
+      let have = super::super::join_paths(&give);
+      let want = OsString::from("path1:path2");
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn three() {
+      let give = [Path::new("path1"), Path::new("path2"), Path::new("path3")];
+      let have = super::super::join_paths(&give);
+      let want = OsString::from("path1:path2:path3");
+      assert_eq!(have, want);
+    }
+  }
+
+  mod join_path_expressions {
+    use std::ffi::OsString;
+
+    #[test]
+    fn both_non_empty() {
+      let first = OsString::from("path1:path2");
+      let second = OsString::from("path3:path4");
+      let have = super::super::join_path_expressions(&first, &second);
+      let want = OsString::from("path1:path2:path3:path4");
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn first_empty() {
+      let first = OsString::from("");
+      let second = OsString::from("path3:path4");
+      let have = super::super::join_path_expressions(&first, &second);
+      let want = OsString::from("path3:path4");
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn second_empty() {
+      let first = OsString::from("path1:path2");
+      let second = OsString::from("");
+      let have = super::super::join_path_expressions(&first, &second);
+      let want = OsString::from("path1:path2");
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn both_empty() {
+      let first = OsString::from("");
+      let second = OsString::from("");
+      let have = super::super::join_path_expressions(&first, &second);
+      let want = OsString::from("");
+      assert_eq!(have, want);
+    }
   }
 }
