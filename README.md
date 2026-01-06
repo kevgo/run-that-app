@@ -274,12 +274,12 @@ go auto
 
 ### configure color output
 
-_Run-that-app_ follows standard Unix settings for color output. It prints colors
-if STDOUT and STDERR are a TTY. You can customize this by setting environment
-variables:
+_Run-that-app_ follows Unix conventions for colorized output. It emits ANSI
+colors if STDOUT and STDERR are connected to a TTY. You can override this
+behavior using the following environment variables:
 
-- `CLICOLOR_FORCE=1` always displays colors
-- `NO_COLOR=1` never displays colors
+- `CLICOLOR_FORCE=1` always enables color output, even when not writing to a TTY
+- `NO_COLOR=1` disables color output entirely
 
 ## bundled applications
 
