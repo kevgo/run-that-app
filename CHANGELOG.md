@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+### 0.26.1
+
+- prints the version of the app when downloading
+- prepends instead of appends the path to bundled executables to the existing system PATH
+- uses platform-specific path separators
+
 ### 0.26.0
 
 - apps: taplo
