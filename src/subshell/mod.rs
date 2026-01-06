@@ -19,22 +19,21 @@ pub(crate) fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
   cmd.envs(env::vars_os());
   let new_path = if let Some(path) = env::var_os("PATH") {
     // PATH env var is set to something here, could be empty string
-    let mut new_path = join_paths(dirs);
-    new_path.push(":");
-    new_path.push(path);
-    new_path
+    prepend_paths(&path, dirs)
   } else {
     // PATH env var is empty here
-    let mut path = OsString::new();
-    for dir in dirs {
-      if !path.is_empty() {
-        path.push(":");
-      }
-      path.push(dir);
-    }
-    path
+    join_paths(dirs)
   };
   cmd.env("PATH", new_path);
+}
+
+fn prepend_paths(existing_paths: &OsString, dirs: &[&Path]) -> OsString {
+  let mut new_path = join_paths(dirs);
+  if !existing_paths.is_empty() {
+    new_path.push(":");
+    new_path.push(existing_paths);
+  }
+  new_path
 }
 
 fn join_paths(paths: &[&Path]) -> OsString {
@@ -91,6 +90,15 @@ mod tests {
     let give = [Path::new("path1"), Path::new("path2")];
     let have = super::join_paths(&give);
     let want = OsString::from("path1:path2");
+    assert_eq!(have, want);
+  }
+
+  #[test]
+  fn prepend_paths() {
+    let existing_paths = OsString::from("path1:path2");
+    let give = [Path::new("path3"), Path::new("path4")];
+    let have = super::prepend_paths(&existing_paths, &give);
+    let want = OsString::from("path3:path4:path1:path2");
     assert_eq!(have, want);
   }
 }
