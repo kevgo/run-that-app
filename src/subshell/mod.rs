@@ -22,7 +22,7 @@ pub(crate) fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
 
 // joins the given PATH expressions (containing multiple paths) into a single PATH expression
 fn join_path_expressions(first: &OsString, second: &OsString) -> OsString {
-  let mut new_path = OsString::new();
+  let mut new_path = OsString::with_capacity(first.len() + second.len() + 1);
   if !first.is_empty() {
     new_path.push(first);
   }
