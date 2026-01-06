@@ -11,7 +11,11 @@ doc: build node_modules  # test the documentation
 	ls -la C:\Users\runneradmin\.run-that-app\apps\node\25.2.1\node-v25.2.1-win-x64
 	echo 3333333333333333333
 	C:\Users\runneradmin\.run-that-app\apps\node\25.2.1\node-v25.2.1-win-x64\node.exe -v
+	echo 4444444444444444444
 	target/debug/rta npm run node -v
+	echo 5555555555555555555
+	target/debug/rta node -v
+	echo 6666666666666666666
 	target/debug/rta npm exec text-runner
 
 fix: build  # auto-corrects issues
