@@ -2,6 +2,7 @@
   "name": "internal",
   "version": "0.0.0",
   "description": "internal tooling",
+  "type": "module",
   "private": true,
   "devDependencies": {
     "text-runner": "7.5.0"

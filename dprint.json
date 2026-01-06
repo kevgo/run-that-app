@@ -6,7 +6,9 @@
     "trailingCommas": "never"
   },
   "excludes": [
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "**/node_modules",
+    "**/*-lock.json"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.95.13.wasm",

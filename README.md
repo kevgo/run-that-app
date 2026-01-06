@@ -51,6 +51,48 @@ with no runtime overhead.
 [![linux](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml)
 [![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
 
+## installable applications
+
+<a type="apps">
+
+- [actionlint](https://rhysd.github.io/actionlint)
+- [alphavet](https://github.com/skx/alphavet)
+- [contest](https://github.com/contest-framework/server)
+- [cucumber-sort](https://github.com/kevgo/cucumber-sort)
+- [deadcode](https://pkg.go.dev/golang.org/x/tools/cmd/deadcode)
+- [depth](https://github.com/KyleBanks/depth)
+- [dprint](https://dprint.dev)
+- [exhaustruct](https://github.com/GaijinEntertainment/go-exhaustruct)
+- [funcorder](https://github.com/manuelarte/funcorder)
+- [gh](https://cli.github.com)
+- [ghokin](https://github.com/antham/ghokin)
+- [go](https://go.dev)
+- [goda](https://github.com/loov/goda)
+- [gofmt](https://go.dev)
+- [gofumpt](https://github.com/mvdan/gofumpt)
+- [golangci-lint](https://github.com/golangci/golangci-lint)
+- [goreleaser](https://goreleaser.com)
+- [govulncheck](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck)
+- [ireturn](https://github.com/butuzov/ireturn)
+- [keep-sorted](https://github.com/google/keep-sorted)
+- [mdbook](https://github.com/rust-lang/mdBook)
+- [mdbook-linkcheck](https://github.com/Michael-F-Bryan/mdbook-linkcheck)
+- [node-prune](https://github.com/tj/node-prune)
+- [node](https://nodejs.org)
+- [npm](https://www.npmjs.com)
+- [npx](https://www.npmjs.com)
+- [rclone](https://rclone.org)
+- [ripgrep](https://github.com/BurntSushi/ripgrep)
+- [scc](https://github.com/boyter/scc)
+- [shellcheck](https://www.shellcheck.net)
+- [shfmt](https://github.com/mvdan/sh)
+- [staticcheck](https://staticcheck.dev)
+- [taplo](https://github.com/tamasfe/taplo)
+- [tikibase](https://github.com/kevgo/tikibase)
+- [uv](https://github.com/astral-sh/uv)
+
+</a>
+
 ## installation
 
 Linux and macOS:
