@@ -19,16 +19,10 @@ pub(crate) fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
   cmd.envs(env::vars_os());
   let new_path = if let Some(path) = env::var_os("PATH") {
     // PATH env var is set to something here, could be empty string
-    let mut prepend = OsString::new();
-    for dir in dirs {
-      if !prepend.is_empty() {
-        prepend.push(":");
-      }
-      prepend.push(dir.as_os_str());
-    }
-    prepend.push(":");
-    prepend.push(path);
-    prepend
+    let mut new_path = join_paths(dirs);
+    new_path.push(":");
+    new_path.push(path);
+    new_path
   } else {
     // PATH env var is empty here
     let mut path = OsString::new();
@@ -43,6 +37,16 @@ pub(crate) fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
   cmd.env("PATH", new_path);
 }
 
+fn join_paths(paths: &[&Path]) -> OsString {
+  let mut result = OsString::new();
+  for path in paths {
+    if !result.is_empty() {
+      result.push(":");
+    }
+    result.push(path.as_os_str());
+  }
+  result
+}
 pub(crate) fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
   if exit_status.success() {
     return ExitCode::SUCCESS;
@@ -71,6 +75,7 @@ mod tests {
   use crate::executables::Executable;
   use crate::subshell::render_call;
   use big_s::S;
+  use std::ffi::OsString;
   use std::path::Path;
 
   #[test]
@@ -78,6 +83,14 @@ mod tests {
     let executable = Executable::from(Path::new("executable"));
     let have = render_call(&executable, &[S("arg1"), S("arg2"), S("arg3")]);
     let want = S("executable arg1 arg2 arg3");
+    assert_eq!(have, want);
+  }
+
+  #[test]
+  fn join_paths() {
+    let give = [&Path::new("path1"), &Path::new("path2")];
+    let have = super::join_paths(&give);
+    let want = OsString::from("path1:path2");
     assert_eq!(have, want);
   }
 }
