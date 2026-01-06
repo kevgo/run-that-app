@@ -5,6 +5,8 @@ contest: build
 	target/debug/rta contest
 
 doc: build node_modules  # test the documentation
+	@echo "11111111111111111111111111111111111111111111111111111111111111111111111111111"
+	target/debug/rta npm run node -v
 	target/debug/rta npm exec text-runner
 
 fix: build  # auto-corrects issues
