@@ -17,11 +17,7 @@ pub(crate) use stream_output::stream_output;
 /// adds the given dirs to the PATH env variable of the given cmd
 pub(crate) fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
   cmd.envs(env::vars_os());
-  let new_path = match env::var_os("PATH") {
-    Some(path) => join_path_expressions(&join_paths(dirs), &path),
-    None => join_paths(dirs),
-  };
-  cmd.env("PATH", new_path);
+  cmd.env("PATH", join_path_expressions(&join_paths(dirs), &env::var_os("PATH").unwrap_or_default()));
 }
 
 // joins the given PATH expressions (containing multiple paths) into a single PATH expression
