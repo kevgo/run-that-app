@@ -28,7 +28,7 @@ fn join_path_expressions(first: &OsString, second: &OsString) -> OsString {
   }
   if !second.is_empty() {
     if !new_path.is_empty() {
-      new_path.push(":");
+      new_path.push(paths_separator());
     }
     new_path.push(second);
   }
@@ -40,11 +40,15 @@ fn join_paths(paths: &[&Path]) -> OsString {
   let mut result = OsString::new();
   for path in paths {
     if !result.is_empty() {
-      result.push(":");
+      result.push(paths_separator());
     }
     result.push(path.as_os_str());
   }
   result
+}
+
+fn paths_separator() -> &'static str {
+  if cfg!(windows) { ";" } else { ":" }
 }
 
 pub(crate) fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
