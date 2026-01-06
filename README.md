@@ -272,6 +272,14 @@ the version to `auto` enables automatic detection:
 go auto
 ```
 
+### configure color output
+
+_Run-that-app_ emits ANSI colors if STDOUT and STDERR are connected to a TTY.
+You can override this behavior using the following environment variables:
+
+- `CLICOLOR_FORCE=1` always enables color output, even when not writing to a TTY
+- `NO_COLOR=1` disables color output entirely
+
 ## bundled applications
 
 Some tools are distributed as part of another toolchain. In these cases, specify
