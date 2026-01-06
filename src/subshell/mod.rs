@@ -89,7 +89,7 @@ mod tests {
   #[test]
   fn join_paths() {
     let give = [Path::new("path1"), Path::new("path2")];
-    let have = super::join_paths(&give[..]);
+    let have = super::join_paths(&give);
     let want = OsString::from("path1:path2");
     assert_eq!(have, want);
   }
