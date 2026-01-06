@@ -6,7 +6,7 @@ contest: build
 
 doc: build node_modules  # test the documentation
 	@echo "11111111111111111111111111111111111111111111111111111111111111111111111111111"
-	ls -la C:\Users\runneradmin\.run-that-app\apps\node\25.2.1\
+	ls -la C:\Users\runneradmin\.run-that-app\apps\node\25.2.1
 	echo 2222222222222222222
 	ls -la C:\Users\runneradmin\.run-that-app\apps\node\25.2.1\node-v25.2.1-win-x64
 	echo 3333333333333333333
