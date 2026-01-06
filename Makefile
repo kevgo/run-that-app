@@ -38,7 +38,7 @@ test: fix unit lint doc  # runs all tests
 todo:  # displays all TODO items
 	@git grep --color=always --line-number TODO ':!target' | grep -v Makefile
 
-unit: node_modules  # runs the unit tests
+unit: build node_modules  # runs the unit tests
 	cargo test --locked
 	target/debug/rta node --test 'text-runner/**/*.test.ts'
 
