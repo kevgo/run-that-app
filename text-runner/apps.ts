@@ -1,6 +1,6 @@
 import { deepEqual } from "node:assert/strict";
 import { execSync } from "node:child_process";
-import * as process from 'node:process';
+import * as process from "node:process";
 
 import * as textRunner from "text-runner";
 
