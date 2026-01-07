@@ -57,6 +57,3 @@ update:  # updates the dependencies
 node_modules: package.json package-lock.json
 	target/debug/rta npm ci
 	@touch node_modules  # update timestamp so that Make doesn't re-install it on every command
-
-target/debug/rta: Cargo.toml Cargo.lock
-	cargo build --locked
