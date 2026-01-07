@@ -42,12 +42,12 @@ unit: build node_modules  # runs the unit tests
 	cargo test --locked
 	target/debug/rta node --test 'text-runner/**/*.test.ts'
 
-update:  # updates the dependencies
+update: build  # updates the dependencies
 	cargo install cargo-edit cargo-machete
 	cargo machete
 	cargo upgrade
 	cargo run -- --update
-	tools/rta --update
+	target/debug/rta --update
 
 # --- HELPER TARGETS --------------------------------------------------------------------------------------------------------------------------------
 
