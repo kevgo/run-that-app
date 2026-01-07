@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.27.0
+
+- app: conc
+
 ### 0.26.1
 
 - prints the version of the app when downloading

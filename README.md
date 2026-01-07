@@ -324,7 +324,7 @@ This installs Go 1.21.6 and uses its bundled `gofmt`.
 Example Makefile integration:
 
 ```make
-RTA_VERSION = 0.26.1  # version of run-that-app to use
+RTA_VERSION = 0.27.0  # version of run-that-app to use
 
 # an example Make target that uses run-that-app
 test: tools/rta@${RTA_VERSION}
