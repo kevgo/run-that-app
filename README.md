@@ -57,6 +57,7 @@ with no runtime overhead.
 
 - [actionlint](https://rhysd.github.io/actionlint)
 - [alphavet](https://github.com/skx/alphavet)
+- [conc](https://github.com/kevgo/conc)
 - [contest](https://github.com/contest-framework/server)
 - [cucumber-sort](https://github.com/kevgo/cucumber-sort)
 - [deadcode](https://pkg.go.dev/golang.org/x/tools/cmd/deadcode)
