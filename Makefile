@@ -47,7 +47,7 @@ update:  # updates the dependencies
 	cargo machete
 	cargo upgrade
 	cargo run -- --update
-
+	tools/rta --update
 
 # --- HELPER TARGETS --------------------------------------------------------------------------------------------------------------------------------
 
