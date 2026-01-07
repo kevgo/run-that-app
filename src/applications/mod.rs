@@ -2,6 +2,7 @@
 
 mod actionlint;
 mod alphavet;
+mod conc;
 mod contest;
 mod cucumber_sort;
 mod deadcode;
@@ -50,6 +51,7 @@ pub(crate) fn all() -> Apps {
     // keep-sorted start
     Box::new(actionlint::ActionLint {}),
     Box::new(alphavet::Alphavet {}),
+    Box::new(conc::Conc {}),
     Box::new(contest::Contest {}),
     Box::new(cucumber_sort::CucumberSort {}),
     Box::new(deadcode::Deadcode {}),
