@@ -14,6 +14,7 @@ pub(crate) fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Resu
   let mut which = false;
   let mut add = false;
   let mut install = false;
+  let mut reinstall = false;
   let mut test = false;
   let mut indicate_available = false;
   let mut update = false;
@@ -52,6 +53,10 @@ pub(crate) fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Resu
       }
       if &arg == "--optional" {
         optional = true;
+        continue;
+      }
+      if &arg == "--reinstall" {
+        reinstall = true;
         continue;
       }
       if &arg == "--test" {
@@ -97,7 +102,7 @@ pub(crate) fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Resu
       app_args.push(arg);
     }
   }
-  if multiple_true(&[which, indicate_available, install, test, update, versions.is_some()]) {
+  if multiple_true(&[which, indicate_available, install, reinstall, test, update, versions.is_some()]) {
     return Err(UserError::MultipleCommandsGiven);
   }
   if update {
@@ -132,6 +137,16 @@ pub(crate) fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Resu
         verbose,
       }));
     }
+    if reinstall {
+      return Ok(Command::Reinstall(commands::install::Args {
+        app_name,
+        version,
+        from_source,
+        include_apps,
+        optional,
+        verbose,
+      }));
+    }
     if which {
       return Ok(Command::Which(commands::which::Args {
         app_name,
@@ -154,7 +169,7 @@ pub(crate) fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Resu
       verbose,
     }));
   }
-  if error_on_output || install || optional || verbose || which || indicate_available {
+  if error_on_output || install || optional || reinstall || verbose || which || indicate_available {
     return Err(UserError::MissingApplication);
   }
   Ok(Command::DisplayHelp)
@@ -328,6 +343,40 @@ mod tests {
             optional: false,
             verbose: false,
           }));
+          pretty::assert_eq!(have, want);
+        }
+      }
+
+      mod reinstall {
+        use crate::applications;
+        use crate::cli::{Command, parse};
+        use crate::commands::install;
+        use crate::error::UserError;
+        use big_s::S;
+
+        #[test]
+        fn normal() {
+          let apps = applications::all();
+          let actionlint = apps.lookup("actionlint").unwrap();
+          let args = vec![S("--reinstall"), S("actionlint")].into_iter();
+          let have = parse(args, &apps);
+          let want = Ok(Command::Reinstall(install::Args {
+            app_name: actionlint.name(),
+            version: None,
+            from_source: false,
+            include_apps: vec![],
+            optional: false,
+            verbose: false,
+          }));
+          pretty::assert_eq!(have, want);
+        }
+
+        #[test]
+        fn missing_app() {
+          let apps = applications::all();
+          let args = vec![S("--reinstall")].into_iter();
+          let have = parse(args, &apps);
+          let want = Err(UserError::MissingApplication);
           pretty::assert_eq!(have, want);
         }
       }
