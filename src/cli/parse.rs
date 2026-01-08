@@ -170,8 +170,7 @@ mod tests {
 
   mod parse {
     use crate::applications;
-    use crate::cli::Command;
-    use crate::cli::parse;
+    use crate::cli::{Command, parse};
 
     #[test]
     fn no_arguments() {
