@@ -4,8 +4,7 @@ use crate::commands::{self, add, available, run, test, update, versions};
 use crate::error::{Result, UserError};
 
 #[allow(clippy::too_many_lines)]
-pub(crate) fn parse(mut cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Command> {
-  let _skipped_binary_name = cli_args.next();
+pub(crate) fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Command> {
   let mut app_version: Option<AppVersion> = None;
   let mut verbose = false;
   let mut app_args: Vec<String> = vec![];
@@ -185,7 +184,7 @@ mod tests {
     #[test]
     fn no_arguments() {
       let apps = applications::all();
-      let have = parse_args(vec!["rta"], &apps);
+      let have = parse_args(vec![], &apps);
       let want = Ok(Command::DisplayHelp);
       pretty::assert_eq!(have, want);
     }
@@ -210,7 +209,7 @@ mod tests {
         fn with_app() {
           let apps = applications::all();
           let shellcheck = apps.lookup("shellcheck").unwrap();
-          let have = parse_args(vec!["rta", "--available", "shellcheck"], &apps);
+          let have = parse_args(vec!["--available", "shellcheck"], &apps);
           let want = Ok(Command::Available(available::Args {
             app_name: shellcheck.name(),
             optional: false,
@@ -224,7 +223,7 @@ mod tests {
         fn with_all_options() {
           let apps = applications::all();
           let shellcheck = apps.lookup("shellcheck").unwrap();
-          let have = parse_args(vec!["rta", "--available", "--verbose", "shellcheck"], &apps);
+          let have = parse_args(vec!["--available", "--verbose", "shellcheck"], &apps);
           let want = Ok(Command::Available(available::Args {
             app_name: shellcheck.name(),
             optional: false,
@@ -237,7 +236,7 @@ mod tests {
         #[test]
         fn without_app() {
           let apps = applications::all();
-          let have = parse_args(vec!["rta", "--available"], &apps);
+          let have = parse_args(vec!["--available"], &apps);
           let want = Err(UserError::MissingApplication);
           pretty::assert_eq!(have, want);
         }
@@ -254,7 +253,7 @@ mod tests {
         fn normal() {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
-          let have = parse_args(vec!["rta", "--error-on-output", "actionlint"], &apps);
+          let have = parse_args(vec!["--error-on-output", "actionlint"], &apps);
           let want = Ok(Command::RunApp(run::Args {
             app_name: actionlint.name(),
             version: None,
@@ -271,7 +270,7 @@ mod tests {
         #[test]
         fn missing_app() {
           let apps = applications::all();
-          let have = parse_args(vec!["rta", "--error-on-output"], &apps);
+          let have = parse_args(vec!["--error-on-output"], &apps);
           let want = Err(UserError::MissingApplication);
           pretty::assert_eq!(have, want);
         }
@@ -285,7 +284,7 @@ mod tests {
         #[test]
         fn flag() {
           let apps = applications::all();
-          let have = parse_args(vec!["rta", "--from-source", "actionlint"], &apps);
+          let have = parse_args(vec!["--from-source", "actionlint"], &apps);
           let actionlint = apps.lookup("actionlint").unwrap();
           let want = Ok(Command::RunApp(run::Args {
             app_name: actionlint.name(),
@@ -310,7 +309,7 @@ mod tests {
         #[test]
         fn no_app_no_verbose() {
           let apps = applications::all();
-          let have = parse_args(vec!["rta", "--test"], &apps);
+          let have = parse_args(vec!["--test"], &apps);
           let want = Ok(Command::Test(test::Args {
             optional: false,
             start_at_app: None,
@@ -322,7 +321,7 @@ mod tests {
         #[test]
         fn no_app_verbose() {
           let apps = applications::all();
-          let have = parse_args(vec!["rta", "--test", "--verbose"], &apps);
+          let have = parse_args(vec!["--test", "--verbose"], &apps);
           let want = Ok(Command::Test(test::Args {
             optional: false,
             start_at_app: None,
@@ -335,7 +334,7 @@ mod tests {
         fn app_no_verbose() {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
-          let have = parse_args(vec!["rta", "--test", "actionlint"], &apps);
+          let have = parse_args(vec!["--test", "actionlint"], &apps);
           let want = Ok(Command::Test(test::Args {
             optional: false,
             start_at_app: Some(actionlint.name()),
@@ -348,7 +347,7 @@ mod tests {
         fn app_verbose() {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
-          let have = parse_args(vec!["rta", "--test", "--verbose", "actionlint"], &apps);
+          let have = parse_args(vec!["--test", "--verbose", "actionlint"], &apps);
           let want = Ok(Command::Test(test::Args {
             optional: false,
             start_at_app: Some(actionlint.name()),
@@ -366,7 +365,7 @@ mod tests {
         #[test]
         fn short() {
           let apps = applications::all();
-          let have = parse_args(vec!["rta", "-h"], &apps);
+          let have = parse_args(vec!["-h"], &apps);
           let want = Ok(Command::DisplayHelp);
           pretty::assert_eq!(have, want);
         }
@@ -374,7 +373,7 @@ mod tests {
         #[test]
         fn long() {
           let apps = applications::all();
-          let have = parse_args(vec!["rta", "--help"], &apps);
+          let have = parse_args(vec!["--help"], &apps);
           let want = Ok(Command::DisplayHelp);
           pretty::assert_eq!(have, want);
         }
@@ -392,7 +391,7 @@ mod tests {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
           let gh = apps.lookup("gh").unwrap();
-          let have = parse_args(vec!["rta", "--include=gh", "actionlint@2"], &apps);
+          let have = parse_args(vec!["--include=gh", "actionlint@2"], &apps);
           let want = Ok(Command::RunApp(run::Args {
             app_name: actionlint.name(),
             version: Some(Version::from("2")),
@@ -409,7 +408,7 @@ mod tests {
         #[test]
         fn invalid() {
           let apps = applications::all();
-          let have = parse_args(vec!["rta", "--include=zonk", "actionlint@2"], &apps);
+          let have = parse_args(vec!["--include=zonk", "actionlint@2"], &apps);
           let want = Err(UserError::UnknownApp(S("zonk")));
           pretty::assert_eq!(have, want);
         }
@@ -427,7 +426,7 @@ mod tests {
         fn long() {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
-          let have = parse_args(vec!["rta", "--verbose", "actionlint@2"], &apps);
+          let have = parse_args(vec!["--verbose", "actionlint@2"], &apps);
           let want = Ok(Command::RunApp(run::Args {
             app_name: actionlint.name(),
             version: Some(Version::from("2")),
@@ -445,7 +444,7 @@ mod tests {
         fn short() {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
-          let have = parse_args(vec!["rta", "-v", "actionlint@2"], &apps);
+          let have = parse_args(vec!["-v", "actionlint@2"], &apps);
           let want = Ok(Command::RunApp(run::Args {
             app_name: actionlint.name(),
             version: Some(Version::from("2")),
@@ -462,7 +461,7 @@ mod tests {
         #[test]
         fn missing_app() {
           let apps = applications::all();
-          let have = parse_args(vec!["rta", "--verbose"], &apps);
+          let have = parse_args(vec!["--verbose"], &apps);
           let want = Err(UserError::MissingApplication);
           pretty::assert_eq!(have, want);
         }
@@ -471,7 +470,7 @@ mod tests {
       #[test]
       fn multiple_commands() {
         let apps = applications::all();
-        let have = parse_args(vec!["rta", "--which", "--available", "shellcheck"], &apps);
+        let have = parse_args(vec!["--which", "--available", "shellcheck"], &apps);
         let want = Err(UserError::MultipleCommandsGiven);
         pretty::assert_eq!(have, want);
       }
@@ -480,7 +479,7 @@ mod tests {
       fn optional() {
         let apps = applications::all();
         let actionlint = apps.lookup("actionlint").unwrap();
-        let have = parse_args(vec!["rta", "--optional", "actionlint@2", "arg1"], &apps);
+        let have = parse_args(vec!["--optional", "actionlint@2", "arg1"], &apps);
         let want = Ok(Command::RunApp(run::Args {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
@@ -502,7 +501,7 @@ mod tests {
         #[test]
         fn short() {
           let apps = applications::all();
-          let have = parse_args(vec!["rta", "-V"], &apps);
+          let have = parse_args(vec!["-V"], &apps);
           let want = Ok(Command::Version);
           pretty::assert_eq!(have, want);
         }
@@ -510,7 +509,7 @@ mod tests {
         #[test]
         fn long() {
           let apps = applications::all();
-          let have = parse_args(vec!["rta", "--version"], &apps);
+          let have = parse_args(vec!["--version"], &apps);
           let want = Ok(Command::Version);
           pretty::assert_eq!(have, want);
         }
@@ -526,7 +525,7 @@ mod tests {
         fn correct_usage() {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
-          let have = parse_args(vec!["rta", "--versions", "actionlint"], &apps);
+          let have = parse_args(vec!["--versions", "actionlint"], &apps);
           let want = Ok(Command::Versions(versions::Args {
             app_name: actionlint.name(),
             amount: 10,
@@ -539,7 +538,7 @@ mod tests {
         fn custom_amount() {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
-          let have = parse_args(vec!["rta", "--versions=20", "actionlint"], &apps);
+          let have = parse_args(vec!["--versions=20", "actionlint"], &apps);
           let want = Ok(Command::Versions(versions::Args {
             app_name: actionlint.name(),
             amount: 20,
@@ -551,7 +550,7 @@ mod tests {
         #[test]
         fn missing_app() {
           let apps = applications::all();
-          let have = parse_args(vec!["rta", "--versions"], &apps);
+          let have = parse_args(vec!["--versions"], &apps);
           let want = Ok(Command::DisplayHelp);
           pretty::assert_eq!(have, want);
         }
@@ -567,7 +566,7 @@ mod tests {
         fn with_app() {
           let apps = applications::all();
           let shellcheck = apps.lookup("shellcheck").unwrap();
-          let have = parse_args(vec!["rta", "--which", "shellcheck"], &apps);
+          let have = parse_args(vec!["--which", "shellcheck"], &apps);
           let want = Ok(Command::Which(commands::which::Args {
             app_name: shellcheck.name(),
             optional: false,
@@ -581,7 +580,7 @@ mod tests {
         fn with_all_options() {
           let apps = applications::all();
           let shellcheck = apps.lookup("shellcheck").unwrap();
-          let have = parse_args(vec!["rta", "--which", "--verbose", "shellcheck"], &apps);
+          let have = parse_args(vec!["--which", "--verbose", "shellcheck"], &apps);
           let want = Ok(Command::Which(commands::which::Args {
             app_name: shellcheck.name(),
             optional: false,
@@ -594,7 +593,7 @@ mod tests {
         #[test]
         fn without_app() {
           let apps = applications::all();
-          let have = parse_args(vec!["rta", "--which"], &apps);
+          let have = parse_args(vec!["--which"], &apps);
           let want = Err(UserError::MissingApplication);
           pretty::assert_eq!(have, want);
         }
@@ -613,7 +612,7 @@ mod tests {
       fn no_arguments() {
         let apps = applications::all();
         let actionlint = apps.lookup("actionlint").unwrap();
-        let have = parse_args(vec!["rta", "actionlint@2"], &apps);
+        let have = parse_args(vec!["actionlint@2"], &apps);
         let want = Ok(Command::RunApp(run::Args {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
@@ -631,7 +630,7 @@ mod tests {
       fn some_arguments() {
         let apps = applications::all();
         let actionlint = apps.lookup("actionlint").unwrap();
-        let have = parse_args(vec!["rta", "actionlint@2", "--arg1", "arg2"], &apps);
+        let have = parse_args(vec!["actionlint@2", "--arg1", "arg2"], &apps);
         let want = Ok(Command::RunApp(run::Args {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
@@ -658,7 +657,7 @@ mod tests {
       fn rta_and_app_arguments() {
         let apps = applications::all();
         let actionlint = apps.lookup("actionlint").unwrap();
-        let have = parse_args(vec!["rta", "--verbose", "actionlint@2", "--arg1", "arg2"], &apps);
+        let have = parse_args(vec!["--verbose", "actionlint@2", "--arg1", "arg2"], &apps);
         let want = Ok(Command::RunApp(run::Args {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
@@ -676,7 +675,7 @@ mod tests {
       fn same_arguments_as_run_that_app() {
         let apps = applications::all();
         let actionlint = apps.lookup("actionlint").unwrap();
-        let have = parse_args(vec!["rta", "actionlint@2", "--verbose", "--version"], &apps);
+        let have = parse_args(vec!["actionlint@2", "--verbose", "--version"], &apps);
         let want = Ok(Command::RunApp(run::Args {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
