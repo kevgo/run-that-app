@@ -43,10 +43,6 @@ pub(crate) fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Resu
       if &arg == "--help" || &arg == "-h" {
         return Ok(Command::DisplayHelp);
       }
-      if &arg == "--reinstall" {
-        reinstall = true;
-        continue;
-      }
       if &arg == "--error-on-output" {
         error_on_output = true;
         continue;
@@ -57,6 +53,10 @@ pub(crate) fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Resu
       }
       if &arg == "--optional" {
         optional = true;
+        continue;
+      }
+      if &arg == "--reinstall" {
+        reinstall = true;
         continue;
       }
       if &arg == "--test" {
