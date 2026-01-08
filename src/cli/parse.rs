@@ -273,17 +273,18 @@ mod tests {
       }
 
       mod install {
-        use super::super::parse_args;
         use crate::applications;
-        use crate::cli::Command;
+        use crate::cli::{Command, parse};
         use crate::commands::install;
         use crate::error::UserError;
+        use big_s::S;
 
         #[test]
         fn normal() {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
-          let have = parse_args(vec!["--install", "actionlint"], &apps);
+          let args = vec![S("--install"), S("actionlint")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::Install(install::Args {
             app_name: actionlint.name(),
             version: None,
@@ -298,7 +299,8 @@ mod tests {
         #[test]
         fn missing_app() {
           let apps = applications::all();
-          let have = parse_args(vec!["--install"], &apps);
+          let args = vec![S("--install")].into_iter();
+          let have = parse(args, &apps);
           let want = Err(UserError::MissingApplication);
           pretty::assert_eq!(have, want);
         }
