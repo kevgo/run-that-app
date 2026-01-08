@@ -42,10 +42,18 @@ impl Yard {
 
   pub(crate) fn delete_app_folder(&self, app_name: &ApplicationName) -> Result<()> {
     let folder_path = self.root.join("apps").join(app_name);
-    fs::remove_dir_all(&folder_path).map_err(|err| UserError::CannotDeleteFolder {
-      folder: folder_path,
-      err: err.to_string(),
-    })?;
+    let err = fs::remove_dir_all(&folder_path);
+    if let Err(err) = err {
+      match err.kind() {
+        std::io::ErrorKind::NotFound => return Ok(()),
+        _ => {
+          return Err(UserError::CannotDeleteFolder {
+            folder: folder_path,
+            err: err.to_string(),
+          });
+        }
+      }
+    }
     Ok(())
   }
 
