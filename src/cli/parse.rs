@@ -154,7 +154,7 @@ pub(crate) fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Resu
       verbose,
     }));
   }
-  if error_on_output || optional || verbose || which || indicate_available {
+  if error_on_output || install || optional || verbose || which || indicate_available {
     return Err(UserError::MissingApplication);
   }
   Ok(Command::DisplayHelp)
