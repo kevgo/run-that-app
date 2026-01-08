@@ -167,49 +167,42 @@ fn multiple_true(values: &[bool]) -> bool {
 
 #[cfg(test)]
 mod tests {
-  use crate::Command;
-  use crate::applications::Apps;
-  use crate::error::Result;
-
-  // helper function for tests
-  fn parse_args(args: Vec<&'static str>, apps: &Apps) -> Result<Command> {
-    super::parse(args.into_iter().map(ToString::to_string), apps)
-  }
 
   mod parse {
-    use super::parse_args;
     use crate::applications;
     use crate::cli::Command;
+    use crate::cli::parse;
 
     #[test]
     fn no_arguments() {
       let apps = applications::all();
-      let have = parse_args(vec![], &apps);
+      let args = vec![].into_iter();
+      let have = parse(args, &apps);
       let want = Ok(Command::DisplayHelp);
       pretty::assert_eq!(have, want);
     }
 
     mod rta_arguments {
-      use super::parse_args;
       use crate::applications;
-      use crate::cli::Command;
+      use crate::cli::{Command, parse};
       use crate::commands::run;
       use crate::configuration::Version;
       use crate::error::UserError;
       use big_s::S;
 
       mod available {
-        use super::super::parse_args;
         use crate::applications;
-        use crate::cli::Command;
+        use crate::cli::{Command, parse};
         use crate::commands::available;
         use crate::error::UserError;
+        use big_s::S;
 
         #[test]
         fn with_app() {
           let apps = applications::all();
           let shellcheck = apps.lookup("shellcheck").unwrap();
-          let have = parse_args(vec!["--available", "shellcheck"], &apps);
+          let args = vec![S("--available"), S("shellcheck")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::Available(available::Args {
             app_name: shellcheck.name(),
             optional: false,
@@ -223,7 +216,8 @@ mod tests {
         fn with_all_options() {
           let apps = applications::all();
           let shellcheck = apps.lookup("shellcheck").unwrap();
-          let have = parse_args(vec!["--available", "--verbose", "shellcheck"], &apps);
+          let args = vec![S("--available"), S("--verbose"), S("shellcheck")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::Available(available::Args {
             app_name: shellcheck.name(),
             optional: false,
@@ -236,24 +230,26 @@ mod tests {
         #[test]
         fn without_app() {
           let apps = applications::all();
-          let have = parse_args(vec!["--available"], &apps);
+          let args = vec![S("--available")].into_iter();
+          let have = parse(args, &apps);
           let want = Err(UserError::MissingApplication);
           pretty::assert_eq!(have, want);
         }
       }
 
       mod error_on_output {
-        use super::super::parse_args;
         use crate::applications;
-        use crate::cli::Command;
+        use crate::cli::{Command, parse};
         use crate::commands::run;
         use crate::error::UserError;
+        use big_s::S;
 
         #[test]
         fn normal() {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
-          let have = parse_args(vec!["--error-on-output", "actionlint"], &apps);
+          let args = vec![S("--error-on-output"), S("actionlint")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::RunApp(run::Args {
             app_name: actionlint.name(),
             version: None,
@@ -270,21 +266,24 @@ mod tests {
         #[test]
         fn missing_app() {
           let apps = applications::all();
-          let have = parse_args(vec!["--error-on-output"], &apps);
+          let args = vec![S("--error-on-output")].into_iter();
+          let have = parse(args, &apps);
           let want = Err(UserError::MissingApplication);
           pretty::assert_eq!(have, want);
         }
       }
 
       mod from_source {
-        use crate::cli::parse::tests::parse_args;
+        use crate::cli::parse;
         use crate::commands::run;
         use crate::{Command, applications};
+        use big_s::S;
 
         #[test]
         fn flag() {
           let apps = applications::all();
-          let have = parse_args(vec!["--from-source", "actionlint"], &apps);
+          let args = vec![S("--from-source"), S("actionlint")].into_iter();
+          let have = parse(args, &apps);
           let actionlint = apps.lookup("actionlint").unwrap();
           let want = Ok(Command::RunApp(run::Args {
             app_name: actionlint.name(),
@@ -301,15 +300,16 @@ mod tests {
       }
 
       mod test {
-        use super::super::parse_args;
         use crate::applications;
-        use crate::cli::Command;
+        use crate::cli::{Command, parse};
         use crate::commands::test;
+        use big_s::S;
 
         #[test]
         fn no_app_no_verbose() {
           let apps = applications::all();
-          let have = parse_args(vec!["--test"], &apps);
+          let args = vec![S("--test")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::Test(test::Args {
             optional: false,
             start_at_app: None,
@@ -321,7 +321,8 @@ mod tests {
         #[test]
         fn no_app_verbose() {
           let apps = applications::all();
-          let have = parse_args(vec!["--test", "--verbose"], &apps);
+          let args = vec![S("--test"), S("--verbose")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::Test(test::Args {
             optional: false,
             start_at_app: None,
@@ -334,7 +335,8 @@ mod tests {
         fn app_no_verbose() {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
-          let have = parse_args(vec!["--test", "actionlint"], &apps);
+          let args = vec![S("--test"), S("actionlint")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::Test(test::Args {
             optional: false,
             start_at_app: Some(actionlint.name()),
@@ -347,7 +349,8 @@ mod tests {
         fn app_verbose() {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
-          let have = parse_args(vec!["--test", "--verbose", "actionlint"], &apps);
+          let args = vec![S("--test"), S("--verbose"), S("actionlint")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::Test(test::Args {
             optional: false,
             start_at_app: Some(actionlint.name()),
@@ -358,14 +361,15 @@ mod tests {
       }
 
       mod help_parameter {
-        use super::super::parse_args;
         use crate::applications;
-        use crate::cli::Command;
+        use crate::cli::{Command, parse};
+        use big_s::S;
 
         #[test]
         fn short() {
           let apps = applications::all();
-          let have = parse_args(vec!["-h"], &apps);
+          let args = vec![S("-h")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::DisplayHelp);
           pretty::assert_eq!(have, want);
         }
@@ -373,14 +377,15 @@ mod tests {
         #[test]
         fn long() {
           let apps = applications::all();
-          let have = parse_args(vec!["--help"], &apps);
+          let args = vec![S("--help")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::DisplayHelp);
           pretty::assert_eq!(have, want);
         }
       }
 
       mod include_apps {
-        use super::super::parse_args;
+        use crate::cli::parse;
         use crate::commands::run;
         use crate::configuration::Version;
         use crate::{Command, UserError, applications};
@@ -391,7 +396,8 @@ mod tests {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
           let gh = apps.lookup("gh").unwrap();
-          let have = parse_args(vec!["--include=gh", "actionlint@2"], &apps);
+          let args = vec![S("--include=gh"), S("actionlint@2")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::RunApp(run::Args {
             app_name: actionlint.name(),
             version: Some(Version::from("2")),
@@ -408,25 +414,27 @@ mod tests {
         #[test]
         fn invalid() {
           let apps = applications::all();
-          let have = parse_args(vec!["--include=zonk", "actionlint@2"], &apps);
+          let args = vec![S("--include=zonk"), S("actionlint@2")].into_iter();
+          let have = parse(args, &apps);
           let want = Err(UserError::UnknownApp(S("zonk")));
           pretty::assert_eq!(have, want);
         }
       }
 
       mod verbose {
-        use super::super::parse_args;
         use crate::applications;
-        use crate::cli::Command;
+        use crate::cli::{Command, parse};
         use crate::commands::run;
         use crate::configuration::Version;
         use crate::error::UserError;
+        use big_s::S;
 
         #[test]
         fn long() {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
-          let have = parse_args(vec!["--verbose", "actionlint@2"], &apps);
+          let args = vec![S("--verbose"), S("actionlint@2")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::RunApp(run::Args {
             app_name: actionlint.name(),
             version: Some(Version::from("2")),
@@ -444,7 +452,8 @@ mod tests {
         fn short() {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
-          let have = parse_args(vec!["-v", "actionlint@2"], &apps);
+          let args = vec![S("-v"), S("actionlint@2")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::RunApp(run::Args {
             app_name: actionlint.name(),
             version: Some(Version::from("2")),
@@ -461,7 +470,8 @@ mod tests {
         #[test]
         fn missing_app() {
           let apps = applications::all();
-          let have = parse_args(vec!["--verbose"], &apps);
+          let args = vec![S("--verbose")].into_iter();
+          let have = parse(args, &apps);
           let want = Err(UserError::MissingApplication);
           pretty::assert_eq!(have, want);
         }
@@ -470,7 +480,8 @@ mod tests {
       #[test]
       fn multiple_commands() {
         let apps = applications::all();
-        let have = parse_args(vec!["--which", "--available", "shellcheck"], &apps);
+        let args = vec![S("--which"), S("--available"), S("shellcheck")].into_iter();
+        let have = parse(args, &apps);
         let want = Err(UserError::MultipleCommandsGiven);
         pretty::assert_eq!(have, want);
       }
@@ -479,7 +490,8 @@ mod tests {
       fn optional() {
         let apps = applications::all();
         let actionlint = apps.lookup("actionlint").unwrap();
-        let have = parse_args(vec!["--optional", "actionlint@2", "arg1"], &apps);
+        let args = vec![S("--optional"), S("actionlint@2"), S("arg1")].into_iter();
+        let have = parse(args, &apps);
         let want = Ok(Command::RunApp(run::Args {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
@@ -494,14 +506,15 @@ mod tests {
       }
 
       mod version {
-        use super::parse_args;
         use crate::applications;
-        use crate::cli::Command;
+        use crate::cli::{Command, parse};
+        use big_s::S;
 
         #[test]
         fn short() {
           let apps = applications::all();
-          let have = parse_args(vec!["-V"], &apps);
+          let args = vec![S("-V")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::Version);
           pretty::assert_eq!(have, want);
         }
@@ -509,23 +522,25 @@ mod tests {
         #[test]
         fn long() {
           let apps = applications::all();
-          let have = parse_args(vec!["--version"], &apps);
+          let args = vec![S("--version")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::Version);
           pretty::assert_eq!(have, want);
         }
       }
 
       mod versions {
-        use super::parse_args;
         use crate::applications;
-        use crate::cli::Command;
+        use crate::cli::{Command, parse};
         use crate::commands::versions;
+        use big_s::S;
 
         #[test]
         fn correct_usage() {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
-          let have = parse_args(vec!["--versions", "actionlint"], &apps);
+          let args = vec![S("--versions"), S("actionlint")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::Versions(versions::Args {
             app_name: actionlint.name(),
             amount: 10,
@@ -538,7 +553,8 @@ mod tests {
         fn custom_amount() {
           let apps = applications::all();
           let actionlint = apps.lookup("actionlint").unwrap();
-          let have = parse_args(vec!["--versions=20", "actionlint"], &apps);
+          let args = vec![S("--versions=20"), S("actionlint")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::Versions(versions::Args {
             app_name: actionlint.name(),
             amount: 20,
@@ -550,23 +566,25 @@ mod tests {
         #[test]
         fn missing_app() {
           let apps = applications::all();
-          let have = parse_args(vec!["--versions"], &apps);
+          let args = vec![S("--versions")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::DisplayHelp);
           pretty::assert_eq!(have, want);
         }
       }
 
       mod which {
-        use super::super::parse_args;
-        use crate::cli::Command;
+        use crate::cli::{Command, parse};
         use crate::error::UserError;
         use crate::{applications, commands};
+        use big_s::S;
 
         #[test]
         fn with_app() {
           let apps = applications::all();
           let shellcheck = apps.lookup("shellcheck").unwrap();
-          let have = parse_args(vec!["--which", "shellcheck"], &apps);
+          let args = vec![S("--which"), S("shellcheck")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::Which(commands::which::Args {
             app_name: shellcheck.name(),
             optional: false,
@@ -580,7 +598,8 @@ mod tests {
         fn with_all_options() {
           let apps = applications::all();
           let shellcheck = apps.lookup("shellcheck").unwrap();
-          let have = parse_args(vec!["--which", "--verbose", "shellcheck"], &apps);
+          let args = vec![S("--which"), S("--verbose"), S("shellcheck")].into_iter();
+          let have = parse(args, &apps);
           let want = Ok(Command::Which(commands::which::Args {
             app_name: shellcheck.name(),
             optional: false,
@@ -593,7 +612,8 @@ mod tests {
         #[test]
         fn without_app() {
           let apps = applications::all();
-          let have = parse_args(vec!["--which"], &apps);
+          let args = vec![S("--which")].into_iter();
+          let have = parse(args, &apps);
           let want = Err(UserError::MissingApplication);
           pretty::assert_eq!(have, want);
         }
@@ -601,9 +621,8 @@ mod tests {
     }
 
     mod application_arguments {
-      use super::parse_args;
       use crate::applications;
-      use crate::cli::Command;
+      use crate::cli::{Command, parse};
       use crate::commands::run;
       use crate::configuration::Version;
       use big_s::S;
@@ -612,7 +631,8 @@ mod tests {
       fn no_arguments() {
         let apps = applications::all();
         let actionlint = apps.lookup("actionlint").unwrap();
-        let have = parse_args(vec!["actionlint@2"], &apps);
+        let args = vec![S("actionlint@2")].into_iter();
+        let have = parse(args, &apps);
         let want = Ok(Command::RunApp(run::Args {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
@@ -630,7 +650,8 @@ mod tests {
       fn some_arguments() {
         let apps = applications::all();
         let actionlint = apps.lookup("actionlint").unwrap();
-        let have = parse_args(vec!["actionlint@2", "--arg1", "arg2"], &apps);
+        let args = vec![S("actionlint@2"), S("--arg1"), S("arg2")].into_iter();
+        let have = parse(args, &apps);
         let want = Ok(Command::RunApp(run::Args {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
@@ -646,9 +667,8 @@ mod tests {
     }
 
     mod rta_and_app_arguments {
-      use super::parse_args;
       use crate::applications;
-      use crate::cli::Command;
+      use crate::cli::{Command, parse};
       use crate::commands::run;
       use crate::configuration::Version;
       use big_s::S;
@@ -657,7 +677,8 @@ mod tests {
       fn rta_and_app_arguments() {
         let apps = applications::all();
         let actionlint = apps.lookup("actionlint").unwrap();
-        let have = parse_args(vec!["--verbose", "actionlint@2", "--arg1", "arg2"], &apps);
+        let args = vec![S("--verbose"), S("actionlint@2"), S("--arg1"), S("arg2")].into_iter();
+        let have = parse(args, &apps);
         let want = Ok(Command::RunApp(run::Args {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
@@ -675,7 +696,8 @@ mod tests {
       fn same_arguments_as_run_that_app() {
         let apps = applications::all();
         let actionlint = apps.lookup("actionlint").unwrap();
-        let have = parse_args(vec!["actionlint@2", "--verbose", "--version"], &apps);
+        let args = vec![S("actionlint@2"), S("--verbose"), S("--version")].into_iter();
+        let have = parse(args, &apps);
         let want = Ok(Command::RunApp(run::Args {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
