@@ -276,6 +276,38 @@ mod tests {
         }
       }
 
+      mod install {
+        use super::super::parse_args;
+        use crate::applications;
+        use crate::cli::Command;
+        use crate::commands::install;
+        use crate::error::UserError;
+
+        #[test]
+        fn normal() {
+          let apps = applications::all();
+          let actionlint = apps.lookup("actionlint").unwrap();
+          let have = parse_args(vec!["--install", "actionlint"], &apps);
+          let want = Ok(Command::Install(install::Args {
+            app_name: actionlint.name(),
+            version: None,
+            from_source: false,
+            include_apps: vec![],
+            optional: false,
+            verbose: false,
+          }));
+          pretty::assert_eq!(have, want);
+        }
+
+        #[test]
+        fn missing_app() {
+          let apps = applications::all();
+          let have = parse_args(vec!["--install"], &apps);
+          let want = Err(UserError::MissingApplication);
+          pretty::assert_eq!(have, want);
+        }
+      }
+
       mod from_source {
         use crate::cli::parse::tests::parse_args;
         use crate::commands::run;
