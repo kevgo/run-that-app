@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.28.0
+
+- `--reinstall` command
+
 ### 0.27.0
 
 - app: conc
