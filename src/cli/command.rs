@@ -9,6 +9,7 @@ pub(crate) enum Command {
   Available(available::Args),
   DisplayHelp,
   Install(install::Args),
+  Reinstall(install::Args),
   RunApp(run::Args),
   Test(test::Args),
   Update(update::Args),
