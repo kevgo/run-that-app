@@ -75,7 +75,7 @@ pub(crate) fn test(args: &mut Args, apps: &Apps) -> Result<ExitCode> {
         }
         return Ok(ExitCode::FAILURE);
       }
-      let _ = yard.delete_app_folder(&app.name());
+      yard.delete_app_folder(&app.name())?;
     }
   }
   Ok(ExitCode::SUCCESS)
