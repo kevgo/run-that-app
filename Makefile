@@ -12,8 +12,8 @@ fix: build  # auto-corrects issues
 	cargo clippy --fix --allow-dirty
 	cargo +nightly fmt
 	target/debug/rta dprint fmt
-	target/debug/rta shfmt -f . | xargs target/debug/rta shfmt -w
-	target/debug/rta keep-sorted $(shell target/debug/rta ripgrep -l 'keep-sorted end' ./ --glob '!Makefile')
+	CLICOLOR_FORCE=1 target/debug/rta shfmt -f . | xargs target/debug/rta shfmt -w
+	CLICOLOR_FORCE=1 target/debug/rta keep-sorted $(shell target/debug/rta ripgrep -l 'keep-sorted end' ./ --glob '!Makefile')
 
 install:  # installs this tool locally for testing
 	cargo install --locked --path .
@@ -53,6 +53,8 @@ update:  # updates the dependencies
 
 .DEFAULT_GOAL := help
 .SILENT:
+
+
 
 node_modules: package.json package-lock.json
 	target/debug/rta npm ci
