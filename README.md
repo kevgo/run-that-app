@@ -44,7 +44,7 @@ run-that-app works without:
 - IDE plugins
 - any other kind of bloat
 
-Applications are downloaded directly their original hosting location, typically
+Applications are downloaded directly from their original hosting location, typically
 in 1-2 seconds. Only the executable is stored on disk. Execution is 100% native,
 with no runtime overhead.
 
