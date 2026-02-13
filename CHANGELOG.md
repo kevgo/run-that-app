@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.29.0
+
+- apps: fd
+
 ### 0.28.0
 
 - `--reinstall` command
