@@ -107,7 +107,9 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "fd-find",
-            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            bin_folder: BinFolder::Subfolder {
+              path: "fd-v10.3.0-aarch64-unknown-linux-gnu".into(),
+            },
           },
         ],
       };
@@ -131,7 +133,9 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "fd-find",
-            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            bin_folder: BinFolder::Subfolder {
+              path: "fd-v10.3.0-x86_64-unknown-linux-gnu".into(),
+            },
           },
         ],
       };
@@ -155,7 +159,9 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "fd-find",
-            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            bin_folder: BinFolder::Subfolder {
+              path: "fd-v10.3.0-aarch64-apple-darwin".into(),
+            },
           },
         ],
       };
@@ -179,7 +185,9 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "fd-find",
-            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            bin_folder: BinFolder::Subfolder {
+              path: "fd-v10.3.0-x86_64-apple-darwin".into(),
+            },
           },
         ],
       };
@@ -203,7 +211,9 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "fd-find",
-            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            bin_folder: BinFolder::Subfolder {
+              path: "fd-v10.3.0-aarch64-pc-windows-msvc".into(),
+            },
           },
         ],
       };
@@ -227,7 +237,9 @@ mod tests {
           },
           Method::CompileRustSource {
             crate_name: "fd-find",
-            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            bin_folder: BinFolder::Subfolder {
+              path: "fd-v10.3.0-x86_64-pc-windows-msvc".into(),
+            },
           },
         ],
       };
