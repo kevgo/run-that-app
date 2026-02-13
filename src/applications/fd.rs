@@ -116,7 +116,7 @@ mod tests {
         &Version::from("10.3.0"),
         Platform {
           os: Os::Linux,
-          cpu: Cpu::Arm64,
+          cpu: Cpu::Intel64,
         },
       );
       let want = RunMethod::ThisApp {
@@ -164,7 +164,7 @@ mod tests {
         &Version::from("10.3.0"),
         Platform {
           os: Os::MacOS,
-          cpu: Cpu::Arm64,
+          cpu: Cpu::Intel64,
         },
       );
       let want = RunMethod::ThisApp {
