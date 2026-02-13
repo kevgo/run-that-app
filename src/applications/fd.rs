@@ -74,7 +74,7 @@ impl AppDefinition for Fd {
 }
 
 fn extract_version(output: &str) -> Result<&str> {
-  regexp::first_capture(output, r"dprint (\d+\.\d+\.\d+)")
+  regexp::first_capture(output, r"fd (\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
