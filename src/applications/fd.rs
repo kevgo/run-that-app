@@ -41,13 +41,13 @@ impl AppDefinition for Fd {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/fd-v{version}-{cpu}-{os}.{ext}").into(),
-          bin_folder: BinFolder::Root,
-        },
-        Method::CompileRustSource {
-          crate_name: "fd-find",
           bin_folder: BinFolder::Subfolder {
             path: format!("fd-v{version}-{cpu}-{os}").into(),
           },
+        },
+        Method::CompileRustSource {
+          crate_name: "fd-find",
+          bin_folder: BinFolder::Root,
         },
       ],
     }
@@ -101,13 +101,13 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: "https://github.com/sharkdp/fd/releases/download/v10.3.0/fd-v10.3.0-aarch64-unknown-linux-gnu.tar.gz".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
             bin_folder: BinFolder::Subfolder {
               path: "fd-v10.3.0-aarch64-unknown-linux-gnu".into(),
             },
+          },
+          Method::CompileRustSource {
+            crate_name: "fd-find",
+            bin_folder: BinFolder::Root,
           },
         ],
       };
@@ -127,13 +127,13 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: "https://github.com/sharkdp/fd/releases/download/v10.3.0/fd-v10.3.0-x86_64-unknown-linux-gnu.tar.gz".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
             bin_folder: BinFolder::Subfolder {
               path: "fd-v10.3.0-x86_64-unknown-linux-gnu".into(),
             },
+          },
+          Method::CompileRustSource {
+            crate_name: "fd-find",
+            bin_folder: BinFolder::Root,
           },
         ],
       };
@@ -153,13 +153,13 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: "https://github.com/sharkdp/fd/releases/download/v10.3.0/fd-v10.3.0-aarch64-apple-darwin.tar.gz".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
             bin_folder: BinFolder::Subfolder {
               path: "fd-v10.3.0-aarch64-apple-darwin".into(),
             },
+          },
+          Method::CompileRustSource {
+            crate_name: "fd-find",
+            bin_folder: BinFolder::Root,
           },
         ],
       };
@@ -179,13 +179,13 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: "https://github.com/sharkdp/fd/releases/download/v10.3.0/fd-v10.3.0-x86_64-apple-darwin.tar.gz".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
             bin_folder: BinFolder::Subfolder {
               path: "fd-v10.3.0-x86_64-apple-darwin".into(),
             },
+          },
+          Method::CompileRustSource {
+            crate_name: "fd-find",
+            bin_folder: BinFolder::Root,
           },
         ],
       };
@@ -205,13 +205,13 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: "https://github.com/sharkdp/fd/releases/download/v10.3.0/fd-v10.3.0-aarch64-pc-windows-msvc.zip".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
             bin_folder: BinFolder::Subfolder {
               path: "fd-v10.3.0-aarch64-pc-windows-msvc".into(),
             },
+          },
+          Method::CompileRustSource {
+            crate_name: "fd-find",
+            bin_folder: BinFolder::Root,
           },
         ],
       };
@@ -231,13 +231,13 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: "https://github.com/sharkdp/fd/releases/download/v10.3.0/fd-v10.3.0-x86_64-pc-windows-msvc.zip".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
             bin_folder: BinFolder::Subfolder {
               path: "fd-v10.3.0-x86_64-pc-windows-msvc".into(),
             },
+          },
+          Method::CompileRustSource {
+            crate_name: "fd-find",
+            bin_folder: BinFolder::Root,
           },
         ],
       };
