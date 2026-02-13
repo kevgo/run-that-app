@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
@@ -45,7 +47,9 @@ impl AppDefinition for Fd {
         },
         Method::CompileRustSource {
           crate_name: "fd-find",
-          bin_folder: BinFolder::Subfolder { path: "bin".into() },
+          bin_folder: BinFolder::Subfolder {
+            path: PathBuf::from(format!("fd-v{version}-{cpu}-{os}")),
+          },
         },
       ],
     }
@@ -61,7 +65,7 @@ impl AppDefinition for Fd {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
-    if !output.contains("Auto-formats source code based on the specified plugins") {
+    if !output.contains("A program to find entries in your filesystem") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output(&["--version"], log)?) {
