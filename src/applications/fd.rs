@@ -98,7 +98,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/sharkdp/fd/releases/download/v10.3.0/fd-v10.3.0-arm-unknown-linux-gnueabihf.tar.gz".into(),
+            url: "https://github.com/sharkdp/fd/releases/download/v10.3.0/fd-v10.3.0-aarch64-unknown-linux-gnu.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {
