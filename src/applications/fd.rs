@@ -33,10 +33,14 @@ impl AppDefinition for Fd {
       Os::MacOS => "apple-darwin",
       Os::Windows => "pc-windows-msvc",
     };
+    let ext = match platform.os {
+      Os::Windows => "zip",
+      Os::Linux | Os::MacOS => "tar.gz",
+    };
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/dprint-{cpu}-{os}.zip").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/fd-v{version}-{cpu}-{os}.{ext}").into(),
           bin_folder: BinFolder::Root,
         },
         Method::CompileRustSource {
@@ -98,7 +102,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {
-            crate_name: "dprint",
+            crate_name: "fd-find",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -122,7 +126,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {
-            crate_name: "dprint",
+            crate_name: "fd-find",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -146,7 +150,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {
-            crate_name: "dprint",
+            crate_name: "fd-find",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -170,7 +174,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {
-            crate_name: "dprint",
+            crate_name: "fd-find",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -194,7 +198,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {
-            crate_name: "dprint",
+            crate_name: "fd-find",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -208,7 +212,7 @@ mod tests {
         &Version::from("10.3.0"),
         Platform {
           os: Os::Windows,
-          cpu: Cpu::Arm64,
+          cpu: Cpu::Intel64,
         },
       );
       let want = RunMethod::ThisApp {
@@ -218,7 +222,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {
-            crate_name: "dprint",
+            crate_name: "fd-find",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
