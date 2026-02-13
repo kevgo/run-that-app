@@ -44,9 +44,9 @@ run-that-app works without:
 - IDE plugins
 - any other kind of bloat
 
-Applications are downloaded directly from their original hosting location, typically
-in 1-2 seconds. Only the executable is stored on disk. Execution is 100% native,
-with no runtime overhead.
+Applications are downloaded directly from their original hosting location,
+typically in 1-2 seconds. Only the executable is stored on disk. Execution is
+100% native, with no runtime overhead.
 
 [![linux](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml)
 [![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
@@ -64,6 +64,7 @@ with no runtime overhead.
 - [depth](https://github.com/KyleBanks/depth)
 - [dprint](https://dprint.dev)
 - [exhaustruct](https://github.com/GaijinEntertainment/go-exhaustruct)
+- [fd](https://github.com/sharkdp/fd)
 - [funcorder](https://github.com/manuelarte/funcorder)
 - [gh](https://cli.github.com)
 - [ghokin](https://github.com/antham/ghokin)

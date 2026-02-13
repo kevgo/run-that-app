@@ -9,6 +9,7 @@ mod deadcode;
 mod depth;
 mod dprint;
 mod exhaustruct;
+mod fd;
 mod funcorder;
 mod gh;
 mod ghokin;
@@ -58,6 +59,7 @@ pub(crate) fn all() -> Apps {
     Box::new(depth::Depth {}),
     Box::new(dprint::Dprint {}),
     Box::new(exhaustruct::Exhaustruct {}),
+    Box::new(fd::Fd {}),
     Box::new(funcorder::FuncOrder {}),
     Box::new(gh::Gh {}),
     Box::new(ghokin::Ghokin {}),
