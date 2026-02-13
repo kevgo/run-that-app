@@ -7,7 +7,6 @@ use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, regexp};
 use const_format::formatcp;
-use std::path::PathBuf;
 
 #[derive(Clone)]
 pub(crate) struct Fd {}
@@ -47,7 +46,7 @@ impl AppDefinition for Fd {
         Method::CompileRustSource {
           crate_name: "fd-find",
           bin_folder: BinFolder::Subfolder {
-            path: PathBuf::from(format!("fd-v{version}-{cpu}-{os}")),
+            path: format!("fd-v{version}-{cpu}-{os}").into(),
           },
         },
       ],
