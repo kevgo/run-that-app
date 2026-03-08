@@ -21,7 +21,7 @@ impl AppDefinition for Bun {
   }
 
   fn homepage(&self) -> &'static str {
-    formatcp!("https://github.com/oven-sh/bun")
+    formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
   fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
