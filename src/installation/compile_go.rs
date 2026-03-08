@@ -52,7 +52,7 @@ fn load_rta_go(optional: bool, from_source: bool, ctx: &RuntimeContext) -> Resul
     let versions = go.installable_versions(3, ctx.log)?;
     RequestedVersions::from(versions)
   };
-  if let Some(executable_call) = commands::run::load_or_install_app(&go, requested_go_versions, optional, from_source, ctx)? {
+  if let Some(executable_call) = commands::run::load_or_install_app(&go, &requested_go_versions, optional, from_source, ctx)? {
     return Ok(Some(executable_call.executable.inner()));
   }
   Ok(None)

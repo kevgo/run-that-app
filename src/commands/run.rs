@@ -23,9 +23,9 @@ pub(crate) fn run(args: Args, apps: &Apps) -> Result<ExitCode> {
     log,
   };
   let include_app_versions = config_file.lookup_many(args.include_apps);
-  let include_apps = load_or_install_apps(include_app_versions, apps, args.optional, args.from_source, &ctx)?;
+  let include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
-  let Some(executable_call) = load_or_install_app(app_to_run, requested_versions, args.optional, args.from_source, &ctx)? else {
+  let Some(executable_call) = load_or_install_app(app_to_run, &requested_versions, args.optional, args.from_source, &ctx)? else {
     if args.optional {
       return Ok(ExitCode::SUCCESS);
     }
@@ -70,7 +70,7 @@ pub(crate) struct Args {
 }
 
 pub(crate) fn load_or_install_apps(
-  app_versions: Vec<AppVersions>,
+  app_versions: &Vec<AppVersions>,
   apps: &Apps,
   optional: bool,
   from_source: bool,
@@ -78,8 +78,8 @@ pub(crate) fn load_or_install_apps(
 ) -> Result<Vec<ExecutableCall>> {
   let mut result = vec![];
   for app_version in app_versions {
-    let app = apps.lookup(app_version.app_name)?;
-    if let Some(executable_call) = load_or_install_app(app, app_version.versions, optional, from_source, ctx)? {
+    let app = apps.lookup(&app_version.app_name)?;
+    if let Some(executable_call) = load_or_install_app(app, &app_version.versions, optional, from_source, ctx)? {
       result.push(executable_call);
     }
   }
@@ -88,13 +88,13 @@ pub(crate) fn load_or_install_apps(
 
 pub(crate) fn load_or_install_app(
   app_definition: &dyn AppDefinition,
-  requested_versions: RequestedVersions,
+  requested_versions: &RequestedVersions,
   optional: bool,
   from_source: bool,
   ctx: &RuntimeContext,
 ) -> Result<Option<ExecutableCall>> {
   for requested_version in requested_versions {
-    if let Some(executable_call) = load_or_install(app_definition, &requested_version, optional, from_source, ctx)? {
+    if let Some(executable_call) = load_or_install(app_definition, requested_version, optional, from_source, ctx)? {
       return Ok(Some(executable_call));
     }
   }
