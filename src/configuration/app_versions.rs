@@ -2,7 +2,7 @@ use super::RequestedVersions;
 use crate::applications::ApplicationName;
 use std::cmp::Ordering;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub(crate) struct AppVersions {
   pub(crate) app_name: ApplicationName,
   pub(crate) versions: RequestedVersions,
