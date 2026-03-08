@@ -1,10 +1,10 @@
-use super::strip_leading_v;
+use super::strip_prefix;
 use crate::Log;
 use crate::error::{Result, UserError};
 use crate::logging::Event;
 use big_s::S;
 
-pub(crate) fn all(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<String>> {
+pub(crate) fn all(org: &str, repo: &str, amount: usize, tag_prefix: &str, log: Log) -> Result<Vec<String>> {
   let url = format!("https://api.github.com/repos/{org}/{repo}/git/refs/tags");
   log(Event::GitHubApiRequestBegin { url: &url });
   let get = minreq::get(&url)
@@ -26,7 +26,7 @@ pub(crate) fn all(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<
       });
     }
   };
-  let mut tags = parse_response(response_text)?;
+  let mut tags = parse_response(response_text, tag_prefix)?;
   if tags.is_empty() {
     log(Event::GitHubApiRequestFail { err: "no tags found".into() });
     return Err(UserError::GitHubTagsApiProblem {
@@ -42,7 +42,7 @@ pub(crate) fn all(org: &str, repo: &str, amount: usize, log: Log) -> Result<Vec<
   Ok(tags)
 }
 
-fn parse_response(text: &str) -> Result<Vec<String>> {
+fn parse_response(text: &str, tag_prefix: &str) -> Result<Vec<String>> {
   let value: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::GitHubTagsApiProblem {
     problem: err.to_string(),
     payload: text.to_string(),
@@ -62,7 +62,7 @@ fn parse_response(text: &str) -> Result<Vec<String>> {
       });
     };
     if let Some(stripped) = entry_ref.strip_prefix("refs/tags/") {
-      result.push(strip_leading_v(stripped).to_string());
+      result.push(strip_prefix(stripped, tag_prefix).to_string());
     }
   }
   Ok(result)
@@ -101,7 +101,7 @@ mod tests {
 ]
 
             "#;
-      let have: Vec<String> = super::super::parse_response(response).unwrap();
+      let have: Vec<String> = super::super::parse_response(response, "v").unwrap();
       let want = vec![S("1.0.1"), S("1.0.2")];
       pretty::assert_eq!(have, want);
     }
