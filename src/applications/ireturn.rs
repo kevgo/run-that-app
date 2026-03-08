@@ -13,6 +13,7 @@ pub(crate) struct Ireturn {}
 
 const ORG: &str = "butuzov";
 const REPO: &str = "ireturn";
+const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for Ireturn {
   fn name(&self) -> ApplicationName {
@@ -40,22 +41,22 @@ impl AppDefinition for Ireturn {
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ireturn_{os}_{cpu}.{ext}").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/ireturn_{os}_{cpu}.{ext}").into(),
           bin_folder: BinFolder::Root,
         },
         Method::CompileGoSource {
-          import_path: format!("github.com/{ORG}/{REPO}/cmd/ireturn@v{version}"),
+          import_path: format!("github.com/{ORG}/{REPO}/cmd/ireturn@{TAG_PREFIX}{version}"),
         },
       ],
     }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, log)
+    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, log)
+    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {

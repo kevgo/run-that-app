@@ -14,6 +14,7 @@ pub(crate) struct ActionLint {}
 
 const ORG: &str = "rhysd";
 const REPO: &str = "actionlint";
+const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for ActionLint {
   fn name(&self) -> ApplicationName {
@@ -25,7 +26,7 @@ impl AppDefinition for ActionLint {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, log)
+    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
   }
 
   fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
@@ -45,18 +46,18 @@ impl AppDefinition for ActionLint {
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/actionlint_{version}_{os}_{cpu}.{ext}").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/actionlint_{version}_{os}_{cpu}.{ext}").into(),
           bin_folder: BinFolder::Root,
         },
         Method::CompileGoSource {
-          import_path: format!("github.com/{ORG}/{REPO}/cmd/actionlint@v{version}"),
+          import_path: format!("github.com/{ORG}/{REPO}/cmd/actionlint@{TAG_PREFIX}{version}"),
         },
       ],
     }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, log)
+    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {

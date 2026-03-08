@@ -13,6 +13,7 @@ pub(crate) struct NodePrune {}
 
 const ORG: &str = "tj";
 const REPO: &str = "node-prune";
+const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for NodePrune {
   fn name(&self) -> ApplicationName {
@@ -24,7 +25,7 @@ impl AppDefinition for NodePrune {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    let tags = github_tags::all(ORG, REPO, 1, log)?;
+    let tags = github_tags::all(ORG, REPO, 1, TAG_PREFIX, log)?;
     let Some(tag) = tags.into_iter().nth(0) else {
       return Err(UserError::NoVersionsFound { app: self.name().to_string() });
     };
@@ -47,14 +48,14 @@ impl AppDefinition for NodePrune {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/node-prune_{version}_{os}_{cpu}.tar.gz").into(),
         },
         Method::CompileGoSource {
-          import_path: format!("github.com/tj/node-prune@v{version}"),
+          import_path: format!("github.com/tj/node-prune@{TAG_PREFIX}{version}"),
         },
       ],
     }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    let tags = github_tags::all(ORG, REPO, amount, log)?;
+    let tags = github_tags::all(ORG, REPO, amount, TAG_PREFIX, log)?;
     Ok(tags.into_iter().map(Version::from).collect())
   }
 
