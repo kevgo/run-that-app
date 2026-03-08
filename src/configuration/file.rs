@@ -7,6 +7,8 @@ use std::fs::OpenOptions;
 use std::io::{ErrorKind, Write};
 use std::str::SplitAsciiWhitespace;
 
+const HEADER: &str = "# more info at https://github.com/kevgo/run-that-app\n\n";
+
 #[derive(Debug, Default, PartialEq)]
 pub(crate) struct File {
   pub(crate) apps: Vec<AppVersions>,
@@ -35,7 +37,7 @@ impl File {
         });
       }
     };
-    let content = format!("{app} {version}");
+    let content = format!("{HEADER}{app} {version}");
     file
       .write_all(content.as_bytes())
       .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
@@ -74,6 +76,9 @@ impl File {
       .write(true)
       .truncate(true)
       .open(FILE_NAME)
+      .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))?;
+    file
+      .write_all(HEADER.as_bytes())
       .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))?;
     file
       .write_all(self.to_string().as_bytes())
