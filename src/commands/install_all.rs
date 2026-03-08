@@ -8,7 +8,6 @@ use std::process::ExitCode;
 
 pub(crate) fn install_all(apps: &Apps) -> Result<ExitCode> {
   let config_file = configuration::File::load(apps)?;
-  let apps_to_install = config_file.apps.clone();
   let log = logging::new(false);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
@@ -18,6 +17,6 @@ pub(crate) fn install_all(apps: &Apps) -> Result<ExitCode> {
     config_file: &config_file,
     log,
   };
-  let _ = load_or_install_apps(&apps_to_install, apps, true, false, &ctx)?;
+  let _ = load_or_install_apps(&config_file.apps, apps, true, false, &ctx)?;
   Ok(ExitCode::SUCCESS)
 }

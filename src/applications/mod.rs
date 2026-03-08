@@ -173,7 +173,7 @@ impl Debug for dyn AppDefinition {
   }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub(crate) struct ApplicationName(&'static str);
 
 impl ApplicationName {
