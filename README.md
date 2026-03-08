@@ -85,6 +85,7 @@ typically in 1-2 seconds. Only the executable is stored on disk. Execution is
 - [npx](https://www.npmjs.com)
 - [rclone](https://rclone.org)
 - [ripgrep](https://github.com/BurntSushi/ripgrep)
+- [ruff](https://github.com/astral-sh/ruff)
 - [scc](https://github.com/boyter/scc)
 - [shellcheck](https://www.shellcheck.net)
 - [shfmt](https://github.com/mvdan/sh)
