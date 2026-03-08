@@ -5,7 +5,7 @@ use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
-use crate::{Log, regexp};
+use crate::{Log, strings};
 use std::path;
 
 #[derive(Clone)]
@@ -71,7 +71,7 @@ impl AppDefinition for Gh {
 }
 
 fn extract_version(output: &str) -> Result<&str> {
-  regexp::first_capture(output, r"gh version (\d+\.\d+\.\d+)")
+  strings::first_capture(output, r"gh version (\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
