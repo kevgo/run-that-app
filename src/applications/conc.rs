@@ -13,6 +13,7 @@ pub(crate) struct Conc {}
 
 const ORG: &str = "kevgo";
 const REPO: &str = "conc";
+const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for Conc {
   fn name(&self) -> ApplicationName {
@@ -39,18 +40,18 @@ impl AppDefinition for Conc {
     };
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/conc_{os}_{cpu}.{ext}").into(),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/conc_{os}_{cpu}.{ext}").into(),
         bin_folder: BinFolder::Root,
       }],
     }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, "v", log)
+    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, "v", log)
+    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
