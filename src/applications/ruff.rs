@@ -13,6 +13,7 @@ pub(crate) struct Ruff {}
 
 const ORG: &str = "astral-sh";
 const REPO: &str = "ruff";
+const TAG_PREFIX: &str = "";
 
 impl AppDefinition for Ruff {
   fn name(&self) -> ApplicationName {
@@ -48,11 +49,11 @@ impl AppDefinition for Ruff {
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, "v", log)
+    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, "v", log)
+    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
