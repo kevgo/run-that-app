@@ -89,7 +89,7 @@ mod tests {
     }
   },
   {
-    "ref": "refs/tags/v1.0.2",
+    "ref": "refs/tags/1.0.2",
     "node_id": "MDM6UmVmMjMwOTY5NTk6cmVmcy90YWdzL2dvMS4wLjE=",
     "url": "https://api.github.com/repos/foo/bar/git/refs/tags/v1.0.2",
     "object": {
