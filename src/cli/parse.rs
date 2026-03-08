@@ -14,6 +14,7 @@ pub(crate) fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Resu
   let mut which = false;
   let mut add = false;
   let mut install = false;
+  let mut install_all = false;
   let mut reinstall = false;
   let mut test = false;
   let mut indicate_available = false;
@@ -50,6 +51,9 @@ pub(crate) fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Resu
       if &arg == "--install" {
         install = true;
         continue;
+      }
+      if &arg == "--install-all" {
+        return Ok(Command::InstallAll);
       }
       if &arg == "--optional" {
         optional = true;
@@ -102,7 +106,7 @@ pub(crate) fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Resu
       app_args.push(arg);
     }
   }
-  if multiple_true(&[which, indicate_available, install, reinstall, test, update, versions.is_some()]) {
+  if multiple_true(&[which, indicate_available, install, install_all, reinstall, test, update, versions.is_some()]) {
     return Err(UserError::MultipleCommandsGiven);
   }
   if update {
