@@ -12,7 +12,7 @@ mod hosting;
 mod installation;
 mod logging;
 mod platform;
-mod regexp;
+mod strings;
 mod subshell;
 mod yard;
 

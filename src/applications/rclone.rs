@@ -5,7 +5,7 @@ use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
-use crate::{Log, regexp};
+use crate::{Log, strings};
 
 #[derive(Clone)]
 pub(crate) struct Rclone {}
@@ -65,7 +65,7 @@ impl AppDefinition for Rclone {
 }
 
 fn extract_version(output: &str) -> Result<&str> {
-  regexp::first_capture(output, r"rclone v(\d+\.\d+\.\d+)")
+  strings::first_capture(output, r"rclone v(\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]

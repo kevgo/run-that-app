@@ -1,8 +1,8 @@
-use super::strip_prefix;
 use crate::Log;
 use crate::configuration::Version;
 use crate::error::{Result, UserError};
 use crate::logging::Event;
+use crate::strings::strip_prefix;
 use big_s::S;
 
 /// provides the latest official version of the given application on GitHub Releases

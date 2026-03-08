@@ -5,7 +5,7 @@ use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_tags;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
-use crate::{Log, filesystem, regexp};
+use crate::{Log, filesystem, strings};
 use big_s::S;
 use std::path;
 
@@ -103,11 +103,11 @@ impl AppDefinition for Go {
 }
 
 fn extract_version(output: &str) -> Result<&str> {
-  regexp::first_capture(output, r"go version go(\d+\.\d+\.\d+)")
+  strings::first_capture(output, r"go version go(\d+\.\d+\.\d+)")
 }
 
 fn parse_go_mod(text: &str) -> Result<&str> {
-  regexp::first_capture(text, r"(?m)^go\s+(\d+\.\d+)\s*$")
+  strings::first_capture(text, r"(?m)^go\s+(\d+\.\d+)\s*$")
 }
 
 #[cfg(test)]
