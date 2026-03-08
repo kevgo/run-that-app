@@ -51,6 +51,9 @@ pub(crate) fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Resu
         install = true;
         continue;
       }
+      if &arg == "--install-all" {
+        return Ok(Command::InstallAll);
+      }
       if &arg == "--optional" {
         optional = true;
         continue;

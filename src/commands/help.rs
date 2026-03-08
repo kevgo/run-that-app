@@ -23,6 +23,7 @@ pub(crate) fn print_options() {
 --help, -h                  display this help screen
 --include=<app>             include the given application in the PATH
 --install <app>             install the given application without running it
+--install-all               install all applications listed in the configuration file
 --optional                  if an app is not available for the current platform, do nothing
 --reinstall <app>           delete and then install the given application again
 --update                    updates the versions in run-that-app to the latest available
