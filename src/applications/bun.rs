@@ -13,6 +13,7 @@ pub(crate) struct Bun {}
 
 const ORG: &str = "oven-sh";
 const REPO: &str = "bun";
+const TAG_PREFIX: &str = "bun-v";
 
 impl AppDefinition for Bun {
   fn name(&self) -> ApplicationName {
@@ -35,7 +36,7 @@ impl AppDefinition for Bun {
     };
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/bun-v{version}/bun-{os}-{cpu}.zip").into(),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/bun-{os}-{cpu}.zip").into(),
         bin_folder: BinFolder::Subfolder {
           path: format!("bun-{os}-{cpu}").into(),
         },
@@ -44,11 +45,11 @@ impl AppDefinition for Bun {
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, "bun-v", log)
+    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, "bun-v", log)
+    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
