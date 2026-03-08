@@ -18,6 +18,6 @@ pub(crate) fn install_all(apps: &Apps) -> Result<ExitCode> {
     config_file: &config_file,
     log,
   };
-  let _ = load_or_install_apps(apps_to_install, apps, true, false, &ctx)?;
+  let _ = load_or_install_apps(&apps_to_install, apps, true, false, &ctx)?;
   Ok(ExitCode::SUCCESS)
 }
