@@ -167,9 +167,9 @@ mod tests {
     #[test]
     fn normal() {
       let give = "actionlint 1.2.3\n\
-                        dprint  2.3.4 # comment\n\
-                        mdbook 3.4.5 6.7.8\n\
-                        go system@1.21 1.22.1";
+                  dprint  2.3.4 # comment\n\
+                  mdbook 3.4.5 6.7.8\n\
+                  go system@1.21 1.22.1";
       let apps = applications::all();
       let actionlint = apps.lookup("actionlint").unwrap();
       let dprint = apps.lookup("dprint").unwrap();
