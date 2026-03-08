@@ -44,7 +44,7 @@ impl AppDefinition for Gofumpt {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/gofumpt_v{version}_{os}_{cpu}{ext}").into(),
         },
         Method::CompileGoSource {
-          import_path: format!("mvdan.cc/gofumpt@v{version}"),
+          import_path: format!("mvdan.cc/gofumpt@{TAG_PREFIX}{version}"),
         },
       ],
     }

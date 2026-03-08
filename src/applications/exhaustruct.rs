@@ -31,9 +31,9 @@ impl AppDefinition for Exhaustruct {
   fn run_method(&self, version: &Version, _platform: Platform) -> RunMethod {
     let major_version = version.major_version().unwrap_or(3);
     let import_path = if major_version >= 4 {
-      format!("dev.gaijin.team/go/exhaustruct/v{major_version}/cmd/exhaustruct@v{version}")
+      format!("dev.gaijin.team/go/exhaustruct/v{major_version}/cmd/exhaustruct@{TAG_PREFIX}{version}")
     } else {
-      format!("github.com/{ORG}/{REPO}/v{major_version}/cmd/exhaustruct@v{version}")
+      format!("github.com/{ORG}/{REPO}/v{major_version}/cmd/exhaustruct@{TAG_PREFIX}{version}")
     };
     RunMethod::ThisApp {
       install_methods: vec![Method::CompileGoSource { import_path }],

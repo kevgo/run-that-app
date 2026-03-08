@@ -45,7 +45,7 @@ impl AppDefinition for Ireturn {
           bin_folder: BinFolder::Root,
         },
         Method::CompileGoSource {
-          import_path: format!("github.com/{ORG}/{REPO}/cmd/ireturn@v{version}"),
+          import_path: format!("github.com/{ORG}/{REPO}/cmd/ireturn@{TAG_PREFIX}{version}"),
         },
       ],
     }

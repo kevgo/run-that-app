@@ -48,7 +48,7 @@ impl AppDefinition for NodePrune {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/node-prune_{version}_{os}_{cpu}.tar.gz").into(),
         },
         Method::CompileGoSource {
-          import_path: format!("github.com/tj/node-prune@v{version}"),
+          import_path: format!("github.com/tj/node-prune@{TAG_PREFIX}{version}"),
         },
       ],
     }

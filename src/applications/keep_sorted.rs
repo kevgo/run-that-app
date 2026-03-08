@@ -27,7 +27,7 @@ impl AppDefinition for KeepSorted {
   fn run_method(&self, version: &Version, _platform: Platform) -> RunMethod {
     RunMethod::ThisApp {
       install_methods: vec![Method::CompileGoSource {
-        import_path: format!("github.com/{ORG}/{REPO}@v{version}"),
+        import_path: format!("github.com/{ORG}/{REPO}@{TAG_PREFIX}{version}"),
       }],
     }
   }

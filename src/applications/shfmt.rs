@@ -44,7 +44,7 @@ impl AppDefinition for Shfmt {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/shfmt_v{version}_{os}_{cpu}{ext}").into(),
         },
         Method::CompileGoSource {
-          import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}"),
+          import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@{TAG_PREFIX}{version}"),
         },
       ],
     }
