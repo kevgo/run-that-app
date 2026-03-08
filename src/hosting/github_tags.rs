@@ -1,7 +1,7 @@
-use super::strip_prefix;
 use crate::Log;
 use crate::error::{Result, UserError};
 use crate::logging::Event;
+use crate::strings::strip_prefix;
 use big_s::S;
 
 pub(crate) fn all(org: &str, repo: &str, amount: usize, tag_prefix: &str, log: Log) -> Result<Vec<String>> {
