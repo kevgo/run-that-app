@@ -9,7 +9,7 @@ use std::process::ExitCode;
 pub(crate) fn install_all(apps: &Apps) -> Result<ExitCode> {
   let config_file = configuration::File::load(apps)?;
   let apps_to_install = config_file.apps.clone();
-  let log = logging::new(true);
+  let log = logging::new(false);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
   let ctx = RuntimeContext {
