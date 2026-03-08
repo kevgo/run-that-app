@@ -24,6 +24,7 @@ pub(crate) fn print_options() {
 --include=<app>             include the given application in the PATH
 --install <app>             install the given application without running it
 --optional                  if an app is not available for the current platform, do nothing
+--reinstall <app>           delete and then install the given application again
 --update                    updates the versions in run-that-app to the latest available
 --which <app>               displays the path to the installed executable of the given application
 --verbose, -v               display more details
