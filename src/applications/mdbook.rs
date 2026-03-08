@@ -25,23 +25,10 @@ impl AppDefinition for MdBook {
   }
 
   fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
-    let os = match platform.os {
-      Os::Linux => "unknown-linux-gnu",
-      Os::MacOS => "apple-darwin",
-      Os::Windows => "pc-windows-msvc",
-    };
-    let cpu = match platform.cpu {
-      Cpu::Arm64 => "aarch64",
-      Cpu::Intel64 => "x86_64",
-    };
-    let ext = match platform.os {
-      Os::Linux | Os::MacOS => "tar.gz",
-      Os::Windows => "zip",
-    };
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/mdbook-v{version}-{cpu}-{os}.{ext}").into(),
+          url: archive_url(version, platform).into(),
           bin_folder: BinFolder::Root,
         },
         Method::CompileRustSource {
@@ -72,6 +59,26 @@ impl AppDefinition for MdBook {
   }
 }
 
+fn archive_url(version: &Version, platform: Platform) -> String {
+  if platform.os == Os::Linux && platform.cpu == Cpu::Arm64 {
+    return format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/mdbook-v{version}-aarch64-unknown-linux-musl.tar.gz");
+  }
+  let os = match platform.os {
+    Os::Linux => "unknown-linux-gnu",
+    Os::MacOS => "apple-darwin",
+    Os::Windows => "pc-windows-msvc",
+  };
+  let cpu = match platform.cpu {
+    Cpu::Arm64 => "aarch64",
+    Cpu::Intel64 => "x86_64",
+  };
+  let ext = match platform.os {
+    Os::Linux | Os::MacOS => "tar.gz",
+    Os::Windows => "zip",
+  };
+  format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/mdbook-v{version}-{cpu}-{os}.{ext}")
+}
+
 fn extract_version(output: &str) -> Result<&str> {
   strings::first_capture(output, r"mdbook v(\d+\.\d+\.\d+)")
 }
@@ -91,7 +98,31 @@ mod tests {
     #[test]
     fn linux_arm() {
       let have = (MdBook {}).run_method(
-        &Version::from("0.4.37"),
+        &Version::from("0.5.2"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/rust-lang/mdBook/releases/download/v0.5.2/mdbook-v0.5.2-aarch64-unknown-linux-musl.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileRustSource {
+            crate_name: "mdbook",
+            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (MdBook {}).run_method(
+        &Version::from("0.5.2"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Intel64,
@@ -100,7 +131,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz".into(),
+            url: "https://github.com/rust-lang/mdBook/releases/download/v0.5.2/mdbook-v0.5.2-x86_64-unknown-linux-gnu.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {
@@ -125,6 +156,54 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: "https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-pc-windows-msvc.zip".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileRustSource {
+            crate_name: "mdbook",
+            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (MdBook {}).run_method(
+        &Version::from("0.5.2"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/rust-lang/mdBook/releases/download/v0.5.2/mdbook-v0.5.2-aarch64-apple-darwin.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileRustSource {
+            crate_name: "mdbook",
+            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (MdBook {}).run_method(
+        &Version::from("0.5.2"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/rust-lang/mdBook/releases/download/v0.5.2/mdbook-v0.5.2-x86_64-apple-darwin.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {
