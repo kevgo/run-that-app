@@ -56,7 +56,7 @@ impl AppDefinition for NodePrune {
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
     let tags = github_tags::all(ORG, REPO, amount, TAG_PREFIX, log)?;
-    Ok(tags.into_iter().map(|tag| Version::from(tag)).collect())
+    Ok(tags.into_iter().map(Version::from).collect())
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {

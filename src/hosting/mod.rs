@@ -9,7 +9,7 @@ pub(crate) mod pkg_go_dev;
 /// NOTE: normally this function would only consume and produce a &str.
 /// The way this function is used in this app, it's better to consume and provides an entire String.
 /// This saves an allocation if the string doesn't have a leading v.
-fn strip_prefix<'a, 'b>(name: &'a str, prefix: &'b str) -> &'a str {
+fn strip_prefix<'a>(name: &'a str, prefix: &str) -> &'a str {
   if let Some(stripped) = name.strip_prefix(prefix) { stripped } else { name }
 }
 
