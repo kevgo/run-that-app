@@ -13,6 +13,7 @@ pub(crate) struct Ghokin {}
 
 const ORG: &str = "antham";
 const REPO: &str = "ghokin";
+const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for Ghokin {
   fn name(&self) -> ApplicationName {
@@ -36,21 +37,21 @@ impl AppDefinition for Ghokin {
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/ghokin_{version}_{os}_{cpu}.tar.gz").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/ghokin_{version}_{os}_{cpu}.tar.gz").into(),
           bin_folder: BinFolder::Root,
         },
         Method::CompileGoSource {
-          import_path: format!("github.com/{ORG}/{REPO}/v3@v{version}"),
+          import_path: format!("github.com/{ORG}/{REPO}/v3@{TAG_PREFIX}{version}"),
         },
       ],
     }
   }
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, "v", log)
+    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, "v", log)
+    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {

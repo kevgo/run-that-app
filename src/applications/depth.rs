@@ -13,6 +13,7 @@ pub(crate) struct Depth {}
 
 const ORG: &str = "KyleBanks";
 const REPO: &str = "depth";
+const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for Depth {
   fn name(&self) -> ApplicationName {
@@ -40,21 +41,21 @@ impl AppDefinition for Depth {
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadExecutable {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/depth_{version}_{os}_{cpu}{ext}").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/depth_{version}_{os}_{cpu}{ext}").into(),
         },
         Method::CompileGoSource {
-          import_path: format!("github.com/{ORG}/{REPO}/cmd/depth@v{version}"),
+          import_path: format!("github.com/{ORG}/{REPO}/cmd/depth@{TAG_PREFIX}{version}"),
         },
       ],
     }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, "v", log)
+    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, "v", log)
+    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {

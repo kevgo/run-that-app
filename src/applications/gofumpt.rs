@@ -13,6 +13,7 @@ pub(crate) struct Gofumpt {}
 
 const ORG: &str = "mvdan";
 const REPO: &str = "gofumpt";
+const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for Gofumpt {
   fn name(&self) -> ApplicationName {
@@ -40,7 +41,7 @@ impl AppDefinition for Gofumpt {
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadExecutable {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/gofumpt_v{version}_{os}_{cpu}{ext}").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/gofumpt_v{version}_{os}_{cpu}{ext}").into(),
         },
         Method::CompileGoSource {
           import_path: format!("mvdan.cc/gofumpt@v{version}"),
@@ -50,11 +51,11 @@ impl AppDefinition for Gofumpt {
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, "v", log)
+    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, "v", log)
+    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {

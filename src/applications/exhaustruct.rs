@@ -13,6 +13,7 @@ pub(crate) struct Exhaustruct {}
 
 const ORG: &str = "GaijinEntertainment";
 const REPO: &str = "go-exhaustruct";
+const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for Exhaustruct {
   fn name(&self) -> ApplicationName {
@@ -24,7 +25,7 @@ impl AppDefinition for Exhaustruct {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, "v", log)
+    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
   }
 
   fn run_method(&self, version: &Version, _platform: Platform) -> RunMethod {
@@ -40,7 +41,7 @@ impl AppDefinition for Exhaustruct {
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, "v", log)
+    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
