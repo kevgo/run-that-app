@@ -1,5 +1,12 @@
 # run-that-app changelog
 
+### 0.30.0
+
+- fix mdbook artifact URLs
+- `--install-all` command
+- the config file now contains a comment linking to documentation
+- apps: bun, ruff
+
 ### 0.29.0
 
 - apps: fd
