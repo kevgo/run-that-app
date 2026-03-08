@@ -13,6 +13,7 @@ pub(crate) struct MdBookLinkCheck {}
 
 const ORG: &str = "Michael-F-Bryan";
 const REPO: &str = "mdbook-linkcheck";
+const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for MdBookLinkCheck {
   fn name(&self) -> ApplicationName {
@@ -36,7 +37,7 @@ impl AppDefinition for MdBookLinkCheck {
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/mdbook-linkcheck.{cpu}-{os}.zip").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/mdbook-linkcheck.{cpu}-{os}.zip").into(),
           bin_folder: BinFolder::Root,
         },
         Method::CompileRustSource {
@@ -48,11 +49,11 @@ impl AppDefinition for MdBookLinkCheck {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, log)
+    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, log)
+    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {

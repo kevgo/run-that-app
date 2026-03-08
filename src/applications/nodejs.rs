@@ -13,6 +13,7 @@ pub(crate) struct NodeJS {}
 
 pub(crate) const ORG: &str = "nodejs";
 pub(crate) const REPO: &str = "node";
+pub(crate) const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for NodeJS {
   fn name(&self) -> ApplicationName {
@@ -42,11 +43,11 @@ impl AppDefinition for NodeJS {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, log)
+    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, log)
+    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {

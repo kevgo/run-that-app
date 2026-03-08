@@ -12,6 +12,7 @@ pub(crate) struct Rclone {}
 
 const ORG: &str = "rclone";
 const REPO: &str = "rclone";
+const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for Rclone {
   fn name(&self) -> ApplicationName {
@@ -34,7 +35,7 @@ impl AppDefinition for Rclone {
     };
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/rclone-v{version}-{os}-{cpu}.zip").into(),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/rclone-v{version}-{os}-{cpu}.zip").into(),
         bin_folder: BinFolder::Subfolder {
           path: format!("rclone-v{version}-{os}-{cpu}").into(),
         },
@@ -43,11 +44,11 @@ impl AppDefinition for Rclone {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, log)
+    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, log)
+    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {

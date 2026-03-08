@@ -13,6 +13,7 @@ pub(crate) struct Shfmt {}
 
 const ORG: &str = "mvdan";
 const REPO: &str = "sh";
+const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for Shfmt {
   fn name(&self) -> ApplicationName {
@@ -40,21 +41,21 @@ impl AppDefinition for Shfmt {
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadExecutable {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/shfmt_v{version}_{os}_{cpu}{ext}").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/shfmt_v{version}_{os}_{cpu}{ext}").into(),
         },
         Method::CompileGoSource {
-          import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@v{version}"),
+          import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@{TAG_PREFIX}{version}"),
         },
       ],
     }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, log)
+    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, log)
+    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
