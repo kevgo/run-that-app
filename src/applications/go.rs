@@ -63,9 +63,10 @@ impl AppDefinition for Go {
     let tags = github_tags::all(ORG, REPO, 400, TAG_PREFIX, log)?;
     let mut go_tags: Vec<String> = tags
       .into_iter()
-      .filter(|tag| tag.starts_with(TAG_PREFIX))
       .filter(|tag| !tag.contains("rc"))
-      .map(|tag| tag.trim_start_matches(TAG_PREFIX).to_string())
+      .filter(|tag| !tag.contains("beta"))
+      .filter(|tag| !tag.starts_with("release"))
+      .filter(|tag| !tag.starts_with("weekly"))
       .collect();
     go_tags.sort_unstable_by(|a, b| human_sort::compare(b, a));
     if go_tags.len() > amount {
