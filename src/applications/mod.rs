@@ -39,6 +39,7 @@ mod shfmt;
 mod staticcheck;
 mod taplo;
 mod tikibase;
+mod ty;
 mod uv;
 
 use crate::Log;
@@ -92,6 +93,7 @@ pub(crate) fn all() -> Apps {
     Box::new(staticcheck::StaticCheck {}),
     Box::new(taplo::Taplo {}),
     Box::new(tikibase::Tikibase {}),
+    Box::new(ty::Ty {}),
     Box::new(uv::Uv {}),
     // keep-sorted end
   ])
