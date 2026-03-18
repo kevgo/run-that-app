@@ -94,6 +94,7 @@ typically in 1-2 seconds. Only the executable is stored on disk. Execution is
 - [staticcheck](https://staticcheck.dev)
 - [taplo](https://github.com/tamasfe/taplo)
 - [tikibase](https://github.com/kevgo/tikibase)
+- [ty](https://github.com/astral-sh/ty)
 - [uv](https://github.com/astral-sh/uv)
 
 </a>
