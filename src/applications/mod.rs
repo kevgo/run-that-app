@@ -2,6 +2,7 @@
 
 mod actionlint;
 mod alphavet;
+mod biome;
 mod bun;
 mod conc;
 mod contest;
@@ -54,6 +55,7 @@ pub(crate) fn all() -> Apps {
     // keep-sorted start
     Box::new(actionlint::ActionLint {}),
     Box::new(alphavet::Alphavet {}),
+    Box::new(biome::Biome {}),
     Box::new(bun::Bun {}),
     Box::new(conc::Conc {}),
     Box::new(contest::Contest {}),
