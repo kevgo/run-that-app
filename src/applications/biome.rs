@@ -32,7 +32,7 @@ impl AppDefinition for Biome {
     let os = match platform.os {
       Os::Linux => "linux",
       Os::MacOS => "darwin",
-      Os::Windows => "windows",
+      Os::Windows => "win32",
     };
     let ext = match platform.os {
       Os::Windows => ".exe",
@@ -40,7 +40,11 @@ impl AppDefinition for Biome {
     };
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadExecutable {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/biome-{os}-{cpu}{ext}").into(),
+        url: format!(
+          "https://github.com/{ORG}/{REPO}/releases/download/{tag}{version}/biome-{os}-{cpu}{ext}",
+          tag = urlencoding::encode(TAG_PREFIX)
+        )
+        .into(),
       }],
     }
   }
@@ -107,15 +111,9 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadExecutable {
-            url: "https://github.com/biomejs/biome/releases/download/%40biomejs%2Fbiome%402.4.8/biome-linux-x64".into(),
-          },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
-            bin_folder: BinFolder::Root,
-          },
-        ],
+        install_methods: vec![Method::DownloadExecutable {
+          url: "https://github.com/biomejs/biome/releases/download/%40biomejs%2Fbiome%402.4.8/biome-linux-x64".into(),
+        }],
       };
       assert_eq!(have, want);
     }
@@ -130,15 +128,9 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadExecutable {
-            url: "https://github.com/biomejs/biome/releases/download/%40biomejs%2Fbiome%402.4.8/biome-darwin-arm64".into(),
-          },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
-            bin_folder: BinFolder::Root,
-          },
-        ],
+        install_methods: vec![Method::DownloadExecutable {
+          url: "https://github.com/biomejs/biome/releases/download/%40biomejs%2Fbiome%402.4.8/biome-darwin-arm64".into(),
+        }],
       };
       assert_eq!(have, want);
     }
@@ -153,15 +145,9 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadExecutable {
-            url: "https://github.com/biomejs/biome/releases/download/%40biomejs%2Fbiome%402.4.8/biome-darwin-x64".into(),
-          },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
-            bin_folder: BinFolder::Root,
-          },
-        ],
+        install_methods: vec![Method::DownloadExecutable {
+          url: "https://github.com/biomejs/biome/releases/download/%40biomejs%2Fbiome%402.4.8/biome-darwin-x64".into(),
+        }],
       };
       assert_eq!(have, want);
     }
@@ -176,15 +162,9 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadExecutable {
-            url: "https://github.com/biomejs/biome/releases/download/%40biomejs%2Fbiome%402.4.8/biome-win32-arm64.exe".into(),
-          },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
-            bin_folder: BinFolder::Root,
-          },
-        ],
+        install_methods: vec![Method::DownloadExecutable {
+          url: "https://github.com/biomejs/biome/releases/download/%40biomejs%2Fbiome%402.4.8/biome-win32-arm64.exe".into(),
+        }],
       };
       assert_eq!(have, want);
     }
@@ -199,15 +179,9 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadExecutable {
-            url: "https://github.com/biomejs/biome/releases/download/%40biomejs%2Fbiome%402.4.8/biome-win32-x64.exe".into(),
-          },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
-            bin_folder: BinFolder::Root,
-          },
-        ],
+        install_methods: vec![Method::DownloadExecutable {
+          url: "https://github.com/biomejs/biome/releases/download/%40biomejs%2Fbiome%402.4.8/biome-win32-x64.exe".into(),
+        }],
       };
       assert_eq!(have, want);
     }

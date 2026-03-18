@@ -57,6 +57,7 @@ typically in 1-2 seconds. Only the executable is stored on disk. Execution is
 
 - [actionlint](https://rhysd.github.io/actionlint)
 - [alphavet](https://github.com/skx/alphavet)
+- [biome](https://github.com/biomejs/biome)
 - [bun](https://github.com/oven-sh/bun)
 - [conc](https://github.com/kevgo/conc)
 - [contest](https://github.com/contest-framework/server)
