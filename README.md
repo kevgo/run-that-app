@@ -77,6 +77,7 @@ typically in 1-2 seconds. Only the executable is stored on disk. Execution is
 - [golangci-lint](https://github.com/golangci/golangci-lint)
 - [goreleaser](https://goreleaser.com)
 - [govulncheck](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck)
+- [gum](https://github.com/charmbracelet/gum)
 - [ireturn](https://github.com/butuzov/ireturn)
 - [keep-sorted](https://github.com/google/keep-sorted)
 - [mdbook](https://github.com/rust-lang/mdBook)
