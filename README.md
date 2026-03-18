@@ -51,7 +51,7 @@ typically in 1-2 seconds. Only the executable is stored on disk. Execution is
 [![linux](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml)
 [![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
 
-## installable applications
+## supported applications
 
 <a type="apps">
 
