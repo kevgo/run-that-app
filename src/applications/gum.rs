@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::Log;
 use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
+use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
@@ -42,7 +42,9 @@ impl AppDefinition for Gum {
       install_methods: vec![
         Method::DownloadArchive {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/gum_{version}_{os}_{cpu}.{ext}").into(),
-          bin_folder: BinFolder::Root,
+          bin_folder: BinFolder::Subfolder {
+            path: format!("gum_{version}_{os}_{cpu}").into(),
+          },
         },
         Method::CompileGoSource {
           import_path: format!("github.com/{ORG}/{REPO}@latest"),
@@ -60,12 +62,18 @@ impl AppDefinition for Gum {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
-    if !output.contains("Clean and/or apply transformation on gherkin files") {
+    if !output.contains("A tool for glamorous shell scripts") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    // as of 3.4.0 ghokin's "version" command prints nothing
-    Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+    match extract_version(&executable.run_output(&["--version"], log)?) {
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
+    }
   }
+}
+
+fn extract_version(output: &str) -> Result<&str> {
+  strings::first_capture(output, r"gum version v(\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
