@@ -86,7 +86,6 @@ mod tests {
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use big_s::S;
 
     #[test]
     fn linux_arm() {
@@ -106,7 +105,7 @@ mod tests {
             },
           },
           Method::CompileGoSource {
-            import_path: S("github.com/charmbracelet/gum@latest"),
+            import_path: "github.com/charmbracelet/gum@latest".into(),
           },
         ],
       };
@@ -131,7 +130,7 @@ mod tests {
             },
           },
           Method::CompileGoSource {
-            import_path: S("github.com/charmbracelet/gum@latest"),
+            import_path: "github.com/charmbracelet/gum@latest".into(),
           },
         ],
       };
@@ -156,7 +155,7 @@ mod tests {
             },
           },
           Method::CompileGoSource {
-            import_path: S("github.com/charmbracelet/gum@latest"),
+            import_path: "github.com/charmbracelet/gum@latest".into(),
           },
         ],
       };
@@ -181,7 +180,7 @@ mod tests {
             },
           },
           Method::CompileGoSource {
-            import_path: S("github.com/charmbracelet/gum@latest"),
+            import_path: "github.com/charmbracelet/gum@latest".into(),
           },
         ],
       };
@@ -206,7 +205,7 @@ mod tests {
             },
           },
           Method::CompileGoSource {
-            import_path: S("github.com/charmbracelet/gum@latest"),
+            import_path: "github.com/charmbracelet/gum@latest".into(),
           },
         ],
       };
@@ -231,7 +230,7 @@ mod tests {
             },
           },
           Method::CompileGoSource {
-            import_path: S("github.com/charmbracelet/gum@latest"),
+            import_path: "github.com/charmbracelet/gum@latest".into(),
           },
         ],
       };
