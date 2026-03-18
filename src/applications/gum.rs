@@ -101,7 +101,9 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_arm64.tar.gz".into(),
-            bin_folder: BinFolder::Root,
+            bin_folder: BinFolder::Subfolder {
+              path: format!("gum_0.17.0_Linux_arm64").into(),
+            },
           },
           Method::CompileGoSource {
             import_path: S("github.com/charmbracelet/gum@latest"),
@@ -124,7 +126,9 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_x86_64.tar.gz".into(),
-            bin_folder: BinFolder::Root,
+            bin_folder: BinFolder::Subfolder {
+              path: format!("gum_0.17.0_Linux_x86_64").into(),
+            },
           },
           Method::CompileGoSource {
             import_path: S("github.com/charmbracelet/gum@latest"),
@@ -147,7 +151,9 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Darwin_arm64.tar.gz".into(),
-            bin_folder: BinFolder::Root,
+            bin_folder: BinFolder::Subfolder {
+              path: format!("gum_0.17.0_Darwin_arm64").into(),
+            },
           },
           Method::CompileGoSource {
             import_path: S("github.com/charmbracelet/gum@latest"),
@@ -170,7 +176,9 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Darwin_x86_64.tar.gz".into(),
-            bin_folder: BinFolder::Root,
+            bin_folder: BinFolder::Subfolder {
+              path: format!("gum_0.17.0_Darwin_x86_64").into(),
+            },
           },
           Method::CompileGoSource {
             import_path: S("github.com/charmbracelet/gum@latest"),
@@ -193,7 +201,9 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Windows_arm64.zip".into(),
-            bin_folder: BinFolder::Root,
+            bin_folder: BinFolder::Subfolder {
+              path: format!("gum_0.17.0_Windows_arm64").into(),
+            },
           },
           Method::CompileGoSource {
             import_path: S("github.com/charmbracelet/gum@latest"),
@@ -216,7 +226,9 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Windows_x86_64.zip".into(),
-            bin_folder: BinFolder::Root,
+            bin_folder: BinFolder::Subfolder {
+              path: format!("gum_0.17.0_Windows_x86_64").into(),
+            },
           },
           Method::CompileGoSource {
             import_path: S("github.com/charmbracelet/gum@latest"),
