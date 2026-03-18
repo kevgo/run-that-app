@@ -55,7 +55,7 @@ impl AppDefinition for Biome {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
-    if !output.contains("A program to find entries in your filesystem") {
+    if !output.contains("Biome official CLI.") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output(&["--version"], log)?) {
@@ -66,7 +66,7 @@ impl AppDefinition for Biome {
 }
 
 fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"fd (\d+\.\d+\.\d+)")
+  strings::first_capture(output, r"Version: (\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
