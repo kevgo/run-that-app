@@ -22,6 +22,7 @@ mod gofumpt;
 mod golangci_lint;
 mod goreleaser;
 mod govulnchec;
+mod gum;
 mod ireturn;
 mod keep_sorted;
 mod mdbook;
@@ -76,6 +77,7 @@ pub(crate) fn all() -> Apps {
     Box::new(golangci_lint::GolangCiLint {}),
     Box::new(goreleaser::Goreleaser {}),
     Box::new(govulnchec::Govulncheck {}),
+    Box::new(gum::Gum {}),
     Box::new(ireturn::Ireturn {}),
     Box::new(keep_sorted::KeepSorted {}),
     Box::new(mdbook::MdBook {}),
