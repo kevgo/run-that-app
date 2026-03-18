@@ -102,7 +102,7 @@ mod tests {
           Method::DownloadArchive {
             url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_arm64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder {
-              path: S("gum_0.17.0_Linux_arm64").into(),
+              path: "gum_0.17.0_Linux_arm64".into(),
             },
           },
           Method::CompileGoSource {
@@ -127,7 +127,7 @@ mod tests {
           Method::DownloadArchive {
             url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_x86_64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder {
-              path: S("gum_0.17.0_Linux_x86_64").into(),
+              path: "gum_0.17.0_Linux_x86_64".into(),
             },
           },
           Method::CompileGoSource {
@@ -152,7 +152,7 @@ mod tests {
           Method::DownloadArchive {
             url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Darwin_arm64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder {
-              path: S("gum_0.17.0_Darwin_arm64").into(),
+              path: "gum_0.17.0_Darwin_arm64".into(),
             },
           },
           Method::CompileGoSource {
@@ -177,7 +177,7 @@ mod tests {
           Method::DownloadArchive {
             url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Darwin_x86_64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder {
-              path: S("gum_0.17.0_Darwin_x86_64").into(),
+              path: "gum_0.17.0_Darwin_x86_64".into(),
             },
           },
           Method::CompileGoSource {
@@ -202,7 +202,7 @@ mod tests {
           Method::DownloadArchive {
             url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Windows_arm64.zip".into(),
             bin_folder: BinFolder::Subfolder {
-              path: S("gum_0.17.0_Windows_arm64").into(),
+              path: "gum_0.17.0_Windows_arm64".into(),
             },
           },
           Method::CompileGoSource {
@@ -227,7 +227,7 @@ mod tests {
           Method::DownloadArchive {
             url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Windows_x86_64.zip".into(),
             bin_folder: BinFolder::Subfolder {
-              path: S("gum_0.17.0_Windows_x86_64").into(),
+              path: "gum_0.17.0_Windows_x86_64".into(),
             },
           },
           Method::CompileGoSource {
