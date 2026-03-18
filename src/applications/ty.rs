@@ -9,15 +9,15 @@ use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct Ruff {}
+pub(crate) struct Ty {}
 
 const ORG: &str = "astral-sh";
-const REPO: &str = "ruff";
+const REPO: &str = "ty";
 const TAG_PREFIX: &str = "";
 
-impl AppDefinition for Ruff {
+impl AppDefinition for Ty {
   fn name(&self) -> ApplicationName {
-    "ruff".into()
+    "ty".into()
   }
 
   fn homepage(&self) -> &'static str {
@@ -40,9 +40,9 @@ impl AppDefinition for Ruff {
     };
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/ruff-{cpu}-{os}.{ext}").into(),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/ty-{cpu}-{os}.{ext}").into(),
         bin_folder: BinFolder::Subfolder {
-          path: format!("ruff-{cpu}-{os}").into(),
+          path: format!("ty-{cpu}-{os}").into(),
         },
       }],
     }
@@ -69,7 +69,7 @@ impl AppDefinition for Ruff {
 }
 
 fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"ruff (\d+\.\d+\.\d+)")
+  strings::first_capture(output, r"ty (\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
@@ -78,36 +78,16 @@ mod tests {
 
   mod install_methods {
     use crate::applications::AppDefinition;
-    use crate::applications::ruff::Ruff;
+    use crate::applications::ty::Ty;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
-    fn macos_arm() {
-      let have = (Ruff {}).run_method(
-        &Version::from("0.15.5"),
-        Platform {
-          os: Os::MacOS,
-          cpu: Cpu::Arm64,
-        },
-      );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-aarch64-apple-darwin.tar.gz".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "ruff-aarch64-apple-darwin".into(),
-          },
-        }],
-      };
-      assert_eq!(have, want);
-    }
-
-    #[test]
     fn linux_arm() {
-      let have = (Ruff {}).run_method(
-        &Version::from("0.15.5"),
+      let have = (Ty {}).run_method(
+        &Version::from("0.0.23"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Arm64,
@@ -115,9 +95,89 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-aarch64-unknown-linux-gnu.tar.gz".into(),
+          url: "https://github.com/astral-sh/ty/releases/download/0.0.23/ty-aarch64-unknown-linux-gnu.tar.gz".into(),
           bin_folder: BinFolder::Subfolder {
-            path: "ruff-aarch64-unknown-linux-gnu".into(),
+            path: "ty-aarch64-unknown-linux-gnu".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (Ty {}).run_method(
+        &Version::from("0.0.23"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/astral-sh/ty/releases/download/0.0.23/ty-x86_64-unknown-linux-gnu.tar.gz".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "ty-x86_64-unknown-linux-gnu".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (Ty {}).run_method(
+        &Version::from("0.0.23"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/astral-sh/ty/releases/download/0.0.23/ty-aarch64-apple-darwin.tar.gz".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "ty-aarch64-apple-darwin".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (Ty {}).run_method(
+        &Version::from("0.0.23"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/astral-sh/ty/releases/download/0.0.23/ty-x86_64-apple-darwin.tar.gz".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "ty-x86_64-apple-darwin".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (Ty {}).run_method(
+        &Version::from("0.0.23"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/astral-sh/ty/releases/download/0.0.23/ty-aarch64-pc-windows-msvc.zip".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "ty-aarch64-pc-windows-msvc".into(),
           },
         }],
       };
@@ -126,8 +186,8 @@ mod tests {
 
     #[test]
     fn windows_intel() {
-      let have = (Ruff {}).run_method(
-        &Version::from("0.15.5"),
+      let have = (Ty {}).run_method(
+        &Version::from("0.0.23"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
@@ -135,9 +195,9 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-x86_64-pc-windows-msvc.zip".into(),
+          url: "https://github.com/astral-sh/ty/releases/download/0.0.23/ty-x86_64-pc-windows-msvc.zip".into(),
           bin_folder: BinFolder::Subfolder {
-            path: "ruff-x86_64-pc-windows-msvc".into(),
+            path: "ty-x86_64-pc-windows-msvc".into(),
           },
         }],
       };
@@ -147,7 +207,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("ruff 0.15.5"), Ok("0.15.5"));
+    assert_eq!(super::extract_version("ty 0.0.23"), Ok("0.0.23"));
     assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
