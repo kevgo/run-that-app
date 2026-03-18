@@ -81,7 +81,7 @@ mod tests {
     use crate::applications::biome::Biome;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
-    use crate::installation::{BinFolder, Method};
+    use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
