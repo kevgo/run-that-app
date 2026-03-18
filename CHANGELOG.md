@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+### 0.31.0
+
+- apps: biome, gum, ty
+
 ### 0.30.0
 
 - fix mdbook artifact URLs
