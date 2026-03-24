@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+#### 0.23.0
+
+- apps: rumdl
+
 ### 0.31.0
 
 - apps: biome, gum, ty
