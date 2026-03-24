@@ -1,6 +1,6 @@
 # run-that-app changelog
 
-#### 0.23.0
+#### 0.32.0
 
 - apps: rumdl
 
