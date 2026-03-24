@@ -34,6 +34,7 @@ mod npx;
 mod rclone;
 mod ripgrep;
 mod ruff;
+mod rumdl;
 mod scc;
 mod shellcheck;
 mod shfmt;
@@ -89,6 +90,7 @@ pub(crate) fn all() -> Apps {
     Box::new(rclone::Rclone {}),
     Box::new(ripgrep::RipGrep {}),
     Box::new(ruff::Ruff {}),
+    Box::new(rumdl::Rumdl {}),
     Box::new(scc::Scc {}),
     Box::new(shellcheck::ShellCheck {}),
     Box::new(shfmt::Shfmt {}),

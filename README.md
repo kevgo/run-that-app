@@ -89,6 +89,7 @@ typically in 1-2 seconds. Only the executable is stored on disk. Execution is
 - [rclone](https://rclone.org)
 - [ripgrep](https://github.com/BurntSushi/ripgrep)
 - [ruff](https://github.com/astral-sh/ruff)
+- [rumdl](https://github.com/rvben/rumdl)
 - [scc](https://github.com/boyter/scc)
 - [shellcheck](https://www.shellcheck.net)
 - [shfmt](https://github.com/mvdan/sh)
