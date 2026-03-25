@@ -2,11 +2,9 @@
 set -e
 
 print_welcome() {
-	echo "RUN-THAT-APP DOWNLOAD SCRIPT"
-	echo
-	echo "This script is under development. Please report issues at"
-	echo "https://github.com/kevgo/run-that-app/issues"
-	echo
+	version=$1
+	name=$2
+	echo "Installing run-that-app $version as $name ..."
 }
 
 VERSION="0.33.0"               # the default version of run-that-app to download
@@ -31,7 +29,7 @@ main() {
 		esac
 	done
 
-	print_welcome
+	print_welcome "$VERSION" "$DEST_FILENAME"
 
 	need_cmd uname
 	need_cmd curl
