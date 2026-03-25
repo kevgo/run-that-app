@@ -1,5 +1,12 @@
 # run-that-app changelog
 
+### 0.33.0
+
+BREAKING CHANGE: the downloader now requires to provide the version to install via the named `--version` parameter
+
+- the downloader now supports the `--name` argument to save the binary under a specific name
+- apps: pyrefly
+
 ### 0.32.0
 
 - apps: rumdl
