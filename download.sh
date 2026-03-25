@@ -2,7 +2,7 @@
 set -e
 
 print_welcome() {
-  version=$1
+	version=$1
 	name=$2
 	echo "Installing run-that-app $version as $name ..."
 }
