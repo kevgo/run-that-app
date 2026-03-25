@@ -9,9 +9,26 @@ print_welcome() {
 	echo
 }
 
-VERSION="${1:-0.32.0}" # the version of run-that-app to download
-DEST_FILENAME="${2:-rta}"
+VERSION="0.32.0" # the version of run-that-app to download
+DEST_FILENAME="rta"
 TMP_DIR=./run_that_app_install
+
+while [ -n "$1" ]; do
+	case "$1" in
+		--version)
+			VERSION="$2"
+			shift 2
+			;;
+		--filename)
+			DEST_FILENAME="$2"
+			shift 2
+			;;
+		*)
+			echo "Unknown argument: $1"
+			exit 2
+			;;
+	esac
+done
 
 main() {
 	print_welcome
