@@ -31,6 +31,7 @@ mod node_prune;
 mod nodejs;
 mod npm;
 mod npx;
+mod pyrefly;
 mod rclone;
 mod ripgrep;
 mod ruff;
@@ -87,6 +88,7 @@ pub(crate) fn all() -> Apps {
     Box::new(nodejs::NodeJS {}),
     Box::new(npm::Npm {}),
     Box::new(npx::Npx {}),
+    Box::new(pyrefly::Pyrefly {}),
     Box::new(rclone::Rclone {}),
     Box::new(ripgrep::RipGrep {}),
     Box::new(ruff::Ruff {}),
