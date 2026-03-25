@@ -86,6 +86,7 @@ typically in 1-2 seconds. Only the executable is stored on disk. Execution is
 - [node](https://nodejs.org)
 - [npm](https://www.npmjs.com)
 - [npx](https://www.npmjs.com)
+- [pyrefly](https://pyrefly.org)
 - [rclone](https://rclone.org)
 - [ripgrep](https://github.com/BurntSushi/ripgrep)
 - [ruff](https://github.com/astral-sh/ruff)

@@ -21,7 +21,7 @@ impl AppDefinition for Pyrefly {
   }
 
   fn homepage(&self) -> &'static str {
-    formatcp!("https://github.com/{ORG}/{REPO}")
+    formatcp!("https://pyrefly.org")
   }
 
   fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
