@@ -14,6 +14,7 @@ DEST_FILENAME="rta"            # the default name of the downloaded file
 TMP_DIR=./run_that_app_install # the temporary directory to download the archive to
 
 main() {
+	# parse the arguments
 	while [ -n "$1" ]; do
 		case "$1" in
 		--version)
