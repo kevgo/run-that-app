@@ -9,27 +9,27 @@ print_welcome() {
 	echo
 }
 
-VERSION="0.32.0"                # the default version of run-that-app to download
-DEST_FILENAME="rta"             # the default name of the downloaded file
-TMP_DIR=./run_that_app_install  # the temporary directory to download the archive to
-
-while [ -n "$1" ]; do
-	case "$1" in
-	--version)
-		VERSION="$2"
-		shift 2
-		;;
-	--name)
-		DEST_FILENAME="$2"
-		shift 2
-		;;
-	*)
-		err "Unknown argument: $1"
-		;;
-	esac
-done
+VERSION="0.32.0"               # the default version of run-that-app to download
+DEST_FILENAME="rta"            # the default name of the downloaded file
+TMP_DIR=./run_that_app_install # the temporary directory to download the archive to
 
 main() {
+	while [ -n "$1" ]; do
+		case "$1" in
+		--version)
+			VERSION="$2"
+			shift 2
+			;;
+		--name)
+			DEST_FILENAME="$2"
+			shift 2
+			;;
+		*)
+			err "Unknown argument: $1"
+			;;
+		esac
+	done
+
 	print_welcome
 
 	need_cmd uname
