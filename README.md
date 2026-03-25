@@ -104,10 +104,19 @@ typically in 1-2 seconds. Only the executable is stored on disk. Execution is
 
 ## installation
 
+The installer places the _run-that-app_ executable into the current directory.
+To install elsewhere, execute the installer from that directory.
+
 Linux and macOS:
 
 ```sh
 curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh
+```
+
+To download a specific version or save under a specific filename:
+
+```sh
+curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh -S -- [--version <version>] [--name <filename>]
 ```
 
 Windows (Powershell):
@@ -115,9 +124,6 @@ Windows (Powershell):
 ```powershell
 Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kevgo/run-that-app/main/download.ps1" -UseBasicParsing).Content
 ```
-
-The installer places the _run-that-app_ executable into the current directory.
-To install elsewhere, execute the installer from that directory.
 
 Compile from source:
 

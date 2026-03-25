@@ -9,10 +9,28 @@ print_welcome() {
 	echo
 }
 
-VERSION="${1:-0.32.0}" # the version of run-that-app to download
-TMP_DIR=./run_that_app_install
+VERSION="0.32.0"               # the default version of run-that-app to download
+DEST_FILENAME="rta"            # the default name of the downloaded file
+TMP_DIR=./run_that_app_install # the temporary directory to download the archive to
 
 main() {
+	# parse the arguments
+	while [ -n "$1" ]; do
+		case "$1" in
+		--version)
+			VERSION="$2"
+			shift 2
+			;;
+		--name)
+			DEST_FILENAME="$2"
+			shift 2
+			;;
+		*)
+			err "Unknown argument: $1"
+			;;
+		esac
+	done
+
 	print_welcome
 
 	need_cmd uname
@@ -27,10 +45,11 @@ main() {
 		err "Unsupported CPU architecture, please install from source."
 	fi
 	DOWNLOAD_URL="$(download_url "$OS" "$CPU")"
-	DEST_FILE=$(executable_filename "$OS")
+	SRC_FILE=$(executable_filename "rta" "$OS")
+	DEST_FILE=$(executable_filename "$DEST_FILENAME" "$OS")
 
 	check_already_installed "$DEST_FILE"
-	download_and_extract "$DOWNLOAD_URL" "$OS" "$DEST_FILE"
+	download_and_extract "$DOWNLOAD_URL" "$OS" "$SRC_FILE" "$DEST_FILE"
 
 	echo
 	echo "Successfully installed run-that-app $VERSION for $OS/$CPU."
@@ -39,17 +58,18 @@ main() {
 download_and_extract() {
 	URL=$1
 	OS=$2
-	FILENAME=$3
+	SRC_FILENAME=$3
+	DEST_FILENAME=$4
 	create_folder "$TMP_DIR"
 	if [ "$OS" = "windows" ]; then
 		need_cmd unzip
 		curl -Lo "$TMP_DIR/run-that-app.zip" "$URL"
-		(cd $TMP_DIR && unzip run-that-app.zip "$FILENAME")
+		(cd $TMP_DIR && unzip run-that-app.zip "$SRC_FILENAME")
 	else
 		need_cmd tar
 		curl -L "$URL" | tar xz --directory "$TMP_DIR"
 	fi
-	mv "$TMP_DIR/$FILENAME" .
+	mv "$TMP_DIR/$SRC_FILENAME" "$DEST_FILENAME"
 	rm -rf $TMP_DIR
 }
 
@@ -96,11 +116,12 @@ create_folder() {
 }
 
 executable_filename() {
-	OS=$1
+	FILENAME=$1
+	OS=$2
 	if [ "$OS" = "windows" ]; then
-		echo "rta.exe"
+		echo "$FILENAME.exe"
 	else
-		echo "rta"
+		echo "$FILENAME"
 	fi
 }
 
