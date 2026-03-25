@@ -29,7 +29,7 @@ main() {
 		esac
 	done
 
-	print_welcome
+	print_welcome "$VERSION" "$DEST_FILENAME"
 
 	need_cmd uname
 	need_cmd curl
