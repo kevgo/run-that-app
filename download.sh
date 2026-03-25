@@ -116,12 +116,12 @@ create_folder() {
 }
 
 executable_filename() {
-	DEST_FILENAME=$1
+	FILENAME=$1
 	OS=$2
 	if [ "$OS" = "windows" ]; then
-		echo "$DEST_FILE.exe"
+		echo "$FILENAME.exe"
 	else
-		echo "$DEST_FILENAME"
+		echo "$FILENAME"
 	fi
 }
 
