@@ -112,7 +112,7 @@ Linux and macOS:
 curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh
 ```
 
-To download a specific version or filename:
+To download a specific version or save under a specific filename:
 
 ```sh
 curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh -S -- [--version <version>] [--name <filename>]
