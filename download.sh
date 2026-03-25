@@ -9,9 +9,9 @@ print_welcome() {
 	echo
 }
 
-VERSION="0.32.0"    # the default version of run-that-app to download
-DEST_FILENAME="rta" # the default name of the downloaded file
-TMP_DIR=./run_that_app_install
+VERSION="0.32.0"                # the default version of run-that-app to download
+DEST_FILENAME="rta"             # the default name of the downloaded file
+TMP_DIR=./run_that_app_install  # the temporary directory to download the archive to
 
 while [ -n "$1" ]; do
 	case "$1" in
