@@ -9,8 +9,8 @@ print_welcome() {
 	echo
 }
 
-VERSION="0.32.0" # the version of run-that-app to download
-DEST_FILENAME="rta"
+VERSION="0.32.0"    # the default version of run-that-app to download
+DEST_FILENAME="rta" # the default name of the downloaded file
 TMP_DIR=./run_that_app_install
 
 while [ -n "$1" ]; do

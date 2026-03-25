@@ -115,7 +115,7 @@ curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh
 To download a specific version or filename:
 
 ```sh
-curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh -S -- --version <version> --name <filename>
+curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh -S -- [--version <version>] [--name <filename>]
 ```
 
 Windows (Powershell):
