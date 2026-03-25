@@ -16,10 +16,12 @@ TMP_DIR=./run_that_app_install
 while [ -n "$1" ]; do
 	case "$1" in
 		--version)
+		  echo "Setting version to $2"
 			VERSION="$2"
 			shift 2
 			;;
 		--name)
+			echo "Setting name to $2"
 			DEST_FILENAME="$2"
 			shift 2
 			;;
