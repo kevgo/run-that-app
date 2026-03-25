@@ -56,7 +56,7 @@ impl AppDefinition for Pyrefly {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
-    if !output.contains("An extremely fast Python type checker.") {
+    if !output.contains("A fast Python type checker") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output(&["--version"], log)?) {
