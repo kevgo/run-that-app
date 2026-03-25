@@ -19,7 +19,7 @@ while [ -n "$1" ]; do
 			VERSION="$2"
 			shift 2
 			;;
-		--filename)
+		--name)
 			DEST_FILENAME="$2"
 			shift 2
 			;;
