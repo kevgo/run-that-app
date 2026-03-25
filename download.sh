@@ -10,6 +10,7 @@ print_welcome() {
 }
 
 VERSION="${1:-0.32.0}" # the version of run-that-app to download
+DEST_FILENAME="${2:-rta}"
 TMP_DIR=./run_that_app_install
 
 main() {
@@ -27,7 +28,7 @@ main() {
 		err "Unsupported CPU architecture, please install from source."
 	fi
 	DOWNLOAD_URL="$(download_url "$OS" "$CPU")"
-	DEST_FILE=$(executable_filename "$OS")
+	DEST_FILE=$(executable_filename "$DEST_FILENAME" "$OS")
 
 	check_already_installed "$DEST_FILE"
 	download_and_extract "$DOWNLOAD_URL" "$OS" "$DEST_FILE"
@@ -96,11 +97,12 @@ create_folder() {
 }
 
 executable_filename() {
-	OS=$1
+	DEST_FILENAME=$1
+	OS=$2
 	if [ "$OS" = "windows" ]; then
-		echo "rta.exe"
+		echo "$DEST_FILE.exe"
 	else
-		echo "rta"
+		echo "$DEST_FILENAME"
 	fi
 }
 
