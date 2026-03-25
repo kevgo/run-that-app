@@ -6,7 +6,6 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, strings};
-use const_format::formatcp;
 
 #[derive(Clone)]
 pub(crate) struct Pyrefly {}
@@ -21,7 +20,7 @@ impl AppDefinition for Pyrefly {
   }
 
   fn homepage(&self) -> &'static str {
-    formatcp!("https://pyrefly.org")
+    "https://pyrefly.org"
   }
 
   fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
