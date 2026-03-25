@@ -112,16 +112,10 @@ Linux and macOS:
 curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh
 ```
 
-To download a specific version:
+To download a specific version or filename:
 
 ```sh
-curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh -S <version>
-```
-
-To set the name of the downloaded file to something different than "rta":
-
-```sh
-curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh -S <version> <filename>
+curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh -S -- --version <version> --name <filename>
 ```
 
 Windows (Powershell):
