@@ -9,5 +9,4 @@
   ```bash
   git checkout main && git tag v0.34.0 && git push --tags
   ```
-
 - the CI server creates the release fully automatically
