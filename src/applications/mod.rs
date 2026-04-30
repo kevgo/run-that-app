@@ -39,6 +39,7 @@ mod rumdl;
 mod scc;
 mod shellcheck;
 mod shfmt;
+mod snyk;
 mod staticcheck;
 mod taplo;
 mod tikibase;
@@ -96,6 +97,7 @@ pub(crate) fn all() -> Apps {
     Box::new(scc::Scc {}),
     Box::new(shellcheck::ShellCheck {}),
     Box::new(shfmt::Shfmt {}),
+    Box::new(snyk::Snyk {}),
     Box::new(staticcheck::StaticCheck {}),
     Box::new(taplo::Taplo {}),
     Box::new(tikibase::Tikibase {}),
