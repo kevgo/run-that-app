@@ -55,7 +55,7 @@ impl AppDefinition for Snyk {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
-    if !output.contains("shfmt formats shell programs") {
+    if !output.contains("Snyk CLI scans and monitors your projects for security vulnerabilities and license issues") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output(&["--version"], log)?) {
