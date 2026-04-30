@@ -127,7 +127,7 @@ Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kev
 
 Compile from source:
 
-```
+```sh
 cargo install --git https://github.com/kevgo/run-that-app
 ```
 
@@ -153,7 +153,7 @@ following arguments are passed through to the application.
 Run [ShellCheck](https://shellcheck.net) version `0.9.0` with arguments
 `--color=always myscript.sh`:
 
-```bash
+```sh
 rta shellcheck@0.9.0 --color=always myscript.sh
 ```
 
@@ -172,7 +172,7 @@ failing the command.
 
 Example: run ShellCheck only if it is available on the current platform:
 
-```bash
+```sh
 rta --optional shellcheck@0.9.0 myscript.sh
 ```
 
@@ -229,7 +229,7 @@ rta --from-source <app>
 _Run-that-app_ supports a configuration file named `run-that-app`, using the
 [asdf version file format](https://asdf-vm.com/manage/configuration.html):
 
-```
+```sh
 actionlint 1.6.26
 shellcheck 0.9.0
 ```
@@ -237,7 +237,7 @@ shellcheck 0.9.0
 With this file in place, you no longer need to be specify the version
 explicitly:
 
-```bash
+```sh
 rta actionlint
 ```
 
@@ -248,7 +248,7 @@ avoid interference.
 
 Add an application at its latest version (creates the config file if needed):
 
-```
+```sh
 rta --add actionlint
 ```
 
@@ -256,7 +256,7 @@ rta --add actionlint
 
 Update all configured applications to their latest versions:
 
-```
+```sh
 rta --update
 ```
 
@@ -265,7 +265,7 @@ rta --update
 _Run-that-app_ can reuse tools already installed on your system. The executable
 must be present in the PATH, and the version must be declared as `system`.
 
-```
+```sh
 go system 1.21.3
 ```
 
@@ -283,7 +283,7 @@ go system@1.21.* 1.21.3
 Some tools define their version in project files (e.g. Go via `go.mod`). Setting
 the version to `auto` enables automatic detection:
 
-```
+```sh
 go auto
 ```
 
