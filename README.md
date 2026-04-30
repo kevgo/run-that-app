@@ -94,6 +94,7 @@ typically in 1-2 seconds. Only the executable is stored on disk. Execution is
 - [scc](https://github.com/boyter/scc)
 - [shellcheck](https://www.shellcheck.net)
 - [shfmt](https://github.com/mvdan/sh)
+- [snyk](https://github.com/snyk/cli)
 - [staticcheck](https://staticcheck.dev)
 - [taplo](https://github.com/tamasfe/taplo)
 - [tikibase](https://github.com/kevgo/tikibase)
