@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+## 0.34.0
+
+- app: snyk
+
 ### 0.33.0
 
 BREAKING CHANGE: the downloader now requires to provide the version to install via the named `--version` parameter
