@@ -7,7 +7,7 @@ print_welcome() {
 	echo "Installing run-that-app $version as $name ..."
 }
 
-VERSION="0.33.0"               # the default version of run-that-app to download
+VERSION="0.34.0"               # the default version of run-that-app to download
 DEST_FILENAME="rta"            # the default name of the downloaded file
 TMP_DIR=./run_that_app_install # the temporary directory to download the archive to
 
