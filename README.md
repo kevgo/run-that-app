@@ -341,20 +341,20 @@ Example Makefile integration:
 ```make
 RTA_VERSION = 0.34.0  # version of run-that-app to use
 
-# an example Make target that uses run-that-app
-test: tools/rta@${RTA_VERSION}
-	tools/rta actionlint
+RTA = tools/rta@${RTA_VERSION}
+ACTIONLINT = $(RTA} actionlint
+
+# an example Make target that uses run-that-app to run actionlint
+test: ${RTA}
+	$(ACTIONLINT) -verbose
 
 # this Make target installs run-that-app if it isn't installed or has the wrong version
-tools/rta@${RTA_VERSION}:
-	@rm -f tools/rta*
-	@mkdir -p tools
-	@(cd tools && curl https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh)
-	@mv tools/rta tools/rta@${RUN_THAT_APP_VERSION}
-	@ln -s rta@${RUN_THAT_APP_VERSION} tools/rta
+${RTA}:
+	rm .tools/rta@* 2>/dev/null || true
+	curl -fSL https://raw.githubusercontent.com/kevgo/run-that-app/main/download.sh | sh -s -- --version ${RTA_VERSION} --name $(RTA)
 ```
 
-Add `tools/rta*` to `.gitignore`.
+Add `tools/rta@*` to `.gitignore`.
 
 ### Q&A
 
