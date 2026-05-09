@@ -78,14 +78,13 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
 
   mod run_method {
-    use std::path::MAIN_SEPARATOR;
-
     use crate::applications::AppDefinition;
     use crate::applications::gh::Gh;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
+    use std::path::MAIN_SEPARATOR;
 
     #[test]
     fn linux_arm() {
@@ -102,10 +101,7 @@ mod tests {
           install_methods: vec![Method::DownloadArchive {
             url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz".into(),
             bin_folder: BinFolder::Subfolders {
-              options: vec![
-                "bin".into(),
-                format!("gh_2.39.1_linux_arm64{sep}bin").into(),
-              ],
+              options: vec!["bin".into(), format!("gh_2.39.1_linux_arm64{sep}bin").into(),],
             },
           }],
         },
@@ -127,10 +123,7 @@ mod tests {
           install_methods: vec![Method::DownloadArchive {
             url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_amd64.tar.gz".into(),
             bin_folder: BinFolder::Subfolders {
-              options: vec![
-                "bin".into(),
-                format!("gh_2.39.1_linux_amd64{sep}bin").into(),
-              ],
+              options: vec!["bin".into(), format!("gh_2.39.1_linux_amd64{sep}bin").into(),],
             },
           }],
         },
@@ -152,10 +145,7 @@ mod tests {
           install_methods: vec![Method::DownloadArchive {
             url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_macOS_arm64.zip".into(),
             bin_folder: BinFolder::Subfolders {
-              options: vec![
-                "bin".into(),
-                format!("gh_2.39.1_macOS_arm64{sep}bin").into(),
-              ],
+              options: vec!["bin".into(), format!("gh_2.39.1_macOS_arm64{sep}bin").into(),],
             },
           }],
         },
@@ -177,10 +167,7 @@ mod tests {
           install_methods: vec![Method::DownloadArchive {
             url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_macOS_amd64.zip".into(),
             bin_folder: BinFolder::Subfolders {
-              options: vec![
-                "bin".into(),
-                format!("gh_2.39.1_macOS_amd64{sep}bin").into(),
-              ],
+              options: vec!["bin".into(), format!("gh_2.39.1_macOS_amd64{sep}bin").into(),],
             },
           }],
         },
@@ -202,10 +189,7 @@ mod tests {
           install_methods: vec![Method::DownloadArchive {
             url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_arm64.zip".into(),
             bin_folder: BinFolder::Subfolders {
-              options: vec![
-                "bin".into(),
-                format!("gh_2.39.1_windows_arm64{sep}bin").into(),
-              ],
+              options: vec!["bin".into(), format!("gh_2.39.1_windows_arm64{sep}bin").into(),],
             },
           }],
         },
@@ -227,10 +211,7 @@ mod tests {
           install_methods: vec![Method::DownloadArchive {
             url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip".into(),
             bin_folder: BinFolder::Subfolders {
-              options: vec![
-                "bin".into(),
-                format!("gh_2.39.1_windows_amd64{sep}bin").into(),
-              ],
+              options: vec!["bin".into(), format!("gh_2.39.1_windows_amd64{sep}bin").into(),],
             },
           }],
         },

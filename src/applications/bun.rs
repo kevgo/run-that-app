@@ -112,9 +112,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/oven-sh/bun/releases/download/bun-v1.3.8/bun-linux-x64.zip".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "bun-linux-x64".into(),
-          },
+          bin_folder: BinFolder::Subfolder { path: "bun-linux-x64".into() },
         }],
       };
       assert_eq!(have, want);
@@ -152,9 +150,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/oven-sh/bun/releases/download/bun-v1.3.8/bun-darwin-x64.zip".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "bun-darwin-x64".into(),
-          },
+          bin_folder: BinFolder::Subfolder { path: "bun-darwin-x64".into() },
         }],
       };
       assert_eq!(have, want);

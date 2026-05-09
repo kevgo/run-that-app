@@ -114,14 +114,13 @@ fn parse_go_mod(text: &str) -> Result<&str> {
 mod tests {
 
   mod run_method {
-    use std::path::MAIN_SEPARATOR;
-
     use crate::applications::AppDefinition;
     use crate::applications::go::Go;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
+    use std::path::MAIN_SEPARATOR;
 
     #[test]
     fn linux_arm() {
