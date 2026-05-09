@@ -55,7 +55,7 @@ impl AppDefinition for Yamlfmt {
     if !output.contains("yamlfmt is a simple command line tool for formatting yaml files.") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    let output = executable.run_output(&["version"], log)?;
+    let output = executable.run_output(&["-version"], log)?;
     match extract_version(&output) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
