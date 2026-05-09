@@ -46,8 +46,8 @@ impl AppDefinition for Fd {
             path: format!("fd-{TAG_PREFIX}{version}-{cpu}-{os}").into(),
           },
         },
-        Method::CompileRustSource {
-          crate_name: "fd-find",
+        Method::CompileRustCrate {
+          name: "fd-find",
           bin_folder: BinFolder::Root,
         },
       ],
@@ -106,8 +106,8 @@ mod tests {
               path: "fd-v10.3.0-aarch64-unknown-linux-gnu".into(),
             },
           },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
+          Method::CompileRustCrate {
+            name: "fd-find",
             bin_folder: BinFolder::Root,
           },
         ],
@@ -132,8 +132,8 @@ mod tests {
               path: "fd-v10.3.0-x86_64-unknown-linux-gnu".into(),
             },
           },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
+          Method::CompileRustCrate {
+            name: "fd-find",
             bin_folder: BinFolder::Root,
           },
         ],
@@ -158,8 +158,8 @@ mod tests {
               path: "fd-v10.3.0-aarch64-apple-darwin".into(),
             },
           },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
+          Method::CompileRustCrate {
+            name: "fd-find",
             bin_folder: BinFolder::Root,
           },
         ],
@@ -184,8 +184,8 @@ mod tests {
               path: "fd-v10.3.0-x86_64-apple-darwin".into(),
             },
           },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
+          Method::CompileRustCrate {
+            name: "fd-find",
             bin_folder: BinFolder::Root,
           },
         ],
@@ -210,8 +210,8 @@ mod tests {
               path: "fd-v10.3.0-aarch64-pc-windows-msvc".into(),
             },
           },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
+          Method::CompileRustCrate {
+            name: "fd-find",
             bin_folder: BinFolder::Root,
           },
         ],
@@ -236,8 +236,8 @@ mod tests {
               path: "fd-v10.3.0-x86_64-pc-windows-msvc".into(),
             },
           },
-          Method::CompileRustSource {
-            crate_name: "fd-find",
+          Method::CompileRustCrate {
+            name: "fd-find",
             bin_folder: BinFolder::Root,
           },
         ],

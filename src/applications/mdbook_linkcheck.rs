@@ -40,8 +40,8 @@ impl AppDefinition for MdBookLinkCheck {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/mdbook-linkcheck.{cpu}-{os}.zip").into(),
           bin_folder: BinFolder::Root,
         },
-        Method::CompileRustSource {
-          crate_name: "mdbook-linkcheck",
+        Method::CompileRustCrate {
+          name: "mdbook-linkcheck",
           bin_folder: BinFolder::Subfolder { path: "bin".into() },
         },
       ],
@@ -99,8 +99,8 @@ mod tests {
             url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.aarch64-unknown-linux-gnu.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
-            crate_name: "mdbook-linkcheck",
+          Method::CompileRustCrate {
+            name: "mdbook-linkcheck",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -123,8 +123,8 @@ mod tests {
             url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-unknown-linux-gnu.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
-            crate_name: "mdbook-linkcheck",
+          Method::CompileRustCrate {
+            name: "mdbook-linkcheck",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -147,8 +147,8 @@ mod tests {
             url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.aarch64-apple-darwin.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
-            crate_name: "mdbook-linkcheck",
+          Method::CompileRustCrate {
+            name: "mdbook-linkcheck",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -171,8 +171,8 @@ mod tests {
             url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-apple-darwin.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
-            crate_name: "mdbook-linkcheck",
+          Method::CompileRustCrate {
+            name: "mdbook-linkcheck",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -195,8 +195,8 @@ mod tests {
             url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.aarch64-pc-windows-msvc.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
-            crate_name: "mdbook-linkcheck",
+          Method::CompileRustCrate {
+            name: "mdbook-linkcheck",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -219,8 +219,8 @@ mod tests {
             url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-pc-windows-msvc.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
-            crate_name: "mdbook-linkcheck",
+          Method::CompileRustCrate {
+            name: "mdbook-linkcheck",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],

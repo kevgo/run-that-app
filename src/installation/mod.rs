@@ -1,7 +1,7 @@
 //! This module implements the different ways to download and install an application.
 
 mod compile_go;
-mod compile_rust;
+mod compile_rust_crate;
 mod download_archive;
 mod download_executable;
 
@@ -40,9 +40,9 @@ pub(crate) enum Method {
   },
 
   /// installs the application by compiling it from its source written in Rust
-  CompileRustSource {
+  CompileRustCrate {
     /// the name of the Rust crate that contains the executable
-    crate_name: &'static str,
+    name: &'static str,
     /// The subfolder that contains the executables after compilation.
     bin_folder: BinFolder,
   },
@@ -52,7 +52,7 @@ impl Method {
   pub(crate) fn bin_folder(self) -> BinFolder {
     match self {
       Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => BinFolder::Root,
-      Method::DownloadArchive { url: _, bin_folder } | Method::CompileRustSource { crate_name: _, bin_folder } => bin_folder,
+      Method::DownloadArchive { url: _, bin_folder } | Method::CompileRustCrate { name: _, bin_folder } => bin_folder,
     }
   }
 
@@ -61,7 +61,7 @@ impl Method {
     match self {
       Method::DownloadArchive { url: _, bin_folder } => bin_folder.executable_paths(app_folder, executable_filename),
       Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => vec![app_folder.join(executable_filename)],
-      Method::CompileRustSource { crate_name: _, bin_folder } => match bin_folder {
+      Method::CompileRustCrate { name: _, bin_folder } => match bin_folder {
         BinFolder::Root => vec![app_folder.join(executable_filename)],
         BinFolder::Subfolder { path } => vec![app_folder.join(path).join(executable_filename)],
         BinFolder::Subfolders { options } | BinFolder::RootOrSubfolders { options } => {
@@ -74,7 +74,7 @@ impl Method {
   pub(crate) fn is_from_source(&self) -> bool {
     match self {
       Method::DownloadArchive { url: _, bin_folder: _ } | Method::DownloadExecutable { url: _ } => false,
-      Method::CompileGoSource { import_path: _ } | Method::CompileRustSource { crate_name: _, bin_folder: _ } => true,
+      Method::CompileGoSource { import_path: _ } | Method::CompileRustCrate { name: _, bin_folder: _ } => true,
     }
   }
 
@@ -82,7 +82,7 @@ impl Method {
     match self {
       Method::DownloadArchive { url: _, bin_folder: _ } => format!("download archive for {app}@{version}"),
       Method::DownloadExecutable { url: _ } => format!("download executable for {app}@{version}"),
-      Method::CompileGoSource { import_path: _ } | Method::CompileRustSource { crate_name: _, bin_folder: _ } => format!("compile {app}@{version} from source"),
+      Method::CompileGoSource { import_path: _ } | Method::CompileRustCrate { name: _, bin_folder: _ } => format!("compile {app}@{version} from source"),
     }
   }
 }
@@ -184,7 +184,7 @@ pub(crate) fn install(
     Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &app_folder, version, url, bin_folder, optional, ctx),
     Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &app_folder, version, download_url, optional, ctx),
     Method::CompileGoSource { import_path } => compile_go::run(&app_folder, import_path, optional, from_source, ctx),
-    Method::CompileRustSource { crate_name, bin_folder: _ } => compile_rust::run(&app_folder, crate_name, ctx.log),
+    Method::CompileRustCrate { name, bin_folder: _ } => compile_rust_crate::run(&app_folder, name, ctx.log),
   }
 }
 

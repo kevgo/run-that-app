@@ -44,8 +44,8 @@ impl AppDefinition for Taplo {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/taplo-{os}-{cpu}.{ext}").into(),
           bin_folder: BinFolder::Root,
         },
-        Method::CompileRustSource {
-          crate_name: "taplo-cli",
+        Method::CompileRustCrate {
+          name: "taplo-cli",
           bin_folder: BinFolder::Subfolder { path: "bin".into() },
         },
       ],
@@ -103,8 +103,8 @@ mod tests {
             url: "https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-linux-aarch64.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
-            crate_name: "taplo-cli",
+          Method::CompileRustCrate {
+            name: "taplo-cli",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -127,8 +127,8 @@ mod tests {
             url: "https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-linux-x86_64.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
-            crate_name: "taplo-cli",
+          Method::CompileRustCrate {
+            name: "taplo-cli",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -151,8 +151,8 @@ mod tests {
             url: "https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-darwin-aarch64.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
-            crate_name: "taplo-cli",
+          Method::CompileRustCrate {
+            name: "taplo-cli",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -175,8 +175,8 @@ mod tests {
             url: "https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-darwin-x86_64.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
-            crate_name: "taplo-cli",
+          Method::CompileRustCrate {
+            name: "taplo-cli",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -199,8 +199,8 @@ mod tests {
             url: "https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-windows-aarch64.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
-            crate_name: "taplo-cli",
+          Method::CompileRustCrate {
+            name: "taplo-cli",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -223,8 +223,8 @@ mod tests {
             url: "https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-windows-x86_64.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
-            crate_name: "taplo-cli",
+          Method::CompileRustCrate {
+            name: "taplo-cli",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
