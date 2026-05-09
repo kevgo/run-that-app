@@ -63,6 +63,7 @@ typically in 1-2 seconds. Only the executable is stored on disk. Execution is
 - [contest](https://github.com/contest-framework/server)
 - [cucumber-sort](https://github.com/kevgo/cucumber-sort)
 - [deadcode](https://pkg.go.dev/golang.org/x/tools/cmd/deadcode)
+- [delete-empty-folders](https://github.com/kevgo/delete-empty-folders)
 - [depth](https://github.com/KyleBanks/depth)
 - [dprint](https://dprint.dev)
 - [exhaustruct](https://github.com/GaijinEntertainment/go-exhaustruct)
