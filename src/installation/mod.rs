@@ -173,7 +173,7 @@ pub(crate) fn any(app_definition: &dyn AppDefinition, version: &Version, optiona
     if from_source && !install_method.is_from_source() {
       continue;
     }
-    let outcome = install(app_definition, install_method, version, optional, from_source, ctx)?;
+    let outcome = install(app_definition, &install_method, version, optional, from_source, ctx)?;
     if outcome.success() {
       return Ok(outcome);
     }
@@ -184,7 +184,7 @@ pub(crate) fn any(app_definition: &dyn AppDefinition, version: &Version, optiona
 /// installs the given app using the given installation method
 pub(crate) fn install(
   app_definition: &dyn AppDefinition,
-  install_method: Method,
+  install_method: &Method,
   version: &Version,
   optional: bool,
   from_source: bool,
@@ -196,7 +196,7 @@ pub(crate) fn install(
     Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &app_folder, version, &download_url, optional, ctx),
     Method::CompileGoSource { import_path } => compile_go::run(&app_folder, &import_path, optional, from_source, ctx),
     Method::CompileRustCrate { name, bin_folder: _ } => compile_rust::run(&app_folder, RustSource::CratesIo { name }, ctx.log),
-    Method::CompileRustRepo { url } => compile_rust::run(&app_folder, RustSource::Repository { url }, ctx.log),
+    Method::CompileRustRepo { url } => compile_rust::run(&app_folder, RustSource::Repository { url: url.clone() }, ctx.log),
   }
 }
 
