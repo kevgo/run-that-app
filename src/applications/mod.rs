@@ -46,6 +46,7 @@ mod taplo;
 mod tikibase;
 mod ty;
 mod uv;
+mod yamlfmt;
 
 use crate::Log;
 use crate::configuration::Version;
@@ -105,6 +106,7 @@ pub(crate) fn all() -> Apps {
     Box::new(tikibase::Tikibase {}),
     Box::new(ty::Ty {}),
     Box::new(uv::Uv {}),
+    Box::new(yamlfmt::Yamlfmt {}),
     // keep-sorted end
   ])
 }
