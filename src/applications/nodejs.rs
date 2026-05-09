@@ -138,10 +138,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-x64.tar.xz".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec![
-              "node-v20.10.0-linux-x64".into(),
-              format!("node-v20.10.0-linux-x64{}bin", MAIN_SEPARATOR).into(),
-            ],
+            options: vec!["node-v20.10.0-linux-x64".into(), format!("node-v20.10.0-linux-x64{}bin", MAIN_SEPARATOR).into()],
           },
         }],
       };
@@ -207,10 +204,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-arm64.zip".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec![
-              "node-v20.10.0-win-arm64".into(),
-              format!("node-v20.10.0-win-arm64{}bin", MAIN_SEPARATOR).into(),
-            ],
+            options: vec!["node-v20.10.0-win-arm64".into(), format!("node-v20.10.0-win-arm64{}bin", MAIN_SEPARATOR).into()],
           },
         }],
       };
@@ -230,10 +224,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec![
-              "node-v20.10.0-win-x64".into(),
-              format!("node-v20.10.0-win-x64{}bin", MAIN_SEPARATOR).into(),
-            ],
+            options: vec!["node-v20.10.0-win-x64".into(), format!("node-v20.10.0-win-x64{}bin", MAIN_SEPARATOR).into()],
           },
         }],
       };
