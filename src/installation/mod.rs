@@ -34,13 +34,13 @@ pub(crate) enum Method {
     url: Url,
   },
 
-  /// installs the applications by compiling it from its source written in Go
+  /// installs an application written in Go by compiling it from its source hosted on a remote repository
   CompileGoSource {
     /// the Go import path to use
     import_path: String,
   },
 
-  /// installs the application by compiling it from its source written in Rust
+  /// installs an application written in Rust by compiling it from its source hosted on crates.io
   CompileRustCrate {
     /// the name of the Rust crate that contains the executable
     name: &'static str,
@@ -48,6 +48,7 @@ pub(crate) enum Method {
     bin_folder: BinFolder,
   },
 
+  /// installs an application written in Rust by compiling it from its source hosted on a remote repository
   CompileRustRepo {
     /// the URL of the Rust repository to clone
     url: Url,
