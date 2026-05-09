@@ -7,7 +7,7 @@ use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, filesystem, strings};
 use big_s::S;
-use std::path;
+use std::path::MAIN_SEPARATOR;
 
 #[derive(Clone)]
 pub(crate) struct Go {}
@@ -39,13 +39,12 @@ impl AppDefinition for Go {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    let sep = path::MAIN_SEPARATOR;
     let version_str = version.as_str().trim_start_matches(TAG_PREFIX);
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://go.dev/dl/{TAG_PREFIX}{version_str}.{os}-{cpu}.{ext}").into(),
         bin_folder: BinFolder::Subfolder {
-          path: format!("go{sep}bin").into(),
+          path: format!("go{MAIN_SEPARATOR}bin").into(),
         },
       }],
     }
@@ -124,7 +123,6 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      let sep = MAIN_SEPARATOR;
       let have = (Go {}).run_method(
         &Version::from("1.21.5"),
         Platform {
@@ -136,7 +134,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://go.dev/dl/go1.21.5.linux-arm64.tar.gz".into(),
           bin_folder: BinFolder::Subfolder {
-            path: format!("go{sep}bin").into(),
+            path: format!("go{MAIN_SEPARATOR}bin").into(),
           },
         }],
       };
@@ -145,7 +143,6 @@ mod tests {
 
     #[test]
     fn linux_intel() {
-      let sep = MAIN_SEPARATOR;
       let have = (Go {}).run_method(
         &Version::from("1.21.5"),
         Platform {
@@ -157,7 +154,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://go.dev/dl/go1.21.5.linux-amd64.tar.gz".into(),
           bin_folder: BinFolder::Subfolder {
-            path: format!("go{sep}bin").into(),
+            path: format!("go{MAIN_SEPARATOR}bin").into(),
           },
         }],
       };
@@ -166,7 +163,6 @@ mod tests {
 
     #[test]
     fn macos_arm() {
-      let sep = MAIN_SEPARATOR;
       let have = (Go {}).run_method(
         &Version::from("1.21.5"),
         Platform {
@@ -178,7 +174,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz".into(),
           bin_folder: BinFolder::Subfolder {
-            path: format!("go{sep}bin").into(),
+            path: format!("go{MAIN_SEPARATOR}bin").into(),
           },
         }],
       };
@@ -187,7 +183,6 @@ mod tests {
 
     #[test]
     fn macos_intel() {
-      let sep = MAIN_SEPARATOR;
       let have = (Go {}).run_method(
         &Version::from("1.21.5"),
         Platform {
@@ -199,7 +194,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://go.dev/dl/go1.21.5.darwin-amd64.tar.gz".into(),
           bin_folder: BinFolder::Subfolder {
-            path: format!("go{sep}bin").into(),
+            path: format!("go{MAIN_SEPARATOR}bin").into(),
           },
         }],
       };
@@ -208,7 +203,6 @@ mod tests {
 
     #[test]
     fn windows_arm() {
-      let sep = MAIN_SEPARATOR;
       let have = (Go {}).run_method(
         &Version::from("1.21.5"),
         Platform {
@@ -220,7 +214,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://go.dev/dl/go1.21.5.windows-arm64.zip".into(),
           bin_folder: BinFolder::Subfolder {
-            path: format!("go{sep}bin").into(),
+            path: format!("go{MAIN_SEPARATOR}bin").into(),
           },
         }],
       };
@@ -229,7 +223,6 @@ mod tests {
 
     #[test]
     fn windows_intel() {
-      let sep = MAIN_SEPARATOR;
       let have = (Go {}).run_method(
         &Version::from("1.21.5"),
         Platform {
@@ -241,7 +234,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://go.dev/dl/go1.21.5.windows-amd64.zip".into(),
           bin_folder: BinFolder::Subfolder {
-            path: format!("go{sep}bin").into(),
+            path: format!("go{MAIN_SEPARATOR}bin").into(),
           },
         }],
       };

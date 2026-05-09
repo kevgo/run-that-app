@@ -6,7 +6,7 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, strings};
-use std::path;
+use std::path::MAIN_SEPARATOR;
 
 #[derive(Clone)]
 pub(crate) struct NodeJS {}
@@ -28,14 +28,13 @@ impl AppDefinition for NodeJS {
     let os = os_text(platform.os);
     let cpu = cpu_text(platform.cpu);
     let ext = ext_text(platform.os);
-    let sep = path::MAIN_SEPARATOR;
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}").into(),
         bin_folder: BinFolder::RootOrSubfolders {
           options: vec![
             format!("node-v{version}-{os}-{cpu}").into(),
-            format!("node-v{version}-{os}-{cpu}{sep}bin").into(),
+            format!("node-v{version}-{os}-{cpu}{MAIN_SEPARATOR}bin").into(),
           ],
         },
       }],
@@ -117,7 +116,7 @@ mod tests {
           bin_folder: BinFolder::RootOrSubfolders {
             options: vec![
               "node-v20.10.0-linux-arm64".into(),
-              format!("node-v20.10.0-linux-arm64{}bin", MAIN_SEPARATOR).into(),
+              format!("node-v20.10.0-linux-arm64{MAIN_SEPARATOR}bin").into(),
             ],
           },
         }],
@@ -138,7 +137,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-x64.tar.xz".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec!["node-v20.10.0-linux-x64".into(), format!("node-v20.10.0-linux-x64{}bin", MAIN_SEPARATOR).into()],
+            options: vec!["node-v20.10.0-linux-x64".into(), format!("node-v20.10.0-linux-x64{MAIN_SEPARATOR}bin").into()],
           },
         }],
       };
@@ -160,7 +159,7 @@ mod tests {
           bin_folder: BinFolder::RootOrSubfolders {
             options: vec![
               "node-v20.10.0-darwin-arm64".into(),
-              format!("node-v20.10.0-darwin-arm64{}bin", MAIN_SEPARATOR).into(),
+              format!("node-v20.10.0-darwin-arm64{MAIN_SEPARATOR}bin").into(),
             ],
           },
         }],
@@ -181,10 +180,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-x64.tar.gz".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec![
-              "node-v20.10.0-darwin-x64".into(),
-              format!("node-v20.10.0-darwin-x64{}bin", MAIN_SEPARATOR).into(),
-            ],
+            options: vec!["node-v20.10.0-darwin-x64".into(), format!("node-v20.10.0-darwin-x64{MAIN_SEPARATOR}bin").into()],
           },
         }],
       };
@@ -204,7 +200,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-arm64.zip".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec!["node-v20.10.0-win-arm64".into(), format!("node-v20.10.0-win-arm64{}bin", MAIN_SEPARATOR).into()],
+            options: vec!["node-v20.10.0-win-arm64".into(), format!("node-v20.10.0-win-arm64{MAIN_SEPARATOR}bin").into()],
           },
         }],
       };
@@ -224,7 +220,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec!["node-v20.10.0-win-x64".into(), format!("node-v20.10.0-win-x64{}bin", MAIN_SEPARATOR).into()],
+            options: vec!["node-v20.10.0-win-x64".into(), format!("node-v20.10.0-win-x64{MAIN_SEPARATOR}bin").into()],
           },
         }],
       };
