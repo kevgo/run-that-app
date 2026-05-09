@@ -43,7 +43,7 @@ impl AppDefinition for Shfmt {
         Method::DownloadExecutable {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/shfmt_v{version}_{os}_{cpu}{ext}").into(),
         },
-        Method::GoCompileSource {
+        Method::CompileGoSource {
           import_path: format!("mvdan.cc/sh/v3/cmd/shfmt@{TAG_PREFIX}{version}"),
         },
       ],
@@ -101,7 +101,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_linux_arm64".into(),
           },
-          Method::GoCompileSource {
+          Method::CompileGoSource {
             import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
           },
         ],
@@ -123,7 +123,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_linux_amd64".into(),
           },
-          Method::GoCompileSource {
+          Method::CompileGoSource {
             import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
           },
         ],
@@ -145,7 +145,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_arm64".into(),
           },
-          Method::GoCompileSource {
+          Method::CompileGoSource {
             import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
           },
         ],
@@ -167,7 +167,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_amd64".into(),
           },
-          Method::GoCompileSource {
+          Method::CompileGoSource {
             import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
           },
         ],
@@ -189,7 +189,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_windows_arm64.exe".into(),
           },
-          Method::GoCompileSource {
+          Method::CompileGoSource {
             import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
           },
         ],
@@ -211,7 +211,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_windows_amd64.exe".into(),
           },
-          Method::GoCompileSource {
+          Method::CompileGoSource {
             import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
           },
         ],

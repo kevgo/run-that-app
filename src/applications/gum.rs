@@ -46,7 +46,7 @@ impl AppDefinition for Gum {
             path: format!("gum_{version}_{os}_{cpu}").into(),
           },
         },
-        Method::GoCompileSource {
+        Method::CompileGoSource {
           import_path: format!("github.com/{ORG}/{REPO}@latest"),
         },
       ],
@@ -104,7 +104,7 @@ mod tests {
               path: "gum_0.17.0_Linux_arm64".into(),
             },
           },
-          Method::GoCompileSource {
+          Method::CompileGoSource {
             import_path: "github.com/charmbracelet/gum@latest".into(),
           },
         ],
@@ -129,7 +129,7 @@ mod tests {
               path: "gum_0.17.0_Linux_x86_64".into(),
             },
           },
-          Method::GoCompileSource {
+          Method::CompileGoSource {
             import_path: "github.com/charmbracelet/gum@latest".into(),
           },
         ],
@@ -154,7 +154,7 @@ mod tests {
               path: "gum_0.17.0_Darwin_arm64".into(),
             },
           },
-          Method::GoCompileSource {
+          Method::CompileGoSource {
             import_path: "github.com/charmbracelet/gum@latest".into(),
           },
         ],
@@ -179,7 +179,7 @@ mod tests {
               path: "gum_0.17.0_Darwin_x86_64".into(),
             },
           },
-          Method::GoCompileSource {
+          Method::CompileGoSource {
             import_path: "github.com/charmbracelet/gum@latest".into(),
           },
         ],
@@ -204,7 +204,7 @@ mod tests {
               path: "gum_0.17.0_Windows_arm64".into(),
             },
           },
-          Method::GoCompileSource {
+          Method::CompileGoSource {
             import_path: "github.com/charmbracelet/gum@latest".into(),
           },
         ],
@@ -229,7 +229,7 @@ mod tests {
               path: "gum_0.17.0_Windows_x86_64".into(),
             },
           },
-          Method::GoCompileSource {
+          Method::CompileGoSource {
             import_path: "github.com/charmbracelet/gum@latest".into(),
           },
         ],

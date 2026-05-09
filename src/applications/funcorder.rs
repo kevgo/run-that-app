@@ -26,7 +26,7 @@ impl AppDefinition for FuncOrder {
 
   fn run_method(&self, version: &Version, _platform: Platform) -> RunMethod {
     RunMethod::ThisApp {
-      install_methods: vec![Method::GoCompileSource {
+      install_methods: vec![Method::CompileGoSource {
         import_path: format!("github.com/{ORG}/{REPO}@{TAG_PREFIX}{version}"),
       }],
     }
@@ -70,7 +70,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("github.com/manuelarte/funcorder@v0.8.0"),
         }],
       };
@@ -87,7 +87,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("github.com/manuelarte/funcorder@v0.8.0"),
         }],
       };
@@ -104,7 +104,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("github.com/manuelarte/funcorder@v0.8.0"),
         }],
       };
@@ -121,7 +121,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("github.com/manuelarte/funcorder@v0.8.0"),
         }],
       };
@@ -138,7 +138,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("github.com/manuelarte/funcorder@v0.8.0"),
         }],
       };
@@ -155,7 +155,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("github.com/manuelarte/funcorder@v0.8.0"),
         }],
       };

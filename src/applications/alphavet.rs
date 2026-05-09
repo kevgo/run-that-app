@@ -27,7 +27,7 @@ impl AppDefinition for Alphavet {
 
   fn run_method(&self, version: &Version, _platform: Platform) -> RunMethod {
     RunMethod::ThisApp {
-      install_methods: vec![Method::GoCompileSource {
+      install_methods: vec![Method::CompileGoSource {
         import_path: format!("github.com/{ORG}/{REPO}/cmd/alphavet@{TAG_PREFIX}{version}"),
       }],
     }
@@ -72,7 +72,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("github.com/skx/alphavet/cmd/alphavet@v0.1.0"),
         }],
       };
@@ -89,7 +89,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("github.com/skx/alphavet/cmd/alphavet@v0.1.0"),
         }],
       };
@@ -106,7 +106,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("github.com/skx/alphavet/cmd/alphavet@v0.1.0"),
         }],
       };
@@ -123,7 +123,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("github.com/skx/alphavet/cmd/alphavet@v0.1.0"),
         }],
       };
@@ -140,7 +140,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("github.com/skx/alphavet/cmd/alphavet@v0.1.0"),
         }],
       };
@@ -157,7 +157,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("github.com/skx/alphavet/cmd/alphavet@v0.1.0"),
         }],
       };

@@ -20,7 +20,7 @@ impl AppDefinition for Govulncheck {
 
   fn run_method(&self, version: &Version, _platform: Platform) -> RunMethod {
     RunMethod::ThisApp {
-      install_methods: vec![Method::GoCompileSource {
+      install_methods: vec![Method::CompileGoSource {
         import_path: format!("golang.org/x/vuln/cmd/govulncheck@v{version}"),
       }],
     }
@@ -66,7 +66,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
         }],
       };
@@ -83,7 +83,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
         }],
       };
@@ -100,7 +100,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
         }],
       };
@@ -117,7 +117,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
         }],
       };
@@ -134,7 +134,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
         }],
       };
@@ -151,7 +151,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::GoCompileSource {
+        install_methods: vec![Method::CompileGoSource {
           import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
         }],
       };
