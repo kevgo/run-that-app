@@ -1,5 +1,3 @@
-use const_format::formatcp;
-
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
@@ -7,6 +5,7 @@ use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, ExecutableArgs, RunMethod};
 use crate::platform::Platform;
+use const_format::formatcp;
 use std::path::MAIN_SEPARATOR;
 
 #[derive(Clone)]

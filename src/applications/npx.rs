@@ -5,6 +5,8 @@ use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, ExecutableArgs, RunMethod};
 use crate::platform::Platform;
+use const_format::formatcp;
+use std::path::MAIN_SEPARATOR;
 
 #[derive(Clone)]
 pub(crate) struct Npx {}
@@ -22,7 +24,10 @@ impl AppDefinition for Npx {
     RunMethod::OtherAppDefaultExecutable {
       app_definition: Box::new(app_to_install()),
       args: ExecutableArgs::OneOfTheseInAppFolder {
-        options: vec!["node_modules/npm/bin/npx-cli.js", "lib/node_modules/npm/bin/npx-cli.js"],
+        options: vec![
+          formatcp!("node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npx-cli.js"),
+          formatcp!("lib{MAIN_SEPARATOR}node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npx-cli.js"),
+        ],
       },
     }
   }
@@ -61,6 +66,7 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
+    #[cfg(not(windows))]
     fn linux_arm() {
       let have = (Npx {}).run_method(
         &Version::from("20.10.0"),
@@ -79,6 +85,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(windows))]
     fn linux_intel() {
       let have = (Npx {}).run_method(
         &Version::from("20.10.0"),
@@ -97,6 +104,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(windows))]
     fn macos_arm() {
       let have = (Npx {}).run_method(
         &Version::from("20.10.0"),
@@ -115,6 +123,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(windows))]
     fn macos_intel() {
       let have = (Npx {}).run_method(
         &Version::from("20.10.0"),
@@ -133,6 +142,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(windows)]
     fn windows_arm() {
       let have = (Npx {}).run_method(
         &Version::from("20.10.0"),
@@ -144,13 +154,14 @@ mod tests {
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["node_modules/npm/bin/npx-cli.js", "lib/node_modules/npm/bin/npx-cli.js"],
+          options: vec![r"node_modules\npm\bin\npx-cli.js", r"lib\node_modules\npm\bin\npx-cli.js"],
         },
       };
       assert_eq!(have, want);
     }
 
     #[test]
+    #[cfg(windows)]
     fn windows_intel() {
       let have = (Npx {}).run_method(
         &Version::from("20.10.0"),
@@ -162,7 +173,7 @@ mod tests {
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["node_modules/npm/bin/npx-cli.js", "lib/node_modules/npm/bin/npx-cli.js"],
+          options: vec![r"node_modules\npm\bin\npx-cli.js", r"lib\node_modules\npm\bin\npx-cli.js"],
         },
       };
       assert_eq!(have, want);
