@@ -132,6 +132,7 @@ mod tests {
       assert_eq!(have, want);
     }
 
+    #[cfg(windows)]
     #[test]
     fn windows_arm() {
       let have = (Npm {}).run_method(
@@ -144,12 +145,13 @@ mod tests {
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+          options: vec![r"node_modules\npm\bin\npm-cli.js", r"lib\node_modules\npm\bin\npm-cli.js"],
         },
       };
       assert_eq!(have, want);
     }
 
+    #[cfg(windows)]
     #[test]
     fn windows_intel() {
       let have = (Npm {}).run_method(
@@ -162,7 +164,7 @@ mod tests {
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+          options: vec![r"node_modules\npm\bin\npm-cli.js", r"lib\node_modules\npm\bin\npm-cli.js"],
         },
       };
       assert_eq!(have, want);
