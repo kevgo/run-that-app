@@ -39,10 +39,16 @@ impl AppDefinition for CucumberSort {
       Os::Windows => "zip",
     };
     RunMethod::ThisApp {
-      install_methods: vec![Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/cucumber_sort_{os}_{cpu}.{ext}").into(),
-        bin_folder: BinFolder::Root,
-      }],
+      install_methods: vec![
+        Method::DownloadArchive {
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/cucumber_sort_{os}_{cpu}.{ext}").into(),
+          bin_folder: BinFolder::Root,
+        },
+        Method::CompileRustRepo {
+          url: self.homepage().into(),
+          tag: format!("{TAG_PREFIX}{version}"),
+        },
+      ],
     }
   }
 
@@ -92,10 +98,16 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/kevgo/cucumber-sort/releases/download/v0.1.0/cucumber_sort_linux_arm_64.tar.gz".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/kevgo/cucumber-sort/releases/download/v0.1.0/cucumber_sort_linux_arm_64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileRustRepo {
+            url: "https://github.com/kevgo/cucumber-sort".into(),
+            tag: "v0.1.0".into(),
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -110,10 +122,16 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/kevgo/cucumber-sort/releases/download/v0.1.0/cucumber_sort_linux_intel_64.tar.gz".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/kevgo/cucumber-sort/releases/download/v0.1.0/cucumber_sort_linux_intel_64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileRustRepo {
+            url: "https://github.com/kevgo/cucumber-sort".into(),
+            tag: "v0.1.0".into(),
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -128,10 +146,16 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/kevgo/cucumber-sort/releases/download/v0.1.0/cucumber_sort_macos_arm_64.tar.gz".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/kevgo/cucumber-sort/releases/download/v0.1.0/cucumber_sort_macos_arm_64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileRustRepo {
+            url: "https://github.com/kevgo/cucumber-sort".into(),
+            tag: "v0.1.0".into(),
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -146,10 +170,16 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/kevgo/cucumber-sort/releases/download/v0.1.0/cucumber_sort_macos_intel_64.tar.gz".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/kevgo/cucumber-sort/releases/download/v0.1.0/cucumber_sort_macos_intel_64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileRustRepo {
+            url: "https://github.com/kevgo/cucumber-sort".into(),
+            tag: "v0.1.0".into(),
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -164,10 +194,16 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/kevgo/cucumber-sort/releases/download/v0.1.0/cucumber_sort_windows_arm_64.zip".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/kevgo/cucumber-sort/releases/download/v0.1.0/cucumber_sort_windows_arm_64.zip".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileRustRepo {
+            url: "https://github.com/kevgo/cucumber-sort".into(),
+            tag: "v0.1.0".into(),
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -182,10 +218,16 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/kevgo/cucumber-sort/releases/download/v0.1.0/cucumber_sort_windows_intel_64.zip".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/kevgo/cucumber-sort/releases/download/v0.1.0/cucumber_sort_windows_intel_64.zip".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileRustRepo {
+            url: "https://github.com/kevgo/cucumber-sort".into(),
+            tag: "v0.1.0".into(),
+          },
+        ],
       };
       assert_eq!(have, want);
     }

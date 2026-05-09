@@ -1,7 +1,7 @@
 //! This module implements the different ways to download and install an application.
 
 mod compile_go;
-mod compile_rust_crate;
+mod compile_rust;
 mod download_archive;
 mod download_executable;
 
@@ -11,6 +11,7 @@ use crate::context::RuntimeContext;
 use crate::download::Url;
 use crate::error::Result;
 use crate::executables::ExecutableNamePlatform;
+use crate::installation::compile_rust::RustSource;
 use std::fmt::{Debug, Display};
 use std::path::{Path, PathBuf};
 
@@ -33,18 +34,26 @@ pub(crate) enum Method {
     url: Url,
   },
 
-  /// installs the applications by compiling it from its source written in Go
+  /// installs an application written in Go by compiling it from its source hosted on a remote repository
   CompileGoSource {
     /// the Go import path to use
     import_path: String,
   },
 
-  /// installs the application by compiling it from its source written in Rust
+  /// installs an application written in Rust by compiling it from its source hosted on crates.io
   CompileRustCrate {
     /// the name of the Rust crate that contains the executable
     name: &'static str,
     /// The subfolder that contains the executables after compilation.
     bin_folder: BinFolder,
+  },
+
+  /// installs an application written in Rust by compiling it from its source hosted on a remote repository
+  CompileRustRepo {
+    /// the URL of the repository containing the source code
+    url: Url,
+    /// the tag of the repository to use
+    tag: String,
   },
 }
 
@@ -53,6 +62,7 @@ impl Method {
     match self {
       Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => BinFolder::Root,
       Method::DownloadArchive { url: _, bin_folder } | Method::CompileRustCrate { name: _, bin_folder } => bin_folder,
+      Method::CompileRustRepo { url: _, tag: _ } => BinFolder::Subfolder { path: "bin".into() },
     }
   }
 
@@ -68,13 +78,14 @@ impl Method {
           options.iter().map(|option| app_folder.join(option).join(executable_filename)).collect()
         }
       },
+      Method::CompileRustRepo { url: _, tag: _ } => vec![app_folder.join("bin").join(executable_filename)],
     }
   }
 
   pub(crate) fn is_from_source(&self) -> bool {
     match self {
       Method::DownloadArchive { url: _, bin_folder: _ } | Method::DownloadExecutable { url: _ } => false,
-      Method::CompileGoSource { import_path: _ } | Method::CompileRustCrate { name: _, bin_folder: _ } => true,
+      Method::CompileGoSource { import_path: _ } | Method::CompileRustCrate { name: _, bin_folder: _ } | Method::CompileRustRepo { url: _, tag: _ } => true,
     }
   }
 
@@ -82,7 +93,9 @@ impl Method {
     match self {
       Method::DownloadArchive { url: _, bin_folder: _ } => format!("download archive for {app}@{version}"),
       Method::DownloadExecutable { url: _ } => format!("download executable for {app}@{version}"),
-      Method::CompileGoSource { import_path: _ } | Method::CompileRustCrate { name: _, bin_folder: _ } => format!("compile {app}@{version} from source"),
+      Method::CompileGoSource { import_path: _ } | Method::CompileRustCrate { name: _, bin_folder: _ } | Method::CompileRustRepo { url: _, tag: _ } => {
+        format!("compile {app}@{version} from source")
+      }
     }
   }
 }
@@ -184,7 +197,15 @@ pub(crate) fn install(
     Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &app_folder, version, url, bin_folder, optional, ctx),
     Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &app_folder, version, download_url, optional, ctx),
     Method::CompileGoSource { import_path } => compile_go::run(&app_folder, import_path, optional, from_source, ctx),
-    Method::CompileRustCrate { name, bin_folder: _ } => compile_rust_crate::run(&app_folder, name, ctx.log),
+    Method::CompileRustCrate { name, bin_folder: _ } => compile_rust::run(&app_folder, &RustSource::CratesIo { name }, ctx.log),
+    Method::CompileRustRepo { url, tag } => compile_rust::run(
+      &app_folder,
+      &RustSource::Repository {
+        url: url.clone(),
+        tag: tag.clone(),
+      },
+      ctx.log,
+    ),
   }
 }
 

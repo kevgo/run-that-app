@@ -1,4 +1,5 @@
 use super::Outcome;
+use crate::download::Url;
 use crate::error::{Result, UserError};
 use crate::logging::{Event, Log};
 use std::io::ErrorKind;
@@ -6,14 +7,31 @@ use std::path::Path;
 use std::process::Command;
 use which::which;
 
+/// the different locations from where to get Rust source code
+pub(crate) enum RustSource {
+  /// install from crates.io
+  CratesIo { name: &'static str },
+  /// install from a remote repository
+  Repository { url: Url, tag: String },
+}
+
 /// installs the given Rust-based application by compiling it from source
-pub(crate) fn run(app_folder: &Path, crate_name: &str, log: Log) -> Result<Outcome> {
+pub(crate) fn run(app_folder: &Path, source: &RustSource, log: Log) -> Result<Outcome> {
   let Ok(cargo_path) = which("cargo") else {
     return Err(UserError::RustNotInstalled);
   };
   let mut cmd = Command::new(&cargo_path);
   let app_folder_str = &app_folder.to_string_lossy();
-  let args = vec!["install", "--root", &app_folder_str, "--locked", crate_name];
+  let mut args = vec!["install", "--root", &app_folder_str, "--locked"];
+  match &source {
+    RustSource::CratesIo { name } => args.push(name),
+    RustSource::Repository { url, tag } => {
+      args.push("--git");
+      args.push(url.as_ref());
+      args.push("--tag");
+      args.push(tag);
+    }
+  }
   log(Event::CompileRustStart {
     cargo_path: &cargo_path,
     args: &args,
