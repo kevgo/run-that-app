@@ -98,6 +98,78 @@ mod tests {
     }
 
     #[test]
+    fn linux_intel() {
+      let have = (Yamlfmt {}).run_method(
+        &Version::from("0.21.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/google/yamlfmt/releases/download/v0.21.0/yamlfmt_0.21.0_Linux_x86_64.tar.gz".into(),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (Yamlfmt {}).run_method(
+        &Version::from("0.21.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/google/yamlfmt/releases/download/v0.21.0/yamlfmt_0.21.0_Darwin_arm64.tar.gz".into(),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (Yamlfmt {}).run_method(
+        &Version::from("0.21.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/google/yamlfmt/releases/download/v0.21.0/yamlfmt_0.21.0_Linux_arm64.tar.gz".into(),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (Yamlfmt {}).run_method(
+        &Version::from("0.21.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/google/yamlfmt/releases/download/v0.21.0/yamlfmt_0.21.0_Windows_arm64.tar.gz".into(),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
     fn windows_intel() {
       let have = (Yamlfmt {}).run_method(
         &Version::from("0.21.0"),
