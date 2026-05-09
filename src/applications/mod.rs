@@ -8,6 +8,7 @@ mod conc;
 mod contest;
 mod cucumber_sort;
 mod deadcode;
+mod delete_empty_folders;
 mod depth;
 mod dprint;
 mod exhaustruct;
@@ -66,6 +67,7 @@ pub(crate) fn all() -> Apps {
     Box::new(contest::Contest {}),
     Box::new(cucumber_sort::CucumberSort {}),
     Box::new(deadcode::Deadcode {}),
+    Box::new(delete_empty_folders::DeleteEmptyFolders {}),
     Box::new(depth::Depth {}),
     Box::new(dprint::Dprint {}),
     Box::new(exhaustruct::Exhaustruct {}),
