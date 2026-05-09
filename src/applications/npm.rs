@@ -1,3 +1,5 @@
+use const_format::formatcp;
+
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
@@ -5,6 +7,7 @@ use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, ExecutableArgs, RunMethod};
 use crate::platform::Platform;
+use std::path::MAIN_SEPARATOR;
 
 #[derive(Clone)]
 pub(crate) struct Npm {}
@@ -22,7 +25,10 @@ impl AppDefinition for Npm {
     RunMethod::OtherAppDefaultExecutable {
       app_definition: Box::new(NodeJS {}),
       args: ExecutableArgs::OneOfTheseInAppFolder {
-        options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+        options: vec![
+          formatcp!("node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npm-cli.js"),
+          formatcp!("lib{MAIN_SEPARATOR}node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npm-cli.js"),
+        ],
       },
     }
   }
