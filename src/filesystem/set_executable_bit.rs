@@ -17,8 +17,6 @@ pub(crate) fn set_executable_bit(filepath: &Path) {
   let _ = fs::set_permissions(filepath, permissions);
 }
 
-/// Does nothing on Windows.
+/// Does nothing on Windows since Windows determines executability through file extensions.
 #[cfg(windows)]
-fn set_executable_bit(_filepath: &Path) {
-  // Windows does not have file permissions --> nothing to do here
-}
+fn set_executable_bit(_filepath: &Path) {}
