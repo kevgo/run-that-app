@@ -89,133 +89,127 @@ mod tests {
     #[test]
     fn linux_arm() {
       let sep = MAIN_SEPARATOR;
-      assert_eq!(
-        (Gh {}).run_method(
-          &Version::from("2.39.1"),
-          Platform {
-            os: Os::Linux,
-            cpu: Cpu::Arm64,
-          },
-        ),
-        RunMethod::ThisApp {
-          install_methods: vec![Method::DownloadArchive {
-            url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz".into(),
-            bin_folder: BinFolder::Subfolders {
-              options: vec!["bin".into(), format!("gh_2.39.1_linux_arm64{sep}bin").into(),],
-            },
-          }],
+      let have = (Gh {}).run_method(
+        &Version::from("2.39.1"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
         },
       );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz".into(),
+          bin_folder: BinFolder::Subfolders {
+            options: vec!["bin".into(), format!("gh_2.39.1_linux_arm64{sep}bin").into()],
+          },
+        }],
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn linux_intel() {
       let sep = MAIN_SEPARATOR;
-      assert_eq!(
-        (Gh {}).run_method(
-          &Version::from("2.39.1"),
-          Platform {
-            os: Os::Linux,
-            cpu: Cpu::Intel64,
-          },
-        ),
-        RunMethod::ThisApp {
-          install_methods: vec![Method::DownloadArchive {
-            url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_amd64.tar.gz".into(),
-            bin_folder: BinFolder::Subfolders {
-              options: vec!["bin".into(), format!("gh_2.39.1_linux_amd64{sep}bin").into(),],
-            },
-          }],
+      let have = (Gh {}).run_method(
+        &Version::from("2.39.1"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
         },
       );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_amd64.tar.gz".into(),
+          bin_folder: BinFolder::Subfolders {
+            options: vec!["bin".into(), format!("gh_2.39.1_linux_amd64{sep}bin").into()],
+          },
+        }],
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn macos_arm() {
       let sep = MAIN_SEPARATOR;
-      assert_eq!(
-        (Gh {}).run_method(
-          &Version::from("2.39.1"),
-          Platform {
-            os: Os::MacOS,
-            cpu: Cpu::Arm64,
-          },
-        ),
-        RunMethod::ThisApp {
-          install_methods: vec![Method::DownloadArchive {
-            url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_macOS_arm64.zip".into(),
-            bin_folder: BinFolder::Subfolders {
-              options: vec!["bin".into(), format!("gh_2.39.1_macOS_arm64{sep}bin").into(),],
-            },
-          }],
+      let have = (Gh {}).run_method(
+        &Version::from("2.39.1"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
         },
       );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_macOS_arm64.zip".into(),
+          bin_folder: BinFolder::Subfolders {
+            options: vec!["bin".into(), format!("gh_2.39.1_macOS_arm64{sep}bin").into()],
+          },
+        }],
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn macos_intel() {
       let sep = MAIN_SEPARATOR;
-      assert_eq!(
-        (Gh {}).run_method(
-          &Version::from("2.39.1"),
-          Platform {
-            os: Os::MacOS,
-            cpu: Cpu::Intel64,
-          },
-        ),
-        RunMethod::ThisApp {
-          install_methods: vec![Method::DownloadArchive {
-            url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_macOS_amd64.zip".into(),
-            bin_folder: BinFolder::Subfolders {
-              options: vec!["bin".into(), format!("gh_2.39.1_macOS_amd64{sep}bin").into(),],
-            },
-          }],
+      let have = (Gh {}).run_method(
+        &Version::from("2.39.1"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
         },
       );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_macOS_amd64.zip".into(),
+          bin_folder: BinFolder::Subfolders {
+            options: vec!["bin".into(), format!("gh_2.39.1_macOS_amd64{sep}bin").into()],
+          },
+        }],
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn windows_arm() {
       let sep = MAIN_SEPARATOR;
-      assert_eq!(
-        (Gh {}).run_method(
-          &Version::from("2.39.1"),
-          Platform {
-            os: Os::Windows,
-            cpu: Cpu::Arm64,
-          },
-        ),
-        RunMethod::ThisApp {
-          install_methods: vec![Method::DownloadArchive {
-            url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_arm64.zip".into(),
-            bin_folder: BinFolder::Subfolders {
-              options: vec!["bin".into(), format!("gh_2.39.1_windows_arm64{sep}bin").into(),],
-            },
-          }],
+      let have = (Gh {}).run_method(
+        &Version::from("2.39.1"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
         },
       );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_arm64.zip".into(),
+          bin_folder: BinFolder::Subfolders {
+            options: vec!["bin".into(), format!("gh_2.39.1_windows_arm64{sep}bin").into()],
+          },
+        }],
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn windows_intel() {
       let sep = MAIN_SEPARATOR;
-      assert_eq!(
-        (Gh {}).run_method(
-          &Version::from("2.39.1"),
-          Platform {
-            os: Os::Windows,
-            cpu: Cpu::Intel64,
-          },
-        ),
-        RunMethod::ThisApp {
-          install_methods: vec![Method::DownloadArchive {
-            url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip".into(),
-            bin_folder: BinFolder::Subfolders {
-              options: vec!["bin".into(), format!("gh_2.39.1_windows_amd64{sep}bin").into(),],
-            },
-          }],
+      let have = (Gh {}).run_method(
+        &Version::from("2.39.1"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
         },
       );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip".into(),
+          bin_folder: BinFolder::Subfolders {
+            options: vec!["bin".into(), format!("gh_2.39.1_windows_amd64{sep}bin").into()],
+          },
+        }],
+      };
+      assert_eq!(have, want);
     }
   }
 
