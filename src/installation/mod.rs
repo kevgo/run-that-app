@@ -50,7 +50,7 @@ pub(crate) enum Method {
 
   /// installs an application written in Rust by compiling it from its source hosted on a remote repository
   CompileRustRepo {
-    /// the URL of the Rust repository to clone
+    /// the URL of the repository containing the source code
     url: Url,
     /// The subfolder that contains the executables after compilation.
     bin_folder: BinFolder,
