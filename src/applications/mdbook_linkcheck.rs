@@ -84,13 +84,6 @@ mod tests {
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
 
-    fn rust_compile() -> Method {
-      Method::CompileRustSource {
-        crate_name: "mdbook-linkcheck",
-        bin_folder: BinFolder::Subfolder { path: "bin".into() },
-      }
-    }
-
     #[test]
     fn linux_arm() {
       let have = (MdBookLinkCheck {}).run_method(
@@ -106,7 +99,10 @@ mod tests {
             url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.aarch64-unknown-linux-gnu.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          rust_compile(),
+          Method::CompileRustSource {
+            crate_name: "mdbook-linkcheck",
+            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+          },
         ],
       };
       assert_eq!(have, want);
@@ -127,7 +123,10 @@ mod tests {
             url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-unknown-linux-gnu.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          rust_compile(),
+          Method::CompileRustSource {
+            crate_name: "mdbook-linkcheck",
+            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+          },
         ],
       };
       assert_eq!(have, want);
@@ -148,7 +147,10 @@ mod tests {
             url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.aarch64-apple-darwin.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          rust_compile(),
+          Method::CompileRustSource {
+            crate_name: "mdbook-linkcheck",
+            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+          },
         ],
       };
       assert_eq!(have, want);
@@ -169,7 +171,10 @@ mod tests {
             url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-apple-darwin.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          rust_compile(),
+          Method::CompileRustSource {
+            crate_name: "mdbook-linkcheck",
+            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+          },
         ],
       };
       assert_eq!(have, want);
@@ -190,7 +195,10 @@ mod tests {
             url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.aarch64-pc-windows-msvc.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          rust_compile(),
+          Method::CompileRustSource {
+            crate_name: "mdbook-linkcheck",
+            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+          },
         ],
       };
       assert_eq!(have, want);
@@ -211,7 +219,10 @@ mod tests {
             url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-pc-windows-msvc.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          rust_compile(),
+          Method::CompileRustSource {
+            crate_name: "mdbook-linkcheck",
+            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+          },
         ],
       };
       assert_eq!(have, want);

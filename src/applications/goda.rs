@@ -61,14 +61,6 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    fn want() -> RunMethod {
-      RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
-          import_path: S("github.com/loov/goda@v0.5.9"),
-        }],
-      }
-    }
-
     #[test]
     fn linux_arm() {
       assert_eq!(
@@ -79,7 +71,11 @@ mod tests {
             cpu: Cpu::Arm64,
           },
         ),
-        want(),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/loov/goda@v0.5.9"),
+          }],
+        },
       );
     }
 
@@ -93,7 +89,11 @@ mod tests {
             cpu: Cpu::Intel64,
           },
         ),
-        want(),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/loov/goda@v0.5.9"),
+          }],
+        },
       );
     }
 
@@ -107,7 +107,11 @@ mod tests {
             cpu: Cpu::Arm64,
           },
         ),
-        want(),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/loov/goda@v0.5.9"),
+          }],
+        },
       );
     }
 
@@ -121,7 +125,11 @@ mod tests {
             cpu: Cpu::Intel64,
           },
         ),
-        want(),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/loov/goda@v0.5.9"),
+          }],
+        },
       );
     }
 
@@ -135,7 +143,11 @@ mod tests {
             cpu: Cpu::Arm64,
           },
         ),
-        want(),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/loov/goda@v0.5.9"),
+          }],
+        },
       );
     }
 
@@ -149,7 +161,11 @@ mod tests {
             cpu: Cpu::Intel64,
           },
         ),
-        want(),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/loov/goda@v0.5.9"),
+          }],
+        },
       );
     }
   }

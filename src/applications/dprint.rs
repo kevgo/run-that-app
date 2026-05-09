@@ -82,21 +82,6 @@ mod tests {
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
 
-    fn want(url: &str) -> RunMethod {
-      RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadArchive {
-            url: url.into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileRustSource {
-            crate_name: "dprint",
-            bin_folder: BinFolder::Subfolder { path: "bin".into() },
-          },
-        ],
-      }
-    }
-
     #[test]
     fn linux_arm() {
       let have = (Dprint {}).run_method(
@@ -108,7 +93,18 @@ mod tests {
       );
       assert_eq!(
         have,
-        want("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-unknown-linux-gnu.zip"),
+        RunMethod::ThisApp {
+          install_methods: vec![
+            Method::DownloadArchive {
+              url: "https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-unknown-linux-gnu.zip".into(),
+              bin_folder: BinFolder::Root,
+            },
+            Method::CompileRustSource {
+              crate_name: "dprint",
+              bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            },
+          ],
+        },
       );
     }
 
@@ -123,7 +119,18 @@ mod tests {
       );
       assert_eq!(
         have,
-        want("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-x86_64-unknown-linux-gnu.zip"),
+        RunMethod::ThisApp {
+          install_methods: vec![
+            Method::DownloadArchive {
+              url: "https://github.com/dprint/dprint/releases/download/0.48.0/dprint-x86_64-unknown-linux-gnu.zip".into(),
+              bin_folder: BinFolder::Root,
+            },
+            Method::CompileRustSource {
+              crate_name: "dprint",
+              bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            },
+          ],
+        },
       );
     }
 
@@ -138,7 +145,18 @@ mod tests {
       );
       assert_eq!(
         have,
-        want("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-apple-darwin.zip"),
+        RunMethod::ThisApp {
+          install_methods: vec![
+            Method::DownloadArchive {
+              url: "https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-apple-darwin.zip".into(),
+              bin_folder: BinFolder::Root,
+            },
+            Method::CompileRustSource {
+              crate_name: "dprint",
+              bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            },
+          ],
+        },
       );
     }
 
@@ -153,7 +171,18 @@ mod tests {
       );
       assert_eq!(
         have,
-        want("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-x86_64-apple-darwin.zip"),
+        RunMethod::ThisApp {
+          install_methods: vec![
+            Method::DownloadArchive {
+              url: "https://github.com/dprint/dprint/releases/download/0.48.0/dprint-x86_64-apple-darwin.zip".into(),
+              bin_folder: BinFolder::Root,
+            },
+            Method::CompileRustSource {
+              crate_name: "dprint",
+              bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            },
+          ],
+        },
       );
     }
 
@@ -168,7 +197,18 @@ mod tests {
       );
       assert_eq!(
         have,
-        want("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-pc-windows-msvc.zip"),
+        RunMethod::ThisApp {
+          install_methods: vec![
+            Method::DownloadArchive {
+              url: "https://github.com/dprint/dprint/releases/download/0.48.0/dprint-aarch64-pc-windows-msvc.zip".into(),
+              bin_folder: BinFolder::Root,
+            },
+            Method::CompileRustSource {
+              crate_name: "dprint",
+              bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            },
+          ],
+        },
       );
     }
 
@@ -183,7 +223,18 @@ mod tests {
       );
       assert_eq!(
         have,
-        want("https://github.com/dprint/dprint/releases/download/0.48.0/dprint-x86_64-pc-windows-msvc.zip"),
+        RunMethod::ThisApp {
+          install_methods: vec![
+            Method::DownloadArchive {
+              url: "https://github.com/dprint/dprint/releases/download/0.48.0/dprint-x86_64-pc-windows-msvc.zip".into(),
+              bin_folder: BinFolder::Root,
+            },
+            Method::CompileRustSource {
+              crate_name: "dprint",
+              bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            },
+          ],
+        },
       );
     }
   }

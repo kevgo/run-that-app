@@ -88,21 +88,6 @@ mod tests {
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
 
-    fn want(url: &str) -> RunMethod {
-      RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadArchive {
-            url: url.into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileRustSource {
-            crate_name: "taplo-cli",
-            bin_folder: BinFolder::Subfolder { path: "bin".into() },
-          },
-        ],
-      }
-    }
-
     #[test]
     fn linux_arm() {
       let have = (Taplo {}).run_method(
@@ -112,7 +97,21 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      assert_eq!(have, want("https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-linux-aarch64.gz"));
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![
+            Method::DownloadArchive {
+              url: "https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-linux-aarch64.gz".into(),
+              bin_folder: BinFolder::Root,
+            },
+            Method::CompileRustSource {
+              crate_name: "taplo-cli",
+              bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            },
+          ],
+        },
+      );
     }
 
     #[test]
@@ -124,7 +123,21 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      assert_eq!(have, want("https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-linux-x86_64.gz"));
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![
+            Method::DownloadArchive {
+              url: "https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-linux-x86_64.gz".into(),
+              bin_folder: BinFolder::Root,
+            },
+            Method::CompileRustSource {
+              crate_name: "taplo-cli",
+              bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            },
+          ],
+        },
+      );
     }
 
     #[test]
@@ -136,7 +149,21 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      assert_eq!(have, want("https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-darwin-aarch64.gz"));
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![
+            Method::DownloadArchive {
+              url: "https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-darwin-aarch64.gz".into(),
+              bin_folder: BinFolder::Root,
+            },
+            Method::CompileRustSource {
+              crate_name: "taplo-cli",
+              bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            },
+          ],
+        },
+      );
     }
 
     #[test]
@@ -148,7 +175,21 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      assert_eq!(have, want("https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-darwin-x86_64.gz"));
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![
+            Method::DownloadArchive {
+              url: "https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-darwin-x86_64.gz".into(),
+              bin_folder: BinFolder::Root,
+            },
+            Method::CompileRustSource {
+              crate_name: "taplo-cli",
+              bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            },
+          ],
+        },
+      );
     }
 
     #[test]
@@ -160,7 +201,21 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      assert_eq!(have, want("https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-windows-aarch64.zip"));
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![
+            Method::DownloadArchive {
+              url: "https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-windows-aarch64.zip".into(),
+              bin_folder: BinFolder::Root,
+            },
+            Method::CompileRustSource {
+              crate_name: "taplo-cli",
+              bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            },
+          ],
+        },
+      );
     }
 
     #[test]
@@ -172,7 +227,21 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      assert_eq!(have, want("https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-windows-x86_64.zip"));
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![
+            Method::DownloadArchive {
+              url: "https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-windows-x86_64.zip".into(),
+              bin_folder: BinFolder::Root,
+            },
+            Method::CompileRustSource {
+              crate_name: "taplo-cli",
+              bin_folder: BinFolder::Subfolder { path: "bin".into() },
+            },
+          ],
+        },
+      );
     }
   }
 

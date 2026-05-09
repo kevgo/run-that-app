@@ -60,14 +60,6 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    fn want() -> RunMethod {
-      RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
-          import_path: S("github.com/manuelarte/funcorder@v0.8.0"),
-        }],
-      }
-    }
-
     #[test]
     fn linux_arm() {
       let have = (FuncOrder {}).run_method(
@@ -77,7 +69,14 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      assert_eq!(have, want());
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/manuelarte/funcorder@v0.8.0"),
+          }],
+        },
+      );
     }
 
     #[test]
@@ -89,7 +88,14 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      assert_eq!(have, want());
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/manuelarte/funcorder@v0.8.0"),
+          }],
+        },
+      );
     }
 
     #[test]
@@ -101,7 +107,14 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      assert_eq!(have, want());
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/manuelarte/funcorder@v0.8.0"),
+          }],
+        },
+      );
     }
 
     #[test]
@@ -113,7 +126,14 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      assert_eq!(have, want());
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/manuelarte/funcorder@v0.8.0"),
+          }],
+        },
+      );
     }
 
     #[test]
@@ -125,7 +145,14 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      assert_eq!(have, want());
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/manuelarte/funcorder@v0.8.0"),
+          }],
+        },
+      );
     }
 
     #[test]
@@ -137,7 +164,14 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      assert_eq!(have, want());
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/manuelarte/funcorder@v0.8.0"),
+          }],
+        },
+      );
     }
   }
 }

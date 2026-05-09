@@ -69,14 +69,6 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    fn want() -> RunMethod {
-      RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
-          import_path: S("github.com/google/keep-sorted@v0.7.1"),
-        }],
-      }
-    }
-
     #[test]
     fn linux_arm() {
       let have = (KeepSorted {}).run_method(
@@ -86,7 +78,14 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      assert_eq!(have, want());
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/google/keep-sorted@v0.7.1"),
+          }],
+        },
+      );
     }
 
     #[test]
@@ -98,7 +97,14 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      assert_eq!(have, want());
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/google/keep-sorted@v0.7.1"),
+          }],
+        },
+      );
     }
 
     #[test]
@@ -110,7 +116,14 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      assert_eq!(have, want());
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/google/keep-sorted@v0.7.1"),
+          }],
+        },
+      );
     }
 
     #[test]
@@ -122,7 +135,14 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      assert_eq!(have, want());
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/google/keep-sorted@v0.7.1"),
+          }],
+        },
+      );
     }
 
     #[test]
@@ -134,7 +154,14 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      assert_eq!(have, want());
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/google/keep-sorted@v0.7.1"),
+          }],
+        },
+      );
     }
 
     #[test]
@@ -146,7 +173,14 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      assert_eq!(have, want());
+      assert_eq!(
+        have,
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/google/keep-sorted@v0.7.1"),
+          }],
+        },
+      );
     }
   }
 

@@ -60,13 +60,6 @@ mod tests {
     use crate::executables::{ExecutableNameUnix, RunMethod};
     use crate::platform::{Cpu, Os, Platform};
 
-    fn want() -> RunMethod {
-      RunMethod::OtherAppOtherExecutable {
-        app_definition: Box::new(Go {}),
-        executable_name: ExecutableNameUnix::from("gofmt"),
-      }
-    }
-
     #[test]
     fn linux_arm() {
       assert_eq!(
@@ -77,7 +70,10 @@ mod tests {
             cpu: Cpu::Arm64,
           },
         ),
-        want(),
+        RunMethod::OtherAppOtherExecutable {
+          app_definition: Box::new(Go {}),
+          executable_name: ExecutableNameUnix::from("gofmt"),
+        },
       );
     }
 
@@ -91,7 +87,10 @@ mod tests {
             cpu: Cpu::Intel64,
           },
         ),
-        want(),
+        RunMethod::OtherAppOtherExecutable {
+          app_definition: Box::new(Go {}),
+          executable_name: ExecutableNameUnix::from("gofmt"),
+        },
       );
     }
 
@@ -105,7 +104,10 @@ mod tests {
             cpu: Cpu::Arm64,
           },
         ),
-        want(),
+        RunMethod::OtherAppOtherExecutable {
+          app_definition: Box::new(Go {}),
+          executable_name: ExecutableNameUnix::from("gofmt"),
+        },
       );
     }
 
@@ -119,7 +121,10 @@ mod tests {
             cpu: Cpu::Intel64,
           },
         ),
-        want(),
+        RunMethod::OtherAppOtherExecutable {
+          app_definition: Box::new(Go {}),
+          executable_name: ExecutableNameUnix::from("gofmt"),
+        },
       );
     }
 
@@ -133,7 +138,10 @@ mod tests {
             cpu: Cpu::Arm64,
           },
         ),
-        want(),
+        RunMethod::OtherAppOtherExecutable {
+          app_definition: Box::new(Go {}),
+          executable_name: ExecutableNameUnix::from("gofmt"),
+        },
       );
     }
 
@@ -147,7 +155,10 @@ mod tests {
             cpu: Cpu::Intel64,
           },
         ),
-        want(),
+        RunMethod::OtherAppOtherExecutable {
+          app_definition: Box::new(Go {}),
+          executable_name: ExecutableNameUnix::from("gofmt"),
+        },
       );
     }
   }

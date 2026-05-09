@@ -80,12 +80,6 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    fn compile() -> Method {
-      Method::CompileGoSource {
-        import_path: S("github.com/tj/node-prune@v1.0.1"),
-      }
-    }
-
     #[test]
     fn linux_arm() {
       let have = (NodePrune {}).run_method(
@@ -100,7 +94,9 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_linux_arm64.tar.gz".into(),
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/tj/node-prune@v1.0.1"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -120,7 +116,9 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_linux_amd64.tar.gz".into(),
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/tj/node-prune@v1.0.1"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -140,7 +138,9 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_darwin_arm64.tar.gz".into(),
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/tj/node-prune@v1.0.1"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -160,7 +160,9 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_darwin_amd64.tar.gz".into(),
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/tj/node-prune@v1.0.1"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -180,7 +182,9 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_windows_arm64.tar.gz".into(),
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/tj/node-prune@v1.0.1"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -200,7 +204,9 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_windows_amd64.tar.gz".into(),
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/tj/node-prune@v1.0.1"),
+          },
         ],
       };
       assert_eq!(have, want);

@@ -60,15 +60,6 @@ mod tests {
     use crate::executables::{ExecutableArgs, RunMethod};
     use crate::platform::{Cpu, Os, Platform};
 
-    fn want() -> RunMethod {
-      RunMethod::OtherAppDefaultExecutable {
-        app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
-        },
-      }
-    }
-
     #[test]
     fn linux_arm() {
       assert_eq!(
@@ -79,7 +70,12 @@ mod tests {
             cpu: Cpu::Arm64,
           },
         ),
-        want(),
+        RunMethod::OtherAppDefaultExecutable {
+          app_definition: Box::new(NodeJS {}),
+          args: ExecutableArgs::OneOfTheseInAppFolder {
+            options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+          },
+        },
       );
     }
 
@@ -93,7 +89,12 @@ mod tests {
             cpu: Cpu::Intel64,
           },
         ),
-        want(),
+        RunMethod::OtherAppDefaultExecutable {
+          app_definition: Box::new(NodeJS {}),
+          args: ExecutableArgs::OneOfTheseInAppFolder {
+            options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+          },
+        },
       );
     }
 
@@ -107,7 +108,12 @@ mod tests {
             cpu: Cpu::Arm64,
           },
         ),
-        want(),
+        RunMethod::OtherAppDefaultExecutable {
+          app_definition: Box::new(NodeJS {}),
+          args: ExecutableArgs::OneOfTheseInAppFolder {
+            options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+          },
+        },
       );
     }
 
@@ -121,7 +127,12 @@ mod tests {
             cpu: Cpu::Intel64,
           },
         ),
-        want(),
+        RunMethod::OtherAppDefaultExecutable {
+          app_definition: Box::new(NodeJS {}),
+          args: ExecutableArgs::OneOfTheseInAppFolder {
+            options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+          },
+        },
       );
     }
 
@@ -135,7 +146,12 @@ mod tests {
             cpu: Cpu::Arm64,
           },
         ),
-        want(),
+        RunMethod::OtherAppDefaultExecutable {
+          app_definition: Box::new(NodeJS {}),
+          args: ExecutableArgs::OneOfTheseInAppFolder {
+            options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+          },
+        },
       );
     }
 
@@ -149,7 +165,12 @@ mod tests {
             cpu: Cpu::Intel64,
           },
         ),
-        want(),
+        RunMethod::OtherAppDefaultExecutable {
+          app_definition: Box::new(NodeJS {}),
+          args: ExecutableArgs::OneOfTheseInAppFolder {
+            options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+          },
+        },
       );
     }
   }

@@ -80,12 +80,6 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    fn compile() -> Method {
-      Method::CompileGoSource {
-        import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
-      }
-    }
-
     #[test]
     fn linux_arm() {
       let have = (Ireturn {}).run_method(
@@ -101,7 +95,9 @@ mod tests {
             url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_linux_arm64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -122,7 +118,9 @@ mod tests {
             url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_linux_x86_64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -143,7 +141,9 @@ mod tests {
             url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_darwin_arm64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -164,7 +164,9 @@ mod tests {
             url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_darwin_x86_64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -185,7 +187,9 @@ mod tests {
             url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_windows_arm64.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -206,7 +210,9 @@ mod tests {
             url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_windows_x86_64.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
+          },
         ],
       };
       assert_eq!(have, want);

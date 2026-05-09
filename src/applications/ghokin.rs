@@ -76,12 +76,6 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    fn compile() -> Method {
-      Method::CompileGoSource {
-        import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
-      }
-    }
-
     #[test]
     fn linux_arm() {
       let have = (Ghokin {}).run_method(
@@ -97,7 +91,9 @@ mod tests {
             url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_linux_arm64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -118,7 +114,9 @@ mod tests {
             url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_linux_amd64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -139,7 +137,9 @@ mod tests {
             url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_arm64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -160,7 +160,9 @@ mod tests {
             url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_amd64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -181,7 +183,9 @@ mod tests {
             url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_windows_arm64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -202,7 +206,9 @@ mod tests {
             url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_windows_amd64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
+          },
         ],
       };
       assert_eq!(have, want);

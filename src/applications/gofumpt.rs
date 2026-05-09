@@ -87,12 +87,6 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    fn compile() -> Method {
-      Method::CompileGoSource {
-        import_path: S("mvdan.cc/gofumpt@v0.5.0"),
-      }
-    }
-
     #[test]
     fn linux_arm() {
       let have = (Gofumpt {}).run_method(
@@ -107,7 +101,9 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_linux_arm64".into(),
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("mvdan.cc/gofumpt@v0.5.0"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -127,7 +123,9 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_linux_amd64".into(),
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("mvdan.cc/gofumpt@v0.5.0"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -147,7 +145,9 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_darwin_arm64".into(),
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("mvdan.cc/gofumpt@v0.5.0"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -167,7 +167,9 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_darwin_amd64".into(),
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("mvdan.cc/gofumpt@v0.5.0"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -187,7 +189,9 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_windows_arm64.exe".into(),
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("mvdan.cc/gofumpt@v0.5.0"),
+          },
         ],
       };
       assert_eq!(have, want);
@@ -207,7 +211,9 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_windows_amd64.exe".into(),
           },
-          compile(),
+          Method::CompileGoSource {
+            import_path: S("mvdan.cc/gofumpt@v0.5.0"),
+          },
         ],
       };
       assert_eq!(have, want);
