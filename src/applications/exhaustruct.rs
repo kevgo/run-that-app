@@ -64,14 +64,6 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    fn want_v3() -> RunMethod {
-      RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
-          import_path: S("github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct@v3.3.0"),
-        }],
-      }
-    }
-
     #[test]
     fn linux_arm() {
       assert_eq!(
@@ -82,7 +74,11 @@ mod tests {
             cpu: Cpu::Arm64,
           },
         ),
-        want_v3(),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct@v3.3.0"),
+          }],
+        }
       );
     }
 
@@ -96,7 +92,11 @@ mod tests {
             cpu: Cpu::Intel64,
           },
         ),
-        want_v3(),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct@v3.3.0"),
+          }],
+        }
       );
     }
 
@@ -110,7 +110,11 @@ mod tests {
             cpu: Cpu::Arm64,
           },
         ),
-        want_v3(),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct@v3.3.0"),
+          }],
+        }
       );
     }
 
@@ -124,7 +128,11 @@ mod tests {
             cpu: Cpu::Intel64,
           },
         ),
-        want_v3(),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct@v3.3.0"),
+          }],
+        }
       );
     }
 
@@ -138,7 +146,11 @@ mod tests {
             cpu: Cpu::Arm64,
           },
         ),
-        want_v3(),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct@v3.3.0"),
+          }],
+        }
       );
     }
 
@@ -152,7 +164,11 @@ mod tests {
             cpu: Cpu::Intel64,
           },
         ),
-        want_v3(),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct@v3.3.0"),
+          }],
+        }
       );
     }
   }
