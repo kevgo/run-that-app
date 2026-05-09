@@ -142,7 +142,7 @@ mod tests {
         &Version::from("0.0.1"),
         Platform {
           os: Os::MacOS,
-          cpu: Cpu::Arm64,
+          cpu: Cpu::Intel64,
         },
       );
       let want = RunMethod::ThisApp {
