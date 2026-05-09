@@ -93,7 +93,7 @@ mod tests {
     #[test]
     fn linux_arm() {
       let have = (ActionLint {}).run_method(
-        &Version::from("1.6.26"),
+        &Version::from("1.7.12"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Arm64,
@@ -102,11 +102,103 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_linux_arm64.tar.gz".into(),
+            url: "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_arm64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
           Method::CompileGoSource {
-            import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.6.26"),
+            import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.7.12"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (ActionLint {}).run_method(
+        &Version::from("1.7.12"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.7.12"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (ActionLint {}).run_method(
+        &Version::from("1.7.12"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_darwin_arm64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.7.12"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (ActionLint {}).run_method(
+        &Version::from("1.7.12"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_darwin_amd64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.7.12"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (ActionLint {}).run_method(
+        &Version::from("1.7.12"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_windows_arm64.zip".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.7.12"),
           },
         ],
       };
@@ -116,7 +208,7 @@ mod tests {
     #[test]
     fn windows_intel() {
       let have = (ActionLint {}).run_method(
-        &Version::from("1.6.26"),
+        &Version::from("1.7.12"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
@@ -125,11 +217,11 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/rhysd/actionlint/releases/download/v1.6.26/actionlint_1.6.26_windows_amd64.zip".into(),
+            url: "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_windows_amd64.zip".into(),
             bin_folder: BinFolder::Root,
           },
           Method::CompileGoSource {
-            import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.6.26"),
+            import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.7.12"),
           },
         ],
       };
