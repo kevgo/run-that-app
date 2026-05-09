@@ -28,12 +28,14 @@ lint: build  # runs all linters
 	# target/debug/rta dprint check  # this breaks the Windows CI due to linebreak errors
 	target/debug/rta --optional shellcheck download.sh
 
+ps: fix test  # pitstop
+
 setup:  # install development dependencies on this computer
 	rustup component add clippy
 	rustup toolchain add nightly
 	rustup component add rustfmt --toolchain nightly
 
-test: fix unit lint doc  # runs all tests
+test: unit lint doc  # runs all tests
 
 todo:  # displays all TODO items
 	@git grep --color=always --line-number TODO ':!target' | grep -v Makefile
