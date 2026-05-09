@@ -99,10 +99,16 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_linux_arm_64.tar.gz".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_linux_arm_64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileRustRepo {
+            url: "https://github.com/contest-framework/server".into(),
+            bin_folder: BinFolder::Root,
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -117,10 +123,16 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_linux_intel_64.tar.gz".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_linux_intel_64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileRustRepo {
+            url: "https://github.com/contest-framework/server".into(),
+            bin_folder: BinFolder::Root,
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -135,10 +147,16 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_macos_arm_64.tar.gz".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_macos_arm_64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileRustRepo {
+            url: "https://github.com/contest-framework/server".into(),
+            bin_folder: BinFolder::Root,
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -153,10 +171,16 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_macos_intel_64.tar.gz".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_macos_intel_64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileRustRepo {
+            url: "https://github.com/contest-framework/server".into(),
+            bin_folder: BinFolder::Root,
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -171,10 +195,16 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_windows_arm_64.zip".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_windows_arm_64.zip".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileRustRepo {
+            url: "https://github.com/contest-framework/server".into(),
+            bin_folder: BinFolder::Root,
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -189,10 +219,16 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_windows_intel_64.zip".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_windows_intel_64.zip".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileRustRepo {
+            url: "https://github.com/contest-framework/server".into(),
+            bin_folder: BinFolder::Root,
+          },
+        ],
       };
       assert_eq!(have, want);
     }
