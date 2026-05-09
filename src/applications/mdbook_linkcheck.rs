@@ -76,7 +76,7 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
   use crate::UserError;
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::mdbook_linkcheck::MdBookLinkCheck;
     use crate::configuration::Version;
@@ -84,8 +84,78 @@ mod tests {
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
 
+    fn rust_compile() -> Method {
+      Method::CompileRustSource {
+        crate_name: "mdbook-linkcheck",
+        bin_folder: BinFolder::Subfolder { path: "bin".into() },
+      }
+    }
+
     #[test]
     fn linux_arm() {
+      let have = (MdBookLinkCheck {}).run_method(
+        &Version::from("0.7.8"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.aarch64-unknown-linux-gnu.zip".into(),
+            bin_folder: BinFolder::Root,
+          },
+          rust_compile(),
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (MdBookLinkCheck {}).run_method(
+        &Version::from("0.7.8"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-unknown-linux-gnu.zip".into(),
+            bin_folder: BinFolder::Root,
+          },
+          rust_compile(),
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (MdBookLinkCheck {}).run_method(
+        &Version::from("0.7.8"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.aarch64-apple-darwin.zip".into(),
+            bin_folder: BinFolder::Root,
+          },
+          rust_compile(),
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
       let have = (MdBookLinkCheck {}).run_method(
         &Version::from("0.7.8"),
         Platform {
@@ -99,10 +169,28 @@ mod tests {
             url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-apple-darwin.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
-            crate_name: "mdbook-linkcheck",
-            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+          rust_compile(),
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (MdBookLinkCheck {}).run_method(
+        &Version::from("0.7.8"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.aarch64-pc-windows-msvc.zip".into(),
+            bin_folder: BinFolder::Root,
           },
+          rust_compile(),
         ],
       };
       assert_eq!(have, want);
@@ -123,10 +211,7 @@ mod tests {
             url: "https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/v0.7.8/mdbook-linkcheck.x86_64-pc-windows-msvc.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
-            crate_name: "mdbook-linkcheck",
-            bin_folder: BinFolder::Subfolder { path: "bin".into() },
-          },
+          rust_compile(),
         ],
       };
       assert_eq!(have, want);

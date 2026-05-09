@@ -75,7 +75,7 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
   use crate::UserError;
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::contest::Contest;
     use crate::configuration::Version;
@@ -85,6 +85,42 @@ mod tests {
 
     #[test]
     fn linux_arm() {
+      let have = (Contest {}).run_method(
+        &Version::from("0.4.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_linux_arm_64.tar.gz".into(),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (Contest {}).run_method(
+        &Version::from("0.4.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_linux_intel_64.tar.gz".into(),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
       let have = (Contest {}).run_method(
         &Version::from("0.4.0"),
         Platform {
@@ -102,17 +138,53 @@ mod tests {
     }
 
     #[test]
-    fn windows_intel() {
+    fn macos_intel() {
       let have = (Contest {}).run_method(
         &Version::from("0.4.0"),
         Platform {
-          os: Os::Linux,
+          os: Os::MacOS,
           cpu: Cpu::Intel64,
         },
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_linux_intel_64.tar.gz".into(),
+          url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_macos_intel_64.tar.gz".into(),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (Contest {}).run_method(
+        &Version::from("0.4.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_windows_arm_64.zip".into(),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_intel() {
+      let have = (Contest {}).run_method(
+        &Version::from("0.4.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/contest-framework/server/releases/download/v0.4.0/contest_windows_intel_64.zip".into(),
           bin_folder: BinFolder::Root,
         }],
       };

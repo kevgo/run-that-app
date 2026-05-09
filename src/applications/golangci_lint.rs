@@ -70,7 +70,7 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
   use crate::UserError;
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::golangci_lint::GolangCiLint;
     use crate::configuration::Version;
@@ -83,6 +83,46 @@ mod tests {
       let have = (GolangCiLint {}).run_method(
         &Version::from("1.55.2"),
         Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-linux-arm64.tar.gz".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "golangci-lint-1.55.2-linux-arm64".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (GolangCiLint {}).run_method(
+        &Version::from("1.55.2"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-linux-amd64.tar.gz".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "golangci-lint-1.55.2-linux-amd64".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (GolangCiLint {}).run_method(
+        &Version::from("1.55.2"),
+        Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
         },
@@ -92,6 +132,46 @@ mod tests {
           url: "https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-darwin-arm64.tar.gz".into(),
           bin_folder: BinFolder::Subfolder {
             path: "golangci-lint-1.55.2-darwin-arm64".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (GolangCiLint {}).run_method(
+        &Version::from("1.55.2"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-darwin-amd64.tar.gz".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "golangci-lint-1.55.2-darwin-amd64".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (GolangCiLint {}).run_method(
+        &Version::from("1.55.2"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/golangci/golangci-lint/releases/download/v1.55.2/golangci-lint-1.55.2-windows-arm64.zip".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "golangci-lint-1.55.2-windows-arm64".into(),
           },
         }],
       };

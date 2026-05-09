@@ -74,7 +74,7 @@ fn extract_version(output: &str) -> Result<&str> {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::shellcheck::ShellCheck;
     use crate::configuration::Version;
@@ -85,7 +85,27 @@ mod tests {
     #[test]
     fn linux_arm() {
       let have = (ShellCheck {}).run_method(
-        &Version::from("0.9.0"),
+        &Version::from("0.10.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.linux.aarch64.tar.xz".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "shellcheck-v0.10.0".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (ShellCheck {}).run_method(
+        &Version::from("0.10.0"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Intel64,
@@ -93,9 +113,9 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.linux.x86_64.tar.xz".into(),
+          url: "https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.linux.x86_64.tar.xz".into(),
           bin_folder: BinFolder::Subfolder {
-            path: "shellcheck-v0.9.0".into(),
+            path: "shellcheck-v0.10.0".into(),
           },
         }],
       };
@@ -114,6 +134,66 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.darwin.aarch64.tar.xz".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "shellcheck-v0.10.0".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (ShellCheck {}).run_method(
+        &Version::from("0.10.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.darwin.x86_64.tar.xz".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "shellcheck-v0.10.0".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (ShellCheck {}).run_method(
+        &Version::from("0.10.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.windows.aarch64.zip".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "shellcheck-v0.10.0".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_intel() {
+      let have = (ShellCheck {}).run_method(
+        &Version::from("0.10.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.windows.x86_64.zip".into(),
           bin_folder: BinFolder::Subfolder {
             path: "shellcheck-v0.10.0".into(),
           },

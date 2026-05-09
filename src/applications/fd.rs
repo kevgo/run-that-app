@@ -81,7 +81,7 @@ fn extract_version(output: &str) -> Result<&str> {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
     use super::super::Fd;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
@@ -116,7 +116,7 @@ mod tests {
     }
 
     #[test]
-    fn linux_x86() {
+    fn linux_intel() {
       let have = (Fd {}).run_method(
         &Version::from("10.3.0"),
         Platform {
@@ -168,7 +168,7 @@ mod tests {
     }
 
     #[test]
-    fn macos_x86() {
+    fn macos_intel() {
       let have = (Fd {}).run_method(
         &Version::from("10.3.0"),
         Platform {
@@ -220,7 +220,7 @@ mod tests {
     }
 
     #[test]
-    fn windows_x86() {
+    fn windows_intel() {
       let have = (Fd {}).run_method(
         &Version::from("10.3.0"),
         Platform {

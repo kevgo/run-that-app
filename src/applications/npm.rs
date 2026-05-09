@@ -52,7 +52,7 @@ fn app_to_install() -> NodeJS {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::nodejs::NodeJS;
     use crate::applications::npm::Npm;
@@ -60,42 +60,97 @@ mod tests {
     use crate::executables::{ExecutableArgs, RunMethod};
     use crate::platform::{Cpu, Os, Platform};
 
-    #[test]
-    #[cfg(unix)]
-    fn linux_arm() {
-      let have = (Npm {}).run_method(
-        &Version::from("20.10.0"),
-        Platform {
-          os: Os::MacOS,
-          cpu: Cpu::Arm64,
-        },
-      );
-      let want = RunMethod::OtherAppDefaultExecutable {
+    fn want() -> RunMethod {
+      RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
           options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
         },
-      };
-      assert_eq!(have, want);
+      }
     }
 
     #[test]
-    #[cfg(windows)]
-    fn windows_intel() {
-      let have = (Npm {}).run_method(
-        &Version::from("20.10.0"),
-        Platform {
-          os: Os::Windows,
-          cpu: Cpu::Intel64,
-        },
+    fn linux_arm() {
+      assert_eq!(
+        (Npm {}).run_method(
+          &Version::from("20.10.0"),
+          Platform {
+            os: Os::Linux,
+            cpu: Cpu::Arm64,
+          },
+        ),
+        want(),
       );
-      let want = RunMethod::OtherAppDefaultExecutable {
-        app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
-        },
-      };
-      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      assert_eq!(
+        (Npm {}).run_method(
+          &Version::from("20.10.0"),
+          Platform {
+            os: Os::Linux,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        want(),
+      );
+    }
+
+    #[test]
+    fn macos_arm() {
+      assert_eq!(
+        (Npm {}).run_method(
+          &Version::from("20.10.0"),
+          Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Arm64,
+          },
+        ),
+        want(),
+      );
+    }
+
+    #[test]
+    fn macos_intel() {
+      assert_eq!(
+        (Npm {}).run_method(
+          &Version::from("20.10.0"),
+          Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        want(),
+      );
+    }
+
+    #[test]
+    fn windows_arm() {
+      assert_eq!(
+        (Npm {}).run_method(
+          &Version::from("20.10.0"),
+          Platform {
+            os: Os::Windows,
+            cpu: Cpu::Arm64,
+          },
+        ),
+        want(),
+      );
+    }
+
+    #[test]
+    fn windows_intel() {
+      assert_eq!(
+        (Npm {}).run_method(
+          &Version::from("20.10.0"),
+          Platform {
+            os: Os::Windows,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        want(),
+      );
     }
   }
 }

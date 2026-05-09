@@ -72,13 +72,53 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
   use crate::UserError;
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::bun::Bun;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
+
+    #[test]
+    fn linux_arm() {
+      let have = (Bun {}).run_method(
+        &Version::from("1.3.8"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/oven-sh/bun/releases/download/bun-v1.3.8/bun-linux-aarch64.zip".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "bun-linux-aarch64".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (Bun {}).run_method(
+        &Version::from("1.3.8"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/oven-sh/bun/releases/download/bun-v1.3.8/bun-linux-x64.zip".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "bun-linux-x64".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
 
     #[test]
     fn macos_arm() {
@@ -101,19 +141,39 @@ mod tests {
     }
 
     #[test]
-    fn linux_arm() {
+    fn macos_intel() {
       let have = (Bun {}).run_method(
         &Version::from("1.3.8"),
         Platform {
-          os: Os::Linux,
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/oven-sh/bun/releases/download/bun-v1.3.8/bun-darwin-x64.zip".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "bun-darwin-x64".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (Bun {}).run_method(
+        &Version::from("1.3.8"),
+        Platform {
+          os: Os::Windows,
           cpu: Cpu::Arm64,
         },
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/oven-sh/bun/releases/download/bun-v1.3.8/bun-linux-aarch64.zip".into(),
+          url: "https://github.com/oven-sh/bun/releases/download/bun-v1.3.8/bun-windows-aarch64.zip".into(),
           bin_folder: BinFolder::Subfolder {
-            path: "bun-linux-aarch64".into(),
+            path: "bun-windows-aarch64".into(),
           },
         }],
       };

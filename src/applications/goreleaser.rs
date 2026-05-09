@@ -72,7 +72,7 @@ fn extract_version(output: &str) -> Result<&str> {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::goreleaser::Goreleaser;
     use crate::configuration::Version;
@@ -85,6 +85,42 @@ mod tests {
       let have = (Goreleaser {}).run_method(
         &Version::from("1.22.1"),
         Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Linux_arm64.tar.gz".into(),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (Goreleaser {}).run_method(
+        &Version::from("1.22.1"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Linux_x86_64.tar.gz".into(),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (Goreleaser {}).run_method(
+        &Version::from("1.22.1"),
+        Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
         },
@@ -92,6 +128,42 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_arm64.tar.gz".into(),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (Goreleaser {}).run_method(
+        &Version::from("1.22.1"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Darwin_x86_64.tar.gz".into(),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (Goreleaser {}).run_method(
+        &Version::from("1.22.1"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/goreleaser/goreleaser/releases/download/v1.22.1/goreleaser_Windows_arm64.zip".into(),
           bin_folder: BinFolder::Root,
         }],
       };

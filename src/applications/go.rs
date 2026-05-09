@@ -113,7 +113,9 @@ fn parse_go_mod(text: &str) -> Result<&str> {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
+    use std::path::MAIN_SEPARATOR;
+
     use crate::applications::AppDefinition;
     use crate::applications::go::Go;
     use crate::configuration::Version;
@@ -121,47 +123,100 @@ mod tests {
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
 
-    #[test]
-    #[cfg(unix)]
-    fn linux_arm() {
-      use std::path;
-
-      let have = (Go {}).run_method(
-        &Version::from("1.21.5"),
-        Platform {
-          os: Os::MacOS,
-          cpu: Cpu::Arm64,
-        },
-      );
-      let sep = path::MAIN_SEPARATOR;
-      let want = RunMethod::ThisApp {
+    fn want(url: &str) -> RunMethod {
+      let sep = MAIN_SEPARATOR;
+      RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz".into(),
+          url: url.into(),
           bin_folder: BinFolder::Subfolder {
             path: format!("go{sep}bin").into(),
           },
         }],
-      };
-      assert_eq!(have, want);
+      }
     }
 
     #[test]
-    #[cfg(windows)]
-    fn windows_intel() {
-      let have = (Go {}).run_method(
-        &Version::from("1.21.5"),
-        Platform {
-          os: Os::Windows,
-          cpu: Cpu::Intel64,
-        },
+    fn linux_arm() {
+      assert_eq!(
+        (Go {}).run_method(
+          &Version::from("1.21.5"),
+          Platform {
+            os: Os::Linux,
+            cpu: Cpu::Arm64,
+          },
+        ),
+        want("https://go.dev/dl/go1.21.5.linux-arm64.tar.gz"),
       );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://go.dev/dl/go1.21.5.windows-amd64.zip".into(),
-          bin_folder: BinFolder::Subfolder { path: "go\\bin".into() },
-        }],
-      };
-      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      assert_eq!(
+        (Go {}).run_method(
+          &Version::from("1.21.5"),
+          Platform {
+            os: Os::Linux,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        want("https://go.dev/dl/go1.21.5.linux-amd64.tar.gz"),
+      );
+    }
+
+    #[test]
+    fn macos_arm() {
+      assert_eq!(
+        (Go {}).run_method(
+          &Version::from("1.21.5"),
+          Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Arm64,
+          },
+        ),
+        want("https://go.dev/dl/go1.21.5.darwin-arm64.tar.gz"),
+      );
+    }
+
+    #[test]
+    fn macos_intel() {
+      assert_eq!(
+        (Go {}).run_method(
+          &Version::from("1.21.5"),
+          Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        want("https://go.dev/dl/go1.21.5.darwin-amd64.tar.gz"),
+      );
+    }
+
+    #[test]
+    fn windows_arm() {
+      assert_eq!(
+        (Go {}).run_method(
+          &Version::from("1.21.5"),
+          Platform {
+            os: Os::Windows,
+            cpu: Cpu::Arm64,
+          },
+        ),
+        want("https://go.dev/dl/go1.21.5.windows-arm64.zip"),
+      );
+    }
+
+    #[test]
+    fn windows_intel() {
+      assert_eq!(
+        (Go {}).run_method(
+          &Version::from("1.21.5"),
+          Platform {
+            os: Os::Windows,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        want("https://go.dev/dl/go1.21.5.windows-amd64.zip"),
+      );
     }
   }
 

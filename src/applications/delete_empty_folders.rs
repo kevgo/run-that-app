@@ -74,7 +74,7 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
   use crate::UserError;
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::delete_empty_folders::DeleteEmptyFolders;
     use crate::configuration::Version;

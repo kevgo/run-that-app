@@ -93,7 +93,9 @@ pub(crate) fn os_text(os: Os) -> &'static str {
 mod tests {
   use crate::UserError;
 
-  mod install_methods {
+  mod run_method {
+    use std::path::MAIN_SEPARATOR;
+
     use crate::applications::AppDefinition;
     use crate::applications::nodejs::NodeJS;
     use crate::configuration::Version;
@@ -101,46 +103,118 @@ mod tests {
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
 
-    #[test]
-    #[cfg(unix)]
-    fn linux_arm() {
-      let have = (NodeJS {}).run_method(
-        &Version::from("20.10.0"),
-        Platform {
-          os: Os::MacOS,
-          cpu: Cpu::Arm64,
-        },
-      );
-      let want = RunMethod::ThisApp {
+    fn want(url: &str, folder: &str) -> RunMethod {
+      let sep = MAIN_SEPARATOR;
+      RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz".into(),
+          url: url.into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec!["node-v20.10.0-darwin-arm64".into(), "node-v20.10.0-darwin-arm64/bin".into()],
+            options: vec![folder.into(), format!("{folder}{sep}bin").into()],
           },
         }],
-      };
-      assert_eq!(have, want);
+      }
     }
 
     #[test]
-    #[cfg(windows)]
-    fn windows_intel() {
-      let have = (NodeJS {}).run_method(
-        &Version::from("20.10.0"),
-        Platform {
-          os: Os::Windows,
-          cpu: Cpu::Intel64,
-        },
-      );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip".into(),
-          bin_folder: BinFolder::RootOrSubfolders {
-            options: vec!["node-v20.10.0-win-x64".into(), "node-v20.10.0-win-x64\\bin".into()],
+    fn linux_arm() {
+      assert_eq!(
+        (NodeJS {}).run_method(
+          &Version::from("20.10.0"),
+          Platform {
+            os: Os::Linux,
+            cpu: Cpu::Arm64,
           },
-        }],
-      };
-      assert_eq!(have, want);
+        ),
+        want(
+          "https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-arm64.tar.xz",
+          "node-v20.10.0-linux-arm64",
+        ),
+      );
+    }
+
+    #[test]
+    fn linux_intel() {
+      assert_eq!(
+        (NodeJS {}).run_method(
+          &Version::from("20.10.0"),
+          Platform {
+            os: Os::Linux,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        want(
+          "https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-x64.tar.xz",
+          "node-v20.10.0-linux-x64",
+        ),
+      );
+    }
+
+    #[test]
+    fn macos_arm() {
+      assert_eq!(
+        (NodeJS {}).run_method(
+          &Version::from("20.10.0"),
+          Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Arm64,
+          },
+        ),
+        want(
+          "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz",
+          "node-v20.10.0-darwin-arm64",
+        ),
+      );
+    }
+
+    #[test]
+    fn macos_intel() {
+      assert_eq!(
+        (NodeJS {}).run_method(
+          &Version::from("20.10.0"),
+          Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        want(
+          "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-x64.tar.gz",
+          "node-v20.10.0-darwin-x64",
+        ),
+      );
+    }
+
+    #[test]
+    fn windows_arm() {
+      assert_eq!(
+        (NodeJS {}).run_method(
+          &Version::from("20.10.0"),
+          Platform {
+            os: Os::Windows,
+            cpu: Cpu::Arm64,
+          },
+        ),
+        want(
+          "https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-arm64.zip",
+          "node-v20.10.0-win-arm64",
+        ),
+      );
+    }
+
+    #[test]
+    fn windows_intel() {
+      assert_eq!(
+        (NodeJS {}).run_method(
+          &Version::from("20.10.0"),
+          Platform {
+            os: Os::Windows,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        want(
+          "https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip",
+          "node-v20.10.0-win-x64",
+        ),
+      );
     }
   }
 

@@ -52,7 +52,7 @@ fn app_to_install() -> Go {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::go::Go;
     use crate::applications::gofmt::Gofmt;
@@ -60,36 +60,95 @@ mod tests {
     use crate::executables::{ExecutableNameUnix, RunMethod};
     use crate::platform::{Cpu, Os, Platform};
 
-    #[test]
-    fn macos() {
-      let have = (Gofmt {}).run_method(
-        &Version::from("1.23.4"),
-        Platform {
-          os: Os::MacOS,
-          cpu: Cpu::Intel64,
-        },
-      );
-      let want = RunMethod::OtherAppOtherExecutable {
+    fn want() -> RunMethod {
+      RunMethod::OtherAppOtherExecutable {
         app_definition: Box::new(Go {}),
         executable_name: ExecutableNameUnix::from("gofmt"),
-      };
-      assert_eq!(have, want);
+      }
     }
 
     #[test]
-    fn windows() {
-      let have = (Gofmt {}).run_method(
-        &Version::from("1.23.4"),
-        Platform {
-          os: Os::Windows,
-          cpu: Cpu::Intel64,
-        },
+    fn linux_arm() {
+      assert_eq!(
+        (Gofmt {}).run_method(
+          &Version::from("1.23.4"),
+          Platform {
+            os: Os::Linux,
+            cpu: Cpu::Arm64,
+          },
+        ),
+        want(),
       );
-      let want = RunMethod::OtherAppOtherExecutable {
-        app_definition: Box::new(Go {}),
-        executable_name: ExecutableNameUnix::from("gofmt"),
-      };
-      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      assert_eq!(
+        (Gofmt {}).run_method(
+          &Version::from("1.23.4"),
+          Platform {
+            os: Os::Linux,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        want(),
+      );
+    }
+
+    #[test]
+    fn macos_arm() {
+      assert_eq!(
+        (Gofmt {}).run_method(
+          &Version::from("1.23.4"),
+          Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Arm64,
+          },
+        ),
+        want(),
+      );
+    }
+
+    #[test]
+    fn macos_intel() {
+      assert_eq!(
+        (Gofmt {}).run_method(
+          &Version::from("1.23.4"),
+          Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        want(),
+      );
+    }
+
+    #[test]
+    fn windows_arm() {
+      assert_eq!(
+        (Gofmt {}).run_method(
+          &Version::from("1.23.4"),
+          Platform {
+            os: Os::Windows,
+            cpu: Cpu::Arm64,
+          },
+        ),
+        want(),
+      );
+    }
+
+    #[test]
+    fn windows_intel() {
+      assert_eq!(
+        (Gofmt {}).run_method(
+          &Version::from("1.23.4"),
+          Platform {
+            os: Os::Windows,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        want(),
+      );
     }
   }
 }

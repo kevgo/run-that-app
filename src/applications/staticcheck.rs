@@ -66,7 +66,7 @@ impl AppDefinition for StaticCheck {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::staticcheck::StaticCheck;
     use crate::configuration::Version;
@@ -75,8 +75,56 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
+    fn compile() -> Method {
+      Method::CompileGoSource {
+        import_path: S("honnef.co/go/tools/cmd/staticcheck@3.7.0"),
+      }
+    }
+
     #[test]
     fn linux_arm() {
+      let have = (StaticCheck {}).run_method(
+        &Version::from("3.7.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_linux_arm64.tar.gz".into(),
+            bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
+          },
+          compile(),
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (StaticCheck {}).run_method(
+        &Version::from("3.7.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_linux_amd64.tar.gz".into(),
+            bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
+          },
+          compile(),
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
       let have = (StaticCheck {}).run_method(
         &Version::from("3.7.0"),
         Platform {
@@ -90,9 +138,49 @@ mod tests {
             url: "https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_darwin_arm64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
           },
-          Method::CompileGoSource {
-            import_path: S("honnef.co/go/tools/cmd/staticcheck@3.7.0"),
+          compile(),
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (StaticCheck {}).run_method(
+        &Version::from("3.7.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_darwin_amd64.tar.gz".into(),
+            bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
           },
+          compile(),
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (StaticCheck {}).run_method(
+        &Version::from("3.7.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_windows_arm64.tar.gz".into(),
+            bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
+          },
+          compile(),
         ],
       };
       assert_eq!(have, want);
@@ -113,9 +201,7 @@ mod tests {
             url: "https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_windows_amd64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
           },
-          Method::CompileGoSource {
-            import_path: S("honnef.co/go/tools/cmd/staticcheck@3.7.0"),
-          },
+          compile(),
         ],
       };
       assert_eq!(have, want);

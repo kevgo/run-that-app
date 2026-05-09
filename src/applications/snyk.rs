@@ -73,7 +73,7 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
   use crate::UserError;
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::snyk::Snyk;
     use crate::configuration::Version;
@@ -144,6 +144,23 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadExecutable {
           url: "https://github.com/snyk/cli/releases/download/v1.1304.1/snyk-macos".into(),
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (Snyk {}).run_method(
+        &Version::from("1.1304.1"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadExecutable {
+          url: "https://github.com/snyk/cli/releases/download/v1.1304.1/snyk-win-arm64.exe".into(),
         }],
       };
       assert_eq!(have, want);

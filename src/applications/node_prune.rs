@@ -71,7 +71,7 @@ impl AppDefinition for NodePrune {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::node_prune::NodePrune;
     use crate::configuration::Version;
@@ -80,8 +80,34 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
+    fn compile() -> Method {
+      Method::CompileGoSource {
+        import_path: S("github.com/tj/node-prune@v1.0.1"),
+      }
+    }
+
     #[test]
     fn linux_arm() {
+      let have = (NodePrune {}).run_method(
+        &Version::from("1.0.1"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_linux_arm64.tar.gz".into(),
+          },
+          compile(),
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
       let have = (NodePrune {}).run_method(
         &Version::from("1.0.1"),
         Platform {
@@ -94,9 +120,67 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_linux_amd64.tar.gz".into(),
           },
-          Method::CompileGoSource {
-            import_path: S("github.com/tj/node-prune@v1.0.1"),
+          compile(),
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (NodePrune {}).run_method(
+        &Version::from("1.0.1"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_darwin_arm64.tar.gz".into(),
           },
+          compile(),
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (NodePrune {}).run_method(
+        &Version::from("1.0.1"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_darwin_amd64.tar.gz".into(),
+          },
+          compile(),
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (NodePrune {}).run_method(
+        &Version::from("1.0.1"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_windows_arm64.tar.gz".into(),
+          },
+          compile(),
         ],
       };
       assert_eq!(have, want);
@@ -116,9 +200,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_windows_amd64.tar.gz".into(),
           },
-          Method::CompileGoSource {
-            import_path: S("github.com/tj/node-prune@v1.0.1"),
-          },
+          compile(),
         ],
       };
       assert_eq!(have, want);

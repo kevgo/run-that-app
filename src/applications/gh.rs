@@ -77,7 +77,9 @@ fn extract_version(output: &str) -> Result<&str> {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
+    use std::path::MAIN_SEPARATOR;
+
     use crate::applications::AppDefinition;
     use crate::applications::gh::Gh;
     use crate::configuration::Version;
@@ -85,46 +87,121 @@ mod tests {
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
 
-    #[test]
-    #[cfg(unix)]
-    fn linux_arm() {
-      let have = (Gh {}).run_method(
-        &Version::from("2.39.1"),
-        Platform {
-          os: Os::Linux,
-          cpu: Cpu::Arm64,
-        },
-      );
-      let want = RunMethod::ThisApp {
+    fn want(url: &str, gh_extract_folder: &str) -> RunMethod {
+      let sep = MAIN_SEPARATOR;
+      RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz".into(),
+          url: url.into(),
           bin_folder: BinFolder::Subfolders {
-            options: vec!["bin".into(), "gh_2.39.1_linux_arm64/bin".into()],
+            options: vec![
+              "bin".into(),
+              format!("gh_2.39.1_{gh_extract_folder}{sep}bin").into(),
+            ],
           },
         }],
-      };
-      assert_eq!(have, want);
+      }
     }
 
     #[test]
-    #[cfg(windows)]
-    fn windows_intel() {
-      let have = (Gh {}).run_method(
-        &Version::from("2.39.1"),
-        Platform {
-          os: Os::Windows,
-          cpu: Cpu::Intel64,
-        },
-      );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip".into(),
-          bin_folder: BinFolder::Subfolders {
-            options: vec!["bin".into(), "gh_2.39.1_windows_amd64\\bin".into()],
+    fn linux_arm() {
+      assert_eq!(
+        (Gh {}).run_method(
+          &Version::from("2.39.1"),
+          Platform {
+            os: Os::Linux,
+            cpu: Cpu::Arm64,
           },
-        }],
-      };
-      assert_eq!(have, want);
+        ),
+        want(
+          "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_arm64.tar.gz",
+          "linux_arm64",
+        ),
+      );
+    }
+
+    #[test]
+    fn linux_intel() {
+      assert_eq!(
+        (Gh {}).run_method(
+          &Version::from("2.39.1"),
+          Platform {
+            os: Os::Linux,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        want(
+          "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_linux_amd64.tar.gz",
+          "linux_amd64",
+        ),
+      );
+    }
+
+    #[test]
+    fn macos_arm() {
+      assert_eq!(
+        (Gh {}).run_method(
+          &Version::from("2.39.1"),
+          Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Arm64,
+          },
+        ),
+        want(
+          "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_macOS_arm64.zip",
+          "macOS_arm64",
+        ),
+      );
+    }
+
+    #[test]
+    fn macos_intel() {
+      assert_eq!(
+        (Gh {}).run_method(
+          &Version::from("2.39.1"),
+          Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        want(
+          "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_macOS_amd64.zip",
+          "macOS_amd64",
+        ),
+      );
+    }
+
+    #[test]
+    fn windows_arm() {
+      assert_eq!(
+        (Gh {}).run_method(
+          &Version::from("2.39.1"),
+          Platform {
+            os: Os::Windows,
+            cpu: Cpu::Arm64,
+          },
+        ),
+        want(
+          "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_arm64.zip",
+          "windows_arm64",
+        ),
+      );
+    }
+
+    #[test]
+    fn windows_intel() {
+      assert_eq!(
+        (Gh {}).run_method(
+          &Version::from("2.39.1"),
+          Platform {
+            os: Os::Windows,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        want(
+          "https://github.com/cli/cli/releases/download/v2.39.1/gh_2.39.1_windows_amd64.zip",
+          "windows_amd64",
+        ),
+      );
     }
   }
 

@@ -50,29 +50,121 @@ impl AppDefinition for Deadcode {
 
 #[cfg(test)]
 mod tests {
-  use crate::applications::deadcode::Deadcode;
-  use crate::executables::RunMethod;
-
-  #[test]
-  fn install_methods() {
+  mod run_method {
     use crate::applications::AppDefinition;
+    use crate::applications::deadcode::Deadcode;
     use crate::configuration::Version;
+    use crate::executables::RunMethod;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    let have = (Deadcode {}).run_method(
-      &Version::from("0.16.1"),
-      Platform {
-        os: Os::Linux,
-        cpu: Cpu::Arm64,
-      },
-    );
-    let want = RunMethod::ThisApp {
-      install_methods: vec![Method::CompileGoSource {
-        import_path: S("golang.org/x/tools/cmd/deadcode@v0.16.1"),
-      }],
-    };
-    assert_eq!(have, want);
+    #[test]
+    fn linux_arm() {
+      assert_eq!(
+        (Deadcode {}).run_method(
+          &Version::from("0.16.1"),
+          Platform {
+            os: Os::Linux,
+            cpu: Cpu::Arm64,
+          },
+        ),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("golang.org/x/tools/cmd/deadcode@v0.16.1"),
+          }],
+        }
+      );
+    }
+
+    #[test]
+    fn linux_intel() {
+      assert_eq!(
+        (Deadcode {}).run_method(
+          &Version::from("0.16.1"),
+          Platform {
+            os: Os::Linux,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("golang.org/x/tools/cmd/deadcode@v0.16.1"),
+          }],
+        }
+      );
+    }
+
+    #[test]
+    fn macos_arm() {
+      assert_eq!(
+        (Deadcode {}).run_method(
+          &Version::from("0.16.1"),
+          Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Arm64,
+          },
+        ),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("golang.org/x/tools/cmd/deadcode@v0.16.1"),
+          }],
+        }
+      );
+    }
+
+    #[test]
+    fn macos_intel() {
+      assert_eq!(
+        (Deadcode {}).run_method(
+          &Version::from("0.16.1"),
+          Platform {
+            os: Os::MacOS,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("golang.org/x/tools/cmd/deadcode@v0.16.1"),
+          }],
+        }
+      );
+    }
+
+    #[test]
+    fn windows_arm() {
+      assert_eq!(
+        (Deadcode {}).run_method(
+          &Version::from("0.16.1"),
+          Platform {
+            os: Os::Windows,
+            cpu: Cpu::Arm64,
+          },
+        ),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("golang.org/x/tools/cmd/deadcode@v0.16.1"),
+          }],
+        }
+      );
+    }
+
+    #[test]
+    fn windows_intel() {
+      assert_eq!(
+        (Deadcode {}).run_method(
+          &Version::from("0.16.1"),
+          Platform {
+            os: Os::Windows,
+            cpu: Cpu::Intel64,
+          },
+        ),
+        RunMethod::ThisApp {
+          install_methods: vec![Method::CompileGoSource {
+            import_path: S("golang.org/x/tools/cmd/deadcode@v0.16.1"),
+          }],
+        }
+      );
+    }
   }
 }
