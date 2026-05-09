@@ -1,5 +1,3 @@
-use const_format::formatcp;
-
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::error::Result;
@@ -8,6 +6,7 @@ use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, strings};
+use const_format::formatcp;
 
 #[derive(Clone)]
 pub(crate) struct Yamlfmt {}
@@ -103,7 +102,7 @@ mod tests {
         &Version::from("0.21.0"),
         Platform {
           os: Os::Linux,
-          cpu: Cpu::Arm64,
+          cpu: Cpu::Intel64,
         },
       );
       let want = RunMethod::ThisApp {
@@ -139,12 +138,12 @@ mod tests {
         &Version::from("0.21.0"),
         Platform {
           os: Os::MacOS,
-          cpu: Cpu::Arm64,
+          cpu: Cpu::Intel64,
         },
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/google/yamlfmt/releases/download/v0.21.0/yamlfmt_0.21.0_Linux_arm64.tar.gz".into(),
+          url: "https://github.com/google/yamlfmt/releases/download/v0.21.0/yamlfmt_0.21.0_Darwin_x86_64.tar.gz".into(),
           bin_folder: BinFolder::Root,
         }],
       };
@@ -156,7 +155,7 @@ mod tests {
       let have = (Yamlfmt {}).run_method(
         &Version::from("0.21.0"),
         Platform {
-          os: Os::MacOS,
+          os: Os::Windows,
           cpu: Cpu::Arm64,
         },
       );
