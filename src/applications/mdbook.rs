@@ -87,7 +87,7 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
   use crate::UserError;
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::mdbook::MdBook;
     use crate::configuration::Version;
@@ -144,9 +144,33 @@ mod tests {
     }
 
     #[test]
+    fn windows_arm() {
+      let have = (MdBook {}).run_method(
+        &Version::from("0.5.2"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/rust-lang/mdBook/releases/download/v0.5.2/mdbook-v0.5.2-aarch64-pc-windows-msvc.zip".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileRustSource {
+            crate_name: "mdbook",
+            bin_folder: BinFolder::Subfolder { path: "bin".into() },
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
     fn windows_intel() {
       let have = (MdBook {}).run_method(
-        &Version::from("0.4.37"),
+        &Version::from("0.5.2"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
@@ -155,7 +179,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-pc-windows-msvc.zip".into(),
+            url: "https://github.com/rust-lang/mdBook/releases/download/v0.5.2/mdbook-v0.5.2-x86_64-pc-windows-msvc.zip".into(),
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustSource {

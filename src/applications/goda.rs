@@ -52,29 +52,115 @@ impl AppDefinition for Goda {
 
 #[cfg(test)]
 mod tests {
-  use crate::executables::RunMethod;
-
-  #[test]
-  fn install_methods() {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::goda::Goda;
     use crate::configuration::Version;
+    use crate::executables::RunMethod;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    let have = (Goda {}).run_method(
-      &Version::from("0.5.9"),
-      Platform {
-        os: Os::MacOS,
-        cpu: Cpu::Intel64,
-      },
-    );
-    let want = RunMethod::ThisApp {
-      install_methods: vec![Method::CompileGoSource {
-        import_path: S("github.com/loov/goda@v0.5.9"),
-      }],
-    };
-    assert_eq!(have, want);
+    #[test]
+    fn linux_arm() {
+      let have = (Goda {}).run_method(
+        &Version::from("0.5.9"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("github.com/loov/goda@v0.5.9"),
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (Goda {}).run_method(
+        &Version::from("0.5.9"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("github.com/loov/goda@v0.5.9"),
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (Goda {}).run_method(
+        &Version::from("0.5.9"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("github.com/loov/goda@v0.5.9"),
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (Goda {}).run_method(
+        &Version::from("0.5.9"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("github.com/loov/goda@v0.5.9"),
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (Goda {}).run_method(
+        &Version::from("0.5.9"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("github.com/loov/goda@v0.5.9"),
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_intel() {
+      let have = (Goda {}).run_method(
+        &Version::from("0.5.9"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("github.com/loov/goda@v0.5.9"),
+        }],
+      };
+      assert_eq!(have, want);
+    }
   }
 }

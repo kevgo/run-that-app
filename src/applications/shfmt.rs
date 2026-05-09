@@ -78,7 +78,7 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
   use crate::UserError;
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::shfmt::Shfmt;
     use crate::configuration::Version;
@@ -92,6 +92,50 @@ mod tests {
       let have = (Shfmt {}).run_method(
         &Version::from("3.7.0"),
         Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_linux_arm64".into(),
+          },
+          Method::CompileGoSource {
+            import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (Shfmt {}).run_method(
+        &Version::from("3.7.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_linux_amd64".into(),
+          },
+          Method::CompileGoSource {
+            import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (Shfmt {}).run_method(
+        &Version::from("3.7.0"),
+        Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
         },
@@ -100,6 +144,50 @@ mod tests {
         install_methods: vec![
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_arm64".into(),
+          },
+          Method::CompileGoSource {
+            import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (Shfmt {}).run_method(
+        &Version::from("3.7.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_darwin_amd64".into(),
+          },
+          Method::CompileGoSource {
+            import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (Shfmt {}).run_method(
+        &Version::from("3.7.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: "https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_windows_arm64.exe".into(),
           },
           Method::CompileGoSource {
             import_path: S("mvdan.cc/sh/v3/cmd/shfmt@v3.7.0"),

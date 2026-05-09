@@ -5,6 +5,8 @@ use crate::configuration::Version;
 use crate::error::Result;
 use crate::executables::{Executable, ExecutableArgs, RunMethod};
 use crate::platform::Platform;
+use const_format::formatcp;
+use std::path::MAIN_SEPARATOR;
 
 #[derive(Clone)]
 pub(crate) struct Npm {}
@@ -22,7 +24,10 @@ impl AppDefinition for Npm {
     RunMethod::OtherAppDefaultExecutable {
       app_definition: Box::new(NodeJS {}),
       args: ExecutableArgs::OneOfTheseInAppFolder {
-        options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+        options: vec![
+          formatcp!("node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npm-cli.js"),
+          formatcp!("lib{MAIN_SEPARATOR}node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npm-cli.js"),
+        ],
       },
     }
   }
@@ -52,7 +57,7 @@ fn app_to_install() -> NodeJS {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::nodejs::NodeJS;
     use crate::applications::npm::Npm;
@@ -61,8 +66,46 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
-    #[cfg(unix)]
+    #[cfg(not(windows))]
     fn linux_arm() {
+      let have = (Npm {}).run_method(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::OtherAppDefaultExecutable {
+        app_definition: Box::new(NodeJS {}),
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+        },
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    #[cfg(not(windows))]
+    fn linux_intel() {
+      let have = (Npm {}).run_method(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::OtherAppDefaultExecutable {
+        app_definition: Box::new(NodeJS {}),
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+        },
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    #[cfg(not(windows))]
+    fn macos_arm() {
       let have = (Npm {}).run_method(
         &Version::from("20.10.0"),
         Platform {
@@ -74,6 +117,44 @@ mod tests {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
           options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+        },
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    #[cfg(not(windows))]
+    fn macos_intel() {
+      let have = (Npm {}).run_method(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::OtherAppDefaultExecutable {
+        app_definition: Box::new(NodeJS {}),
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+        },
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    #[cfg(windows)]
+    fn windows_arm() {
+      let have = (Npm {}).run_method(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::OtherAppDefaultExecutable {
+        app_definition: Box::new(NodeJS {}),
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec![r"node_modules\npm\bin\npm-cli.js", r"lib\node_modules\npm\bin\npm-cli.js"],
         },
       };
       assert_eq!(have, want);
@@ -92,7 +173,7 @@ mod tests {
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+          options: vec![r"node_modules\npm\bin\npm-cli.js", r"lib\node_modules\npm\bin\npm-cli.js"],
         },
       };
       assert_eq!(have, want);

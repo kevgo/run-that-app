@@ -70,7 +70,7 @@ fn extract_version(output: &str) -> Result<&str> {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::yamlfmt::Yamlfmt;
     use crate::configuration::Version;

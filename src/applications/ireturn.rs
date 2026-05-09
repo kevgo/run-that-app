@@ -71,7 +71,7 @@ impl AppDefinition for Ireturn {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::ireturn::Ireturn;
     use crate::configuration::Version;
@@ -86,6 +86,29 @@ mod tests {
         &Version::from("0.3.0"),
         Platform {
           os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_linux_arm64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (Ireturn {}).run_method(
+        &Version::from("0.3.0"),
+        Platform {
+          os: Os::Linux,
           cpu: Cpu::Intel64,
         },
       );
@@ -93,6 +116,75 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_linux_x86_64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (Ireturn {}).run_method(
+        &Version::from("0.3.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_darwin_arm64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (Ireturn {}).run_method(
+        &Version::from("0.3.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_darwin_x86_64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (Ireturn {}).run_method(
+        &Version::from("0.3.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_windows_arm64.zip".into(),
             bin_folder: BinFolder::Root,
           },
           Method::CompileGoSource {

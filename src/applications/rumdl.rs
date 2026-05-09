@@ -74,7 +74,7 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
   use crate::UserError;
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::rumdl::Rumdl;
     use crate::configuration::Version;
@@ -148,6 +148,24 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/rvben/rumdl/releases/download/v0.1.58/rumdl-v0.1.58-x86_64-apple-darwin.tar.gz".into(),
+          bin_folder: BinFolder::Root,
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (Rumdl {}).run_method(
+        &Version::from("0.1.58"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/rvben/rumdl/releases/download/v0.1.58/rumdl-v0.1.58-aarch64-pc-windows-msvc.zip".into(),
           bin_folder: BinFolder::Root,
         }],
       };

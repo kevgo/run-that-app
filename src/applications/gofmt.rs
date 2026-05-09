@@ -52,7 +52,7 @@ fn app_to_install() -> Go {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::go::Go;
     use crate::applications::gofmt::Gofmt;
@@ -61,7 +61,55 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
-    fn macos() {
+    fn linux_arm() {
+      let have = (Gofmt {}).run_method(
+        &Version::from("1.23.4"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::OtherAppOtherExecutable {
+        app_definition: Box::new(Go {}),
+        executable_name: ExecutableNameUnix::from("gofmt"),
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (Gofmt {}).run_method(
+        &Version::from("1.23.4"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::OtherAppOtherExecutable {
+        app_definition: Box::new(Go {}),
+        executable_name: ExecutableNameUnix::from("gofmt"),
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (Gofmt {}).run_method(
+        &Version::from("1.23.4"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::OtherAppOtherExecutable {
+        app_definition: Box::new(Go {}),
+        executable_name: ExecutableNameUnix::from("gofmt"),
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
       let have = (Gofmt {}).run_method(
         &Version::from("1.23.4"),
         Platform {
@@ -77,7 +125,23 @@ mod tests {
     }
 
     #[test]
-    fn windows() {
+    fn windows_arm() {
+      let have = (Gofmt {}).run_method(
+        &Version::from("1.23.4"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::OtherAppOtherExecutable {
+        app_definition: Box::new(Go {}),
+        executable_name: ExecutableNameUnix::from("gofmt"),
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_intel() {
       let have = (Gofmt {}).run_method(
         &Version::from("1.23.4"),
         Platform {

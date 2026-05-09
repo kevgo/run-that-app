@@ -75,7 +75,7 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
   use crate::UserError;
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::scc::Scc;
     use crate::configuration::Version;
@@ -89,6 +89,52 @@ mod tests {
       let have = (Scc {}).run_method(
         &Version::from("3.2.0"),
         Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Linux_arm64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/boyter/scc/v3@v3.2.0"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (Scc {}).run_method(
+        &Version::from("3.2.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Linux_x86_64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/boyter/scc/v3@v3.2.0"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (Scc {}).run_method(
+        &Version::from("3.2.0"),
+        Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
         },
@@ -97,6 +143,52 @@ mod tests {
         install_methods: vec![
           Method::DownloadArchive {
             url: "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Darwin_arm64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/boyter/scc/v3@v3.2.0"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (Scc {}).run_method(
+        &Version::from("3.2.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Darwin_x86_64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/boyter/scc/v3@v3.2.0"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (Scc {}).run_method(
+        &Version::from("3.2.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Windows_arm64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
           Method::CompileGoSource {

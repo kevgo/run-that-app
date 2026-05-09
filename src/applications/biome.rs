@@ -76,7 +76,7 @@ fn extract_version(output: &str) -> Result<&str> {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::biome::Biome;
     use crate::configuration::Version;
@@ -102,7 +102,7 @@ mod tests {
     }
 
     #[test]
-    fn linux_x86() {
+    fn linux_intel() {
       let have = (Biome {}).run_method(
         &Version::from("2.4.8"),
         Platform {
@@ -136,7 +136,7 @@ mod tests {
     }
 
     #[test]
-    fn macos_x86() {
+    fn macos_intel() {
       let have = (Biome {}).run_method(
         &Version::from("2.4.8"),
         Platform {
@@ -170,7 +170,7 @@ mod tests {
     }
 
     #[test]
-    fn windows_x86() {
+    fn windows_intel() {
       let have = (Biome {}).run_method(
         &Version::from("2.4.8"),
         Platform {

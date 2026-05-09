@@ -67,7 +67,7 @@ impl AppDefinition for Ghokin {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::ghokin::Ghokin;
     use crate::configuration::Version;
@@ -78,6 +78,75 @@ mod tests {
 
     #[test]
     fn linux_arm() {
+      let have = (Ghokin {}).run_method(
+        &Version::from("3.4.1"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_linux_arm64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (Ghokin {}).run_method(
+        &Version::from("3.4.1"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_linux_amd64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (Ghokin {}).run_method(
+        &Version::from("3.4.1"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_arm64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
       let have = (Ghokin {}).run_method(
         &Version::from("3.4.1"),
         Platform {
@@ -100,9 +169,32 @@ mod tests {
     }
 
     #[test]
+    fn windows_arm() {
+      let have = (Ghokin {}).run_method(
+        &Version::from("3.4.1"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_windows_arm64.tar.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
     fn windows_intel() {
       let have = (Ghokin {}).run_method(
-        &Version::from("3.7.0"),
+        &Version::from("3.4.1"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
@@ -111,11 +203,11 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/antham/ghokin/releases/download/v3.7.0/ghokin_3.7.0_windows_amd64.tar.gz".into(),
+            url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_windows_amd64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
           Method::CompileGoSource {
-            import_path: S("github.com/antham/ghokin/v3@v3.7.0"),
+            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
           },
         ],
       };

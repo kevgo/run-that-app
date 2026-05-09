@@ -71,7 +71,7 @@ impl AppDefinition for Depth {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
     use super::super::Depth;
     use crate::applications::AppDefinition;
     use crate::configuration::Version;
@@ -93,6 +93,94 @@ mod tests {
         install_methods: vec![
           Method::DownloadExecutable {
             url: "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_linux_aarch64".into(),
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/KyleBanks/depth/cmd/depth@v1.2.1"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (Depth {}).run_method(
+        &Version::from("1.2.1"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_linux_amd64".into(),
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/KyleBanks/depth/cmd/depth@v1.2.1"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (Depth {}).run_method(
+        &Version::from("1.2.1"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_darwin_aarch64".into(),
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/KyleBanks/depth/cmd/depth@v1.2.1"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (Depth {}).run_method(
+        &Version::from("1.2.1"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_darwin_amd64".into(),
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/KyleBanks/depth/cmd/depth@v1.2.1"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (Depth {}).run_method(
+        &Version::from("1.2.1"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_windows_aarch64.exe".into(),
           },
           Method::CompileGoSource {
             import_path: S("github.com/KyleBanks/depth/cmd/depth@v1.2.1"),

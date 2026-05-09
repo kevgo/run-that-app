@@ -76,13 +76,53 @@ fn extract_version(output: &str) -> Result<&str> {
 mod tests {
   use crate::UserError;
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::ruff::Ruff;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
+
+    #[test]
+    fn linux_arm() {
+      let have = (Ruff {}).run_method(
+        &Version::from("0.15.5"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-aarch64-unknown-linux-gnu.tar.gz".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "ruff-aarch64-unknown-linux-gnu".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (Ruff {}).run_method(
+        &Version::from("0.15.5"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-x86_64-unknown-linux-gnu.tar.gz".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "ruff-x86_64-unknown-linux-gnu".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
 
     #[test]
     fn macos_arm() {
@@ -105,19 +145,39 @@ mod tests {
     }
 
     #[test]
-    fn linux_arm() {
+    fn macos_intel() {
       let have = (Ruff {}).run_method(
         &Version::from("0.15.5"),
         Platform {
-          os: Os::Linux,
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-x86_64-apple-darwin.tar.gz".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "ruff-x86_64-apple-darwin".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (Ruff {}).run_method(
+        &Version::from("0.15.5"),
+        Platform {
+          os: Os::Windows,
           cpu: Cpu::Arm64,
         },
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-aarch64-unknown-linux-gnu.tar.gz".into(),
+          url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-aarch64-pc-windows-msvc.zip".into(),
           bin_folder: BinFolder::Subfolder {
-            path: "ruff-aarch64-unknown-linux-gnu".into(),
+            path: "ruff-aarch64-pc-windows-msvc".into(),
           },
         }],
       };

@@ -71,7 +71,7 @@ fn extract_version(output: &str) -> Result<&str> {
 #[cfg(test)]
 mod tests {
 
-  mod install_methods {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::rclone::Rclone;
     use crate::configuration::Version;
@@ -93,6 +93,86 @@ mod tests {
           url: "https://github.com/rclone/rclone/releases/download/v1.72.1/rclone-v1.72.1-linux-arm64.zip".into(),
           bin_folder: BinFolder::Subfolder {
             path: "rclone-v1.72.1-linux-arm64".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (Rclone {}).run_method(
+        &Version::from("1.72.1"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/rclone/rclone/releases/download/v1.72.1/rclone-v1.72.1-linux-amd64.zip".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "rclone-v1.72.1-linux-amd64".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (Rclone {}).run_method(
+        &Version::from("1.72.1"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/rclone/rclone/releases/download/v1.72.1/rclone-v1.72.1-osx-arm64.zip".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "rclone-v1.72.1-osx-arm64".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (Rclone {}).run_method(
+        &Version::from("1.72.1"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/rclone/rclone/releases/download/v1.72.1/rclone-v1.72.1-osx-amd64.zip".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "rclone-v1.72.1-osx-amd64".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (Rclone {}).run_method(
+        &Version::from("1.72.1"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/rclone/rclone/releases/download/v1.72.1/rclone-v1.72.1-windows-arm64.zip".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "rclone-v1.72.1-windows-arm64".into(),
           },
         }],
       };

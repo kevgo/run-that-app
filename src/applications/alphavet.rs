@@ -53,29 +53,115 @@ impl AppDefinition for Alphavet {
 
 #[cfg(test)]
 mod tests {
-  use crate::executables::RunMethod;
-
-  #[test]
-  fn install_methods() {
+  mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::alphavet::Alphavet;
     use crate::configuration::Version;
+    use crate::executables::RunMethod;
     use crate::installation::Method;
     use crate::platform::{Cpu, Os, Platform};
     use big_s::S;
 
-    let have = (Alphavet {}).run_method(
-      &Version::from("0.1.0"),
-      Platform {
-        os: Os::Linux,
-        cpu: Cpu::Arm64,
-      },
-    );
-    let want = RunMethod::ThisApp {
-      install_methods: vec![Method::CompileGoSource {
-        import_path: S("github.com/skx/alphavet/cmd/alphavet@v0.1.0"),
-      }],
-    };
-    assert_eq!(have, want);
+    #[test]
+    fn linux_arm() {
+      let have = (Alphavet {}).run_method(
+        &Version::from("0.1.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("github.com/skx/alphavet/cmd/alphavet@v0.1.0"),
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (Alphavet {}).run_method(
+        &Version::from("0.1.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("github.com/skx/alphavet/cmd/alphavet@v0.1.0"),
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (Alphavet {}).run_method(
+        &Version::from("0.1.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("github.com/skx/alphavet/cmd/alphavet@v0.1.0"),
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (Alphavet {}).run_method(
+        &Version::from("0.1.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("github.com/skx/alphavet/cmd/alphavet@v0.1.0"),
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (Alphavet {}).run_method(
+        &Version::from("0.1.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("github.com/skx/alphavet/cmd/alphavet@v0.1.0"),
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_intel() {
+      let have = (Alphavet {}).run_method(
+        &Version::from("0.1.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("github.com/skx/alphavet/cmd/alphavet@v0.1.0"),
+        }],
+      };
+      assert_eq!(have, want);
+    }
   }
 }
