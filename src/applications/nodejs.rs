@@ -99,8 +99,8 @@ mod tests {
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use std::path::MAIN_SEPARATOR;
 
+    #[cfg(windows)]
     #[test]
     fn linux_arm() {
       let have = (NodeJS {}).run_method(
@@ -114,16 +114,35 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-arm64.tar.xz".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec![
-              "node-v20.10.0-linux-arm64".into(),
-              format!("node-v20.10.0-linux-arm64{MAIN_SEPARATOR}bin").into(),
-            ],
+            options: vec!["node-v20.10.0-linux-arm64".into(), r"node-v20.10.0-linux-arm64\bin".into()],
           },
         }],
       };
       assert_eq!(have, want);
     }
 
+    #[cfg(not(windows))]
+    #[test]
+    fn linux_arm() {
+      let have = (NodeJS {}).run_method(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-arm64.tar.xz".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["node-v20.10.0-linux-arm64".into(), "node-v20.10.0-linux-arm64/bin".into()],
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[cfg(windows)]
     #[test]
     fn linux_intel() {
       let have = (NodeJS {}).run_method(
@@ -137,13 +156,35 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-x64.tar.xz".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec!["node-v20.10.0-linux-x64".into(), format!("node-v20.10.0-linux-x64{MAIN_SEPARATOR}bin").into()],
+            options: vec!["node-v20.10.0-linux-x64".into(), r"node-v20.10.0-linux-x64\bin".into()],
           },
         }],
       };
       assert_eq!(have, want);
     }
 
+    #[cfg(not(windows))]
+    #[test]
+    fn linux_intel() {
+      let have = (NodeJS {}).run_method(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-x64.tar.xz".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["node-v20.10.0-linux-x64".into(), "node-v20.10.0-linux-x64/bin".into()],
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[cfg(windows)]
     #[test]
     fn macos_arm() {
       let have = (NodeJS {}).run_method(
@@ -157,16 +198,35 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec![
-              "node-v20.10.0-darwin-arm64".into(),
-              format!("node-v20.10.0-darwin-arm64{MAIN_SEPARATOR}bin").into(),
-            ],
+            options: vec!["node-v20.10.0-darwin-arm64".into(), r"node-v20.10.0-darwin-arm64\bin".into()],
           },
         }],
       };
       assert_eq!(have, want);
     }
 
+    #[cfg(not(windows))]
+    #[test]
+    fn macos_arm() {
+      let have = (NodeJS {}).run_method(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-arm64.tar.gz".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["node-v20.10.0-darwin-arm64".into(), "node-v20.10.0-darwin-arm64/bin".into()],
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[cfg(windows)]
     #[test]
     fn macos_intel() {
       let have = (NodeJS {}).run_method(
@@ -180,13 +240,35 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-x64.tar.gz".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec!["node-v20.10.0-darwin-x64".into(), format!("node-v20.10.0-darwin-x64{MAIN_SEPARATOR}bin").into()],
+            options: vec!["node-v20.10.0-darwin-x64".into(), r"node-v20.10.0-darwin-x64\bin".into()],
           },
         }],
       };
       assert_eq!(have, want);
     }
 
+    #[cfg(not(windows))]
+    #[test]
+    fn macos_intel() {
+      let have = (NodeJS {}).run_method(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-darwin-x64.tar.gz".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["node-v20.10.0-darwin-x64".into(), "node-v20.10.0-darwin-x64/bin".into()],
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[cfg(windows)]
     #[test]
     fn windows_arm() {
       let have = (NodeJS {}).run_method(
@@ -200,13 +282,35 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-arm64.zip".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec!["node-v20.10.0-win-arm64".into(), format!("node-v20.10.0-win-arm64{MAIN_SEPARATOR}bin").into()],
+            options: vec!["node-v20.10.0-win-arm64".into(), r"node-v20.10.0-win-arm64\bin".into()],
           },
         }],
       };
       assert_eq!(have, want);
     }
 
+    #[cfg(not(windows))]
+    #[test]
+    fn windows_arm() {
+      let have = (NodeJS {}).run_method(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-arm64.zip".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["node-v20.10.0-win-arm64".into(), "node-v20.10.0-win-arm64/bin".into()],
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[cfg(windows)]
     #[test]
     fn windows_intel() {
       let have = (NodeJS {}).run_method(
@@ -220,7 +324,28 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec!["node-v20.10.0-win-x64".into(), format!("node-v20.10.0-win-x64{MAIN_SEPARATOR}bin").into()],
+            options: vec!["node-v20.10.0-win-x64".into(), r"node-v20.10.0-win-x64\bin".into()],
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[cfg(not(windows))]
+    #[test]
+    fn windows_intel() {
+      let have = (NodeJS {}).run_method(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://nodejs.org/dist/v20.10.0/node-v20.10.0-win-x64.zip".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["node-v20.10.0-win-x64".into(), "node-v20.10.0-win-x64/bin".into()],
           },
         }],
       };
