@@ -77,7 +77,6 @@ mod tests {
   mod install_methods {
     use crate::applications::AppDefinition;
     use crate::applications::delete_empty_folders::DeleteEmptyFolders;
-    use crate::applications::tikibase::Tikibase;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
@@ -86,7 +85,7 @@ mod tests {
     #[test]
     fn linux_arm() {
       let have = (DeleteEmptyFolders {}).run_method(
-        &Version::from("0.6.2"),
+        &Version::from("0.0.1"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Arm64,
@@ -103,8 +102,8 @@ mod tests {
 
     #[test]
     fn linux_intel() {
-      let have = (Tikibase {}).run_method(
-        &Version::from("0.6.2"),
+      let have = (DeleteEmptyFolders {}).run_method(
+        &Version::from("0.0.1"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Arm64,
@@ -122,7 +121,7 @@ mod tests {
     #[test]
     fn macos_arm() {
       let have = (DeleteEmptyFolders {}).run_method(
-        &Version::from("0.6.2"),
+        &Version::from("0.0.1"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
@@ -139,8 +138,8 @@ mod tests {
 
     #[test]
     fn macos_intel() {
-      let have = (Tikibase {}).run_method(
-        &Version::from("0.6.2"),
+      let have = (DeleteEmptyFolders {}).run_method(
+        &Version::from("0.0.1"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
@@ -158,7 +157,7 @@ mod tests {
     #[test]
     fn windows_arm() {
       let have = (DeleteEmptyFolders {}).run_method(
-        &Version::from("0.6.2"),
+        &Version::from("0.0.1"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Arm64,
@@ -175,8 +174,8 @@ mod tests {
 
     #[test]
     fn windows_intel() {
-      let have = (Tikibase {}).run_method(
-        &Version::from("0.6.2"),
+      let have = (DeleteEmptyFolders {}).run_method(
+        &Version::from("0.0.1"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
@@ -184,7 +183,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/kevgo/tikibase/releases/download/v0.6.2/tikibase_windows_intel64.zip".into(),
+          url: "https://github.com/kevgo/delete-empty-folders/releases/download/v0.0.1/delete_empty_folders_windows_intel_64.zip".into(),
           bin_folder: BinFolder::Root,
         }],
       };
@@ -194,7 +193,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("tikibase 0.6.2"), Ok("0.6.2"));
+    assert_eq!(super::extract_version("delete-empty-folders 0.0.1"), Ok("0.0.1"));
     assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
