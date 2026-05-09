@@ -19,4 +19,4 @@ pub(crate) fn set_executable_bit(filepath: &Path) {
 
 /// Does nothing on Windows since Windows determines executability through file extensions.
 #[cfg(windows)]
-fn set_executable_bit(_filepath: &Path) {}
+pub(crate) fn set_executable_bit(_filepath: &Path) {}
