@@ -39,10 +39,16 @@ impl AppDefinition for Tikibase {
       Os::Windows => "zip",
     };
     RunMethod::ThisApp {
-      install_methods: vec![Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/tikibase_{os}_{cpu}.{ext}").into(),
-        bin_folder: BinFolder::Root,
-      }],
+      install_methods: vec![
+        Method::DownloadArchive {
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/tikibase_{os}_{cpu}.{ext}").into(),
+          bin_folder: BinFolder::Root,
+        },
+        Method::CompileRustRepo {
+          url: self.homepage().into(),
+          bin_folder: BinFolder::Root,
+        },
+      ],
     }
   }
 

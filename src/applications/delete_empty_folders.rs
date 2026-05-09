@@ -39,10 +39,16 @@ impl AppDefinition for DeleteEmptyFolders {
       Os::Windows => "zip",
     };
     RunMethod::ThisApp {
-      install_methods: vec![Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/delete_empty_folders_{os}_{cpu}.{ext}").into(),
-        bin_folder: BinFolder::Root,
-      }],
+      install_methods: vec![
+        Method::DownloadArchive {
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/delete_empty_folders_{os}_{cpu}.{ext}").into(),
+          bin_folder: BinFolder::Root,
+        },
+        Method::CompileRustRepo {
+          url: self.homepage().into(),
+          bin_folder: BinFolder::Root,
+        },
+      ],
     }
   }
 
