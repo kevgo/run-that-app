@@ -26,7 +26,7 @@ impl AppDefinition for Goda {
 
   fn run_method(&self, version: &Version, _platform: Platform) -> RunMethod {
     RunMethod::ThisApp {
-      install_methods: vec![Method::CompileGoSource {
+      install_methods: vec![Method::GoCompileSource {
         import_path: format!("github.com/{ORG}/{REPO}@{TAG_PREFIX}{version}"),
       }],
     }
@@ -71,7 +71,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
+        install_methods: vec![Method::GoCompileSource {
           import_path: S("github.com/loov/goda@v0.5.9"),
         }],
       };
@@ -88,7 +88,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
+        install_methods: vec![Method::GoCompileSource {
           import_path: S("github.com/loov/goda@v0.5.9"),
         }],
       };
@@ -105,7 +105,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
+        install_methods: vec![Method::GoCompileSource {
           import_path: S("github.com/loov/goda@v0.5.9"),
         }],
       };
@@ -122,7 +122,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
+        install_methods: vec![Method::GoCompileSource {
           import_path: S("github.com/loov/goda@v0.5.9"),
         }],
       };
@@ -139,7 +139,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
+        install_methods: vec![Method::GoCompileSource {
           import_path: S("github.com/loov/goda@v0.5.9"),
         }],
       };
@@ -156,7 +156,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
+        install_methods: vec![Method::GoCompileSource {
           import_path: S("github.com/loov/goda@v0.5.9"),
         }],
       };

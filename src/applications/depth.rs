@@ -43,7 +43,7 @@ impl AppDefinition for Depth {
         Method::DownloadExecutable {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/depth_{version}_{os}_{cpu}{ext}").into(),
         },
-        Method::CompileGoSource {
+        Method::GoCompileSource {
           import_path: format!("github.com/{ORG}/{REPO}/cmd/depth@{TAG_PREFIX}{version}"),
         },
       ],
@@ -94,7 +94,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_linux_aarch64".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/KyleBanks/depth/cmd/depth@v1.2.1"),
           },
         ],
@@ -116,7 +116,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_linux_amd64".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/KyleBanks/depth/cmd/depth@v1.2.1"),
           },
         ],
@@ -138,7 +138,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_darwin_aarch64".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/KyleBanks/depth/cmd/depth@v1.2.1"),
           },
         ],
@@ -160,7 +160,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_darwin_amd64".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/KyleBanks/depth/cmd/depth@v1.2.1"),
           },
         ],
@@ -182,7 +182,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_windows_aarch64.exe".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/KyleBanks/depth/cmd/depth@v1.2.1"),
           },
         ],
@@ -204,7 +204,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/KyleBanks/depth/releases/download/v1.2.1/depth_1.2.1_windows_amd64.exe".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/KyleBanks/depth/cmd/depth@v1.2.1"),
           },
         ],

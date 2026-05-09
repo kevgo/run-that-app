@@ -31,7 +31,7 @@ impl AppDefinition for MdBook {
           url: archive_url(version, platform).into(),
           bin_folder: BinFolder::Root,
         },
-        Method::CompileRustSource {
+        Method::RustCompileCrate {
           crate_name: "mdbook",
           bin_folder: BinFolder::Subfolder { path: "bin".into() },
         },
@@ -110,7 +110,7 @@ mod tests {
             url: "https://github.com/rust-lang/mdBook/releases/download/v0.5.2/mdbook-v0.5.2-aarch64-unknown-linux-musl.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
+          Method::RustCompileCrate {
             crate_name: "mdbook",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
@@ -134,7 +134,7 @@ mod tests {
             url: "https://github.com/rust-lang/mdBook/releases/download/v0.5.2/mdbook-v0.5.2-x86_64-unknown-linux-gnu.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
+          Method::RustCompileCrate {
             crate_name: "mdbook",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
@@ -158,7 +158,7 @@ mod tests {
             url: "https://github.com/rust-lang/mdBook/releases/download/v0.5.2/mdbook-v0.5.2-aarch64-pc-windows-msvc.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
+          Method::RustCompileCrate {
             crate_name: "mdbook",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
@@ -182,7 +182,7 @@ mod tests {
             url: "https://github.com/rust-lang/mdBook/releases/download/v0.5.2/mdbook-v0.5.2-x86_64-pc-windows-msvc.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
+          Method::RustCompileCrate {
             crate_name: "mdbook",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
@@ -206,7 +206,7 @@ mod tests {
             url: "https://github.com/rust-lang/mdBook/releases/download/v0.5.2/mdbook-v0.5.2-aarch64-apple-darwin.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
+          Method::RustCompileCrate {
             crate_name: "mdbook",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
@@ -230,7 +230,7 @@ mod tests {
             url: "https://github.com/rust-lang/mdBook/releases/download/v0.5.2/mdbook-v0.5.2-x86_64-apple-darwin.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileRustSource {
+          Method::RustCompileCrate {
             crate_name: "mdbook",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },

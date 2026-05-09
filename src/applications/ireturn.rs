@@ -44,7 +44,7 @@ impl AppDefinition for Ireturn {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/ireturn_{os}_{cpu}.{ext}").into(),
           bin_folder: BinFolder::Root,
         },
-        Method::CompileGoSource {
+        Method::GoCompileSource {
           import_path: format!("github.com/{ORG}/{REPO}/cmd/ireturn@{TAG_PREFIX}{version}"),
         },
       ],
@@ -95,7 +95,7 @@ mod tests {
             url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_linux_arm64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
           },
         ],
@@ -118,7 +118,7 @@ mod tests {
             url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_linux_x86_64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
           },
         ],
@@ -141,7 +141,7 @@ mod tests {
             url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_darwin_arm64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
           },
         ],
@@ -164,7 +164,7 @@ mod tests {
             url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_darwin_x86_64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
           },
         ],
@@ -187,7 +187,7 @@ mod tests {
             url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_windows_arm64.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
           },
         ],
@@ -210,7 +210,7 @@ mod tests {
             url: "https://github.com/butuzov/ireturn/releases/download/v0.3.0/ireturn_windows_x86_64.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/butuzov/ireturn/cmd/ireturn@v0.3.0"),
           },
         ],

@@ -36,7 +36,7 @@ impl AppDefinition for Exhaustruct {
       format!("github.com/{ORG}/{REPO}/v{major_version}/cmd/exhaustruct@{TAG_PREFIX}{version}")
     };
     RunMethod::ThisApp {
-      install_methods: vec![Method::CompileGoSource { import_path }],
+      install_methods: vec![Method::GoCompileSource { import_path }],
     }
   }
 
@@ -74,7 +74,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
+        install_methods: vec![Method::GoCompileSource {
           import_path: S("github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct@v3.3.0"),
         }],
       };
@@ -91,7 +91,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
+        install_methods: vec![Method::GoCompileSource {
           import_path: S("github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct@v3.3.0"),
         }],
       };
@@ -108,7 +108,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
+        install_methods: vec![Method::GoCompileSource {
           import_path: S("github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct@v3.3.0"),
         }],
       };
@@ -125,7 +125,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
+        install_methods: vec![Method::GoCompileSource {
           import_path: S("github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct@v3.3.0"),
         }],
       };
@@ -142,7 +142,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
+        install_methods: vec![Method::GoCompileSource {
           import_path: S("github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct@v3.3.0"),
         }],
       };
@@ -159,7 +159,7 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
+        install_methods: vec![Method::GoCompileSource {
           import_path: S("github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct@v3.3.0"),
         }],
       };

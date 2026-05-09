@@ -49,7 +49,7 @@ impl AppDefinition for ActionLint {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/actionlint_{version}_{os}_{cpu}.{ext}").into(),
           bin_folder: BinFolder::Root,
         },
-        Method::CompileGoSource {
+        Method::GoCompileSource {
           import_path: format!("github.com/{ORG}/{REPO}/cmd/actionlint@{TAG_PREFIX}{version}"),
         },
       ],
@@ -105,7 +105,7 @@ mod tests {
             url: "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_arm64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.7.12"),
           },
         ],
@@ -128,7 +128,7 @@ mod tests {
             url: "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.7.12"),
           },
         ],
@@ -151,7 +151,7 @@ mod tests {
             url: "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_darwin_arm64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.7.12"),
           },
         ],
@@ -174,7 +174,7 @@ mod tests {
             url: "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_darwin_amd64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.7.12"),
           },
         ],
@@ -197,7 +197,7 @@ mod tests {
             url: "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_windows_arm64.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.7.12"),
           },
         ],
@@ -220,7 +220,7 @@ mod tests {
             url: "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_windows_amd64.zip".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/rhysd/actionlint/cmd/actionlint@v1.7.12"),
           },
         ],

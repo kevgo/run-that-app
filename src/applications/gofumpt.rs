@@ -43,7 +43,7 @@ impl AppDefinition for Gofumpt {
         Method::DownloadExecutable {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/gofumpt_v{version}_{os}_{cpu}{ext}").into(),
         },
-        Method::CompileGoSource {
+        Method::GoCompileSource {
           import_path: format!("mvdan.cc/gofumpt@{TAG_PREFIX}{version}"),
         },
       ],
@@ -101,7 +101,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_linux_arm64".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("mvdan.cc/gofumpt@v0.5.0"),
           },
         ],
@@ -123,7 +123,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_linux_amd64".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("mvdan.cc/gofumpt@v0.5.0"),
           },
         ],
@@ -145,7 +145,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_darwin_arm64".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("mvdan.cc/gofumpt@v0.5.0"),
           },
         ],
@@ -167,7 +167,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_darwin_amd64".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("mvdan.cc/gofumpt@v0.5.0"),
           },
         ],
@@ -189,7 +189,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_windows_arm64.exe".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("mvdan.cc/gofumpt@v0.5.0"),
           },
         ],
@@ -211,7 +211,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/mvdan/gofumpt/releases/download/v0.5.0/gofumpt_v0.5.0_windows_amd64.exe".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("mvdan.cc/gofumpt@v0.5.0"),
           },
         ],

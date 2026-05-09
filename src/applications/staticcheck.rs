@@ -39,7 +39,7 @@ impl AppDefinition for StaticCheck {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/staticcheck_{os}_{cpu}.tar.gz").into(),
           bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
         },
-        Method::CompileGoSource {
+        Method::GoCompileSource {
           import_path: format!("honnef.co/go/tools/cmd/staticcheck@{version}"),
         },
       ],
@@ -90,7 +90,7 @@ mod tests {
             url: "https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_linux_arm64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("honnef.co/go/tools/cmd/staticcheck@3.7.0"),
           },
         ],
@@ -113,7 +113,7 @@ mod tests {
             url: "https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_linux_amd64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("honnef.co/go/tools/cmd/staticcheck@3.7.0"),
           },
         ],
@@ -136,7 +136,7 @@ mod tests {
             url: "https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_darwin_arm64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("honnef.co/go/tools/cmd/staticcheck@3.7.0"),
           },
         ],
@@ -159,7 +159,7 @@ mod tests {
             url: "https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_darwin_amd64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("honnef.co/go/tools/cmd/staticcheck@3.7.0"),
           },
         ],
@@ -182,7 +182,7 @@ mod tests {
             url: "https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_windows_arm64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("honnef.co/go/tools/cmd/staticcheck@3.7.0"),
           },
         ],
@@ -205,7 +205,7 @@ mod tests {
             url: "https://github.com/dominikh/go-tools/releases/download/3.7.0/staticcheck_windows_amd64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("honnef.co/go/tools/cmd/staticcheck@3.7.0"),
           },
         ],

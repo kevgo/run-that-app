@@ -40,7 +40,7 @@ impl AppDefinition for Scc {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/scc_{os}_{cpu}.tar.gz").into(),
           bin_folder: BinFolder::Root,
         },
-        Method::CompileGoSource {
+        Method::GoCompileSource {
           import_path: format!("github.com/{ORG}/{REPO}/v3@{TAG_PREFIX}{version}"),
         },
       ],
@@ -99,7 +99,7 @@ mod tests {
             url: "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Linux_arm64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/boyter/scc/v3@v3.2.0"),
           },
         ],
@@ -122,7 +122,7 @@ mod tests {
             url: "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Linux_x86_64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/boyter/scc/v3@v3.2.0"),
           },
         ],
@@ -145,7 +145,7 @@ mod tests {
             url: "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Darwin_arm64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/boyter/scc/v3@v3.2.0"),
           },
         ],
@@ -168,7 +168,7 @@ mod tests {
             url: "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Darwin_x86_64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/boyter/scc/v3@v3.2.0"),
           },
         ],
@@ -191,7 +191,7 @@ mod tests {
             url: "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Windows_arm64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/boyter/scc/v3@v3.2.0"),
           },
         ],
@@ -214,7 +214,7 @@ mod tests {
             url: "https://github.com/boyter/scc/releases/download/v3.2.0/scc_Windows_x86_64.tar.gz".into(),
             bin_folder: BinFolder::Root,
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/boyter/scc/v3@v3.2.0"),
           },
         ],

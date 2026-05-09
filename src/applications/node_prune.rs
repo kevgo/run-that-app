@@ -47,7 +47,7 @@ impl AppDefinition for NodePrune {
         Method::DownloadExecutable {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/node-prune_{version}_{os}_{cpu}.tar.gz").into(),
         },
-        Method::CompileGoSource {
+        Method::GoCompileSource {
           import_path: format!("github.com/tj/node-prune@{TAG_PREFIX}{version}"),
         },
       ],
@@ -94,7 +94,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_linux_arm64.tar.gz".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/tj/node-prune@v1.0.1"),
           },
         ],
@@ -116,7 +116,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_linux_amd64.tar.gz".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/tj/node-prune@v1.0.1"),
           },
         ],
@@ -138,7 +138,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_darwin_arm64.tar.gz".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/tj/node-prune@v1.0.1"),
           },
         ],
@@ -160,7 +160,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_darwin_amd64.tar.gz".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/tj/node-prune@v1.0.1"),
           },
         ],
@@ -182,7 +182,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_windows_arm64.tar.gz".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/tj/node-prune@v1.0.1"),
           },
         ],
@@ -204,7 +204,7 @@ mod tests {
           Method::DownloadExecutable {
             url: "https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_windows_amd64.tar.gz".into(),
           },
-          Method::CompileGoSource {
+          Method::GoCompileSource {
             import_path: S("github.com/tj/node-prune@v1.0.1"),
           },
         ],
