@@ -12,7 +12,7 @@ pub(crate) enum RustSource {
   /// install from crates.io
   CratesIo { name: &'static str },
   /// install from a remote repository
-  Repository { url: Url },
+  Repository { url: Url, tag: String },
 }
 
 /// installs the given Rust-based application by compiling it from source
@@ -25,9 +25,11 @@ pub(crate) fn run(app_folder: &Path, source: &RustSource, log: Log) -> Result<Ou
   let mut args = vec!["install", "--root", &app_folder_str, "--locked"];
   match &source {
     RustSource::CratesIo { name } => args.push(name),
-    RustSource::Repository { url } => {
+    RustSource::Repository { url, tag } => {
       args.push("--git");
       args.push(url.as_ref());
+      args.push("--tag");
+      args.push(tag);
     }
   }
   log(Event::CompileRustStart {

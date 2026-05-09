@@ -44,7 +44,10 @@ impl AppDefinition for DeleteEmptyFolders {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/delete_empty_folders_{os}_{cpu}.{ext}").into(),
           bin_folder: BinFolder::Root,
         },
-        Method::CompileRustRepo { url: self.homepage().into() },
+        Method::CompileRustRepo {
+          url: self.homepage().into(),
+          tag: format!("{TAG_PREFIX}{version}"),
+        },
       ],
     }
   }
@@ -102,6 +105,7 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/delete-empty-folders".into(),
+            tag: "v0.0.1".into(),
           },
         ],
       };
@@ -125,6 +129,7 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/delete-empty-folders".into(),
+            tag: "v0.0.1".into(),
           },
         ],
       };
@@ -148,6 +153,7 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/delete-empty-folders".into(),
+            tag: "v0.0.1".into(),
           },
         ],
       };
@@ -171,6 +177,7 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/delete-empty-folders".into(),
+            tag: "v0.0.1".into(),
           },
         ],
       };
@@ -194,6 +201,7 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/delete-empty-folders".into(),
+            tag: "v0.0.1".into(),
           },
         ],
       };
@@ -217,6 +225,7 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/delete-empty-folders".into(),
+            tag: "v0.0.1".into(),
           },
         ],
       };

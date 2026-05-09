@@ -44,7 +44,10 @@ impl AppDefinition for Tikibase {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/tikibase_{os}_{cpu}.{ext}").into(),
           bin_folder: BinFolder::Root,
         },
-        Method::CompileRustRepo { url: self.homepage().into() },
+        Method::CompileRustRepo {
+          url: self.homepage().into(),
+          tag: format!("{TAG_PREFIX}{version}"),
+        },
       ],
     }
   }
@@ -102,6 +105,7 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/tikibase".into(),
+            tag: "v0.6.2".into(),
           },
         ],
       };
@@ -125,6 +129,7 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/tikibase".into(),
+            tag: "v0.6.2".into(),
           },
         ],
       };
@@ -148,6 +153,7 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/tikibase".into(),
+            tag: "v0.6.2".into(),
           },
         ],
       };
@@ -171,6 +177,7 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/tikibase".into(),
+            tag: "v0.6.2".into(),
           },
         ],
       };
@@ -194,6 +201,7 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/tikibase".into(),
+            tag: "v0.6.2".into(),
           },
         ],
       };
@@ -217,6 +225,7 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/tikibase".into(),
+            tag: "v0.6.2".into(),
           },
         ],
       };
