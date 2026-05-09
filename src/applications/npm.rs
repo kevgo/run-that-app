@@ -62,116 +62,110 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      assert_eq!(
-        (Npm {}).run_method(
-          &Version::from("20.10.0"),
-          Platform {
-            os: Os::Linux,
-            cpu: Cpu::Arm64,
-          },
-        ),
-        RunMethod::OtherAppDefaultExecutable {
-          app_definition: Box::new(NodeJS {}),
-          args: ExecutableArgs::OneOfTheseInAppFolder {
-            options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
-          },
+      let have = (Npm {}).run_method(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
         },
       );
+      let want = RunMethod::OtherAppDefaultExecutable {
+        app_definition: Box::new(NodeJS {}),
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+        },
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn linux_intel() {
-      assert_eq!(
-        (Npm {}).run_method(
-          &Version::from("20.10.0"),
-          Platform {
-            os: Os::Linux,
-            cpu: Cpu::Intel64,
-          },
-        ),
-        RunMethod::OtherAppDefaultExecutable {
-          app_definition: Box::new(NodeJS {}),
-          args: ExecutableArgs::OneOfTheseInAppFolder {
-            options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
-          },
+      let have = (Npm {}).run_method(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
         },
       );
+      let want = RunMethod::OtherAppDefaultExecutable {
+        app_definition: Box::new(NodeJS {}),
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+        },
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn macos_arm() {
-      assert_eq!(
-        (Npm {}).run_method(
-          &Version::from("20.10.0"),
-          Platform {
-            os: Os::MacOS,
-            cpu: Cpu::Arm64,
-          },
-        ),
-        RunMethod::OtherAppDefaultExecutable {
-          app_definition: Box::new(NodeJS {}),
-          args: ExecutableArgs::OneOfTheseInAppFolder {
-            options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
-          },
+      let have = (Npm {}).run_method(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
         },
       );
+      let want = RunMethod::OtherAppDefaultExecutable {
+        app_definition: Box::new(NodeJS {}),
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+        },
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn macos_intel() {
-      assert_eq!(
-        (Npm {}).run_method(
-          &Version::from("20.10.0"),
-          Platform {
-            os: Os::MacOS,
-            cpu: Cpu::Intel64,
-          },
-        ),
-        RunMethod::OtherAppDefaultExecutable {
-          app_definition: Box::new(NodeJS {}),
-          args: ExecutableArgs::OneOfTheseInAppFolder {
-            options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
-          },
+      let have = (Npm {}).run_method(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
         },
       );
+      let want = RunMethod::OtherAppDefaultExecutable {
+        app_definition: Box::new(NodeJS {}),
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+        },
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn windows_arm() {
-      assert_eq!(
-        (Npm {}).run_method(
-          &Version::from("20.10.0"),
-          Platform {
-            os: Os::Windows,
-            cpu: Cpu::Arm64,
-          },
-        ),
-        RunMethod::OtherAppDefaultExecutable {
-          app_definition: Box::new(NodeJS {}),
-          args: ExecutableArgs::OneOfTheseInAppFolder {
-            options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
-          },
+      let have = (Npm {}).run_method(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
         },
       );
+      let want = RunMethod::OtherAppDefaultExecutable {
+        app_definition: Box::new(NodeJS {}),
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+        },
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn windows_intel() {
-      assert_eq!(
-        (Npm {}).run_method(
-          &Version::from("20.10.0"),
-          Platform {
-            os: Os::Windows,
-            cpu: Cpu::Intel64,
-          },
-        ),
-        RunMethod::OtherAppDefaultExecutable {
-          app_definition: Box::new(NodeJS {}),
-          args: ExecutableArgs::OneOfTheseInAppFolder {
-            options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
-          },
+      let have = (Npm {}).run_method(
+        &Version::from("20.10.0"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
         },
       );
+      let want = RunMethod::OtherAppDefaultExecutable {
+        app_definition: Box::new(NodeJS {}),
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+        },
+      };
+      assert_eq!(have, want);
     }
   }
 }

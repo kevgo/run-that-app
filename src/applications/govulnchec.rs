@@ -58,110 +58,104 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      assert_eq!(
-        (Govulncheck {}).run_method(
-          &Version::from("1.1.4"),
-          Platform {
-            os: Os::Linux,
-            cpu: Cpu::Arm64,
-          },
-        ),
-        RunMethod::ThisApp {
-          install_methods: vec![Method::CompileGoSource {
-            import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
-          }],
+      let have = (Govulncheck {}).run_method(
+        &Version::from("1.1.4"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
         },
       );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
+        }],
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn linux_intel() {
-      assert_eq!(
-        (Govulncheck {}).run_method(
-          &Version::from("1.1.4"),
-          Platform {
-            os: Os::Linux,
-            cpu: Cpu::Intel64,
-          },
-        ),
-        RunMethod::ThisApp {
-          install_methods: vec![Method::CompileGoSource {
-            import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
-          }],
+      let have = (Govulncheck {}).run_method(
+        &Version::from("1.1.4"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
         },
       );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
+        }],
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn macos_arm() {
-      assert_eq!(
-        (Govulncheck {}).run_method(
-          &Version::from("1.1.4"),
-          Platform {
-            os: Os::MacOS,
-            cpu: Cpu::Arm64,
-          },
-        ),
-        RunMethod::ThisApp {
-          install_methods: vec![Method::CompileGoSource {
-            import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
-          }],
+      let have = (Govulncheck {}).run_method(
+        &Version::from("1.1.4"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
         },
       );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
+        }],
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn macos_intel() {
-      assert_eq!(
-        (Govulncheck {}).run_method(
-          &Version::from("1.1.4"),
-          Platform {
-            os: Os::MacOS,
-            cpu: Cpu::Intel64,
-          },
-        ),
-        RunMethod::ThisApp {
-          install_methods: vec![Method::CompileGoSource {
-            import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
-          }],
+      let have = (Govulncheck {}).run_method(
+        &Version::from("1.1.4"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
         },
       );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
+        }],
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn windows_arm() {
-      assert_eq!(
-        (Govulncheck {}).run_method(
-          &Version::from("1.1.4"),
-          Platform {
-            os: Os::Windows,
-            cpu: Cpu::Arm64,
-          },
-        ),
-        RunMethod::ThisApp {
-          install_methods: vec![Method::CompileGoSource {
-            import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
-          }],
+      let have = (Govulncheck {}).run_method(
+        &Version::from("1.1.4"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
         },
       );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
+        }],
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn windows_intel() {
-      assert_eq!(
-        (Govulncheck {}).run_method(
-          &Version::from("1.1.4"),
-          Platform {
-            os: Os::Windows,
-            cpu: Cpu::Intel64,
-          },
-        ),
-        RunMethod::ThisApp {
-          install_methods: vec![Method::CompileGoSource {
-            import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
-          }],
+      let have = (Govulncheck {}).run_method(
+        &Version::from("1.1.4"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
         },
       );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::CompileGoSource {
+          import_path: S("golang.org/x/vuln/cmd/govulncheck@v1.1.4"),
+        }],
+      };
+      assert_eq!(have, want);
     }
   }
 }

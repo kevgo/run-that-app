@@ -62,104 +62,98 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      assert_eq!(
-        (Gofmt {}).run_method(
-          &Version::from("1.23.4"),
-          Platform {
-            os: Os::Linux,
-            cpu: Cpu::Arm64,
-          },
-        ),
-        RunMethod::OtherAppOtherExecutable {
-          app_definition: Box::new(Go {}),
-          executable_name: ExecutableNameUnix::from("gofmt"),
+      let have = (Gofmt {}).run_method(
+        &Version::from("1.23.4"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
         },
       );
+      let want = RunMethod::OtherAppOtherExecutable {
+        app_definition: Box::new(Go {}),
+        executable_name: ExecutableNameUnix::from("gofmt"),
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn linux_intel() {
-      assert_eq!(
-        (Gofmt {}).run_method(
-          &Version::from("1.23.4"),
-          Platform {
-            os: Os::Linux,
-            cpu: Cpu::Intel64,
-          },
-        ),
-        RunMethod::OtherAppOtherExecutable {
-          app_definition: Box::new(Go {}),
-          executable_name: ExecutableNameUnix::from("gofmt"),
+      let have = (Gofmt {}).run_method(
+        &Version::from("1.23.4"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
         },
       );
+      let want = RunMethod::OtherAppOtherExecutable {
+        app_definition: Box::new(Go {}),
+        executable_name: ExecutableNameUnix::from("gofmt"),
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn macos_arm() {
-      assert_eq!(
-        (Gofmt {}).run_method(
-          &Version::from("1.23.4"),
-          Platform {
-            os: Os::MacOS,
-            cpu: Cpu::Arm64,
-          },
-        ),
-        RunMethod::OtherAppOtherExecutable {
-          app_definition: Box::new(Go {}),
-          executable_name: ExecutableNameUnix::from("gofmt"),
+      let have = (Gofmt {}).run_method(
+        &Version::from("1.23.4"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
         },
       );
+      let want = RunMethod::OtherAppOtherExecutable {
+        app_definition: Box::new(Go {}),
+        executable_name: ExecutableNameUnix::from("gofmt"),
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn macos_intel() {
-      assert_eq!(
-        (Gofmt {}).run_method(
-          &Version::from("1.23.4"),
-          Platform {
-            os: Os::MacOS,
-            cpu: Cpu::Intel64,
-          },
-        ),
-        RunMethod::OtherAppOtherExecutable {
-          app_definition: Box::new(Go {}),
-          executable_name: ExecutableNameUnix::from("gofmt"),
+      let have = (Gofmt {}).run_method(
+        &Version::from("1.23.4"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
         },
       );
+      let want = RunMethod::OtherAppOtherExecutable {
+        app_definition: Box::new(Go {}),
+        executable_name: ExecutableNameUnix::from("gofmt"),
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn windows_arm() {
-      assert_eq!(
-        (Gofmt {}).run_method(
-          &Version::from("1.23.4"),
-          Platform {
-            os: Os::Windows,
-            cpu: Cpu::Arm64,
-          },
-        ),
-        RunMethod::OtherAppOtherExecutable {
-          app_definition: Box::new(Go {}),
-          executable_name: ExecutableNameUnix::from("gofmt"),
+      let have = (Gofmt {}).run_method(
+        &Version::from("1.23.4"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
         },
       );
+      let want = RunMethod::OtherAppOtherExecutable {
+        app_definition: Box::new(Go {}),
+        executable_name: ExecutableNameUnix::from("gofmt"),
+      };
+      assert_eq!(have, want);
     }
 
     #[test]
     fn windows_intel() {
-      assert_eq!(
-        (Gofmt {}).run_method(
-          &Version::from("1.23.4"),
-          Platform {
-            os: Os::Windows,
-            cpu: Cpu::Intel64,
-          },
-        ),
-        RunMethod::OtherAppOtherExecutable {
-          app_definition: Box::new(Go {}),
-          executable_name: ExecutableNameUnix::from("gofmt"),
+      let have = (Gofmt {}).run_method(
+        &Version::from("1.23.4"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
         },
       );
+      let want = RunMethod::OtherAppOtherExecutable {
+        app_definition: Box::new(Go {}),
+        executable_name: ExecutableNameUnix::from("gofmt"),
+      };
+      assert_eq!(have, want);
     }
   }
 }
