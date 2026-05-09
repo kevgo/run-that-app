@@ -52,7 +52,7 @@ impl AppDefinition for Yamlfmt {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
-    if !output.contains("Rclone syncs files to and from cloud storage providers") {
+    if !output.contains("yamlfmt is a simple command line tool for formatting yaml files.") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     let output = executable.run_output(&["version"], log)?;
@@ -64,7 +64,7 @@ impl AppDefinition for Yamlfmt {
 }
 
 fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"rclone v(\d+\.\d+\.\d+)")
+  strings::first_capture(output, r"yamlfmt (\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
