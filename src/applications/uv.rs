@@ -21,7 +21,7 @@ impl AppDefinition for Uv {
   }
 
   fn homepage(&self) -> &'static str {
-    formatcp!("https://github.com/astral-sh/uv")
+    formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
   fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
