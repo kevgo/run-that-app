@@ -100,8 +100,8 @@ mod tests {
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
 
-    #[cfg(not(windows))]
     #[test]
+    #[cfg(not(windows))]
     fn linux_arm() {
       let have = (NodeJS {}).run_method(
         &Version::from("20.10.0"),
@@ -121,8 +121,8 @@ mod tests {
       assert_eq!(have, want);
     }
 
-    #[cfg(not(windows))]
     #[test]
+    #[cfg(not(windows))]
     fn linux_intel() {
       let have = (NodeJS {}).run_method(
         &Version::from("20.10.0"),
@@ -142,8 +142,8 @@ mod tests {
       assert_eq!(have, want);
     }
 
-    #[cfg(not(windows))]
     #[test]
+    #[cfg(not(windows))]
     fn macos_arm() {
       let have = (NodeJS {}).run_method(
         &Version::from("20.10.0"),
@@ -163,8 +163,8 @@ mod tests {
       assert_eq!(have, want);
     }
 
-    #[cfg(not(windows))]
     #[test]
+    #[cfg(not(windows))]
     fn macos_intel() {
       let have = (NodeJS {}).run_method(
         &Version::from("20.10.0"),
@@ -184,8 +184,8 @@ mod tests {
       assert_eq!(have, want);
     }
 
-    #[cfg(windows)]
     #[test]
+    #[cfg(windows)]
     fn windows_arm() {
       let have = (NodeJS {}).run_method(
         &Version::from("20.10.0"),
@@ -205,8 +205,8 @@ mod tests {
       assert_eq!(have, want);
     }
 
-    #[cfg(windows)]
     #[test]
+    #[cfg(windows)]
     fn windows_intel() {
       let have = (NodeJS {}).run_method(
         &Version::from("20.10.0"),
