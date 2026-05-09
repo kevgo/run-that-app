@@ -45,10 +45,7 @@ impl AppDefinition for Contest {
           url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/contest_{os}_{cpu}.{ext}").into(),
           bin_folder: BinFolder::Root,
         },
-        Method::CompileRustRepo {
-          url: self.homepage().into(),
-          bin_folder: BinFolder::Root,
-        },
+        Method::CompileRustRepo { url: self.homepage().into() },
       ],
     }
   }
@@ -106,7 +103,6 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/contest-framework/server".into(),
-            bin_folder: BinFolder::Root,
           },
         ],
       };
@@ -130,7 +126,6 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/contest-framework/server".into(),
-            bin_folder: BinFolder::Root,
           },
         ],
       };
@@ -154,7 +149,6 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/contest-framework/server".into(),
-            bin_folder: BinFolder::Root,
           },
         ],
       };
@@ -178,7 +172,6 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/contest-framework/server".into(),
-            bin_folder: BinFolder::Root,
           },
         ],
       };
@@ -202,7 +195,6 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/contest-framework/server".into(),
-            bin_folder: BinFolder::Root,
           },
         ],
       };
@@ -226,7 +218,6 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/contest-framework/server".into(),
-            bin_folder: BinFolder::Root,
           },
         ],
       };
