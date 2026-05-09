@@ -14,7 +14,6 @@ pub(crate) struct ActionLint {}
 
 const ORG: &str = "rhysd";
 const REPO: &str = "actionlint";
-const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for ActionLint {
   fn name(&self) -> ApplicationName {
@@ -70,6 +69,10 @@ impl AppDefinition for ActionLint {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::NotIdentified { output }),
     }
+  }
+
+  fn tagged_version(&self, version: &Version) -> TaggedVersion {
+    format!("{TAG_PREFIX}{version}").into()
   }
 }
 

@@ -141,6 +141,8 @@ pub(crate) trait AppDefinition: DynClone {
   /// ensures that the given executable belongs to this app and if yes returns its version
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult>;
 
+  fn tagged_version(&self, version: &Version) -> TaggedVersion;
+
   /// Apps can override this method to provide version restrictions
   /// defined by config files in the working directory.
   /// Apps that don't override this method are considered

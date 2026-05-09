@@ -1,4 +1,6 @@
 use super::Outcome;
+use crate::applications::AppDefinition;
+use crate::configuration::Version;
 use crate::download::Url;
 use crate::error::{Result, UserError};
 use crate::logging::{Event, Log};
@@ -12,11 +14,11 @@ pub(crate) enum RustSource {
   /// install from crates.io
   CratesIo { name: &'static str },
   /// install from a remote repository
-  Repository { url: Url, tag: String },
+  Repository { url: Url },
 }
 
 /// installs the given Rust-based application by compiling it from source
-pub(crate) fn run(app_folder: &Path, source: &RustSource, log: Log) -> Result<Outcome> {
+pub(crate) fn run(app_definition: &dyn AppDefinition, version: &Version, app_folder: &Path, source: &RustSource, log: Log) -> Result<Outcome> {
   let Ok(cargo_path) = which("cargo") else {
     return Err(UserError::RustNotInstalled);
   };
@@ -25,11 +27,11 @@ pub(crate) fn run(app_folder: &Path, source: &RustSource, log: Log) -> Result<Ou
   let mut args = vec!["install", "--root", &app_folder_str, "--locked"];
   match &source {
     RustSource::CratesIo { name } => args.push(name),
-    RustSource::Repository { url, tag } => {
+    RustSource::Repository { url } => {
       args.push("--git");
       args.push(url.as_ref());
       args.push("--tag");
-      args.push(tag);
+      args.push(app_definition.tagged_version(version).as_str());
     }
   }
   log(Event::CompileRustStart {
