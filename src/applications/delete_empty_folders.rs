@@ -106,12 +106,12 @@ mod tests {
         &Version::from("0.0.1"),
         Platform {
           os: Os::Linux,
-          cpu: Cpu::Arm64,
+          cpu: Cpu::Intel64,
         },
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/kevgo/delete-empty-folders/releases/download/v0.0.1/delete_empty_folders_linux_arm_64.tar.gz".into(),
+          url: "https://github.com/kevgo/delete-empty-folders/releases/download/v0.0.1/delete_empty_folders_linux_intel_64.tar.gz".into(),
           bin_folder: BinFolder::Root,
         }],
       };
