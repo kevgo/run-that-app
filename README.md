@@ -101,6 +101,7 @@ typically in 1-2 seconds. Only the executable is stored on disk. Execution is
 - [tikibase](https://github.com/kevgo/tikibase)
 - [ty](https://github.com/astral-sh/ty)
 - [uv](https://github.com/astral-sh/uv)
+- [yamlfmt](https://github.com/google/yamlfmt)
 
 </a>
 
