@@ -32,7 +32,7 @@ impl AppDefinition for MdBook {
           bin_folder: BinFolder::Root,
         },
         Method::CompileRustCrate {
-          crate_name: "mdbook",
+          name: "mdbook",
           bin_folder: BinFolder::Subfolder { path: "bin".into() },
         },
       ],
@@ -111,7 +111,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "mdbook",
+            name: "mdbook",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -135,7 +135,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "mdbook",
+            name: "mdbook",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -159,7 +159,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "mdbook",
+            name: "mdbook",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -183,7 +183,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "mdbook",
+            name: "mdbook",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -207,7 +207,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "mdbook",
+            name: "mdbook",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -231,7 +231,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "mdbook",
+            name: "mdbook",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],

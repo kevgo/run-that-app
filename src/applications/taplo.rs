@@ -45,7 +45,7 @@ impl AppDefinition for Taplo {
           bin_folder: BinFolder::Root,
         },
         Method::CompileRustCrate {
-          crate_name: "taplo-cli",
+          name: "taplo-cli",
           bin_folder: BinFolder::Subfolder { path: "bin".into() },
         },
       ],
@@ -104,7 +104,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "taplo-cli",
+            name: "taplo-cli",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -128,7 +128,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "taplo-cli",
+            name: "taplo-cli",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -152,7 +152,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "taplo-cli",
+            name: "taplo-cli",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -176,7 +176,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "taplo-cli",
+            name: "taplo-cli",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -200,7 +200,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "taplo-cli",
+            name: "taplo-cli",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -224,7 +224,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "taplo-cli",
+            name: "taplo-cli",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],

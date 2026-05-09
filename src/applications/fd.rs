@@ -47,7 +47,7 @@ impl AppDefinition for Fd {
           },
         },
         Method::CompileRustCrate {
-          crate_name: "fd-find",
+          name: "fd-find",
           bin_folder: BinFolder::Root,
         },
       ],
@@ -107,7 +107,7 @@ mod tests {
             },
           },
           Method::CompileRustCrate {
-            crate_name: "fd-find",
+            name: "fd-find",
             bin_folder: BinFolder::Root,
           },
         ],
@@ -133,7 +133,7 @@ mod tests {
             },
           },
           Method::CompileRustCrate {
-            crate_name: "fd-find",
+            name: "fd-find",
             bin_folder: BinFolder::Root,
           },
         ],
@@ -159,7 +159,7 @@ mod tests {
             },
           },
           Method::CompileRustCrate {
-            crate_name: "fd-find",
+            name: "fd-find",
             bin_folder: BinFolder::Root,
           },
         ],
@@ -185,7 +185,7 @@ mod tests {
             },
           },
           Method::CompileRustCrate {
-            crate_name: "fd-find",
+            name: "fd-find",
             bin_folder: BinFolder::Root,
           },
         ],
@@ -211,7 +211,7 @@ mod tests {
             },
           },
           Method::CompileRustCrate {
-            crate_name: "fd-find",
+            name: "fd-find",
             bin_folder: BinFolder::Root,
           },
         ],
@@ -237,7 +237,7 @@ mod tests {
             },
           },
           Method::CompileRustCrate {
-            crate_name: "fd-find",
+            name: "fd-find",
             bin_folder: BinFolder::Root,
           },
         ],

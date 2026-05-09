@@ -41,7 +41,7 @@ impl AppDefinition for MdBookLinkCheck {
           bin_folder: BinFolder::Root,
         },
         Method::CompileRustCrate {
-          crate_name: "mdbook-linkcheck",
+          name: "mdbook-linkcheck",
           bin_folder: BinFolder::Subfolder { path: "bin".into() },
         },
       ],
@@ -100,7 +100,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "mdbook-linkcheck",
+            name: "mdbook-linkcheck",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -124,7 +124,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "mdbook-linkcheck",
+            name: "mdbook-linkcheck",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -148,7 +148,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "mdbook-linkcheck",
+            name: "mdbook-linkcheck",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -172,7 +172,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "mdbook-linkcheck",
+            name: "mdbook-linkcheck",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -196,7 +196,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "mdbook-linkcheck",
+            name: "mdbook-linkcheck",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
@@ -220,7 +220,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileRustCrate {
-            crate_name: "mdbook-linkcheck",
+            name: "mdbook-linkcheck",
             bin_folder: BinFolder::Subfolder { path: "bin".into() },
           },
         ],
