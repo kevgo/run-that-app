@@ -128,7 +128,7 @@ mod tests {
     use std::fs;
 
     #[test]
-    #[cfg(unix)]
+    #[cfg(not(windows))]
     fn unix_success() {
       use std::io::Write;
       use std::os::unix::fs::PermissionsExt;
@@ -147,7 +147,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(unix)]
+    #[cfg(not(windows))]
     fn unix_error() {
       use crate::filesystem;
       let tempdir = tempfile::tempdir().unwrap();

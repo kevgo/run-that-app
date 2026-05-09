@@ -60,6 +60,7 @@ mod tests {
     use crate::executables::{ExecutableArgs, RunMethod};
     use crate::platform::{Cpu, Os, Platform};
 
+    #[cfg(not(windows))]
     #[test]
     fn linux_arm() {
       let have = (Npm {}).run_method(
@@ -78,6 +79,7 @@ mod tests {
       assert_eq!(have, want);
     }
 
+    #[cfg(not(windows))]
     #[test]
     fn linux_intel() {
       let have = (Npm {}).run_method(
@@ -96,6 +98,7 @@ mod tests {
       assert_eq!(have, want);
     }
 
+    #[cfg(not(windows))]
     #[test]
     fn macos_arm() {
       let have = (Npm {}).run_method(
@@ -114,6 +117,7 @@ mod tests {
       assert_eq!(have, want);
     }
 
+    #[cfg(not(windows))]
     #[test]
     fn macos_intel() {
       let have = (Npm {}).run_method(

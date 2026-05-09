@@ -1,9 +1,11 @@
 use std::path::Path;
 
+// TODO: merge these three functions
+
 /// Makes the given file executable by setting appropriate permissions.
 /// Ignores non-existing files.
 pub(crate) fn set_executable_bit(filepath: &Path) {
-  #[cfg(unix)]
+  #[cfg(not(windows))]
   return set_executable_bit_unix(filepath);
   #[cfg(windows)]
   return set_executable_bit_windows(filepath);
