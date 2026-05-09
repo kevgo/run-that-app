@@ -16,7 +16,7 @@ pub(crate) enum RustSource {
 }
 
 /// installs the given Rust-based application by compiling it from source
-pub(crate) fn run(app_folder: &Path, source: RustSource, log: Log) -> Result<Outcome> {
+pub(crate) fn run(app_folder: &Path, source: &RustSource, log: Log) -> Result<Outcome> {
   let Ok(cargo_path) = which("cargo") else {
     return Err(UserError::RustNotInstalled);
   };
