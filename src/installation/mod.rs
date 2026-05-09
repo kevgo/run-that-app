@@ -1,7 +1,7 @@
 //! This module implements the different ways to download and install an application.
 
 mod compile_go;
-mod compile_rust;
+mod compile_rust_crate;
 mod download_archive;
 mod download_executable;
 
@@ -184,10 +184,7 @@ pub(crate) fn install(
     Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &app_folder, version, url, bin_folder, optional, ctx),
     Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &app_folder, version, download_url, optional, ctx),
     Method::CompileGoSource { import_path } => compile_go::run(&app_folder, import_path, optional, from_source, ctx),
-    Method::CompileRustCrate {
-      name: crate_name,
-      bin_folder: _,
-    } => compile_rust::run(&app_folder, crate_name, ctx.log),
+    Method::CompileRustCrate { name, bin_folder: _ } => compile_rust_crate::run(&app_folder, name, ctx.log),
   }
 }
 
