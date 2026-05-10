@@ -1,30 +1,30 @@
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::{Result, UserError};
 use crate::executables::Executable;
 use crate::subshell;
 
-pub(crate) fn latest(pkg_name: &str) -> Result<Version> {
-  let versions = versions(pkg_name, 1)?;
+pub(crate) fn latest(pkg_name: &str, tag_format: &TagFormat) -> Result<Version> {
+  let versions = versions(pkg_name, 1, tag_format)?;
   let Some(first) = versions.into_iter().next() else {
     return Err(UserError::NoVersionsFound { app: pkg_name.to_string() });
   };
   Ok(first)
 }
 
-pub(crate) fn versions(pkg_name: &str, amount: usize) -> Result<Vec<Version>> {
+pub(crate) fn versions(pkg_name: &str, amount: usize, tag_format: &TagFormat) -> Result<Vec<Version>> {
   let output = subshell::capture_output(&Executable::from("go"), &["list", "-m", "-versions", pkg_name])?;
-  let mut versions = parse_output(&output);
+  let mut versions = parse_output(&output, tag_format);
   if versions.len() > amount {
     versions.resize(amount, Version::from(""));
   }
   Ok(versions)
 }
 
-fn parse_output(output: &str) -> Vec<Version> {
+fn parse_output(output: &str, tag_format: &TagFormat) -> Vec<Version> {
   let mut versions: Vec<Version> = output
     .split_whitespace()
     .skip(1) // skip the package name
-    .map(|s| s.strip_prefix('v').unwrap_or(s).into())
+    .map(|s| tag_format.parse(s))
     .collect();
   versions.sort_unstable_by(|a, b| b.cmp(a));
   versions
@@ -101,7 +101,7 @@ mod tests {
         S("0.1.1"),
         S("0.1.0"),
       ];
-      let have = parse_output(give);
+      let have = parse_output(give, &TagFormat::PrefixV);
       assert_eq!(have, want);
     }
   }
