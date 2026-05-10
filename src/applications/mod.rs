@@ -49,7 +49,7 @@ mod uv;
 mod yamlfmt;
 
 use crate::Log;
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableArgs, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
@@ -141,7 +141,8 @@ pub(crate) trait AppDefinition: DynClone {
   /// ensures that the given executable belongs to this app and if yes returns its version
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult>;
 
-  fn tagged_version(&self, version: &Version) -> TaggedVersion;
+  /// how Git tags look like for this app
+  fn tag_format(&self) -> TagFormat;
 
   /// Apps can override this method to provide version restrictions
   /// defined by config files in the working directory.

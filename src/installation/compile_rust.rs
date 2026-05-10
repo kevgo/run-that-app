@@ -4,6 +4,7 @@ use crate::configuration::Version;
 use crate::download::Url;
 use crate::error::{Result, UserError};
 use crate::logging::{Event, Log};
+use big_s::S;
 use std::io::ErrorKind;
 use std::path::Path;
 use std::process::Command;
@@ -24,14 +25,14 @@ pub(crate) fn run(app_definition: &dyn AppDefinition, version: &Version, app_fol
   };
   let mut cmd = Command::new(&cargo_path);
   let app_folder_str = &app_folder.to_string_lossy();
-  let mut args = vec!["install", "--root", &app_folder_str, "--locked"];
+  let mut args: Vec<String> = vec![S("install"), S("--root"), app_folder_str.to_string(), S("--locked")];
   match &source {
-    RustSource::CratesIo { name } => args.push(name),
+    RustSource::CratesIo { name } => args.push(S(name)),
     RustSource::Repository { url } => {
-      args.push("--git");
-      args.push(url.as_ref());
-      args.push("--tag");
-      args.push(app_definition.tagged_version(version).as_str());
+      args.push(S("--git"));
+      args.push(url.to_string());
+      args.push(S("--tag"));
+      args.push(app_definition.tag_format().format_version(version));
     }
   }
   log(Event::CompileRustStart {

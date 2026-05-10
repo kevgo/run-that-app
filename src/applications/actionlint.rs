@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::applications::ApplicationName;
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
@@ -71,8 +71,8 @@ impl AppDefinition for ActionLint {
     }
   }
 
-  fn tagged_version(&self, version: &Version) -> TaggedVersion {
-    format!("{TAG_PREFIX}{version}").into()
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::Prefixed("v".into())
   }
 }
 
