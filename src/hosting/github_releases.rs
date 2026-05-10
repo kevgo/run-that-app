@@ -76,7 +76,7 @@ fn parse_versions_response(text: &str, tag_format: &TagFormat) -> Result<Vec<Ver
   let mut result: Vec<Version> = Vec::with_capacity(releases.len());
   for release in releases {
     if let Some(release_tag) = release["tag_name"].as_str() {
-      result.push(tag_format.parse(release_tag).into());
+      result.push(tag_format.parse(release_tag));
     }
   }
   Ok(result)

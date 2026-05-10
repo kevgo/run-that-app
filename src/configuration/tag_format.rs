@@ -15,8 +15,8 @@ impl TagFormat {
   pub(crate) fn parse<AS: AsRef<str>>(&self, value: AS) -> Version {
     match self {
       TagFormat::Plain => Version::from(value.as_ref()),
-      TagFormat::PrefixV => Version::from(value.as_ref().strip_prefix("v").unwrap()),
-      TagFormat::Prefixed(prefix) => Version::from(value.as_ref().strip_prefix(prefix).unwrap()),
+      TagFormat::PrefixV => Version::from(value.as_ref().strip_prefix("v").unwrap_or(value.as_ref())),
+      TagFormat::Prefixed(prefix) => Version::from(value.as_ref().strip_prefix(prefix).unwrap_or(value.as_ref())),
     }
   }
 
