@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
@@ -13,7 +13,6 @@ pub(crate) struct Goda {}
 
 const ORG: &str = "loov";
 const REPO: &str = "goda";
-const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for Goda {
   fn name(&self) -> ApplicationName {
@@ -25,19 +24,20 @@ impl AppDefinition for Goda {
   }
 
   fn run_method(&self, version: &Version, _platform: Platform) -> RunMethod {
+    let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![Method::CompileGoSource {
-        import_path: format!("github.com/{ORG}/{REPO}@{TAG_PREFIX}{version}"),
+        import_path: format!("github.com/{ORG}/{REPO}@{tag}"),
       }],
     }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
+    github_releases::latest(ORG, REPO, &self.tag_format(), log)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
+    github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -47,6 +47,10 @@ impl AppDefinition for Goda {
     }
     // as of 0.5.7 goda has no way to determine the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::PrefixV
   }
 }
 

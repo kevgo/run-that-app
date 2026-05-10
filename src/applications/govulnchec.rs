@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::installation::Method;
@@ -19,9 +19,10 @@ impl AppDefinition for Govulncheck {
   }
 
   fn run_method(&self, version: &Version, _platform: Platform) -> RunMethod {
+    let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![Method::CompileGoSource {
-        import_path: format!("golang.org/x/vuln/cmd/govulncheck@v{version}"),
+        import_path: format!("golang.org/x/vuln/cmd/govulncheck@{tag}"),
       }],
     }
   }
@@ -42,6 +43,10 @@ impl AppDefinition for Govulncheck {
     }
     // govulncheck does not display the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::PrefixV
   }
 }
 

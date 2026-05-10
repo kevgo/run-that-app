@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
@@ -13,7 +13,6 @@ pub(crate) struct MdBook {}
 
 const ORG: &str = "rust-lang";
 const REPO: &str = "mdBook";
-const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for MdBook {
   fn name(&self) -> ApplicationName {
@@ -28,7 +27,7 @@ impl AppDefinition for MdBook {
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: archive_url(version, platform).into(),
+          url: archive_url(version, platform, &self.tag_format()).into(),
           bin_folder: BinFolder::Root,
         },
         Method::CompileRustCrate {
@@ -40,11 +39,11 @@ impl AppDefinition for MdBook {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
+    github_releases::latest(ORG, REPO, &self.tag_format(), log)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
+    github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -57,11 +56,16 @@ impl AppDefinition for MdBook {
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
   }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::PrefixV
+  }
 }
 
-fn archive_url(version: &Version, platform: Platform) -> String {
+fn archive_url(version: &Version, platform: Platform, tag_format: &TagFormat) -> String {
+  let tag = tag_format.format_version(version);
   if platform.os == Os::Linux && platform.cpu == Cpu::Arm64 {
-    return format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/mdbook-v{version}-aarch64-unknown-linux-musl.tar.gz");
+    return format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/mdbook-v{version}-aarch64-unknown-linux-musl.tar.gz");
   }
   let os = match platform.os {
     Os::Linux => "unknown-linux-gnu",
@@ -76,7 +80,7 @@ fn archive_url(version: &Version, platform: Platform) -> String {
     Os::Linux | Os::MacOS => "tar.gz",
     Os::Windows => "zip",
   };
-  format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/mdbook-v{version}-{cpu}-{os}.{ext}")
+  format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/mdbook-v{version}-{cpu}-{os}.{ext}")
 }
 
 fn extract_version(output: &str) -> Result<&str> {

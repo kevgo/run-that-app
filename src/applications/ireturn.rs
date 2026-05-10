@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
@@ -13,7 +13,6 @@ pub(crate) struct Ireturn {}
 
 const ORG: &str = "butuzov";
 const REPO: &str = "ireturn";
-const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for Ireturn {
   fn name(&self) -> ApplicationName {
@@ -38,25 +37,26 @@ impl AppDefinition for Ireturn {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
+    let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/ireturn_{os}_{cpu}.{ext}").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/ireturn_{os}_{cpu}.{ext}").into(),
           bin_folder: BinFolder::Root,
         },
         Method::CompileGoSource {
-          import_path: format!("github.com/{ORG}/{REPO}/cmd/ireturn@{TAG_PREFIX}{version}"),
+          import_path: format!("github.com/{ORG}/{REPO}/cmd/ireturn@{tag}"),
         },
       ],
     }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
+    github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
+    github_releases::latest(ORG, REPO, &self.tag_format(), log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -65,6 +65,10 @@ impl AppDefinition for Ireturn {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::PrefixV
   }
 }
 

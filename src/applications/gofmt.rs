@@ -1,7 +1,7 @@
 use super::go::Go;
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
@@ -42,6 +42,10 @@ impl AppDefinition for Gofmt {
     #[allow(clippy::unwrap_used)]
     let go_path = executable.as_path().parent().unwrap().join(go.executable_filename().as_ref());
     go.analyze_executable(&Executable::from(go_path), log)
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    app_to_install().tag_format()
   }
 }
 

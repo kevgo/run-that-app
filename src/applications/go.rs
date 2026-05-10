@@ -1,12 +1,11 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_tags;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, filesystem, strings};
-use big_s::S;
 use std::path::MAIN_SEPARATOR;
 
 #[derive(Clone)]
@@ -14,7 +13,6 @@ pub(crate) struct Go {}
 
 const ORG: &str = "golang";
 const REPO: &str = "go";
-const TAG_PREFIX: &str = "go";
 
 impl AppDefinition for Go {
   fn name(&self) -> ApplicationName {
@@ -39,10 +37,10 @@ impl AppDefinition for Go {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    let version_str = version.as_str().trim_start_matches(TAG_PREFIX);
+    let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://go.dev/dl/{TAG_PREFIX}{version_str}.{os}-{cpu}.{ext}").into(),
+        url: format!("https://go.dev/dl/{tag}.{os}-{cpu}.{ext}").into(),
         bin_folder: BinFolder::Subfolder {
           path: format!("go{MAIN_SEPARATOR}bin").into(),
         },
@@ -59,19 +57,19 @@ impl AppDefinition for Go {
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    let tags = github_tags::all(ORG, REPO, 400, TAG_PREFIX, log)?;
-    let mut go_tags: Vec<String> = tags
+    let tags = github_tags::all(ORG, REPO, 400, &self.tag_format(), log)?;
+    let mut go_tags: Vec<Version> = tags
       .into_iter()
-      .filter(|tag| !tag.contains("rc"))
-      .filter(|tag| !tag.contains("beta"))
-      .filter(|tag| !tag.starts_with("release"))
-      .filter(|tag| !tag.starts_with("weekly"))
+      .filter(|tag| !tag.as_str().contains("rc"))
+      .filter(|tag| !tag.as_str().contains("beta"))
+      .filter(|tag| !tag.as_str().starts_with("release"))
+      .filter(|tag| !tag.as_str().starts_with("weekly"))
       .collect();
-    go_tags.sort_unstable_by(|a, b| human_sort::compare(b, a));
+    go_tags.sort_unstable_by(|a, b| human_sort::compare(b.as_str(), a.as_str()));
     if go_tags.len() > amount {
-      go_tags.resize(amount, S(""));
+      go_tags.resize(amount, Version::from(""));
     }
-    Ok(go_tags.into_iter().map(Version::from).collect())
+    Ok(go_tags.into_iter().collect())
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -98,6 +96,10 @@ impl AppDefinition for Go {
       reason: err.to_string(),
     })?;
     Ok(version_req)
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::Prefix("go")
   }
 }
 

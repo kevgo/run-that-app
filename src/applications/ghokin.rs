@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
@@ -13,7 +13,6 @@ pub(crate) struct Ghokin {}
 
 const ORG: &str = "antham";
 const REPO: &str = "ghokin";
-const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for Ghokin {
   fn name(&self) -> ApplicationName {
@@ -34,24 +33,25 @@ impl AppDefinition for Ghokin {
       Os::MacOS => "darwin",
       Os::Windows => "windows",
     };
+    let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/ghokin_{version}_{os}_{cpu}.tar.gz").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/ghokin_{version}_{os}_{cpu}.tar.gz").into(),
           bin_folder: BinFolder::Root,
         },
         Method::CompileGoSource {
-          import_path: format!("github.com/{ORG}/{REPO}/v3@{TAG_PREFIX}{version}"),
+          import_path: format!("github.com/{ORG}/{REPO}/v3@{tag}"),
         },
       ],
     }
   }
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
+    github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
+    github_releases::latest(ORG, REPO, &self.tag_format(), log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -61,6 +61,10 @@ impl AppDefinition for Ghokin {
     }
     // as of 3.4.0 ghokin's "version" command prints nothing
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::PrefixV
   }
 }
 

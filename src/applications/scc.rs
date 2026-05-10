@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
@@ -13,7 +13,6 @@ pub(crate) struct Scc {}
 
 const ORG: &str = "boyter";
 const REPO: &str = "scc";
-const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for Scc {
   fn name(&self) -> ApplicationName {
@@ -34,25 +33,26 @@ impl AppDefinition for Scc {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "x86_64",
     };
+    let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/scc_{os}_{cpu}.tar.gz").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/scc_{os}_{cpu}.tar.gz").into(),
           bin_folder: BinFolder::Root,
         },
         Method::CompileGoSource {
-          import_path: format!("github.com/{ORG}/{REPO}/v3@{TAG_PREFIX}{version}"),
+          import_path: format!("github.com/{ORG}/{REPO}/v3@{tag}"),
         },
       ],
     }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
+    github_releases::latest(ORG, REPO, &self.tag_format(), log)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
+    github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -64,6 +64,10 @@ impl AppDefinition for Scc {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::PrefixV
   }
 }
 

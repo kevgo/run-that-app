@@ -70,7 +70,7 @@ mod tests {
 
   mod parse {
     use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName};
-    use crate::configuration::Version;
+    use crate::configuration::{TagFormat, Version};
     use crate::error::Result;
     use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
     use crate::logging::Log;
@@ -105,6 +105,9 @@ mod tests {
         unimplemented!()
       }
       fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {
+        unimplemented!()
+      }
+      fn tag_format(&self) -> TagFormat {
         unimplemented!()
       }
     }

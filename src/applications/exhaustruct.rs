@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
@@ -13,7 +13,6 @@ pub(crate) struct Exhaustruct {}
 
 const ORG: &str = "GaijinEntertainment";
 const REPO: &str = "go-exhaustruct";
-const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for Exhaustruct {
   fn name(&self) -> ApplicationName {
@@ -25,15 +24,16 @@ impl AppDefinition for Exhaustruct {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
+    github_releases::latest(ORG, REPO, &self.tag_format(), log)
   }
 
   fn run_method(&self, version: &Version, _platform: Platform) -> RunMethod {
     let major_version = version.major_version().unwrap_or(3);
+    let tag = self.tag_format().format_version(version);
     let import_path = if major_version >= 4 {
-      format!("dev.gaijin.team/go/exhaustruct/v{major_version}/cmd/exhaustruct@{TAG_PREFIX}{version}")
+      format!("dev.gaijin.team/go/exhaustruct/v{major_version}/cmd/exhaustruct@{tag}")
     } else {
-      format!("github.com/{ORG}/{REPO}/v{major_version}/cmd/exhaustruct@{TAG_PREFIX}{version}")
+      format!("github.com/{ORG}/{REPO}/v{major_version}/cmd/exhaustruct@{tag}")
     };
     RunMethod::ThisApp {
       install_methods: vec![Method::CompileGoSource { import_path }],
@@ -41,7 +41,7 @@ impl AppDefinition for Exhaustruct {
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
+    github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -50,6 +50,10 @@ impl AppDefinition for Exhaustruct {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::PrefixV
   }
 }
 

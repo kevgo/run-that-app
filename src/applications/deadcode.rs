@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, AppDefinition};
 use crate::Log;
 use crate::applications::ApplicationName;
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::pkg_go_dev;
@@ -23,19 +23,20 @@ impl AppDefinition for Deadcode {
   }
 
   fn run_method(&self, version: &Version, _platform: Platform) -> RunMethod {
+    let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![Method::CompileGoSource {
-        import_path: format!("golang.org/x/tools/cmd/deadcode@v{version}"),
+        import_path: format!("golang.org/x/tools/cmd/deadcode@{tag}"),
       }],
     }
   }
 
   fn latest_installable_version(&self, _log: Log) -> Result<Version> {
-    pkg_go_dev::latest(PKG_NAME)
+    pkg_go_dev::latest(PKG_NAME, &self.tag_format())
   }
 
   fn installable_versions(&self, amount: usize, _log: Log) -> Result<Vec<Version>> {
-    pkg_go_dev::versions(PKG_NAME, amount)
+    pkg_go_dev::versions(PKG_NAME, amount, &self.tag_format())
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -45,6 +46,10 @@ impl AppDefinition for Deadcode {
     }
     // as of 0.16.1 deadcode does not display the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::PrefixV
   }
 }
 
