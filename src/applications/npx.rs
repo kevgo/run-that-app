@@ -1,7 +1,7 @@
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, ExecutableArgs, RunMethod};
 use crate::platform::Platform;
@@ -47,6 +47,10 @@ impl AppDefinition for Npx {
     }
     // Npx is versioned together with NodeJS. The actual version of npm is therefore not relevant here.
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    app_to_install().tag_format()
   }
 }
 

@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
@@ -13,7 +13,6 @@ pub(crate) struct NodeJS {}
 
 pub(crate) const ORG: &str = "nodejs";
 pub(crate) const REPO: &str = "node";
-pub(crate) const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for NodeJS {
   fn name(&self) -> ApplicationName {
@@ -28,9 +27,10 @@ impl AppDefinition for NodeJS {
     let os = os_text(platform.os);
     let cpu = cpu_text(platform.cpu);
     let ext = ext_text(platform.os);
+    let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://nodejs.org/dist/v{version}/node-v{version}-{os}-{cpu}.{ext}").into(),
+        url: format!("https://nodejs.org/dist/v{version}/node-{tag}-{os}-{cpu}.{ext}").into(),
         bin_folder: BinFolder::RootOrSubfolders {
           options: vec![
             format!("node-v{version}-{os}-{cpu}").into(),
@@ -42,11 +42,11 @@ impl AppDefinition for NodeJS {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
+    github_releases::latest(ORG, REPO, &self.tag_format(), log)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
+    github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -58,6 +58,10 @@ impl AppDefinition for NodeJS {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::PrefixV
   }
 }
 

@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
@@ -9,7 +9,6 @@ use crate::platform::{Cpu, Os, Platform};
 
 const ORG: &str = "dominikh";
 const REPO: &str = "go-tools";
-const TAG_PREFIX: &str = "";
 
 #[derive(Clone)]
 pub(crate) struct StaticCheck {}
@@ -33,10 +32,11 @@ impl AppDefinition for StaticCheck {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "amd64",
     };
+    let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{version}/staticcheck_{os}_{cpu}.tar.gz").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/staticcheck_{os}_{cpu}.tar.gz").into(),
           bin_folder: BinFolder::Subfolder { path: "staticcheck".into() },
         },
         Method::CompileGoSource {
@@ -47,11 +47,11 @@ impl AppDefinition for StaticCheck {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
+    github_releases::latest(ORG, REPO, &self.tag_format(), log)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
+    github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -60,6 +60,10 @@ impl AppDefinition for StaticCheck {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::Plain
   }
 }
 

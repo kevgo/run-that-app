@@ -27,7 +27,7 @@ pub(crate) enum Event<'a> {
   CompileGoFailed,
   CompileRustStart {
     cargo_path: &'a Path,
-    args: &'a [&'a str],
+    args: &'a [String],
   },
   CompileRustSuccess,
   CompileRustFailed,

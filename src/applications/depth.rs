@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
@@ -13,7 +13,6 @@ pub(crate) struct Depth {}
 
 const ORG: &str = "KyleBanks";
 const REPO: &str = "depth";
-const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for Depth {
   fn name(&self) -> ApplicationName {
@@ -38,24 +37,25 @@ impl AppDefinition for Depth {
       Os::Windows => ".exe",
       Os::Linux | Os::MacOS => "",
     };
+    let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadExecutable {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/depth_{version}_{os}_{cpu}{ext}").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/depth_{version}_{os}_{cpu}{ext}").into(),
         },
         Method::CompileGoSource {
-          import_path: format!("github.com/{ORG}/{REPO}/cmd/depth@{TAG_PREFIX}{version}"),
+          import_path: format!("github.com/{ORG}/{REPO}/cmd/depth@{tag}"),
         },
       ],
     }
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
+    github_releases::latest(ORG, REPO, &self.tag_format(), log)
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
+    github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -65,6 +65,10 @@ impl AppDefinition for Depth {
     }
     // as of 1.2.1 depth doesn't display the version of the installed executable
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::PrefixV
   }
 }
 
