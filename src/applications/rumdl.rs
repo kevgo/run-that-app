@@ -40,7 +40,7 @@ impl AppDefinition for Rumdl {
     let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/rumdl-{version}-{cpu}-{os}.{ext}").into(),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/rumdl-{tag}-{cpu}-{os}.{ext}").into(),
         bin_folder: BinFolder::Root,
       }],
     }
