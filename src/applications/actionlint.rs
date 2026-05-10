@@ -46,7 +46,7 @@ impl AppDefinition for ActionLint {
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/actionlint_{version}_{os}_{cpu}.{ext}",).into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/actionlint_{version}_{os}_{cpu}.{ext}").into(),
           bin_folder: BinFolder::Root,
         },
         Method::CompileGoSource {
