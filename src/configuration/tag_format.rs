@@ -28,3 +28,60 @@ impl TagFormat {
     }
   }
 }
+
+#[cfg(test)]
+mod tests {
+
+  mod parse {
+    use crate::configuration::{TagFormat, Version};
+
+    #[test]
+    fn plain() {
+      assert_eq!(TagFormat::Plain.parse("1.2.3"), Version::from("1.2.3"));
+    }
+
+    #[test]
+    fn prefix_v_with_v() {
+      assert_eq!(TagFormat::PrefixV.parse("v1.0.0"), Version::from("1.0.0"));
+    }
+
+    #[test]
+    fn prefix_v_without_v() {
+      assert_eq!(TagFormat::PrefixV.parse("1.0.0"), Version::from("1.0.0"));
+    }
+
+    #[test]
+    fn custom_matching_prefix() {
+      assert_eq!(TagFormat::Prefix("bun-v").parse("bun-v1.2.3"), Version::from("1.2.3"));
+    }
+
+    #[test]
+    fn custom_no_prefix() {
+      assert_eq!(TagFormat::Prefix("bun-v").parse("1.2.3"), Version::from("1.2.3"));
+    }
+
+    #[test]
+    fn custom_other_prefix() {
+      assert_eq!(TagFormat::Prefix("@pkg/").format_version(&Version::from("1.0.0")), "@pkg/1.0.0");
+    }
+  }
+
+  mod format_version {
+    use crate::configuration::{TagFormat, Version};
+
+    #[test]
+    fn plain_formats_without_prefix() {
+      assert_eq!(TagFormat::Plain.format_version(&Version::from("4.5.6")), "4.5.6");
+    }
+
+    #[test]
+    fn prefix_v() {
+      assert_eq!(TagFormat::PrefixV.format_version(&Version::from("2.3.4")), "v2.3.4");
+    }
+
+    #[test]
+    fn custom_prefix() {
+      assert_eq!(TagFormat::Prefix("rel-").format_version(&Version::from("1.0.0")), "rel-1.0.0");
+    }
+  }
+}
