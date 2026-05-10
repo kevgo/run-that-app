@@ -70,7 +70,7 @@ mod tests {
     use crate::configuration::{TagFormat, Version};
 
     #[test]
-    fn plain_formats_without_prefix() {
+    fn plain() {
       assert_eq!(TagFormat::Plain.format_version(&Version::from("4.5.6")), "4.5.6");
     }
 
