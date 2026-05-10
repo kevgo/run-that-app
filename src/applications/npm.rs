@@ -50,7 +50,7 @@ impl AppDefinition for Npm {
   }
 
   fn tag_format(&self) -> TagFormat {
-    TagFormat::Plain
+    app_to_install().tag_format()
   }
 }
 
