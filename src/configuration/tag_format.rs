@@ -7,7 +7,7 @@ pub(crate) enum TagFormat {
   /// version tags have the prefix "v", i.e. version 1.2.3 has tag "v1.2.3"
   PrefixV,
   /// version tags have the given prefix
-  Prefixed(String),
+  Prefixed(&'static str),
 }
 
 impl TagFormat {

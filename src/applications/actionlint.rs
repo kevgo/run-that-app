@@ -57,7 +57,7 @@ impl AppDefinition for ActionLint {
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, self.tag_format(), log)
+    github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -73,7 +73,7 @@ impl AppDefinition for ActionLint {
   }
 
   fn tag_format(&self) -> TagFormat {
-    TagFormat::Prefixed("v".into())
+    TagFormat::PrefixV
   }
 }
 

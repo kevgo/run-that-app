@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
@@ -13,7 +13,6 @@ pub(crate) struct Biome {}
 
 const ORG: &str = "biomejs";
 const REPO: &str = "biome";
-const TAG_PREFIX: &str = "@biomejs/biome@";
 
 impl AppDefinition for Biome {
   fn name(&self) -> ApplicationName {
@@ -38,23 +37,21 @@ impl AppDefinition for Biome {
       Os::Windows => ".exe",
       Os::Linux | Os::MacOS => "",
     };
+    let tag = self.tag_format().format_version(version);
+    let tag = urlencoding::encode(&tag);
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadExecutable {
-        url: format!(
-          "https://github.com/{ORG}/{REPO}/releases/download/{tag}{version}/biome-{os}-{cpu}{ext}",
-          tag = urlencoding::encode(TAG_PREFIX)
-        )
-        .into(),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/biome-{os}-{cpu}{ext}",).into(),
       }],
     }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
+    github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
+    github_releases::latest(ORG, REPO, &self.tag_format(), log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -66,6 +63,9 @@ impl AppDefinition for Biome {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
+  }
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::Prefixed("@biomejs/biome@")
   }
 }
 
