@@ -65,7 +65,7 @@ impl AppDefinition for Biome {
     }
   }
   fn tag_format(&self) -> TagFormat {
-    TagFormat::Prefixed("@biomejs/biome@")
+    TagFormat::Prefix("@biomejs/biome@")
   }
 }
 

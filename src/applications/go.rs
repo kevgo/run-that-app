@@ -100,7 +100,7 @@ impl AppDefinition for Go {
   }
 
   fn tag_format(&self) -> TagFormat {
-    TagFormat::Prefixed("go")
+    TagFormat::Prefix("go")
   }
 }
 

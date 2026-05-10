@@ -7,7 +7,7 @@ pub(crate) enum TagFormat {
   /// version tags have the prefix "v", i.e. version 1.2.3 has tag "v1.2.3"
   PrefixV,
   /// version tags have the given prefix
-  Prefixed(&'static str),
+  Prefix(&'static str),
 }
 
 impl TagFormat {
@@ -16,7 +16,7 @@ impl TagFormat {
     match self {
       TagFormat::Plain => Version::from(value.as_ref()),
       TagFormat::PrefixV => Version::from(value.as_ref().strip_prefix("v").unwrap_or(value.as_ref())),
-      TagFormat::Prefixed(prefix) => Version::from(value.as_ref().strip_prefix(prefix).unwrap_or(value.as_ref())),
+      TagFormat::Prefix(prefix) => Version::from(value.as_ref().strip_prefix(prefix).unwrap_or(value.as_ref())),
     }
   }
 
@@ -24,7 +24,7 @@ impl TagFormat {
     match self {
       TagFormat::Plain => version.to_string(),
       TagFormat::PrefixV => format!("v{version}"),
-      TagFormat::Prefixed(prefix) => format!("{prefix}{version}"),
+      TagFormat::Prefix(prefix) => format!("{prefix}{version}"),
     }
   }
 }

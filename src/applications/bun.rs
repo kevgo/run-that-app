@@ -64,7 +64,7 @@ impl AppDefinition for Bun {
   }
 
   fn tag_format(&self) -> TagFormat {
-    TagFormat::Prefixed("bun-v")
+    TagFormat::Prefix("bun-v")
   }
 }
 
