@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_tags;
@@ -14,7 +14,6 @@ pub(crate) struct Go {}
 
 const ORG: &str = "golang";
 const REPO: &str = "go";
-const TAG_PREFIX: &str = "go";
 
 impl AppDefinition for Go {
   fn name(&self) -> ApplicationName {
@@ -39,10 +38,10 @@ impl AppDefinition for Go {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
-    let version_str = version.as_str().trim_start_matches(TAG_PREFIX);
+    let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://go.dev/dl/{TAG_PREFIX}{version_str}.{os}-{cpu}.{ext}").into(),
+        url: format!("https://go.dev/dl/{tag}.{os}-{cpu}.{ext}").into(),
         bin_folder: BinFolder::Subfolder {
           path: format!("go{MAIN_SEPARATOR}bin").into(),
         },
@@ -59,7 +58,7 @@ impl AppDefinition for Go {
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    let tags = github_tags::all(ORG, REPO, 400, TAG_PREFIX, log)?;
+    let tags = github_tags::all(ORG, REPO, 400, &self.tag_format(), log)?;
     let mut go_tags: Vec<String> = tags
       .into_iter()
       .filter(|tag| !tag.contains("rc"))
@@ -98,6 +97,10 @@ impl AppDefinition for Go {
       reason: err.to_string(),
     })?;
     Ok(version_req)
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::Prefixed("go")
   }
 }
 

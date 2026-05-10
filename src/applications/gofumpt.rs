@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
@@ -13,7 +13,6 @@ pub(crate) struct Gofumpt {}
 
 const ORG: &str = "mvdan";
 const REPO: &str = "gofumpt";
-const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for Gofumpt {
   fn name(&self) -> ApplicationName {
@@ -38,24 +37,25 @@ impl AppDefinition for Gofumpt {
       Os::Windows => ".exe",
       Os::Linux | Os::MacOS => "",
     };
+    let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadExecutable {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/gofumpt_v{version}_{os}_{cpu}{ext}").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/gofumpt_v{version}_{os}_{cpu}{ext}").into(),
         },
         Method::CompileGoSource {
-          import_path: format!("mvdan.cc/gofumpt@{TAG_PREFIX}{version}"),
+          import_path: format!("mvdan.cc/gofumpt@{tag}"),
         },
       ],
     }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
+    github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
+    github_releases::latest(ORG, REPO, &self.tag_format(), log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -67,6 +67,10 @@ impl AppDefinition for Gofumpt {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::PrefixV
   }
 }
 
