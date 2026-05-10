@@ -6,7 +6,6 @@ use crate::hosting::github_tags;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, filesystem, strings};
-use big_s::S;
 use std::path::MAIN_SEPARATOR;
 
 #[derive(Clone)]
@@ -59,18 +58,18 @@ impl AppDefinition for Go {
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
     let tags = github_tags::all(ORG, REPO, 400, &self.tag_format(), log)?;
-    let mut go_tags: Vec<String> = tags
+    let mut go_tags: Vec<Version> = tags
       .into_iter()
-      .filter(|tag| !tag.contains("rc"))
-      .filter(|tag| !tag.contains("beta"))
-      .filter(|tag| !tag.starts_with("release"))
-      .filter(|tag| !tag.starts_with("weekly"))
+      .filter(|tag| !tag.as_str().contains("rc"))
+      .filter(|tag| !tag.as_str().contains("beta"))
+      .filter(|tag| !tag.as_str().starts_with("release"))
+      .filter(|tag| !tag.as_str().starts_with("weekly"))
       .collect();
-    go_tags.sort_unstable_by(|a, b| human_sort::compare(b, a));
+    go_tags.sort_unstable_by(|a, b| human_sort::compare(b.as_str(), a.as_str()));
     if go_tags.len() > amount {
-      go_tags.resize(amount, S(""));
+      go_tags.resize(amount, Version::from(""));
     }
-    Ok(go_tags.into_iter().map(Version::from).collect())
+    Ok(go_tags.into_iter().collect())
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
