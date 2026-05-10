@@ -72,9 +72,8 @@ fn parse_response(text: &str, tag_format: &TagFormat) -> Result<Vec<String>> {
 mod tests {
 
   mod parse_versions_response {
-    use big_s::S;
-
     use crate::configuration::TagFormat;
+    use big_s::S;
 
     #[test]
     fn simple() {
