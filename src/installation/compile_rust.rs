@@ -24,8 +24,8 @@ pub(crate) fn run(app_definition: &dyn AppDefinition, version: &Version, app_fol
     return Err(UserError::RustNotInstalled);
   };
   let mut cmd = Command::new(&cargo_path);
-  let app_folder_str = &app_folder.to_string_lossy();
-  let mut args: Vec<String> = vec![S("install"), S("--root"), app_folder_str.to_string(), S("--locked")];
+  let app_folder_str = app_folder.to_string_lossy().to_string();
+  let mut args: Vec<String> = vec![S("install"), S("--root"), app_folder_str, S("--locked")];
   match &source {
     RustSource::CratesIo { name } => args.push(S(name)),
     RustSource::Repository { url } => {
