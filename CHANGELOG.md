@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+## 0.35.0
+
+- RTA can now compile Rust apps from remote repos like GitHub
+  in addition to the existing ability to compile from crates.io
+- app: delete-empty-folders, yamlfmt
+
 ## 0.34.0
 
 - app: snyk
