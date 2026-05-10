@@ -25,7 +25,7 @@ impl AppDefinition for ActionLint {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
+    github_releases::latest(ORG, REPO, &self.tag_format(), log)
   }
 
   fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
@@ -42,21 +42,22 @@ impl AppDefinition for ActionLint {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
+    let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/actionlint_{version}_{os}_{cpu}.{ext}").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/actionlint_{version}_{os}_{cpu}.{ext}",).into(),
           bin_folder: BinFolder::Root,
         },
         Method::CompileGoSource {
-          import_path: format!("github.com/{ORG}/{REPO}/cmd/actionlint@{TAG_PREFIX}{version}"),
+          import_path: format!("github.com/{ORG}/{REPO}/cmd/actionlint@{tag}"),
         },
       ],
     }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
+    github_releases::versions(ORG, REPO, amount, self.tag_format(), log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {

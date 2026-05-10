@@ -1,12 +1,11 @@
 use crate::Log;
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::{Result, UserError};
 use crate::logging::Event;
-use crate::strings::strip_prefix;
 use big_s::S;
 
 /// provides the latest official version of the given application on GitHub Releases
-pub(crate) fn latest(org: &str, repo: &str, tag_prefix: &str, log: Log) -> Result<Version> {
+pub(crate) fn latest(org: &str, repo: &str, tag_format: &TagFormat, log: Log) -> Result<Version> {
   let url = format!("https://api.github.com/repos/{org}/{repo}/releases/latest");
   log(Event::GitHubApiRequestBegin { url: &url });
   let get = minreq::get(&url)
@@ -30,10 +29,10 @@ pub(crate) fn latest(org: &str, repo: &str, tag_prefix: &str, log: Log) -> Resul
       });
     }
   };
-  parse_latest_response(response_text, tag_prefix)
+  parse_latest_response(response_text, tag_format)
 }
 
-fn parse_latest_response(text: &str, tag_prefix: &str) -> Result<Version> {
+fn parse_latest_response(text: &str, tag_format: &TagFormat) -> Result<Version> {
   let release: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::GitHubReleasesApiProblem {
     problem: err.to_string(),
     payload: text.to_string(),
@@ -43,11 +42,11 @@ fn parse_latest_response(text: &str, tag_prefix: &str) -> Result<Version> {
       err: String::from("missing 'tag_name' field"),
     });
   };
-  Ok(Version::from(strip_prefix(tag, tag_prefix)))
+  Ok(tag_format.parse(tag))
 }
 
 /// provides the given number of latest versions of the given application on GitHub Releases
-pub(crate) fn versions(org: &str, repo: &str, amount: usize, tag_prefix: &str, log: Log) -> Result<Vec<Version>> {
+pub(crate) fn versions(org: &str, repo: &str, amount: usize, tag_format: &TagFormat, log: Log) -> Result<Vec<Version>> {
   let url = format!("https://api.github.com/repos/{org}/{repo}/releases?per_page={amount}");
   log(Event::GitHubApiRequestBegin { url: &url });
   let get = minreq::get(&url)
@@ -60,10 +59,10 @@ pub(crate) fn versions(org: &str, repo: &str, amount: usize, tag_prefix: &str, l
     return Err(UserError::NotOnline);
   };
   let response_text = response.as_str().map_err(|err| UserError::InvalidGitHubAPIResponse { err: err.to_string() })?;
-  parse_versions_response(response_text, tag_prefix)
+  parse_versions_response(response_text, tag_format)
 }
 
-fn parse_versions_response(text: &str, tag_prefix: &str) -> Result<Vec<Version>> {
+fn parse_versions_response(text: &str, tag_format: &TagFormat) -> Result<Vec<Version>> {
   let releases: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::GitHubReleasesApiProblem {
     problem: err.to_string(),
     payload: text.to_string(),
@@ -77,7 +76,7 @@ fn parse_versions_response(text: &str, tag_prefix: &str) -> Result<Vec<Version>>
   let mut result: Vec<Version> = Vec::with_capacity(releases.len());
   for release in releases {
     if let Some(release_tag) = release["tag_name"].as_str() {
-      result.push(strip_prefix(release_tag, tag_prefix).into());
+      result.push(tag_format.parse(release_tag).into());
     }
   }
   Ok(result)
@@ -85,7 +84,7 @@ fn parse_versions_response(text: &str, tag_prefix: &str) -> Result<Vec<Version>>
 
 #[cfg(test)]
 mod tests {
-  use crate::configuration::Version;
+  use crate::configuration::{TagFormat, Version};
 
   #[test]
   #[allow(clippy::too_many_lines)]
@@ -554,7 +553,7 @@ mod tests {
     "mentions_count": 5
   }
 ]"#;
-    let have = super::parse_versions_response(response, "v").unwrap();
+    let have = super::parse_versions_response(response, &TagFormat::PrefixV).unwrap();
     let want = vec![Version::from("1.6.26")];
     assert_eq!(have, want);
   }
@@ -636,7 +635,7 @@ mod tests {
     }
   ]
 }"#;
-    let have = super::parse_latest_response(response, "v").unwrap();
+    let have = super::parse_latest_response(response, &TagFormat::PrefixV).unwrap();
     let want = Version::from("1.0.0");
     assert_eq!(have, want);
   }

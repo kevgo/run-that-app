@@ -1,10 +1,10 @@
 use crate::Log;
+use crate::configuration::TagFormat;
 use crate::error::{Result, UserError};
 use crate::logging::Event;
-use crate::strings::strip_prefix;
 use big_s::S;
 
-pub(crate) fn all(org: &str, repo: &str, amount: usize, tag_prefix: &str, log: Log) -> Result<Vec<String>> {
+pub(crate) fn all(org: &str, repo: &str, amount: usize, tag_format: &TagFormat, log: Log) -> Result<Vec<String>> {
   let url = format!("https://api.github.com/repos/{org}/{repo}/git/refs/tags");
   log(Event::GitHubApiRequestBegin { url: &url });
   let get = minreq::get(&url)
@@ -26,7 +26,7 @@ pub(crate) fn all(org: &str, repo: &str, amount: usize, tag_prefix: &str, log: L
       });
     }
   };
-  let mut tags = parse_response(response_text, tag_prefix)?;
+  let mut tags = parse_response(response_text, tag_format)?;
   if tags.is_empty() {
     log(Event::GitHubApiRequestFail { err: "no tags found".into() });
     return Err(UserError::GitHubTagsApiProblem {
@@ -42,7 +42,7 @@ pub(crate) fn all(org: &str, repo: &str, amount: usize, tag_prefix: &str, log: L
   Ok(tags)
 }
 
-fn parse_response(text: &str, tag_prefix: &str) -> Result<Vec<String>> {
+fn parse_response(text: &str, tag_format: &TagFormat) -> Result<Vec<String>> {
   let value: serde_json::Value = serde_json::from_str(text).map_err(|err| UserError::GitHubTagsApiProblem {
     problem: err.to_string(),
     payload: text.to_string(),
@@ -62,7 +62,7 @@ fn parse_response(text: &str, tag_prefix: &str) -> Result<Vec<String>> {
       });
     };
     if let Some(stripped) = entry_ref.strip_prefix("refs/tags/") {
-      result.push(strip_prefix(stripped, tag_prefix).to_string());
+      result.push(tag_format.parse(stripped).to_string());
     }
   }
   Ok(result)
@@ -73,6 +73,8 @@ mod tests {
 
   mod parse_versions_response {
     use big_s::S;
+
+    use crate::configuration::TagFormat;
 
     #[test]
     fn simple() {
@@ -101,7 +103,7 @@ mod tests {
 ]
 
             "#;
-      let have: Vec<String> = super::super::parse_response(response, "v").unwrap();
+      let have: Vec<String> = super::super::parse_response(response, &TagFormat::PrefixV).unwrap();
       let want = vec![S("1.0.1"), S("1.0.2")];
       pretty::assert_eq!(have, want);
     }
