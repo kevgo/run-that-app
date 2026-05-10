@@ -41,7 +41,7 @@ todo:  # displays all TODO items
 	@git grep --color=always --line-number TODO ':!target' | grep -v Makefile
 
 unit: build node_modules  # runs the unit tests
-	cargo test --locked
+	cargo test --locked --quiet
 	target/debug/rta node --test 'text-runner/**/*.test.ts'
 
 update:  # updates the dependencies
