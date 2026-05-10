@@ -59,11 +59,6 @@ mod tests {
     fn custom_no_prefix() {
       assert_eq!(TagFormat::Prefix("bun-v").parse("1.2.3"), Version::from("1.2.3"));
     }
-
-    #[test]
-    fn custom_other_prefix() {
-      assert_eq!(TagFormat::Prefix("@pkg/").format_version(&Version::from("1.0.0")), "@pkg/1.0.0");
-    }
   }
 
   mod format_version {
@@ -80,8 +75,8 @@ mod tests {
     }
 
     #[test]
-    fn custom_prefix() {
-      assert_eq!(TagFormat::Prefix("rel-").format_version(&Version::from("1.0.0")), "rel-1.0.0");
+    fn custom() {
+      assert_eq!(TagFormat::Prefix("@pkg/").format_version(&Version::from("1.0.0")), "@pkg/1.0.0");
     }
   }
 }
