@@ -41,7 +41,7 @@ impl AppDefinition for Biome {
     let tag = urlencoding::encode(&tag);
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadExecutable {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/biome-{os}-{cpu}{ext}",).into(),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/biome-{os}-{cpu}{ext}").into(),
       }],
     }
   }
