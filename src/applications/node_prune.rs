@@ -1,6 +1,6 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_tags;
@@ -13,7 +13,6 @@ pub(crate) struct NodePrune {}
 
 const ORG: &str = "tj";
 const REPO: &str = "node-prune";
-const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for NodePrune {
   fn name(&self) -> ApplicationName {
@@ -25,7 +24,7 @@ impl AppDefinition for NodePrune {
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    let tags = github_tags::all(ORG, REPO, 1, TAG_PREFIX, log)?;
+    let tags = github_tags::all(ORG, REPO, 1, &self.tag_format(), log)?;
     let Some(tag) = tags.into_iter().nth(0) else {
       return Err(UserError::NoVersionsFound { app: self.name().to_string() });
     };
@@ -42,21 +41,22 @@ impl AppDefinition for NodePrune {
       Cpu::Arm64 => "arm64",
       Cpu::Intel64 => "amd64",
     };
+    let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadExecutable {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/v{version}/node-prune_{version}_{os}_{cpu}.tar.gz").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/node-prune_{version}_{os}_{cpu}.tar.gz").into(),
         },
         Method::CompileGoSource {
-          import_path: format!("github.com/tj/node-prune@{TAG_PREFIX}{version}"),
+          import_path: format!("github.com/tj/node-prune@{tag}"),
         },
       ],
     }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    let tags = github_tags::all(ORG, REPO, amount, TAG_PREFIX, log)?;
-    Ok(tags.into_iter().map(Version::from).collect())
+    let tags = github_tags::all(ORG, REPO, amount, &self.tag_format(), log)?;
+    Ok(tags.into_iter().map(|tag| self.tag_format().parse(tag)).collect())
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -65,6 +65,10 @@ impl AppDefinition for NodePrune {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::PrefixV
   }
 }
 

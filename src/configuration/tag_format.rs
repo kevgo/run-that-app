@@ -12,11 +12,11 @@ pub(crate) enum TagFormat {
 
 impl TagFormat {
   /// parses the given tag value into a Version
-  pub(crate) fn parse(&self, value: &str) -> Version {
+  pub(crate) fn parse<AS: AsRef<str>>(&self, value: AS) -> Version {
     match self {
-      TagFormat::Plain => Version::from(value),
-      TagFormat::PrefixV => Version::from(value.strip_prefix("v").unwrap()),
-      TagFormat::Prefixed(prefix) => Version::from(value.strip_prefix(prefix).unwrap()),
+      TagFormat::Plain => Version::from(value.as_ref()),
+      TagFormat::PrefixV => Version::from(value.as_ref().strip_prefix("v").unwrap()),
+      TagFormat::Prefixed(prefix) => Version::from(value.as_ref().strip_prefix(prefix).unwrap()),
     }
   }
 
