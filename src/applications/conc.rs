@@ -1,5 +1,5 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::configuration::Version;
+use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
@@ -13,7 +13,6 @@ pub(crate) struct Conc {}
 
 const ORG: &str = "kevgo";
 const REPO: &str = "conc";
-const TAG_PREFIX: &str = "v";
 
 impl AppDefinition for Conc {
   fn name(&self) -> ApplicationName {
@@ -38,26 +37,24 @@ impl AppDefinition for Conc {
       Os::Linux | Os::MacOS => "tar.gz",
       Os::Windows => "zip",
     };
+    let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{TAG_PREFIX}{version}/conc_{os}_{cpu}.{ext}").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/conc_{os}_{cpu}.{ext}").into(),
           bin_folder: BinFolder::Root,
         },
-        Method::CompileRustRepo {
-          url: self.homepage().into(),
-          tag: format!("{TAG_PREFIX}{version}"),
-        },
+        Method::CompileRustRepo { url: self.homepage().into() },
       ],
     }
   }
 
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
-    github_releases::versions(ORG, REPO, amount, TAG_PREFIX, log)
+    github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
   }
 
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
-    github_releases::latest(ORG, REPO, TAG_PREFIX, log)
+    github_releases::latest(ORG, REPO, &self.tag_format(), log)
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
@@ -69,6 +66,10 @@ impl AppDefinition for Conc {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::PrefixV
   }
 }
 
@@ -105,7 +106,6 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/conc".into(),
-            tag: "v0.1.0".into(),
           },
         ],
       };
@@ -129,7 +129,6 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/conc".into(),
-            tag: "v0.1.0".into(),
           },
         ],
       };
@@ -153,7 +152,6 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/conc".into(),
-            tag: "v0.1.0".into(),
           },
         ],
       };
@@ -177,7 +175,6 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/conc".into(),
-            tag: "v0.1.0".into(),
           },
         ],
       };
@@ -201,7 +198,6 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/conc".into(),
-            tag: "v0.1.0".into(),
           },
         ],
       };
@@ -225,7 +221,6 @@ mod tests {
           },
           Method::CompileRustRepo {
             url: "https://github.com/kevgo/conc".into(),
-            tag: "v0.1.0".into(),
           },
         ],
       };
