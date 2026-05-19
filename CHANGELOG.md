@@ -1,5 +1,10 @@
 # run-that-app changelog
 
+## 0.36.0
+
+- app: lefthook
+- now extracts the correct filename out of .gz archives on Windows
+
 ## 0.35.0
 
 - RTA can now compile Rust apps from remote repos like GitHub
