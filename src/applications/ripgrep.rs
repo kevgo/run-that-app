@@ -94,26 +94,6 @@ mod tests {
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
-    fn macos_arm() {
-      let have = (RipGrep {}).run_method(
-        &Version::from("14.1.1"),
-        Platform {
-          os: Os::MacOS,
-          cpu: Cpu::Arm64,
-        },
-      );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-apple-darwin.tar.gz".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "ripgrep-14.1.1-aarch64-apple-darwin".into(),
-          },
-        }],
-      };
-      assert_eq!(have, want);
-    }
-
-    #[test]
     fn linux_arm() {
       let have = (RipGrep {}).run_method(
         &Version::from("14.1.1"),
@@ -147,6 +127,26 @@ mod tests {
           url: "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz".into(),
           bin_folder: BinFolder::Subfolder {
             path: "ripgrep-14.1.1-x86_64-unknown-linux-musl".into(),
+          },
+        }],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (RipGrep {}).run_method(
+        &Version::from("14.1.1"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![Method::DownloadArchive {
+          url: "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-apple-darwin.tar.gz".into(),
+          bin_folder: BinFolder::Subfolder {
+            path: "ripgrep-14.1.1-aarch64-apple-darwin".into(),
           },
         }],
       };
