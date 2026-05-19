@@ -71,7 +71,7 @@ impl AppDefinition for Lefthook {
 }
 
 fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"lefthook (\d+\.\d+\.\d+)")
+  strings::first_capture(output, r"lefthook version (\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
@@ -197,7 +197,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("lefthook 2.1.6"), Ok("2.1.6"));
+    assert_eq!(super::extract_version("lefthook version 2.1.6"), Ok("2.1.6"));
     assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
