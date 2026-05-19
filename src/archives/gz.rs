@@ -22,14 +22,14 @@ impl Archive for Gz {
     let executable_name_platform = executable_name_unix.platform_path(platform.os);
     let output_path = &target_dir.join(executable_name_platform);
     let mut gz_decoder = GzDecoder::new(io::Cursor::new(&self.data));
-    match File::create(&output_path) {
+    match File::create(output_path) {
       Ok(mut file) => {
         if let Err(err) = io::copy(&mut gz_decoder, &mut file) {
           log(Event::ArchiveExtractFailed { err: err.to_string() });
           return Err(UserError::ArchiveCannotExtract { reason: err.to_string() });
         }
         drop(file); // close file before setting permissions
-        filesystem::set_executable_bit(&output_path);
+        filesystem::set_executable_bit(output_path);
         log(Event::ArchiveExtractSuccess);
         Ok(())
       }
