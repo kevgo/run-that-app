@@ -90,6 +90,7 @@ mod tests {
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
 
     #[test]
     fn linux_arm() {
@@ -101,10 +102,15 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_Linux_arm64.gz".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_Linux_arm64.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/evilmartians/lefthook/v2@v2.1.6"),
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -119,10 +125,15 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_Linux_x86_64.gz".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_Linux_x86_64.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/evilmartians/lefthook/v2@v2.1.6"),
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -137,10 +148,15 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_MacOS_arm64.gz".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_MacOS_arm64.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/evilmartians/lefthook/v2@v2.1.6"),
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -155,10 +171,15 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_MacOS_x86_64.gz".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_MacOS_x86_64.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/evilmartians/lefthook/v2@v2.1.6"),
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -173,10 +194,15 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_Windows_arm64.gz".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_Windows_arm64.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/evilmartians/lefthook/v2@v2.1.6"),
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -191,10 +217,15 @@ mod tests {
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_Windows_x86_64.gz".into(),
-          bin_folder: BinFolder::Root,
-        }],
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_Windows_x86_64.gz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/evilmartians/lefthook/v2@v2.1.6"),
+          },
+        ],
       };
       assert_eq!(have, want);
     }
