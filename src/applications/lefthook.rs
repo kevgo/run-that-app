@@ -56,7 +56,7 @@ impl AppDefinition for Lefthook {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
-    if !output.contains("lefthook") {
+    if !output.contains("Git hooks manager") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&output) {
