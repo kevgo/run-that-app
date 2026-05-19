@@ -39,10 +39,15 @@ impl AppDefinition for Lefthook {
     };
     let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
-      install_methods: vec![Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/lefthook_{version}_{os}_{cpu}.gz").into(),
-        bin_folder: BinFolder::Root,
-      }],
+      install_methods: vec![
+        Method::DownloadArchive {
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/lefthook_{version}_{os}_{cpu}.gz").into(),
+          bin_folder: BinFolder::Root,
+        },
+        Method::CompileGoSource {
+          import_path: format!("github.com/{ORG}/{REPO}/v2@{tag}"),
+        },
+      ],
     }
   }
 
