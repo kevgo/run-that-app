@@ -1,9 +1,10 @@
 use super::Archive;
 use crate::applications::ApplicationName;
 use crate::error::{Result, UserError};
+use crate::executables::ExecutableNameUnix;
 use crate::filesystem;
 use crate::logging::{Event, Log};
-use crate::platform::{Os, Platform};
+use crate::platform::Platform;
 use flate2::read::GzDecoder;
 use std::fs::File;
 use std::io;
@@ -17,10 +18,9 @@ pub(crate) struct Gz {
 impl Archive for Gz {
   fn extract_all(&self, target_dir: &Path, platform: Platform, log: Log, app: &ApplicationName) -> Result<()> {
     log(Event::ArchiveExtractBegin { archive_type: "gz" });
-    let mut output_path = target_dir.join(app);
-    if platform.os == Os::Windows {
-      output_path = output_path.with_extension("exe");
-    }
+    let executable_name_unix = ExecutableNameUnix::from(app.as_str());
+    let executable_name_platform = executable_name_unix.platform_path(platform.os);
+    let output_path = &target_dir.join(executable_name_platform);
     let mut gz_decoder = GzDecoder::new(io::Cursor::new(&self.data));
     match File::create(&output_path) {
       Ok(mut file) => {
