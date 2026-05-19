@@ -82,7 +82,7 @@ mod tests {
 
   mod run_method {
     use crate::applications::AppDefinition;
-    use crate::applications::ripgrep::RipGrep;
+    use crate::applications::lefthook::Lefthook;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
@@ -90,8 +90,8 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      let have = (RipGrep {}).run_method(
-        &Version::from("14.1.1"),
+      let have = (Lefthook {}).run_method(
+        &Version::from("2.1.6"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Arm64,
@@ -99,7 +99,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-unknown-linux-gnu.tar.gz".into(),
+          url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_Linux_arm64.gz".into(),
           bin_folder: BinFolder::Subfolder {
             path: "ripgrep-14.1.1-aarch64-unknown-linux-gnu".into(),
           },
@@ -110,7 +110,7 @@ mod tests {
 
     #[test]
     fn linux_intel() {
-      let have = (RipGrep {}).run_method(
+      let have = (Lefthook {}).run_method(
         &Version::from("14.1.1"),
         Platform {
           os: Os::Linux,
@@ -119,7 +119,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz".into(),
+          url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_Linux_x86_64.gz".into(),
           bin_folder: BinFolder::Subfolder {
             path: "ripgrep-14.1.1-x86_64-unknown-linux-musl".into(),
           },
@@ -130,7 +130,7 @@ mod tests {
 
     #[test]
     fn macos_arm() {
-      let have = (RipGrep {}).run_method(
+      let have = (Lefthook {}).run_method(
         &Version::from("14.1.1"),
         Platform {
           os: Os::MacOS,
@@ -139,7 +139,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-apple-darwin.tar.gz".into(),
+          url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_MacOS_arm64.gz".into(),
           bin_folder: BinFolder::Subfolder {
             path: "ripgrep-14.1.1-aarch64-apple-darwin".into(),
           },
@@ -150,7 +150,7 @@ mod tests {
 
     #[test]
     fn macos_intel() {
-      let have = (RipGrep {}).run_method(
+      let have = (Lefthook {}).run_method(
         &Version::from("14.1.1"),
         Platform {
           os: Os::MacOS,
@@ -159,7 +159,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-apple-darwin.tar.gz".into(),
+          url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_MacOS_x86_64.gz".into(),
           bin_folder: BinFolder::Subfolder {
             path: "ripgrep-14.1.1-x86_64-apple-darwin".into(),
           },
@@ -170,7 +170,7 @@ mod tests {
 
     #[test]
     fn windows_arm() {
-      let have = (RipGrep {}).run_method(
+      let have = (Lefthook {}).run_method(
         &Version::from("14.1.1"),
         Platform {
           os: Os::Windows,
@@ -179,7 +179,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-pc-windows-msvc.zip".into(),
+          url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_Windows_arm64.gz".into(),
           bin_folder: BinFolder::Subfolder {
             path: "ripgrep-14.1.1-aarch64-pc-windows-msvc".into(),
           },
@@ -190,7 +190,7 @@ mod tests {
 
     #[test]
     fn windows_intel() {
-      let have = (RipGrep {}).run_method(
+      let have = (Lefthook {}).run_method(
         &Version::from("14.1.1"),
         Platform {
           os: Os::Windows,
@@ -199,7 +199,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip".into(),
+          url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_Windows_x86_64.gz".into(),
           bin_folder: BinFolder::Subfolder {
             path: "ripgrep-14.1.1-x86_64-pc-windows-msvc".into(),
           },
@@ -211,7 +211,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("ripgrep 14.1.1"), Ok("14.1.1"));
+    assert_eq!(super::extract_version("lefthook 2.1.6"), Ok("2.1.6"));
     assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
