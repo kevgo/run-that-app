@@ -41,9 +41,7 @@ impl AppDefinition for Lefthook {
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/lefthook_{version}_{os}_{cpu}.gz").into(),
-        bin_folder: BinFolder::Subfolder {
-          path: format!("ripgrep-{version}-{cpu}-{os}").into(),
-        },
+        bin_folder: BinFolder::Root,
       }],
     }
   }
@@ -68,7 +66,7 @@ impl AppDefinition for Lefthook {
   }
 
   fn tag_format(&self) -> TagFormat {
-    TagFormat::Plain
+    TagFormat::PrefixV
   }
 }
 
@@ -100,9 +98,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_Linux_arm64.gz".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "ripgrep-14.1.1-aarch64-unknown-linux-gnu".into(),
-          },
+          bin_folder: BinFolder::Root,
         }],
       };
       assert_eq!(have, want);
@@ -111,7 +107,7 @@ mod tests {
     #[test]
     fn linux_intel() {
       let have = (Lefthook {}).run_method(
-        &Version::from("14.1.1"),
+        &Version::from("2.1.6"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Intel64,
@@ -120,9 +116,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_Linux_x86_64.gz".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "ripgrep-14.1.1-x86_64-unknown-linux-musl".into(),
-          },
+          bin_folder: BinFolder::Root,
         }],
       };
       assert_eq!(have, want);
@@ -131,7 +125,7 @@ mod tests {
     #[test]
     fn macos_arm() {
       let have = (Lefthook {}).run_method(
-        &Version::from("14.1.1"),
+        &Version::from("2.1.6"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
@@ -140,9 +134,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_MacOS_arm64.gz".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "ripgrep-14.1.1-aarch64-apple-darwin".into(),
-          },
+          bin_folder: BinFolder::Root,
         }],
       };
       assert_eq!(have, want);
@@ -151,7 +143,7 @@ mod tests {
     #[test]
     fn macos_intel() {
       let have = (Lefthook {}).run_method(
-        &Version::from("14.1.1"),
+        &Version::from("2.1.6"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Intel64,
@@ -160,9 +152,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_MacOS_x86_64.gz".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "ripgrep-14.1.1-x86_64-apple-darwin".into(),
-          },
+          bin_folder: BinFolder::Root,
         }],
       };
       assert_eq!(have, want);
@@ -171,7 +161,7 @@ mod tests {
     #[test]
     fn windows_arm() {
       let have = (Lefthook {}).run_method(
-        &Version::from("14.1.1"),
+        &Version::from("2.1.6"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Arm64,
@@ -180,9 +170,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_Windows_arm64.gz".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "ripgrep-14.1.1-aarch64-pc-windows-msvc".into(),
-          },
+          bin_folder: BinFolder::Root,
         }],
       };
       assert_eq!(have, want);
@@ -191,7 +179,7 @@ mod tests {
     #[test]
     fn windows_intel() {
       let have = (Lefthook {}).run_method(
-        &Version::from("14.1.1"),
+        &Version::from("2.1.6"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
@@ -200,9 +188,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/evilmartians/lefthook/releases/download/v2.1.6/lefthook_2.1.6_Windows_x86_64.gz".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "ripgrep-14.1.1-x86_64-pc-windows-msvc".into(),
-          },
+          bin_folder: BinFolder::Root,
         }],
       };
       assert_eq!(have, want);
