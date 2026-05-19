@@ -81,6 +81,7 @@ typically in 1-2 seconds. Only the executable is stored on disk. Execution is
 - [gum](https://github.com/charmbracelet/gum)
 - [ireturn](https://github.com/butuzov/ireturn)
 - [keep-sorted](https://github.com/google/keep-sorted)
+- [lefthook](https://lefthook.dev)
 - [mdbook](https://github.com/rust-lang/mdBook)
 - [mdbook-linkcheck](https://github.com/Michael-F-Bryan/mdbook-linkcheck)
 - [node-prune](https://github.com/tj/node-prune)

@@ -20,7 +20,7 @@ impl AppDefinition for Lefthook {
   }
 
   fn homepage(&self) -> &'static str {
-    formatcp!("https://github.com/{ORG}/{REPO}")
+    formatcp!("https://lefthook.dev")
   }
 
   fn executable_filename(&self) -> executables::ExecutableNameUnix {
