@@ -26,6 +26,7 @@ mod govulnchec;
 mod gum;
 mod ireturn;
 mod keep_sorted;
+mod lefthook;
 mod mdbook;
 mod mdbook_linkcheck;
 mod node_prune;
@@ -86,6 +87,7 @@ pub(crate) fn all() -> Apps {
     Box::new(gum::Gum {}),
     Box::new(ireturn::Ireturn {}),
     Box::new(keep_sorted::KeepSorted {}),
+    Box::new(lefthook::Lefthook {}),
     Box::new(mdbook::MdBook {}),
     Box::new(mdbook_linkcheck::MdBookLinkCheck {}),
     Box::new(node_prune::NodePrune {}),
