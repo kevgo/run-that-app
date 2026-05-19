@@ -9,13 +9,14 @@ use self::tar_xz::TarXz;
 use self::zip::Zip;
 use crate::applications::ApplicationName;
 use crate::error::Result;
+use crate::platform::Platform;
 use crate::{Log, filesystem};
 use std::path::Path;
 
 /// An archive is a compressed file containing an executable and other files needed to run a particular application.
 pub(crate) trait Archive {
   /// extracts all files from the given archive data to the given location on disk
-  fn extract_all(&self, target_dir: &Path, log: Log, app: &ApplicationName) -> Result<()>;
+  fn extract_all(&self, target_dir: &Path, platform: Platform, log: Log, app: &ApplicationName) -> Result<()>;
 }
 
 /// provides the archive that can extract the given file path

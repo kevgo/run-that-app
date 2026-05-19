@@ -3,6 +3,7 @@ use crate::applications::ApplicationName;
 use crate::error::{Result, UserError};
 use crate::filesystem;
 use crate::logging::{Event, Log};
+use crate::platform::{Os, Platform};
 use flate2::read::GzDecoder;
 use std::fs::File;
 use std::io;
@@ -14,9 +15,12 @@ pub(crate) struct Gz {
 }
 
 impl Archive for Gz {
-  fn extract_all(&self, target_dir: &Path, log: Log, app: &ApplicationName) -> Result<()> {
+  fn extract_all(&self, target_dir: &Path, platform: Platform, log: Log, app: &ApplicationName) -> Result<()> {
     log(Event::ArchiveExtractBegin { archive_type: "gz" });
-    let output_path = target_dir.join(app);
+    let mut output_path = target_dir.join(app);
+    if platform.os == Os::Windows {
+      output_path = output_path.with_extension("exe");
+    }
     let mut gz_decoder = GzDecoder::new(io::Cursor::new(&self.data));
     match File::create(&output_path) {
       Ok(mut file) => {
