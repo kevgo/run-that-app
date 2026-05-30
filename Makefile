@@ -12,6 +12,7 @@ fix: build  # auto-corrects issues
 	cargo clippy --fix --allow-dirty
 	cargo +nightly fmt
 	target/debug/rta dprint fmt
+	target/debug/rta taplo fmt
 	CLICOLOR_FORCE=1 target/debug/rta shfmt -f . | xargs target/debug/rta shfmt -w
 	target/debug/rta keep-sorted $(shell target/debug/rta ripgrep -l 'keep-sorted end' ./ --glob '!Makefile')
 
