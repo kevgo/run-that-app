@@ -15,6 +15,7 @@ extend-disable = [
   "MD033", # allow inline HTML
   "MD041", # first line in file should be a top level heading
   "MD059", # link text should be descriptive
+  "MD063", # heading capitalization
 ]
 
 exclude = [".github", "target", "node_modules", ".vscode", "CHANGELOG.md"]
@@ -48,11 +49,3 @@ html-elements = false
 [MD060]
 enabled = true
 style = "aligned"
-
-# heading capitalization
-[MD063]
-style = "sentence-case"
-ignore-words = [
-  # keep-sorted start
-  # keep-sorted end
-]
