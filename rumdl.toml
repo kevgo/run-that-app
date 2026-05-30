@@ -1,0 +1,58 @@
+# rumdl configuration file
+
+[global]
+
+# Additional rules to enable on top of defaults (additive, does not replace)
+extend-enable = [
+  "MD060", # format tables
+  "MD063", # heading capitalization
+  "MD070", # nested code fence collision
+]
+
+# Additional rules to disable on top of the disable list (additive)
+extend-disable = [
+  "MD001", # heading levels should increment by one level at a time
+  "MD033", # allow inline HTML
+  "MD041", # first line in file should be a top level heading
+  "MD059", # link text should be descriptive
+]
+
+exclude = [".github", "target", "node_modules", ".vscode", "CHANGELOG.md"]
+
+# Respect .gitignore files when scanning directories (default: true)
+respect-gitignore = true
+
+# Markdown flavor/dialect: standard (default), gfm, commonmark, mkdocs, mdx, quarto
+flavor = "gfm"
+
+# text-wrap
+[MD013]
+line-length = 80
+reflow = true # Enable automatic text reflow/wrapping
+reflow-mode = "semantic-line-breaks" # Reflow mode: "default", "normalize", "sentence-per-line", or "semantic-line-breaks" (default: "default")
+length-mode = "visual" # How to count line length: "visual", "chars", or "bytes" (default: "visual")
+code-blocks = false # Exclude code blocks from line length check
+tables = false # Exclude tables from line length check
+# headings = true  # Include headings in line length check
+
+# Proper names that should be capitalized correctly
+[MD044]
+names = [
+  # keep-sorted start
+  # keep-sorted end
+]
+code-blocks = false
+html-elements = false
+
+# format tables
+[MD060]
+enabled = true
+style = "aligned"
+
+# heading capitalization
+[MD063]
+style = "sentence-case"
+ignore-words = [
+  # keep-sorted start
+  # keep-sorted end
+]
