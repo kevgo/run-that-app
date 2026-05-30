@@ -16,7 +16,7 @@ const REPO: &str = "prettier-standalone";
 
 impl AppDefinition for PrettierStandalone {
   fn name(&self) -> ApplicationName {
-    "prettier-standalone".into()
+    "prettier".into()
   }
 
   fn homepage(&self) -> &'static str {
