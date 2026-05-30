@@ -36,7 +36,7 @@ impl AppDefinition for PrettierStandalone {
     let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
-        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/prettier-{os}-{cpu}.tar.gz").into(),
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/prettier-{os}-{cpu}-{version}.tar.gz").into(),
         bin_folder: BinFolder::Root,
       }],
     }
