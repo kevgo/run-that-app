@@ -76,6 +76,7 @@ mod tests {
 
   mod run_method {
     use crate::applications::AppDefinition;
+    use crate::applications::prettier_standalone::PrettierStandalone;
     use crate::applications::pyrefly::Pyrefly;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
@@ -84,8 +85,8 @@ mod tests {
 
     #[test]
     fn linux_arm() {
-      let have = (Pyrefly {}).run_method(
-        &Version::from("0.57.1"),
+      let have = (PrettierStandalone {}).run_method(
+        &Version::from("0.24.0"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Arm64,
@@ -93,7 +94,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/facebook/pyrefly/releases/download/0.57.1/pyrefly-linux-arm64.tar.gz".into(),
+          url: "https://github.com/markelliot/prettier-standalone/releases/download/0.24.0/prettier-linux-arm64-0.24.0.tar.gz".into(),
           bin_folder: BinFolder::Root,
         }],
       };
@@ -102,8 +103,8 @@ mod tests {
 
     #[test]
     fn linux_intel() {
-      let have = (Pyrefly {}).run_method(
-        &Version::from("0.57.1"),
+      let have = (PrettierStandalone {}).run_method(
+        &Version::from("0.24.0"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Intel64,
@@ -111,7 +112,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/facebook/pyrefly/releases/download/0.57.1/pyrefly-linux-x86_64.tar.gz".into(),
+          url: "https://github.com/markelliot/prettier-standalone/releases/download/0.24.0/prettier-linux-amd64-0.24.0.tar.gz".into(),
           bin_folder: BinFolder::Root,
         }],
       };
@@ -120,7 +121,7 @@ mod tests {
 
     #[test]
     fn macos_arm() {
-      let have = (Pyrefly {}).run_method(
+      let have = (PrettierStandalone {}).run_method(
         &Version::from("0.57.1"),
         Platform {
           os: Os::MacOS,
@@ -129,7 +130,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/facebook/pyrefly/releases/download/0.57.1/pyrefly-macos-arm64.tar.gz".into(),
+          url: "https://github.com/markelliot/prettier-standalone/releases/download/0.24.0/prettier-darwin-arm64-0.24.0.tar.gz".into(),
           bin_folder: BinFolder::Root,
         }],
       };
@@ -138,7 +139,7 @@ mod tests {
 
     #[test]
     fn macos_intel() {
-      let have = (Pyrefly {}).run_method(
+      let have = (PrettierStandalone {}).run_method(
         &Version::from("0.57.1"),
         Platform {
           os: Os::MacOS,
@@ -147,43 +148,7 @@ mod tests {
       );
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/facebook/pyrefly/releases/download/0.57.1/pyrefly-macos-x86_64.tar.gz".into(),
-          bin_folder: BinFolder::Root,
-        }],
-      };
-      assert_eq!(have, want);
-    }
-
-    #[test]
-    fn windows_arm() {
-      let have = (Pyrefly {}).run_method(
-        &Version::from("0.57.1"),
-        Platform {
-          os: Os::Windows,
-          cpu: Cpu::Arm64,
-        },
-      );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/facebook/pyrefly/releases/download/0.57.1/pyrefly-windows-arm64.zip".into(),
-          bin_folder: BinFolder::Root,
-        }],
-      };
-      assert_eq!(have, want);
-    }
-
-    #[test]
-    fn windows_intel() {
-      let have = (Pyrefly {}).run_method(
-        &Version::from("0.57.1"),
-        Platform {
-          os: Os::Windows,
-          cpu: Cpu::Intel64,
-        },
-      );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadArchive {
-          url: "https://github.com/facebook/pyrefly/releases/download/0.57.1/pyrefly-windows-x86_64.zip".into(),
+          url: "https://github.com/markelliot/prettier-standalone/releases/download/0.24.0/prettier-darwin-amd64-0.24.0.tar.gz".into(),
           bin_folder: BinFolder::Root,
         }],
       };
