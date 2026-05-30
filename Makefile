@@ -13,6 +13,7 @@ fix: build  # auto-corrects issues
 	cargo +nightly fmt
 	target/debug/rta dprint fmt
 	target/debug/rta rumdl fmt
+	target/debug/rta taplo fmt
 	CLICOLOR_FORCE=1 target/debug/rta shfmt -f . | xargs target/debug/rta shfmt -w
 	target/debug/rta keep-sorted $(shell target/debug/rta ripgrep -l 'keep-sorted end' ./ --glob '!Makefile')
 
@@ -28,6 +29,7 @@ lint: build  # runs all linters
 	target/debug/rta actionlint
 	# target/debug/rta dprint check
 	target/debug/rta rumdl check
+	target/debug/rta taplo check
 	target/debug/rta --optional shellcheck download.sh
 
 ps: fix test  # pitstop
