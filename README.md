@@ -5,19 +5,21 @@
 
 <br><br>
 
-_Run-that-app_ is a minimalistic cross-platform application runner. It executes
+_Run-that-app_ is a minimalistic cross-platform application runner. It runs
 native CLI tools on Linux, macOS, Windows, and BSD without requiring a prior
-installation. The primary use case is running developer tools (linters,
-analyzers, formatters, etc) in scripts and CI pipelines.
+installation.
+
+The primary use case is running developer tools (linters, analyzers, formatters,
+etc) in scripts and CI pipelines.
 
 #### integrating installation and execution
 
-Installing small developer tools at pinned versions across multiple operating
-systems is a surprisingly hard problem without a good solution.
-
-Run-that-app sidesteps the problem entirely: instead of _installing_ tools, it
-focuses on _running_ them. For most development workflows, that's what you
-actually care about.
+Installing small developer tools at multiple pinned versions across multiple
+operating systems is a surprisingly hard problem without a good solution.
+Run-that-app sidesteps this problem: instead of _installing_ tools, it focuses
+on _running_ them. For most development workflows, that's what you actually care
+about. This greatly simplifies many technical aspects and makes the tool
+completely non-intrusive to your configuration and environment.
 
 #### radically minimalistic
 
@@ -28,7 +30,7 @@ run-that-app works without:
 
 - application shims
 - shell integrations
-- hard links
+- hard or soft links
 - environment variables
 - configuration files and settings
 - dependencies
@@ -36,8 +38,8 @@ run-that-app works without:
 - custom packaging and container formats
 - a dedicated install step
 - application repositories
-- Docker
-- WASM
+- containers like Docker
+- web assembly
 - system daemons
 - sudo
 - emulation
@@ -47,6 +49,8 @@ run-that-app works without:
 Applications are downloaded directly from their original hosting location,
 typically in 1-2 seconds. Only the executable is stored on disk. Execution is
 100% native, with no runtime overhead.
+
+We can also compile apps from source if needed.
 
 [![linux](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_linux.yml)
 [![windows](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml/badge.svg)](https://github.com/kevgo/run-that-app/actions/workflows/ci_windows.yml)
@@ -108,8 +112,8 @@ typically in 1-2 seconds. Only the executable is stored on disk. Execution is
 
 ## installation
 
-The installer places the _run-that-app_ executable into the current directory.
-To install elsewhere, execute the installer from that directory.
+The installer script places the _run-that-app_ executable into the current
+directory. To install elsewhere, execute the installer from that directory.
 
 Linux and macOS:
 
