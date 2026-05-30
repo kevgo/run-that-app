@@ -27,6 +27,7 @@ lint: build  # runs all linters
 	git diff --check
 	target/debug/rta actionlint
 	# target/debug/rta dprint check  # this breaks the Windows CI due to linebreak errors
+	target/debug/rta rumdl check
 	target/debug/rta --optional shellcheck download.sh
 
 ps: fix test  # pitstop
