@@ -1,7 +1,6 @@
 # rumdl configuration file
 
 [global]
-
 # Additional rules to enable on top of defaults (additive, does not replace)
 extend-enable = [
   "MD060", # format tables
