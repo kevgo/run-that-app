@@ -12,6 +12,7 @@ fix: build  # auto-corrects issues
 	cargo clippy --fix --allow-dirty
 	cargo +nightly fmt
 	target/debug/rta dprint fmt
+	target/debug/rta rumdl fmt
 	target/debug/rta taplo fmt
 	CLICOLOR_FORCE=1 target/debug/rta shfmt -f . | xargs target/debug/rta shfmt -w
 	target/debug/rta keep-sorted $(shell target/debug/rta ripgrep -l 'keep-sorted end' ./ --glob '!Makefile')
@@ -26,7 +27,8 @@ lint: build  # runs all linters
 	cargo clippy --all-targets --all-features -- --deny=warnings
 	git diff --check
 	target/debug/rta actionlint
-	# target/debug/rta dprint check  # this breaks the Windows CI due to linebreak errors
+	# target/debug/rta dprint check
+	target/debug/rta rumdl check
 	target/debug/rta --optional shellcheck download.sh
 
 ps: fix test  # pitstop
