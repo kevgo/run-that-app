@@ -121,7 +121,7 @@ mod tests {
     #[test]
     fn macos_arm() {
       let have = (PrettierStandalone {}).run_method(
-        &Version::from("0.57.1"),
+        &Version::from("0.24.0"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
@@ -139,7 +139,7 @@ mod tests {
     #[test]
     fn macos_intel() {
       let have = (PrettierStandalone {}).run_method(
-        &Version::from("0.57.1"),
+        &Version::from("0.24.0"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Intel64,
