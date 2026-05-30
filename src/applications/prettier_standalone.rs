@@ -162,7 +162,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(prettier_standalone::extract_version("pyrefly 0.57.1"), Ok("0.57.1"));
+    assert_eq!(prettier_standalone::extract_version("0.24.0"), Ok("0.24.0"));
     assert_eq!(prettier_standalone::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
