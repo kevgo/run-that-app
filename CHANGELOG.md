@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+## 0.37.0
+
+- app: prettier-standalone
+
 ## 0.36.0
 
 - app: lefthook
