@@ -5,26 +5,29 @@
 
 <br><br>
 
-_Run-that-app_ is a minimalistic cross-platform application runner. It runs
-native CLI tools on Linux, macOS, Windows, and BSD without requiring a prior
-installation.
+_Run-that-app_ is a minimalistic cross-platform application runner.
+It runs native CLI tools on Linux, macOS, Windows,
+and BSD without requiring a prior installation.
 
-The primary use case is running developer tools (linters, analyzers, formatters,
-etc) in scripts and CI pipelines.
+The primary use case is running developer tools
+(linters, analyzers, formatters, etc) in scripts and CI pipelines.
 
 #### integrating installation and execution
 
 Installing small developer tools at multiple pinned versions across multiple
 operating systems is a surprisingly hard problem without a good solution.
-Run-that-app sidesteps this problem: instead of _installing_ tools, it focuses
-on _running_ them. For most development workflows, that's what you actually care
-about. This greatly simplifies many technical aspects and makes the tool
-completely non-intrusive to your configuration and environment.
+Run-that-app sidesteps this problem: instead of _installing_ tools,
+it focuses on _running_ them.
+For most development workflows, that's what you actually care about.
+This greatly simplifies many technical aspects
+and makes the tool completely non-intrusive to your configuration
+and environment.
 
 #### radically minimalistic
 
-Run-that-app is intentionally minimalistic and non-invasive. It ships as a
-single stand-alone binary. Following the principle "perfection is achieved not
+Run-that-app is intentionally minimalistic and non-invasive.
+It ships as a single stand-alone binary.
+Following the principle "perfection is achieved not
 when there is nothing left to add, but when there is nothing left to take away",
 run-that-app works without:
 
@@ -47,8 +50,9 @@ run-that-app works without:
 - any other kind of bloat
 
 Applications are downloaded directly from their original hosting location,
-typically in 1-2 seconds. Only the executable is stored on disk. Execution is
-100% native, with no runtime overhead.
+typically in 1-2 seconds.
+Only the executable is stored on disk.
+Execution is 100% native, with no runtime overhead.
 
 We can also compile apps from source if needed.
 
@@ -113,7 +117,8 @@ We can also compile apps from source if needed.
 ## installation
 
 The installer script places the _run-that-app_ executable into the current
-directory. To install elsewhere, execute the installer from that directory.
+directory.
+To install elsewhere, execute the installer from that directory.
 
 Linux and macOS:
 
@@ -151,12 +156,12 @@ Run [actionlint](https://github.com/rhysd/actionlint) at version `1.6.26`:
 rta actionlint@1.6.26
 ```
 
-The app version should contain only the version number (e.g. `1.6.26`), even if
-the Git tag is prefixed (e.g. `v1.6.26`).
+The app version should contain only the version number
+(e.g. `1.6.26`), even if the Git tag is prefixed (e.g. `v1.6.26`).
 
 _Run-that-app_ arguments must appear before the name of the application to run.
-The application name is the first argument that does not start with a dash. All
-following arguments are passed through to the application.
+The application name is the first argument that does not start with a dash.
+All following arguments are passed through to the application.
 
 Run [ShellCheck](https://shellcheck.net) version `0.9.0` with arguments
 `--color=always myscript.sh`:
@@ -173,10 +178,11 @@ rta --apps
 
 ### graceful degredation
 
-Not all applications support all platforms. If binaries aren't distributed for
-your platform, _run-that-app_ can compile applications from source. If that
-doesn't work, the `--optional` flag skips unsupported applications without
-failing the command.
+Not all applications support all platforms.
+If binaries aren't distributed for your platform,
+_run-that-app_ can compile applications from source.
+If that doesn't work, the `--optional` flag skips unsupported applications
+without failing the command.
 
 Example: run ShellCheck only if it is available on the current platform:
 
@@ -190,8 +196,8 @@ The `--available` command reports availability via its exit code.
 
 The `--which` command prints the path to the resolved executable.
 
-Example: run `go vet` with `alphavet` as a custom vet tool, but only if
-`alphavet` is available:
+Example: run `go vet` with `alphavet` as a custom vet tool,
+but only if `alphavet` is available:
 
 ```sh
 rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
@@ -200,8 +206,8 @@ rta --available alphavet && go vet "-vettool=$(rta --which alphavet)" ./...
 ### monitor output
 
 Some tools (e.g. [deadcode](https://pkg.go.dev/golang.org/x/tools/cmd/deadcode))
-report findings via stdout but exit with status code 0. The `--error-on-output`
-treats any output as failure.
+report findings via stdout but exit with status code 0.
+The `--error-on-output` treats any output as failure.
 
 ```sh
 rta --error-on-output deadcode
@@ -223,8 +229,9 @@ rta --versions=3 actionlint
 
 ### force installation from source
 
-If precompiled binaries are available (e.g. via GitHub releases), _run-that-app_
-use them. If not, it can compile applications from source.
+If precompiled binaries are available
+(e.g. via GitHub releases), _run-that-app_ use them.
+If not, it can compile applications from source.
 
 To enforce compilation from source even when binaries exist:
 
@@ -242,15 +249,15 @@ actionlint 1.6.26
 shellcheck 0.9.0
 ```
 
-With this file in place, you no longer need to be specify the version
-explicitly:
+With this file in place,
+you no longer need to be specify the version explicitly:
 
 ```sh
 rta actionlint
 ```
 
-The file name intentionally differs from [asdf](#asdf) and [mise](#mise) to
-avoid interference.
+The file name intentionally differs from [asdf](#asdf)
+and [mise](#mise) to avoid interference.
 
 ### add an application
 
@@ -270,15 +277,16 @@ rta --update
 
 ### globally installed applications
 
-_Run-that-app_ can reuse tools already installed on your system. The executable
-must be present in the PATH, and the version must be declared as `system`.
+_Run-that-app_ can reuse tools already installed on your system.
+The executable must be present in the PATH,
+and the version must be declared as `system`.
 
 ```sh
 go system 1.21.3
 ```
 
-This prefers the system-installed Go. If none is found, Go 1.21.3 is installed
-and used.
+This prefers the system-installed Go.
+If none is found, Go 1.21.3 is installed and used.
 
 You can restrict acceptable versions for the externally installed app:
 
@@ -288,8 +296,8 @@ go system@1.21.* 1.21.3
 
 ### external version declarations
 
-Some tools define their version in project files (e.g. Go via `go.mod`). Setting
-the version to `auto` enables automatic detection:
+Some tools define their version in project files (e.g. Go via `go.mod`).
+Setting the version to `auto` enables automatic detection:
 
 ```sh
 go auto
@@ -305,12 +313,13 @@ You can override this behavior using the following environment variables:
 
 ## bundled applications
 
-Some tools are distributed as part of another toolchain. In these cases, specify
-the version of the _bundling_ application.
+Some tools are distributed as part of another toolchain.
+In these cases, specify the version of the _bundling_ application.
 
 ### npm and npx
 
-`npm` and `npx` are provided by Node.js. To use them, specify a Node version:
+`npm` and `npx` are provided by Node.js.
+To use them, specify a Node version:
 
 ```asdf
 npm 20.10.0
@@ -328,12 +337,13 @@ You can combine both declarations:
 npm system@10.2 20.10.0
 ```
 
-This prefers an existing `npm` ≥ 10.2, otherwise installs Node 20.10.0 and uses
-the npm version that comes with it.
+This prefers an existing `npm` ≥ 10.2,
+otherwise installs Node 20.10.0 and uses the npm version that comes with it.
 
 ### gofmt
 
-_Gofmt_ is bundled with Go. Specify the Go version:
+_Gofmt_ is bundled with Go.
+Specify the Go version:
 
 ```asdf
 gofmt 1.21.6
@@ -367,16 +377,17 @@ Add `tools/rta@*` to `.gitignore`.
 
 ### Run-that-app does not support an application I need
 
-Adding a new application is straightforward. See the
-[developer documentation](docs/DEVELOPMENT.md).
+Adding a new application is straightforward.
+See the [developer documentation](docs/DEVELOPMENT.md).
 
 ### Why not use the package manager?
 
-If it works for you, do it. In practice, package managers introduce issues:
+If it works for you, do it.
+In practice, package managers introduce issues:
 
-- Different OSes use different package managers. You would need to support
-  Homebrew, Nix, Scoop, Chocolatey, winget, DNF, pacman, apt, pkg, snap, zypper,
-  xbps, portage, etc.
+- Different OSes use different package managers.
+  You would need to support Homebrew, Nix, Scoop, Chocolatey, winget, DNF,
+  pacman, apt, pkg, snap, zypper, xbps, portage, etc.
 - Some environments like Windows or bare-bones Docker images don't have a
   package manager.
 - Not all tools are packaged everywhere.
@@ -386,8 +397,8 @@ If it works for you, do it. In practice, package managers introduce issues:
 
 ### Why not use Docker?
 
-Docker solves a different problem: shipping full runtime environments. For
-development tooling, it often adds unnecessary complexity and bloat:
+Docker solves a different problem: shipping full runtime environments.
+For development tooling, it often adds unnecessary complexity and bloat:
 
 - extra OS layers (especially on Windows and macOS)
 - significant storage and memory overhead
@@ -403,13 +414,13 @@ Cross-platform Bash scripts quickly become fragile:
 - they and the external tools they use can behave differently across systems
 - they don't work natively on Windows
 
-Run-that-app is effectively a cross-platform Bash script, written in a strongly
-typed programming language with predictable behavior.
+Run-that-app is effectively a cross-platform Bash script,
+written in a strongly typed programming language with predictable behavior.
 
 ### An app is not available for my platform
 
-_Run-that-app_ can compile from source. If that fails, it can
-[gracefully degrade](#graceful-degredation).
+_Run-that-app_ can compile from source.
+If that fails, it can [gracefully degrade](#graceful-degredation).
 
 ### What about NodeJS, Python, or Ruby tools?
 
@@ -418,11 +429,13 @@ which then run the respective tool.
 
 ### An app has complex dependencies
 
-Open an issue. Many cases are solvable.
+Open an issue.
+Many cases are solvable.
 
 ### Why no marketplace?
 
-That marketplace is in the source code. This avoids:
+That marketplace is in the source code.
+This avoids:
 
 - weak schema-based configuration languages
 - version skew between runner and marketplace
@@ -432,13 +445,14 @@ It also enables fully deterministic tooling in locked-down environments.
 
 ## Related solutions
 
-These other cross-platform package managers might be a better fit for your use
-case.
+These other cross-platform package managers might be a better fit
+for your use case.
 
 ### asdf
 
 [Asdf](https://asdf-vm.com) is a mature cross-platform tool runner based on Bash
-(now also Go). It relies on plugins and shims and does not support Windows well.
+(now also Go).
+It relies on plugins and shims and does not support Windows well.
 
 _Run-that-app_ is faster, simpler, and Windows-native.
 
@@ -451,8 +465,8 @@ _Run-that-app_ is much simpler and focuses on doing one thing well.
 
 ### pkgx
 
-[Pkgx](https://pkgx.sh) provides a polished UX, shell integration, and an
-[app store](https://tea.xyz).
+[Pkgx](https://pkgx.sh) provides a polished UX, shell integration,
+and an [app store](https://tea.xyz).
 
 _Run-that-app_ trades polish for simplicity, determinism, and flexibility,
 including source builds and conditional execution.
