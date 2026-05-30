@@ -77,7 +77,6 @@ mod tests {
   mod run_method {
     use crate::applications::AppDefinition;
     use crate::applications::prettier_standalone::PrettierStandalone;
-    use crate::applications::pyrefly::Pyrefly;
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::installation::{BinFolder, Method};
