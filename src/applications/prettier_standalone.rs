@@ -1,7 +1,7 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
-use crate::executables::{Executable, RunMethod};
+use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
@@ -16,7 +16,11 @@ const REPO: &str = "prettier-standalone";
 
 impl AppDefinition for PrettierStandalone {
   fn name(&self) -> ApplicationName {
-    "prettier".into()
+    "prettier-standalone".into()
+  }
+
+  fn executable_filename(&self) -> ExecutableNameUnix {
+    ExecutableNameUnix::from("prettier")
   }
 
   fn homepage(&self) -> &'static str {
@@ -157,7 +161,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(super::extract_version("pyrefly 0.57.1"), Ok("0.57.1"));
-    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
+    assert_eq!(prettie::extract_version("pyrefly 0.57.1"), Ok("0.57.1"));
+    assert_eq!(prettie::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
