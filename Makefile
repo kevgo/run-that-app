@@ -29,6 +29,7 @@ lint: build  # runs all linters
 	target/debug/rta actionlint
 	# target/debug/rta dprint check
 	target/debug/rta rumdl check
+	target/debug/rta taplo check
 	target/debug/rta --optional shellcheck download.sh
 
 ps: fix test  # pitstop
