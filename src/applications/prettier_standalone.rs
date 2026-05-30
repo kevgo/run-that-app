@@ -55,8 +55,8 @@ impl AppDefinition for PrettierStandalone {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output(&["-h"], log)?;
-    if !output.contains("A fast Python type checker") {
+    let output = executable.run_output(&["--help"], log)?;
+    if !output.contains("Print the names of files that are different from Prettier's formatting") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match extract_version(&executable.run_output(&["--version"], log)?) {
@@ -71,12 +71,13 @@ impl AppDefinition for PrettierStandalone {
 }
 
 fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"pyrefly (\d+\.\d+\.\d+)")
+  strings::first_capture(output, r"(\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
 mod tests {
   use crate::UserError;
+  use crate::applications::prettier_standalone;
 
   mod run_method {
     use crate::applications::AppDefinition;
@@ -161,7 +162,7 @@ mod tests {
 
   #[test]
   fn extract_version() {
-    assert_eq!(prettie::extract_version("pyrefly 0.57.1"), Ok("0.57.1"));
-    assert_eq!(prettie::extract_version("other"), Err(UserError::RegexDoesntMatch));
+    assert_eq!(prettier_standalone::extract_version("pyrefly 0.57.1"), Ok("0.57.1"));
+    assert_eq!(prettier_standalone::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
