@@ -1,6 +1,4 @@
-use crate::commands::{
-  AddArgs, AvailableArgs, InstallArgs, RunArgs, TestArgs, UpdateArgs, VersionsArgs, WhichArgs, add, available, install, run, test, update, versions, which,
-};
+use crate::commands::{AddArgs, AvailableArgs, InstallArgs, RunArgs, TestArgs, UpdateArgs, VersionsArgs, WhichArgs};
 
 /// the main commands that run-this-app can execute
 #[derive(Debug, PartialEq)]
