@@ -21,6 +21,7 @@
 //!
 //! ```
 //! use rta::Version;
+//! use std::process::ExitCode;
 //!
 //! // find the "gh" app programmatically
 //! let apps = rta::applications::all();
@@ -37,7 +38,14 @@
 //!   optional: true,
 //!   verbose: false,
 //! };
-//! let exit_code = rta::commands::run(args, &apps);
+//! let result = rta::commands::run(args, &apps);
+//! match result {
+//!   Ok(exit_code) => println!("app ran, check exit code"),
+//!   Err(error) => {
+//!     println!("app failed to run");
+//!     error.print();
+//!   }
+//! }
 //! ```
 
 pub mod applications;
