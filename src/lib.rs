@@ -21,10 +21,11 @@
 //!
 //! ```
 //! use std::process::ExitCode;
+//! use crate::rta::applications::AppDefinition;
 //!
 //! // find the "gh" app programmatically
 //! let apps = rta::applications::all();
-//! let gh = apps.lookup("gh").unwrap();
+//! let gh = rta::applications::Gh {};
 //!
 //! // call the "gh" app at version "2.34.0" with the argument "--version"
 //! let args = rta::commands::RunArgs {
