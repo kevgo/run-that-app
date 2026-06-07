@@ -10,7 +10,7 @@ use crate::yard::Yard;
 use crate::{platform, subshell, yard};
 use std::process::ExitCode;
 
-pub fn run(args: Args, apps: &Apps) -> Result<ExitCode> {
+pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
   let app_to_run = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
@@ -43,7 +43,7 @@ pub fn run(args: Args, apps: &Apps) -> Result<ExitCode> {
 /// data needed to run an executable
 #[derive(Debug, PartialEq)]
 #[allow(clippy::struct_excessive_bools)]
-pub struct Args {
+pub struct RunArgs {
   /// name of the app to execute
   pub app_name: ApplicationName,
 

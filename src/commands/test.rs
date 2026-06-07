@@ -9,7 +9,7 @@ use colored::Colorize;
 use std::io;
 use std::process::ExitCode;
 
-pub fn test(args: &mut Args, apps: &Apps) -> Result<ExitCode> {
+pub fn test(args: &mut TestArgs, apps: &Apps) -> Result<ExitCode> {
   find_duplicate_app_names(apps)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
@@ -82,7 +82,7 @@ pub fn test(args: &mut Args, apps: &Apps) -> Result<ExitCode> {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Args {
+pub struct TestArgs {
   pub optional: bool,
   pub start_at_app: Option<ApplicationName>,
   pub verbose: bool,

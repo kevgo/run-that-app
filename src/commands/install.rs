@@ -6,7 +6,7 @@ use crate::yard::Yard;
 use crate::{commands, logging, platform, yard};
 use std::process::ExitCode;
 
-pub fn install(args: Args, apps: &Apps) -> Result<ExitCode> {
+pub fn install(args: InstallArgs, apps: &Apps) -> Result<ExitCode> {
   let app_to_install = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
@@ -33,7 +33,7 @@ pub fn install(args: Args, apps: &Apps) -> Result<ExitCode> {
 /// data needed to install an executable
 #[derive(Debug, PartialEq)]
 #[allow(clippy::struct_excessive_bools)]
-pub struct Args {
+pub struct InstallArgs {
   /// name of the app to install
   pub app_name: ApplicationName,
 

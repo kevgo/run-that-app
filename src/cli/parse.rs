@@ -109,10 +109,10 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Comm
     return Err(UserError::MultipleCommandsGiven);
   }
   if update {
-    return Ok(Command::Update(update::Args { verbose }));
+    return Ok(Command::Update(update::UpdateArgs { verbose }));
   }
   if test {
-    return Ok(Command::Test(test::Args {
+    return Ok(Command::Test(test::TestArgs {
       optional,
       start_at_app: app_version.map(|av| av.app_name),
       verbose,
@@ -120,10 +120,10 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Comm
   }
   if let Some(AppVersion { app_name, version }) = app_version {
     if add {
-      return Ok(Command::Add(add::Args { app_name, verbose }));
+      return Ok(Command::Add(add::AddArgs { app_name, verbose }));
     }
     if indicate_available {
-      return Ok(Command::Available(available::Args {
+      return Ok(Command::Available(available::AvailableArgs {
         app_name,
         optional,
         version,
@@ -131,7 +131,7 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Comm
       }));
     }
     if install {
-      return Ok(Command::Install(commands::install::Args {
+      return Ok(Command::Install(commands::install::InstallArgs {
         app_name,
         version,
         from_source,
@@ -141,7 +141,7 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Comm
       }));
     }
     if reinstall {
-      return Ok(Command::Reinstall(commands::install::Args {
+      return Ok(Command::Reinstall(commands::install::InstallArgs {
         app_name,
         version,
         from_source,
@@ -159,9 +159,9 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Comm
       }));
     }
     if let Some(amount) = versions {
-      return Ok(Command::Versions(versions::Args { app_name, amount, verbose }));
+      return Ok(Command::Versions(versions::VersionsArgs { app_name, amount, verbose }));
     }
-    return Ok(Command::RunApp(run::Args {
+    return Ok(Command::RunApp(run::RunArgs {
       app_name,
       version,
       app_args,
@@ -220,7 +220,7 @@ mod tests {
           let shellcheck = apps.lookup("shellcheck").unwrap();
           let args = vec![S("--available"), S("shellcheck")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Available(available::Args {
+          let want = Ok(Command::Available(available::AvailableArgs {
             app_name: shellcheck.name(),
             optional: false,
             version: None,
@@ -235,7 +235,7 @@ mod tests {
           let shellcheck = apps.lookup("shellcheck").unwrap();
           let args = vec![S("--available"), S("--verbose"), S("shellcheck")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Available(available::Args {
+          let want = Ok(Command::Available(available::AvailableArgs {
             app_name: shellcheck.name(),
             optional: false,
             version: None,
@@ -267,7 +267,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("--error-on-output"), S("actionlint")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::RunApp(run::Args {
+          let want = Ok(Command::RunApp(run::RunArgs {
             app_name: actionlint.name(),
             version: None,
             app_args: vec![],
@@ -303,7 +303,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("--install"), S("actionlint")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Install(install::Args {
+          let want = Ok(Command::Install(install::InstallArgs {
             app_name: actionlint.name(),
             version: None,
             from_source: false,
@@ -336,7 +336,7 @@ mod tests {
           let args = vec![S("--from-source"), S("actionlint")].into_iter();
           let have = parse(args, &apps);
           let actionlint = apps.lookup("actionlint").unwrap();
-          let want = Ok(Command::RunApp(run::Args {
+          let want = Ok(Command::RunApp(run::RunArgs {
             app_name: actionlint.name(),
             version: None,
             app_args: vec![],
@@ -363,7 +363,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("--reinstall"), S("actionlint")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Reinstall(install::Args {
+          let want = Ok(Command::Reinstall(install::InstallArgs {
             app_name: actionlint.name(),
             version: None,
             from_source: false,
@@ -395,7 +395,7 @@ mod tests {
           let apps = applications::all();
           let args = vec![S("--test")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Test(test::Args {
+          let want = Ok(Command::Test(test::TestArgs {
             optional: false,
             start_at_app: None,
             verbose: false,
@@ -408,7 +408,7 @@ mod tests {
           let apps = applications::all();
           let args = vec![S("--test"), S("--verbose")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Test(test::Args {
+          let want = Ok(Command::Test(test::TestArgs {
             optional: false,
             start_at_app: None,
             verbose: true,
@@ -422,7 +422,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("--test"), S("actionlint")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Test(test::Args {
+          let want = Ok(Command::Test(test::TestArgs {
             optional: false,
             start_at_app: Some(actionlint.name()),
             verbose: false,
@@ -436,7 +436,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("--test"), S("--verbose"), S("actionlint")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Test(test::Args {
+          let want = Ok(Command::Test(test::TestArgs {
             optional: false,
             start_at_app: Some(actionlint.name()),
             verbose: true,
@@ -483,7 +483,7 @@ mod tests {
           let gh = apps.lookup("gh").unwrap();
           let args = vec![S("--include=gh"), S("actionlint@2")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::RunApp(run::Args {
+          let want = Ok(Command::RunApp(run::RunArgs {
             app_name: actionlint.name(),
             version: Some(Version::from("2")),
             app_args: vec![],
@@ -520,7 +520,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("--verbose"), S("actionlint@2")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::RunApp(run::Args {
+          let want = Ok(Command::RunApp(run::RunArgs {
             app_name: actionlint.name(),
             version: Some(Version::from("2")),
             app_args: vec![],
@@ -539,7 +539,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("-v"), S("actionlint@2")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::RunApp(run::Args {
+          let want = Ok(Command::RunApp(run::RunArgs {
             app_name: actionlint.name(),
             version: Some(Version::from("2")),
             app_args: vec![],
@@ -577,7 +577,7 @@ mod tests {
         let actionlint = apps.lookup("actionlint").unwrap();
         let args = vec![S("--optional"), S("actionlint@2"), S("arg1")].into_iter();
         let have = parse(args, &apps);
-        let want = Ok(Command::RunApp(run::Args {
+        let want = Ok(Command::RunApp(run::RunArgs {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
           app_args: vec![S("arg1")],
@@ -626,7 +626,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("--versions"), S("actionlint")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Versions(versions::Args {
+          let want = Ok(Command::Versions(versions::VersionsArgs {
             app_name: actionlint.name(),
             amount: 10,
             verbose: false,
@@ -640,7 +640,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("--versions=20"), S("actionlint")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Versions(versions::Args {
+          let want = Ok(Command::Versions(versions::VersionsArgs {
             app_name: actionlint.name(),
             amount: 20,
             verbose: false,
@@ -718,7 +718,7 @@ mod tests {
         let actionlint = apps.lookup("actionlint").unwrap();
         let args = vec![S("actionlint@2")].into_iter();
         let have = parse(args, &apps);
-        let want = Ok(Command::RunApp(run::Args {
+        let want = Ok(Command::RunApp(run::RunArgs {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
           app_args: vec![],
@@ -737,7 +737,7 @@ mod tests {
         let actionlint = apps.lookup("actionlint").unwrap();
         let args = vec![S("actionlint@2"), S("--arg1"), S("arg2")].into_iter();
         let have = parse(args, &apps);
-        let want = Ok(Command::RunApp(run::Args {
+        let want = Ok(Command::RunApp(run::RunArgs {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
           app_args: vec![S("--arg1"), S("arg2")],
@@ -764,7 +764,7 @@ mod tests {
         let actionlint = apps.lookup("actionlint").unwrap();
         let args = vec![S("--verbose"), S("actionlint@2"), S("--arg1"), S("arg2")].into_iter();
         let have = parse(args, &apps);
-        let want = Ok(Command::RunApp(run::Args {
+        let want = Ok(Command::RunApp(run::RunArgs {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
           app_args: vec![S("--arg1"), S("arg2")],
@@ -783,7 +783,7 @@ mod tests {
         let actionlint = apps.lookup("actionlint").unwrap();
         let args = vec![S("actionlint@2"), S("--verbose"), S("--version")].into_iter();
         let have = parse(args, &apps);
-        let want = Ok(Command::RunApp(run::Args {
+        let want = Ok(Command::RunApp(run::RunArgs {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
           app_args: vec![S("--verbose"), S("--version")],
