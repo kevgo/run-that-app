@@ -1,12 +1,22 @@
 //! run-that-app runs third-party applications without the need to install them
 //!
-//! Example:
+//! # Examples
+//!
+//! Call an app with CLI arguments and default RTA options:
 //! ```
 //! let args: Vec<String> = vec!["gh@2.34.0".into(), "--version".into()];
 //! let exit_code = rta::run(args.into_iter());
 //! ```
 //!
-//! Example:
+//! Same call with RTA options provided in CLI format:
+//!
+//! ```
+//! let args: Vec<String> = vec!["--verbose".into(), "gh@2.34.0".into(), "--version".into()];
+//! let exit_code = rta::run(args.into_iter());
+//! ```
+//!
+//! Programmatic API:
+//!
 //! ```
 //! use rta::Version;
 //!
