@@ -8,7 +8,7 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, strings};
 
 #[derive(Clone)]
-pub(crate) struct ShellCheck {}
+pub struct ShellCheck {}
 
 const ORG: &str = "koalaman";
 const REPO: &str = "shellcheck";

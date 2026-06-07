@@ -3,9 +3,15 @@ use std::cmp::Ordering;
 use std::fmt::Display;
 use std::path::Path;
 
-/// the desired version of an application
+/// the desired version of an [application][crate::applications::AppDefinition]
+///
+/// Example:
+/// ```
+/// use rta::Version;
+/// let version = Version::from("1.2.3");
+/// ```
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) struct Version(String);
+pub struct Version(String);
 
 impl Eq for Version {}
 
@@ -27,11 +33,13 @@ impl Ord for Version {
 }
 
 impl Version {
-  pub(crate) fn as_str(&self) -> &str {
+  #[must_use]
+  pub fn as_str(&self) -> &str {
     &self.0
   }
 
-  pub(crate) fn major_version(&self) -> Option<usize> {
+  #[must_use]
+  pub fn major_version(&self) -> Option<usize> {
     let first_part = self.0.split('.').next()?;
     if first_part.is_empty() {
       return None;
@@ -41,7 +49,7 @@ impl Version {
     numeric_part.parse().ok()
   }
 
-  pub(crate) fn semver(&self) -> Result<semver::Version> {
+  pub fn semver(&self) -> Result<semver::Version> {
     semver::Version::parse(&self.0).map_err(|err| UserError::CannotParseSemverVersion {
       expression: self.0.clone(),
       reason: err.to_string(),

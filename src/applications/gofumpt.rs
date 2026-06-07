@@ -9,7 +9,7 @@ use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct Gofumpt {}
+pub struct Gofumpt {}
 
 const ORG: &str = "mvdan";
 const REPO: &str = "gofumpt";

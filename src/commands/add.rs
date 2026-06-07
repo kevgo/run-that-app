@@ -3,7 +3,7 @@ use crate::error::Result;
 use crate::{configuration, logging};
 use std::process::ExitCode;
 
-pub(crate) fn add(args: Args, apps: &Apps) -> Result<ExitCode> {
+pub fn add(args: AddArgs, apps: &Apps) -> Result<ExitCode> {
   let log = logging::new(args.verbose);
   let app = apps.lookup(args.app_name)?;
   let version = app.latest_installable_version(log)?;
@@ -16,8 +16,9 @@ pub(crate) fn add(args: Args, apps: &Apps) -> Result<ExitCode> {
   Ok(ExitCode::SUCCESS)
 }
 
+/// named arguments for the [`add`] command
 #[derive(Debug, PartialEq)]
-pub(crate) struct Args {
-  pub(crate) app_name: ApplicationName,
-  pub(crate) verbose: bool,
+pub struct AddArgs {
+  pub app_name: ApplicationName,
+  pub verbose: bool,
 }

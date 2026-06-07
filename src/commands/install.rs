@@ -6,7 +6,7 @@ use crate::yard::Yard;
 use crate::{commands, logging, platform, yard};
 use std::process::ExitCode;
 
-pub(crate) fn install(args: Args, apps: &Apps) -> Result<ExitCode> {
+pub fn install(args: InstallArgs, apps: &Apps) -> Result<ExitCode> {
   let app_to_install = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
@@ -30,24 +30,24 @@ pub(crate) fn install(args: Args, apps: &Apps) -> Result<ExitCode> {
   Ok(ExitCode::SUCCESS)
 }
 
-/// data needed to install an executable
+/// named arguments for the [`install`], [`install_all`][super::install_all::install_all], and [`reinstall`][super::reinstall::reinstall] commands
 #[derive(Debug, PartialEq)]
 #[allow(clippy::struct_excessive_bools)]
-pub(crate) struct Args {
+pub struct InstallArgs {
   /// name of the app to install
-  pub(crate) app_name: ApplicationName,
+  pub app_name: ApplicationName,
 
   /// possible versions of the app to install
-  pub(crate) version: Option<Version>,
+  pub version: Option<Version>,
 
   /// if true, install only from source
-  pub(crate) from_source: bool,
+  pub from_source: bool,
 
   /// other applications to include
-  pub(crate) include_apps: Vec<ApplicationName>,
+  pub include_apps: Vec<ApplicationName>,
 
   /// whether it's okay to not install the app if it cannot be installed
-  pub(crate) optional: bool,
+  pub optional: bool,
 
-  pub(crate) verbose: bool,
+  pub verbose: bool,
 }

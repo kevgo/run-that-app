@@ -9,7 +9,7 @@ use crate::{Log, strings};
 use std::path::MAIN_SEPARATOR;
 
 #[derive(Clone)]
-pub(crate) struct Gh {}
+pub struct Gh {}
 
 const ORG: &str = "cli";
 const REPO: &str = "cli";

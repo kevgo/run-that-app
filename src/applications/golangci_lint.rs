@@ -9,7 +9,7 @@ use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct GolangCiLint {}
+pub struct GolangCiLint {}
 
 const ORG: &str = "golangci";
 const REPO: &str = "golangci-lint";

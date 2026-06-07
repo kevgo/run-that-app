@@ -9,7 +9,7 @@ use crate::platform::Platform;
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct Goda {}
+pub struct Goda {}
 
 const ORG: &str = "loov";
 const REPO: &str = "goda";

@@ -2,5 +2,5 @@
 mod artifact;
 mod url;
 
-pub(crate) use artifact::artifact;
-pub(crate) use url::Url;
+pub use artifact::artifact;
+pub use url::Url;

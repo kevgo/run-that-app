@@ -9,7 +9,7 @@ use crate::platform::{Cpu, Os, Platform};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct Ghokin {}
+pub struct Ghokin {}
 
 const ORG: &str = "antham";
 const REPO: &str = "ghokin";

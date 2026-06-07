@@ -9,7 +9,7 @@ use crate::{Log, filesystem, strings};
 use std::path::MAIN_SEPARATOR;
 
 #[derive(Clone)]
-pub(crate) struct Go {}
+pub struct Go {}
 
 const ORG: &str = "golang";
 const REPO: &str = "go";

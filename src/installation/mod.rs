@@ -17,7 +17,7 @@ use std::path::{Path, PathBuf};
 
 /// the different methods to install an application
 #[derive(Debug, PartialEq)]
-pub(crate) enum Method {
+pub enum Method {
   /// installs the application by downloading and extracting an archive containing the application executable from the internet
   DownloadArchive {
     /// the URL of the archive to download
@@ -56,7 +56,7 @@ pub(crate) enum Method {
 }
 
 impl Method {
-  pub(crate) fn bin_folder(self) -> BinFolder {
+  pub fn bin_folder(self) -> BinFolder {
     match self {
       Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => BinFolder::Root,
       Method::DownloadArchive { url: _, bin_folder } | Method::CompileRustCrate { name: _, bin_folder } => bin_folder,
@@ -65,7 +65,7 @@ impl Method {
   }
 
   /// provides possible locations of the given executable within the given app folder in the given  yard
-  pub(crate) fn executable_paths(&self, app_folder: &Path, executable_filename: &ExecutableNamePlatform) -> Vec<PathBuf> {
+  pub fn executable_paths(&self, app_folder: &Path, executable_filename: &ExecutableNamePlatform) -> Vec<PathBuf> {
     match self {
       Method::DownloadArchive { url: _, bin_folder } => bin_folder.executable_paths(app_folder, executable_filename),
       Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => vec![app_folder.join(executable_filename)],
@@ -80,14 +80,14 @@ impl Method {
     }
   }
 
-  pub(crate) fn is_from_source(&self) -> bool {
+  pub fn is_from_source(&self) -> bool {
     match self {
       Method::DownloadArchive { url: _, bin_folder: _ } | Method::DownloadExecutable { url: _ } => false,
       Method::CompileGoSource { import_path: _ } | Method::CompileRustCrate { name: _, bin_folder: _ } | Method::CompileRustRepo { url: _ } => true,
     }
   }
 
-  pub(crate) fn name(&self, app: &ApplicationName, version: &Version) -> String {
+  pub fn name(&self, app: &ApplicationName, version: &Version) -> String {
     match self {
       Method::DownloadArchive { url: _, bin_folder: _ } => format!("download archive for {app}@{version}"),
       Method::DownloadExecutable { url: _ } => format!("download executable for {app}@{version}"),
@@ -100,7 +100,7 @@ impl Method {
 
 /// describes the various locations where the executable files could be inside an application folder
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) enum BinFolder {
+pub enum BinFolder {
   /// all executables are directly in the app folder
   Root,
   /// the executables are in the given subfolder
@@ -112,7 +112,7 @@ pub(crate) enum BinFolder {
 }
 
 impl BinFolder {
-  pub(crate) fn possible_paths(&self, app_folder: &Path) -> Vec<PathBuf> {
+  pub fn possible_paths(&self, app_folder: &Path) -> Vec<PathBuf> {
     match self {
       BinFolder::Root => vec![app_folder.to_path_buf()],
       BinFolder::Subfolder { path } => vec![app_folder.join(path)],
@@ -127,7 +127,7 @@ impl BinFolder {
     }
   }
 
-  pub(crate) fn executable_paths(&self, app_folder: &Path, executable_name: &ExecutableNamePlatform) -> Vec<PathBuf> {
+  pub fn executable_paths(&self, app_folder: &Path, executable_name: &ExecutableNamePlatform) -> Vec<PathBuf> {
     match self {
       BinFolder::RootOrSubfolders { options } => {
         let mut result = vec![app_folder.join(executable_name)];
@@ -168,7 +168,7 @@ impl Display for BinFolder {
 }
 
 /// installs the given app using the first of the given installation methods that works
-pub(crate) fn any(app_definition: &dyn AppDefinition, version: &Version, optional: bool, from_source: bool, ctx: &RuntimeContext) -> Result<Outcome> {
+pub fn any(app_definition: &dyn AppDefinition, version: &Version, optional: bool, from_source: bool, ctx: &RuntimeContext) -> Result<Outcome> {
   for install_method in app_definition.run_method(version, ctx.platform).install_methods() {
     if from_source && !install_method.is_from_source() {
       continue;
@@ -182,7 +182,7 @@ pub(crate) fn any(app_definition: &dyn AppDefinition, version: &Version, optiona
 }
 
 /// installs the given app using the given installation method
-pub(crate) fn install(
+pub fn install(
   app_definition: &dyn AppDefinition,
   install_method: &Method,
   version: &Version,
@@ -201,13 +201,13 @@ pub(crate) fn install(
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) enum Outcome {
+pub enum Outcome {
   Installed,
   NotInstalled,
 }
 
 impl Outcome {
-  pub(crate) fn success(&self) -> bool {
+  pub fn success(&self) -> bool {
     match self {
       Outcome::Installed => true,
       Outcome::NotInstalled => false,

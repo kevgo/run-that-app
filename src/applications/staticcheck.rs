@@ -11,7 +11,7 @@ const ORG: &str = "dominikh";
 const REPO: &str = "go-tools";
 
 #[derive(Clone)]
-pub(crate) struct StaticCheck {}
+pub struct StaticCheck {}
 
 impl AppDefinition for StaticCheck {
   fn name(&self) -> ApplicationName {

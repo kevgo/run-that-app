@@ -4,7 +4,7 @@ use crate::executables::Executable;
 use std::process::Command;
 
 /// executes the given executable with the given args, returns the captured output (STDOUT and STDERR)
-pub(crate) fn capture_output(executable: &Executable, args: &[&str]) -> Result<String> {
+pub fn capture_output(executable: &Executable, args: &[&str]) -> Result<String> {
   let mut cmd = Command::new(executable);
   cmd.args(args);
   #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard

@@ -8,7 +8,7 @@ use crate::{archives, download, filesystem};
 use std::path::Path;
 
 /// downloads and unpacks the content of an archive file
-pub(crate) fn run(
+pub fn run(
   app_definition: &dyn AppDefinition,
   app_folder: &Path,
   version: &Version,

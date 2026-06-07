@@ -7,7 +7,7 @@ use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
 
 #[derive(Clone)]
-pub(crate) struct Gofmt {}
+pub struct Gofmt {}
 
 impl AppDefinition for Gofmt {
   fn name(&self) -> ApplicationName {

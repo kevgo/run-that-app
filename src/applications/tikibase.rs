@@ -9,7 +9,7 @@ use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct Tikibase {}
+pub struct Tikibase {}
 
 const ORG: &str = "kevgo";
 const REPO: &str = "tikibase";

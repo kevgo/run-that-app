@@ -10,7 +10,7 @@ use std::process::Command;
 use which::which;
 
 /// installs the given Go-based application by compiling it from source
-pub(crate) fn run(app_folder: &Path, import_path: &str, optional: bool, from_source: bool, ctx: &RuntimeContext) -> Result<Outcome> {
+pub fn run(app_folder: &Path, import_path: &str, optional: bool, from_source: bool, ctx: &RuntimeContext) -> Result<Outcome> {
   let go_args = vec!["install", &import_path];
   let go_path = if let Ok(system_go_path) = which("go") {
     system_go_path
@@ -45,14 +45,14 @@ pub(crate) fn run(app_folder: &Path, import_path: &str, optional: bool, from_sou
 
 fn load_rta_go(optional: bool, from_source: bool, ctx: &RuntimeContext) -> Result<Option<PathBuf>> {
   use crate::applications::AppDefinition;
-  let go = applications::go::Go {};
+  let go = applications::Go {};
   let requested_go_versions: RequestedVersions = if let Some(versions) = ctx.config_file.lookup(&go.name()) {
     (*versions).clone()
   } else {
     let versions = go.installable_versions(3, ctx.log)?;
     RequestedVersions::from(versions)
   };
-  if let Some(executable_call) = commands::run::load_or_install_app(&go, &requested_go_versions, optional, from_source, ctx)? {
+  if let Some(executable_call) = commands::load_or_install_app(&go, &requested_go_versions, optional, from_source, ctx)? {
     return Ok(Some(executable_call.executable.inner()));
   }
   Ok(None)

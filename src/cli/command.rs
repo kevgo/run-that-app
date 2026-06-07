@@ -1,20 +1,20 @@
-use crate::commands::{add, available, install, run, test, update, versions, which};
+use crate::commands::{AddArgs, AvailableArgs, InstallArgs, RunArgs, TestArgs, UpdateArgs, VersionsArgs, WhichArgs};
 
 /// the main commands that run-this-app can execute
 #[derive(Debug, PartialEq)]
-pub(crate) enum Command {
-  Add(add::Args),
+pub enum Command {
+  Add(AddArgs),
   AppsLong,
   AppsShort,
-  Available(available::Args),
+  Available(AvailableArgs),
   DisplayHelp,
-  Install(install::Args),
+  Install(InstallArgs),
   InstallAll,
-  Reinstall(install::Args),
-  RunApp(run::Args),
-  Test(test::Args),
-  Update(update::Args),
+  Reinstall(InstallArgs),
+  RunApp(RunArgs),
+  Test(TestArgs),
+  Update(UpdateArgs),
   Version,
-  Versions(versions::Args),
-  Which(which::Args),
+  Versions(VersionsArgs),
+  Which(WhichArgs),
 }

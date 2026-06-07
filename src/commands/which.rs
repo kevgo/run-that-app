@@ -7,7 +7,7 @@ use crate::yard::Yard;
 use crate::{logging, platform, yard};
 use std::process::ExitCode;
 
-pub(crate) fn which(args: &Args, apps: &Apps) -> Result<ExitCode> {
+pub fn which(args: &WhichArgs, apps: &Apps) -> Result<ExitCode> {
   let app = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
   let yard = Yard::load_or_create(&yard::production_location()?)?;
@@ -28,9 +28,9 @@ pub(crate) fn which(args: &Args, apps: &Apps) -> Result<ExitCode> {
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct Args {
-  pub(crate) app_name: ApplicationName,
-  pub(crate) optional: bool,
-  pub(crate) version: Option<Version>,
-  pub(crate) verbose: bool,
+pub struct WhichArgs {
+  pub app_name: ApplicationName,
+  pub optional: bool,
+  pub version: Option<Version>,
+  pub verbose: bool,
 }

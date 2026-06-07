@@ -16,7 +16,7 @@ mod fd;
 mod funcorder;
 mod gh;
 mod ghokin;
-pub(crate) mod go;
+mod go;
 mod goda;
 mod gofmt;
 mod gofumpt;
@@ -55,11 +55,59 @@ use crate::configuration::{TagFormat, Version};
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableArgs, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
-use dyn_clone::DynClone;
-use std::fmt::{Debug, Display};
-use std::path::Path;
+pub use actionlint::ActionLint;
+pub use alphavet::Alphavet;
+pub use biome::Biome;
+pub use bun::Bun;
+pub use conc::Conc;
+pub use contest::Contest;
+pub use cucumber_sort::CucumberSort;
+pub use deadcode::Deadcode;
+pub use delete_empty_folders::DeleteEmptyFolders;
+pub use depth::Depth;
+pub use dprint::Dprint;
+pub use exhaustruct::Exhaustruct;
+pub use fd::Fd;
+pub use funcorder::FuncOrder;
+pub use gh::Gh;
+pub use ghokin::Ghokin;
+pub use go::Go;
+pub use goda::Goda;
+pub use gofmt::Gofmt;
+pub use gofumpt::Gofumpt;
+pub use golangci_lint::GolangCiLint;
+pub use goreleaser::Goreleaser;
+pub use govulnchec::Govulncheck;
+pub use gum::Gum;
+pub use ireturn::Ireturn;
+pub use keep_sorted::KeepSorted;
+pub use lefthook::Lefthook;
+pub use mdbook::MdBook;
+pub use mdbook_linkcheck::MdBookLinkCheck;
+pub use node_prune::NodePrune;
+pub use nodejs::NodeJS;
+pub use npm::Npm;
+pub use npx::Npx;
+pub use prettier_standalone::PrettierStandalone;
+pub use pyrefly::Pyrefly;
+pub use rclone::Rclone;
+pub use ripgrep::RipGrep;
+pub use ruff::Ruff;
+pub use rumdl::Rumdl;
+pub use scc::Scc;
+pub use shellcheck::ShellCheck;
+pub use shfmt::Shfmt;
+pub use snyk::Snyk;
+pub use staticcheck::StaticCheck;
+pub use taplo::Taplo;
+pub use tikibase::Tikibase;
+pub use ty::Ty;
+pub use uv::Uv;
+pub use yamlfmt::Yamlfmt;
 
-pub(crate) fn all() -> Apps {
+/// all [applications][AppDefinition] that run-that-app can execute
+#[must_use]
+pub fn all() -> Apps {
   Apps(vec![
     // keep-sorted start
     Box::new(actionlint::ActionLint {}),
@@ -116,7 +164,9 @@ pub(crate) fn all() -> Apps {
 }
 
 /// all the information about an application that run-that-app can install
-pub(crate) trait AppDefinition: DynClone {
+///
+/// You get a specific application finding it in the result of [`all`].
+pub trait AppDefinition: dyn_clone::DynClone {
   /// the name by which the user can select this application at the run-that-app CLI
   fn name(&self) -> ApplicationName;
 
@@ -137,6 +187,8 @@ pub(crate) trait AppDefinition: DynClone {
   fn homepage(&self) -> &'static str;
 
   /// provides the versions of this application that can be installed
+  ///
+  /// You can get loggers from [`crate::logging`].
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>>;
 
   /// provides the latest version of this application that can be installed
@@ -167,11 +219,7 @@ dyn_clone::clone_trait_object!(AppDefinition);
 /// provides the app that contains the executable for the given app,
 /// the name of the executable provided by this app to call,
 /// and arguments to call that executable with.
-pub(crate) fn carrier<'a>(
-  app: &'a dyn AppDefinition,
-  version: &Version,
-  platform: Platform,
-) -> (Box<dyn AppDefinition + 'a>, ExecutableNameUnix, ExecutableArgs) {
+pub fn carrier<'a>(app: &'a dyn AppDefinition, version: &Version, platform: Platform) -> (Box<dyn AppDefinition + 'a>, ExecutableNameUnix, ExecutableArgs) {
   match app.run_method(version, platform) {
     RunMethod::ThisApp { install_methods: _ } => (dyn_clone::clone_box(app), app.executable_filename(), ExecutableArgs::None),
     RunMethod::OtherAppOtherExecutable {
@@ -190,21 +238,27 @@ impl PartialEq for dyn AppDefinition {
   }
 }
 
-impl Debug for dyn AppDefinition {
+impl std::fmt::Debug for dyn AppDefinition {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(self.name().as_ref())
   }
 }
 
+/// the name of an application
+///
+/// You get get it by calling the [name][AppDefinition::name] method on an [application][AppDefinition].
 #[derive(Debug, PartialEq)]
-pub(crate) struct ApplicationName(&'static str);
+pub struct ApplicationName(&'static str);
 
 impl ApplicationName {
-  pub(crate) fn as_str(&self) -> &str {
+  #[must_use]
+  pub fn as_str(&self) -> &str {
     self.0
   }
 
-  pub(crate) fn len(&self) -> usize {
+  #[allow(clippy::len_without_is_empty)]
+  #[must_use]
+  pub fn len(&self) -> usize {
     self.0.len()
   }
 }
@@ -215,15 +269,15 @@ impl From<&'static str> for ApplicationName {
   }
 }
 
-impl Display for ApplicationName {
+impl std::fmt::Display for ApplicationName {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(self.0)
   }
 }
 
-impl AsRef<Path> for ApplicationName {
-  fn as_ref(&self) -> &Path {
-    Path::new(&self.0)
+impl AsRef<std::path::Path> for ApplicationName {
+  fn as_ref(&self) -> &std::path::Path {
+    std::path::Path::new(&self.0)
   }
 }
 
@@ -239,7 +293,7 @@ impl PartialEq<&str> for ApplicationName {
   }
 }
 
-pub(crate) enum AnalyzeResult {
+pub enum AnalyzeResult {
   /// the given executable does not belong to this app
   NotIdentified { output: String },
 
@@ -250,11 +304,16 @@ pub(crate) enum AnalyzeResult {
   IdentifiedWithVersion(Version),
 }
 
-pub(crate) struct Apps(Vec<Box<dyn AppDefinition>>);
+/// a collection of [applications][AppDefinition]
+pub struct Apps(Vec<Box<dyn AppDefinition>>);
 
 impl Apps {
+  pub fn iter(&self) -> std::slice::Iter<'_, Box<dyn AppDefinition>> {
+    self.0.iter()
+  }
+
   /// provides the app with the given name
-  pub(crate) fn lookup<AS: AsRef<str>>(&self, name: AS) -> Result<&dyn AppDefinition> {
+  pub fn lookup<AS: AsRef<str>>(&self, name: AS) -> Result<&dyn AppDefinition> {
     for app in &self.0 {
       if app.name() == name.as_ref() {
         return Ok(app.as_ref());
@@ -267,7 +326,8 @@ impl Apps {
   }
 
   /// provides the length of the name of the app with the longest name
-  pub(crate) fn longest_name_length(&self) -> usize {
+  #[must_use]
+  pub fn longest_name_length(&self) -> usize {
     self.into_iter().map(|app| app.name().len()).max().unwrap_or_default()
   }
 }

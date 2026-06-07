@@ -10,7 +10,7 @@ use std::thread;
 /// Executes the given executable with the given arguments, streaming the output to the terminal while monitoring it.
 /// Any output results in an Err.
 #[allow(clippy::unwrap_used)]
-pub(crate) fn detect_output(executable: &Executable, args: &[String], apps_to_include: &[ExecutableCall]) -> Result<ExitCode> {
+pub fn detect_output(executable: &Executable, args: &[String], apps_to_include: &[ExecutableCall]) -> Result<ExitCode> {
   let (sender, receiver) = mpsc::channel();
   let mut cmd = Command::new(executable);
   cmd.args(args);
@@ -119,7 +119,7 @@ fn monitor_exit(mut process: Child, sender: mpsc::Sender<Event>) {
 }
 
 /// events that can happen with subshells
-pub(crate) enum Event {
+pub enum Event {
   /// a line of output to STDOUT or STDERR terminated by LF
   PermanentLine(Vec<u8>),
   /// a line of output to STDOUT or STDERR terminated by CR

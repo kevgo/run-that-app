@@ -8,7 +8,7 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, strings};
 
 #[derive(Clone)]
-pub(crate) struct Dprint {}
+pub struct Dprint {}
 
 const ORG: &str = "dprint";
 const REPO: &str = "dprint";

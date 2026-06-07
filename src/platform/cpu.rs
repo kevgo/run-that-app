@@ -3,7 +3,7 @@ use crate::logging::{Event, Log};
 use std::env;
 use std::fmt::Display;
 
-pub(crate) fn determine(log: Log) -> Result<Cpu> {
+pub fn determine(log: Log) -> Result<Cpu> {
   log(Event::IdentifiedCpu {
     architecture: env::consts::ARCH,
   });
@@ -15,7 +15,7 @@ pub(crate) fn determine(log: Log) -> Result<Cpu> {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub(crate) enum Cpu {
+pub enum Cpu {
   Intel64,
   Arm64,
 }

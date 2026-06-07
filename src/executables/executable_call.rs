@@ -6,13 +6,13 @@ use std::path::Path;
 
 /// information to call an `App`s executable, as it is defined by the user
 #[derive(Clone)]
-pub(crate) struct ExecutableCallDefinition {
-  pub(crate) executable: Executable,
-  pub(crate) args: ExecutableArgs,
+pub struct ExecutableCallDefinition {
+  pub executable: Executable,
+  pub args: ExecutableArgs,
 }
 
 impl ExecutableCallDefinition {
-  pub(crate) fn into_executable_call(self, app_folder: &Path) -> Option<ExecutableCall> {
+  pub fn into_executable_call(self, app_folder: &Path) -> Option<ExecutableCall> {
     match self.args {
       ExecutableArgs::None => Some(ExecutableCall {
         executable: self.executable,
@@ -45,7 +45,7 @@ impl Display for ExecutableCallDefinition {
 /// Arguments that are required to execute an application itself - these are not arguments provided by the user.
 /// Example: running npm happens as "node npm.js", "npm.js" is the executable arg.
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) enum ExecutableArgs {
+pub enum ExecutableArgs {
   /// the executable is called without any additional arguments
   None,
   /// uses the first of the given options that exists inside the folder that application is installed in
@@ -54,7 +54,7 @@ pub(crate) enum ExecutableArgs {
 
 impl ExecutableArgs {
   /// provides the argument to use, adjusted to a callable format
-  pub(crate) fn locate(&self, app_folder: &Path, bin_folder: &BinFolder) -> Result<Vec<String>> {
+  pub fn locate(&self, app_folder: &Path, bin_folder: &BinFolder) -> Result<Vec<String>> {
     match self {
       ExecutableArgs::None => Ok(vec![]),
       ExecutableArgs::OneOfTheseInAppFolder { options } => {
@@ -89,14 +89,14 @@ impl Display for ExecutableArgs {
 }
 
 /// information to call an app with file paths adjusted
-pub(crate) struct ExecutableCall {
-  pub(crate) executable: Executable,
-  pub(crate) args: Vec<String>,
+pub struct ExecutableCall {
+  pub executable: Executable,
+  pub args: Vec<String>,
 }
 
 impl ExecutableCall {
   /// provides the data to call this `ExecutableCall` with the given arguments
-  pub(crate) fn with_args(self, mut args: Vec<String>) -> (Executable, Vec<String>) {
+  pub fn with_args(self, mut args: Vec<String>) -> (Executable, Vec<String>) {
     let mut result_args = self.args;
     result_args.append(&mut args);
     (self.executable, result_args)

@@ -9,7 +9,7 @@ use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct MdBook {}
+pub struct MdBook {}
 
 const ORG: &str = "rust-lang";
 const REPO: &str = "mdBook";

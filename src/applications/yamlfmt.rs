@@ -9,7 +9,7 @@ use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct Yamlfmt {}
+pub struct Yamlfmt {}
 
 const ORG: &str = "google";
 const REPO: &str = "yamlfmt";

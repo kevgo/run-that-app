@@ -9,7 +9,7 @@ use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct Ty {}
+pub struct Ty {}
 
 const ORG: &str = "astral-sh";
 const REPO: &str = "ty";

@@ -9,7 +9,7 @@ use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct Uv {}
+pub struct Uv {}
 
 const ORG: &str = "astral-sh";
 const REPO: &str = "uv";

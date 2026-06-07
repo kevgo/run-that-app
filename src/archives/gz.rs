@@ -11,8 +11,8 @@ use std::io;
 use std::path::Path;
 
 /// a .gz file downloaded from the internet, containing a single executable
-pub(crate) struct Gz {
-  pub(crate) data: Vec<u8>,
+pub struct Gz {
+  pub data: Vec<u8>,
 }
 
 impl Archive for Gz {

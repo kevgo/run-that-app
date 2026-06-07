@@ -8,9 +8,9 @@ use crate::yard::Yard;
 /// Context struct that holds common runtime parameters to avoid passing
 /// many parameters through multiple layers of function calls.
 #[derive(Clone, Copy)]
-pub(crate) struct RuntimeContext<'a> {
-  pub(crate) platform: Platform,
-  pub(crate) yard: &'a Yard,
-  pub(crate) config_file: &'a configuration::File,
-  pub(crate) log: Log,
+pub struct RuntimeContext<'a> {
+  pub platform: Platform,
+  pub yard: &'a Yard,
+  pub config_file: &'a configuration::File,
+  pub log: Log,
 }
