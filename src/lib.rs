@@ -2,8 +2,8 @@
 //!
 //! Example:
 //! ```
-//! let args = vec![String::from("gh@2.34.0"), String::from("--version")].into_iter();
-//! let exit_code = rta::run(args);
+//! let args: Vec<String> = vec!["gh@2.34.0".into(), "--version".into()];
+//! let exit_code = rta::run(args.into_iter());
 //! ```
 //!
 //! Example:
