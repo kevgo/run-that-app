@@ -10,8 +10,11 @@
 //! ```
 //! use rta::Version;
 //!
+//! // find the "gh" app programmatically
 //! let apps = rta::applications::all();
 //! let gh = apps.lookup("gh").unwrap();
+//!
+//! // call the "gh" app at version "2.34.0" with the argument "--version"
 //! let args = rta::commands::RunArgs {
 //!   app_name: gh.name(),
 //!   version: Some(Version::from("2.34.0")),
