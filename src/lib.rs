@@ -8,7 +8,7 @@ mod executables;
 mod filesystem;
 mod hosting;
 mod installation;
-mod logging;
+pub mod logging;
 mod platform;
 mod strings;
 mod subshell;
@@ -16,9 +16,8 @@ mod yard;
 
 pub mod applications;
 pub mod commands;
-pub use configuration::Version;
-
 use cli::Command;
+pub use configuration::Version;
 #[cfg(test)]
 pub use error::UserError;
 use logging::Log;

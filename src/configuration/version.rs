@@ -33,10 +33,12 @@ impl Ord for Version {
 }
 
 impl Version {
+  #[must_use]
   pub fn as_str(&self) -> &str {
     &self.0
   }
 
+  #[must_use]
   pub fn major_version(&self) -> Option<usize> {
     let first_part = self.0.split('.').next()?;
     if first_part.is_empty() {
