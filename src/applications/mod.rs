@@ -105,6 +105,7 @@ pub use ty::Ty;
 pub use uv::Uv;
 pub use yamlfmt::Yamlfmt;
 
+/// all [applications][AppDefinition] that run-that-app can execute
 #[must_use]
 pub fn all() -> Apps {
   Apps(vec![
@@ -163,6 +164,8 @@ pub fn all() -> Apps {
 }
 
 /// all the information about an application that run-that-app can install
+///
+/// You get a specific application finding it in the result of [`all`].
 pub trait AppDefinition: dyn_clone::DynClone {
   /// the name by which the user can select this application at the run-that-app CLI
   fn name(&self) -> ApplicationName;
@@ -239,6 +242,9 @@ impl std::fmt::Debug for dyn AppDefinition {
   }
 }
 
+/// the name of an application
+///
+/// You get get it by calling the [name][AppDefinition::name] method on an [application][AppDefinition].
 #[derive(Debug, PartialEq)]
 pub struct ApplicationName(&'static str);
 
@@ -296,6 +302,7 @@ pub enum AnalyzeResult {
   IdentifiedWithVersion(Version),
 }
 
+/// a collection of [applications][AppDefinition]
 pub struct Apps(Vec<Box<dyn AppDefinition>>);
 
 impl Apps {

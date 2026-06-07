@@ -16,6 +16,7 @@ mod yard;
 
 pub mod applications;
 pub mod commands;
+pub use configuration::Version;
 
 use cli::Command;
 #[cfg(test)]

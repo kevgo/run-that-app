@@ -3,7 +3,13 @@ use std::cmp::Ordering;
 use std::fmt::Display;
 use std::path::Path;
 
-/// the desired version of an application
+/// the desired version of an [application][crate::applications::AppDefinition]
+///
+/// Example:
+/// ```
+/// use rta::Version;
+/// let version = Version::from("1.2.3");
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct Version(String);
 
