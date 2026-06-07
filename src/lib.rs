@@ -23,7 +23,7 @@ pub use error::UserError;
 use logging::Log;
 use std::process::ExitCode;
 
-/// Runs run-that-app wi
+/// Runs run-that-app with the given CLI arguments.
 pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
   let apps = applications::all();
   match cli::parse(args, &apps)? {
