@@ -6,7 +6,7 @@
 //! is to provide the CLI arguments you would use
 //! when executing the run-that-app binary:
 //! ```
-//! let args: Vec<String> = vec!["gh@2.34.0".into(), "--version".into()];
+//! let args: Vec<String> = vec!["--verbose".into(), "gh@2.34.0".into(), "--version".into()];
 //! let exit_code = rta::run(args.into_iter());
 //! ```
 //!
