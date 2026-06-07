@@ -37,7 +37,7 @@
 //!   optional: true,
 //!   verbose: false,
 //! };
-//! let _ = rta::commands::run(args, &apps);
+//! let exit_code = rta::commands::run(args, &apps);
 //! ```
 
 pub mod applications;
