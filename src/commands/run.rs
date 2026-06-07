@@ -9,6 +9,7 @@ use crate::logging::{self, Event};
 use crate::subshell::add_paths;
 use crate::yard::Yard;
 use crate::{platform, subshell, yard};
+use std::path::Path;
 use std::process::{Command, ExitCode};
 
 pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
@@ -94,10 +95,9 @@ pub fn get_cmd(app: &dyn AppDefinition, args: RunArgs, apps: &Apps) -> Result<Op
     return Err(UserError::UnsupportedPlatform);
   };
   let (executable, args) = executable_call.with_args(args.app_args);
-  let executable2 = &executable;
-  let mut paths_to_include = vec![executable2.as_path().parent().unwrap()];
-  let mut cmd = Command::new(executable2);
-  cmd.args(args);
+  let mut paths_to_include: Vec<&Path> = vec![&executable.as_path().parent().unwrap()];
+  let mut cmd = Command::new(&executable);
+  cmd.args(&args);
   for app_to_include in &include_apps {
     paths_to_include.push(app_to_include.executable.as_path().parent().unwrap());
   }
