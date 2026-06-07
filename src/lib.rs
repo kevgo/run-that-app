@@ -2,20 +2,22 @@
 //!
 //! # Examples
 //!
-//! Call an app with CLI arguments and default RTA options:
+//! The easiest way to run an app
+//! is to provide the CLI arguments you would use
+//! when executing the run-that-app binary:
 //! ```
 //! let args: Vec<String> = vec!["gh@2.34.0".into(), "--version".into()];
 //! let exit_code = rta::run(args.into_iter());
 //! ```
 //!
-//! Same call with RTA options provided in CLI format:
+//! The same call with RTA options:
 //!
 //! ```
 //! let args: Vec<String> = vec!["--verbose".into(), "gh@2.34.0".into(), "--version".into()];
 //! let exit_code = rta::run(args.into_iter());
 //! ```
 //!
-//! Programmatic API:
+//! Run an app via the programmatic API:
 //!
 //! ```
 //! use rta::Version;
@@ -28,7 +30,7 @@
 //! let args = rta::commands::RunArgs {
 //!   app_name: gh.name(),
 //!   version: Some(Version::from("2.34.0")),
-//!   app_args: vec![String::from("--version")],
+//!   app_args: vec!["--version".into()],
 //!   error_on_output: false,
 //!   from_source: false,
 //!   include_apps: vec![],
