@@ -4,7 +4,7 @@ use crate::error::{Result, UserError};
 
 /// a collection of Version instances
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) struct RequestedVersions(pub Vec<RequestedVersion>);
+pub struct RequestedVersions(pub Vec<RequestedVersion>);
 
 impl Eq for RequestedVersions {}
 
@@ -37,7 +37,7 @@ impl Ord for RequestedVersions {
 impl RequestedVersions {
   /// Provides the version to use: if the user provided a version to use via CLI, use it.
   /// Otherwise provide the versions from the config file.
-  pub(crate) fn determine(app: &ApplicationName, cli_version: Option<&Version>, config_file: &File) -> Result<RequestedVersions> {
+  pub fn determine(app: &ApplicationName, cli_version: Option<&Version>, config_file: &File) -> Result<RequestedVersions> {
     if let Some(version) = cli_version {
       return Ok(RequestedVersions::from(version));
     }
@@ -64,17 +64,17 @@ impl RequestedVersions {
   }
 
   #[cfg(test)]
-  pub(crate) fn new() -> RequestedVersions {
+  pub fn new() -> RequestedVersions {
     RequestedVersions(vec![])
   }
 
-  pub(crate) fn push(&mut self, value: RequestedVersion) {
+  pub fn push(&mut self, value: RequestedVersion) {
     self.0.push(value);
   }
 
   /// Updates the largest non-system version in this collection with the given value.
   /// Returns the value that was replaced.
-  pub(crate) fn update_largest_with(&mut self, value: &Version) -> Option<Version> {
+  pub fn update_largest_with(&mut self, value: &Version) -> Option<Version> {
     let largest = self.largest_yard()?;
     if largest == value {
       return None;

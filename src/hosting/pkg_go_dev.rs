@@ -3,7 +3,7 @@ use crate::error::{Result, UserError};
 use crate::executables::Executable;
 use crate::subshell;
 
-pub(crate) fn latest(pkg_name: &str, tag_format: &TagFormat) -> Result<Version> {
+pub fn latest(pkg_name: &str, tag_format: &TagFormat) -> Result<Version> {
   let versions = versions(pkg_name, 1, tag_format)?;
   let Some(first) = versions.into_iter().next() else {
     return Err(UserError::NoVersionsFound { app: pkg_name.to_string() });
@@ -11,7 +11,7 @@ pub(crate) fn latest(pkg_name: &str, tag_format: &TagFormat) -> Result<Version> 
   Ok(first)
 }
 
-pub(crate) fn versions(pkg_name: &str, amount: usize, tag_format: &TagFormat) -> Result<Vec<Version>> {
+pub fn versions(pkg_name: &str, amount: usize, tag_format: &TagFormat) -> Result<Vec<Version>> {
   let output = subshell::capture_output(&Executable::from("go"), &["list", "-m", "-versions", pkg_name])?;
   let mut versions = parse_output(&output, tag_format);
   if versions.len() > amount {

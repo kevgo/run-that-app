@@ -6,7 +6,7 @@ use std::process::{Command, ExitCode};
 /// Runs the given executable with the given arguments.
 /// Streams output to the user's terminal.
 #[allow(clippy::unwrap_used)]
-pub(crate) fn stream_output(executable: &Executable, args: &[String], apps_to_include: &[ExecutableCall]) -> Result<ExitCode> {
+pub fn stream_output(executable: &Executable, args: &[String], apps_to_include: &[ExecutableCall]) -> Result<ExitCode> {
   let mut cmd = Command::new(executable);
   cmd.args(args);
   let mut paths_to_include = vec![executable.as_path().parent().unwrap()];

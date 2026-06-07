@@ -5,11 +5,11 @@ use std::path::Path;
 
 /// the unix name of an executable
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) struct ExecutableNameUnix(String);
+pub struct ExecutableNameUnix(String);
 
 impl ExecutableNameUnix {
   /// provides the platform-specific version of this `UnixExecutableName`
-  pub(crate) fn platform_path(self, os: Os) -> ExecutableNamePlatform {
+  pub fn platform_path(self, os: Os) -> ExecutableNamePlatform {
     ExecutableNamePlatform::from(match os {
       Os::Linux | Os::MacOS => self.0,
       Os::Windows => format!("{self}.exe"),
@@ -49,7 +49,7 @@ impl From<String> for ExecutableNameUnix {
 
 /// The platform-specific filename of an executable.
 /// On Windows: "unix-executable-name.exe"
-pub(crate) struct ExecutableNamePlatform(String);
+pub struct ExecutableNamePlatform(String);
 
 impl From<String> for ExecutableNamePlatform {
   fn from(value: String) -> Self {

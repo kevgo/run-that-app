@@ -3,7 +3,7 @@ use std::path::Path;
 /// Makes the given file executable by setting appropriate permissions.
 /// Ignores non-existing files.
 #[cfg(not(windows))]
-pub(crate) fn set_executable_bit(filepath: &Path) {
+pub fn set_executable_bit(filepath: &Path) {
   use std::fs;
   use std::os::unix::fs::PermissionsExt;
   let Ok(executable_file) = fs::File::open(filepath) else { return };
@@ -19,4 +19,4 @@ pub(crate) fn set_executable_bit(filepath: &Path) {
 
 /// Does nothing on Windows since Windows determines executability through file extensions.
 #[cfg(windows)]
-pub(crate) fn set_executable_bit(_filepath: &Path) {}
+pub fn set_executable_bit(_filepath: &Path) {}

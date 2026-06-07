@@ -9,7 +9,7 @@ use crate::platform::{Cpu, Os, Platform};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct NodePrune {}
+pub struct NodePrune {}
 
 const ORG: &str = "tj";
 const REPO: &str = "node-prune";

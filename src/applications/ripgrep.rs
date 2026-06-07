@@ -9,7 +9,7 @@ use crate::{Log, executables, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct RipGrep {}
+pub struct RipGrep {}
 
 const ORG: &str = "BurntSushi";
 const REPO: &str = "ripgrep";

@@ -5,7 +5,7 @@ mod executable_call;
 mod executable_name;
 mod run_method;
 
-pub(crate) use executable::Executable;
-pub(crate) use executable_call::{ExecutableArgs, ExecutableCall, ExecutableCallDefinition};
-pub(crate) use executable_name::{ExecutableNamePlatform, ExecutableNameUnix};
-pub(crate) use run_method::RunMethod;
+pub use executable::Executable;
+pub use executable_call::{ExecutableArgs, ExecutableCall, ExecutableCallDefinition};
+pub use executable_name::{ExecutableNamePlatform, ExecutableNameUnix};
+pub use run_method::RunMethod;

@@ -9,7 +9,7 @@ use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct DeleteEmptyFolders {}
+pub struct DeleteEmptyFolders {}
 
 const ORG: &str = "kevgo";
 const REPO: &str = "delete-empty-folders";

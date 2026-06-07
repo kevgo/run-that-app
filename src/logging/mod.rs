@@ -7,5 +7,5 @@ mod log;
 mod normal;
 mod verbose;
 
-pub(crate) use event::Event;
-pub(crate) use log::{Log, new};
+pub use event::Event;
+pub use log::{Log, new};

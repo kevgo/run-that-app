@@ -9,7 +9,7 @@ use crate::{Log, executables, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct Lefthook {}
+pub struct Lefthook {}
 
 const ORG: &str = "evilmartians";
 const REPO: &str = "lefthook";

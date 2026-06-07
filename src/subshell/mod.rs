@@ -10,12 +10,12 @@ mod detect_output;
 mod stream_output;
 
 use crate::executables::Executable;
-pub(crate) use capture_output::capture_output;
-pub(crate) use detect_output::detect_output;
-pub(crate) use stream_output::stream_output;
+pub use capture_output::capture_output;
+pub use detect_output::detect_output;
+pub use stream_output::stream_output;
 
 /// adds the given dirs to the PATH env variable of the given cmd
-pub(crate) fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
+pub fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
   cmd.envs(env::vars_os());
   cmd.env("PATH", join_path_expressions(&join_paths(dirs), &env::var_os("PATH").unwrap_or_default()));
 }
@@ -51,7 +51,7 @@ fn paths_separator() -> &'static str {
   if cfg!(windows) { ";" } else { ":" }
 }
 
-pub(crate) fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
+pub fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
   if exit_status.success() {
     return ExitCode::SUCCESS;
   }
@@ -65,7 +65,7 @@ pub(crate) fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
 }
 
 /// provides a printable version of this `ExecutableCall` when called with additional arguments
-pub(crate) fn render_call(executable: &Executable, args: &[String]) -> String {
+pub fn render_call(executable: &Executable, args: &[String]) -> String {
   let mut result = executable.to_string();
   for arg in args {
     result.push(' ');

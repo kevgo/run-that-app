@@ -9,7 +9,7 @@ use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct Bun {}
+pub struct Bun {}
 
 const ORG: &str = "oven-sh";
 const REPO: &str = "bun";

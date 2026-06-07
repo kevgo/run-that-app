@@ -9,7 +9,7 @@ use crate::platform::{Cpu, Os, Platform};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct Ireturn {}
+pub struct Ireturn {}
 
 const ORG: &str = "butuzov";
 const REPO: &str = "ireturn";

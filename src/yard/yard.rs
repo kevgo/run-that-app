@@ -9,18 +9,18 @@ use crate::logging::Event;
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
 
-pub(crate) struct Yard {
-  pub(crate) root: PathBuf,
+pub struct Yard {
+  pub root: PathBuf,
 }
 
 /// stores executables of and metadata about applications
 // Named after rail yards, i.e. locations where passenger cars of trains are stored, sorted, and repaired.
 impl Yard {
-  pub(crate) fn app_folder(&self, app_name: &ApplicationName, app_version: &Version) -> PathBuf {
+  pub fn app_folder(&self, app_name: &ApplicationName, app_version: &Version) -> PathBuf {
     self.root.join("apps").join(app_name).join(app_version)
   }
 
-  pub(crate) fn create(containing_folder: &Path) -> Result<Yard> {
+  pub fn create(containing_folder: &Path) -> Result<Yard> {
     let root = root_path(containing_folder);
     if let Err(err) = fs::create_dir_all(&root) {
       return Err(UserError::CannotCreateFolder {
@@ -31,7 +31,7 @@ impl Yard {
     Ok(Yard { root })
   }
 
-  pub(crate) fn create_app_folder(&self, app_name: &ApplicationName, app_version: &Version) -> Result<PathBuf> {
+  pub fn create_app_folder(&self, app_name: &ApplicationName, app_version: &Version) -> Result<PathBuf> {
     let folder = self.app_folder(app_name, app_version);
     fs::create_dir_all(&folder).map_err(|err| UserError::CannotCreateFolder {
       folder: folder.clone(),
@@ -40,7 +40,7 @@ impl Yard {
     Ok(folder)
   }
 
-  pub(crate) fn delete_app_folder(&self, app_name: &ApplicationName) -> Result<()> {
+  pub fn delete_app_folder(&self, app_name: &ApplicationName) -> Result<()> {
     let folder_path = self.root.join("apps").join(app_name);
     if let Err(err) = fs::remove_dir_all(&folder_path)
       && err.kind() != std::io::ErrorKind::NotFound
@@ -53,11 +53,11 @@ impl Yard {
     Ok(())
   }
 
-  pub(crate) fn is_not_installable(&self, app: &ApplicationName, version: &Version) -> bool {
+  pub fn is_not_installable(&self, app: &ApplicationName, version: &Version) -> bool {
     self.not_installable_path(app, version).exists()
   }
 
-  pub(crate) fn load(containing_folder: &Path) -> Result<Option<Yard>> {
+  pub fn load(containing_folder: &Path) -> Result<Option<Yard>> {
     let root_dir = root_path(containing_folder);
     let Ok(metadata) = root_dir.metadata() else {
       return Ok(None);
@@ -68,14 +68,14 @@ impl Yard {
     Ok(Some(Yard { root: root_dir }))
   }
 
-  pub(crate) fn load_or_create(containing_folder: &Path) -> Result<Yard> {
+  pub fn load_or_create(containing_folder: &Path) -> Result<Yard> {
     match Yard::load(containing_folder)? {
       Some(existing_yard) => Ok(existing_yard),
       None => Yard::create(containing_folder),
     }
   }
 
-  pub(crate) fn load_executable(
+  pub fn load_executable(
     &self,
     app_definition: &dyn AppDefinition,
     executable: &ExecutableNameUnix,
@@ -99,7 +99,7 @@ impl Yard {
     None
   }
 
-  pub(crate) fn mark_not_installable(&self, app: &ApplicationName, version: &Version) -> Result<()> {
+  pub fn mark_not_installable(&self, app: &ApplicationName, version: &Version) -> Result<()> {
     self.create_app_folder(app, version)?;
     let path = self.not_installable_path(app, version);
     match File::create(&path) {

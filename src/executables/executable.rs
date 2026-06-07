@@ -8,7 +8,7 @@ use std::path::{Path, PathBuf};
 
 /// the full path to an executable that RTA knows exists and that it can execute
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) struct Executable(PathBuf);
+pub struct Executable(PathBuf);
 
 impl AsRef<OsStr> for Executable {
   fn as_ref(&self) -> &OsStr {
@@ -17,21 +17,21 @@ impl AsRef<OsStr> for Executable {
 }
 
 impl Executable {
-  pub(crate) fn as_str(&self) -> Cow<'_, str> {
+  pub fn as_str(&self) -> Cow<'_, str> {
     self.0.to_string_lossy()
   }
 
   /// runs this executable with the given args and returns the output it produced
-  pub(crate) fn run_output(&self, args: &[&str], log: Log) -> Result<String> {
+  pub fn run_output(&self, args: &[&str], log: Log) -> Result<String> {
     log(Event::AnalyzeExecutableBegin { cmd: &self.as_str(), args });
     subshell::capture_output(self, args)
   }
 
-  pub(crate) fn inner(self) -> PathBuf {
+  pub fn inner(self) -> PathBuf {
     self.0
   }
 
-  pub(crate) fn as_path(&self) -> &Path {
+  pub fn as_path(&self) -> &Path {
     &self.0
   }
 }

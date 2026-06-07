@@ -9,7 +9,7 @@ use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct Scc {}
+pub struct Scc {}
 
 const ORG: &str = "boyter";
 const REPO: &str = "scc";

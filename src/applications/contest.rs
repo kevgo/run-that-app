@@ -10,7 +10,7 @@ use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct Contest {}
+pub struct Contest {}
 
 const ORG: &str = "contest-framework";
 const REPO: &str = "server";

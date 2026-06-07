@@ -10,7 +10,7 @@ use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct ActionLint {}
+pub struct ActionLint {}
 
 const ORG: &str = "rhysd";
 const REPO: &str = "actionlint";

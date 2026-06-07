@@ -9,7 +9,7 @@ use crate::platform::Platform;
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct FuncOrder {}
+pub struct FuncOrder {}
 
 const ORG: &str = "manuelarte";
 const REPO: &str = "funcorder";

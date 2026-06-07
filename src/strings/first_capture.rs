@@ -2,7 +2,7 @@ use crate::error::{Result, UserError};
 use regex::Regex;
 
 /// provides the first capture of the given regex in the given text
-pub(crate) fn first_capture<'a>(text: &'a str, regex: &str) -> Result<&'a str> {
+pub fn first_capture<'a>(text: &'a str, regex: &str) -> Result<&'a str> {
   let regex = Regex::new(regex).map_err(|err| UserError::InvalidRegex {
     regex: regex.to_string(),
     err: err.to_string(),

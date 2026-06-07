@@ -4,7 +4,7 @@ use crate::error::{Result, UserError};
 use crate::logging::Event;
 use big_s::S;
 
-pub(crate) fn all(org: &str, repo: &str, amount: usize, tag_format: &TagFormat, log: Log) -> Result<Vec<Version>> {
+pub fn all(org: &str, repo: &str, amount: usize, tag_format: &TagFormat, log: Log) -> Result<Vec<Version>> {
   let url = format!("https://api.github.com/repos/{org}/{repo}/git/refs/tags");
   log(Event::GitHubApiRequestBegin { url: &url });
   let get = minreq::get(&url)

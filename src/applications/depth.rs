@@ -9,7 +9,7 @@ use crate::platform::{Cpu, Os, Platform};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct Depth {}
+pub struct Depth {}
 
 const ORG: &str = "KyleBanks";
 const REPO: &str = "depth";

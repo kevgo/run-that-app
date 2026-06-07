@@ -11,7 +11,7 @@ use std::process::Command;
 use which::which;
 
 /// the different locations from where to get Rust source code
-pub(crate) enum RustSource {
+pub enum RustSource {
   /// install from crates.io
   CratesIo { name: &'static str },
   /// install from a remote repository
@@ -19,7 +19,7 @@ pub(crate) enum RustSource {
 }
 
 /// installs the given Rust-based application by compiling it from source
-pub(crate) fn run(app_definition: &dyn AppDefinition, version: &Version, app_folder: &Path, source: &RustSource, log: Log) -> Result<Outcome> {
+pub fn run(app_definition: &dyn AppDefinition, version: &Version, app_folder: &Path, source: &RustSource, log: Log) -> Result<Outcome> {
   let Ok(cargo_path) = which("cargo") else {
     return Err(UserError::RustNotInstalled);
   };

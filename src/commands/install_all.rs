@@ -6,7 +6,7 @@ use crate::yard::{self, Yard};
 use crate::{configuration, logging, platform};
 use std::process::ExitCode;
 
-pub(crate) fn install_all(apps: &Apps) -> Result<ExitCode> {
+pub fn install_all(apps: &Apps) -> Result<ExitCode> {
   let config_file = configuration::File::load(apps)?;
   let log = logging::new(false);
   let platform = platform::detect(log)?;

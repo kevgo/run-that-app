@@ -4,7 +4,7 @@ use colored::Colorize;
 use std::path::PathBuf;
 
 /// a Result that always has a `UserError` as the error and therefore doesn't require to specify it at each call point
-pub(crate) type Result<T> = core::result::Result<T, UserError>;
+pub type Result<T> = core::result::Result<T, UserError>;
 
 /// errors that are the user's fault and should be displayed to them
 #[derive(Debug, PartialEq)]
@@ -62,7 +62,7 @@ pub enum UserError {
 
 impl UserError {
   #[allow(clippy::too_many_lines)]
-  pub(crate) fn print(self) {
+  pub fn print(self) {
     match self {
       UserError::ArchiveCannotExtract { reason } => {
         error(&format!("cannot extract the archive: {reason}"));

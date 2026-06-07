@@ -3,9 +3,9 @@ use crate::applications::ApplicationName;
 use std::cmp::Ordering;
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct AppVersions {
-  pub(crate) app_name: ApplicationName,
-  pub(crate) versions: RequestedVersions,
+pub struct AppVersions {
+  pub app_name: ApplicationName,
+  pub versions: RequestedVersions,
 }
 
 impl Eq for AppVersions {}

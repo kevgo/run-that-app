@@ -7,8 +7,8 @@ use std::io;
 use std::path::Path;
 
 /// a .zip file downloaded from the internet, containing an application
-pub(crate) struct Zip {
-  pub(crate) data: Vec<u8>,
+pub struct Zip {
+  pub data: Vec<u8>,
 }
 
 impl Archive for Zip {

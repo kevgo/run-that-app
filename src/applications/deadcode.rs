@@ -9,7 +9,7 @@ use crate::installation::Method;
 use crate::platform::Platform;
 
 #[derive(Clone)]
-pub(crate) struct Deadcode {}
+pub struct Deadcode {}
 
 const PKG_NAME: &str = "golang.org/x/tools";
 

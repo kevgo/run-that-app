@@ -69,7 +69,7 @@ pub struct Args {
   pub verbose: bool,
 }
 
-pub(crate) fn load_or_install_apps(
+pub fn load_or_install_apps(
   app_versions: &Vec<AppVersions>,
   apps: &Apps,
   optional: bool,
@@ -86,7 +86,7 @@ pub(crate) fn load_or_install_apps(
   Ok(result)
 }
 
-pub(crate) fn load_or_install_app(
+pub fn load_or_install_app(
   app_definition: &dyn AppDefinition,
   requested_versions: &RequestedVersions,
   optional: bool,

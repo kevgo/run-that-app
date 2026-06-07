@@ -9,7 +9,7 @@ use const_format::formatcp;
 use std::path::MAIN_SEPARATOR;
 
 #[derive(Clone)]
-pub(crate) struct Npx {}
+pub struct Npx {}
 
 impl AppDefinition for Npx {
   fn name(&self) -> ApplicationName {

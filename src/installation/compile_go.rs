@@ -10,7 +10,7 @@ use std::process::Command;
 use which::which;
 
 /// installs the given Go-based application by compiling it from source
-pub(crate) fn run(app_folder: &Path, import_path: &str, optional: bool, from_source: bool, ctx: &RuntimeContext) -> Result<Outcome> {
+pub fn run(app_folder: &Path, import_path: &str, optional: bool, from_source: bool, ctx: &RuntimeContext) -> Result<Outcome> {
   let go_args = vec!["install", &import_path];
   let go_path = if let Ok(system_go_path) = which("go") {
     system_go_path

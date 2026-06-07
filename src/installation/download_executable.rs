@@ -8,14 +8,7 @@ use crate::{download, filesystem};
 use std::path::Path;
 
 /// downloads an uncompressed precompiled binary
-pub(crate) fn run(
-  app_definition: &dyn AppDefinition,
-  app_folder: &Path,
-  version: &Version,
-  url: &Url,
-  optional: bool,
-  ctx: &RuntimeContext,
-) -> Result<Outcome> {
+pub fn run(app_definition: &dyn AppDefinition, app_folder: &Path, version: &Version, url: &Url, optional: bool, ctx: &RuntimeContext) -> Result<Outcome> {
   let Some(artifact) = download::artifact(url, &app_definition.name(), version, optional, ctx.log)? else {
     return Ok(Outcome::NotInstalled);
   };

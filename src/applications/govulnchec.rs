@@ -7,7 +7,7 @@ use crate::installation::Method;
 use crate::platform::Platform;
 
 #[derive(Clone)]
-pub(crate) struct Govulncheck {}
+pub struct Govulncheck {}
 
 impl AppDefinition for Govulncheck {
   fn name(&self) -> ApplicationName {

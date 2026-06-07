@@ -16,7 +16,7 @@ mod fd;
 mod funcorder;
 mod gh;
 mod ghokin;
-pub(crate) mod go;
+pub mod go;
 mod goda;
 mod gofmt;
 mod gofumpt;
@@ -59,7 +59,7 @@ use dyn_clone::DynClone;
 use std::fmt::{Debug, Display};
 use std::path::Path;
 
-pub(crate) fn all() -> Apps {
+pub fn all() -> Apps {
   Apps(vec![
     // keep-sorted start
     Box::new(actionlint::ActionLint {}),
@@ -116,7 +116,7 @@ pub(crate) fn all() -> Apps {
 }
 
 /// all the information about an application that run-that-app can install
-pub(crate) trait AppDefinition: DynClone {
+pub trait AppDefinition: DynClone {
   /// the name by which the user can select this application at the run-that-app CLI
   fn name(&self) -> ApplicationName;
 
@@ -167,11 +167,7 @@ dyn_clone::clone_trait_object!(AppDefinition);
 /// provides the app that contains the executable for the given app,
 /// the name of the executable provided by this app to call,
 /// and arguments to call that executable with.
-pub(crate) fn carrier<'a>(
-  app: &'a dyn AppDefinition,
-  version: &Version,
-  platform: Platform,
-) -> (Box<dyn AppDefinition + 'a>, ExecutableNameUnix, ExecutableArgs) {
+pub fn carrier<'a>(app: &'a dyn AppDefinition, version: &Version, platform: Platform) -> (Box<dyn AppDefinition + 'a>, ExecutableNameUnix, ExecutableArgs) {
   match app.run_method(version, platform) {
     RunMethod::ThisApp { install_methods: _ } => (dyn_clone::clone_box(app), app.executable_filename(), ExecutableArgs::None),
     RunMethod::OtherAppOtherExecutable {
@@ -197,14 +193,14 @@ impl Debug for dyn AppDefinition {
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct ApplicationName(&'static str);
+pub struct ApplicationName(&'static str);
 
 impl ApplicationName {
-  pub(crate) fn as_str(&self) -> &str {
+  pub fn as_str(&self) -> &str {
     self.0
   }
 
-  pub(crate) fn len(&self) -> usize {
+  pub fn len(&self) -> usize {
     self.0.len()
   }
 }
@@ -239,7 +235,7 @@ impl PartialEq<&str> for ApplicationName {
   }
 }
 
-pub(crate) enum AnalyzeResult {
+pub enum AnalyzeResult {
   /// the given executable does not belong to this app
   NotIdentified { output: String },
 
@@ -250,11 +246,11 @@ pub(crate) enum AnalyzeResult {
   IdentifiedWithVersion(Version),
 }
 
-pub(crate) struct Apps(Vec<Box<dyn AppDefinition>>);
+pub struct Apps(Vec<Box<dyn AppDefinition>>);
 
 impl Apps {
   /// provides the app with the given name
-  pub(crate) fn lookup<AS: AsRef<str>>(&self, name: AS) -> Result<&dyn AppDefinition> {
+  pub fn lookup<AS: AsRef<str>>(&self, name: AS) -> Result<&dyn AppDefinition> {
     for app in &self.0 {
       if app.name() == name.as_ref() {
         return Ok(app.as_ref());
@@ -267,7 +263,7 @@ impl Apps {
   }
 
   /// provides the length of the name of the app with the longest name
-  pub(crate) fn longest_name_length(&self) -> usize {
+  pub fn longest_name_length(&self) -> usize {
     self.into_iter().map(|app| app.name().len()).max().unwrap_or_default()
   }
 }

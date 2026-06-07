@@ -10,12 +10,12 @@ use std::str::SplitAsciiWhitespace;
 const HEADER: &str = "# more info at https://github.com/kevgo/run-that-app\n\n";
 
 #[derive(Debug, Default, PartialEq)]
-pub(crate) struct File {
-  pub(crate) apps: Vec<AppVersions>,
+pub struct File {
+  pub apps: Vec<AppVersions>,
 }
 
 impl File {
-  pub(crate) fn add(mut self, app_name: ApplicationName, version: Version) -> Result<()> {
+  pub fn add(mut self, app_name: ApplicationName, version: Version) -> Result<()> {
     self.apps.push(AppVersions {
       app_name,
       versions: RequestedVersions::from(vec![RequestedVersion::Yard(version)]),
@@ -24,7 +24,7 @@ impl File {
     self.save()
   }
 
-  pub(crate) fn create(app: &ApplicationName, version: &Version) -> Result<()> {
+  pub fn create(app: &ApplicationName, version: &Version) -> Result<()> {
     let mut file = match OpenOptions::new().write(true).create_new(true).open(FILE_NAME) {
       Ok(file) => file,
       Err(err) => {
@@ -43,22 +43,22 @@ impl File {
       .map_err(|err| UserError::CannotAccessConfigFile(err.to_string()))
   }
 
-  pub(crate) fn read(apps: &Apps) -> Result<Option<File>> {
+  pub fn read(apps: &Apps) -> Result<Option<File>> {
     match filesystem::read_file(FILE_NAME)? {
       Some(text) => Ok(Some(parse(&text, apps)?)),
       None => Ok(None),
     }
   }
 
-  pub(crate) fn load(apps: &Apps) -> Result<File> {
+  pub fn load(apps: &Apps) -> Result<File> {
     Ok(Self::read(apps)?.unwrap_or_default())
   }
 
-  pub(crate) fn lookup(&self, app_name: &ApplicationName) -> Option<&RequestedVersions> {
+  pub fn lookup(&self, app_name: &ApplicationName) -> Option<&RequestedVersions> {
     self.apps.iter().find(|app| &app.app_name == app_name).map(|app_version| &app_version.versions)
   }
 
-  pub(crate) fn lookup_many(&self, app_names: Vec<ApplicationName>) -> Vec<AppVersions> {
+  pub fn lookup_many(&self, app_names: Vec<ApplicationName>) -> Vec<AppVersions> {
     let mut result = vec![];
     for app_name in app_names {
       if let Some(versions) = self.lookup(&app_name) {
@@ -71,7 +71,7 @@ impl File {
     result
   }
 
-  pub(crate) fn save(&self) -> Result<()> {
+  pub fn save(&self) -> Result<()> {
     let mut file = OpenOptions::new()
       .write(true)
       .truncate(true)

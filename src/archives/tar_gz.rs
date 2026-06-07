@@ -8,8 +8,8 @@ use std::io;
 use std::path::Path;
 
 /// a .tar.gz file downloaded from the internet, containing an application
-pub(crate) struct TarGz {
-  pub(crate) data: Vec<u8>,
+pub struct TarGz {
+  pub data: Vec<u8>,
 }
 
 impl Archive for TarGz {

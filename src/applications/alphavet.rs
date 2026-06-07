@@ -10,7 +10,7 @@ use crate::platform::Platform;
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct Alphavet {}
+pub struct Alphavet {}
 
 const ORG: &str = "skx";
 const REPO: &str = "alphavet";

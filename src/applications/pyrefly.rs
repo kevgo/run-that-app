@@ -8,7 +8,7 @@ use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, strings};
 
 #[derive(Clone)]
-pub(crate) struct Pyrefly {}
+pub struct Pyrefly {}
 
 const ORG: &str = "facebook";
 const REPO: &str = "pyrefly";

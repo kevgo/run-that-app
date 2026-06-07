@@ -9,7 +9,7 @@ use crate::platform::Platform;
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct Exhaustruct {}
+pub struct Exhaustruct {}
 
 const ORG: &str = "GaijinEntertainment";
 const REPO: &str = "go-exhaustruct";

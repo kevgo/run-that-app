@@ -9,7 +9,7 @@ use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
-pub(crate) struct MdBookLinkCheck {}
+pub struct MdBookLinkCheck {}
 
 const ORG: &str = "Michael-F-Bryan";
 const REPO: &str = "mdbook-linkcheck";
