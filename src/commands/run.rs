@@ -10,7 +10,7 @@ use crate::yard::Yard;
 use crate::{platform, subshell, yard};
 use std::process::ExitCode;
 
-pub(crate) fn run(args: Args, apps: &Apps) -> Result<ExitCode> {
+pub fn run(args: Args, apps: &Apps) -> Result<ExitCode> {
   let app_to_run = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
@@ -43,30 +43,30 @@ pub(crate) fn run(args: Args, apps: &Apps) -> Result<ExitCode> {
 /// data needed to run an executable
 #[derive(Debug, PartialEq)]
 #[allow(clippy::struct_excessive_bools)]
-pub(crate) struct Args {
+pub struct Args {
   /// name of the app to execute
-  pub(crate) app_name: ApplicationName,
+  pub app_name: ApplicationName,
 
   /// possible versions of the app to execute
-  pub(crate) version: Option<Version>,
+  pub version: Option<Version>,
 
   /// arguments to call the app with
   #[allow(clippy::struct_field_names)]
-  pub(crate) app_args: Vec<String>,
+  pub app_args: Vec<String>,
 
   /// if true, any output produced by the app is equivalent to an exit code > 0
-  pub(crate) error_on_output: bool,
+  pub error_on_output: bool,
 
   /// if true, install only from source
-  pub(crate) from_source: bool,
+  pub from_source: bool,
 
   /// other applications to include into the PATH
-  pub(crate) include_apps: Vec<ApplicationName>,
+  pub include_apps: Vec<ApplicationName>,
 
   /// whether it's okay to not run the app if it cannot be installed
-  pub(crate) optional: bool,
+  pub optional: bool,
 
-  pub(crate) verbose: bool,
+  pub verbose: bool,
 }
 
 pub(crate) fn load_or_install_apps(
