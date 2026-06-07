@@ -99,7 +99,7 @@ pub fn get_cmd(app: &dyn AppDefinition, args: RunArgs, apps: &Apps) -> Result<Op
   let mut cmd = Command::new(executable);
   cmd.args(args);
   for app_to_include in &include_apps {
-    paths_to_include.push(&app_to_include.executable.as_path().parent().unwrap());
+    paths_to_include.push(app_to_include.executable.as_path().parent().unwrap());
   }
   add_paths(&mut cmd, &paths_to_include);
   Ok(Some(cmd))
