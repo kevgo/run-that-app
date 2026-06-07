@@ -7,7 +7,7 @@ use crate::yard::Yard;
 use crate::{logging, platform, yard};
 use std::process::ExitCode;
 
-pub(crate) fn available(args: &Args, apps: &Apps) -> Result<ExitCode> {
+pub fn available(args: &Args, apps: &Apps) -> Result<ExitCode> {
   let app = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
@@ -27,9 +27,9 @@ pub(crate) fn available(args: &Args, apps: &Apps) -> Result<ExitCode> {
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct Args {
-  pub(crate) app_name: ApplicationName,
-  pub(crate) optional: bool,
-  pub(crate) version: Option<Version>,
-  pub(crate) verbose: bool,
+pub struct Args {
+  pub app_name: ApplicationName,
+  pub optional: bool,
+  pub version: Option<Version>,
+  pub verbose: bool,
 }
