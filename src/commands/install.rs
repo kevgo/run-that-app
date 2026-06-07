@@ -30,7 +30,7 @@ pub fn install(args: InstallArgs, apps: &Apps) -> Result<ExitCode> {
   Ok(ExitCode::SUCCESS)
 }
 
-/// data needed to install an executable
+/// named arguments for the [`install`], [`install_all`], and [`reinstall`] commands
 #[derive(Debug, PartialEq)]
 #[allow(clippy::struct_excessive_bools)]
 pub struct InstallArgs {

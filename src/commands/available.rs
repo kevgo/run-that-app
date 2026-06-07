@@ -26,7 +26,7 @@ pub fn available(args: &AvailableArgs, apps: &Apps) -> Result<ExitCode> {
   Ok(ExitCode::FAILURE)
 }
 
-/// named arguments for the `available` command
+/// named arguments for the [`available`] command
 #[derive(Debug, PartialEq)]
 pub struct AvailableArgs {
   pub app_name: ApplicationName,
