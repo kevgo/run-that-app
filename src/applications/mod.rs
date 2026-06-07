@@ -188,7 +188,7 @@ pub trait AppDefinition: dyn_clone::DynClone {
 
   /// provides the versions of this application that can be installed
   ///
-  /// You can get loggers from [`crate::logging`].
+  /// You can get loggers from [`rta::logging`].
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>>;
 
   /// provides the latest version of this application that can be installed
