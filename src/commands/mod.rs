@@ -20,7 +20,7 @@ pub(crate) use help::help;
 pub use install::{InstallArgs, install};
 pub use install_all::install_all;
 pub use reinstall::reinstall;
-pub use run::{RunArgs, get_cmd, load_or_install_app, load_or_install_apps, run};
+pub use run::{RunArgs, load_or_install_app, load_or_install_apps, run};
 pub use test::{TestArgs, test};
 pub use update::{UpdateArgs, update};
 pub use version::version;

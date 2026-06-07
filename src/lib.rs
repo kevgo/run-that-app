@@ -57,13 +57,20 @@ mod platform;
 mod strings;
 mod subshell;
 mod yard;
-use cli::Command;
-pub use commands::get_cmd;
+use cli::Cli;
 pub use configuration::Version;
 #[cfg(test)]
 pub use error::UserError;
 use logging::Log;
-use std::process::ExitCode;
+use std::path::Path;
+use std::process::{Command, ExitCode};
+
+use crate::applications::{AppDefinition, Apps};
+use crate::commands::{RunArgs, load_or_install_app, load_or_install_apps};
+use crate::configuration::RequestedVersions;
+use crate::context::RuntimeContext;
+use crate::subshell::add_paths;
+use crate::yard::Yard;
 
 /// Runs run-that-app with the given CLI arguments.
 ///
@@ -75,19 +82,53 @@ use std::process::ExitCode;
 pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
   let apps = applications::all();
   match cli::parse(args, &apps)? {
-    Command::Add(args) => commands::add(args, &apps),
-    Command::AppsLong => Ok(commands::applications::long(&apps)),
-    Command::AppsShort => Ok(commands::applications::short(&apps)),
-    Command::Available(args) => commands::available(&args, &apps),
-    Command::DisplayHelp => Ok(commands::help()),
-    Command::Install(args) => commands::install(args, &apps),
-    Command::InstallAll => commands::install_all(&apps),
-    Command::Reinstall(args) => commands::reinstall(args, &apps),
-    Command::RunApp(args) => commands::run(args, &apps),
-    Command::Test(mut args) => commands::test(&mut args, &apps),
-    Command::Update(args) => commands::update(&args, &apps),
-    Command::Version => Ok(commands::version()),
-    Command::Versions(args) => commands::versions(&args, &apps),
-    Command::Which(args) => commands::which(&args, &apps),
+    Cli::Add(args) => commands::add(args, &apps),
+    Cli::AppsLong => Ok(commands::applications::long(&apps)),
+    Cli::AppsShort => Ok(commands::applications::short(&apps)),
+    Cli::Available(args) => commands::available(&args, &apps),
+    Cli::DisplayHelp => Ok(commands::help()),
+    Cli::Install(args) => commands::install(args, &apps),
+    Cli::InstallAll => commands::install_all(&apps),
+    Cli::Reinstall(args) => commands::reinstall(args, &apps),
+    Cli::RunApp(args) => commands::run(args, &apps),
+    Cli::Test(mut args) => commands::test(&mut args, &apps),
+    Cli::Update(args) => commands::update(&args, &apps),
+    Cli::Version => Ok(commands::version()),
+    Cli::Versions(args) => commands::versions(&args, &apps),
+    Cli::Which(args) => commands::which(&args, &apps),
   }
+}
+
+/// Provides a fully configured Command instance that executes the given app with the given arguments.
+///
+/// You can customize the output and execute the command your own way.
+pub fn get_cmd(app: &dyn AppDefinition, args: RunArgs, apps: &Apps) -> Result<Option<Command>, error::UserError> {
+  let log = logging::new(args.verbose);
+  let platform = platform::detect(log)?;
+  let yard = Yard::load_or_create(&yard::production_location()?)?;
+  let config_file = configuration::File::load(apps)?;
+  let ctx = RuntimeContext {
+    platform,
+    yard: &yard,
+    config_file: &config_file,
+    log,
+  };
+  let include_app_versions = config_file.lookup_many(args.include_apps);
+  let include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
+  let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
+  let Some(executable_call) = load_or_install_app(app, &requested_versions, args.optional, args.from_source, &ctx)? else {
+    if args.optional {
+      return Ok(None);
+    }
+    return Err(error::UserError::UnsupportedPlatform);
+  };
+  let (executable, args) = executable_call.with_args(args.app_args);
+  let mut paths_to_include: Vec<&Path> = vec![&executable.as_path().parent().unwrap()];
+  let mut cmd = Command::new(&executable);
+  cmd.args(&args);
+  for app_to_include in &include_apps {
+    paths_to_include.push(app_to_include.executable.as_path().parent().unwrap());
+  }
+  add_paths(&mut cmd, &paths_to_include);
+  Ok(Some(cmd))
 }

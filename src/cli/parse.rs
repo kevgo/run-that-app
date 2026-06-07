@@ -1,10 +1,10 @@
-use super::{AppVersion, Command};
+use super::{AppVersion, Cli};
 use crate::applications::{ApplicationName, Apps};
 use crate::commands::{AddArgs, AvailableArgs, InstallArgs, RunArgs, TestArgs, UpdateArgs, VersionsArgs, WhichArgs};
 use crate::error::{Result, UserError};
 
 #[allow(clippy::too_many_lines)]
-pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Command> {
+pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Cli> {
   let mut app_version: Option<AppVersion> = None;
   let mut verbose = false;
   let mut app_args: Vec<String> = vec![];
@@ -27,10 +27,10 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Comm
         continue;
       }
       if &arg == "--apps" {
-        return Ok(Command::AppsLong);
+        return Ok(Cli::AppsLong);
       }
       if &arg == "-a" {
-        return Ok(Command::AppsShort);
+        return Ok(Cli::AppsShort);
       }
       if &arg == "--available" {
         indicate_available = true;
@@ -41,7 +41,7 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Comm
         continue;
       }
       if &arg == "--help" || &arg == "-h" {
-        return Ok(Command::DisplayHelp);
+        return Ok(Cli::DisplayHelp);
       }
       if &arg == "--error-on-output" {
         error_on_output = true;
@@ -52,7 +52,7 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Comm
         continue;
       }
       if &arg == "--install-all" {
-        return Ok(Command::InstallAll);
+        return Ok(Cli::InstallAll);
       }
       if &arg == "--optional" {
         optional = true;
@@ -75,7 +75,7 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Comm
         continue;
       }
       if &arg == "--version" || &arg == "-V" {
-        return Ok(Command::Version);
+        return Ok(Cli::Version);
       }
       if &arg == "--versions" {
         versions = Some(10);
@@ -109,10 +109,10 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Comm
     return Err(UserError::MultipleCommandsGiven);
   }
   if update {
-    return Ok(Command::Update(UpdateArgs { verbose }));
+    return Ok(Cli::Update(UpdateArgs { verbose }));
   }
   if test {
-    return Ok(Command::Test(TestArgs {
+    return Ok(Cli::Test(TestArgs {
       optional,
       start_at_app: app_version.map(|av| av.app_name),
       verbose,
@@ -120,10 +120,10 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Comm
   }
   if let Some(AppVersion { app_name, version }) = app_version {
     if add {
-      return Ok(Command::Add(AddArgs { app_name, verbose }));
+      return Ok(Cli::Add(AddArgs { app_name, verbose }));
     }
     if indicate_available {
-      return Ok(Command::Available(AvailableArgs {
+      return Ok(Cli::Available(AvailableArgs {
         app_name,
         optional,
         version,
@@ -131,7 +131,7 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Comm
       }));
     }
     if install {
-      return Ok(Command::Install(InstallArgs {
+      return Ok(Cli::Install(InstallArgs {
         app_name,
         version,
         from_source,
@@ -141,7 +141,7 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Comm
       }));
     }
     if reinstall {
-      return Ok(Command::Reinstall(InstallArgs {
+      return Ok(Cli::Reinstall(InstallArgs {
         app_name,
         version,
         from_source,
@@ -151,7 +151,7 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Comm
       }));
     }
     if which {
-      return Ok(Command::Which(WhichArgs {
+      return Ok(Cli::Which(WhichArgs {
         app_name,
         optional,
         version,
@@ -159,9 +159,9 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Comm
       }));
     }
     if let Some(amount) = versions {
-      return Ok(Command::Versions(VersionsArgs { app_name, amount, verbose }));
+      return Ok(Cli::Versions(VersionsArgs { app_name, amount, verbose }));
     }
-    return Ok(Command::RunApp(RunArgs {
+    return Ok(Cli::RunApp(RunArgs {
       app_name,
       version,
       app_args,
@@ -175,7 +175,7 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Comm
   if error_on_output || install || optional || reinstall || verbose || which || indicate_available {
     return Err(UserError::MissingApplication);
   }
-  Ok(Command::DisplayHelp)
+  Ok(Cli::DisplayHelp)
 }
 
 /// indicates whether the given values contain two or more true values
@@ -188,20 +188,20 @@ mod tests {
 
   mod parse {
     use crate::applications;
-    use crate::cli::{Command, parse};
+    use crate::cli::{Cli, parse};
 
     #[test]
     fn no_arguments() {
       let apps = applications::all();
       let args = vec![].into_iter();
       let have = parse(args, &apps);
-      let want = Ok(Command::DisplayHelp);
+      let want = Ok(Cli::DisplayHelp);
       pretty::assert_eq!(have, want);
     }
 
     mod rta_arguments {
       use crate::applications;
-      use crate::cli::{Command, parse};
+      use crate::cli::{Cli, parse};
       use crate::commands::RunArgs;
       use crate::configuration::Version;
       use crate::error::UserError;
@@ -209,7 +209,7 @@ mod tests {
 
       mod available {
         use crate::applications;
-        use crate::cli::{Command, parse};
+        use crate::cli::{Cli, parse};
         use crate::commands::AvailableArgs;
         use crate::error::UserError;
         use big_s::S;
@@ -220,7 +220,7 @@ mod tests {
           let shellcheck = apps.lookup("shellcheck").unwrap();
           let args = vec![S("--available"), S("shellcheck")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Available(AvailableArgs {
+          let want = Ok(Cli::Available(AvailableArgs {
             app_name: shellcheck.name(),
             optional: false,
             version: None,
@@ -235,7 +235,7 @@ mod tests {
           let shellcheck = apps.lookup("shellcheck").unwrap();
           let args = vec![S("--available"), S("--verbose"), S("shellcheck")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Available(AvailableArgs {
+          let want = Ok(Cli::Available(AvailableArgs {
             app_name: shellcheck.name(),
             optional: false,
             version: None,
@@ -256,7 +256,7 @@ mod tests {
 
       mod error_on_output {
         use crate::applications;
-        use crate::cli::{Command, parse};
+        use crate::cli::{Cli, parse};
         use crate::commands::RunArgs;
         use crate::error::UserError;
         use big_s::S;
@@ -267,7 +267,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("--error-on-output"), S("actionlint")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::RunApp(RunArgs {
+          let want = Ok(Cli::RunApp(RunArgs {
             app_name: actionlint.name(),
             version: None,
             app_args: vec![],
@@ -292,7 +292,7 @@ mod tests {
 
       mod install {
         use crate::applications;
-        use crate::cli::{Command, parse};
+        use crate::cli::{Cli, parse};
         use crate::commands::InstallArgs;
         use crate::error::UserError;
         use big_s::S;
@@ -303,7 +303,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("--install"), S("actionlint")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Install(InstallArgs {
+          let want = Ok(Cli::Install(InstallArgs {
             app_name: actionlint.name(),
             version: None,
             from_source: false,
@@ -327,7 +327,7 @@ mod tests {
       mod from_source {
         use crate::cli::parse;
         use crate::commands::RunArgs;
-        use crate::{Command, applications};
+        use crate::{Cli, applications};
         use big_s::S;
 
         #[test]
@@ -336,7 +336,7 @@ mod tests {
           let args = vec![S("--from-source"), S("actionlint")].into_iter();
           let have = parse(args, &apps);
           let actionlint = apps.lookup("actionlint").unwrap();
-          let want = Ok(Command::RunApp(RunArgs {
+          let want = Ok(Cli::RunApp(RunArgs {
             app_name: actionlint.name(),
             version: None,
             app_args: vec![],
@@ -352,7 +352,7 @@ mod tests {
 
       mod reinstall {
         use crate::applications;
-        use crate::cli::{Command, parse};
+        use crate::cli::{Cli, parse};
         use crate::commands::InstallArgs;
         use crate::error::UserError;
         use big_s::S;
@@ -363,7 +363,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("--reinstall"), S("actionlint")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Reinstall(InstallArgs {
+          let want = Ok(Cli::Reinstall(InstallArgs {
             app_name: actionlint.name(),
             version: None,
             from_source: false,
@@ -386,7 +386,7 @@ mod tests {
 
       mod test {
         use crate::applications;
-        use crate::cli::{Command, parse};
+        use crate::cli::{Cli, parse};
         use crate::commands::TestArgs;
         use big_s::S;
 
@@ -395,7 +395,7 @@ mod tests {
           let apps = applications::all();
           let args = vec![S("--test")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Test(TestArgs {
+          let want = Ok(Cli::Test(TestArgs {
             optional: false,
             start_at_app: None,
             verbose: false,
@@ -408,7 +408,7 @@ mod tests {
           let apps = applications::all();
           let args = vec![S("--test"), S("--verbose")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Test(TestArgs {
+          let want = Ok(Cli::Test(TestArgs {
             optional: false,
             start_at_app: None,
             verbose: true,
@@ -422,7 +422,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("--test"), S("actionlint")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Test(TestArgs {
+          let want = Ok(Cli::Test(TestArgs {
             optional: false,
             start_at_app: Some(actionlint.name()),
             verbose: false,
@@ -436,7 +436,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("--test"), S("--verbose"), S("actionlint")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Test(TestArgs {
+          let want = Ok(Cli::Test(TestArgs {
             optional: false,
             start_at_app: Some(actionlint.name()),
             verbose: true,
@@ -447,7 +447,7 @@ mod tests {
 
       mod help_parameter {
         use crate::applications;
-        use crate::cli::{Command, parse};
+        use crate::cli::{Cli, parse};
         use big_s::S;
 
         #[test]
@@ -455,7 +455,7 @@ mod tests {
           let apps = applications::all();
           let args = vec![S("-h")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::DisplayHelp);
+          let want = Ok(Cli::DisplayHelp);
           pretty::assert_eq!(have, want);
         }
 
@@ -464,7 +464,7 @@ mod tests {
           let apps = applications::all();
           let args = vec![S("--help")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::DisplayHelp);
+          let want = Ok(Cli::DisplayHelp);
           pretty::assert_eq!(have, want);
         }
       }
@@ -473,7 +473,7 @@ mod tests {
         use crate::cli::parse;
         use crate::commands::RunArgs;
         use crate::configuration::Version;
-        use crate::{Command, UserError, applications};
+        use crate::{Cli, UserError, applications};
         use big_s::S;
 
         #[test]
@@ -483,7 +483,7 @@ mod tests {
           let gh = apps.lookup("gh").unwrap();
           let args = vec![S("--include=gh"), S("actionlint@2")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::RunApp(RunArgs {
+          let want = Ok(Cli::RunApp(RunArgs {
             app_name: actionlint.name(),
             version: Some(Version::from("2")),
             app_args: vec![],
@@ -508,7 +508,7 @@ mod tests {
 
       mod verbose {
         use crate::applications;
-        use crate::cli::{Command, parse};
+        use crate::cli::{Cli, parse};
         use crate::commands::RunArgs;
         use crate::configuration::Version;
         use crate::error::UserError;
@@ -520,7 +520,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("--verbose"), S("actionlint@2")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::RunApp(RunArgs {
+          let want = Ok(Cli::RunApp(RunArgs {
             app_name: actionlint.name(),
             version: Some(Version::from("2")),
             app_args: vec![],
@@ -539,7 +539,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("-v"), S("actionlint@2")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::RunApp(RunArgs {
+          let want = Ok(Cli::RunApp(RunArgs {
             app_name: actionlint.name(),
             version: Some(Version::from("2")),
             app_args: vec![],
@@ -577,7 +577,7 @@ mod tests {
         let actionlint = apps.lookup("actionlint").unwrap();
         let args = vec![S("--optional"), S("actionlint@2"), S("arg1")].into_iter();
         let have = parse(args, &apps);
-        let want = Ok(Command::RunApp(RunArgs {
+        let want = Ok(Cli::RunApp(RunArgs {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
           app_args: vec![S("arg1")],
@@ -592,7 +592,7 @@ mod tests {
 
       mod version {
         use crate::applications;
-        use crate::cli::{Command, parse};
+        use crate::cli::{Cli, parse};
         use big_s::S;
 
         #[test]
@@ -600,7 +600,7 @@ mod tests {
           let apps = applications::all();
           let args = vec![S("-V")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Version);
+          let want = Ok(Cli::Version);
           pretty::assert_eq!(have, want);
         }
 
@@ -609,14 +609,14 @@ mod tests {
           let apps = applications::all();
           let args = vec![S("--version")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Version);
+          let want = Ok(Cli::Version);
           pretty::assert_eq!(have, want);
         }
       }
 
       mod versions {
         use crate::applications;
-        use crate::cli::{Command, parse};
+        use crate::cli::{Cli, parse};
         use crate::commands::VersionsArgs;
         use big_s::S;
 
@@ -626,7 +626,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("--versions"), S("actionlint")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Versions(VersionsArgs {
+          let want = Ok(Cli::Versions(VersionsArgs {
             app_name: actionlint.name(),
             amount: 10,
             verbose: false,
@@ -640,7 +640,7 @@ mod tests {
           let actionlint = apps.lookup("actionlint").unwrap();
           let args = vec![S("--versions=20"), S("actionlint")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Versions(VersionsArgs {
+          let want = Ok(Cli::Versions(VersionsArgs {
             app_name: actionlint.name(),
             amount: 20,
             verbose: false,
@@ -653,14 +653,14 @@ mod tests {
           let apps = applications::all();
           let args = vec![S("--versions")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::DisplayHelp);
+          let want = Ok(Cli::DisplayHelp);
           pretty::assert_eq!(have, want);
         }
       }
 
       mod which {
         use crate::applications;
-        use crate::cli::{Command, parse};
+        use crate::cli::{Cli, parse};
         use crate::commands::WhichArgs;
         use crate::error::UserError;
         use big_s::S;
@@ -671,7 +671,7 @@ mod tests {
           let shellcheck = apps.lookup("shellcheck").unwrap();
           let args = vec![S("--which"), S("shellcheck")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Which(WhichArgs {
+          let want = Ok(Cli::Which(WhichArgs {
             app_name: shellcheck.name(),
             optional: false,
             version: None,
@@ -686,7 +686,7 @@ mod tests {
           let shellcheck = apps.lookup("shellcheck").unwrap();
           let args = vec![S("--which"), S("--verbose"), S("shellcheck")].into_iter();
           let have = parse(args, &apps);
-          let want = Ok(Command::Which(WhichArgs {
+          let want = Ok(Cli::Which(WhichArgs {
             app_name: shellcheck.name(),
             optional: false,
             version: None,
@@ -708,7 +708,7 @@ mod tests {
 
     mod application_arguments {
       use crate::applications;
-      use crate::cli::{Command, parse};
+      use crate::cli::{Cli, parse};
       use crate::commands::RunArgs;
       use crate::configuration::Version;
       use big_s::S;
@@ -719,7 +719,7 @@ mod tests {
         let actionlint = apps.lookup("actionlint").unwrap();
         let args = vec![S("actionlint@2")].into_iter();
         let have = parse(args, &apps);
-        let want = Ok(Command::RunApp(RunArgs {
+        let want = Ok(Cli::RunApp(RunArgs {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
           app_args: vec![],
@@ -738,7 +738,7 @@ mod tests {
         let actionlint = apps.lookup("actionlint").unwrap();
         let args = vec![S("actionlint@2"), S("--arg1"), S("arg2")].into_iter();
         let have = parse(args, &apps);
-        let want = Ok(Command::RunApp(RunArgs {
+        let want = Ok(Cli::RunApp(RunArgs {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
           app_args: vec![S("--arg1"), S("arg2")],
@@ -754,7 +754,7 @@ mod tests {
 
     mod rta_and_app_arguments {
       use crate::applications;
-      use crate::cli::{Command, parse};
+      use crate::cli::{Cli, parse};
       use crate::commands::RunArgs;
       use crate::configuration::Version;
       use big_s::S;
@@ -765,7 +765,7 @@ mod tests {
         let actionlint = apps.lookup("actionlint").unwrap();
         let args = vec![S("--verbose"), S("actionlint@2"), S("--arg1"), S("arg2")].into_iter();
         let have = parse(args, &apps);
-        let want = Ok(Command::RunApp(RunArgs {
+        let want = Ok(Cli::RunApp(RunArgs {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
           app_args: vec![S("--arg1"), S("arg2")],
@@ -784,7 +784,7 @@ mod tests {
         let actionlint = apps.lookup("actionlint").unwrap();
         let args = vec![S("actionlint@2"), S("--verbose"), S("--version")].into_iter();
         let have = parse(args, &apps);
-        let want = Ok(Command::RunApp(RunArgs {
+        let want = Ok(Cli::RunApp(RunArgs {
           app_name: actionlint.name(),
           version: Some(Version::from("2")),
           app_args: vec![S("--verbose"), S("--version")],

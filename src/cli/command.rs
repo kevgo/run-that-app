@@ -2,7 +2,7 @@ use crate::commands::{AddArgs, AvailableArgs, InstallArgs, RunArgs, TestArgs, Up
 
 /// the main commands that run-this-app can execute
 #[derive(Debug, PartialEq)]
-pub enum Command {
+pub enum Cli {
   Add(AddArgs),
   AppsLong,
   AppsShort,
