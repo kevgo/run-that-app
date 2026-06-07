@@ -59,6 +59,7 @@ use dyn_clone::DynClone;
 use std::fmt::{Debug, Display};
 use std::path::Path;
 
+#[must_use]
 pub fn all() -> Apps {
   Apps(vec![
     // keep-sorted start
@@ -196,10 +197,12 @@ impl Debug for dyn AppDefinition {
 pub struct ApplicationName(&'static str);
 
 impl ApplicationName {
+  #[must_use]
   pub fn as_str(&self) -> &str {
     self.0
   }
 
+  #[must_use]
   pub fn len(&self) -> usize {
     self.0.len()
   }
@@ -263,6 +266,7 @@ impl Apps {
   }
 
   /// provides the length of the name of the app with the longest name
+  #[must_use]
   pub fn longest_name_length(&self) -> usize {
     self.into_iter().map(|app| app.name().len()).max().unwrap_or_default()
   }
