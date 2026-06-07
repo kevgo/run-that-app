@@ -68,8 +68,8 @@ use std::process::ExitCode;
 ///
 /// Example:
 /// ```
-/// let args = vec![String::from("--version")].into_iter();
-/// let exit_code = rta::run(args);
+/// let args = vec![String::from("gh@2.34.0"), String::from("--version")];
+/// let exit_code = rta::run(args.into_iter());
 /// ```
 pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
   let apps = applications::all();
