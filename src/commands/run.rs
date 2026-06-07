@@ -95,8 +95,7 @@ pub fn get_cmd(app: &dyn AppDefinition, args: RunArgs, apps: &Apps) -> Result<Op
   };
   let (executable, args) = executable_call.with_args(args.app_args);
   let executable2 = executable.clone();
-  let p = executable2.as_path().parent().unwrap();
-  let mut paths_to_include = vec![p];
+  let mut paths_to_include = vec![executable2.as_path().parent().unwrap()];
   let mut cmd = Command::new(executable);
   cmd.args(args);
   for app_to_include in &include_apps {
