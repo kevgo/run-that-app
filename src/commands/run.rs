@@ -6,6 +6,7 @@ use crate::executables::{ExecutableCall, ExecutableCallDefinition};
 use crate::filesystem::find_global_install;
 use crate::installation::{self, Outcome};
 use crate::logging::{self, Event};
+use crate::subshell::add_paths;
 use crate::yard::Yard;
 use crate::{platform, subshell, yard};
 use std::process::{Command, ExitCode};
@@ -72,8 +73,37 @@ pub struct RunArgs {
 /// Provides a fully configured Command instance that executes the given app with the given arguments.
 ///
 /// You can customize the output and execute the command your own way.
-pub fn get_cmd(app: &dyn AppDefinition, args: Vec<String>, apps: &Apps) -> Option<Command> {
-  //
+pub fn get_cmd(app: &dyn AppDefinition, args: RunArgs, apps: &Apps) -> Result<Option<Command>> {
+  let log = logging::new(args.verbose);
+  let platform = platform::detect(log)?;
+  let yard = Yard::load_or_create(&yard::production_location()?)?;
+  let config_file = configuration::File::load(apps)?;
+  let ctx = RuntimeContext {
+    platform,
+    yard: &yard,
+    config_file: &config_file,
+    log,
+  };
+  let include_app_versions = config_file.lookup_many(args.include_apps);
+  let include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
+  let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
+  let Some(executable_call) = load_or_install_app(app, &requested_versions, args.optional, args.from_source, &ctx)? else {
+    if args.optional {
+      return Ok(None);
+    }
+    return Err(UserError::UnsupportedPlatform);
+  };
+  let (executable, args) = executable_call.with_args(args.app_args);
+  let executable2 = executable.clone();
+  let p = executable2.as_path().parent().unwrap();
+  let mut paths_to_include = vec![p];
+  let mut cmd = Command::new(executable);
+  cmd.args(args);
+  for app_to_include in &include_apps {
+    paths_to_include.push(&app_to_include.executable.as_path().parent().unwrap());
+  }
+  add_paths(&mut cmd, &paths_to_include);
+  Ok(Some(cmd))
 }
 
 pub fn load_or_install_apps(
