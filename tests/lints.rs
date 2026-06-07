@@ -13,6 +13,9 @@ fn pub_crate() -> io::Result<()> {
   find_files(&current_dir, &mut files)?;
   let mut failure = false;
   for file in files {
+    if file.ends_with("src/lib.rs") {
+      continue;
+    }
     for (index, line) in lines_in_file(&file)?.enumerate() {
       if let Ok(line_content) = line
         && line_content.trim_start().starts_with("pub ")

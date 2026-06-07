@@ -1,7 +1,7 @@
 use std::fmt::Display;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub(crate) struct Url(String);
+pub struct Url(String);
 
 impl AsRef<str> for Url {
   fn as_ref(&self) -> &str {
