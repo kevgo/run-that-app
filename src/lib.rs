@@ -102,6 +102,7 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// Provides a fully configured Command instance that executes the given app with the given arguments.
 ///
 /// You can customize the output and execute the command your own way.
+#[allow(clippy::missing_panics_doc)] // there is always a parent here since this is a location inside the yard
 pub fn get_cmd(app: &dyn AppDefinition, args: RunArgs, apps: &Apps) -> Result<Option<Command>, error::UserError> {
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
@@ -123,10 +124,12 @@ pub fn get_cmd(app: &dyn AppDefinition, args: RunArgs, apps: &Apps) -> Result<Op
     return Err(error::UserError::UnsupportedPlatform);
   };
   let (executable, args) = executable_call.with_args(args.app_args);
+  #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
   let mut paths_to_include: Vec<&Path> = vec![&executable.as_path().parent().unwrap()];
   let mut cmd = Command::new(&executable);
   cmd.args(&args);
   for app_to_include in &include_apps {
+    #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
     paths_to_include.push(app_to_include.executable.as_path().parent().unwrap());
   }
   add_paths(&mut cmd, &paths_to_include);
