@@ -16,6 +16,7 @@ pub fn add(args: AddArgs, apps: &Apps) -> Result<ExitCode> {
   Ok(ExitCode::SUCCESS)
 }
 
+/// named arguments for the `add` command
 #[derive(Debug, PartialEq)]
 pub struct AddArgs {
   pub app_name: ApplicationName,
