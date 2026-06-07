@@ -16,8 +16,8 @@ fn applications_mod_has_pub_use_for_every_module() {
 
   assert!(
     missing.is_empty(),
-    "src/applications/mod.rs is missing `pub use` re-exports for: {}\n\
-     For each `mod xxx;` declaration, add a line like `pub use xxx::Xxx;`.",
+    "src/applications/mod.rs: missing `pub use` re-exports for: {}\n\
+     For each `mod xxx;` declaration, add a line `pub use xxx::Xxx;`.",
     missing.join(", ")
   );
 }
