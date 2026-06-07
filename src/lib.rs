@@ -101,7 +101,7 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// Provides a fully configured Command instance that executes the given app with the given arguments.
 ///
 /// You can customize the output and execute the command your own way.
-#[allow(clippy::missing_panics_doc)] // there is always a parent here since this is a location inside the yard
+#[allow(clippy::missing_panics_doc)] // all the unwraps here never trigger
 pub fn get_cmd(app: &dyn AppDefinition, args: RunArgs, apps: &Apps) -> Result<Option<Command>, error::UserError> {
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
