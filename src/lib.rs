@@ -1,5 +1,34 @@
+//! run-that-app runs third-party applications without the need to install them
+//!
+//! Example:
+//! ```
+//! let args = vec![String::from("gh@2.34.0"), String::from("--version")].into_iter();
+//! let exit_code = rta::run(args);
+//! ```
+//!
+//! Example:
+//! ```
+//! use rta::Version;
+//!
+//! let apps = rta::applications::all();
+//! let gh = apps.lookup("gh").unwrap();
+//! let args = rta::commands::RunArgs {
+//!   app_name: gh.name(),
+//!   version: Some(Version::from("2.34.0")),
+//!   app_args: vec![String::from("--version")],
+//!   error_on_output: false,
+//!   from_source: false,
+//!   include_apps: vec![],
+//!   optional: true,
+//!   verbose: false,
+//! };
+//! let _ = rta::commands::run(args, &apps);
+//! ```
+
+pub mod applications;
 mod archives;
 mod cli;
+pub mod commands;
 mod configuration;
 mod context;
 mod download;
@@ -13,9 +42,6 @@ mod platform;
 mod strings;
 mod subshell;
 mod yard;
-
-pub mod applications;
-pub mod commands;
 use cli::Command;
 pub use configuration::Version;
 #[cfg(test)]
