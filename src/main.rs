@@ -1,5 +1,11 @@
 use std::process::ExitCode;
 
 fn main() -> ExitCode {
-  rta::run_or_exit(std::env::args().skip(1))
+  match rta::run(std::env::args().skip(1)) {
+    Ok(exitcode) => exitcode,
+    Err(err) => {
+      err.print();
+      ExitCode::FAILURE
+    }
+  }
 }
