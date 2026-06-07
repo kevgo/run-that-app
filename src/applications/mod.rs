@@ -55,10 +55,6 @@ use crate::configuration::{TagFormat, Version};
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableArgs, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
-use dyn_clone::DynClone;
-use std::fmt::{Debug, Display};
-use std::path::Path;
-
 pub use actionlint::ActionLint;
 pub use alphavet::Alphavet;
 pub use biome::Biome;
@@ -167,7 +163,7 @@ pub fn all() -> Apps {
 }
 
 /// all the information about an application that run-that-app can install
-pub trait AppDefinition: DynClone {
+pub trait AppDefinition: dyn_clone::DynClone {
   /// the name by which the user can select this application at the run-that-app CLI
   fn name(&self) -> ApplicationName;
 
@@ -237,7 +233,7 @@ impl PartialEq for dyn AppDefinition {
   }
 }
 
-impl Debug for dyn AppDefinition {
+impl std::fmt::Debug for dyn AppDefinition {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(self.name().as_ref())
   }
@@ -265,15 +261,15 @@ impl From<&'static str> for ApplicationName {
   }
 }
 
-impl Display for ApplicationName {
+impl std::fmt::Display for ApplicationName {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(self.0)
   }
 }
 
-impl AsRef<Path> for ApplicationName {
-  fn as_ref(&self) -> &Path {
-    Path::new(&self.0)
+impl AsRef<std::path::Path> for ApplicationName {
+  fn as_ref(&self) -> &std::path::Path {
+    std::path::Path::new(&self.0)
   }
 }
 
