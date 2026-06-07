@@ -30,7 +30,7 @@
 //! // call the "gh" app at version "2.34.0" with the argument "--version"
 //! let args = rta::commands::RunArgs {
 //!   app_name: gh.name(),
-//!   version: Some(Version::from("2.34.0")),
+//!   version: Some("2.34.0".into()),
 //!   app_args: vec!["--version".into()],
 //!   error_on_output: false,
 //!   from_source: false,
