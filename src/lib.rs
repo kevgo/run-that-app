@@ -54,7 +54,7 @@ pub mod commands;
 mod configuration;
 mod context;
 mod download;
-mod error;
+pub mod error;
 mod executables;
 mod filesystem;
 mod hosting;
