@@ -10,22 +10,15 @@
 //! let exit_code = rta::run(args.into_iter());
 //! ```
 //!
-//! The same call with RTA options:
-//!
-//! ```
-//! let args: Vec<String> = vec!["--verbose".into(), "gh@2.34.0".into(), "--version".into()];
-//! let exit_code = rta::run(args.into_iter());
-//! ```
-//!
-//! Run an app via the programmatic API:
+//! You can also use the programmatic API:
 //!
 //! ```
 //! use std::process::ExitCode;
 //! use crate::rta::applications::AppDefinition;
 //!
 //! // call the "gh" app at version "2.34.0" with the argument "--version"
-//! let apps = rta::applications::all();
 //! let gh = rta::applications::Gh {};
+//! let apps = rta::applications::all();
 //!
 //! let args = rta::commands::RunArgs {
 //!   app_name: gh.name(),
