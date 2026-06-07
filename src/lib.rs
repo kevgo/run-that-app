@@ -57,6 +57,12 @@ mod platform;
 mod strings;
 mod subshell;
 mod yard;
+use crate::applications::{AppDefinition, Apps};
+use crate::commands::{RunArgs, load_or_install_app, load_or_install_apps};
+use crate::configuration::RequestedVersions;
+use crate::context::RuntimeContext;
+use crate::subshell::add_paths;
+use crate::yard::Yard;
 use cli::Cli;
 pub use configuration::Version;
 #[cfg(test)]
@@ -64,13 +70,6 @@ pub use error::UserError;
 use logging::Log;
 use std::path::Path;
 use std::process::{Command, ExitCode};
-
-use crate::applications::{AppDefinition, Apps};
-use crate::commands::{RunArgs, load_or_install_app, load_or_install_apps};
-use crate::configuration::RequestedVersions;
-use crate::context::RuntimeContext;
-use crate::subshell::add_paths;
-use crate::yard::Yard;
 
 /// Runs run-that-app with the given CLI arguments.
 ///
