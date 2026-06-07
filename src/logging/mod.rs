@@ -9,3 +9,5 @@ mod verbose;
 
 pub use event::Event;
 pub use log::{Log, new};
+pub use normal::log as normal_log;
+pub use verbose::log as verbose_log;
