@@ -20,7 +20,6 @@
 //! Run an app via the programmatic API:
 //!
 //! ```
-//! use rta::Version;
 //! use std::process::ExitCode;
 //!
 //! // find the "gh" app programmatically
