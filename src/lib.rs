@@ -24,6 +24,12 @@ use logging::Log;
 use std::process::ExitCode;
 
 /// Runs run-that-app with the given CLI arguments.
+///
+/// Example:
+/// ```
+/// let args = vec![String::from("--version")].into_iter();
+/// let exit_code = rta::run(args);
+/// ```
 pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
   let apps = applications::all();
   match cli::parse(args, &apps)? {
