@@ -1,5 +1,7 @@
 //! Custom linters for this codebase.
 
+#![allow(clippy::expect_used)]
+
 use std::collections::HashSet;
 use std::fs;
 
