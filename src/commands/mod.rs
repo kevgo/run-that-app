@@ -1,7 +1,7 @@
 //! This module implements the business logic for each top-level command that run-that-app understands.
 
 mod add;
-mod applications;
+pub(crate) mod applications;
 mod available;
 mod help;
 mod install;
@@ -20,7 +20,7 @@ pub(crate) use help::help;
 pub use install::{InstallArgs, install};
 pub use install_all::install_all;
 pub use reinstall::reinstall;
-pub use run::{RunArgs, run};
+pub use run::{RunArgs, load_or_install_app, load_or_install_apps, run};
 pub use test::{TestArgs, test};
 pub use update::{UpdateArgs, update};
 pub use version::version;
