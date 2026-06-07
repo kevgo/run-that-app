@@ -8,7 +8,7 @@ use crate::installation::{self, Outcome};
 use crate::logging::{self, Event};
 use crate::yard::Yard;
 use crate::{platform, subshell, yard};
-use std::process::ExitCode;
+use std::process::{Command, ExitCode};
 
 pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
   let app_to_run = apps.lookup(&args.app_name)?;
@@ -67,6 +67,13 @@ pub struct RunArgs {
   pub optional: bool,
 
   pub verbose: bool,
+}
+
+/// Provides a fully configured Command instance that executes the given app with the given arguments.
+///
+/// You can customize the output and execute the command your own way.
+pub fn get_cmd(app: &dyn AppDefinition, args: Vec<String>, apps: &Apps) -> Option<Command> {
+  //
 }
 
 pub fn load_or_install_apps(
