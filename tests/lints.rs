@@ -8,8 +8,9 @@ const APPLICATIONS_MOD: &str = "src/applications/mod.rs";
 #[test]
 fn applications_mod_has_pub_use_for_every_module() {
   let content = fs::read_to_string(APPLICATIONS_MOD).expect("read applications mod.rs");
-  let modules = application_modules(&content);
-  let pub_uses = application_pub_use_modules(&content);
+  let lines: Vec<String> = content.lines().map(str::trim).map(ToString::to_string).collect();
+  let modules = application_modules(&lines);
+  let pub_uses = application_pub_use_modules(&lines);
 
   let missing: Vec<&str> = modules.iter().filter(|module| !pub_uses.contains(*module)).map(String::as_str).collect();
 
@@ -21,15 +22,14 @@ fn applications_mod_has_pub_use_for_every_module() {
   );
 }
 
-fn application_modules(content: &str) -> Vec<String> {
+fn application_modules(lines: &[String]) -> Vec<String> {
   let mut modules = Vec::new();
 
-  for line in content.lines() {
-    let trimmed = line.trim();
-    if trimmed.is_empty() || trimmed.starts_with("//!") {
+  for line in lines {
+    if line.is_empty() || line.starts_with("//!") {
       continue;
     }
-    if let Some(name) = trimmed.strip_prefix("mod ").and_then(|rest| rest.strip_suffix(';')) {
+    if let Some(name) = line.strip_prefix("mod ").and_then(|rest| rest.strip_suffix(';')) {
       modules.push(name.to_string());
       continue;
     }
@@ -39,12 +39,11 @@ fn application_modules(content: &str) -> Vec<String> {
   modules
 }
 
-fn application_pub_use_modules(content: &str) -> HashSet<String> {
-  content
-    .lines()
+fn application_pub_use_modules(lines: &[String]) -> HashSet<String> {
+  lines
+    .iter()
     .filter_map(|line| {
-      let trimmed = line.trim();
-      let rest = trimmed.strip_prefix("pub use ")?;
+      let rest = line.strip_prefix("pub use ")?;
       let module = rest.split("::").next()?;
       Some(module.to_string())
     })
