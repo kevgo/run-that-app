@@ -253,6 +253,10 @@ pub enum AnalyzeResult {
 pub struct Apps(Vec<Box<dyn AppDefinition>>);
 
 impl Apps {
+  pub fn iter(&self) -> std::slice::Iter<'_, Box<dyn AppDefinition>> {
+    self.0.iter()
+  }
+
   /// provides the app with the given name
   pub fn lookup<AS: AsRef<str>>(&self, name: AS) -> Result<&dyn AppDefinition> {
     for app in &self.0 {
