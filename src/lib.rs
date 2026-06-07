@@ -58,6 +58,7 @@ mod strings;
 mod subshell;
 mod yard;
 use cli::Command;
+pub use commands::get_cmd;
 pub use configuration::Version;
 #[cfg(test)]
 pub use error::UserError;
