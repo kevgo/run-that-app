@@ -114,11 +114,12 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Cli>
   if test {
     return Ok(Cli::Test(TestArgs {
       optional,
-      start_at_app: app_version.map(|av| av.app_name),
+      start_at_app: app_version.map(|av| av.app.name()),
       verbose,
     }));
   }
-  if let Some(AppVersion { app_name, version }) = app_version {
+  if let Some(AppVersion { app, version }) = app_version {
+    let app_name = app.name();
     if add {
       return Ok(Cli::Add(AddArgs { app_name, verbose }));
     }
