@@ -5,9 +5,7 @@
 
 <br><br>
 
-_Run-that-app_ is a minimalistic cross-platform application runner.
-It runs native CLI tools on Linux, macOS, Windows,
-and BSD without requiring a prior installation.
+_Run-that-app_ runs third-party applications without the need to install them.
 
 The primary use case is running developer tools
 (linters, analyzers, formatters, etc) in scripts and CI pipelines.
