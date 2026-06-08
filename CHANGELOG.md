@@ -4,6 +4,10 @@
 
 Update for release as a Rust crate.
 
+## 0.37.1
+
+Update for release as a Rust crate.
+
 ## 0.37.0
 
 - app: prettier-standalone
