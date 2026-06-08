@@ -1,6 +1,6 @@
 # run-that-app changelog
 
-## 0.37.1
+## 0.37.2
 
 Update for release as a Rust crate.
 
