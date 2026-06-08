@@ -8,6 +8,7 @@ RIPGREP      = $(RTA) ripgrep
 RUMDL        = $(RTA) rumdl
 SHELLCHECK   = $(RTA) --optional shellcheck
 TAPLO        = $(RTA) taplo
+TEXTRUNNER   = $(NPM) exec text-runner
 
 build:  # compiles this app in debug mode
 	cargo build --locked
@@ -16,7 +17,7 @@ contest: build
 	target/debug/rta contest
 
 doc: build node_modules  # test the documentation
-	target/debug/rta npm exec text-runner
+	$(TEXTRUNNER)
 
 fix: build  # auto-corrects issues
 	cargo +nightly fix --allow-dirty
