@@ -119,6 +119,7 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Cli>
     }));
   }
   if let Some(AppVersion { app, version }) = app_version {
+    // TODO: remove this and make all places that use it use the app reference directly
     let app_name = app.name();
     if add {
       return Ok(Cli::Add(AddArgs { app_name, verbose }));
