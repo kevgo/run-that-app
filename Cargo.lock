@@ -630,7 +630,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rta"
+name = "run-that-app"
 version = "0.37.0"
 dependencies = [
  "big_s",

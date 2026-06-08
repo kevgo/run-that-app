@@ -1,8 +1,15 @@
 [package]
-name = "rta"
+name = "run-that-app"
 version = "0.37.0"
 edition = "2024"
 rust-version = "1.91"
+
+[lib]
+name = "rta"
+
+[[bin]]
+name = "rta"
+path = "src/main.rs"
 
 [dependencies]
 big_s = "1.0.2"
