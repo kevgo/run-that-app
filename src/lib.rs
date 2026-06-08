@@ -111,7 +111,6 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 ///   rta::GetCmdArgs {
 ///     version: Some("1.7.12".into()),
 ///     app_args: vec!["--help".into()],
-///     error_on_output: false,
 ///     from_source: false,
 ///     include_apps: vec![],
 ///     optional: false,
@@ -175,9 +174,6 @@ pub struct GetCmdArgs {
   /// arguments to call the app with
   #[allow(clippy::struct_field_names)]
   pub app_args: Vec<String>,
-
-  /// if true, any output produced by the app is equivalent to an exit code > 0
-  pub error_on_output: bool,
 
   /// if true, install only from source
   pub from_source: bool,
