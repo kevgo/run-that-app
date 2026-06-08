@@ -6,6 +6,6 @@ mod exit;
 mod parse;
 
 use app_version::AppVersion;
-pub use command::Command;
+pub use command::Cli;
 pub use exit::exit;
 pub use parse::parse;
