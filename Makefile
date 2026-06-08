@@ -1,3 +1,11 @@
+RTA_VERSION = 0.36.0  # run-that-app version to use
+
+RTA          = tools/rta@${RTA_VERSION}
+DPRINT       = $(RTA) dprint
+NPM          = $(RTA) npm
+RUMDL        = $(RTA) rumdl
+TAPLO        = $(RTA) taplo
+
 build:  # compiles this app in debug mode
 	cargo build --locked
 
