@@ -129,7 +129,6 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// let exit_status = cmd.status().unwrap();
 /// assert!(exit_status.success());
 /// ```
-#[allow(clippy::missing_panics_doc)] // all the unwraps here never happen
 pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result<Option<Command>, error::UserError> {
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
@@ -156,8 +155,7 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
   let mut cmd = Command::new(&executable);
   cmd.args(&args);
   for app_to_include in &include_apps {
-    #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
-    paths_to_include.push(app_to_include.executable.as_path().parent().unwrap());
+    paths_to_include.push(app_to_include.executable.parent_path());
   }
   add_paths(&mut cmd, &paths_to_include);
   Ok(Some(cmd))
