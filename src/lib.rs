@@ -102,7 +102,7 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 ///
 /// You can customize the output and execute the command your own way.
 #[allow(clippy::missing_panics_doc)] // all the unwraps here never happen
-pub fn get_cmd(app: &dyn AppDefinition, args: RunArgs, apps: &Apps) -> Result<Option<Command>, error::UserError> {
+pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result<Option<Command>, error::UserError> {
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
@@ -133,4 +133,30 @@ pub fn get_cmd(app: &dyn AppDefinition, args: RunArgs, apps: &Apps) -> Result<Op
   }
   add_paths(&mut cmd, &paths_to_include);
   Ok(Some(cmd))
+}
+
+/// data needed to run an executable
+#[derive(Debug, PartialEq)]
+#[allow(clippy::struct_excessive_bools)]
+pub struct GetCmdArgs {
+  /// possible versions of the app to execute
+  pub version: Option<Version>,
+
+  /// arguments to call the app with
+  #[allow(clippy::struct_field_names)]
+  pub app_args: Vec<String>,
+
+  /// if true, any output produced by the app is equivalent to an exit code > 0
+  pub error_on_output: bool,
+
+  /// if true, install only from source
+  pub from_source: bool,
+
+  /// other applications to include into the PATH
+  pub include_apps: Vec<Box<dyn AppDefinition>>,
+
+  /// whether it's okay to not run the app if it cannot be installed
+  pub optional: bool,
+
+  pub verbose: bool,
 }
