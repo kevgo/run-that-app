@@ -1,6 +1,7 @@
 use crate::applications::{AppDefinition, Apps};
 use crate::configuration::Version;
 use crate::error::Result;
+use std::fmt::Debug;
 
 /// a request from the user to run a particular app
 pub struct AppVersion<'a> {
@@ -8,7 +9,7 @@ pub struct AppVersion<'a> {
   pub version: Option<Version>,
 }
 
-impl std::fmt::Debug for AppVersion<'_> {
+impl Debug for AppVersion<'_> {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.debug_struct("AppVersion")
       .field("app", &self.app.name())
