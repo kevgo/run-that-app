@@ -1,16 +1,30 @@
-use crate::applications::{AppDefinition, ApplicationName, Apps};
+use crate::applications::{AppDefinition, Apps};
 use crate::configuration::Version;
 use crate::error::Result;
 
 /// a request from the user to run a particular app
-#[derive(Debug, PartialEq)]
 pub struct AppVersion<'a> {
   pub app: &'a dyn AppDefinition,
   pub version: Option<Version>,
 }
 
+impl<'a> std::fmt::Debug for AppVersion<'a> {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.debug_struct("AppVersion")
+      .field("app", &self.app.name())
+      .field("version", &self.version)
+      .finish()
+  }
+}
+
+impl<'a> PartialEq for AppVersion<'a> {
+  fn eq(&self, other: &Self) -> bool {
+    self.app.name() == other.app.name() && self.version == other.version
+  }
+}
+
 impl<'a> AppVersion<'a> {
-  pub fn new<S: AsRef<str>>(token: S, apps: &Apps) -> Result<Self> {
+  pub fn new<S: AsRef<str>>(token: S, apps: &'a Apps) -> Result<Self> {
     let (app_name, version) = token.as_ref().split_once('@').unwrap_or((token.as_ref(), ""));
     let app = apps.lookup(app_name)?;
     let version = if version.is_empty() { None } else { Some(Version::from(version)) };
