@@ -152,8 +152,7 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
     return Err(error::UserError::UnsupportedPlatform);
   };
   let (executable, args) = executable_call.with_args(args.app_args);
-  #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
-  let mut paths_to_include: Vec<&Path> = vec![&executable.as_path().parent().unwrap()];
+  let mut paths_to_include: Vec<&Path> = vec![&executable.parent_path()];
   let mut cmd = Command::new(&executable);
   cmd.args(&args);
   for app_to_include in &include_apps {
