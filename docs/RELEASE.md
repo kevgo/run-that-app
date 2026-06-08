@@ -11,7 +11,6 @@
   ```
 
 - the CI server creates the release fully automatically
-
 - publish to crates.io:
 
   ```sh
