@@ -84,7 +84,7 @@ pub fn test(args: &mut TestArgs, apps: &Apps) -> Result<ExitCode> {
 #[derive(Debug, PartialEq)]
 pub struct TestArgs {
   pub optional: bool,
-  pub start_at_app: Option<ApplicationName>,
+  pub start_at_app: Option<ApplicationName>, // TODO: make this a reference
   pub verbose: bool,
 }
 
