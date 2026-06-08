@@ -1,5 +1,3 @@
-RTA_VERSION = 0.36.0  # run-that-app version to use
-
 RTA          = target/debug/rta
 ACTIONLINT   = $(RTA) actionlint
 DPRINT       = $(RTA) dprint
