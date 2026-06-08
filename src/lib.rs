@@ -108,7 +108,6 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// use std::process::ExitCode;
 ///
 /// let actionlint = rta::applications::ActionLint {};
-/// let apps = rta::applications::all();
 /// let cmd = rta::get_cmd(
 ///   &actionlint,
 ///   rta::GetCmdArgs {
@@ -120,7 +119,7 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 ///     optional: false,
 ///     verbose: false,
 ///   },
-///   &apps,
+///   &rta::applications::all(),
 /// );
 /// let mut cmd = cmd.unwrap().unwrap();
 /// let exit_status = cmd.status().unwrap();
