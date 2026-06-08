@@ -100,7 +100,7 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Cli>
       }
     }
     if app_version.is_none() {
-      app_version = Some(AppVersion::new(arg, apps)?);
+      app_version = Some(AppVersion::parse(arg, apps)?);
     } else {
       app_args.push(arg);
     }
