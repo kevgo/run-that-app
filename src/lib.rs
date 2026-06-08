@@ -58,7 +58,6 @@ mod strings;
 mod subshell;
 mod yard;
 use crate::applications::{AppDefinition, Apps};
-use crate::cli::AppVersion;
 use crate::commands::{load_or_install_app, load_or_install_apps};
 use crate::configuration::RequestedVersions;
 use crate::context::RuntimeContext;
@@ -130,7 +129,7 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// let exit_status = cmd.status().unwrap();
 /// assert!(exit_status.success());
 /// ```
-pub fn get_cmd(app: &AppVersion, args: GetCmdArgs, apps: &Apps) -> Result<Option<Command>, error::UserError> {
+pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result<Option<Command>, error::UserError> {
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
@@ -145,9 +144,8 @@ pub fn get_cmd(app: &AppVersion, args: GetCmdArgs, apps: &Apps) -> Result<Option
   let include_app_names = args.include_apps.iter().map(|app| app.name()).collect();
   let include_app_versions = config_file.lookup_many(include_app_names);
   let include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
-  // TODO: use the app directly here instead of &app.app.name()
-  let requested_versions = RequestedVersions::determine(&app.app.name(), args.version.as_ref(), &config_file)?;
-  let Some(executable_call) = load_or_install_app(app.app, &requested_versions, args.optional, args.from_source, &ctx)? else {
+  let requested_versions = RequestedVersions::determine(&app.name(), args.version.as_ref(), &config_file)?;
+  let Some(executable_call) = load_or_install_app(app, &requested_versions, args.optional, args.from_source, &ctx)? else {
     if args.optional {
       return Ok(None);
     }
