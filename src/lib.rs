@@ -108,8 +108,6 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// use std::process::ExitCode;
 ///
 /// let actionlint = rta::applications::ActionLint {};
-/// let all_apps = rta::applications::all();
-///
 /// let cmd = rta::get_cmd(
 ///   &actionlint,
 ///   rta::GetCmdArgs {
@@ -121,7 +119,7 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 ///     optional: false,
 ///     verbose: false,
 ///   },
-///   &all_apps,
+///   &rta::applications::all(),
 /// );
 ///
 /// let Ok(cmd) = cmd else {
@@ -130,6 +128,7 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// let Some(mut cmd) = cmd else {
 ///   panic!("actionlint is not supported on this platform");
 /// };
+///
 /// let exit_status = cmd.status().unwrap();
 /// assert!(exit_status.success());
 /// ```
