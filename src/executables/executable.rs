@@ -34,6 +34,11 @@ impl Executable {
   pub fn as_path(&self) -> &Path {
     &self.0
   }
+
+  pub fn parent_path(&self) -> &Path {
+    #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
+    self.0.parent().unwrap()
+  }
 }
 
 impl Display for Executable {
