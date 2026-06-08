@@ -98,9 +98,34 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
   }
 }
 
-/// Provides a fully configured Command instance that executes the given app with the given arguments.
+/// Provides a fully configured [`std::process::Command`] instance
+/// that executes the given app with the given arguments.
+/// You can run it any way you like.
 ///
-/// You can customize the output and execute the command your own way.
+/// # Examples
+///
+/// ```
+/// use std::process::ExitCode;
+///
+/// let actionlint = rta::applications::ActionLint {};
+/// let apps = rta::applications::all();
+/// let cmd = rta::get_cmd(
+/// &actionlint,
+/// rta::GetCmdArgs {
+/// version: Some("1.7.12".into()),
+/// app_args: vec!["--version".into()],
+/// error_on_output: false,
+/// from_source: false,
+/// include_apps: vec![],
+/// optional: false,
+/// verbose: false,
+/// },
+/// &apps,
+/// );
+/// let mut cmd = cmd.unwrap().unwrap();
+/// let exit_status = cmd.status().unwrap();
+/// assert!(exit_status.success());
+/// ```
 #[allow(clippy::missing_panics_doc)] // all the unwraps here never happen
 pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result<Option<Command>, error::UserError> {
   let log = logging::new(args.verbose);
