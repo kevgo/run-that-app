@@ -1,3 +1,15 @@
+RTA          = target/debug/rta
+ACTIONLINT   = $(RTA) actionlint
+DPRINT       = $(RTA) dprint
+KEEP_SORTED  = $(RTA) keep-sorted
+NPM          = $(RTA) npm
+NODE         = $(RTA) node
+RIPGREP      = $(RTA) ripgrep
+RUMDL        = $(RTA) rumdl
+SHELLCHECK   = $(RTA) --optional shellcheck
+TAPLO        = $(RTA) taplo
+TEXTRUNNER   = $(NPM) exec text-runner
+
 build:  # compiles this app in debug mode
 	cargo build --locked
 
@@ -5,17 +17,17 @@ contest: build
 	target/debug/rta contest
 
 doc: build node_modules  # test the documentation
-	target/debug/rta npm exec text-runner
+	$(TEXTRUNNER)
 
 fix: build  # auto-corrects issues
 	cargo +nightly fix --allow-dirty
 	cargo clippy --fix --allow-dirty
 	cargo +nightly fmt
-	target/debug/rta dprint fmt
-	target/debug/rta rumdl fmt
-	target/debug/rta taplo fmt
+	$(DPRINT) fmt
+	$(RUMDL) fmt
+	$(TAPLO) fmt
 	CLICOLOR_FORCE=1 target/debug/rta shfmt -f . | xargs target/debug/rta shfmt -w
-	target/debug/rta keep-sorted $(shell target/debug/rta ripgrep -l 'keep-sorted end' ./ --glob '!Makefile')
+	$(KEEP_SORTED) $(shell $(RIPGREP) -l 'keep-sorted end' ./ --glob '!Makefile')
 
 install:  # installs this tool locally for testing
 	cargo install --locked --path .
@@ -26,11 +38,11 @@ help:  # shows all available Make commands
 lint: build  # runs all linters
 	cargo clippy --all-targets --all-features -- --deny=warnings
 	git diff --check
-	target/debug/rta actionlint
-	# target/debug/rta dprint check
-	target/debug/rta rumdl check
-	target/debug/rta taplo check
-	target/debug/rta --optional shellcheck download.sh
+	$(ACTIONLINT)
+	# $(DPRINT) check
+	$(RUMDL) check
+	$(TAPLO) check
+	$(SHELLCHECK) download.sh
 
 ps: fix test  # pitstop
 
@@ -46,7 +58,7 @@ todo:  # displays all TODO items
 
 unit: build node_modules  # runs the unit tests
 	cargo test --locked --quiet
-	target/debug/rta node --test 'text-runner/**/*.test.ts'
+	$(NODE) --test 'text-runner/**/*.test.ts'
 
 update:  # updates the dependencies
 	cargo install cargo-edit cargo-machete
@@ -61,5 +73,5 @@ update:  # updates the dependencies
 .SILENT:
 
 node_modules: package.json package-lock.json
-	target/debug/rta npm ci
+	$(NPM) ci
 	@touch node_modules  # update timestamp so that Make doesn't re-install it on every command
