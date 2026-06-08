@@ -113,7 +113,8 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
     config_file: &config_file,
     log,
   };
-  let include_app_versions = config_file.lookup_many(args.include_apps);
+  let app_names = args.include_apps.iter().map(|app| app.name()).collect();
+  let include_app_versions = config_file.lookup_many(app_names);
   let include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
   let Some(executable_call) = load_or_install_app(app, &requested_versions, args.optional, args.from_source, &ctx)? else {
