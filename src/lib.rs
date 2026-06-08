@@ -57,7 +57,7 @@ mod platform;
 mod strings;
 mod subshell;
 mod yard;
-use cli::Command;
+use cli::Cli;
 pub use configuration::Version;
 #[cfg(test)]
 pub use error::UserError;
@@ -74,19 +74,19 @@ use std::process::ExitCode;
 pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
   let apps = applications::all();
   match cli::parse(args, &apps)? {
-    Command::Add(args) => commands::add(args, &apps),
-    Command::AppsLong => Ok(commands::applications::long(&apps)),
-    Command::AppsShort => Ok(commands::applications::short(&apps)),
-    Command::Available(args) => commands::available(&args, &apps),
-    Command::DisplayHelp => Ok(commands::help()),
-    Command::Install(args) => commands::install(args, &apps),
-    Command::InstallAll => commands::install_all(&apps),
-    Command::Reinstall(args) => commands::reinstall(args, &apps),
-    Command::RunApp(args) => commands::run(args, &apps),
-    Command::Test(mut args) => commands::test(&mut args, &apps),
-    Command::Update(args) => commands::update(&args, &apps),
-    Command::Version => Ok(commands::version()),
-    Command::Versions(args) => commands::versions(&args, &apps),
-    Command::Which(args) => commands::which(&args, &apps),
+    Cli::Add(args) => commands::add(args, &apps),
+    Cli::AppsLong => Ok(commands::applications::long(&apps)),
+    Cli::AppsShort => Ok(commands::applications::short(&apps)),
+    Cli::Available(args) => commands::available(&args, &apps),
+    Cli::DisplayHelp => Ok(commands::help()),
+    Cli::Install(args) => commands::install(args, &apps),
+    Cli::InstallAll => commands::install_all(&apps),
+    Cli::Reinstall(args) => commands::reinstall(args, &apps),
+    Cli::RunApp(args) => commands::run(args, &apps),
+    Cli::Test(mut args) => commands::test(&mut args, &apps),
+    Cli::Update(args) => commands::update(&args, &apps),
+    Cli::Version => Ok(commands::version()),
+    Cli::Versions(args) => commands::versions(&args, &apps),
+    Cli::Which(args) => commands::which(&args, &apps),
   }
 }
