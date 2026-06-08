@@ -105,14 +105,12 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// # Examples
 ///
 /// ```
-/// use std::process::ExitCode;
-///
 /// let actionlint = rta::applications::ActionLint {};
 /// let cmd = rta::get_cmd(
 ///   &actionlint,
 ///   rta::GetCmdArgs {
 ///     version: Some("1.7.12".into()),
-///     app_args: vec!["--version".into()],
+///     app_args: vec!["--help".into()],
 ///     error_on_output: false,
 ///     from_source: false,
 ///     include_apps: vec![],
