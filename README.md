@@ -1,6 +1,6 @@
 <br>
 <div align="center">
-<img alt="Run that app logo" src="docs/logo.png" width="725" height="177" align="center">
+<img alt="Run that app logo" src="https://raw.githubusercontent.com/kevgo/run-that-app/refs/heads/main/docs/logo.png" width="725" height="177" align="center">
 </div>
 
 <br><br>
