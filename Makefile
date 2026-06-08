@@ -73,5 +73,5 @@ update:  # updates the dependencies
 .SILENT:
 
 node_modules: package.json package-lock.json
-	target/debug/rta npm ci
+	$(NPM) ci
 	@touch node_modules  # update timestamp so that Make doesn't re-install it on every command
