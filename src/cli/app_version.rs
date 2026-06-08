@@ -8,7 +8,7 @@ pub struct AppVersion<'a> {
   pub version: Option<Version>,
 }
 
-impl<'a> std::fmt::Debug for AppVersion<'a> {
+impl std::fmt::Debug for AppVersion<'_> {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.debug_struct("AppVersion")
       .field("app", &self.app.name())
@@ -17,7 +17,7 @@ impl<'a> std::fmt::Debug for AppVersion<'a> {
   }
 }
 
-impl<'a> PartialEq for AppVersion<'a> {
+impl PartialEq for AppVersion<'_> {
   fn eq(&self, other: &Self) -> bool {
     self.app.name() == other.app.name() && self.version == other.version
   }
