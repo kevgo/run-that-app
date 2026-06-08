@@ -4,6 +4,7 @@ use std::cmp::Ordering;
 
 #[derive(Debug, PartialEq)]
 pub struct AppVersions {
+  // TODO: make this a reference to AppDefinition
   pub app_name: ApplicationName,
   pub versions: RequestedVersions,
 }

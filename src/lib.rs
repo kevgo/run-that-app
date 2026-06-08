@@ -166,8 +166,7 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
 #[derive(Debug, PartialEq)]
 #[allow(clippy::struct_excessive_bools)]
 pub struct GetCmdArgs {
-  /// possible versions of the app to execute
-  // TODO: remove this and make the `app` command of get_cmd an AppVersion once that struct contains an AppDefinition reference
+  /// version of the app to execute
   pub version: Option<Version>,
 
   /// arguments to call the app with
