@@ -57,12 +57,19 @@ mod platform;
 mod strings;
 mod subshell;
 mod yard;
+use crate::applications::{AppDefinition, Apps};
+use crate::commands::{load_or_install_app, load_or_install_apps};
+use crate::configuration::RequestedVersions;
+use crate::context::RuntimeContext;
+use crate::subshell::add_paths;
+use crate::yard::Yard;
 use cli::Cli;
 pub use configuration::Version;
 #[cfg(test)]
 pub use error::UserError;
 use logging::Log;
-use std::process::ExitCode;
+use std::path::Path;
+use std::process::{Command, ExitCode};
 
 /// Runs run-that-app with the given CLI arguments.
 ///
@@ -89,4 +96,92 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
     Cli::Versions(args) => commands::versions(&args, &apps),
     Cli::Which(args) => commands::which(&args, &apps),
   }
+}
+
+/// Provides a fully configured [`std::process::Command`] instance
+/// that executes the given app with the given arguments.
+/// You can run it any way you like.
+///
+/// # Examples
+///
+/// ```
+/// let actionlint = rta::applications::ActionLint {};
+/// let cmd = rta::get_cmd(
+///   &actionlint,
+///   rta::GetCmdArgs {
+///     version: Some("1.7.12".into()),
+///     app_args: vec!["--help".into()],
+///     from_source: false,
+///     include_apps: vec![],
+///     optional: false,
+///     verbose: false,
+///   },
+///   &rta::applications::all(),
+/// );
+///
+/// let Ok(cmd) = cmd else {
+///   panic!("ran into an error: {:?}", cmd.err());
+/// };
+/// let Some(mut cmd) = cmd else {
+///   panic!("actionlint is not supported on this platform");
+/// };
+///
+/// let exit_status = cmd.status().unwrap();
+/// assert!(exit_status.success());
+/// ```
+pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result<Option<Command>, error::UserError> {
+  let log = logging::new(args.verbose);
+  let platform = platform::detect(log)?;
+  let yard = Yard::load_or_create(&yard::production_location()?)?;
+  let config_file = configuration::File::load(apps)?;
+  let ctx = RuntimeContext {
+    platform,
+    yard: &yard,
+    config_file: &config_file,
+    log,
+  };
+  // TODO: remove this and make all places that use the app names use app references directly
+  let include_app_names = args.include_apps.iter().map(|app| app.name()).collect();
+  let include_app_versions = config_file.lookup_many(include_app_names);
+  let include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
+  let requested_versions = RequestedVersions::determine(&app.name(), args.version.as_ref(), &config_file)?;
+  let Some(executable_call) = load_or_install_app(app, &requested_versions, args.optional, args.from_source, &ctx)? else {
+    if args.optional {
+      return Ok(None);
+    }
+    return Err(error::UserError::UnsupportedPlatform);
+  };
+  let (executable, args) = executable_call.with_args(args.app_args);
+  let mut paths_to_include: Vec<&Path> = vec![&executable.parent_path()];
+  let mut cmd = Command::new(&executable);
+  cmd.args(&args);
+  for app_to_include in &include_apps {
+    paths_to_include.push(app_to_include.executable.parent_path());
+  }
+  add_paths(&mut cmd, &paths_to_include);
+  Ok(Some(cmd))
+}
+
+/// data needed to run an executable
+#[derive(Debug, PartialEq)]
+#[allow(clippy::struct_excessive_bools)]
+pub struct GetCmdArgs {
+  /// possible versions of the app to execute
+  // TODO: remove this and make the `app` command of get_cmd an AppVersion once that struct contains an AppDefinition reference
+  pub version: Option<Version>,
+
+  /// arguments to call the app with
+  #[allow(clippy::struct_field_names)]
+  pub app_args: Vec<String>,
+
+  /// if true, install only from source
+  pub from_source: bool,
+
+  /// other applications to include into the PATH
+  pub include_apps: Vec<Box<dyn AppDefinition>>,
+
+  /// whether it's okay to not run the app if it cannot be installed
+  pub optional: bool,
+
+  pub verbose: bool,
 }
