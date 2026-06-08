@@ -110,17 +110,17 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// let actionlint = rta::applications::ActionLint {};
 /// let apps = rta::applications::all();
 /// let cmd = rta::get_cmd(
-/// &actionlint,
-/// rta::GetCmdArgs {
-/// version: Some("1.7.12".into()),
-/// app_args: vec!["--version".into()],
-/// error_on_output: false,
-/// from_source: false,
-/// include_apps: vec![],
-/// optional: false,
-/// verbose: false,
-/// },
-/// &apps,
+///   &actionlint,
+///   rta::GetCmdArgs {
+///     version: Some("1.7.12".into()),
+///     app_args: vec!["--version".into()],
+///     error_on_output: false,
+///     from_source: false,
+///     include_apps: vec![],
+///     optional: false,
+///     verbose: false,
+///   },
+///   &apps,
 /// );
 /// let mut cmd = cmd.unwrap().unwrap();
 /// let exit_status = cmd.status().unwrap();
