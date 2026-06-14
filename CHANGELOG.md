@@ -2,6 +2,10 @@
 
 ## 0.37.2
 
+- all internal non-error messages to go STDERR
+
+## 0.37.2
+
 Update for release as a Rust crate.
 
 ## 0.37.1
