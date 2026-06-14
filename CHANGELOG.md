@@ -1,6 +1,6 @@
 # run-that-app changelog
 
-## 0.37.2
+## 0.37.3
 
 - all internal non-error messages to go STDERR
 
