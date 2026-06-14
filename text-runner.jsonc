@@ -8,6 +8,13 @@
   // To exclude the "vendor" folder: '{,!(vendor)/**/}*.md'
   "files": "**/*.md",
 
+  "exclude": [
+    "node_modules",
+    "target",
+    ".git",
+    ".vscode"
+  ],
+
   // the formatter to use (detailed, dot, progress, summary)
   "format": "dot",
 
