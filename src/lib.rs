@@ -108,7 +108,7 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 ///
 /// ```
 /// let actionlint = rta::applications::ActionLint {};
-/// let cmd = rta::get_cmd(
+/// let cmd_info = rta::get_cmd(
 ///   &actionlint,
 ///   rta::GetCmdArgs {
 ///     version: Some("1.7.12".into()),
@@ -121,13 +121,14 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 ///   &rta::applications::all(),
 /// );
 ///
-/// let Ok(cmd) = cmd else {
-///   panic!("ran into an error: {:?}", cmd.err());
+/// let Ok(cmd_info) = cmd_info else {
+///   panic!("ran into an error: {:?}", cmd_info.err());
 /// };
-/// let Some(mut cmd) = cmd else {
+/// let Some(mut cmd_info) = cmd_info else {
 ///   panic!("actionlint is not supported on this platform");
 /// };
 ///
+/// let cmd = std::process::Command::from(cmd_info);
 /// let exit_status = cmd.status().unwrap();
 /// assert!(exit_status.success());
 /// ```
