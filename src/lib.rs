@@ -58,11 +58,10 @@ mod strings;
 mod subshell;
 mod yard;
 use crate::applications::{AppDefinition, Apps};
-use crate::commands::{load_or_install_app, load_or_install_apps};
+use crate::commands::load_or_install_app;
 use crate::configuration::RequestedVersions;
 use crate::context::RuntimeContext;
 use crate::executables::CommandInfo;
-use crate::subshell::add_paths;
 use crate::yard::Yard;
 use cli::Cli;
 pub use configuration::Version;
@@ -70,7 +69,7 @@ pub use configuration::Version;
 pub use error::UserError;
 use logging::Log;
 use std::path::Path;
-use std::process::{Command, ExitCode};
+use std::process::ExitCode;
 
 /// Runs run-that-app with the given CLI arguments.
 ///
@@ -141,10 +140,6 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
     config_file: &config_file,
     log,
   };
-  // TODO: remove this and make all places that use the app names use app references directly
-  let include_app_names = args.include_apps.iter().map(|app| app.name()).collect();
-  let include_app_versions = config_file.lookup_many(include_app_names);
-  let include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
   let requested_versions = RequestedVersions::determine(&app.name(), args.version.as_ref(), &config_file)?;
   let Some(executable_call) = load_or_install_app(app, &requested_versions, args.optional, args.from_source, &ctx)? else {
     if args.optional {
@@ -153,19 +148,14 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
     return Err(error::UserError::UnsupportedPlatform);
   };
   let (executable, args) = executable_call.with_args(args.app_args);
-  let mut paths_to_include: Vec<&Path> = vec![&executable.parent_path()];
+  let paths_to_include: Vec<&Path> = vec![&executable.parent_path()];
+  let env_path = subshell::path_expressions(&paths_to_include);
   let cmd_info = CommandInfo {
     executable: executable.into(),
     args,
-    env_path: None,
+    env_path,
   };
-  let mut cmd = Command::new(&executable);
-  cmd.args(&args);
-  for app_to_include in &include_apps {
-    paths_to_include.push(app_to_include.executable.parent_path());
-  }
-  add_paths(&mut cmd, &paths_to_include);
-  Ok(Some(cmd))
+  Ok(Some(cmd_info))
 }
 
 /// data needed to run an executable

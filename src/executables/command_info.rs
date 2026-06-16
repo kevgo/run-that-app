@@ -1,4 +1,5 @@
 use std::env;
+use std::ffi::OsString;
 use std::path::PathBuf;
 use std::process::Command;
 
@@ -11,17 +12,16 @@ pub struct CommandInfo {
   pub args: Vec<String>,
 
   /// the PATH environment variable to use when running this command
-  pub env_path: Option<String>,
+  pub env_path: OsString,
 }
 
 impl CommandInfo {
-  pub fn to_command(&self) -> Command {
-    let mut cmd = Command::new(&self.executable);
-    cmd.args(&self.args);
+  pub fn to_command(self) -> Command {
+    let CommandInfo { executable, args, env_path } = self;
+    let mut cmd = Command::new(executable);
+    cmd.args(args);
     cmd.envs(env::vars_os());
-    if let Some(env_path) = &self.env_path {
-      cmd.env("PATH", env_path);
-    }
+    cmd.env("PATH", env_path);
     cmd
   }
 }

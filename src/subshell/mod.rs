@@ -20,6 +20,10 @@ pub fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
   cmd.env("PATH", join_path_expressions(&join_paths(dirs), &env::var_os("PATH").unwrap_or_default()));
 }
 
+pub fn path_expressions(dirs: &[&Path]) -> OsString {
+  join_path_expressions(&join_paths(dirs), &env::var_os("PATH").unwrap_or_default())
+}
+
 /// joins the given PATH expressions (containing multiple paths) into a single PATH expression
 fn join_path_expressions(first: &OsString, second: &OsString) -> OsString {
   let mut new_path = OsString::with_capacity(first.len() + second.len() + 1);
