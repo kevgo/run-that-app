@@ -61,7 +61,7 @@ use crate::applications::{AppDefinition, Apps};
 use crate::commands::{load_or_install_app, load_or_install_apps};
 use crate::configuration::RequestedVersions;
 use crate::context::RuntimeContext;
-use crate::subshell::add_paths;
+pub use crate::executables::CommandInfo;
 use crate::yard::Yard;
 use cli::Cli;
 pub use configuration::Version;
@@ -69,7 +69,7 @@ pub use configuration::Version;
 pub use error::UserError;
 use logging::Log;
 use std::path::Path;
-use std::process::{Command, ExitCode};
+use std::process::ExitCode;
 
 /// Runs run-that-app with the given CLI arguments.
 ///
@@ -98,15 +98,17 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
   }
 }
 
-/// Provides a fully configured [`std::process::Command`] instance
+/// Provides a placeholder for a fully configured [`std::process::Command`] instance
 /// that executes the given app with the given arguments.
 /// You can run it any way you like.
+/// The placeholder differs that it is able to provide information about the command to execute.
+/// You can convert [`CommandInfo`] instances into actual [`std::process::Command`] instances via the `From` trait.
 ///
 /// # Examples
 ///
 /// ```
 /// let actionlint = rta::applications::ActionLint {};
-/// let cmd = rta::get_cmd(
+/// let cmd_info = rta::get_cmd(
 ///   &actionlint,
 ///   rta::GetCmdArgs {
 ///     version: Some("1.7.12".into()),
@@ -119,17 +121,18 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 ///   &rta::applications::all(),
 /// );
 ///
-/// let Ok(cmd) = cmd else {
-///   panic!("ran into an error: {:?}", cmd.err());
+/// let Ok(cmd_info) = cmd_info else {
+///   panic!("ran into an error: {:?}", cmd_info.err());
 /// };
-/// let Some(mut cmd) = cmd else {
+/// let Some(mut cmd_info) = cmd_info else {
 ///   panic!("actionlint is not supported on this platform");
 /// };
 ///
+/// let mut cmd = std::process::Command::from(cmd_info);
 /// let exit_status = cmd.status().unwrap();
 /// assert!(exit_status.success());
 /// ```
-pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result<Option<Command>, error::UserError> {
+pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result<Option<CommandInfo>, error::UserError> {
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
@@ -153,13 +156,16 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
   };
   let (executable, args) = executable_call.with_args(args.app_args);
   let mut paths_to_include: Vec<&Path> = vec![&executable.parent_path()];
-  let mut cmd = Command::new(&executable);
-  cmd.args(&args);
   for app_to_include in &include_apps {
     paths_to_include.push(app_to_include.executable.parent_path());
   }
-  add_paths(&mut cmd, &paths_to_include);
-  Ok(Some(cmd))
+  let env_path = subshell::path_expressions(&paths_to_include);
+  let cmd_info = CommandInfo {
+    executable: executable.into(),
+    args,
+    env_path,
+  };
+  Ok(Some(cmd_info))
 }
 
 /// data needed to run an executable
