@@ -58,10 +58,10 @@ mod strings;
 mod subshell;
 mod yard;
 use crate::applications::{AppDefinition, Apps};
-use crate::commands::load_or_install_app;
+use crate::commands::{load_or_install_app, load_or_install_apps};
 use crate::configuration::RequestedVersions;
 use crate::context::RuntimeContext;
-use crate::executables::CommandInfo;
+pub use crate::executables::CommandInfo;
 use crate::yard::Yard;
 use cli::Cli;
 pub use configuration::Version;
@@ -98,9 +98,11 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
   }
 }
 
-/// Provides a fully configured [`std::process::Command`] instance
+/// Provides a placeholder for a fully configured [`std::process::Command`] instance
 /// that executes the given app with the given arguments.
 /// You can run it any way you like.
+/// The placeholder differs that it is able to provide information about the command to execute.
+/// You can convert [`CommandInfo`] instances into actual [`std::process::Command`] instances via the `From` trait.
 ///
 /// # Examples
 ///
@@ -140,6 +142,10 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
     config_file: &config_file,
     log,
   };
+  // TODO: remove this and make all places that use the app names use app references directly
+  let include_app_names = args.include_apps.iter().map(|app| app.name()).collect();
+  let include_app_versions = config_file.lookup_many(include_app_names);
+  let include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
   let requested_versions = RequestedVersions::determine(&app.name(), args.version.as_ref(), &config_file)?;
   let Some(executable_call) = load_or_install_app(app, &requested_versions, args.optional, args.from_source, &ctx)? else {
     if args.optional {
@@ -148,7 +154,10 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
     return Err(error::UserError::UnsupportedPlatform);
   };
   let (executable, args) = executable_call.with_args(args.app_args);
-  let paths_to_include: Vec<&Path> = vec![&executable.parent_path()];
+  let mut paths_to_include: Vec<&Path> = vec![&executable.parent_path()];
+  for app_to_include in &include_apps {
+    paths_to_include.push(app_to_include.executable.parent_path());
+  }
   let env_path = subshell::path_expressions(&paths_to_include);
   let cmd_info = CommandInfo {
     executable: executable.into(),
