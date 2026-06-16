@@ -27,10 +27,6 @@ impl Executable {
     subshell::capture_output(self, args)
   }
 
-  pub fn inner(self) -> PathBuf {
-    self.0
-  }
-
   pub fn as_path(&self) -> &Path {
     &self.0
   }

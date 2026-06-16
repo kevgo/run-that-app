@@ -61,6 +61,7 @@ use crate::applications::{AppDefinition, Apps};
 use crate::commands::{load_or_install_app, load_or_install_apps};
 use crate::configuration::RequestedVersions;
 use crate::context::RuntimeContext;
+use crate::executables::CommandInfo;
 use crate::subshell::add_paths;
 use crate::yard::Yard;
 use cli::Cli;
@@ -129,7 +130,7 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// let exit_status = cmd.status().unwrap();
 /// assert!(exit_status.success());
 /// ```
-pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result<Option<Command>, error::UserError> {
+pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result<Option<CommandInfo>, error::UserError> {
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
@@ -153,6 +154,11 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
   };
   let (executable, args) = executable_call.with_args(args.app_args);
   let mut paths_to_include: Vec<&Path> = vec![&executable.parent_path()];
+  let cmd_info = CommandInfo {
+    executable: executable.into(),
+    args,
+    env_path: None,
+  };
   let mut cmd = Command::new(&executable);
   cmd.args(&args);
   for app_to_include in &include_apps {
