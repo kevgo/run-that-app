@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+## 0.38.0
+
+- the API now exports a `Command` placeholder that allows inspection
+
 ## 0.37.3
 
 - all internal non-error messages to go STDERR
