@@ -128,7 +128,7 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 ///   panic!("actionlint is not supported on this platform");
 /// };
 ///
-/// let cmd = std::process::Command::from(cmd_info);
+/// let mut cmd = std::process::Command::from(cmd_info);
 /// let exit_status = cmd.status().unwrap();
 /// assert!(exit_status.success());
 /// ```
