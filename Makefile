@@ -52,7 +52,7 @@ setup:  # install development dependencies on this computer
 	rustup toolchain add nightly
 	rustup component add rustfmt --toolchain nightly
 
-setup-githooks: ${RTA}  ## installs the Git pre-commit to auto-format
+setup-githooks: build  ## installs the Git pre-commit to auto-format
 	@$(LEFTHOOK) install
 
 test: unit lint doc  # runs all tests
