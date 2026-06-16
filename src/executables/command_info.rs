@@ -15,9 +15,9 @@ pub struct CommandInfo {
   pub env_path: OsString,
 }
 
-impl CommandInfo {
-  pub fn to_command(self) -> Command {
-    let CommandInfo { executable, args, env_path } = self;
+impl From<CommandInfo> for Command {
+  fn from(value: CommandInfo) -> Self {
+    let CommandInfo { executable, args, env_path } = value;
     let mut cmd = Command::new(executable);
     cmd.args(args);
     cmd.envs(env::vars_os());
