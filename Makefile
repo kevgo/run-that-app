@@ -2,6 +2,7 @@ RTA          = target/debug/rta
 ACTIONLINT   = $(RTA) actionlint
 DPRINT       = $(RTA) dprint
 KEEP_SORTED  = $(RTA) keep-sorted
+LEFTHOOK     = $(RTA) lefthook
 NPM          = $(RTA) npm
 NODE         = $(RTA) node
 RIPGREP      = $(RTA) ripgrep
