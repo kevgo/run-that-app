@@ -2,6 +2,7 @@ RTA          = target/debug/rta
 ACTIONLINT   = $(RTA) actionlint
 DPRINT       = $(RTA) dprint
 KEEP_SORTED  = $(RTA) keep-sorted
+LEFTHOOK     = $(RTA) lefthook
 NPM          = $(RTA) npm
 NODE         = $(RTA) node
 RIPGREP      = $(RTA) ripgrep
@@ -50,6 +51,9 @@ setup:  # install development dependencies on this computer
 	rustup component add clippy
 	rustup toolchain add nightly
 	rustup component add rustfmt --toolchain nightly
+
+setup-githooks: build  ## installs the Git pre-commit to auto-format
+	@$(LEFTHOOK) install
 
 test: unit lint doc  # runs all tests
 
