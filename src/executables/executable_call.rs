@@ -2,7 +2,7 @@ use super::Executable;
 use crate::error::{Result, UserError};
 use crate::installation::BinFolder;
 use std::fmt::{Display, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 /// information to call an `App`s executable, as it is defined by the user
 #[derive(Clone)]
@@ -49,7 +49,12 @@ pub enum ExecutableArgs {
   /// the executable is called without any additional arguments
   None,
   /// uses the first of the given options that exists inside the folder that application is installed in
-  OneOfTheseInAppFolder { options: Vec<&'static str> },
+  OneOfTheseInAppFolder {
+    options: Vec<&'static str>,
+  },
+  InMyFolder {
+    path: PathBuf,
+  },
 }
 
 impl ExecutableArgs {

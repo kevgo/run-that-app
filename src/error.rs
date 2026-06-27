@@ -13,7 +13,7 @@ pub enum UserError {
   ArchiveCannotExtract { reason: String },
   CannotAccessConfigFile(String),
   CannotCompileRustSource { err: String },
-  CannotCreateFile { filename: &'static str, err: String },
+  CannotCreateFile { filepath: String, err: String },
   CannotCreateFolder { folder: PathBuf, reason: String },
   CannotCreateTempDir { err: String },
   CannotDeleteFolder { folder: PathBuf, err: String },
@@ -74,7 +74,7 @@ impl UserError {
       UserError::CannotCompileRustSource { err } => error(&format!("cannot compile Rust source: {err}")),
       UserError::CannotDeleteFolder { folder, err } => error(&format!("cannot delete folder {}: {err}", folder.to_string_lossy())),
       UserError::CannotDetermineCurrentDirectory(reason) => error(&format!("cannot determine the current directory: {reason}")),
-      UserError::CannotCreateFile { filename, err } => error(&format!("cannot create file {filename}: {err}")),
+      UserError::CannotCreateFile { filepath: filename, err } => error(&format!("cannot create file {filename}: {err}")),
       UserError::CannotCreateFolder { folder, reason } => {
         error(&format!("cannot create folder {folder}: {reason}", folder = folder.to_string_lossy()));
         desc("Please check access permissions and try again.");

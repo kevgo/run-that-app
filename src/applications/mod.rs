@@ -51,6 +51,8 @@ mod ty;
 mod uv;
 mod yamlfmt;
 
+use std::path::Path;
+
 use crate::Log;
 use crate::configuration::{TagFormat, Version};
 use crate::error::{Result, UserError};
@@ -230,7 +232,11 @@ pub fn carrier<'a>(app: &'a dyn AppDefinition, version: &Version, platform: Plat
     RunMethod::OtherAppDefaultExecutable { app_definition, args } => {
       (dyn_clone::clone_box(app_definition.as_ref()), app_definition.executable_filename(), args)
     }
-    RunMethod::NodeJS { package_name, executable_path } => (Box::new(Npm {}), , ExecutableArgs::None),
+    RunMethod::NodeJS { package_name, executable_path } => {
+      let node = NodeJS {};
+      let executable_filename = node.executable_filename();
+      (Box::new(node), executable_filename, ExecutableArgs::InMyFolder { path: executable_path.into() })
+    }
   }
 }
 

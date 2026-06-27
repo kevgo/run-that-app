@@ -4,8 +4,9 @@ mod compile_go;
 mod compile_rust;
 mod download_archive;
 mod download_executable;
+mod install_nodejs_package;
 
-use crate::applications::{AppDefinition, ApplicationName};
+use crate::applications::{AppDefinition, ApplicationName, Apps};
 use crate::configuration::Version;
 use crate::context::RuntimeContext;
 use crate::download::Url;
@@ -178,12 +179,12 @@ impl Display for BinFolder {
 }
 
 /// installs the given app using the first of the given installation methods that works
-pub fn any(app_definition: &dyn AppDefinition, version: &Version, optional: bool, from_source: bool, ctx: &RuntimeContext) -> Result<Outcome> {
+pub fn any(app_definition: &dyn AppDefinition, version: &Version, optional: bool, from_source: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Outcome> {
   for install_method in app_definition.run_method(version, ctx.platform).install_methods() {
     if from_source && !install_method.is_from_source() {
       continue;
     }
-    let outcome = install(app_definition, &install_method, version, optional, from_source, ctx)?;
+    let outcome = install(app_definition, &install_method, version, optional, from_source, ctx, apps)?;
     if outcome.success() {
       return Ok(outcome);
     }
@@ -199,6 +200,7 @@ pub fn install(
   optional: bool,
   from_source: bool,
   ctx: &RuntimeContext,
+  apps: &Apps,
 ) -> Result<Outcome> {
   let app_folder = ctx.yard.create_app_folder(&app_definition.name(), version)?;
   match install_method {
@@ -207,6 +209,7 @@ pub fn install(
     Method::CompileGoSource { import_path } => compile_go::run(&app_folder, import_path, optional, from_source, ctx),
     Method::CompileRustCrate { name, bin_folder: _ } => compile_rust::run(app_definition, version, &app_folder, &RustSource::CratesIo { name }, ctx.log),
     Method::CompileRustRepo { url } => compile_rust::run(app_definition, version, &app_folder, &RustSource::Repository { url: url.clone() }, ctx.log),
+    Method::InstallNodeJSPackage { package_name } => install_nodejs_package::run(package_name, &app_folder, version, optional, apps),
   }
 }
 
