@@ -30,6 +30,10 @@ impl ExecutableCallDefinition {
         }
         None
       }
+      ExecutableArgs::InMyFolder { path } => Some(ExecutableCall {
+        executable: self.executable,
+        args: vec![path.to_string_lossy().to_string()],
+      }),
     }
   }
 }
@@ -49,12 +53,9 @@ pub enum ExecutableArgs {
   /// the executable is called without any additional arguments
   None,
   /// uses the first of the given options that exists inside the folder that application is installed in
-  OneOfTheseInAppFolder {
-    options: Vec<&'static str>,
-  },
-  InMyFolder {
-    path: PathBuf,
-  },
+  OneOfTheseInAppFolder { options: Vec<&'static str> },
+  /// uses the given path inside the folder of the app that defines this
+  InMyFolder { path: PathBuf },
 }
 
 impl ExecutableArgs {
@@ -73,6 +74,7 @@ impl ExecutableArgs {
         }
         Err(UserError::CannotFindExecutable)
       }
+      ExecutableArgs::InMyFolder { path } => Ok(vec![app_folder.join(path).to_string_lossy().to_string()]),
     }
   }
 }
@@ -89,6 +91,7 @@ impl Display for ExecutableArgs {
         }
         Ok(())
       }
+      ExecutableArgs::InMyFolder { path } => f.write_str(&format!("{} in the current app folder", &path.display())),
     }
   }
 }

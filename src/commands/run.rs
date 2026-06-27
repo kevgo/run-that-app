@@ -25,7 +25,7 @@ pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
   let include_app_versions = config_file.lookup_many(args.include_apps);
   let include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
-  let Some(executable_call) = load_or_install_app(app_to_run, &requested_versions, args.optional, args.from_source, &ctx)? else {
+  let Some(executable_call) = load_or_install_app(app_to_run, &requested_versions, args.optional, args.from_source, &ctx, apps)? else {
     if args.optional {
       return Ok(ExitCode::SUCCESS);
     }
@@ -79,7 +79,7 @@ pub fn load_or_install_apps(
   let mut result = vec![];
   for app_version in app_versions {
     let app = apps.lookup(&app_version.app_name)?;
-    if let Some(executable_call) = load_or_install_app(app, &app_version.versions, optional, from_source, ctx)? {
+    if let Some(executable_call) = load_or_install_app(app, &app_version.versions, optional, from_source, ctx, apps)? {
       result.push(executable_call);
     }
   }
@@ -92,9 +92,10 @@ pub fn load_or_install_app(
   optional: bool,
   from_source: bool,
   ctx: &RuntimeContext,
+  apps: &Apps,
 ) -> Result<Option<ExecutableCall>> {
   for requested_version in requested_versions {
-    if let Some(executable_call) = load_or_install(app_definition, requested_version, optional, from_source, ctx)? {
+    if let Some(executable_call) = load_or_install(app_definition, requested_version, optional, from_source, ctx, apps)? {
       return Ok(Some(executable_call));
     }
   }
@@ -107,6 +108,7 @@ fn load_or_install(
   optional: bool,
   from_source: bool,
   ctx: &RuntimeContext,
+  apps: &Apps,
 ) -> Result<Option<ExecutableCall>> {
   match requested_version {
     RequestedVersion::Path(version) => {
@@ -118,7 +120,7 @@ fn load_or_install(
       }
       Ok(None)
     }
-    RequestedVersion::Yard(version) => load_or_install_from_yard(app_definition, version, optional, from_source, ctx),
+    RequestedVersion::Yard(version) => load_or_install_from_yard(app_definition, version, optional, from_source, ctx, apps),
   }
 }
 
@@ -172,6 +174,7 @@ fn load_or_install_from_yard(
   optional: bool,
   from_source: bool,
   ctx: &RuntimeContext,
+  apps: &Apps,
 ) -> Result<Option<ExecutableCall>> {
   let (app_to_install, executable_name, executable_args) = carrier(app_definition, version, ctx.platform);
   let app_name = app_to_install.name();
@@ -186,7 +189,7 @@ fn load_or_install_from_yard(
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  match installation::any(app_to_install.as_ref(), version, optional, from_source, ctx)? {
+  match installation::any(app_to_install.as_ref(), version, optional, from_source, ctx, apps)? {
     Outcome::Installed => {} // we'll load it below
     Outcome::NotInstalled => {
       ctx.yard.mark_not_installable(&app_name, version)?;
