@@ -71,6 +71,7 @@ pub use exhaustruct::Exhaustruct;
 pub use fd::Fd;
 pub use funcorder::FuncOrder;
 pub use gh::Gh;
+pub use gherkinlint::GherkinLint;
 pub use ghokin::Ghokin;
 pub use go::Go;
 pub use goda::Goda;

@@ -10,8 +10,8 @@ use const_format::formatcp;
 #[derive(Clone)]
 pub struct GherkinLint {}
 
-const ORG: &str = "antham";
-const REPO: &str = "ghokin";
+const ORG: &str = "gherkin-lint";
+const REPO: &str = "gherkin-lint";
 
 impl AppDefinition for GherkinLint {
   fn name(&self) -> ApplicationName {
