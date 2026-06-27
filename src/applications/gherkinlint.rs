@@ -1,13 +1,11 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
-use crate::applications::NodeJS;
 use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
-use crate::executables::{Executable, ExecutableArgs, RunMethod};
+use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::platform::Platform;
 use const_format::formatcp;
-use std::path::Path;
 
 #[derive(Clone)]
 pub struct GherkinLint {}
@@ -25,11 +23,9 @@ impl AppDefinition for GherkinLint {
   }
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {
-    RunMethod::OtherAppDefaultExecutable {
-      app_definition: Box::new(NodeJS {}),
-      args: ExecutableArgs::InMyFolder {
-        path: Path::new("node_modules").join("bin").join("gherkin-lint"),
-      },
+    RunMethod::NodeJS {
+      package_name: "gherkin-lint".into(),
+      executable_path: "node_modules/.bin/gherkin-lint".into(),
     }
   }
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
