@@ -25,7 +25,7 @@ pub fn run(package_name: &str, app_folder: &Path, version: &Version, optional: b
   let npm = Npm {};
   commands::run(
     RunArgs {
-      app_name: npm.name().into(),
+      app_name: npm.name(),
       app_args: vec!["install".to_string()],
       version: None,
       optional,

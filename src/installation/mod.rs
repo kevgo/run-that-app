@@ -56,7 +56,7 @@ pub enum Method {
   },
 
   InstallNodeJSPackage {
-    /// the name of the NodeJS package to install
+    /// the name of the `NodeJS` package to install
     package_name: String,
   },
 }
