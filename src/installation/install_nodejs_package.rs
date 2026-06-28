@@ -3,8 +3,8 @@ use crate::commands::RunArgs;
 use crate::error::{Result, UserError};
 use crate::installation::Outcome;
 use crate::{Version, commands, logging};
-use std::path::Path;
 use std::fs;
+use std::path::Path;
 
 pub fn run(package_name: &str, app_folder: &Path, version: &Version, optional: bool, apps: &Apps) -> Result<Outcome> {
   // create the package.json file

@@ -38,15 +38,15 @@ impl AppDefinition for GherkinLint {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
-    if !output.contains("Clean and/or apply transformation on gherkin files") {
+    if !output.contains(".gherkin-lintrc") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    // as of 3.4.0 ghokin's "version" command prints nothing
+    // gherkin-lint has no version command
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 
   fn tag_format(&self) -> TagFormat {
-    TagFormat::PrefixV
+    TagFormat::Plain
   }
 }
 

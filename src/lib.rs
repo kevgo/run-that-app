@@ -24,6 +24,7 @@
 //!   app_name: gh.name(),
 //!   version: Some("2.34.0".into()),
 //!   app_args: vec!["--version".into()],
+//!   cwd: None,
 //!   error_on_output: false,
 //!   from_source: false,
 //!   include_apps: vec![],

@@ -184,7 +184,11 @@ fn load_or_install_from_yard(
   // A NodeJS package is installed into its own app folder via "npm install" and then executed through NodeJS.
   // This needs to install two separate apps (the package and NodeJS itself, each with their own version),
   // so it cannot go through the generic single-app installation flow below.
-  if let RunMethod::NodeJS { package_name: _, executable_path } = app_definition.run_method(version, ctx.platform) {
+  if let RunMethod::NodeJS {
+    package_name: _,
+    executable_path,
+  } = app_definition.run_method(version, ctx.platform)
+  {
     return load_or_install_nodejs_package(app_definition, &executable_path, version, optional, from_source, ctx, apps);
   }
   let (app_to_install, executable_name, executable_args) = carrier(app_definition, version, ctx.platform);
