@@ -58,6 +58,7 @@ mod tests {
     use crate::configuration::Version;
     use crate::executables::RunMethod;
     use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
 
     #[test]
     fn linux_arm() {
@@ -69,8 +70,8 @@ mod tests {
         },
       );
       let want = RunMethod::NodeJS {
-        package_name: "gherkin-lint".into(),
-        executable_path: "node_modules/.bin/gherkin-lint".into(),
+        package_name: S("gherkin-lint"),
+        executable_path: S("node_modules/.bin/gherkin-lint"),
       };
       assert_eq!(have, want);
     }
@@ -85,8 +86,8 @@ mod tests {
         },
       );
       let want = RunMethod::NodeJS {
-        package_name: "gherkin-lint".into(),
-        executable_path: "node_modules/.bin/gherkin-lint".into(),
+        package_name: S("gherkin-lint"),
+        executable_path: S("node_modules/.bin/gherkin-lint"),
       };
       assert_eq!(have, want);
     }
@@ -101,8 +102,8 @@ mod tests {
         },
       );
       let want = RunMethod::NodeJS {
-        package_name: "gherkin-lint".into(),
-        executable_path: "node_modules/.bin/gherkin-lint".into(),
+        package_name: S("gherkin-lint"),
+        executable_path: S("node_modules/.bin/gherkin-lint"),
       };
       assert_eq!(have, want);
     }
@@ -117,8 +118,8 @@ mod tests {
         },
       );
       let want = RunMethod::NodeJS {
-        package_name: "gherkin-lint".into(),
-        executable_path: "node_modules/.bin/gherkin-lint".into(),
+        package_name: S("gherkin-lint"),
+        executable_path: S("node_modules/.bin/gherkin-lint"),
       };
       assert_eq!(have, want);
     }
@@ -133,8 +134,8 @@ mod tests {
         },
       );
       let want = RunMethod::NodeJS {
-        package_name: "gherkin-lint".into(),
-        executable_path: "node_modules/.bin/gherkin-lint".into(),
+        package_name: S("gherkin-lint"),
+        executable_path: S("node_modules/.bin/gherkin-lint"),
       };
       assert_eq!(have, want);
     }
@@ -149,8 +150,8 @@ mod tests {
         },
       );
       let want = RunMethod::NodeJS {
-        package_name: "gherkin-lint".into(),
-        executable_path: "node_modules/.bin/gherkin-lint".into(),
+        package_name: S("gherkin-lint"),
+        executable_path: S("node_modules/.bin/gherkin-lint"),
       };
       assert_eq!(have, want);
     }
