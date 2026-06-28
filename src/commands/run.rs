@@ -1,8 +1,8 @@
-use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps, carrier};
+use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps, NodeJS, carrier};
 use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersions, Version};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::executables::{ExecutableCall, ExecutableCallDefinition};
+use crate::executables::{ExecutableCall, ExecutableCallDefinition, RunMethod};
 use crate::filesystem::find_global_install;
 use crate::installation::{self, Outcome};
 use crate::logging::{self, Event};
@@ -176,6 +176,12 @@ fn load_or_install_from_yard(
   ctx: &RuntimeContext,
   apps: &Apps,
 ) -> Result<Option<ExecutableCall>> {
+  // A NodeJS package is installed into its own app folder via "npm install" and then executed through NodeJS.
+  // This needs to install two separate apps (the package and NodeJS itself, each with their own version),
+  // so it cannot go through the generic single-app installation flow below.
+  if let RunMethod::NodeJS { package_name: _, executable_path } = app_definition.run_method(version, ctx.platform) {
+    return load_or_install_nodejs_package(app_definition, &executable_path, version, optional, from_source, ctx, apps);
+  }
   let (app_to_install, executable_name, executable_args) = carrier(app_definition, version, ctx.platform);
   let app_name = app_to_install.name();
   // try to load the app
@@ -203,4 +209,47 @@ fn load_or_install_from_yard(
     return Ok(Some(ExecutableCall { executable, args }));
   }
   Err(UserError::CannotFindExecutable)
+}
+
+/// installs the given `NodeJS` package (if needed) and provides a call that executes it through `NodeJS`
+fn load_or_install_nodejs_package(
+  app_definition: &dyn AppDefinition,
+  executable_path: &str,
+  version: &Version,
+  optional: bool,
+  from_source: bool,
+  ctx: &RuntimeContext,
+  apps: &Apps,
+) -> Result<Option<ExecutableCall>> {
+  let app_name = app_definition.name();
+  let app_folder = ctx.yard.app_folder(&app_name, version);
+  let script_path = app_folder.join(executable_path);
+  // install the NodeJS package into its app folder if it isn't there yet
+  if !script_path.exists() {
+    if ctx.yard.is_not_installable(&app_name, version) {
+      return Ok(None);
+    }
+    match installation::any(app_definition, version, optional, from_source, ctx, apps)? {
+      Outcome::Installed => {}
+      Outcome::NotInstalled => {
+        ctx.yard.mark_not_installable(&app_name, version)?;
+        return Ok(None);
+      }
+    }
+  }
+  if !script_path.exists() {
+    return Err(UserError::CannotFindExecutable);
+  }
+  // load NodeJS to execute the package's script with
+  let node = NodeJS {};
+  let node_versions = if let Some(versions) = ctx.config_file.lookup(&node.name()) {
+    (*versions).clone()
+  } else {
+    RequestedVersions::from(node.installable_versions(1, ctx.log)?)
+  };
+  let Some(node_call) = load_or_install_app(&node, &node_versions, optional, from_source, ctx, apps)? else {
+    return Ok(None);
+  };
+  let (executable, args) = node_call.with_args(vec![script_path.to_string_lossy().to_string()]);
+  Ok(Some(ExecutableCall { executable, args }))
 }
