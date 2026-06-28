@@ -46,7 +46,7 @@ impl AppDefinition for GherkinLint {
   }
 
   fn tag_format(&self) -> TagFormat {
-    TagFormat::Plain
+    TagFormat::PrefixV
   }
 }
 
