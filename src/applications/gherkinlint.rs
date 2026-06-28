@@ -54,148 +54,103 @@ impl AppDefinition for GherkinLint {
 mod tests {
 
   mod run_method {
-    use crate::applications::AppDefinition;
-    use crate::applications::ghokin::Ghokin;
+    use crate::applications::{AppDefinition, GherkinLint};
     use crate::configuration::Version;
     use crate::executables::RunMethod;
-    use crate::installation::{BinFolder, Method};
     use crate::platform::{Cpu, Os, Platform};
-    use big_s::S;
 
     #[test]
     fn linux_arm() {
-      let have = (Ghokin {}).run_method(
-        &Version::from("3.4.1"),
+      let have = (GherkinLint {}).run_method(
+        &Version::from("4.2.4"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Arm64,
         },
       );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadArchive {
-            url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_linux_arm64.tar.gz".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileGoSource {
-            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
-          },
-        ],
+      let want = RunMethod::NodeJS {
+        package_name: "gherkin-lint".into(),
+        executable_path: "node_modules/.bin/gherkin-lint".into(),
       };
       assert_eq!(have, want);
     }
 
     #[test]
     fn linux_intel() {
-      let have = (Ghokin {}).run_method(
-        &Version::from("3.4.1"),
+      let have = (GherkinLint {}).run_method(
+        &Version::from("4.2.4"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Intel64,
         },
       );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadArchive {
-            url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_linux_amd64.tar.gz".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileGoSource {
-            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
-          },
-        ],
+      let want = RunMethod::NodeJS {
+        package_name: "gherkin-lint".into(),
+        executable_path: "node_modules/.bin/gherkin-lint".into(),
       };
       assert_eq!(have, want);
     }
 
     #[test]
     fn macos_arm() {
-      let have = (Ghokin {}).run_method(
-        &Version::from("3.4.1"),
+      let have = (GherkinLint {}).run_method(
+        &Version::from("4.2.4"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
         },
       );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadArchive {
-            url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_arm64.tar.gz".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileGoSource {
-            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
-          },
-        ],
+      let want = RunMethod::NodeJS {
+        package_name: "gherkin-lint".into(),
+        executable_path: "node_modules/.bin/gherkin-lint".into(),
       };
       assert_eq!(have, want);
     }
 
     #[test]
     fn macos_intel() {
-      let have = (Ghokin {}).run_method(
-        &Version::from("3.4.1"),
+      let have = (GherkinLint {}).run_method(
+        &Version::from("4.2.4"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Intel64,
         },
       );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadArchive {
-            url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_darwin_amd64.tar.gz".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileGoSource {
-            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
-          },
-        ],
+      let want = RunMethod::NodeJS {
+        package_name: "gherkin-lint".into(),
+        executable_path: "node_modules/.bin/gherkin-lint".into(),
       };
       assert_eq!(have, want);
     }
 
     #[test]
     fn windows_arm() {
-      let have = (Ghokin {}).run_method(
+      let have = (GherkinLint {}).run_method(
         &Version::from("3.4.1"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Arm64,
         },
       );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadArchive {
-            url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_windows_arm64.tar.gz".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileGoSource {
-            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
-          },
-        ],
+      let want = RunMethod::NodeJS {
+        package_name: "gherkin-lint".into(),
+        executable_path: "node_modules/.bin/gherkin-lint".into(),
       };
       assert_eq!(have, want);
     }
 
     #[test]
     fn windows_intel() {
-      let have = (Ghokin {}).run_method(
-        &Version::from("3.4.1"),
+      let have = (GherkinLint {}).run_method(
+        &Version::from("4.2.4"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadArchive {
-            url: "https://github.com/antham/ghokin/releases/download/v3.4.1/ghokin_3.4.1_windows_amd64.tar.gz".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileGoSource {
-            import_path: S("github.com/antham/ghokin/v3@v3.4.1"),
-          },
-        ],
+      let want = RunMethod::NodeJS {
+        package_name: "gherkin-lint".into(),
+        executable_path: "node_modules/.bin/gherkin-lint".into(),
       };
       assert_eq!(have, want);
     }
