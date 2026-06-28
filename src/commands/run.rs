@@ -8,6 +8,7 @@ use crate::installation::{self, Outcome};
 use crate::logging::{self, Event};
 use crate::yard::Yard;
 use crate::{platform, subshell, yard};
+use std::path::PathBuf;
 use std::process::ExitCode;
 
 pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
@@ -31,12 +32,13 @@ pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
     }
     return Err(UserError::UnsupportedPlatform);
   };
+  let cwd = args.cwd.as_deref();
   if args.error_on_output {
     let (executable, args) = executable_call.with_args(args.app_args);
-    subshell::detect_output(&executable, &args, &include_apps)
+    subshell::detect_output(&executable, &args, &include_apps, cwd)
   } else {
     let (executable, args) = executable_call.with_args(args.app_args);
-    subshell::stream_output(&executable, &args, &include_apps)
+    subshell::stream_output(&executable, &args, &include_apps, cwd)
   }
 }
 
@@ -67,6 +69,9 @@ pub struct RunArgs {
   pub optional: bool,
 
   pub verbose: bool,
+
+  /// optional working directory in which to execute the app
+  pub cwd: Option<PathBuf>,
 }
 
 pub fn load_or_install_apps(

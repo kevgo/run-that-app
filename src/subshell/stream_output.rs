@@ -1,14 +1,18 @@
 use super::{add_paths, exit_status_to_code, render_call};
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableCall};
+use std::path::Path;
 use std::process::{Command, ExitCode};
 
 /// Runs the given executable with the given arguments.
 /// Streams output to the user's terminal.
 #[allow(clippy::unwrap_used)]
-pub fn stream_output(executable: &Executable, args: &[String], apps_to_include: &[ExecutableCall]) -> Result<ExitCode> {
+pub fn stream_output(executable: &Executable, args: &[String], apps_to_include: &[ExecutableCall], cwd: Option<&Path>) -> Result<ExitCode> {
   let mut cmd = Command::new(executable);
   cmd.args(args);
+  if let Some(dir) = cwd {
+    cmd.current_dir(dir);
+  }
   let mut paths_to_include = vec![executable.as_path().parent().unwrap()];
   for app_to_include in apps_to_include {
     paths_to_include.push(app_to_include.executable.as_path().parent().unwrap());
