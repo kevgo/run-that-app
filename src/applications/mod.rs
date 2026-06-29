@@ -51,8 +51,6 @@ mod ty;
 mod uv;
 mod yamlfmt;
 
-use std::path::Path;
-
 use crate::Log;
 use crate::configuration::{TagFormat, Version};
 use crate::error::{Result, UserError};
@@ -73,6 +71,7 @@ pub use exhaustruct::Exhaustruct;
 pub use fd::Fd;
 pub use funcorder::FuncOrder;
 pub use gh::Gh;
+pub use gherkinlint::GherkinLint;
 pub use ghokin::Ghokin;
 pub use go::Go;
 pub use goda::Goda;
@@ -128,6 +127,7 @@ pub fn all() -> Apps {
     Box::new(fd::Fd {}),
     Box::new(funcorder::FuncOrder {}),
     Box::new(gh::Gh {}),
+    Box::new(gherkinlint::GherkinLint {}),
     Box::new(ghokin::Ghokin {}),
     Box::new(go::Go {}),
     Box::new(goda::Goda {}),
@@ -232,7 +232,10 @@ pub fn carrier<'a>(app: &'a dyn AppDefinition, version: &Version, platform: Plat
     RunMethod::OtherAppDefaultExecutable { app_definition, args } => {
       (dyn_clone::clone_box(app_definition.as_ref()), app_definition.executable_filename(), args)
     }
-    RunMethod::NodeJS { package_name, executable_path } => {
+    RunMethod::NodeJS {
+      package_name: _,
+      executable_path,
+    } => {
       let node = NodeJS {};
       let executable_filename = node.executable_filename();
       (Box::new(node), executable_filename, ExecutableArgs::InMyFolder { path: executable_path.into() })

@@ -56,7 +56,7 @@ pub enum Method {
   },
 
   InstallNodeJSPackage {
-    /// the name of the NodeJS package to install
+    /// the name of the `NodeJS` package to install
     package_name: String,
   },
 }
@@ -206,7 +206,7 @@ pub fn install(
   match install_method {
     Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &app_folder, version, url, bin_folder, optional, ctx),
     Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &app_folder, version, download_url, optional, ctx),
-    Method::CompileGoSource { import_path } => compile_go::run(&app_folder, import_path, optional, from_source, ctx),
+    Method::CompileGoSource { import_path } => compile_go::run(&app_folder, import_path, optional, from_source, ctx, apps),
     Method::CompileRustCrate { name, bin_folder: _ } => compile_rust::run(app_definition, version, &app_folder, &RustSource::CratesIo { name }, ctx.log),
     Method::CompileRustRepo { url } => compile_rust::run(app_definition, version, &app_folder, &RustSource::Repository { url: url.clone() }, ctx.log),
     Method::InstallNodeJSPackage { package_name } => install_nodejs_package::run(package_name, &app_folder, version, optional, apps),

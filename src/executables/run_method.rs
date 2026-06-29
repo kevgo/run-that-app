@@ -28,9 +28,9 @@ pub enum RunMethod {
     args: ExecutableArgs,
   },
 
-  /// the app to run is a NodeJS package
+  /// the app to run is a `NodeJS` package
   NodeJS {
-    /// name of the NodeJS package to install
+    /// name of the `NodeJS` package to install
     package_name: String,
 
     /// path to the executable to run

@@ -2,7 +2,7 @@ use crate::applications::{AppDefinition, Apps, Npm};
 use crate::commands::RunArgs;
 use crate::error::{Result, UserError};
 use crate::installation::Outcome;
-use crate::{Version, commands};
+use crate::{Version, commands, logging};
 use std::fs;
 use std::path::Path;
 
@@ -21,18 +21,21 @@ pub fn run(package_name: &str, app_folder: &Path, version: &Version, optional: b
     err: err.to_string(),
   })?;
 
-  // run "npm install"
+  // run "npm install" inside the app folder so that "node_modules" is created next to the "package.json" file
+  // npm is distributed together with NodeJS, so we install it at the latest available NodeJS version
   let npm = Npm {};
+  let npm_version = npm.latest_installable_version(logging::new(false))?;
   commands::run(
     RunArgs {
-      app_name: npm.name().into(),
+      app_name: npm.name(),
       app_args: vec!["install".to_string()],
-      version: None,
+      version: Some(npm_version),
       optional,
       from_source: false,
       include_apps: vec![],
       verbose: false,
       error_on_output: false,
+      cwd: Some(app_folder.to_path_buf()),
     },
     apps,
   )?;
