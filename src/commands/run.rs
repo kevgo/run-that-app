@@ -8,8 +8,9 @@ use crate::installation::{self, Outcome};
 use crate::logging::{self, Event};
 use crate::yard::Yard;
 use crate::{platform, subshell, yard};
+use ahash::AHashSet;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
@@ -256,13 +257,13 @@ fn load_or_install_nodejs_package(
     return Ok(None);
   };
   // determine the JS file to call from the "bin" entry in the package's package.json file
-  let bin_js = load_bin_js(app_folder.join("package.json"), &app_name, version)?;
+  let bin_js = load_bin_js(&app_folder.join("package.json"), &app_name, version)?;
   let (executable, args) = node_call.with_args(vec![bin_js]);
   Ok(Some(ExecutableCall { executable, args }))
 }
 
-fn load_bin_js(package_json_path: PathBuf, app_name: &ApplicationName, version: &Version) -> Result<String> {
-  let content = fs::read_to_string(&package_json_path).map_err(|err| UserError::UnsupportedNpmPackage {
+fn load_bin_js(package_json_path: &Path, app_name: &ApplicationName, version: &Version) -> Result<String> {
+  let content = fs::read_to_string(package_json_path).map_err(|err| UserError::UnsupportedNpmPackage {
     app_name: app_name.clone(),
     version: version.clone(),
     err: format!("cannot find file {}: {}", package_json_path.display(), err),
@@ -271,10 +272,10 @@ fn load_bin_js(package_json_path: PathBuf, app_name: &ApplicationName, version: 
 }
 
 fn parse_package_json(content: &str, app_name: &ApplicationName, version: &Version) -> Result<String> {
-  let package_json: serde_json::Value = serde_json::from_str(content).map_err(|e| UserError::UnsupportedNpmPackage {
+  let package_json: serde_json::Value = serde_json::from_str(content).map_err(|err| UserError::UnsupportedNpmPackage {
     app_name: app_name.clone(),
     version: version.clone(),
-    err: format!("cannot parse package.json: {e}"),
+    err: format!("cannot parse package.json: {err}"),
   })?;
   match &package_json["bin"] {
     serde_json::Value::String(s) => Ok(s.clone()),
@@ -286,8 +287,9 @@ fn parse_package_json(content: &str, app_name: &ApplicationName, version: &Versi
         return Ok(s.to_string());
       }
       // if all values point to the same file, use that
-      let files: std::collections::HashSet<&str> = map.values().filter_map(|v| v.as_str()).collect();
+      let files: AHashSet<&str> = map.values().filter_map(|v| v.as_str()).collect();
       if files.len() == 1 {
+        #[allow(clippy::unwrap_used)]
         return Ok(files.into_iter().next().unwrap().to_string());
       }
       Err(UserError::UnsupportedNpmPackage {
