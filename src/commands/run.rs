@@ -257,18 +257,20 @@ fn load_or_install_nodejs_package(
     return Ok(None);
   };
   // determine the JS file to call from the "bin" entry in the package's package.json file
-  let bin_js = load_bin_js(&app_folder.join("package.json"), &app_name, version)?;
-  let (executable, args) = node_call.with_args(vec![bin_js]);
+  let entry_point = load_entry_point(&app_folder.join("node_modules").join(&app_name), &app_name, version)?;
+  let (executable, args) = node_call.with_args(vec![entry_point]);
   Ok(Some(ExecutableCall { executable, args }))
 }
 
-fn load_bin_js(package_json_path: &Path, app_name: &ApplicationName, version: &Version) -> Result<String> {
-  let content = fs::read_to_string(package_json_path).map_err(|err| UserError::UnsupportedNpmPackage {
+fn load_entry_point(package_path: &Path, app_name: &ApplicationName, version: &Version) -> Result<String> {
+  let package_json_path = package_path.join("package.json");
+  let content = fs::read_to_string(&package_json_path).map_err(|err| UserError::UnsupportedNpmPackage {
     app_name: app_name.clone(),
     version: version.clone(),
     err: format!("cannot find file {}: {}", package_json_path.display(), err),
   })?;
-  parse_package_json(&content, app_name, version)
+  let entry_point = parse_package_json(&content, app_name, version)?;
+  Ok(package_path.join(entry_point).to_string_lossy().to_string())
 }
 
 fn parse_package_json(content: &str, app_name: &ApplicationName, version: &Version) -> Result<String> {
