@@ -10,13 +10,14 @@ pub fn run(package_name: &str, app_folder: &Path, version: &Version, optional: b
   // create the package.json file
   let filepath = app_folder.join("package.json");
   let content = format!(
-    r#"{{
+    r#"
+{{
   "dependencies": {{
     "{package_name}": "{version}"
   }}
 }}"#,
   );
-  fs::write(&filepath, content).map_err(|err| UserError::CannotCreateFile {
+  fs::write(&filepath, &content[1..]).map_err(|err| UserError::CannotCreateFile {
     filename: filepath.to_string_lossy().to_string(),
     err: err.to_string(),
   })?;
