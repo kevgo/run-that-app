@@ -1,4 +1,4 @@
-use crate::applications::{AppDefinition, Apps, Npm};
+use crate::applications::{AppDefinition, Apps, NodeJS, Npm};
 use crate::commands::RunArgs;
 use crate::error::{Result, UserError};
 use crate::installation::Outcome;
@@ -25,6 +25,7 @@ pub fn run(package_name: &str, app_folder: &Path, version: &Version, optional: b
   // npm is distributed together with NodeJS, so we install it at the latest available NodeJS version
   let npm = Npm {};
   let npm_version = npm.latest_installable_version(logging::new(false))?;
+  let nodejs = NodeJS {};
   commands::run(
     RunArgs {
       app_name: npm.name(),
@@ -32,7 +33,7 @@ pub fn run(package_name: &str, app_folder: &Path, version: &Version, optional: b
       version: Some(npm_version),
       optional,
       from_source: false,
-      include_apps: vec![],
+      include_apps: vec![nodejs.name()],
       verbose: false,
       error_on_output: false,
       cwd: Some(app_folder.to_path_buf()),
