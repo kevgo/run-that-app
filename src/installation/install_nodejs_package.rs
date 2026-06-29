@@ -17,7 +17,7 @@ pub fn run(package_name: &str, app_folder: &Path, version: &Version, optional: b
 }}"#,
   );
   fs::write(&filepath, content).map_err(|err| UserError::CannotCreateFile {
-    filepath: filepath.to_string_lossy().to_string(),
+    filename: filepath.to_string_lossy().to_string(),
     err: err.to_string(),
   })?;
 
