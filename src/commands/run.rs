@@ -285,7 +285,7 @@ fn parse_package_json(content: &str, app_name: &ApplicationName, version: &Versi
     err: format!("cannot parse package.json: {err}"),
   })?;
   match &package_json["bin"] {
-    serde_json::Value::String(s) => Ok(s.clone()),
+    serde_json::Value::String(value) => Ok(value.clone()),
     serde_json::Value::Object(map) => {
       // prefer the entry whose key matches the app name
       if let Some(val) = map.get(app_name.as_str())
