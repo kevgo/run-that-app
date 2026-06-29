@@ -175,6 +175,7 @@ fn load_from_path(app_to_run: &dyn AppDefinition, range: &semver::VersionReq, ct
   }
 }
 
+// TODO: convert to named arguments
 fn load_or_install_from_yard(
   app_definition: &dyn AppDefinition,
   version: &Version,
@@ -222,6 +223,7 @@ fn load_or_install_from_yard(
   Err(UserError::CannotFindExecutable)
 }
 
+// TODO: convert to named arguments
 /// installs the given `NodeJS` package (if needed) and provides a call that executes it through `NodeJS`
 fn load_or_install_nodejs_package(
   app_definition: &dyn AppDefinition,
