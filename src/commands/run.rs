@@ -256,7 +256,7 @@ fn load_or_install_nodejs_package(
   let Some(node_call) = load_or_install_app(&node, &node_versions, optional, false, ctx, apps)? else {
     return Ok(None);
   };
-  // determine the JS file to call from the "bin" entry in the package's package.json file
+  // determine the main entry point for the npm package from the "bin" entry in the package's package.json file
   let entry_point = load_entry_point(&app_folder.join("node_modules").join(&app_name), &app_name, version)?;
   let (executable, args) = node_call.with_args(vec![entry_point]);
   Ok(Some(ExecutableCall { executable, args }))
