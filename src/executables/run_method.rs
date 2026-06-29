@@ -11,6 +11,7 @@ pub enum RunMethod {
     /// defines the ways in which this app can be installed
     install_methods: Vec<installation::Method>,
   },
+
   /// executes another executable (not the default executable) of another app
   OtherAppOtherExecutable {
     /// the other application that contains the executable
@@ -18,6 +19,7 @@ pub enum RunMethod {
     /// name of the executable to run
     executable_name: ExecutableNameUnix,
   },
+
   /// executes the default executable of another app with additional arguments
   OtherAppDefaultExecutable {
     /// the other applications whose default executable to run
