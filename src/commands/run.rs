@@ -91,6 +91,7 @@ pub fn load_or_install_apps(
   Ok(result)
 }
 
+// TODO: convert to named arguments
 pub fn load_or_install_app(
   app_definition: &dyn AppDefinition,
   requested_versions: &RequestedVersions,
@@ -107,6 +108,7 @@ pub fn load_or_install_app(
   Ok(None)
 }
 
+// TODO: convert to named arguments
 fn load_or_install(
   app_definition: &dyn AppDefinition,
   requested_version: &RequestedVersion,
