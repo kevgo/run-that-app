@@ -246,6 +246,10 @@ fn load_or_install_nodejs_package(
       }
     }
   }
+  // app not installed --> check if uninstallable
+  if ctx.yard.is_not_installable(&app_name, version) {
+    return Ok(None);
+  }
   // NodeJS will execute the package
   let node = NodeJS {};
   let node_versions = if let Some(versions) = ctx.config_file.lookup(&node.name()) {
