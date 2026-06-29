@@ -257,20 +257,21 @@ fn load_or_install_nodejs_package(
     return Ok(None);
   };
   // determine the main entry point for the npm package from the "bin" entry in the its package.json file
-  let entry_point = load_entry_point(&app_folder.join("node_modules").join(&app_name), &app_name, version)?;
+  let entry_point = load_entry_point(&app_folder, &app_name, version)?;
   let (executable, args) = node_call.with_args(vec![entry_point]);
   Ok(Some(ExecutableCall { executable, args }))
 }
 
-fn load_entry_point(package_path: &Path, app_name: &ApplicationName, version: &Version) -> Result<String> {
-  let package_json_path = package_path.join("package.json");
+fn load_entry_point(app_folder: &Path, app_name: &ApplicationName, version: &Version) -> Result<String> {
+  let package_src = app_folder.join("node_modules").join(app_name);
+  let package_json_path = package_src.join("package.json");
   let content = fs::read_to_string(&package_json_path).map_err(|err| UserError::UnsupportedNpmPackage {
     app_name: app_name.clone(),
     version: version.clone(),
     err: format!("cannot find file {}: {}", package_json_path.display(), err),
   })?;
   let entry_point = parse_package_json(&content, app_name, version)?;
-  Ok(package_path.join(entry_point).to_string_lossy().to_string())
+  Ok(package_src.join(entry_point).to_string_lossy().to_string())
 }
 
 fn parse_package_json(content: &str, app_name: &ApplicationName, version: &Version) -> Result<String> {
