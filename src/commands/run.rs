@@ -253,7 +253,7 @@ fn load_or_install_nodejs_package(
   } else {
     RequestedVersions::from(node.latest_installable_version(ctx.log)?)
   };
-  let Some(node_call) = load_or_install_app(&node, &node_versions, optional, from_source, ctx, apps)? else {
+  let Some(node_call) = load_or_install_app(&node, &node_versions, optional, false, ctx, apps)? else {
     return Ok(None);
   };
   // determine the JS file to call from the "bin" entry in the package's package.json file
