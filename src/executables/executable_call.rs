@@ -2,7 +2,7 @@ use super::Executable;
 use crate::error::{Result, UserError};
 use crate::installation::BinFolder;
 use std::fmt::{Display, Write};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 /// information to call an `App`s executable, as it is defined by the user
 #[derive(Clone)]
@@ -30,10 +30,6 @@ impl ExecutableCallDefinition {
         }
         None
       }
-      ExecutableArgs::InMyFolder { path } => Some(ExecutableCall {
-        executable: self.executable,
-        args: vec![path.to_string_lossy().to_string()],
-      }),
     }
   }
 }
@@ -54,8 +50,6 @@ pub enum ExecutableArgs {
   None,
   /// uses the first of the given options that exists inside the folder that application is installed in
   OneOfTheseInAppFolder { options: Vec<&'static str> },
-  /// uses the given path inside the folder of the app that defines this
-  InMyFolder { path: PathBuf },
 }
 
 impl ExecutableArgs {
@@ -74,7 +68,6 @@ impl ExecutableArgs {
         }
         Err(UserError::CannotFindExecutable)
       }
-      ExecutableArgs::InMyFolder { path } => Ok(vec![app_folder.join(path).to_string_lossy().to_string()]),
     }
   }
 }
@@ -91,7 +84,6 @@ impl Display for ExecutableArgs {
         }
         Ok(())
       }
-      ExecutableArgs::InMyFolder { path } => f.write_str(&format!("{} in the current app folder", &path.display())),
     }
   }
 }
