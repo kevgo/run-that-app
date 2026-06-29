@@ -305,10 +305,15 @@ fn parse_package_json(content: &str, app_name: &ApplicationName, version: &Versi
         err: "cannot determine the entry point of the package".to_string(),
       })
     }
-    _ => Err(UserError::UnsupportedNpmPackage {
+    serde_json::Value::Null => Err(UserError::UnsupportedNpmPackage {
       app_name: app_name.clone(),
       version: version.clone(),
       err: "package.json has no 'bin' entry".into(),
+    }),
+    _ => Err(UserError::UnsupportedNpmPackage {
+      app_name: app_name.clone(),
+      version: version.clone(),
+      err: "package.json has an unknown 'bin' entry format".into(),
     }),
   }
 }
