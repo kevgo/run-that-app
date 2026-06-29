@@ -64,10 +64,9 @@ pub enum Method {
 impl Method {
   pub fn bin_folder(self) -> BinFolder {
     match self {
-      Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => BinFolder::Root,
+      Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } | Method::InstallNodeJSPackage { package: _ } => BinFolder::Root,
       Method::DownloadArchive { url: _, bin_folder } | Method::CompileRustCrate { name: _, bin_folder } => bin_folder,
       Method::CompileRustRepo { url: _ } => BinFolder::Subfolder { path: "bin".into() },
-      Method::InstallNodeJSPackage { package: _ } => BinFolder::Root,
     }
   }
 

@@ -246,12 +246,12 @@ fn load_or_install_nodejs_package(
       }
     }
   }
-  // load NodeJS to execute the package's script with
+  // NodeJS will execute the package
   let node = NodeJS {};
   let node_versions = if let Some(versions) = ctx.config_file.lookup(&node.name()) {
     (*versions).clone()
   } else {
-    RequestedVersions::from(node.installable_versions(1, ctx.log)?)
+    RequestedVersions::from(node.latest_installable_version(ctx.log)?)
   };
   let Some(node_call) = load_or_install_app(&node, &node_versions, optional, from_source, ctx, apps)? else {
     return Ok(None);
