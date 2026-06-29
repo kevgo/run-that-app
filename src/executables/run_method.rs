@@ -32,9 +32,6 @@ pub enum RunMethod {
   NodeJS {
     /// name of the `NodeJS` package to install
     package_name: String,
-
-    /// path to the executable to run
-    executable_path: String,
   },
 }
 
@@ -42,10 +39,7 @@ impl RunMethod {
   pub fn install_methods(self) -> Vec<installation::Method> {
     match self {
       RunMethod::ThisApp { install_methods } => install_methods,
-      RunMethod::NodeJS {
-        package_name,
-        executable_path: _,
-      } => vec![installation::Method::InstallNodeJSPackage { package_name }],
+      RunMethod::NodeJS { package_name } => vec![installation::Method::InstallNodeJSPackage { package_name }],
       RunMethod::OtherAppOtherExecutable {
         app_definition: _,
         executable_name: _,

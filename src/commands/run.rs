@@ -8,6 +8,7 @@ use crate::installation::{self, Outcome};
 use crate::logging::{self, Event};
 use crate::yard::Yard;
 use crate::{platform, subshell, yard};
+use std::fs;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
@@ -187,12 +188,8 @@ fn load_or_install_from_yard(
   // A NodeJS package is installed into its own app folder via "npm install" and then executed through NodeJS.
   // This needs to install two separate apps (the package and NodeJS itself, each with their own version),
   // so it cannot go through the generic single-app installation flow below.
-  if let RunMethod::NodeJS {
-    package_name: _,
-    executable_path,
-  } = app_definition.run_method(version, ctx.platform)
-  {
-    return load_or_install_nodejs_package(app_definition, &executable_path, version, optional, from_source, ctx, apps);
+  if let RunMethod::NodeJS { package_name: _ } = app_definition.run_method(version, ctx.platform) {
+    return load_or_install_nodejs_package(app_definition, version, optional, from_source, ctx, apps);
   }
   let (app_to_install, executable_name, executable_args) = carrier(app_definition, version, ctx.platform);
   let app_name = app_to_install.name();
@@ -227,7 +224,6 @@ fn load_or_install_from_yard(
 /// installs the given `NodeJS` package (if needed) and provides a call that executes it through `NodeJS`
 fn load_or_install_nodejs_package(
   app_definition: &dyn AppDefinition,
-  executable_path: &str,
   version: &Version,
   optional: bool,
   from_source: bool,
@@ -236,9 +232,8 @@ fn load_or_install_nodejs_package(
 ) -> Result<Option<ExecutableCall>> {
   let app_name = app_definition.name();
   let app_folder = ctx.yard.app_folder(&app_name, version);
-  let script_path = app_folder.join(executable_path);
   // install the NodeJS package into its app folder if it isn't there yet
-  if !script_path.exists() {
+  if !app_folder.exists() {
     if ctx.yard.is_not_installable(&app_name, version) {
       return Ok(None);
     }
@@ -250,9 +245,6 @@ fn load_or_install_nodejs_package(
       }
     }
   }
-  if !script_path.exists() {
-    return Err(UserError::CannotFindExecutable);
-  }
   // load NodeJS to execute the package's script with
   let node = NodeJS {};
   let node_versions = if let Some(versions) = ctx.config_file.lookup(&node.name()) {
@@ -263,6 +255,177 @@ fn load_or_install_nodejs_package(
   let Some(node_call) = load_or_install_app(&node, &node_versions, optional, from_source, ctx, apps)? else {
     return Ok(None);
   };
-  let (executable, args) = node_call.with_args(vec![script_path.to_string_lossy().to_string()]);
+  // determine the JS file to call from the "bin" entry in the package's package.json file
+  let bin_js = load_bin_js(app_folder.join("package.json"), &app_name, version)?;
+  let (executable, args) = node_call.with_args(vec![bin_js]);
   Ok(Some(ExecutableCall { executable, args }))
+}
+
+fn load_bin_js(package_json_path: PathBuf, app_name: &ApplicationName, version: &Version) -> Result<String> {
+  let content = fs::read_to_string(&package_json_path).map_err(|err| UserError::UnsupportedNpmPackage {
+    app_name: app_name.clone(),
+    version: version.clone(),
+    err: format!("cannot find file {}: {}", package_json_path.display(), err),
+  })?;
+  parse_package_json(&content, app_name, version)
+}
+
+fn parse_package_json(content: &str, app_name: &ApplicationName, version: &Version) -> Result<String> {
+  let package_json: serde_json::Value = serde_json::from_str(content).map_err(|e| UserError::UnsupportedNpmPackage {
+    app_name: app_name.clone(),
+    version: version.clone(),
+    err: format!("cannot parse package.json: {}", e),
+  })?;
+  match &package_json["bin"] {
+    serde_json::Value::String(s) => Ok(s.clone()),
+    serde_json::Value::Object(map) => {
+      // prefer the entry whose key matches the app name
+      if let Some(val) = map.get(app_name.as_str())
+        && let Some(s) = val.as_str()
+      {
+        return Ok(s.to_string());
+      }
+      // if all values point to the same file, use that
+      let files: std::collections::HashSet<&str> = map.values().filter_map(|v| v.as_str()).collect();
+      if files.len() == 1 {
+        return Ok(files.into_iter().next().unwrap().to_string());
+      }
+      Err(UserError::UnsupportedNpmPackage {
+        app_name: app_name.clone(),
+        version: version.clone(),
+        err: "cannot determine the entry point of the package".to_string(),
+      })
+    }
+    _ => Err(UserError::UnsupportedNpmPackage {
+      app_name: app_name.clone(),
+      version: version.clone(),
+      err: "package.json has no 'bin' entry".into(),
+    }),
+  }
+}
+
+#[cfg(test)]
+mod tests {
+
+  mod parse_package_json {
+    use crate::applications::ApplicationName;
+    use crate::commands::run::parse_package_json;
+    use crate::{UserError, Version};
+    use big_s::S;
+
+    #[test]
+    fn single_entry() {
+      let app_name = ApplicationName::from("my-app");
+      let version = Version::from("1.0.0");
+      let content = r#"
+{
+  "name": "my-app",
+  "bin": "index.js",
+  "desc": "foo"
+}"#;
+      let result = parse_package_json(content, &app_name, &version);
+      assert_eq!(result, Ok(S("index.js")));
+    }
+
+    #[test]
+    fn multiple_entries_one_matches_name() {
+      let app_name = ApplicationName::from("my-app");
+      let version = Version::from("1.0.0");
+      let content = r#"
+{
+  "name": "my-app",
+  "bin": {
+    "other": "other.js",
+    "my-app": "my-app.js",
+    "another-app": "another.js"
+  },
+  "desc": "foo"
+}"#;
+      let result = parse_package_json(content, &app_name, &version);
+      assert_eq!(result, Ok(S("my-app.js")));
+    }
+
+    #[test]
+    fn multiple_nonmatching_entries_all_point_to_the_same_file() {
+      let app_name = ApplicationName::from("my-app");
+      let version = Version::from("1.0.0");
+      let content = r#"
+{
+  "name": "my-app",
+  "bin": {
+    "one": "my-app.js",
+    "two": "my-app.js",
+    "three": "my-app.js"
+  },
+  "desc": "foo"
+}"#;
+      let result = parse_package_json(content, &app_name, &version);
+      assert_eq!(result, Ok(S("my-app.js")));
+    }
+
+    #[test]
+    fn multiple_nonmatching_entries() {
+      let app_name = ApplicationName::from("my-app");
+      let version = Version::from("1.0.0");
+      let content = r#"
+{
+  "name": "my-app",
+  "bin": {
+    "one": "one.js",
+    "two": "two.js"
+  },
+  "desc": "foo"
+}"#;
+      let result = parse_package_json(content, &app_name, &version);
+      assert_eq!(
+        result,
+        Err(UserError::UnsupportedNpmPackage {
+          app_name: app_name,
+          version,
+          err: "cannot determine the entry point of the package".into(),
+        })
+      );
+    }
+
+    #[test]
+    fn no_bin_entry() {
+      let app_name = ApplicationName::from("my-app");
+      let version = Version::from("1.0.0");
+      let content = r#"
+{
+  "name": "my-app",
+  "desc": "foo"
+}"#;
+      let result = parse_package_json(content, &app_name, &version);
+      assert_eq!(
+        result,
+        Err(UserError::UnsupportedNpmPackage {
+          app_name: app_name,
+          version,
+          err: "package.json has no 'bin' entry".into(),
+        })
+      );
+    }
+
+    #[test]
+    fn empty_bin_entry() {
+      let app_name = ApplicationName::from("my-app");
+      let version = Version::from("1.0.0");
+      let content = r#"
+{
+  "name": "my-app",
+  "bin": {},
+  "desc": "foo"
+}"#;
+      let result = parse_package_json(content, &app_name, &version);
+      assert_eq!(
+        result,
+        Err(UserError::UnsupportedNpmPackage {
+          app_name: app_name,
+          version,
+          err: "cannot determine the entry point of the package".into(),
+        })
+      );
+    }
+  }
 }

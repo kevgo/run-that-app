@@ -1,3 +1,5 @@
+use crate::Version;
+use crate::applications::ApplicationName;
 use crate::configuration::{self, FILE_NAME};
 use crate::download::Url;
 use colored::Colorize;
@@ -22,6 +24,7 @@ pub enum UserError {
   CannotDownload { url: Url, reason: String },
   CannotExecuteBinary { call: String, reason: String },
   CannotFindExecutable,
+  CannotFindPackageJson { package_name: String, filepath: String, reason: String },
   CannotOpenSubshellStream,
   CannotParseSemverVersion { expression: String, reason: String },
   CannotParseSemverRange { expression: String, reason: String },
@@ -56,6 +59,7 @@ pub enum UserError {
   UnsupportedPlatform,
   UnsupportedCPU(String),
   UnsupportedOS(String),
+  UnsupportedNpmPackage { app_name: ApplicationName, version: Version, err: String },
   YardRootIsNotFolder { root: PathBuf },
   YardAccessDenied { msg: String, path: PathBuf },
 }
@@ -91,6 +95,13 @@ impl UserError {
       UserError::CannotFindExecutable => {
         error("cannot locate executable for app.");
         desc("Please report this at https://github.com/kevgo/run-that-app/issues/new and try using an older version until this is fixed.");
+      }
+      UserError::CannotFindPackageJson {
+        package_name,
+        filepath,
+        reason,
+      } => {
+        error(&format!("cannot find package.json file of {package_name}\npath: {filepath}\nerror: {reason}"));
       }
       UserError::CannotOpenSubshellStream => error("cannot open subshell stream"),
       UserError::CannotParseSemverVersion { expression, reason } => {
@@ -191,6 +202,10 @@ impl UserError {
         error(&format!("Your operating system ({name}) is currently not supported."));
         desc("Request support for your platform at https://github.com/kevgo/run-that-app/issues.");
       } // UserError::UnsupportedPlatformAndNoGlobalApp { app_name, platform } => {
+      UserError::UnsupportedNpmPackage { app_name, version, err } => {
+        error(&format!("Unsupported npm package version: {app_name}@{version}: {err}"));
+        desc("Please report this at https://github.com/kevgo/run-that-app/issues/new and use an older version of the package until this is fixed.");
+      }
       UserError::UnsupportedPlatform => {
         error("This application does not seem to support your platform.");
         desc(

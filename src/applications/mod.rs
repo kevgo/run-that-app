@@ -232,13 +232,10 @@ pub fn carrier<'a>(app: &'a dyn AppDefinition, version: &Version, platform: Plat
     RunMethod::OtherAppDefaultExecutable { app_definition, args } => {
       (dyn_clone::clone_box(app_definition.as_ref()), app_definition.executable_filename(), args)
     }
-    RunMethod::NodeJS {
-      package_name: _,
-      executable_path,
-    } => {
+    RunMethod::NodeJS { package_name: _ } => {
       let node = NodeJS {};
       let executable_filename = node.executable_filename();
-      (Box::new(node), executable_filename, ExecutableArgs::InMyFolder { path: executable_path.into() })
+      (Box::new(node), executable_filename, ExecutableArgs::None)
     }
   }
 }
@@ -258,7 +255,7 @@ impl std::fmt::Debug for dyn AppDefinition {
 /// the name of an application
 ///
 /// You get get it by calling the [name][AppDefinition::name] method on an [application][AppDefinition].
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct ApplicationName(&'static str);
 
 impl ApplicationName {

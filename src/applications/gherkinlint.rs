@@ -25,7 +25,6 @@ impl AppDefinition for GherkinLint {
   fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {
     RunMethod::NodeJS {
       package_name: "gherkin-lint".into(),
-      executable_path: "node_modules/.bin/gherkin-lint".into(),
     }
   }
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
@@ -71,7 +70,6 @@ mod tests {
       );
       let want = RunMethod::NodeJS {
         package_name: S("gherkin-lint"),
-        executable_path: S("node_modules/.bin/gherkin-lint"),
       };
       assert_eq!(have, want);
     }
@@ -87,7 +85,6 @@ mod tests {
       );
       let want = RunMethod::NodeJS {
         package_name: S("gherkin-lint"),
-        executable_path: S("node_modules/.bin/gherkin-lint"),
       };
       assert_eq!(have, want);
     }
@@ -103,7 +100,6 @@ mod tests {
       );
       let want = RunMethod::NodeJS {
         package_name: S("gherkin-lint"),
-        executable_path: S("node_modules/.bin/gherkin-lint"),
       };
       assert_eq!(have, want);
     }
@@ -119,7 +115,6 @@ mod tests {
       );
       let want = RunMethod::NodeJS {
         package_name: S("gherkin-lint"),
-        executable_path: S("node_modules/.bin/gherkin-lint"),
       };
       assert_eq!(have, want);
     }
@@ -135,7 +130,6 @@ mod tests {
       );
       let want = RunMethod::NodeJS {
         package_name: S("gherkin-lint"),
-        executable_path: S("node_modules/.bin/gherkin-lint"),
       };
       assert_eq!(have, want);
     }
@@ -151,7 +145,6 @@ mod tests {
       );
       let want = RunMethod::NodeJS {
         package_name: S("gherkin-lint"),
-        executable_path: S("node_modules/.bin/gherkin-lint"),
       };
       assert_eq!(have, want);
     }
