@@ -274,7 +274,7 @@ fn parse_package_json(content: &str, app_name: &ApplicationName, version: &Versi
   let package_json: serde_json::Value = serde_json::from_str(content).map_err(|e| UserError::UnsupportedNpmPackage {
     app_name: app_name.clone(),
     version: version.clone(),
-    err: format!("cannot parse package.json: {}", e),
+    err: format!("cannot parse package.json: {e}"),
   })?;
   match &package_json["bin"] {
     serde_json::Value::String(s) => Ok(s.clone()),
@@ -380,7 +380,7 @@ mod tests {
       assert_eq!(
         result,
         Err(UserError::UnsupportedNpmPackage {
-          app_name: app_name,
+          app_name,
           version,
           err: "cannot determine the entry point of the package".into(),
         })
@@ -400,7 +400,7 @@ mod tests {
       assert_eq!(
         result,
         Err(UserError::UnsupportedNpmPackage {
-          app_name: app_name,
+          app_name,
           version,
           err: "package.json has no 'bin' entry".into(),
         })
@@ -421,7 +421,7 @@ mod tests {
       assert_eq!(
         result,
         Err(UserError::UnsupportedNpmPackage {
-          app_name: app_name,
+          app_name,
           version,
           err: "cannot determine the entry point of the package".into(),
         })
