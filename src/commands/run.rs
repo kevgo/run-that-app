@@ -270,11 +270,11 @@ fn load_entry_point(app_folder: &Path, app_name: &ApplicationName, version: &Ver
     version: version.clone(),
     err: format!("cannot find file {}: {}", package_json_path.display(), err),
   })?;
-  let entry_point = parse_package_json(&content, app_name, version)?;
+  let entry_point = parse_package_json(&content, app_name, version, &package_json_path)?;
   Ok(package_src.join(entry_point).to_string_lossy().to_string())
 }
 
-fn parse_package_json(content: &str, app_name: &ApplicationName, version: &Version) -> Result<String> {
+fn parse_package_json(content: &str, app_name: &ApplicationName, version: &Version, package_json_path: &Path) -> Result<String> {
   let package_json: serde_json::Value = serde_json::from_str(content).map_err(|err| UserError::UnsupportedNpmPackage {
     app_name: app_name.clone(),
     version: version.clone(),
@@ -304,7 +304,7 @@ fn parse_package_json(content: &str, app_name: &ApplicationName, version: &Versi
     serde_json::Value::Null => Err(UserError::UnsupportedNpmPackage {
       app_name: app_name.clone(),
       version: version.clone(),
-      err: "package.json has no 'bin' entry".into(),
+      err: format!("{} has no 'bin' entry", package_json_path.display()),
     }),
     _ => Err(UserError::UnsupportedNpmPackage {
       app_name: app_name.clone(),
@@ -322,6 +322,7 @@ mod tests {
     use crate::commands::run::parse_package_json;
     use crate::{UserError, Version};
     use big_s::S;
+    use std::path::Path;
 
     #[test]
     fn single_entry() {
@@ -333,7 +334,7 @@ mod tests {
   "bin": "index.js",
   "desc": "foo"
 }"#;
-      let result = parse_package_json(content, &app_name, &version);
+      let result = parse_package_json(content, &app_name, &version, &Path::new("package.json"));
       assert_eq!(result, Ok(S("index.js")));
     }
 
@@ -351,7 +352,7 @@ mod tests {
   },
   "desc": "foo"
 }"#;
-      let result = parse_package_json(content, &app_name, &version);
+      let result = parse_package_json(content, &app_name, &version, &Path::new("package.json"));
       assert_eq!(result, Ok(S("my-app.js")));
     }
 
@@ -369,7 +370,7 @@ mod tests {
   },
   "desc": "foo"
 }"#;
-      let result = parse_package_json(content, &app_name, &version);
+      let result = parse_package_json(content, &app_name, &version, &Path::new("package.json"));
       assert_eq!(result, Ok(S("my-app.js")));
     }
 
@@ -386,7 +387,7 @@ mod tests {
   },
   "desc": "foo"
 }"#;
-      let result = parse_package_json(content, &app_name, &version);
+      let result = parse_package_json(content, &app_name, &version, &Path::new("package.json"));
       assert_eq!(
         result,
         Err(UserError::UnsupportedNpmPackage {
@@ -406,7 +407,7 @@ mod tests {
   "name": "my-app",
   "desc": "foo"
 }"#;
-      let result = parse_package_json(content, &app_name, &version);
+      let result = parse_package_json(content, &app_name, &version, &Path::new("package.json"));
       assert_eq!(
         result,
         Err(UserError::UnsupportedNpmPackage {
@@ -427,7 +428,7 @@ mod tests {
   "bin": {},
   "desc": "foo"
 }"#;
-      let result = parse_package_json(content, &app_name, &version);
+      let result = parse_package_json(content, &app_name, &version, &Path::new("package.json"));
       assert_eq!(
         result,
         Err(UserError::UnsupportedNpmPackage {
