@@ -404,7 +404,8 @@ For development tooling, it often adds unnecessary complexity and bloat:
 - Docker-in-Docker issues on CI
 - no help with CPU architecture mismatches
 - often no way to install a specific version of a tool
-- no way to install binaries hosted on GitHub releases in Docker
+- no good way to install binaries only available via GitHub releases in
+  Docker
 
 Use run-that-app inside Docker to install tools not supported by the Linux
 package manager, or other tools at a specific version.
