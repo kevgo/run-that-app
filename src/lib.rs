@@ -108,8 +108,6 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// # Examples
 ///
 /// ```
-/// use rta::applications::AppDefinition;
-///
 /// let actionlint = rta::applications::ActionLint {};
 /// let cmd_info = rta::get_cmd(
 ///   &actionlint,
