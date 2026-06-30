@@ -32,7 +32,7 @@ impl File {
           return Err(UserError::ConfigFileAlreadyExists);
         }
         return Err(UserError::CannotCreateFile {
-          filename: FILE_NAME,
+          filename: FILE_NAME.into(),
           err: err.to_string(),
         });
       }

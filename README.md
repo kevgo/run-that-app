@@ -76,6 +76,7 @@ We can also compile apps from source if needed.
 - [fd](https://github.com/sharkdp/fd)
 - [funcorder](https://github.com/manuelarte/funcorder)
 - [gh](https://cli.github.com)
+- [gherkin-lint](https://github.com/gherkin-lint/gherkin-lint)
 - [ghokin](https://github.com/antham/ghokin)
 - [go](https://go.dev)
 - [goda](https://github.com/loov/goda)

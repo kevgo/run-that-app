@@ -20,7 +20,7 @@ pub fn available(args: &AvailableArgs, apps: &Apps) -> Result<ExitCode> {
     log,
   };
   let versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
-  if load_or_install_app(app, &versions, args.optional, false, &ctx)?.is_some() {
+  if load_or_install_app(app, &versions, args.optional, false, &ctx, apps)?.is_some() {
     return Ok(ExitCode::SUCCESS);
   }
   Ok(ExitCode::FAILURE)

@@ -18,6 +18,7 @@ name = "rta"
 path = "src/main.rs"
 
 [dependencies]
+ahash = "0.8.12"
 big_s = "1.0.2"
 colored = "2.2.0"
 const_format = "0.2.36"

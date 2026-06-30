@@ -27,12 +27,19 @@ pub enum RunMethod {
     /// additional arguments when running the default executable of the given app
     args: ExecutableArgs,
   },
+
+  /// the app to run is a `NodeJS` package
+  NodeJS {
+    /// name of the `NodeJS` package to install
+    package: &'static str,
+  },
 }
 
 impl RunMethod {
   pub fn install_methods(self) -> Vec<installation::Method> {
     match self {
       RunMethod::ThisApp { install_methods } => install_methods,
+      RunMethod::NodeJS { package } => vec![installation::Method::InstallNodeJSPackage { package }],
       RunMethod::OtherAppOtherExecutable {
         app_definition: _,
         executable_name: _,

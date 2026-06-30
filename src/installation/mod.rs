@@ -4,8 +4,9 @@ mod compile_go;
 mod compile_rust;
 mod download_archive;
 mod download_executable;
+mod install_nodejs_package;
 
-use crate::applications::{AppDefinition, ApplicationName};
+use crate::applications::{AppDefinition, ApplicationName, Apps};
 use crate::configuration::Version;
 use crate::context::RuntimeContext;
 use crate::download::Url;
@@ -53,12 +54,17 @@ pub enum Method {
     /// the URL of the repository containing the source code
     url: Url,
   },
+
+  InstallNodeJSPackage {
+    /// the name of the `NodeJS` package to install
+    package: &'static str,
+  },
 }
 
 impl Method {
   pub fn bin_folder(self) -> BinFolder {
     match self {
-      Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => BinFolder::Root,
+      Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } | Method::InstallNodeJSPackage { package: _ } => BinFolder::Root,
       Method::DownloadArchive { url: _, bin_folder } | Method::CompileRustCrate { name: _, bin_folder } => bin_folder,
       Method::CompileRustRepo { url: _ } => BinFolder::Subfolder { path: "bin".into() },
     }
@@ -77,12 +83,13 @@ impl Method {
         }
       },
       Method::CompileRustRepo { url: _ } => vec![app_folder.join("bin").join(executable_filename)],
+      Method::InstallNodeJSPackage { package: _ } => vec![app_folder.join("node_modules").join(".bin").join(executable_filename)],
     }
   }
 
   pub fn is_from_source(&self) -> bool {
     match self {
-      Method::DownloadArchive { url: _, bin_folder: _ } | Method::DownloadExecutable { url: _ } => false,
+      Method::DownloadArchive { url: _, bin_folder: _ } | Method::DownloadExecutable { url: _ } | Method::InstallNodeJSPackage { package: _ } => false,
       Method::CompileGoSource { import_path: _ } | Method::CompileRustCrate { name: _, bin_folder: _ } | Method::CompileRustRepo { url: _ } => true,
     }
   }
@@ -94,6 +101,7 @@ impl Method {
       Method::CompileGoSource { import_path: _ } | Method::CompileRustCrate { name: _, bin_folder: _ } | Method::CompileRustRepo { url: _ } => {
         format!("compile {app}@{version} from source")
       }
+      Method::InstallNodeJSPackage { package } => format!("install NodeJS package {package}@{version}"),
     }
   }
 }
@@ -168,12 +176,12 @@ impl Display for BinFolder {
 }
 
 /// installs the given app using the first of the given installation methods that works
-pub fn any(app_definition: &dyn AppDefinition, version: &Version, optional: bool, from_source: bool, ctx: &RuntimeContext) -> Result<Outcome> {
+pub fn any(app_definition: &dyn AppDefinition, version: &Version, optional: bool, from_source: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Outcome> {
   for install_method in app_definition.run_method(version, ctx.platform).install_methods() {
     if from_source && !install_method.is_from_source() {
       continue;
     }
-    let outcome = install(app_definition, &install_method, version, optional, from_source, ctx)?;
+    let outcome = install(app_definition, &install_method, version, optional, from_source, ctx, apps)?;
     if outcome.success() {
       return Ok(outcome);
     }
@@ -189,14 +197,16 @@ pub fn install(
   optional: bool,
   from_source: bool,
   ctx: &RuntimeContext,
+  apps: &Apps,
 ) -> Result<Outcome> {
   let app_folder = ctx.yard.create_app_folder(&app_definition.name(), version)?;
   match install_method {
     Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &app_folder, version, url, bin_folder, optional, ctx),
     Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &app_folder, version, download_url, optional, ctx),
-    Method::CompileGoSource { import_path } => compile_go::run(&app_folder, import_path, optional, from_source, ctx),
+    Method::CompileGoSource { import_path } => compile_go::run(&app_folder, import_path, optional, from_source, ctx, apps),
     Method::CompileRustCrate { name, bin_folder: _ } => compile_rust::run(app_definition, version, &app_folder, &RustSource::CratesIo { name }, ctx.log),
     Method::CompileRustRepo { url } => compile_rust::run(app_definition, version, &app_folder, &RustSource::Repository { url: url.clone() }, ctx.log),
+    Method::InstallNodeJSPackage { package } => install_nodejs_package::run(package, &app_folder, version, optional, apps),
   }
 }
 

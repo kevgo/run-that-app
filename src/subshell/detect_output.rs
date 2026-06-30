@@ -3,6 +3,7 @@ use crate::cli;
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableCall};
 use std::io::{self, BufRead, BufReader, Read};
+use std::path::Path;
 use std::process::{self, Child, Command, ExitCode, Stdio};
 use std::sync::mpsc;
 use std::thread;
@@ -10,10 +11,13 @@ use std::thread;
 /// Executes the given executable with the given arguments, streaming the output to the terminal while monitoring it.
 /// Any output results in an Err.
 #[allow(clippy::unwrap_used)]
-pub fn detect_output(executable: &Executable, args: &[String], apps_to_include: &[ExecutableCall]) -> Result<ExitCode> {
+pub fn detect_output(executable: &Executable, args: &[String], apps_to_include: &[ExecutableCall], cwd: Option<&Path>) -> Result<ExitCode> {
   let (sender, receiver) = mpsc::channel();
   let mut cmd = Command::new(executable);
   cmd.args(args);
+  if let Some(dir) = cwd {
+    cmd.current_dir(dir);
+  }
   let mut paths_to_include = vec![executable.as_path().parent().unwrap()];
   for app_to_include in apps_to_include {
     paths_to_include.push(app_to_include.executable.as_path().parent().unwrap());

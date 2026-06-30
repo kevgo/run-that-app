@@ -172,6 +172,7 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Cli>
       include_apps,
       optional,
       verbose,
+      cwd: None,
     }));
   }
   if error_on_output || install || optional || reinstall || verbose || which || indicate_available {
@@ -278,6 +279,7 @@ mod tests {
             include_apps: vec![],
             optional: false,
             verbose: false,
+            cwd: None,
           }));
           pretty::assert_eq!(have, want);
         }
@@ -347,6 +349,7 @@ mod tests {
             include_apps: vec![],
             optional: false,
             verbose: false,
+            cwd: None,
           }));
           pretty::assert_eq!(have, want);
         }
@@ -494,6 +497,7 @@ mod tests {
             include_apps: vec![gh.name()],
             optional: false,
             verbose: false,
+            cwd: None,
           }));
           pretty::assert_eq!(have, want);
         }
@@ -531,6 +535,7 @@ mod tests {
             include_apps: vec![],
             optional: false,
             verbose: true,
+            cwd: None,
           }));
           pretty::assert_eq!(have, want);
         }
@@ -550,6 +555,7 @@ mod tests {
             include_apps: vec![],
             optional: false,
             verbose: true,
+            cwd: None,
           }));
           pretty::assert_eq!(have, want);
         }
@@ -588,6 +594,7 @@ mod tests {
           include_apps: vec![],
           optional: true,
           verbose: false,
+          cwd: None,
         }));
         pretty::assert_eq!(have, want);
       }
@@ -730,6 +737,7 @@ mod tests {
           include_apps: vec![],
           optional: false,
           verbose: false,
+          cwd: None,
         }));
         pretty::assert_eq!(have, want);
       }
@@ -749,6 +757,7 @@ mod tests {
           include_apps: vec![],
           optional: false,
           verbose: false,
+          cwd: None,
         }));
         pretty::assert_eq!(have, want);
       }
@@ -776,6 +785,7 @@ mod tests {
           include_apps: vec![],
           optional: false,
           verbose: true,
+          cwd: None,
         }));
         pretty::assert_eq!(have, want);
       }
@@ -795,6 +805,7 @@ mod tests {
           include_apps: vec![],
           optional: false,
           verbose: false,
+          cwd: None,
         }));
         pretty::assert_eq!(have, want);
       }

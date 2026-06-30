@@ -1,3 +1,5 @@
+use crate::Version;
+use crate::applications::ApplicationName;
 use crate::configuration::{self, FILE_NAME};
 use crate::download::Url;
 use colored::Colorize;
@@ -13,7 +15,7 @@ pub enum UserError {
   ArchiveCannotExtract { reason: String },
   CannotAccessConfigFile(String),
   CannotCompileRustSource { err: String },
-  CannotCreateFile { filename: &'static str, err: String },
+  CannotCreateFile { filename: String, err: String },
   CannotCreateFolder { folder: PathBuf, reason: String },
   CannotCreateTempDir { err: String },
   CannotDeleteFolder { folder: PathBuf, err: String },
@@ -56,6 +58,7 @@ pub enum UserError {
   UnsupportedPlatform,
   UnsupportedCPU(String),
   UnsupportedOS(String),
+  UnsupportedNpmPackage { app_name: ApplicationName, version: Version, err: String },
   YardRootIsNotFolder { root: PathBuf },
   YardAccessDenied { msg: String, path: PathBuf },
 }
@@ -191,6 +194,10 @@ impl UserError {
         error(&format!("Your operating system ({name}) is currently not supported."));
         desc("Request support for your platform at https://github.com/kevgo/run-that-app/issues.");
       } // UserError::UnsupportedPlatformAndNoGlobalApp { app_name, platform } => {
+      UserError::UnsupportedNpmPackage { app_name, version, err } => {
+        error(&format!("Unsupported npm package version: {app_name}@{version}: {err}"));
+        desc("Please report this at https://github.com/kevgo/run-that-app/issues/new and use an older version of the package until this is fixed.");
+      }
       UserError::UnsupportedPlatform => {
         error("This application does not seem to support your platform.");
         desc(
