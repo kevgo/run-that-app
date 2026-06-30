@@ -1,20 +1,8 @@
-use crate::error::{Result, UserError};
-use regex::Regex;
+use crate::error::Result;
+use crate::strings;
 
 pub fn capture_version(text: &str) -> Result<&str> {
-  let regex = r"(\d+\.\d+\.\d+)";
-  let regex = Regex::new(regex).map_err(|err| UserError::InvalidRegex {
-    regex: regex.to_string(),
-    err: err.to_string(),
-  })?;
-  let Some(captures) = regex.captures(text) else {
-    return Err(UserError::RegexDoesntMatch);
-  };
-  println!("{captures:?}");
-  let Some(first_capture) = captures.get(1) else {
-    return Err(UserError::RegexHasNoCaptures);
-  };
-  Ok(first_capture.as_str())
+  strings::first_capture(text, r"(\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
