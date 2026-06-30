@@ -78,7 +78,7 @@ impl AppDefinition for ActionLint {
 }
 
 fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"(\d+\.\d+\.\d+)")
+  strings::capture_version(output)
 }
 
 #[cfg(test)]
@@ -231,11 +231,5 @@ mod tests {
       };
       assert_eq!(have, want);
     }
-  }
-
-  #[test]
-  fn extract_version() {
-    assert_eq!(super::extract_version("actionlint 1.6.27"), Ok("1.6.27"));
-    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
