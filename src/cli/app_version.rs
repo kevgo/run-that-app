@@ -5,7 +5,7 @@ use std::fmt::Debug;
 
 /// a request from the user to run a particular app
 pub struct AppVersion<'a> {
-  pub app: &'a Box<dyn AppDefinition>,
+  pub app: &'a (dyn AppDefinition + 'static),
   pub version: Option<Version>,
 }
 

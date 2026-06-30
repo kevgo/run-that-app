@@ -95,7 +95,7 @@ pub fn load_or_install_apps(
 
 // TODO: convert to named arguments
 pub fn load_or_install_app(
-  app_definition: &Box<dyn AppDefinition>,
+  app_definition: &(dyn AppDefinition + 'static),
   requested_versions: &RequestedVersions,
   optional: bool,
   from_source: bool,
@@ -112,7 +112,7 @@ pub fn load_or_install_app(
 
 // TODO: convert to named arguments
 fn load_or_install(
-  app_definition: &Box<dyn AppDefinition>,
+  app_definition: &(dyn AppDefinition + 'static),
   requested_version: &RequestedVersion,
   optional: bool,
   from_source: bool,
@@ -134,7 +134,7 @@ fn load_or_install(
 }
 
 // finds the app in the PATH and verifies it has the correct version
-fn load_from_path(app_to_run: &Box<dyn AppDefinition>, range: &semver::VersionReq, ctx: &RuntimeContext) -> Result<Option<ExecutableCallDefinition>> {
+fn load_from_path(app_to_run: &(dyn AppDefinition + 'static), range: &semver::VersionReq, ctx: &RuntimeContext) -> Result<Option<ExecutableCallDefinition>> {
   let (app_to_install, executable_name, executable_args) = carrier(app_to_run, &Version::from(""), ctx.platform);
   let executable_filename = executable_name.platform_path(ctx.platform.os);
   let Some(executable) = find_global_install(&executable_filename, ctx.log) else {
@@ -179,7 +179,7 @@ fn load_from_path(app_to_run: &Box<dyn AppDefinition>, range: &semver::VersionRe
 
 // TODO: convert to named arguments
 fn load_or_install_from_yard(
-  app_definition: &Box<dyn AppDefinition>,
+  app_definition: &(dyn AppDefinition + 'static),
   version: &Version,
   optional: bool,
   from_source: bool,
@@ -205,7 +205,7 @@ fn load_or_install_from_yard(
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  match installation::any(&app_to_install, version, optional, from_source, ctx, apps)? {
+  match installation::any(app_to_install.as_ref(), version, optional, from_source, ctx, apps)? {
     Outcome::Installed => {} // we'll load it below
     Outcome::NotInstalled => {
       ctx.yard.mark_not_installable(&app_name, version)?;
@@ -224,7 +224,7 @@ fn load_or_install_from_yard(
 // TODO: convert to named arguments
 /// installs the given `NodeJS` package (if needed) and provides a call that executes it through `NodeJS`
 fn load_or_install_nodejs_package(
-  app_definition: &Box<dyn AppDefinition>,
+  app_definition: &(dyn AppDefinition + 'static),
   version: &Version,
   optional: bool,
   from_source: bool,
@@ -258,7 +258,7 @@ fn load_or_install_nodejs_package(
     RequestedVersions::from(node.latest_installable_version(ctx.log)?)
   };
   let boxed: Box<dyn AppDefinition> = Box::new(node);
-  let Some(node_call) = load_or_install_app(&boxed, &node_versions, optional, false, ctx, apps)? else {
+  let Some(node_call) = load_or_install_app(boxed.as_ref(), &node_versions, optional, false, ctx, apps)? else {
     return Ok(None);
   };
   // determine the main entry point for the npm package from the "bin" entry in the its package.json file

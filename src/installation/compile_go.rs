@@ -54,7 +54,7 @@ fn load_rta_go(optional: bool, from_source: bool, ctx: &RuntimeContext, apps: &A
     RequestedVersions::from(versions)
   };
   let boxed: Box<dyn AppDefinition> = Box::new(go);
-  if let Some(executable_call) = commands::load_or_install_app(&boxed, &requested_go_versions, optional, from_source, ctx, apps)? {
+  if let Some(executable_call) = commands::load_or_install_app(boxed.as_ref(), &requested_go_versions, optional, from_source, ctx, apps)? {
     return Ok(Some(executable_call.executable.into()));
   }
   Ok(None)

@@ -177,7 +177,7 @@ impl Display for BinFolder {
 
 /// installs the given app using the first of the given installation methods that works
 pub fn any(
-  app_definition: &Box<dyn AppDefinition>,
+  app_definition: &(dyn AppDefinition + 'static),
   version: &Version,
   optional: bool,
   from_source: bool,
@@ -198,7 +198,7 @@ pub fn any(
 
 /// installs the given app using the given installation method
 pub fn install(
-  app_definition: &Box<dyn AppDefinition>,
+  app_definition: &(dyn AppDefinition + 'static),
   install_method: &Method,
   version: &Version,
   optional: bool,

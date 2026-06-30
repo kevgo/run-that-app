@@ -19,7 +19,7 @@ pub enum RustSource {
 }
 
 /// installs the given Rust-based application by compiling it from source
-pub fn run(app_definition: &Box<dyn AppDefinition>, version: &Version, app_folder: &Path, source: &RustSource, log: Log) -> Result<Outcome> {
+pub fn run(app_definition: &dyn AppDefinition, version: &Version, app_folder: &Path, source: &RustSource, log: Log) -> Result<Outcome> {
   let Ok(cargo_path) = which("cargo") else {
     return Err(UserError::RustNotInstalled);
   };

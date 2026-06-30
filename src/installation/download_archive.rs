@@ -9,7 +9,7 @@ use std::path::Path;
 
 /// downloads and unpacks the content of an archive file
 pub fn run(
-  app_definition: &Box<dyn AppDefinition>,
+  app_definition: &(dyn AppDefinition + 'static),
   app_folder: &Path,
   version: &Version,
   url: &Url,
