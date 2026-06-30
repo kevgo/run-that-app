@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::Log;
 use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::platform::Platform;
+use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
@@ -35,16 +35,22 @@ impl AppDefinition for MarkdownLint {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
-    if !output.contains(".gherkin-lintrc") {
+    if !output.contains("MarkdownLint Command Line Interface") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    // gherkin-lint has no version command
-    Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+    match extract_version(&executable.run_output(&["--version"], log)?) {
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
+    }
   }
 
   fn tag_format(&self) -> TagFormat {
     TagFormat::PrefixV
   }
+}
+
+fn extract_version(output: &str) -> Result<&str> {
+  strings::first_capture(output, r"(\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
