@@ -186,8 +186,8 @@ fn load_or_install_from_yard(
   // A NodeJS package is installed into its own app folder via "npm install" and then executed through NodeJS.
   // This needs to install two separate apps (the package and NodeJS itself, each with their own version),
   // so it cannot go through the generic single-app installation flow below.
-  if let RunMethod::NodeJS { package: _ } = app_definition.run_method(version, ctx.platform) {
-    return load_or_install_nodejs_package(app_definition, version, optional, from_source, ctx, apps);
+  if let RunMethod::NodeJS { package } = app_definition.run_method(version, ctx.platform) {
+    return load_or_install_nodejs_package(app_definition, version, package, optional, from_source, ctx, apps);
   }
   let (app_to_install, executable_name, executable_args) = carrier(app_definition, version, ctx.platform);
   let app_name = app_to_install.name();
@@ -222,6 +222,7 @@ fn load_or_install_from_yard(
 fn load_or_install_nodejs_package(
   app_definition: &dyn AppDefinition,
   version: &Version,
+  npm_package: &str,
   optional: bool,
   from_source: bool,
   ctx: &RuntimeContext,
@@ -257,13 +258,13 @@ fn load_or_install_nodejs_package(
     return Ok(None);
   };
   // determine the main entry point for the npm package from the "bin" entry in the its package.json file
-  let entry_point = load_entry_point(&app_folder, &app_name, version)?;
+  let entry_point = load_entry_point(&app_folder, &app_name, npm_package, version)?;
   let (executable, args) = node_call.with_args(vec![entry_point]);
   Ok(Some(ExecutableCall { executable, args }))
 }
 
-fn load_entry_point(app_folder: &Path, app_name: &ApplicationName, version: &Version) -> Result<String> {
-  let package_src = app_folder.join("node_modules").join(app_name);
+fn load_entry_point(app_folder: &Path, app_name: &ApplicationName, npm_package: &str, version: &Version) -> Result<String> {
+  let package_src = app_folder.join("node_modules").join(npm_package);
   let package_json_path = package_src.join("package.json");
   let content = fs::read_to_string(&package_json_path).map_err(|err| UserError::UnsupportedNpmPackage {
     app_name: app_name.clone(),

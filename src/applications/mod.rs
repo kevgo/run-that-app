@@ -28,6 +28,7 @@ mod gum;
 mod ireturn;
 mod keep_sorted;
 mod lefthook;
+mod markdownlint;
 mod mdbook;
 mod mdbook_linkcheck;
 mod node_prune;
@@ -84,6 +85,7 @@ pub use gum::Gum;
 pub use ireturn::Ireturn;
 pub use keep_sorted::KeepSorted;
 pub use lefthook::Lefthook;
+pub use markdownlint::MarkdownLint;
 pub use mdbook::MdBook;
 pub use mdbook_linkcheck::MdBookLinkCheck;
 pub use node_prune::NodePrune;
@@ -140,6 +142,7 @@ pub fn all() -> Apps {
     Box::new(ireturn::Ireturn {}),
     Box::new(keep_sorted::KeepSorted {}),
     Box::new(lefthook::Lefthook {}),
+    Box::new(markdownlint::MarkdownLint {}),
     Box::new(mdbook::MdBook {}),
     Box::new(mdbook_linkcheck::MdBookLinkCheck {}),
     Box::new(node_prune::NodePrune {}),
