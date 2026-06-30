@@ -108,9 +108,12 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// # Examples
 ///
 /// ```
+/// use rta::applications::AppDefinition;
+///
 /// let actionlint = rta::applications::ActionLint {};
+/// let boxed: Box<dyn AppDefinition> = Box::new(actionlint);
 /// let cmd_info = rta::get_cmd(
-///   &actionlint,
+///   &boxed,
 ///   rta::GetCmdArgs {
 ///     version: Some("1.7.12".into()),
 ///     app_args: vec!["--help".into()],
