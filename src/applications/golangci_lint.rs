@@ -55,7 +55,7 @@ impl AppDefinition for GolangCiLint {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    match strings::capture_version(&executable.run_output(&["--version"], log)?) {
+    match strings::first_version(&executable.run_output(&["--version"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }

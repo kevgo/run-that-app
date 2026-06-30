@@ -63,7 +63,7 @@ impl AppDefinition for Gofumpt {
     if !output.contains("display diffs instead of rewriting files") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match strings::capture_version(&executable.run_output(&["--version"], log)?) {
+    match strings::first_version(&executable.run_output(&["--version"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }

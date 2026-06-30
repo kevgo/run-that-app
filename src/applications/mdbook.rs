@@ -51,7 +51,7 @@ impl AppDefinition for MdBook {
     if !output.contains("Creates a book from markdown files") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match strings::capture_version(&executable.run_output(&["-V"], log)?) {
+    match strings::first_version(&executable.run_output(&["-V"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }

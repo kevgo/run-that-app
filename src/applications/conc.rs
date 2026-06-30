@@ -62,7 +62,7 @@ impl AppDefinition for Conc {
     if !output.contains("Conc runs commands concurrently and returns the first non-zero exit code it encounters.") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match strings::capture_version(&executable.run_output(&["--version"], log)?) {
+    match strings::first_version(&executable.run_output(&["--version"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }

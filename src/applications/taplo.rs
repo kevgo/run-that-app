@@ -65,7 +65,7 @@ impl AppDefinition for Taplo {
     if !output.contains("Lint TOML documents") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match strings::capture_version(&executable.run_output(&["-V"], log)?) {
+    match strings::first_version(&executable.run_output(&["-V"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }

@@ -65,7 +65,7 @@ impl AppDefinition for Gum {
     if !output.contains("A tool for glamorous shell scripts") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match strings::capture_version(&executable.run_output(&["--version"], log)?) {
+    match strings::first_version(&executable.run_output(&["--version"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }

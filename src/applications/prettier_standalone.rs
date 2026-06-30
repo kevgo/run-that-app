@@ -59,7 +59,7 @@ impl AppDefinition for PrettierStandalone {
     if !output.contains("Print the names of files that are different from Prettier's formatting") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match strings::capture_version(&executable.run_output(&["--version"], log)?) {
+    match strings::first_version(&executable.run_output(&["--version"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }

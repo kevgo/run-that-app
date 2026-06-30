@@ -57,7 +57,7 @@ impl AppDefinition for Rclone {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     let output = executable.run_output(&["version"], log)?;
-    match strings::capture_version(&output) {
+    match strings::first_version(&output) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }

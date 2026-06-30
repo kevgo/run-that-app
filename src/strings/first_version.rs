@@ -1,19 +1,20 @@
 use crate::error::Result;
 use crate::strings;
 
-pub fn capture_version(text: &str) -> Result<&str> {
+/// provides the first match of three numbers separated by dots in the given text
+pub fn first_version(text: &str) -> Result<&str> {
   strings::first_capture(text, r"(\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
 mod tests {
-  use super::capture_version;
+  use super::first_version;
   use crate::UserError;
 
   #[test]
   fn exact_match() {
     let give = "1.2.3";
-    let have = capture_version(give);
+    let have = first_version(give);
     let want = Ok("1.2.3");
     assert_eq!(have, want);
   }
@@ -21,7 +22,7 @@ mod tests {
   #[test]
   fn exact_match_with_text() {
     let give = "foo 1.2.3 bar";
-    let have = capture_version(give);
+    let have = first_version(give);
     let want = Ok("1.2.3");
     assert_eq!(have, want);
   }
@@ -29,7 +30,7 @@ mod tests {
   #[test]
   fn multiple_matches() {
     let give = "1.1.1 or 2.2.2 or 3.3.3";
-    let have = capture_version(give);
+    let have = first_version(give);
     let want = Ok("1.1.1");
     assert_eq!(have, want);
   }
@@ -37,7 +38,7 @@ mod tests {
   #[test]
   fn no_match() {
     let text = "word1 word2";
-    let have = capture_version(text);
+    let have = first_version(text);
     let want = Err(UserError::RegexDoesntMatch);
     assert_eq!(have, want);
   }

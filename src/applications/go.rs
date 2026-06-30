@@ -73,7 +73,7 @@ impl AppDefinition for Go {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    if let Ok(version) = strings::capture_version(&executable.run_output(&["version"], log)?) {
+    if let Ok(version) = strings::first_version(&executable.run_output(&["version"], log)?) {
       return Ok(AnalyzeResult::IdentifiedWithVersion(version.into()));
     }
     let output = executable.run_output(&["-h"], log)?;

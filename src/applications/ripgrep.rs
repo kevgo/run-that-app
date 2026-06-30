@@ -66,7 +66,7 @@ impl AppDefinition for RipGrep {
     if !output.contains("ripgrep") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match strings::capture_version(&output) {
+    match strings::first_version(&output) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
