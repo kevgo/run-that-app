@@ -60,7 +60,7 @@ impl AppDefinition for ShellCheck {
     if !output.contains("ShellCheck - shell script analysis tool") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&output) {
+    match strings::capture_version(&output) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -69,10 +69,6 @@ impl AppDefinition for ShellCheck {
   fn tag_format(&self) -> TagFormat {
     TagFormat::PrefixV
   }
-}
-
-fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"version: (\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
@@ -204,26 +200,6 @@ mod tests {
         }],
       };
       assert_eq!(have, want);
-    }
-  }
-
-  mod extract_version {
-    use crate::UserError;
-    use crate::applications::shellcheck::extract_version;
-
-    #[test]
-    fn success() {
-      let give = "
-ShellCheck - shell script analysis tool
-version: 0.9.0
-license: GNU General Public License, version 3
-website: https://www.shellcheck.net";
-      assert_eq!(extract_version(give), Ok("0.9.0"));
-    }
-
-    #[test]
-    fn other() {
-      assert_eq!(extract_version("other"), Err(UserError::RegexDoesntMatch));
     }
   }
 }

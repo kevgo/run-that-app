@@ -62,7 +62,7 @@ impl AppDefinition for DeleteEmptyFolders {
     if !output.contains("Deletes all empty directories in the current directory and its subdirectories") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output(&["--version"], log)?) {
+    match strings::capture_version(&executable.run_output(&["--version"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -73,13 +73,8 @@ impl AppDefinition for DeleteEmptyFolders {
   }
 }
 
-fn extract_version(output: &str) -> Result<&str> {
-  strings::capture_version(output)
-}
-
 #[cfg(test)]
 mod tests {
-  use crate::UserError;
 
   mod run_method {
     use crate::applications::AppDefinition;
@@ -226,11 +221,5 @@ mod tests {
       };
       assert_eq!(have, want);
     }
-  }
-
-  #[test]
-  fn extract_version() {
-    assert_eq!(super::extract_version("delete-empty-folders 0.0.1"), Ok("0.0.1"));
-    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }

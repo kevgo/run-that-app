@@ -59,7 +59,7 @@ impl AppDefinition for Biome {
     if !output.contains("Biome official CLI.") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output(&["--version"], log)?) {
+    match strings::capture_version(&executable.run_output(&["--version"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -67,10 +67,6 @@ impl AppDefinition for Biome {
   fn tag_format(&self) -> TagFormat {
     TagFormat::Prefix("@biomejs/biome@")
   }
-}
-
-fn extract_version(output: &str) -> Result<&str> {
-  strings::capture_version(output)
 }
 
 #[cfg(test)]
