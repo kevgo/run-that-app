@@ -177,7 +177,7 @@ mod tests {
     let shellcheck = apps.lookup("shellcheck").unwrap();
     let yard = Yard { root: PathBuf::from("/root") };
     let have = yard.not_installable_path(&shellcheck.name(), &Version::from("0.9.0"));
-    let want = PathBuf::from("/root/apps/shellcheck/0.9.0/not_installable");
+    let want = PathBuf::from("/root/apps/shellcheck/0.9.0/.run-that-app-not-installable");
     assert_eq!(have, want);
   }
 }
