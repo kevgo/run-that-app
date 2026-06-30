@@ -65,7 +65,7 @@ impl AppDefinition for Taplo {
     if !output.contains("Lint TOML documents") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output(&["-V"], log)?) {
+    match strings::capture_version(&executable.run_output(&["-V"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -76,13 +76,8 @@ impl AppDefinition for Taplo {
   }
 }
 
-fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"taplo (\d+\.\d+\.\d+)")
-}
-
 #[cfg(test)]
 mod tests {
-  use crate::UserError;
 
   mod run_method {
     use crate::applications::AppDefinition;
@@ -235,11 +230,5 @@ mod tests {
       };
       assert_eq!(have, want);
     }
-  }
-
-  #[test]
-  fn extract_version() {
-    assert_eq!(super::extract_version("taplo 0.10.0"), Ok("0.10.0"));
-    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }

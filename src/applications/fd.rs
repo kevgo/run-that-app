@@ -67,7 +67,7 @@ impl AppDefinition for Fd {
     if !output.contains("A program to find entries in your filesystem") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output(&["--version"], log)?) {
+    match strings::capture_version(&executable.run_output(&["--version"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -76,10 +76,6 @@ impl AppDefinition for Fd {
   fn tag_format(&self) -> TagFormat {
     TagFormat::PrefixV
   }
-}
-
-fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"fd (\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]

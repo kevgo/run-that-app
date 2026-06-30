@@ -59,7 +59,7 @@ impl AppDefinition for PrettierStandalone {
     if !output.contains("Print the names of files that are different from Prettier's formatting") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output(&["--version"], log)?) {
+    match strings::capture_version(&executable.run_output(&["--version"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -70,14 +70,8 @@ impl AppDefinition for PrettierStandalone {
   }
 }
 
-fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"(\d+\.\d+\.\d+)")
-}
-
 #[cfg(test)]
 mod tests {
-  use crate::UserError;
-  use crate::applications::prettier_standalone;
 
   mod run_method {
     use crate::applications::AppDefinition;
@@ -158,11 +152,5 @@ mod tests {
       };
       assert_eq!(have, want);
     }
-  }
-
-  #[test]
-  fn extract_version() {
-    assert_eq!(prettier_standalone::extract_version("0.24.0"), Ok("0.24.0"));
-    assert_eq!(prettier_standalone::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }

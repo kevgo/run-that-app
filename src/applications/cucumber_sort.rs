@@ -74,7 +74,7 @@ impl AppDefinition for CucumberSort {
 }
 
 fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"cucumber-sort (\d+\.\d+\.\d+)")
+  strings::capture_version(output)
 }
 
 #[cfg(test)]

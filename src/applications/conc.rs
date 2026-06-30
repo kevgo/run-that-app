@@ -74,7 +74,7 @@ impl AppDefinition for Conc {
 }
 
 fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"conc (\d+\.\d+\.\d+)")
+  strings::capture_version(output)
 }
 
 #[cfg(test)]

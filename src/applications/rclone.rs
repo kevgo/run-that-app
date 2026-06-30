@@ -57,7 +57,7 @@ impl AppDefinition for Rclone {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     let output = executable.run_output(&["version"], log)?;
-    match extract_version(&output) {
+    match strings::capture_version(&output) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -66,10 +66,6 @@ impl AppDefinition for Rclone {
   fn tag_format(&self) -> TagFormat {
     TagFormat::PrefixV
   }
-}
-
-fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"rclone v(\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]

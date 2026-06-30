@@ -75,7 +75,7 @@ impl AppDefinition for Contest {
 }
 
 fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"contest (\d+\.\d+\.\d+)")
+  strings::capture_version(output)
 }
 
 #[cfg(test)]
