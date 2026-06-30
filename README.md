@@ -379,7 +379,7 @@ Add `tools/rta@*` to `.gitignore`.
 Adding a new application is straightforward.
 See the [developer documentation](docs/DEVELOPMENT.md).
 
-### Why not use the package manager?
+### Why not use the official package manager for my operating system?
 
 If it works for you, do it.
 In practice, package managers introduce issues:
@@ -403,7 +403,11 @@ For development tooling, it often adds unnecessary complexity and bloat:
 - significant storage and memory overhead
 - Docker-in-Docker issues on CI
 - no help with CPU architecture mismatches
-- no solution for binaries hosted on GitHub releases
+- often no way to install a specific version of a tool
+- no way to install binaries hosted on GitHub releases in Docker
+
+Use run-that-app inside Docker to install tools not supported by the Linux
+package manager, or other tools at a specific version.
 
 ### Why not quickly write a small Bash script that downloads the executable?
 
