@@ -55,6 +55,7 @@ fn extract_version(output: &str) -> Result<&str> {
 
 #[cfg(test)]
 mod tests {
+  use crate::UserError;
 
   mod run_method {
     use crate::applications::{AppDefinition, MarkdownLint};
@@ -139,5 +140,11 @@ mod tests {
       let want = RunMethod::NodeJS { package: "markdownlint-cli" };
       assert_eq!(have, want);
     }
+  }
+
+  #[test]
+  fn extract_version() {
+    assert_eq!(super::extract_version("0.49.0"), Ok("0.49.0"));
+    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
