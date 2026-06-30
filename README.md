@@ -89,6 +89,7 @@ We can also compile apps from source if needed.
 - [ireturn](https://github.com/butuzov/ireturn)
 - [keep-sorted](https://github.com/google/keep-sorted)
 - [lefthook](https://lefthook.dev)
+- [markdownlint](https://github.com/igorshubovych/markdownlint-cli)
 - [mdbook](https://github.com/rust-lang/mdBook)
 - [mdbook-linkcheck](https://github.com/Michael-F-Bryan/mdbook-linkcheck)
 - [node-prune](https://github.com/tj/node-prune)
