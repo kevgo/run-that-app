@@ -334,7 +334,7 @@ mod tests {
   "bin": "index.js",
   "desc": "foo"
 }"#;
-      let result = parse_package_json(content, &app_name, &version, &Path::new("package.json"));
+      let result = parse_package_json(content, &app_name, &version, Path::new("package.json"));
       assert_eq!(result, Ok(S("index.js")));
     }
 
@@ -352,7 +352,7 @@ mod tests {
   },
   "desc": "foo"
 }"#;
-      let result = parse_package_json(content, &app_name, &version, &Path::new("package.json"));
+      let result = parse_package_json(content, &app_name, &version, Path::new("package.json"));
       assert_eq!(result, Ok(S("my-app.js")));
     }
 
@@ -370,7 +370,7 @@ mod tests {
   },
   "desc": "foo"
 }"#;
-      let result = parse_package_json(content, &app_name, &version, &Path::new("package.json"));
+      let result = parse_package_json(content, &app_name, &version, Path::new("package.json"));
       assert_eq!(result, Ok(S("my-app.js")));
     }
 
@@ -387,7 +387,7 @@ mod tests {
   },
   "desc": "foo"
 }"#;
-      let result = parse_package_json(content, &app_name, &version, &Path::new("package.json"));
+      let result = parse_package_json(content, &app_name, &version, Path::new("package.json"));
       assert_eq!(
         result,
         Err(UserError::UnsupportedNpmPackage {
@@ -407,7 +407,7 @@ mod tests {
   "name": "my-app",
   "desc": "foo"
 }"#;
-      let result = parse_package_json(content, &app_name, &version, &Path::new("package.json"));
+      let result = parse_package_json(content, &app_name, &version, Path::new("package.json"));
       assert_eq!(
         result,
         Err(UserError::UnsupportedNpmPackage {
@@ -428,7 +428,7 @@ mod tests {
   "bin": {},
   "desc": "foo"
 }"#;
-      let result = parse_package_json(content, &app_name, &version, &Path::new("package.json"));
+      let result = parse_package_json(content, &app_name, &version, Path::new("package.json"));
       assert_eq!(
         result,
         Err(UserError::UnsupportedNpmPackage {
