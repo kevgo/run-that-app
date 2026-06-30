@@ -10,7 +10,8 @@ pub fn capture_version(text: &str) -> Result<&str> {
   let Some(captures) = regex.captures(text) else {
     return Err(UserError::RegexDoesntMatch);
   };
-  let Some(first_capture) = captures.get(0) else {
+  println!("{captures:?}");
+  let Some(first_capture) = captures.get(1) else {
     return Err(UserError::RegexHasNoCaptures);
   };
   Ok(first_capture.as_str())
@@ -39,7 +40,7 @@ mod tests {
 
   #[test]
   fn multiple_matches() {
-    let give = "1.1.l or 2.2.2 or 3.3.3";
+    let give = "1.1.1 or 2.2.2 or 3.3.3";
     let have = capture_version(give);
     let want = Ok("1.1.1");
     assert_eq!(have, want);
