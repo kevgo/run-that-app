@@ -4,7 +4,7 @@ use crate::commands::{AddArgs, AvailableArgs, InstallArgs, RunArgs, TestArgs, Up
 use crate::error::{Result, UserError};
 
 #[allow(clippy::too_many_lines)]
-pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Cli> {
+pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Cli<'_>> {
   let mut app_version: Option<AppVersion> = None;
   let mut verbose = false;
   let mut app_args: Vec<String> = vec![];
