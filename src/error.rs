@@ -24,7 +24,6 @@ pub enum UserError {
   CannotDownload { url: Url, reason: String },
   CannotExecuteBinary { call: String, reason: String },
   CannotFindExecutable,
-  CannotFindPackageJson { package_name: String, filepath: String, reason: String },
   CannotOpenSubshellStream,
   CannotParseSemverVersion { expression: String, reason: String },
   CannotParseSemverRange { expression: String, reason: String },
@@ -95,13 +94,6 @@ impl UserError {
       UserError::CannotFindExecutable => {
         error("cannot locate executable for app.");
         desc("Please report this at https://github.com/kevgo/run-that-app/issues/new and try using an older version until this is fixed.");
-      }
-      UserError::CannotFindPackageJson {
-        package_name,
-        filepath,
-        reason,
-      } => {
-        error(&format!("cannot find package.json file of {package_name}\npath: {filepath}\nerror: {reason}"));
       }
       UserError::CannotOpenSubshellStream => error("cannot open subshell stream"),
       UserError::CannotParseSemverVersion { expression, reason } => {
