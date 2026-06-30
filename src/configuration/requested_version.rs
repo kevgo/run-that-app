@@ -13,7 +13,7 @@ pub enum RequestedVersion {
 }
 
 impl RequestedVersion {
-  pub fn parse(version: &str, app_definition: &dyn AppDefinition) -> Result<RequestedVersion> {
+  pub fn parse(version: &str, app_definition: &Box<dyn AppDefinition>) -> Result<RequestedVersion> {
     if let Some(system_version) = is_system(version) {
       if system_version == "auto" {
         return Ok(RequestedVersion::Path(app_definition.allowed_versions()?));
@@ -113,6 +113,7 @@ mod tests {
     }
 
     mod unknown_allowed_versions {
+      use crate::applications::AppDefinition;
       use crate::configuration::RequestedVersion;
 
       #[test]
@@ -120,7 +121,8 @@ mod tests {
         let app = super::TestApp {
           allowed_versions: semver::VersionReq::STAR,
         };
-        let have = RequestedVersion::parse("system@1.2", &app).unwrap();
+        let boxed: Box<dyn AppDefinition> = Box::new(app);
+        let have = RequestedVersion::parse("system@1.2", &boxed).unwrap();
         let want = RequestedVersion::Path(semver::VersionReq::parse("1.2").unwrap());
         assert_eq!(have, want);
       }
@@ -130,13 +132,15 @@ mod tests {
         let app = super::TestApp {
           allowed_versions: semver::VersionReq::STAR,
         };
-        let have = RequestedVersion::parse("system@auto", &app).unwrap();
+        let boxed: Box<dyn AppDefinition> = Box::new(app);
+        let have = RequestedVersion::parse("system@auto", &boxed).unwrap();
         let want = RequestedVersion::Path(semver::VersionReq::STAR);
         assert_eq!(have, want);
       }
     }
 
     mod known_allowed_versions {
+      use crate::applications::AppDefinition;
       use crate::configuration::RequestedVersion;
 
       #[test]
@@ -144,7 +148,8 @@ mod tests {
         let app = super::TestApp {
           allowed_versions: semver::VersionReq::parse("1.21").unwrap(),
         };
-        let have = RequestedVersion::parse("system@1.5", &app).unwrap();
+        let boxed: Box<dyn AppDefinition> = Box::new(app);
+        let have = RequestedVersion::parse("system@1.5", &boxed).unwrap();
         let want = RequestedVersion::Path(semver::VersionReq::parse("1.5").unwrap());
         assert_eq!(have, want);
       }
@@ -154,7 +159,8 @@ mod tests {
         let app = super::TestApp {
           allowed_versions: semver::VersionReq::parse("1.21").unwrap(),
         };
-        let have = RequestedVersion::parse("system@auto", &app).unwrap();
+        let boxed: Box<dyn AppDefinition> = Box::new(app);
+        let have = RequestedVersion::parse("system@auto", &boxed).unwrap();
         let want = RequestedVersion::Path(semver::VersionReq::parse("1.21").unwrap());
         assert_eq!(have, want);
       }

@@ -176,7 +176,14 @@ impl Display for BinFolder {
 }
 
 /// installs the given app using the first of the given installation methods that works
-pub fn any(app_definition: &dyn AppDefinition, version: &Version, optional: bool, from_source: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Outcome> {
+pub fn any(
+  app_definition: &Box<dyn AppDefinition>,
+  version: &Version,
+  optional: bool,
+  from_source: bool,
+  ctx: &RuntimeContext,
+  apps: &Apps,
+) -> Result<Outcome> {
   for install_method in app_definition.run_method(version, ctx.platform).install_methods() {
     if from_source && !install_method.is_from_source() {
       continue;
@@ -191,7 +198,7 @@ pub fn any(app_definition: &dyn AppDefinition, version: &Version, optional: bool
 
 /// installs the given app using the given installation method
 pub fn install(
-  app_definition: &dyn AppDefinition,
+  app_definition: &Box<dyn AppDefinition>,
   install_method: &Method,
   version: &Version,
   optional: bool,

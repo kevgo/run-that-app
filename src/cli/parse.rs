@@ -122,7 +122,7 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Cli>
     // TODO: remove this and make all places that use it use the app reference directly
     let app_name = app.name();
     if add {
-      return Ok(Cli::Add(AddArgs { app_name, verbose }));
+      return Ok(Cli::Add(AddArgs { app, verbose }));
     }
     if indicate_available {
       return Ok(Cli::Available(AvailableArgs {

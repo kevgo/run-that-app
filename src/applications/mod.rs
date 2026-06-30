@@ -222,9 +222,13 @@ dyn_clone::clone_trait_object!(AppDefinition);
 /// provides the app that contains the executable for the given app,
 /// the name of the executable provided by this app to call,
 /// and arguments to call that executable with.
-pub fn carrier<'a>(app: &'a dyn AppDefinition, version: &Version, platform: Platform) -> (Box<dyn AppDefinition + 'a>, ExecutableNameUnix, ExecutableArgs) {
+pub fn carrier<'a>(
+  app: &'a Box<dyn AppDefinition>,
+  version: &Version,
+  platform: Platform,
+) -> (Box<dyn AppDefinition + 'a>, ExecutableNameUnix, ExecutableArgs) {
   match app.run_method(version, platform) {
-    RunMethod::ThisApp { install_methods: _ } => (dyn_clone::clone_box(app), app.executable_filename(), ExecutableArgs::None),
+    RunMethod::ThisApp { install_methods: _ } => (app.clone(), app.executable_filename(), ExecutableArgs::None),
     RunMethod::OtherAppOtherExecutable {
       app_definition,
       executable_name,
@@ -321,13 +325,13 @@ impl Apps {
   }
 
   /// provides the app with the given name
-  pub fn lookup<AS: AsRef<str>>(&self, name: AS) -> Result<&dyn AppDefinition> {
+  pub fn lookup<AS: AsRef<str>>(&self, name: AS) -> Result<&Box<dyn AppDefinition>> {
     for app in &self.0 {
       if app.name() == name.as_ref() {
-        return Ok(app.as_ref());
+        return Ok(&app);
       }
       if app.executable_filename().as_ref() == name.as_ref() {
-        return Ok(app.as_ref());
+        return Ok(&app);
       }
     }
     Err(UserError::UnknownApp(name.as_ref().to_string()))

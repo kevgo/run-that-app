@@ -133,7 +133,7 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// let exit_status = cmd.status().unwrap();
 /// assert!(exit_status.success());
 /// ```
-pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result<Option<CommandInfo>, error::UserError> {
+pub fn get_cmd(app: &Box<dyn AppDefinition>, args: GetCmdArgs, apps: &Apps) -> Result<Option<CommandInfo>, error::UserError> {
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
