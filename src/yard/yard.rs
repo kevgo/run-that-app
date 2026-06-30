@@ -109,7 +109,7 @@ impl Yard {
   }
 
   fn not_installable_path(&self, app_name: &ApplicationName, app_version: &Version) -> PathBuf {
-    self.app_folder(app_name, app_version).join("not_installable") // TODO: rename this file to `.run-that-app-not-installable`
+    self.app_folder(app_name, app_version).join(".run-that-app-not-installable")
   }
 }
 
@@ -177,7 +177,7 @@ mod tests {
     let shellcheck = apps.lookup("shellcheck").unwrap();
     let yard = Yard { root: PathBuf::from("/root") };
     let have = yard.not_installable_path(&shellcheck.name(), &Version::from("0.9.0"));
-    let want = PathBuf::from("/root/apps/shellcheck/0.9.0/not_installable");
+    let want = PathBuf::from("/root/apps/shellcheck/0.9.0/.run-that-app-not-installable");
     assert_eq!(have, want);
   }
 }
