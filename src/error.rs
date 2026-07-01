@@ -41,6 +41,7 @@ pub enum UserError {
   InvalidNumber,
   InvalidGitHubAPIResponse { err: String },
   InvalidRegex { regex: String, err: String },
+  LockCannotAcquire { filename: String, err: String },
   MissingApplication,
   MultipleCommandsGiven,
   NotOnline,
@@ -143,6 +144,9 @@ impl UserError {
         error("Invalid number given");
       }
       UserError::InvalidRegex { regex, err } => error(&format!("invalid regex '{regex}': {err}")),
+      UserError::LockCannotAcquire { filename, err } => {
+        error(&format!("cannot acquire lock for {filename}: {err}"));
+      }
       UserError::MissingApplication => {
         error("missing application");
         desc("Please provide the application to execute");

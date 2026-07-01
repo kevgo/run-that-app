@@ -138,7 +138,7 @@ fn load_or_install(
       })?;
       (ctx.log)(Event::LockAcquireBegin { app: &app_definition.name() });
       let mut lock = RwLock::new(lock_file);
-      let guard = lock.write().map_err(|err| UserError::CannotCreateFile {
+      let guard = lock.write().map_err(|err| UserError::LockCannotAcquire {
         filename: lock_path.to_string_lossy().to_string(),
         err: err.to_string(),
       })?;
