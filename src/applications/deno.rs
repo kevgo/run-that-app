@@ -57,7 +57,7 @@ impl AppDefinition for Deno {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
-    if !output.contains("Auto-formats source code based on the specified plugins") {
+    if !output.contains("A modern JavaScript and TypeScript runtime") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match strings::first_version(&executable.run_output(&["--version"], log)?) {
