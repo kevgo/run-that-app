@@ -128,8 +128,8 @@ fn load_or_install(
       Ok(None)
     }
     RequestedVersion::Yard(version) => {
+      // load or install the app
       filesystem::with_lock(&app_definition.name(), version, ctx, || {
-        // load or install the app
         load_or_install_from_yard(app_definition, version, optional, from_source, ctx, apps)
       })
     }
