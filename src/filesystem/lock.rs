@@ -6,6 +6,7 @@ use crate::logging::Event;
 use fd_lock::RwLock;
 use std::fs::File;
 
+/// runs the given function while holding a lock on the app folder
 pub fn with_lock<T>(app_name: &ApplicationName, version: &Version, ctx: &RuntimeContext, f: impl FnOnce() -> Result<T>) -> Result<T> {
   // acquire the lock
   let app_folder = ctx.yard.create_app_folder(app_name, version)?;
