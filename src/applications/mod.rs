@@ -10,7 +10,6 @@ mod cucumber_sort;
 mod deadcode;
 mod delete_empty_folders;
 mod deno;
-mod denort;
 mod depth;
 mod dprint;
 mod exhaustruct;
@@ -70,7 +69,6 @@ pub use cucumber_sort::CucumberSort;
 pub use deadcode::Deadcode;
 pub use delete_empty_folders::DeleteEmptyFolders;
 pub use deno::Deno;
-pub use denort::Denort;
 pub use depth::Depth;
 pub use dprint::Dprint;
 pub use exhaustruct::Exhaustruct;
@@ -130,7 +128,6 @@ pub fn all() -> Apps {
     Box::new(deadcode::Deadcode {}),
     Box::new(delete_empty_folders::DeleteEmptyFolders {}),
     Box::new(deno::Deno {}),
-    Box::new(denort::Denort {}),
     Box::new(depth::Depth {}),
     Box::new(dprint::Dprint {}),
     Box::new(exhaustruct::Exhaustruct {}),
