@@ -70,6 +70,7 @@ We can also compile apps from source if needed.
 - [cucumber-sort](https://github.com/kevgo/cucumber-sort)
 - [deadcode](https://pkg.go.dev/golang.org/x/tools/cmd/deadcode)
 - [delete-empty-folders](https://github.com/kevgo/delete-empty-folders)
+- [deno](https://deno.com)
 - [depth](https://github.com/KyleBanks/depth)
 - [dprint](https://dprint.dev)
 - [exhaustruct](https://github.com/GaijinEntertainment/go-exhaustruct)
