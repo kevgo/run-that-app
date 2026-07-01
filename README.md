@@ -96,6 +96,7 @@ We can also compile apps from source if needed.
 - [node](https://nodejs.org)
 - [npm](https://www.npmjs.com)
 - [npx](https://www.npmjs.com)
+- [prettier](https://github.com/prettier/prettier)
 - [prettier-standalone](https://github.com/markelliot/prettier-standalone)
 - [pyrefly](https://pyrefly.org)
 - [rclone](https://rclone.org)

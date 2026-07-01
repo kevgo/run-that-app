@@ -35,6 +35,7 @@ mod node_prune;
 mod nodejs;
 mod npm;
 mod npx;
+mod prettier;
 mod prettier_standalone;
 mod pyrefly;
 mod rclone;
@@ -92,6 +93,7 @@ pub use node_prune::NodePrune;
 pub use nodejs::NodeJS;
 pub use npm::Npm;
 pub use npx::Npx;
+pub use prettier::Prettier;
 pub use prettier_standalone::PrettierStandalone;
 pub use pyrefly::Pyrefly;
 pub use rclone::Rclone;
@@ -149,6 +151,7 @@ pub fn all() -> Apps {
     Box::new(nodejs::NodeJS {}),
     Box::new(npm::Npm {}),
     Box::new(npx::Npx {}),
+    Box::new(prettier::Prettier {}),
     Box::new(prettier_standalone::PrettierStandalone {}),
     Box::new(pyrefly::Pyrefly {}),
     Box::new(rclone::Rclone {}),
