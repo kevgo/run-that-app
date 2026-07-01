@@ -152,6 +152,12 @@ fn load_or_install(
       // load or install the app
       let result = load_or_install_from_yard(app_definition, version, &app_folder, optional, from_source, ctx, apps);
 
+      // delete the lockfile
+      fs::remove_file(&lock_file).map_err(|err| UserError::CannotDeleteFile {
+        filename: lock_file.to_string_lossy().to_string(),
+        err: err.to_string(),
+      })?;
+
       // release the lock
       (ctx.log)(Event::LockRelease { app: &app_definition.name() });
       drop(guard);
