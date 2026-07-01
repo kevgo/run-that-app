@@ -75,6 +75,13 @@ pub fn log(event: Event) {
     Event::IntegrationTestDeterminedVersion { version } => eprintln!("Latest version: {}", version.as_str().cyan()),
     Event::IntegrationTestNewInstallMethod { app, method, version } => eprintln!("\n{}", method.name(app, version).bold()),
 
+    Event::LockAcquireBegin { app } => {
+      eprint!("acquiring lock for {} ... ", app.as_str().cyan());
+      let _ = io::stderr().flush();
+    }
+    Event::LockAcquireSuccess => eprintln!("{}", "ok".green()),
+    Event::LockRelease { app } => eprintln!("releasing lock for {}", app.as_str().cyan()),
+
     Event::NotOnline => eprintln!("{}", "not online".red()),
 
     Event::UpdateBegin { app } => eprintln!("updating {} ...", app.as_str().cyan()),

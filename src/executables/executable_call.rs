@@ -94,6 +94,7 @@ impl Display for ExecutableArgs {
 }
 
 /// information to call an app with file paths adjusted
+#[derive(Debug, PartialEq)]
 pub struct ExecutableCall {
   pub executable: Executable,
   pub args: Vec<String>,
