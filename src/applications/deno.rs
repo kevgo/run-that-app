@@ -34,16 +34,10 @@ impl AppDefinition for Deno {
     };
     let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
-      install_methods: vec![
-        Method::DownloadArchive {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/deno-{cpu}-{os}.zip").into(),
-          bin_folder: BinFolder::Root,
-        },
-        Method::CompileRustCrate {
-          name: "dprint",
-          bin_folder: BinFolder::Subfolder { path: "bin".into() },
-        },
-      ],
+      install_methods: vec![Method::DownloadArchive {
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/deno-{cpu}-{os}.zip").into(),
+        bin_folder: BinFolder::Root,
+      }],
     }
   }
 
