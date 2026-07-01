@@ -3,14 +3,13 @@ use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersion
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::{ExecutableCall, ExecutableCallDefinition, RunMethod};
-use crate::filesystem::find_global_install;
+use crate::filesystem::{self, find_global_install};
 use crate::installation::{self, Outcome};
 use crate::logging::{self, Event};
 use crate::yard::Yard;
 use crate::{platform, subshell, yard};
 use ahash::AHashSet;
-use fd_lock::RwLock;
-use std::fs::{self, File};
+use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
@@ -129,33 +128,10 @@ fn load_or_install(
       Ok(None)
     }
     RequestedVersion::Yard(version) => {
-      // acquire the lock
-      let app_folder = ctx.yard.create_app_folder(&app_definition.name(), version)?;
-      let lock_path = app_folder.join(".run-that-app-lock");
-      let lock_file = File::create(&lock_path).map_err(|err| UserError::CannotCreateFile {
-        filename: lock_path.to_string_lossy().to_string(),
-        err: err.to_string(),
-      })?;
-      (ctx.log)(Event::LockAcquireBegin { app: &app_definition.name() });
-      let mut lock = RwLock::new(lock_file);
-      let guard = lock.write().map_err(|err| UserError::LockCannotAcquire {
-        filename: lock_path.to_string_lossy().to_string(),
-        err: err.to_string(),
-      })?;
-      (ctx.log)(Event::LockAcquireSuccess);
-
-      // load or install the app
-      let result = load_or_install_from_yard(app_definition, version, optional, from_source, ctx, apps);
-
-      // release the lock
-      (ctx.log)(Event::LockRelease { app: &app_definition.name() });
-      drop(guard);
-
-      // Note: don't delete the lockfile
-      // because that would allow another process to create a new file
-      // and acquire a lock on that one.
-
-      result
+      filesystem::with_lock(&app_definition.name(), version, ctx, || {
+        // load or install the app
+        load_or_install_from_yard(app_definition, version, optional, from_source, ctx, apps)
+      })
     }
   }
 }
