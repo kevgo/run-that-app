@@ -9,7 +9,8 @@ use crate::logging::{self, Event};
 use crate::yard::Yard;
 use crate::{platform, subshell, yard};
 use ahash::AHashSet;
-use std::fs;
+use fd_lock::RwLock;
+use std::fs::{self, File};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
@@ -127,7 +128,33 @@ fn load_or_install(
       }
       Ok(None)
     }
-    RequestedVersion::Yard(version) => load_or_install_from_yard(app_definition, version, optional, from_source, ctx, apps),
+    RequestedVersion::Yard(version) => {
+      // acquire the lock
+      let app_folder = ctx.yard.app_folder(&app_definition.name(), version);
+      let lock_file = app_folder.join(".run-that-app-lock");
+      let file = File::create(&lock_file).map_err(|err| UserError::CannotCreateFile {
+        filename: lock_file.to_string_lossy().to_string(),
+        err: err.to_string(),
+      })?;
+      (ctx.log)(Event::LockAcquireBegin { app: &app_definition.name() });
+      let mut lock = RwLock::new(file);
+      let guard = match lock.try_write() {
+        Ok(guard) => guard,
+        Err(err) => {
+          return Err(UserError::CannotCreateFile {
+            filename: lock_file.to_string_lossy().to_string(),
+            err: err.to_string(),
+          });
+        }
+      };
+      (ctx.log)(Event::LockAcquireSuccess);
+
+      let result = load_or_install_from_yard(app_definition, version, optional, from_source, ctx, apps);
+      (ctx.log)(Event::LockRelease { app: &app_definition.name() });
+      drop(guard);
+
+      result
+    }
   }
 }
 

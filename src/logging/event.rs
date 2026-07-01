@@ -88,6 +88,13 @@ pub enum Event<'a> {
     method: &'a Method,
     version: &'a Version,
   },
+  LockAcquireBegin {
+    app: &'a ApplicationName,
+  },
+  LockAcquireSuccess,
+  LockRelease {
+    app: &'a ApplicationName,
+  },
   NotOnline,
   UpdateBegin {
     app: &'a ApplicationName,

@@ -53,6 +53,10 @@ pub fn log(event: Event) {
     Event::IntegrationTestDeterminedVersion { version: _ } => {}
     Event::IntegrationTestNewInstallMethod { app, method, version } => eprintln!("\n{}", method.name(app, version).bold()),
 
+    Event::LockAcquireBegin { app: _ } => {}
+    Event::LockAcquireSuccess => {}
+    Event::LockRelease { app: _ } => {}
+
     Event::NotOnline => eprintln!("{}", "not online".red()),
 
     Event::UpdateBegin { app: _ } => {}
