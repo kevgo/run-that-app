@@ -151,14 +151,15 @@ fn load_or_install(
 
       // load or install the app
       let result = load_or_install_from_yard(app_definition, version, &app_folder, optional, from_source, ctx, apps);
+      println!("111111111111111111111111111111 {result:?}");
 
-      // delete the lockfile and release the lock
-      let _ = fs::remove_file(&lock_path).map_err(|err| UserError::CannotDeleteFile {
-        filename: lock_path.to_string_lossy().to_string(),
-        err: err.to_string(),
-      });
+      // release the lock
       (ctx.log)(Event::LockRelease { app: &app_definition.name() });
       drop(guard);
+
+      // Note: don't delete the lockfile
+      // because that would allow another process to create a new file
+      // and acquire a lock on that one.
 
       result
     }
@@ -228,9 +229,11 @@ fn load_or_install_from_yard(
   let app_name = app_to_install.name();
   // try to load the app
   if let Some((executable, bin_folder)) = ctx.yard.load_executable(app_to_install.as_ref(), &executable_name, version, ctx) {
+    println!("222222222222222222222222222222 {executable:?}");
     let args = executable_args.locate(&app_name, version, app_folder, &bin_folder)?;
     return Ok(Some(ExecutableCall { executable, args }));
   }
+  println!("333333333333333333333333333333");
   // app not installed --> check if uninstallable
   if ctx.yard.is_not_installable(&app_name, version) {
     return Ok(None);

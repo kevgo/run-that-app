@@ -93,6 +93,7 @@ impl Yard {
           let bin_folder = installation_method.bin_folder();
           return Some((Executable::from(executable_path), bin_folder));
         }
+        (ctx.log)(Event::YardCheckExistingAppNotFound);
       }
     }
     (ctx.log)(Event::YardCheckExistingAppNotFound);

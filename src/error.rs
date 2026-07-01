@@ -18,7 +18,6 @@ pub enum UserError {
   CannotCreateFile { filename: String, err: String },
   CannotCreateFolder { folder: PathBuf, reason: String },
   CannotCreateTempDir { err: String },
-  CannotDeleteFile { filename: String, err: String },
   CannotDeleteFolder { folder: PathBuf, err: String },
   CannotDetermineCurrentDirectory(String),
   CannotDetermineHomeDirectory,
@@ -76,7 +75,6 @@ impl UserError {
         desc(&format!("please make sure {} is a file and accessible to you", configuration::FILE_NAME));
       }
       UserError::CannotCompileRustSource { err } => error(&format!("cannot compile Rust source: {err}")),
-      UserError::CannotDeleteFile { filename, err } => error(&format!("cannot delete file {filename}: {err}")),
       UserError::CannotDeleteFolder { folder, err } => error(&format!("cannot delete folder {}: {err}", folder.to_string_lossy())),
       UserError::CannotDetermineCurrentDirectory(reason) => error(&format!("cannot determine the current directory: {reason}")),
       UserError::CannotCreateFile { filename, err } => error(&format!("cannot create file {filename}: {err}")),
