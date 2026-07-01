@@ -38,7 +38,8 @@ pub fn test(args: &mut TestArgs, apps: &Apps) -> Result<ExitCode> {
         method: &install_method,
         version: &latest_version,
       });
-      if !installation::install(app.as_ref(), &install_method, &latest_version, args.optional, false, &ctx, apps)?.success() {
+      let app_folder = ctx.yard.create_app_folder(&app.name(), &latest_version)?;
+      if !installation::install(app.as_ref(), &app_folder, &install_method, &latest_version, args.optional, false, &ctx, apps)?.success() {
         continue;
       }
       let app_folder = yard.app_folder(&app.name(), &latest_version);

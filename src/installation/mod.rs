@@ -176,12 +176,20 @@ impl Display for BinFolder {
 }
 
 /// installs the given app using the first of the given installation methods that works
-pub fn any(app_definition: &dyn AppDefinition, version: &Version, optional: bool, from_source: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Outcome> {
+pub fn any(
+  app_definition: &dyn AppDefinition,
+  version: &Version,
+  app_folder: &Path,
+  optional: bool,
+  from_source: bool,
+  ctx: &RuntimeContext,
+  apps: &Apps,
+) -> Result<Outcome> {
   for install_method in app_definition.run_method(version, ctx.platform).install_methods() {
     if from_source && !install_method.is_from_source() {
       continue;
     }
-    let outcome = install(app_definition, &install_method, version, optional, from_source, ctx, apps)?;
+    let outcome = install(app_definition, app_folder, &install_method, version, optional, from_source, ctx, apps)?;
     if outcome.success() {
       return Ok(outcome);
     }
@@ -192,6 +200,7 @@ pub fn any(app_definition: &dyn AppDefinition, version: &Version, optional: bool
 /// installs the given app using the given installation method
 pub fn install(
   app_definition: &dyn AppDefinition,
+  app_folder: &Path,
   install_method: &Method,
   version: &Version,
   optional: bool,
@@ -199,14 +208,13 @@ pub fn install(
   ctx: &RuntimeContext,
   apps: &Apps,
 ) -> Result<Outcome> {
-  let app_folder = ctx.yard.create_app_folder(&app_definition.name(), version)?;
   match install_method {
-    Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &app_folder, version, url, bin_folder, optional, ctx),
-    Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &app_folder, version, download_url, optional, ctx),
-    Method::CompileGoSource { import_path } => compile_go::run(&app_folder, import_path, optional, from_source, ctx, apps),
-    Method::CompileRustCrate { name, bin_folder: _ } => compile_rust::run(app_definition, version, &app_folder, &RustSource::CratesIo { name }, ctx.log),
-    Method::CompileRustRepo { url } => compile_rust::run(app_definition, version, &app_folder, &RustSource::Repository { url: url.clone() }, ctx.log),
-    Method::InstallNodeJSPackage { package } => install_nodejs_package::run(package, &app_folder, version, optional, apps),
+    Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, app_folder, version, url, bin_folder, optional, ctx),
+    Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, app_folder, version, download_url, optional, ctx),
+    Method::CompileGoSource { import_path } => compile_go::run(app_folder, import_path, optional, from_source, ctx, apps),
+    Method::CompileRustCrate { name, bin_folder: _ } => compile_rust::run(app_definition, version, app_folder, &RustSource::CratesIo { name }, ctx.log),
+    Method::CompileRustRepo { url } => compile_rust::run(app_definition, version, app_folder, &RustSource::Repository { url: url.clone() }, ctx.log),
+    Method::InstallNodeJSPackage { package } => install_nodejs_package::run(package, app_folder, version, optional, apps),
   }
 }
 

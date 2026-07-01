@@ -130,7 +130,7 @@ fn load_or_install(
     }
     RequestedVersion::Yard(version) => {
       // acquire the lock
-      let app_folder = ctx.yard.app_folder(&app_definition.name(), version);
+      let app_folder = ctx.yard.create_app_folder(&app_definition.name(), version)?;
       let lock_file = app_folder.join(".run-that-app-lock");
       let file = File::create(&lock_file).map_err(|err| UserError::CannotCreateFile {
         filename: lock_file.to_string_lossy().to_string(),
@@ -149,7 +149,10 @@ fn load_or_install(
       };
       (ctx.log)(Event::LockAcquireSuccess);
 
-      let result = load_or_install_from_yard(app_definition, version, optional, from_source, ctx, apps);
+      // load or install the app
+      let result = load_or_install_from_yard(app_definition, version, &app_folder, optional, from_source, ctx, apps);
+
+      // release the lock
       (ctx.log)(Event::LockRelease { app: &app_definition.name() });
       drop(guard);
 
@@ -205,6 +208,7 @@ fn load_from_path(app_to_run: &dyn AppDefinition, range: &semver::VersionReq, ct
 fn load_or_install_from_yard(
   app_definition: &dyn AppDefinition,
   version: &Version,
+  app_folder: &Path,
   optional: bool,
   from_source: bool,
   ctx: &RuntimeContext,
@@ -214,14 +218,13 @@ fn load_or_install_from_yard(
   // This needs to install two separate apps (the package and NodeJS itself, each with their own version),
   // so it cannot go through the generic single-app installation flow below.
   if let RunMethod::NodeJS { package } = app_definition.run_method(version, ctx.platform) {
-    return load_or_install_nodejs_package(app_definition, version, package, optional, from_source, ctx, apps);
+    return load_or_install_nodejs_package(app_definition, version, app_folder, package, optional, from_source, ctx, apps);
   }
   let (app_to_install, executable_name, executable_args) = carrier(app_definition, version, ctx.platform);
   let app_name = app_to_install.name();
   // try to load the app
   if let Some((executable, bin_folder)) = ctx.yard.load_executable(app_to_install.as_ref(), &executable_name, version, ctx) {
-    let app_folder = ctx.yard.app_folder(&app_name, version);
-    let args = executable_args.locate(&app_folder, &bin_folder)?;
+    let args = executable_args.locate(app_folder, &bin_folder)?;
     return Ok(Some(ExecutableCall { executable, args }));
   }
   // app not installed --> check if uninstallable
@@ -229,7 +232,7 @@ fn load_or_install_from_yard(
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  match installation::any(app_to_install.as_ref(), version, optional, from_source, ctx, apps)? {
+  match installation::any(app_to_install.as_ref(), version, app_folder, optional, from_source, ctx, apps)? {
     Outcome::Installed => {} // we'll load it below
     Outcome::NotInstalled => {
       ctx.yard.mark_not_installable(&app_name, version)?;
@@ -249,6 +252,7 @@ fn load_or_install_from_yard(
 fn load_or_install_nodejs_package(
   app_definition: &dyn AppDefinition,
   version: &Version,
+  app_folder: &Path,
   npm_package: &str,
   optional: bool,
   from_source: bool,
@@ -256,13 +260,12 @@ fn load_or_install_nodejs_package(
   apps: &Apps,
 ) -> Result<Option<ExecutableCall>> {
   let app_name = app_definition.name();
-  let app_folder = ctx.yard.app_folder(&app_name, version);
   // install the NodeJS package into its app folder if it isn't there yet
   if !app_folder.exists() {
     if ctx.yard.is_not_installable(&app_name, version) {
       return Ok(None);
     }
-    match installation::any(app_definition, version, optional, from_source, ctx, apps)? {
+    match installation::any(app_definition, version, app_folder, optional, from_source, ctx, apps)? {
       Outcome::Installed => {}
       Outcome::NotInstalled => {
         ctx.yard.mark_not_installable(&app_name, version)?;
@@ -285,7 +288,7 @@ fn load_or_install_nodejs_package(
     return Ok(None);
   };
   // determine the main entry point for the npm package from the "bin" entry in the its package.json file
-  let entry_point = load_entry_point(&app_folder, &app_name, npm_package, version)?;
+  let entry_point = load_entry_point(app_folder, &app_name, npm_package, version)?;
   let (executable, args) = node_call.with_args(vec![entry_point]);
   Ok(Some(ExecutableCall { executable, args }))
 }
