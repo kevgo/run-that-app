@@ -1,0 +1,185 @@
+use super::{AnalyzeResult, AppDefinition, ApplicationName};
+use crate::configuration::{TagFormat, Version};
+use crate::error::Result;
+use crate::executables::{Executable, RunMethod};
+use crate::hosting::github_releases;
+use crate::installation::{BinFolder, Method};
+use crate::platform::{Cpu, Os, Platform};
+use crate::{Log, strings};
+
+#[derive(Clone)]
+pub struct Denort {}
+
+const ORG: &str = "denoland";
+const REPO: &str = "deno";
+
+impl AppDefinition for Denort {
+  fn name(&self) -> ApplicationName {
+    "denort".into()
+  }
+
+  fn homepage(&self) -> &'static str {
+    "https://deno.com"
+  }
+
+  fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "aarch64",
+      Cpu::Intel64 => "x86_64",
+    };
+    let os = match platform.os {
+      Os::Linux => "unknown-linux-gnu",
+      Os::MacOS => "apple-darwin",
+      Os::Windows => "pc-windows-msvc",
+    };
+    let tag = self.tag_format().format_version(version);
+    RunMethod::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/denort-{cpu}-{os}.zip").into(),
+        bin_folder: BinFolder::Root,
+      }],
+    }
+  }
+
+  fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
+    github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
+  }
+
+  fn latest_installable_version(&self, log: Log) -> Result<Version> {
+    github_releases::latest(ORG, REPO, &self.tag_format(), log)
+  }
+
+  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
+    let output = executable.run_output(&["-h"], log)?;
+    if !output.contains("A modern JavaScript and TypeScript runtime") {
+      return Ok(AnalyzeResult::NotIdentified { output });
+    }
+    match strings::first_version(&executable.run_output(&["--version"], log)?) {
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
+    }
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::PrefixV
+  }
+}
+
+#[cfg(test)]
+mod tests {
+
+  use super::super::Denort;
+  use crate::applications::AppDefinition;
+  use crate::configuration::Version;
+  use crate::executables::RunMethod;
+  use crate::installation::{BinFolder, Method};
+  use crate::platform::{Cpu, Os, Platform};
+
+  #[test]
+  fn linux_arm() {
+    let have = (Denort {}).run_method(
+      &Version::from("2.9.0"),
+      Platform {
+        os: Os::Linux,
+        cpu: Cpu::Arm64,
+      },
+    );
+    let want = RunMethod::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: "https://github.com/denoland/deno/releases/download/v2.9.0/denort-aarch64-unknown-linux-gnu.zip".into(),
+        bin_folder: BinFolder::Root,
+      }],
+    };
+    assert_eq!(have, want);
+  }
+
+  #[test]
+  fn linux_intel() {
+    let have = (Denort {}).run_method(
+      &Version::from("2.9.0"),
+      Platform {
+        os: Os::Linux,
+        cpu: Cpu::Intel64,
+      },
+    );
+    let want = RunMethod::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: "https://github.com/denoland/deno/releases/download/v2.9.0/denort-x86_64-unknown-linux-gnu.zip".into(),
+        bin_folder: BinFolder::Root,
+      }],
+    };
+    assert_eq!(have, want);
+  }
+
+  #[test]
+  fn macos_arm() {
+    let have = (Denort {}).run_method(
+      &Version::from("2.9.0"),
+      Platform {
+        os: Os::MacOS,
+        cpu: Cpu::Arm64,
+      },
+    );
+    let want = RunMethod::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: "https://github.com/denoland/deno/releases/download/v2.9.0/denort-aarch64-apple-darwin.zip".into(),
+        bin_folder: BinFolder::Root,
+      }],
+    };
+    assert_eq!(have, want);
+  }
+
+  #[test]
+  fn macos_intel() {
+    let have = (Denort {}).run_method(
+      &Version::from("2.9.0"),
+      Platform {
+        os: Os::MacOS,
+        cpu: Cpu::Intel64,
+      },
+    );
+    let want = RunMethod::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: "https://github.com/denoland/deno/releases/download/v2.9.0/denort-x86_64-apple-darwin.zip".into(),
+        bin_folder: BinFolder::Root,
+      }],
+    };
+    assert_eq!(have, want);
+  }
+
+  #[test]
+  fn windows_arm() {
+    let have = (Denort {}).run_method(
+      &Version::from("2.9.0"),
+      Platform {
+        os: Os::Windows,
+        cpu: Cpu::Arm64,
+      },
+    );
+    let want = RunMethod::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: "https://github.com/denoland/deno/releases/download/v2.9.0/denort-aarch64-pc-windows-msvc.zip".into(),
+        bin_folder: BinFolder::Root,
+      }],
+    };
+    assert_eq!(have, want);
+  }
+
+  #[test]
+  fn windows_intel() {
+    let have = (Denort {}).run_method(
+      &Version::from("2.9.0"),
+      Platform {
+        os: Os::Windows,
+        cpu: Cpu::Intel64,
+      },
+    );
+    let want = RunMethod::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: "https://github.com/denoland/deno/releases/download/v2.9.0/denort-x86_64-pc-windows-msvc.zip".into(),
+        bin_folder: BinFolder::Root,
+      }],
+    };
+    assert_eq!(have, want);
+  }
+}
