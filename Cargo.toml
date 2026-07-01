@@ -38,6 +38,7 @@ xz2 = "0.1.7"
 zip = "0.6.6"
 
 [dev-dependencies]
+maplit = "1.0.2"
 pretty = { package = "pretty_assertions", version = "1.4.1" }
 
 # We allow warnings here, the Makefile denies them.

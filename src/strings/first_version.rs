@@ -9,37 +9,20 @@ pub fn first_version(text: &str) -> Result<&str> {
 #[cfg(test)]
 mod tests {
   use super::first_version;
-  use crate::UserError;
+  use crate::error::UserError;
+  use maplit::hashmap;
 
   #[test]
-  fn exact_match() {
-    let give = "1.2.3";
-    let have = first_version(give);
-    let want = Ok("1.2.3");
-    assert_eq!(have, want);
-  }
-
-  #[test]
-  fn exact_match_with_text() {
-    let give = "foo 1.2.3 bar";
-    let have = first_version(give);
-    let want = Ok("1.2.3");
-    assert_eq!(have, want);
-  }
-
-  #[test]
-  fn multiple_matches() {
-    let give = "1.1.1 or 2.2.2 or 3.3.3";
-    let have = first_version(give);
-    let want = Ok("1.1.1");
-    assert_eq!(have, want);
-  }
-
-  #[test]
-  fn no_match() {
-    let text = "word1 word2";
-    let have = first_version(text);
-    let want = Err(UserError::RegexDoesntMatch);
-    assert_eq!(have, want);
+  fn test() {
+    let tests = hashmap! {
+        "1.2.3" => Ok("1.2.3"),
+        "foo 1.2.3 bar" => Ok("1.2.3"),
+        "1.1.1 or 2.2.2 or 3.3.3" => Ok("1.1.1"),
+        "word1 word2" => Err(UserError::RegexDoesntMatch),
+    };
+    for (give, want) in tests {
+      let have = first_version(give);
+      assert_eq!(have, want, "{give} -> {want:?}");
+    }
   }
 }
