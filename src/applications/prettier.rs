@@ -35,7 +35,7 @@ impl AppDefinition for Prettier {
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
     let output = executable.run_output(&["-h"], log)?;
-    if !output.contains("MarkdownLint Command Line Interface") {
+    if !output.contains("Stdin is read if it is piped to Prettier and no files are given.") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match strings::first_version(&executable.run_output(&["--version"], log)?) {
