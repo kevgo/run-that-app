@@ -131,18 +131,18 @@ fn load_or_install(
     RequestedVersion::Yard(version) => {
       // acquire the lock
       let app_folder = ctx.yard.create_app_folder(&app_definition.name(), version)?;
-      let lock_file = app_folder.join(".run-that-app-lock");
-      let file = File::create(&lock_file).map_err(|err| UserError::CannotCreateFile {
-        filename: lock_file.to_string_lossy().to_string(),
+      let lock_path = app_folder.join(".run-that-app-lock");
+      let lock_file = File::create(&lock_path).map_err(|err| UserError::CannotCreateFile {
+        filename: lock_path.to_string_lossy().to_string(),
         err: err.to_string(),
       })?;
       (ctx.log)(Event::LockAcquireBegin { app: &app_definition.name() });
-      let mut lock = RwLock::new(file);
+      let mut lock = RwLock::new(lock_file);
       let guard = match lock.write() {
         Ok(guard) => guard,
         Err(err) => {
           return Err(UserError::CannotCreateFile {
-            filename: lock_file.to_string_lossy().to_string(),
+            filename: lock_path.to_string_lossy().to_string(),
             err: err.to_string(),
           });
         }
@@ -152,13 +152,11 @@ fn load_or_install(
       // load or install the app
       let result = load_or_install_from_yard(app_definition, version, &app_folder, optional, from_source, ctx, apps);
 
-      // delete the lockfile
-      fs::remove_file(&lock_file).map_err(|err| UserError::CannotDeleteFile {
-        filename: lock_file.to_string_lossy().to_string(),
+      // delete the lockfile and release the lock
+      fs::remove_file(&lock_path).map_err(|err| UserError::CannotDeleteFile {
+        filename: lock_path.to_string_lossy().to_string(),
         err: err.to_string(),
       })?;
-
-      // release the lock
       (ctx.log)(Event::LockRelease { app: &app_definition.name() });
       drop(guard);
 
