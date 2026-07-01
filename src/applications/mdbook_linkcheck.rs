@@ -61,7 +61,7 @@ impl AppDefinition for MdBookLinkCheck {
     if !output.contains("mdbook-linkcheck") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output(&["-V"], log)?) {
+    match strings::first_version(&executable.run_output(&["-V"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -72,13 +72,8 @@ impl AppDefinition for MdBookLinkCheck {
   }
 }
 
-fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"mdbook-linkcheck (\d+\.\d+\.\d+)")
-}
-
 #[cfg(test)]
 mod tests {
-  use crate::UserError;
 
   mod run_method {
     use crate::applications::AppDefinition;
@@ -231,11 +226,5 @@ mod tests {
       };
       assert_eq!(have, want);
     }
-  }
-
-  #[test]
-  fn extract_version() {
-    assert_eq!(super::extract_version("mdbook-linkcheck 0.7.7"), Ok("0.7.7"));
-    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }

@@ -73,7 +73,7 @@ impl AppDefinition for Go {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    if let Ok(version) = extract_version(&executable.run_output(&["version"], log)?) {
+    if let Ok(version) = strings::first_version(&executable.run_output(&["version"], log)?) {
       return Ok(AnalyzeResult::IdentifiedWithVersion(version.into()));
     }
     let output = executable.run_output(&["-h"], log)?;
@@ -101,10 +101,6 @@ impl AppDefinition for Go {
   fn tag_format(&self) -> TagFormat {
     TagFormat::Prefix("go")
   }
-}
-
-fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"go version go(\d+\.\d+\.\d+)")
 }
 
 fn parse_go_mod(text: &str) -> Result<&str> {
@@ -235,14 +231,6 @@ mod tests {
       };
       assert_eq!(have, want);
     }
-  }
-
-  #[test]
-  fn extract_version() {
-    let give = "go version go1.21.7 linux/arm64";
-    let have = super::extract_version(give);
-    let want = Ok("1.21.7");
-    assert_eq!(have, want);
   }
 
   mod parse_go_mod {

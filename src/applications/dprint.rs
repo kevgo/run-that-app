@@ -60,7 +60,7 @@ impl AppDefinition for Dprint {
     if !output.contains("Auto-formats source code based on the specified plugins") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output(&["--version"], log)?) {
+    match strings::first_version(&executable.run_output(&["--version"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -69,10 +69,6 @@ impl AppDefinition for Dprint {
   fn tag_format(&self) -> TagFormat {
     TagFormat::Plain
   }
-}
-
-fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"dprint (\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]

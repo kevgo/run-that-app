@@ -62,7 +62,7 @@ impl AppDefinition for Gh {
     if !output.contains("Work seamlessly with GitHub from the command line") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output(&["--version"], log)?) {
+    match strings::first_version(&executable.run_output(&["--version"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -71,10 +71,6 @@ impl AppDefinition for Gh {
   fn tag_format(&self) -> TagFormat {
     TagFormat::PrefixV
   }
-}
-
-fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"gh version (\d+\.\d+\.\d+)")
 }
 
 #[cfg(test)]
@@ -212,25 +208,6 @@ mod tests {
         }],
       };
       assert_eq!(have, want);
-    }
-  }
-
-  mod extract_version {
-    use super::super::extract_version;
-    use crate::UserError;
-
-    #[test]
-    fn success() {
-      let output = "
-gh version 2.45.0 (2024-03-04)
-https://github.com/cli/cli/releases/tag/v2.45.0
-";
-      assert_eq!(extract_version(output), Ok("2.45.0"));
-    }
-
-    #[test]
-    fn other() {
-      assert_eq!(extract_version("other"), Err(UserError::RegexDoesntMatch));
     }
   }
 }

@@ -61,7 +61,7 @@ impl AppDefinition for Ruff {
     if !output.contains("An extremely fast Python linter and code formatter") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output(&["--version"], log)?) {
+    match strings::first_version(&executable.run_output(&["--version"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -72,13 +72,8 @@ impl AppDefinition for Ruff {
   }
 }
 
-fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"ruff (\d+\.\d+\.\d+)")
-}
-
 #[cfg(test)]
 mod tests {
-  use crate::UserError;
 
   mod run_method {
     use crate::applications::AppDefinition;
@@ -207,11 +202,5 @@ mod tests {
       };
       assert_eq!(have, want);
     }
-  }
-
-  #[test]
-  fn extract_version() {
-    assert_eq!(super::extract_version("ruff 0.15.5"), Ok("0.15.5"));
-    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }

@@ -54,7 +54,7 @@ impl AppDefinition for NodeJS {
     if !output.contains("Documentation can be found at https://nodejs.org") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output(&["--version"], log)?) {
+    match strings::first_version(&executable.run_output(&["--version"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -63,10 +63,6 @@ impl AppDefinition for NodeJS {
   fn tag_format(&self) -> TagFormat {
     TagFormat::PrefixV
   }
-}
-
-fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"v(\d+\.\d+\.\d+)")
 }
 
 pub fn cpu_text(cpu: Cpu) -> &'static str {
@@ -94,7 +90,6 @@ pub fn os_text(os: Os) -> &'static str {
 
 #[cfg(test)]
 mod tests {
-  use crate::UserError;
 
   mod run_method {
     use crate::applications::AppDefinition;
@@ -229,11 +224,5 @@ mod tests {
       };
       assert_eq!(have, want);
     }
-  }
-
-  #[test]
-  fn extract_version() {
-    assert_eq!(super::extract_version("v10.2.4"), Ok("10.2.4"));
-    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }

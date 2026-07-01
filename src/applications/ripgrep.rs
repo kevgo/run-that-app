@@ -66,7 +66,7 @@ impl AppDefinition for RipGrep {
     if !output.contains("ripgrep") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&output) {
+    match strings::first_version(&output) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -77,13 +77,8 @@ impl AppDefinition for RipGrep {
   }
 }
 
-fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"ripgrep (\d+\.\d+\.\d+)")
-}
-
 #[cfg(test)]
 mod tests {
-  use crate::UserError;
 
   mod run_method {
     use crate::applications::AppDefinition;
@@ -212,11 +207,5 @@ mod tests {
       };
       assert_eq!(have, want);
     }
-  }
-
-  #[test]
-  fn extract_version() {
-    assert_eq!(super::extract_version("ripgrep 14.1.1"), Ok("14.1.1"));
-    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }

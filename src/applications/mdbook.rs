@@ -51,7 +51,7 @@ impl AppDefinition for MdBook {
     if !output.contains("Creates a book from markdown files") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match extract_version(&executable.run_output(&["-V"], log)?) {
+    match strings::first_version(&executable.run_output(&["-V"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
@@ -83,13 +83,8 @@ fn archive_url(version: &Version, platform: Platform, tag_format: &TagFormat) ->
   format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/mdbook-v{version}-{cpu}-{os}.{ext}")
 }
 
-fn extract_version(output: &str) -> Result<&str> {
-  strings::first_capture(output, r"mdbook v(\d+\.\d+\.\d+)")
-}
-
 #[cfg(test)]
 mod tests {
-  use crate::UserError;
 
   mod run_method {
     use crate::applications::AppDefinition;
@@ -242,11 +237,5 @@ mod tests {
       };
       assert_eq!(have, want);
     }
-  }
-
-  #[test]
-  fn extract_version() {
-    assert_eq!(super::extract_version("mdbook v0.4.37"), Ok("0.4.37"));
-    assert_eq!(super::extract_version("other"), Err(UserError::RegexDoesntMatch));
   }
 }
