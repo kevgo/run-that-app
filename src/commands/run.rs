@@ -228,7 +228,7 @@ fn load_or_install_from_yard(
   let app_name = app_to_install.name();
   // try to load the app
   if let Some((executable, bin_folder)) = ctx.yard.load_executable(app_to_install.as_ref(), &executable_name, version, ctx) {
-    let args = executable_args.locate(app_folder, &bin_folder)?;
+    let args = executable_args.locate(&app_name, version, app_folder, &bin_folder)?;
     return Ok(Some(ExecutableCall { executable, args }));
   }
   // app not installed --> check if uninstallable
@@ -246,10 +246,13 @@ fn load_or_install_from_yard(
   // load again now that it is installed
   if let Some((executable, bin_folder)) = ctx.yard.load_executable(app_to_install.as_ref(), &executable_name, version, ctx) {
     let app_folder = ctx.yard.app_folder(&app_name, version);
-    let args = executable_args.locate(&app_folder, &bin_folder)?;
+    let args = executable_args.locate(&app_name, version, &app_folder, &bin_folder)?;
     return Ok(Some(ExecutableCall { executable, args }));
   }
-  Err(UserError::CannotFindExecutable)
+  Err(UserError::CannotFindExecutable {
+    app: app_name.clone(),
+    version: version.clone(),
+  })
 }
 
 /// installs the given `NodeJS` package (if needed) and provides a call that executes it through `NodeJS`

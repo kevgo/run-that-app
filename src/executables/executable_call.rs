@@ -1,4 +1,6 @@
 use super::Executable;
+use crate::Version;
+use crate::applications::ApplicationName;
 use crate::error::{Result, UserError};
 use crate::installation::BinFolder;
 use std::fmt::{Display, Write};
@@ -54,7 +56,7 @@ pub enum ExecutableArgs {
 
 impl ExecutableArgs {
   /// provides the argument to use, adjusted to a callable format
-  pub fn locate(&self, app_folder: &Path, bin_folder: &BinFolder) -> Result<Vec<String>> {
+  pub fn locate(&self, app_name: &ApplicationName, version: &Version, app_folder: &Path, bin_folder: &BinFolder) -> Result<Vec<String>> {
     match self {
       ExecutableArgs::None => Ok(vec![]),
       ExecutableArgs::OneOfTheseInAppFolder { options } => {
@@ -66,7 +68,10 @@ impl ExecutableArgs {
             }
           }
         }
-        Err(UserError::CannotFindExecutable)
+        Err(UserError::CannotFindExecutable {
+          app: app_name.clone(),
+          version: version.clone(),
+        })
       }
     }
   }
