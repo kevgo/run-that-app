@@ -68,156 +68,118 @@ impl AppDefinition for Deno {
 #[cfg(test)]
 mod tests {
 
-  mod run_method {
-    use super::super::Deno;
-    use crate::applications::AppDefinition;
-    use crate::configuration::Version;
-    use crate::executables::RunMethod;
-    use crate::installation::{BinFolder, Method};
-    use crate::platform::{Cpu, Os, Platform};
+  use super::super::Deno;
+  use crate::applications::AppDefinition;
+  use crate::configuration::Version;
+  use crate::executables::RunMethod;
+  use crate::installation::{BinFolder, Method};
+  use crate::platform::{Cpu, Os, Platform};
 
-    #[test]
-    fn linux_arm() {
-      let have = (Deno {}).run_method(
-        &Version::from("2.9.0"),
-        Platform {
-          os: Os::Linux,
-          cpu: Cpu::Arm64,
-        },
-      );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadArchive {
-            url: "https://github.com/denoland/deno/releases/download/v2.9.0/deno-aarch64-unknown-linux-gnu.zip".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileRustCrate {
-            name: "dprint",
-            bin_folder: BinFolder::Subfolder { path: "bin".into() },
-          },
-        ],
-      };
-      assert_eq!(have, want);
-    }
+  #[test]
+  fn linux_arm() {
+    let have = (Deno {}).run_method(
+      &Version::from("2.9.0"),
+      Platform {
+        os: Os::Linux,
+        cpu: Cpu::Arm64,
+      },
+    );
+    let want = RunMethod::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: "https://github.com/denoland/deno/releases/download/v2.9.0/deno-aarch64-unknown-linux-gnu.zip".into(),
+        bin_folder: BinFolder::Root,
+      }],
+    };
+    assert_eq!(have, want);
+  }
 
-    #[test]
-    fn linux_intel() {
-      let have = (Deno {}).run_method(
-        &Version::from("2.9.0"),
-        Platform {
-          os: Os::Linux,
-          cpu: Cpu::Intel64,
-        },
-      );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadArchive {
-            url: "https://github.com/denoland/deno/releases/download/v2.9.0/deno-x86_64-unknown-linux-gnu.zip".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileRustCrate {
-            name: "dprint",
-            bin_folder: BinFolder::Subfolder { path: "bin".into() },
-          },
-        ],
-      };
-      assert_eq!(have, want);
-    }
+  #[test]
+  fn linux_intel() {
+    let have = (Deno {}).run_method(
+      &Version::from("2.9.0"),
+      Platform {
+        os: Os::Linux,
+        cpu: Cpu::Intel64,
+      },
+    );
+    let want = RunMethod::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: "https://github.com/denoland/deno/releases/download/v2.9.0/deno-x86_64-unknown-linux-gnu.zip".into(),
+        bin_folder: BinFolder::Root,
+      }],
+    };
+    assert_eq!(have, want);
+  }
 
-    #[test]
-    fn macos_arm() {
-      let have = (Deno {}).run_method(
-        &Version::from("2.9.0"),
-        Platform {
-          os: Os::MacOS,
-          cpu: Cpu::Arm64,
-        },
-      );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadArchive {
-            url: "https://github.com/denoland/deno/releases/download/v2.9.0/deno-aarch64-apple-darwin.zip".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileRustCrate {
-            name: "dprint",
-            bin_folder: BinFolder::Subfolder { path: "bin".into() },
-          },
-        ],
-      };
-      assert_eq!(have, want);
-    }
+  #[test]
+  fn macos_arm() {
+    let have = (Deno {}).run_method(
+      &Version::from("2.9.0"),
+      Platform {
+        os: Os::MacOS,
+        cpu: Cpu::Arm64,
+      },
+    );
+    let want = RunMethod::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: "https://github.com/denoland/deno/releases/download/v2.9.0/deno-aarch64-apple-darwin.zip".into(),
+        bin_folder: BinFolder::Root,
+      }],
+    };
+    assert_eq!(have, want);
+  }
 
-    #[test]
-    fn macos_intel() {
-      let have = (Deno {}).run_method(
-        &Version::from("2.9.0"),
-        Platform {
-          os: Os::MacOS,
-          cpu: Cpu::Intel64,
-        },
-      );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadArchive {
-            url: "https://github.com/denoland/deno/releases/download/v2.9.0/deno-x86_64-apple-darwin.zip".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileRustCrate {
-            name: "dprint",
-            bin_folder: BinFolder::Subfolder { path: "bin".into() },
-          },
-        ],
-      };
-      assert_eq!(have, want);
-    }
+  #[test]
+  fn macos_intel() {
+    let have = (Deno {}).run_method(
+      &Version::from("2.9.0"),
+      Platform {
+        os: Os::MacOS,
+        cpu: Cpu::Intel64,
+      },
+    );
+    let want = RunMethod::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: "https://github.com/denoland/deno/releases/download/v2.9.0/deno-x86_64-apple-darwin.zip".into(),
+        bin_folder: BinFolder::Root,
+      }],
+    };
+    assert_eq!(have, want);
+  }
 
-    #[test]
-    fn windows_arm() {
-      let have = (Deno {}).run_method(
-        &Version::from("2.9.0"),
-        Platform {
-          os: Os::Windows,
-          cpu: Cpu::Arm64,
-        },
-      );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadArchive {
-            url: "https://github.com/denoland/deno/releases/download/v2.9.0/deno-aarch64-pc-windows-msvc.zip".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileRustCrate {
-            name: "dprint",
-            bin_folder: BinFolder::Subfolder { path: "bin".into() },
-          },
-        ],
-      };
-      assert_eq!(have, want);
-    }
+  #[test]
+  fn windows_arm() {
+    let have = (Deno {}).run_method(
+      &Version::from("2.9.0"),
+      Platform {
+        os: Os::Windows,
+        cpu: Cpu::Arm64,
+      },
+    );
+    let want = RunMethod::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: "https://github.com/denoland/deno/releases/download/v2.9.0/deno-aarch64-pc-windows-msvc.zip".into(),
+        bin_folder: BinFolder::Root,
+      }],
+    };
+    assert_eq!(have, want);
+  }
 
-    #[test]
-    fn windows_intel() {
-      let have = (Deno {}).run_method(
-        &Version::from("2.9.0"),
-        Platform {
-          os: Os::Windows,
-          cpu: Cpu::Intel64,
-        },
-      );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![
-          Method::DownloadArchive {
-            url: "https://github.com/denoland/deno/releases/download/v2.9.0/deno-x86_64-pc-windows-msvc.zip".into(),
-            bin_folder: BinFolder::Root,
-          },
-          Method::CompileRustCrate {
-            name: "dprint",
-            bin_folder: BinFolder::Subfolder { path: "bin".into() },
-          },
-        ],
-      };
-      assert_eq!(have, want);
-    }
+  #[test]
+  fn windows_intel() {
+    let have = (Deno {}).run_method(
+      &Version::from("2.9.0"),
+      Platform {
+        os: Os::Windows,
+        cpu: Cpu::Intel64,
+      },
+    );
+    let want = RunMethod::ThisApp {
+      install_methods: vec![Method::DownloadArchive {
+        url: "https://github.com/denoland/deno/releases/download/v2.9.0/deno-x86_64-pc-windows-msvc.zip".into(),
+        bin_folder: BinFolder::Root,
+      }],
+    };
+    assert_eq!(have, want);
   }
 }
