@@ -3,6 +3,7 @@ use colored::Colorize;
 use std::io::{self, Write};
 
 /// a logger with concise output, for normal production use
+#[allow(clippy::needless_pass_by_value)]
 pub fn log(event: Event) {
   #[allow(clippy::match_same_arms)]
   match event {
