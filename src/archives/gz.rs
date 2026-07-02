@@ -25,7 +25,7 @@ impl Archive for Gz {
     match File::create(output_path) {
       Ok(mut file) => {
         if let Err(err) = io::copy(&mut gz_decoder, &mut file) {
-          log(Event::ArchiveExtractFailed { err: err.to_string() });
+          log(Event::ArchiveExtractFailed { err: &err });
           return Err(UserError::ArchiveCannotExtract { reason: err.to_string() });
         }
         drop(file); // close file before setting permissions
@@ -34,7 +34,7 @@ impl Archive for Gz {
         Ok(())
       }
       Err(err) => {
-        log(Event::ArchiveExtractFailed { err: err.to_string() });
+        log(Event::ArchiveExtractFailed { err: &err });
         Err(UserError::ArchiveCannotExtract { reason: err.to_string() })
       }
     }

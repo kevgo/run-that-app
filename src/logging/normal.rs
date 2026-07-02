@@ -10,7 +10,7 @@ pub fn log(event: Event) {
 
     Event::ArchiveExtractBegin { archive_type: _ } => eprintf!("extracting ... "),
     Event::ArchiveExtractSuccess => eprintln!("{}", "ok".green()),
-    Event::ArchiveExtractFailed { err } => eprintln!("{}", err.red()),
+    Event::ArchiveExtractFailed { err } => eprintln!("{}", err.to_string().red()),
 
     Event::CompileGoBegin { go_path: _, args } => eprintln!("go {}", args.join(" ")),
     Event::CompileGoSuccess => {}
@@ -33,10 +33,10 @@ pub fn log(event: Event) {
 
     Event::ExecutableInstallSaveBegin => eprintf!("saving ... "),
     Event::ExecutableInstallSaveSuccess => eprintln!("{}", "ok".green()),
-    Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.red()),
+    Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.to_string().red()),
 
     Event::GitHubApiRequestBegin { url: _ } => {}
-    Event::GitHubApiRequestFail { err } => eprintln!("GitHub API request failed: {}", err.red()),
+    Event::GitHubApiRequestFail { err } => eprintln!("GitHub API request failed: {}", err.to_string().red()),
     Event::GitHubApiRequestSuccess => {}
 
     Event::GlobalInstallSearch { binary: _ } => {}
