@@ -23,7 +23,7 @@ impl Archive for TarGz {
         Ok(())
       }
       Err(err) => {
-        log(Event::ArchiveExtractFailed { err: err.to_string() });
+        log(Event::ArchiveExtractFailed { err: &err });
         Err(UserError::ArchiveCannotExtract { reason: err.to_string() })
       }
     }
