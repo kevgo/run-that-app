@@ -100,6 +100,11 @@ impl Yard {
     None
   }
 
+  /// provides the filename for the file that locks the installation of the given application at the given version.
+  pub fn lock_filepath(&self, app_name: &ApplicationName, version: &Version) -> PathBuf {
+    self.root.join("locks").join(format!("{app_name}@{version}"))
+  }
+
   pub fn mark_not_installable(&self, app: &ApplicationName, version: &Version) -> Result<()> {
     self.create_app_folder(app, version)?;
     let path = self.not_installable_path(app, version);
@@ -116,7 +121,7 @@ impl Yard {
 
 #[cfg(test)]
 mod tests {
-  use crate::applications;
+  use crate::applications::{self, AppDefinition, ShellCheck};
   use crate::configuration::Version;
   use crate::yard::Yard;
   use std::path::PathBuf;
@@ -170,6 +175,15 @@ mod tests {
       let have = yard.is_not_installable(&app_name, &version);
       assert!(!have);
     }
+  }
+
+  #[test]
+  fn lock_filepath() {
+    let yard = Yard { root: PathBuf::from("/root") };
+    let shellcheck = ShellCheck {};
+    let have = yard.lock_filepath(&shellcheck.name(), &Version::from("0.9.0"));
+    let want = PathBuf::from("/root/locks/shellcheck@0.9.0");
+    assert_eq!(have, want);
   }
 
   #[test]
