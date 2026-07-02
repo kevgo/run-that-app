@@ -130,30 +130,24 @@ mod tests {
     assert_eq!(have, want);
   }
 
-  mod is_not_installable {
-    use crate::applications::{AppDefinition, ShellCheck};
-    use crate::configuration::Version;
-    use crate::yard::Yard;
+  #[test]
+  fn is_not_installable() {
+    let yard = Yard { root: "/root".into() };
+    let shellcheck = ShellCheck {};
+    let version = Version::from("0.9.0");
+    let have = yard.is_not_installable(&shellcheck.name(), &version);
+    assert!(!have);
+  }
 
-    #[test]
-    fn mark_not_installable() {
-      let tempdir = tempfile::tempdir().unwrap();
-      let yard = Yard::create(tempdir.path()).unwrap();
-      let shellcheck = ShellCheck {};
-      let version = Version::from("0.9.0");
-      yard.mark_not_installable(&shellcheck.name(), &version).unwrap();
-      let have = yard.is_not_installable(&shellcheck.name(), &version);
-      assert!(have);
-    }
-
-    #[test]
-    fn is_not_installable() {
-      let yard = Yard { root: "/root".into() };
-      let shellcheck = ShellCheck {};
-      let version = Version::from("0.9.0");
-      let have = yard.is_not_installable(&shellcheck.name(), &version);
-      assert!(!have);
-    }
+  #[test]
+  fn mark_not_installable() {
+    let tempdir = tempfile::tempdir().unwrap();
+    let yard = Yard::create(tempdir.path()).unwrap();
+    let shellcheck = ShellCheck {};
+    let version = Version::from("0.9.0");
+    yard.mark_not_installable(&shellcheck.name(), &version).unwrap();
+    let have = yard.is_not_installable(&shellcheck.name(), &version);
+    assert!(have);
   }
 
   #[test]
