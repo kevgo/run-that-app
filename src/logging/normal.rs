@@ -35,6 +35,14 @@ pub fn log(event: Event) {
     Event::ExecutableInstallSaveSuccess => eprintln!("{}", "ok".green()),
     Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.red()),
 
+    Event::FileCreateBegin { filename: _ } => {}
+    Event::FileCreateSuccess => {}
+    Event::FileCreateFail { err } => eprintln!("{}", err.red()),
+
+    Event::FolderCreateBegin { name: _ } => {}
+    Event::FolderCreateSuccess => {}
+    Event::FolderCreateFail { err } => eprintln!("{}", err.red()),
+
     Event::GitHubApiRequestBegin { url: _ } => {}
     Event::GitHubApiRequestFail { err } => eprintln!("GitHub API request failed: {}", err.red()),
     Event::GitHubApiRequestSuccess => {}

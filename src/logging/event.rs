@@ -4,6 +4,7 @@ use crate::download::Url;
 use crate::executables::ExecutableNamePlatform;
 use crate::installation::Method;
 use std::borrow::Cow;
+use std::fmt::Display;
 use std::path::Path;
 
 /// the different events that can result in CLI output
@@ -46,6 +47,20 @@ pub enum Event<'a> {
   ExecutableInstallSaveBegin,
   ExecutableInstallSaveSuccess,
   ExecutableInstallSaveFail {
+    err: String,
+  },
+  FileCreateBegin {
+    filename: &'a dyn Display,
+  },
+  FileCreateSuccess,
+  FileCreateFail {
+    err: String,
+  },
+  FolderCreateBegin {
+    name: &'a dyn Display,
+  },
+  FolderCreateSuccess,
+  FolderCreateFail {
     err: String,
   },
   GitHubApiRequestBegin {
