@@ -137,7 +137,7 @@ mod tests {
     use std::path::PathBuf;
 
     #[test]
-    fn is_marked() {
+    fn mark_not_installable() {
       let tempdir = tempfile::tempdir().unwrap();
       let yard = Yard::create(tempdir.path()).unwrap();
       let shellcheck = ShellCheck {};
