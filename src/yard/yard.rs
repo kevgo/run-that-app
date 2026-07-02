@@ -9,12 +9,12 @@ use crate::logging::Event;
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
 
+/// The Yard stores application executables and metadata.
+/// Named after rail yards, i.e. locations where passenger cars of trains are stored, sorted, and repaired.
 pub struct Yard {
   pub root: PathBuf,
 }
 
-/// stores executables of and metadata about applications
-// Named after rail yards, i.e. locations where passenger cars of trains are stored, sorted, and repaired.
 impl Yard {
   pub fn app_folder(&self, app_name: &ApplicationName, app_version: &Version) -> PathBuf {
     self.root.join("apps").join(app_name).join(app_version)
