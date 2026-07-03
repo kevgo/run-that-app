@@ -49,6 +49,20 @@ pub enum Event<'a> {
   ExecutableInstallSaveFail {
     err: &'a dyn Display,
   },
+  FileCreateBegin {
+    filename: &'a dyn Display,
+  },
+  FileCreateSuccess,
+  FileCreateFail {
+    err: String,
+  },
+  FolderCreateBegin {
+    name: &'a dyn Display,
+  },
+  FolderCreateSuccess,
+  FolderCreateFail {
+    err: String,
+  },
   GitHubApiRequestBegin {
     url: &'a str,
   },
