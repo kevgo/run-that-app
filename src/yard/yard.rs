@@ -1,5 +1,3 @@
-use fd_lock::RwLock;
-
 use crate::applications::{AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::context::RuntimeContext;
@@ -8,6 +6,7 @@ use crate::executables::{Executable, ExecutableNameUnix};
 use crate::installation::BinFolder;
 use crate::logging::{Event, Log};
 use crate::yard::root_path;
+use fd_lock::RwLock;
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
 
