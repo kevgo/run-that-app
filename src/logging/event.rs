@@ -4,6 +4,7 @@ use crate::download::Url;
 use crate::executables::ExecutableNamePlatform;
 use crate::installation::Method;
 use std::borrow::Cow;
+use std::fmt::Display;
 use std::path::Path;
 
 /// the different events that can result in CLI output
@@ -17,7 +18,7 @@ pub enum Event<'a> {
   },
   ArchiveExtractSuccess,
   ArchiveExtractFailed {
-    err: String,
+    err: &'a dyn Display,
   },
   CompileGoBegin {
     go_path: Cow<'a, str>,
@@ -46,13 +47,27 @@ pub enum Event<'a> {
   ExecutableInstallSaveBegin,
   ExecutableInstallSaveSuccess,
   ExecutableInstallSaveFail {
-    err: String,
+    err: &'a dyn Display,
+  },
+  FileCreateBegin {
+    filename: &'a dyn Display,
+  },
+  FileCreateSuccess,
+  FileCreateFail {
+    err: &'a dyn Display,
+  },
+  FolderCreateBegin {
+    name: &'a dyn Display,
+  },
+  FolderCreateSuccess,
+  FolderCreateFail {
+    err: &'a dyn Display,
   },
   GitHubApiRequestBegin {
     url: &'a str,
   },
   GitHubApiRequestFail {
-    err: String,
+    err: &'a dyn Display,
   },
   GitHubApiRequestSuccess,
   GlobalInstallSearch {
@@ -90,6 +105,9 @@ pub enum Event<'a> {
   },
   LockAcquireBegin {
     app: &'a ApplicationName,
+  },
+  LockAcquireFail {
+    err: &'a dyn Display,
   },
   LockAcquireSuccess,
   LockRelease {

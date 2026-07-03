@@ -3,6 +3,7 @@ use colored::Colorize;
 use std::io::{self, Write};
 
 /// a logger with concise output, for normal production use
+#[allow(clippy::needless_pass_by_value)]
 pub fn log(event: Event) {
   #[allow(clippy::match_same_arms)]
   match event {
@@ -10,7 +11,7 @@ pub fn log(event: Event) {
 
     Event::ArchiveExtractBegin { archive_type: _ } => eprintf!("extracting ... "),
     Event::ArchiveExtractSuccess => eprintln!("{}", "ok".green()),
-    Event::ArchiveExtractFailed { err } => eprintln!("{}", err.red()),
+    Event::ArchiveExtractFailed { err } => eprintln!("{}", err.to_string().red()),
 
     Event::CompileGoBegin { go_path: _, args } => eprintln!("go {}", args.join(" ")),
     Event::CompileGoSuccess => {}
@@ -33,10 +34,18 @@ pub fn log(event: Event) {
 
     Event::ExecutableInstallSaveBegin => eprintf!("saving ... "),
     Event::ExecutableInstallSaveSuccess => eprintln!("{}", "ok".green()),
-    Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.red()),
+    Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.to_string().red()),
+
+    Event::FileCreateBegin { filename: _ } => {}
+    Event::FileCreateSuccess => {}
+    Event::FileCreateFail { err } => eprintln!("{}", err.to_string().red()),
+
+    Event::FolderCreateBegin { name: _ } => {}
+    Event::FolderCreateSuccess => {}
+    Event::FolderCreateFail { err } => eprintln!("{}", err.to_string().red()),
 
     Event::GitHubApiRequestBegin { url: _ } => {}
-    Event::GitHubApiRequestFail { err } => eprintln!("GitHub API request failed: {}", err.red()),
+    Event::GitHubApiRequestFail { err } => eprintln!("GitHub API request failed: {}", err.to_string().red()),
     Event::GitHubApiRequestSuccess => {}
 
     Event::GlobalInstallSearch { binary: _ } => {}
@@ -55,6 +64,7 @@ pub fn log(event: Event) {
 
     Event::LockAcquireBegin { app: _ } => {}
     Event::LockAcquireSuccess => {}
+    Event::LockAcquireFail { err } => eprintln!("{}", err.to_string().red()),
     Event::LockRelease { app: _ } => {}
 
     Event::NotOnline => eprintln!("{}", "not online".red()),
