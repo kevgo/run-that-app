@@ -15,7 +15,7 @@ pub enum UserError {
   ArchiveCannotExtract { reason: String },
   CannotAccessConfigFile(String),
   CannotCompileRustSource { err: String },
-  CannotCreateFile { filename: String, err: String },
+  CannotCreateFile { filename: PathBuf, err: String },
   CannotCreateFolder { folder: PathBuf, reason: String },
   CannotCreateTempDir { err: String },
   CannotDeleteFolder { folder: PathBuf, err: String },
@@ -41,7 +41,7 @@ pub enum UserError {
   InvalidNumber,
   InvalidGitHubAPIResponse { err: String },
   InvalidRegex { regex: String, err: String },
-  LockCannotAcquire { filename: String, err: String },
+  LockCannotAcquire { filename: PathBuf, err: String },
   MissingApplication,
   MultipleCommandsGiven,
   NotOnline,
@@ -78,7 +78,7 @@ impl UserError {
       UserError::CannotCompileRustSource { err } => error(&format!("cannot compile Rust source: {err}")),
       UserError::CannotDeleteFolder { folder, err } => error(&format!("cannot delete folder {}: {err}", folder.to_string_lossy())),
       UserError::CannotDetermineCurrentDirectory(reason) => error(&format!("cannot determine the current directory: {reason}")),
-      UserError::CannotCreateFile { filename, err } => error(&format!("cannot create file {filename}: {err}")),
+      UserError::CannotCreateFile { filename, err } => error(&format!("cannot create file {}: {err}", filename.display())),
       UserError::CannotCreateFolder { folder, reason } => {
         error(&format!("cannot create folder {folder}: {reason}", folder = folder.to_string_lossy()));
         desc("Please check access permissions and try again.");
@@ -145,7 +145,7 @@ impl UserError {
       }
       UserError::InvalidRegex { regex, err } => error(&format!("invalid regex '{regex}': {err}")),
       UserError::LockCannotAcquire { filename, err } => {
-        error(&format!("cannot acquire lock for {filename}: {err}"));
+        error(&format!("cannot acquire lock for {}: {err}", filename.display()));
       }
       UserError::MissingApplication => {
         error("missing application");
