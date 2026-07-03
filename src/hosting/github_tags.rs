@@ -19,7 +19,7 @@ pub fn all(org: &str, repo: &str, amount: usize, tag_format: &TagFormat, log: Lo
   let response_text = match response.as_str() {
     Ok(text) => text,
     Err(err) => {
-      log(Event::GitHubApiRequestFail { err: err.to_string() });
+      log(Event::GitHubApiRequestFail { err: &err });
       return Err(UserError::GitHubTagsApiProblem {
         problem: S("Cannot get response payload"),
         payload: S(""),
@@ -28,7 +28,7 @@ pub fn all(org: &str, repo: &str, amount: usize, tag_format: &TagFormat, log: Lo
   };
   let mut tags = parse_response(response_text, tag_format)?;
   if tags.is_empty() {
-    log(Event::GitHubApiRequestFail { err: "no tags found".into() });
+    log(Event::GitHubApiRequestFail { err: &"no tags found" });
     return Err(UserError::GitHubTagsApiProblem {
       problem: S("no tags found"),
       payload: S(""),

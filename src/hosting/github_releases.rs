@@ -22,7 +22,7 @@ pub fn latest(org: &str, repo: &str, tag_format: &TagFormat, log: Log) -> Result
       text
     }
     Err(err) => {
-      log(Event::GitHubApiRequestFail { err: err.to_string() });
+      log(Event::GitHubApiRequestFail { err: &err });
       return Err(UserError::GitHubTagsApiProblem {
         problem: S("Cannot get response payload"),
         payload: S(""),

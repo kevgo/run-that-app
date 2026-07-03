@@ -10,7 +10,7 @@ pub fn log(event: Event) {
 
     Event::ArchiveExtractBegin { archive_type } => eprintf!("extracting {} ... ", archive_type.cyan()),
     Event::ArchiveExtractSuccess => eprintln!("{}", "ok".green()),
-    Event::ArchiveExtractFailed { err } => eprintln!("{}", err.red()),
+    Event::ArchiveExtractFailed { err } => eprintln!("{}", err.to_string().red()),
 
     Event::CompileGoBegin { go_path, args } => eprintln!("{go_path} {}", args.join(" ")),
     Event::CompileGoSuccess => eprintln!("{}", "Go compilation successful".green()),
@@ -33,11 +33,11 @@ pub fn log(event: Event) {
 
     Event::ExecutableInstallSaveBegin => eprintf!("saving ... "),
     Event::ExecutableInstallSaveSuccess => eprintln!("{}", "ok".green()),
-    Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.red()),
+    Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.to_string().red()),
 
     Event::GitHubApiRequestBegin { url } => eprintf!("Talking to GitHub API ({url}) ... "),
     Event::GitHubApiRequestSuccess => eprintln!("{}", "ok".green()),
-    Event::GitHubApiRequestFail { err } => eprintln!("{}", err.red()),
+    Event::GitHubApiRequestFail { err } => eprintln!("{}", err.to_string().red()),
 
     Event::GlobalInstallSearch { binary } => eprintf!("Looking for {} in the PATH ... ", binary.to_string().cyan()),
     Event::GlobalInstallFound { path } => eprintln!("{}", path.to_string_lossy().green()),
