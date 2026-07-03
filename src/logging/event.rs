@@ -106,6 +106,9 @@ pub enum Event<'a> {
   LockAcquireBegin {
     app: &'a ApplicationName,
   },
+  LockAcquireFail {
+    err: &'a dyn Display,
+  },
   LockAcquireSuccess,
   LockRelease {
     app: &'a ApplicationName,

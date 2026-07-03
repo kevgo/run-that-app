@@ -64,6 +64,7 @@ pub fn log(event: Event) {
 
     Event::LockAcquireBegin { app: _ } => {}
     Event::LockAcquireSuccess => {}
+    Event::LockAcquireFail { err } => eprintln!("{}", err.to_string().red()),
     Event::LockRelease { app: _ } => {}
 
     Event::NotOnline => eprintln!("{}", "not online".red()),

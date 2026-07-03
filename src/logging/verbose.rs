@@ -88,6 +88,7 @@ pub fn log(event: Event) {
       let _ = io::stderr().flush();
     }
     Event::LockAcquireSuccess => eprintln!("{}", "ok".green()),
+    Event::LockAcquireFail { err } => eprintln!("{}", err.to_string().red()),
     Event::LockRelease { app } => eprintln!("releasing lock for {}", app.as_str().cyan()),
 
     Event::NotOnline => eprintln!("{}", "not online".red()),

@@ -176,11 +176,19 @@ impl Yard {
     let lock_file = self.create_lockfile(app_name, version, ctx.log)?;
     (ctx.log)(Event::LockAcquireBegin { app: app_name });
     let mut lock = RwLock::new(lock_file);
-    let guard = lock.write().map_err(|err| UserError::LockCannotAcquire {
-      filename: lock_filename(app_name, version),
-      err: err.to_string(),
-    })?;
-    (ctx.log)(Event::LockAcquireSuccess);
+    let guard = match lock.write() {
+      Ok(guard) => {
+        (ctx.log)(Event::LockAcquireSuccess);
+        guard
+      }
+      Err(err) => {
+        (ctx.log)(Event::LockAcquireFail { err: &err });
+        return Err(UserError::LockCannotAcquire {
+          filename: lock_filename(app_name, version),
+          err: err.to_string(),
+        });
+      }
+    };
 
     // run the function
     let result = f();
