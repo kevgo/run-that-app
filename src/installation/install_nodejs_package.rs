@@ -18,7 +18,7 @@ pub fn run(package_name: &str, app_folder: &Path, version: &Version, optional: b
 }}"#,
   );
   fs::write(&filepath, &content[1..]).map_err(|err| UserError::CannotCreateFile {
-    filename: filepath.clone(),
+    filename: filepath,
     err: err.to_string(),
   })?;
 
