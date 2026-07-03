@@ -54,14 +54,14 @@ pub enum Event<'a> {
   },
   FileCreateSuccess,
   FileCreateFail {
-    err: String,
+    err: &'a dyn Display,
   },
   FolderCreateBegin {
     name: &'a dyn Display,
   },
   FolderCreateSuccess,
   FolderCreateFail {
-    err: String,
+    err: &'a dyn Display,
   },
   GitHubApiRequestBegin {
     url: &'a str,

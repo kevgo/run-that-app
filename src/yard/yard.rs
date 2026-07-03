@@ -68,10 +68,22 @@ impl Yard {
 
     // slow path: if the lockfile doesn't exist, create the lock folder and try creating the lockfile again
     self.create_lock_folder(log)?;
-    File::create(&lock_path).map_err(|err| UserError::CannotCreateFile {
-      filename: lock_path.to_string_lossy().to_string(),
-      err: err.to_string(),
-    })
+    log(Event::FileCreateBegin {
+      filename: &lock_path.display(),
+    });
+    match File::create(&lock_path) {
+      Ok(file) => {
+        log(Event::FileCreateSuccess);
+        Ok(file)
+      }
+      Err(err) => {
+        log(Event::FileCreateFail { err: &err });
+        Err(UserError::CannotCreateFile {
+          filename: lock_path.to_string_lossy().to_string(),
+          err: err.to_string(),
+        })
+      }
+    }
   }
 
   /// creates the folder that contains the lockfiles
@@ -85,7 +97,7 @@ impl Yard {
         Ok(())
       }
       Err(err) => {
-        log(Event::FolderCreateFail { err: err.to_string() });
+        log(Event::FolderCreateFail { err: &err });
         Err(UserError::CannotCreateFolder {
           folder: self.lock_folder().clone(),
           reason: err.to_string(),

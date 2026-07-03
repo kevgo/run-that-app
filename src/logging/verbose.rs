@@ -37,11 +37,11 @@ pub fn log(event: Event) {
 
     Event::FileCreateBegin { filename } => eprintf!("creating file {filename} ... "),
     Event::FileCreateSuccess => eprintln!("{}", "ok".green()),
-    Event::FileCreateFail { err } => eprintln!("{}", err.red()),
+    Event::FileCreateFail { err } => eprintln!("{}", err.to_string().red()),
 
     Event::FolderCreateBegin { name } => eprintf!("creating folder {name} ... "),
     Event::FolderCreateSuccess => eprintln!("{}", "ok".green()),
-    Event::FolderCreateFail { err } => eprintln!("{}", err.red()),
+    Event::FolderCreateFail { err } => eprintln!("{}", err.to_string().red()),
 
     Event::GitHubApiRequestBegin { url } => eprintf!("Talking to GitHub API ({url}) ... "),
     Event::GitHubApiRequestSuccess => eprintln!("{}", "ok".green()),
