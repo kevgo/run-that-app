@@ -49,6 +49,20 @@ pub enum Event<'a> {
   ExecutableInstallSaveFail {
     err: &'a dyn Display,
   },
+  FileCreateBegin {
+    filename: &'a dyn Display,
+  },
+  FileCreateSuccess,
+  FileCreateFail {
+    err: &'a dyn Display,
+  },
+  FolderCreateBegin {
+    name: &'a dyn Display,
+  },
+  FolderCreateSuccess,
+  FolderCreateFail {
+    err: &'a dyn Display,
+  },
   GitHubApiRequestBegin {
     url: &'a str,
   },
@@ -91,6 +105,9 @@ pub enum Event<'a> {
   },
   LockAcquireBegin {
     app: &'a ApplicationName,
+  },
+  LockAcquireFail {
+    err: &'a dyn Display,
   },
   LockAcquireSuccess,
   LockRelease {

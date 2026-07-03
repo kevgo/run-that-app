@@ -36,6 +36,14 @@ pub fn log(event: Event) {
     Event::ExecutableInstallSaveSuccess => eprintln!("{}", "ok".green()),
     Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.to_string().red()),
 
+    Event::FileCreateBegin { filename: _ } => {}
+    Event::FileCreateSuccess => {}
+    Event::FileCreateFail { err } => eprintln!("{}", err.to_string().red()),
+
+    Event::FolderCreateBegin { name: _ } => {}
+    Event::FolderCreateSuccess => {}
+    Event::FolderCreateFail { err } => eprintln!("{}", err.to_string().red()),
+
     Event::GitHubApiRequestBegin { url: _ } => {}
     Event::GitHubApiRequestFail { err } => eprintln!("GitHub API request failed: {}", err.to_string().red()),
     Event::GitHubApiRequestSuccess => {}
@@ -56,6 +64,7 @@ pub fn log(event: Event) {
 
     Event::LockAcquireBegin { app: _ } => {}
     Event::LockAcquireSuccess => {}
+    Event::LockAcquireFail { err } => eprintln!("{}", err.to_string().red()),
     Event::LockRelease { app: _ } => {}
 
     Event::NotOnline => eprintln!("{}", "not online".red()),
