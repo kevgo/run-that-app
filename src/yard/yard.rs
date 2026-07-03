@@ -17,8 +17,8 @@ pub struct Yard {
 }
 
 impl Yard {
-  pub fn app_folder(&self, app_name: &ApplicationName, app_version: &Version) -> PathBuf {
-    self.root.join("apps").join(app_name).join(app_version)
+  pub fn app_folder(&self, app_name: &ApplicationName, version: &Version) -> PathBuf {
+    self.root.join("apps").join(app_version(app_name, version))
   }
 
   pub fn create(containing_folder: &Path) -> Result<Yard> {
@@ -41,8 +41,8 @@ impl Yard {
     Ok(folder)
   }
 
-  pub fn delete_app_folder(&self, app_name: &ApplicationName) -> Result<()> {
-    let folder_path = self.root.join("apps").join(app_name);
+  pub fn delete_app_folder(&self, app_name: &ApplicationName, version: Option<&Version>) -> Result<()> {
+    let folder_path = self.root.join("apps").join(app_version(app_name, version));
     if let Err(err) = fs::remove_dir_all(&folder_path)
       && err.kind() != std::io::ErrorKind::NotFound
     {
@@ -57,7 +57,7 @@ impl Yard {
   fn create_lockfile(&self, app_name: &ApplicationName, version: &Version, log: Log) -> Result<(File, PathBuf)> {
     // fast path: try to create the lockfile directly
     let lock_folder = self.lock_folder();
-    let lock_path = lock_folder.join(lock_filename(app_name, version));
+    let lock_path = lock_folder.join(app_version(app_name, version));
     log(Event::FileCreateBegin {
       filename: &lock_path.display(),
     });
@@ -206,7 +206,7 @@ impl Yard {
 }
 
 /// provides the filename for the file that locks the installation of the given application at the given version.
-pub fn lock_filename(app_name: &ApplicationName, version: &Version) -> String {
+pub fn app_version(app_name: &ApplicationName, version: &Version) -> String {
   format!("{app_name}@{version}")
 }
 
@@ -280,7 +280,7 @@ mod tests {
   #[test]
   fn lock_filename() {
     let shellcheck = ShellCheck {};
-    let have = super::lock_filename(&shellcheck.name(), &Version::from("0.9.0"));
+    let have = super::app_version(&shellcheck.name(), &Version::from("0.9.0"));
     let want = PathBuf::from("shellcheck@0.9.0");
     assert_eq!(have, want);
   }
