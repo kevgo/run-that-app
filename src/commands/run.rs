@@ -3,7 +3,7 @@ use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersion
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::{ExecutableCall, ExecutableCallDefinition, RunMethod};
-use crate::filesystem::{self, find_global_install};
+use crate::filesystem::find_global_install;
 use crate::installation::{self, Outcome};
 use crate::logging::{self, Event};
 use crate::yard::Yard;
@@ -129,7 +129,7 @@ fn load_or_install(
     }
     RequestedVersion::Yard(version) => {
       // load or install the app
-      filesystem::with_lock(&app_definition.name(), version, ctx, || {
+      ctx.yard.with_lock(&app_definition.name(), version, ctx, || {
         load_or_install_from_yard(app_definition, version, optional, from_source, ctx, apps)
       })
     }
