@@ -4,8 +4,9 @@ use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableNameUnix};
 use crate::installation::BinFolder;
-use crate::logging::Event;
+use crate::logging::{Event, Log};
 use crate::yard::root_path;
+use fd_lock::RwLock;
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
 
@@ -51,6 +52,58 @@ impl Yard {
       });
     }
     Ok(())
+  }
+
+  fn create_lockfile(&self, app_name: &ApplicationName, version: &Version, log: Log) -> Result<File> {
+    // fast path: try to create the lockfile directly
+    let lock_folder = self.lock_folder();
+    let lock_path = lock_folder.join(lock_filename(app_name, version));
+    log(Event::FileCreateBegin {
+      filename: &lock_path.display(),
+    });
+    if let Ok(file) = File::create(&lock_path) {
+      log(Event::FileCreateSuccess);
+      return Ok(file);
+    }
+
+    // slow path: if the lockfile doesn't exist, create the lock folder and try creating the lockfile again
+    self.create_lock_folder(log)?;
+    log(Event::FileCreateBegin {
+      filename: &lock_path.display(),
+    });
+    match File::create(&lock_path) {
+      Ok(file) => {
+        log(Event::FileCreateSuccess);
+        Ok(file)
+      }
+      Err(err) => {
+        log(Event::FileCreateFail { err: &err });
+        Err(UserError::CannotCreateFile {
+          filename: lock_path.to_string_lossy().to_string(),
+          err: err.to_string(),
+        })
+      }
+    }
+  }
+
+  /// creates the folder that contains the lockfiles
+  fn create_lock_folder(&self, log: Log) -> Result<()> {
+    log(Event::FolderCreateBegin {
+      name: &self.lock_folder().display(),
+    });
+    match fs::create_dir_all(self.lock_folder()) {
+      Ok(()) => {
+        log(Event::FolderCreateSuccess);
+        Ok(())
+      }
+      Err(err) => {
+        log(Event::FolderCreateFail { err: &err });
+        Err(UserError::CannotCreateFolder {
+          folder: self.lock_folder().clone(),
+          reason: err.to_string(),
+        })
+      }
+    }
   }
 
   pub fn is_not_installable(&self, app: &ApplicationName, version: &Version) -> bool {
@@ -100,6 +153,10 @@ impl Yard {
     None
   }
 
+  pub fn lock_folder(&self) -> PathBuf {
+    self.root.join("locks")
+  }
+
   pub fn mark_not_installable(&self, app: &ApplicationName, version: &Version) -> Result<()> {
     self.create_app_folder(app, version)?;
     let path = self.not_installable_path(app, version);
@@ -112,6 +169,45 @@ impl Yard {
   fn not_installable_path(&self, app_name: &ApplicationName, app_version: &Version) -> PathBuf {
     self.app_folder(app_name, app_version).join(".run-that-app-not-installable")
   }
+
+  /// runs the given function while holding a lock on the app folder
+  pub fn with_lock<T>(&self, app_name: &ApplicationName, version: &Version, ctx: &RuntimeContext, f: impl FnOnce() -> Result<T>) -> Result<T> {
+    // acquire the lock
+    let lock_file = self.create_lockfile(app_name, version, ctx.log)?;
+    (ctx.log)(Event::LockAcquireBegin { app: app_name });
+    let mut lock = RwLock::new(lock_file);
+    let guard = match lock.write() {
+      Ok(guard) => {
+        (ctx.log)(Event::LockAcquireSuccess);
+        guard
+      }
+      Err(err) => {
+        (ctx.log)(Event::LockAcquireFail { err: &err });
+        return Err(UserError::LockCannotAcquire {
+          filename: lock_filename(app_name, version),
+          err: err.to_string(),
+        });
+      }
+    };
+
+    // run the function
+    let result = f();
+
+    // release the lock
+    (ctx.log)(Event::LockRelease { app: app_name });
+    drop(guard);
+
+    // Note: don't delete the lockfile
+    // because that would allow another process to create a new file
+    // and acquire a lock on that one.
+
+    result
+  }
+}
+
+/// provides the filename for the file that locks the installation of the given application at the given version.
+pub fn lock_filename(app_name: &ApplicationName, version: &Version) -> String {
+  format!("{app_name}@{version}")
 }
 
 #[cfg(test)]
@@ -128,6 +224,37 @@ mod tests {
     let have = yard.app_folder(&shellcheck.name(), &Version::from("0.9.0"));
     let want = PathBuf::from("/root/apps/shellcheck/0.9.0");
     assert_eq!(have, want);
+  }
+
+  mod create_lockfile {
+    use crate::Version;
+    use crate::applications::{AppDefinition, ShellCheck};
+    use crate::yard::Yard;
+    use std::fs;
+
+    #[test]
+    fn lock_folder_exists() {
+      let tempdir = tempfile::tempdir().unwrap();
+      let yard = Yard::create(tempdir.path()).unwrap();
+      let lock_path = yard.lock_folder();
+      fs::create_dir_all(&lock_path).unwrap();
+      let shellcheck = ShellCheck {};
+      let version = Version::from("0.9.0");
+      yard.create_lockfile(&shellcheck.name(), &version, crate::logging::normal_log).unwrap();
+      let want = tempdir.path().join(".run-that-app").join("locks").join("shellcheck@0.9.0");
+      assert!(want.exists());
+    }
+
+    #[test]
+    fn lock_folder_does_not_exist() {
+      let tempdir = tempfile::tempdir().unwrap();
+      let yard = Yard::create(tempdir.path()).unwrap();
+      let shellcheck = ShellCheck {};
+      let version = Version::from("0.9.0");
+      yard.create_lockfile(&shellcheck.name(), &version, crate::logging::normal_log).unwrap();
+      let want = tempdir.path().join(".run-that-app").join("locks").join("shellcheck@0.9.0");
+      assert!(want.exists());
+    }
   }
 
   #[test]
@@ -148,6 +275,14 @@ mod tests {
     yard.mark_not_installable(&shellcheck.name(), &version).unwrap();
     let have = yard.is_not_installable(&shellcheck.name(), &version);
     assert!(have);
+  }
+
+  #[test]
+  fn lock_filename() {
+    let shellcheck = ShellCheck {};
+    let have = super::lock_filename(&shellcheck.name(), &Version::from("0.9.0"));
+    let want = PathBuf::from("shellcheck@0.9.0");
+    assert_eq!(have, want);
   }
 
   #[test]

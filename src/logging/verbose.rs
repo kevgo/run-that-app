@@ -35,6 +35,14 @@ pub fn log(event: Event) {
     Event::ExecutableInstallSaveSuccess => eprintln!("{}", "ok".green()),
     Event::ExecutableInstallSaveFail { err } => eprintln!("{}", err.to_string().red()),
 
+    Event::FileCreateBegin { filename } => eprintf!("creating file {filename} ... "),
+    Event::FileCreateSuccess => eprintln!("{}", "ok".green()),
+    Event::FileCreateFail { err } => eprintln!("{}", err.to_string().red()),
+
+    Event::FolderCreateBegin { name } => eprintf!("creating folder {name} ... "),
+    Event::FolderCreateSuccess => eprintln!("{}", "ok".green()),
+    Event::FolderCreateFail { err } => eprintln!("{}", err.to_string().red()),
+
     Event::GitHubApiRequestBegin { url } => eprintf!("Talking to GitHub API ({url}) ... "),
     Event::GitHubApiRequestSuccess => eprintln!("{}", "ok".green()),
     Event::GitHubApiRequestFail { err } => eprintln!("{}", err.to_string().red()),
@@ -80,6 +88,7 @@ pub fn log(event: Event) {
       let _ = io::stderr().flush();
     }
     Event::LockAcquireSuccess => eprintln!("{}", "ok".green()),
+    Event::LockAcquireFail { err } => eprintln!("{}", err.to_string().red()),
     Event::LockRelease { app } => eprintln!("releasing lock for {}", app.as_str().cyan()),
 
     Event::NotOnline => eprintln!("{}", "not online".red()),
