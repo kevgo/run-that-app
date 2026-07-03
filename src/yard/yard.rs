@@ -54,6 +54,15 @@ impl Yard {
     Ok(())
   }
 
+  pub fn create_staging_folder(&self, app_name: &ApplicationName, version: &Version) -> Result<PathBuf> {
+    let folder = self.root.join("staging").join(app_name).join(version);
+    fs::create_dir_all(&folder).map_err(|err| UserError::CannotCreateFolder {
+      folder: folder.clone(),
+      reason: err.to_string(),
+    })?;
+    Ok(folder)
+  }
+
   fn create_lockfile(&self, app_name: &ApplicationName, version: &Version, log: Log) -> Result<(File, PathBuf)> {
     // fast path: try to create the lockfile directly
     let lock_folder = self.lock_folder();
