@@ -9,7 +9,6 @@ use crate::installation::BinFolder;
 use crate::logging::{Event, Log};
 use crate::yard::root_path;
 use std::fs::{self, File};
-use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 
 /// The Yard stores application executables and metadata.
@@ -73,9 +72,7 @@ impl Yard {
     log(Event::FileCreateFail { err: err.to_string() });
 
     // slow path: if the lockfile doesn't exist, create the lock folder and try creating the lockfile again
-    if err.kind() == ErrorKind::NotFound {
-      self.create_lock_folder(log)?;
-    }
+    self.create_lock_folder(log)?;
     File::create(&lock_path).map_err(|err| UserError::CannotCreateFile {
       filename: lock_path.to_string_lossy().to_string(),
       err: err.to_string(),
