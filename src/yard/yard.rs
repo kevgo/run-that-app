@@ -215,20 +215,24 @@ mod tests {
   }
 
   mod create_lockfile {
+    use std::fs;
+
     use crate::Version;
     use crate::applications::{AppDefinition, ShellCheck};
     use crate::yard::Yard;
-    use std::path::PathBuf;
 
     #[test]
     fn lock_folder_exists() {
       let tempdir = tempfile::tempdir().unwrap();
       let yard = Yard::create(tempdir.path()).unwrap();
+      let lock_path = yard.lock_folder();
+      println!("lock_path: {}", lock_path.display());
+      fs::create_dir_all(&lock_path).unwrap();
       let shellcheck = ShellCheck {};
       let version = Version::from("0.9.0");
-      let have = yard.create_lockfile(&shellcheck.name(), &version, crate::logging::normal_log).unwrap();
-      let want = PathBuf::from("/root/locks/shellcheck@0.9.0");
-      assert_eq!(have, want);
+      yard.create_lockfile(&shellcheck.name(), &version, crate::logging::normal_log).unwrap();
+      let want = tempdir.path().join(".run-that-app").join("locks").join("shellcheck@0.9.0");
+      assert!(want.exists());
     }
   }
 
@@ -253,11 +257,11 @@ mod tests {
   }
 
   #[test]
-  fn lock_filepath() {
+  fn lock_filename() {
     let yard = Yard { root: PathBuf::from("/root") };
     let shellcheck = ShellCheck {};
-    let have = yard.lock_filepath(&shellcheck.name(), &Version::from("0.9.0"));
-    let want = PathBuf::from("/root/locks/shellcheck@0.9.0");
+    let have = yard.lock_filename(&shellcheck.name(), &Version::from("0.9.0"));
+    let want = PathBuf::from("shellcheck@0.9.0");
     assert_eq!(have, want);
   }
 
