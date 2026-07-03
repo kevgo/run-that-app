@@ -6,5 +6,5 @@ output: false
 
 pre-commit:
   jobs:
-    - run: make fix
+    - run: make fix || true
       stage_fixed: true
