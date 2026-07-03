@@ -226,8 +226,18 @@ mod tests {
       let tempdir = tempfile::tempdir().unwrap();
       let yard = Yard::create(tempdir.path()).unwrap();
       let lock_path = yard.lock_folder();
-      println!("lock_path: {}", lock_path.display());
       fs::create_dir_all(&lock_path).unwrap();
+      let shellcheck = ShellCheck {};
+      let version = Version::from("0.9.0");
+      yard.create_lockfile(&shellcheck.name(), &version, crate::logging::normal_log).unwrap();
+      let want = tempdir.path().join(".run-that-app").join("locks").join("shellcheck@0.9.0");
+      assert!(want.exists());
+    }
+
+    #[test]
+    fn lock_folder_does_not_exist() {
+      let tempdir = tempfile::tempdir().unwrap();
+      let yard = Yard::create(tempdir.path()).unwrap();
       let shellcheck = ShellCheck {};
       let version = Version::from("0.9.0");
       yard.create_lockfile(&shellcheck.name(), &version, crate::logging::normal_log).unwrap();
