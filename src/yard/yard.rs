@@ -54,7 +54,7 @@ impl Yard {
     Ok(())
   }
 
-  fn create_lockfile(&self, app_name: &ApplicationName, version: &Version, log: Log) -> Result<File> {
+  fn create_lockfile(&self, app_name: &ApplicationName, version: &Version, log: Log) -> Result<(File, PathBuf)> {
     // fast path: try to create the lockfile directly
     let lock_folder = self.lock_folder();
     let lock_path = lock_folder.join(lock_filename(app_name, version));
@@ -63,7 +63,7 @@ impl Yard {
     });
     if let Ok(file) = File::create(&lock_path) {
       log(Event::FileCreateSuccess);
-      return Ok(file);
+      return Ok((file, lock_path));
     }
 
     // slow path: if the lockfile doesn't exist, create the lock folder and try creating the lockfile again
@@ -74,12 +74,12 @@ impl Yard {
     match File::create(&lock_path) {
       Ok(file) => {
         log(Event::FileCreateSuccess);
-        Ok(file)
+        Ok((file, lock_path))
       }
       Err(err) => {
         log(Event::FileCreateFail { err: &err });
         Err(UserError::CannotCreateFile {
-          filename: lock_path.to_string_lossy().to_string(),
+          filename: lock_path,
           err: err.to_string(),
         })
       }
@@ -173,7 +173,7 @@ impl Yard {
   /// runs the given function while holding a lock on the app folder
   pub fn with_lock<T>(&self, app_name: &ApplicationName, version: &Version, ctx: &RuntimeContext, f: impl FnOnce() -> Result<T>) -> Result<T> {
     // acquire the lock
-    let lock_file = self.create_lockfile(app_name, version, ctx.log)?;
+    let (lock_file, lock_path) = self.create_lockfile(app_name, version, ctx.log)?;
     (ctx.log)(Event::LockAcquireBegin { app: app_name });
     let mut lock = RwLock::new(lock_file);
     let guard = match lock.write() {
@@ -184,7 +184,7 @@ impl Yard {
       Err(err) => {
         (ctx.log)(Event::LockAcquireFail { err: &err });
         return Err(UserError::LockCannotAcquire {
-          filename: lock_filename(app_name, version),
+          filename: lock_path,
           err: err.to_string(),
         });
       }
