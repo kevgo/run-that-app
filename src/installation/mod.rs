@@ -199,14 +199,22 @@ pub fn install(
   ctx: &RuntimeContext,
   apps: &Apps,
 ) -> Result<Outcome> {
-  let app_folder = ctx.yard.create_app_folder(&app_definition.name(), version)?;
-  match install_method {
-    Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &app_folder, version, url, bin_folder, optional, ctx),
-    Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &app_folder, version, download_url, optional, ctx),
-    Method::CompileGoSource { import_path } => compile_go::run(&app_folder, import_path, optional, from_source, ctx, apps),
-    Method::CompileRustCrate { name, bin_folder: _ } => compile_rust::run(app_definition, version, &app_folder, &RustSource::CratesIo { name }, ctx.log),
-    Method::CompileRustRepo { url } => compile_rust::run(app_definition, version, &app_folder, &RustSource::Repository { url: url.clone() }, ctx.log),
-    Method::InstallNodeJSPackage { package } => install_nodejs_package::run(package, &app_folder, version, optional, apps),
+  let install_folder = ctx.yard.create_install_folder(app_definition.name(), version)?;
+  let outcome = match install_method {
+    Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &install_folder, version, url, bin_folder, optional, ctx),
+    Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &install_folder, version, download_url, optional, ctx),
+    Method::CompileGoSource { import_path } => compile_go::run(&install_folder, import_path, optional, from_source, ctx, apps),
+    Method::CompileRustCrate { name, bin_folder: _ } => compile_rust::run(app_definition, version, &install_folder, &RustSource::CratesIo { name }, ctx.log),
+    Method::CompileRustRepo { url } => compile_rust::run(app_definition, version, &install_folder, &RustSource::Repository { url: url.clone() }, ctx.log),
+    Method::InstallNodeJSPackage { package } => install_nodejs_package::run(package, &install_folder, version, optional, apps),
+  }?;
+  match outcome {
+    Outcome::Installed => {
+      let app_folder = ctx.yard.create_app_folder(&app_definition.name(), version)?;
+      ctx.yard.move_install_folder_to_app_folder(&install_folder, &app_folder)?;
+      Ok(outcome)
+    }
+    Outcome::NotInstalled => Ok(Outcome::NotInstalled),
   }
 }
 
