@@ -57,18 +57,14 @@ impl Yard {
   fn create_lockfile(&self, app_name: &ApplicationName, version: &Version, log: Log) -> Result<File> {
     // fast path: try to create the lockfile directly
     let lock_folder = self.lock_folder();
-    let lock_path = lock_folder.join(self.lock_filename(app_name, version));
+    let lock_path = lock_folder.join(lock_filename(app_name, version));
     log(Event::FileCreateBegin {
       filename: &lock_path.display(),
     });
-    let err = match File::create(&lock_path) {
-      Ok(file) => {
-        log(Event::FileCreateSuccess);
-        return Ok(file);
-      }
-      Err(err) => err,
-    };
-    log(Event::FileCreateFail { err: err.to_string() });
+    if let Ok(file) = File::create(&lock_path) {
+      log(Event::FileCreateSuccess);
+      return Ok(file);
+    }
 
     // slow path: if the lockfile doesn't exist, create the lock folder and try creating the lockfile again
     self.create_lock_folder(log)?;
@@ -83,8 +79,8 @@ impl Yard {
     log(Event::FolderCreateBegin {
       name: &self.lock_folder().display(),
     });
-    match fs::create_dir_all(&self.lock_folder()) {
-      Ok(_) => {
+    match fs::create_dir_all(self.lock_folder()) {
+      Ok(()) => {
         log(Event::FolderCreateSuccess);
         Ok(())
       }
@@ -145,11 +141,6 @@ impl Yard {
     None
   }
 
-  /// provides the filename for the file that locks the installation of the given application at the given version.
-  pub fn lock_filename(&self, app_name: &ApplicationName, version: &Version) -> String {
-    format!("{app_name}@{version}")
-  }
-
   pub fn lock_folder(&self) -> PathBuf {
     self.root.join("locks")
   }
@@ -174,7 +165,7 @@ impl Yard {
     (ctx.log)(Event::LockAcquireBegin { app: app_name });
     let mut lock = RwLock::new(lock_file);
     let guard = lock.write().map_err(|err| UserError::LockCannotAcquire {
-      filename: self.lock_filename(app_name, version),
+      filename: lock_filename(app_name, version),
       err: err.to_string(),
     })?;
     (ctx.log)(Event::LockAcquireSuccess);
@@ -194,6 +185,11 @@ impl Yard {
   }
 }
 
+/// provides the filename for the file that locks the installation of the given application at the given version.
+pub fn lock_filename(app_name: &ApplicationName, version: &Version) -> String {
+  format!("{app_name}@{version}")
+}
+
 #[cfg(test)]
 mod tests {
   use crate::applications::{AppDefinition, ShellCheck};
@@ -211,11 +207,10 @@ mod tests {
   }
 
   mod create_lockfile {
-    use std::fs;
-
     use crate::Version;
     use crate::applications::{AppDefinition, ShellCheck};
     use crate::yard::Yard;
+    use std::fs;
 
     #[test]
     fn lock_folder_exists() {
@@ -264,9 +259,8 @@ mod tests {
 
   #[test]
   fn lock_filename() {
-    let yard = Yard { root: PathBuf::from("/root") };
     let shellcheck = ShellCheck {};
-    let have = yard.lock_filename(&shellcheck.name(), &Version::from("0.9.0"));
+    let have = super::lock_filename(&shellcheck.name(), &Version::from("0.9.0"));
     let want = PathBuf::from("shellcheck@0.9.0");
     assert_eq!(have, want);
   }
