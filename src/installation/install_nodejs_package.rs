@@ -28,7 +28,7 @@ pub fn run(package_name: &str, app_folder: &Path, version: &Version, optional: b
   commands::run(
     RunArgs {
       app_name: npm.name(),
-      app_args: vec!["ci".to_string()],
+      app_args: vec!["install".to_string(), "--omit=dev".to_string()],
       version: None,
       optional,
       from_source: false,
