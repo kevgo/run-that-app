@@ -120,18 +120,17 @@ impl Yard {
   }
 
   fn find_app_folders(&self, app_name: &ApplicationName) -> Vec<PathBuf> {
-    // list all the folders in the apps folder that match the app name
-    let app_folder = self.root.join("apps").join(app_name);
     let mut result = Vec::new();
     let prefix = format!("{app_name}@");
+    let app_folder = self.root.join("apps");
     for entry in fs::read_dir(app_folder).unwrap() {
       let entry = entry.unwrap();
-      let path = entry.path();
-      if !path.is_dir() {
+      let os_filename = entry.file_name();
+      let Some(filename) = os_filename.to_str() else {
         continue;
-      }
-      if path.starts_with(&prefix) {
-        result.push(path);
+      };
+      if filename.starts_with(&prefix) {
+        result.push(entry.path());
       }
     }
     result
