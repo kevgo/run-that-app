@@ -17,8 +17,12 @@ pub struct Yard {
 }
 
 impl Yard {
-  pub fn app_folder(&self, app_name: &ApplicationName, app_version: &Version) -> PathBuf {
-    self.root.join("apps").join(app_name).join(app_version)
+  pub fn app_folder(&self, app_name: &ApplicationName, version: &Version) -> PathBuf {
+    self.apps_folder().join(app_version(app_name, version))
+  }
+
+  pub fn apps_folder(&self) -> PathBuf {
+    self.root.join("apps")
   }
 
   pub fn create(containing_folder: &Path) -> Result<Yard> {
@@ -41,23 +45,42 @@ impl Yard {
     Ok(folder)
   }
 
-  pub fn delete_app_folder(&self, app_name: &ApplicationName) -> Result<()> {
-    let folder_path = self.root.join("apps").join(app_name);
-    if let Err(err) = fs::remove_dir_all(&folder_path)
-      && err.kind() != std::io::ErrorKind::NotFound
-    {
-      return Err(UserError::CannotDeleteFolder {
-        folder: folder_path,
+  pub fn delete_app_version(&self, app_name: &ApplicationName, version: &Version) -> Result<()> {
+    let folder_path = self.app_folder(app_name, version);
+    let Err(err) = fs::remove_dir_all(&folder_path) else {
+      return Ok(());
+    };
+    if err.kind() == std::io::ErrorKind::NotFound {
+      return Ok(());
+    }
+    Err(UserError::CannotDeleteFolder {
+      folder: folder_path,
+      err: err.to_string(),
+    })
+  }
+
+  fn delete_all_app_versions(&self, app_name: &ApplicationName) -> Result<()> {
+    for app_folder in self.find_app_folders(app_name)? {
+      fs::remove_dir_all(&app_folder).map_err(|err| UserError::CannotDeleteFolder {
+        folder: app_folder,
         err: err.to_string(),
-      });
+      })?;
     }
     Ok(())
+  }
+
+  pub fn delete_app_folders(&self, app_name: &ApplicationName, version: Option<&Version>) -> Result<()> {
+    if let Some(version) = version {
+      self.delete_app_version(app_name, version)
+    } else {
+      self.delete_all_app_versions(app_name)
+    }
   }
 
   fn create_lockfile(&self, app_name: &ApplicationName, version: &Version, log: Log) -> Result<(File, PathBuf)> {
     // fast path: try to create the lockfile directly
     let lock_folder = self.lock_folder();
-    let lock_path = lock_folder.join(lock_filename(app_name, version));
+    let lock_path = lock_folder.join(app_version(app_name, version));
     log(Event::FileCreateBegin {
       filename: &lock_path.display(),
     });
@@ -65,7 +88,6 @@ impl Yard {
       log(Event::FileCreateSuccess);
       return Ok((file, lock_path));
     }
-
     // slow path: if the lockfile doesn't exist, create the lock folder and try creating the lockfile again
     self.create_lock_folder(log)?;
     log(Event::FileCreateBegin {
@@ -104,6 +126,29 @@ impl Yard {
         })
       }
     }
+  }
+
+  fn find_app_folders(&self, app_name: &ApplicationName) -> Result<Vec<PathBuf>> {
+    let mut result = Vec::new();
+    let prefix = format!("{app_name}@");
+    let apps_folder = self.apps_folder();
+    let entries = fs::read_dir(&apps_folder).map_err(|err| UserError::CannotReadFolder {
+      folder: apps_folder,
+      err: err.to_string(),
+    })?;
+    for entry in entries {
+      let Ok(entry) = entry else {
+        continue;
+      };
+      let os_filename = entry.file_name();
+      let Some(filename) = os_filename.to_str() else {
+        continue;
+      };
+      if filename.starts_with(&prefix) {
+        result.push(entry.path());
+      }
+    }
+    Ok(result)
   }
 
   pub fn is_not_installable(&self, app: &ApplicationName, version: &Version) -> bool {
@@ -206,7 +251,7 @@ impl Yard {
 }
 
 /// provides the filename for the file that locks the installation of the given application at the given version.
-pub fn lock_filename(app_name: &ApplicationName, version: &Version) -> String {
+pub fn app_version(app_name: &ApplicationName, version: &Version) -> String {
   format!("{app_name}@{version}")
 }
 
@@ -222,7 +267,7 @@ mod tests {
     let yard = Yard { root: "/root".into() };
     let shellcheck = ShellCheck {};
     let have = yard.app_folder(&shellcheck.name(), &Version::from("0.9.0"));
-    let want = PathBuf::from("/root/apps/shellcheck/0.9.0");
+    let want = PathBuf::from("/root/apps/shellcheck@0.9.0");
     assert_eq!(have, want);
   }
 
@@ -278,9 +323,9 @@ mod tests {
   }
 
   #[test]
-  fn lock_filename() {
+  fn app_version() {
     let shellcheck = ShellCheck {};
-    let have = super::lock_filename(&shellcheck.name(), &Version::from("0.9.0"));
+    let have = super::app_version(&shellcheck.name(), &Version::from("0.9.0"));
     let want = PathBuf::from("shellcheck@0.9.0");
     assert_eq!(have, want);
   }
@@ -290,7 +335,7 @@ mod tests {
     let shellcheck = ShellCheck {};
     let yard = Yard { root: "/root".into() };
     let have = yard.not_installable_path(&shellcheck.name(), &Version::from("0.9.0"));
-    let want = PathBuf::from("/root/apps/shellcheck/0.9.0/.run-that-app-not-installable");
+    let want = PathBuf::from("/root/apps/shellcheck@0.9.0/.run-that-app-not-installable");
     assert_eq!(have, want);
   }
 }
