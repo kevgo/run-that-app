@@ -18,7 +18,11 @@ pub struct Yard {
 
 impl Yard {
   pub fn app_folder(&self, app_name: &ApplicationName, version: &Version) -> PathBuf {
-    self.root.join("apps").join(app_version(app_name, version))
+    self.apps_folder().join(app_version(app_name, version))
+  }
+
+  pub fn apps_folder(&self) -> PathBuf {
+    self.root.join("apps")
   }
 
   pub fn create(containing_folder: &Path) -> Result<Yard> {
@@ -127,9 +131,9 @@ impl Yard {
   fn find_app_folders(&self, app_name: &ApplicationName) -> Result<Vec<PathBuf>> {
     let mut result = Vec::new();
     let prefix = format!("{app_name}@");
-    let app_folder = self.root.join("apps");
-    let entries = fs::read_dir(&app_folder).map_err(|err| UserError::CannotReadFolder {
-      folder: app_folder,
+    let apps_folder = self.apps_folder();
+    let entries = fs::read_dir(&apps_folder).map_err(|err| UserError::CannotReadFolder {
+      folder: apps_folder,
       err: err.to_string(),
     })?;
     for entry in entries {
