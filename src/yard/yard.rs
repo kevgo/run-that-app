@@ -46,12 +46,16 @@ impl Yard {
   }
 
   pub fn create_staging_folder(&self, app_name: &ApplicationName, version: &Version) -> Result<PathBuf> {
-    let folder = self.root.join("staging").join(app_version(app_name, version));
-    fs::create_dir_all(&folder).map_err(|err| UserError::CannotCreateFolder {
-      folder: folder.clone(),
+    let folder_path = self.root.join("staging").join(app_version(app_name, version));
+    // at this point have have exclusive access to install this app
+    // if a folder exists it is from a previous failed installation
+    // and safe to delete
+    let _ = fs::remove_dir_all(&folder_path);
+    fs::create_dir_all(&folder_path).map_err(|err| UserError::CannotCreateFolder {
+      folder: folder_path.clone(),
       reason: err.to_string(),
     })?;
-    Ok(folder)
+    Ok(folder_path)
   }
 
   pub fn delete_app_version(&self, app_name: &ApplicationName, version: &Version) -> Result<()> {
