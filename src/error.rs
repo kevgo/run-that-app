@@ -27,6 +27,7 @@ pub enum UserError {
   CannotOpenSubshellStream,
   CannotParseSemverVersion { expression: String, reason: String },
   CannotParseSemverRange { expression: String, reason: String },
+  CannotReadFolder { folder: PathBuf, err: String },
   CannotReadZipFile { err: String },
   CompilationError { reason: String },
   CompilationInterupted,
@@ -105,6 +106,7 @@ impl UserError {
         error(&format!("semver range \"{expression}\" is incorrect: {reason}"));
         desc("Please use formats described at https://devhints.io/semver.");
       }
+      UserError::CannotReadFolder { folder, err } => error(&format!("cannot read folder {}: {err}", folder.display())),
       UserError::CannotReadZipFile { err } => error(&format!("cannot read ZIP file: {err}")),
       UserError::CompilationError { reason } => {
         error(&format!("Compilation error: {reason}"));
