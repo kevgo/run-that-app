@@ -221,6 +221,21 @@ impl Yard {
   }
 
   pub fn move_staging_folder_to_app_folder(&self, staging_folder: PathBuf, app_folder: PathBuf) -> Result<()> {
+    let outcome = fs::rename(&staging_folder, &app_folder);
+    let Err(err) = outcome else {
+      return Ok(());
+    };
+    if err.kind() != std::io::ErrorKind::NotFound {
+      return Err(UserError::CannotMoveFolder {
+        from: staging_folder,
+        to: app_folder,
+        err: err.to_string(),
+      });
+    }
+    fs::create_dir_all(self.apps_folder()).map_err(|err| UserError::CannotCreateFolder {
+      folder: self.apps_folder(),
+      reason: err.to_string(),
+    })?;
     fs::rename(&staging_folder, &app_folder).map_err(|err| UserError::CannotMoveFolder {
       from: staging_folder,
       to: app_folder,
