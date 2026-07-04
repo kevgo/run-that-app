@@ -128,7 +128,9 @@ impl Yard {
       err: err.to_string(),
     })?;
     for entry in entries {
-      let entry = entry.unwrap();
+      let Ok(entry) = entry else {
+        continue;
+      };
       let os_filename = entry.file_name();
       let Some(filename) = os_filename.to_str() else {
         continue;
