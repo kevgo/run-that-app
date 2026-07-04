@@ -49,6 +49,7 @@ mod shfmt;
 mod snyk;
 mod staticcheck;
 mod taplo;
+mod text_runner;
 mod tikibase;
 mod ty;
 mod uv;
@@ -108,6 +109,7 @@ pub use shfmt::Shfmt;
 pub use snyk::Snyk;
 pub use staticcheck::StaticCheck;
 pub use taplo::Taplo;
+pub use text_runner::TextRunner;
 pub use tikibase::Tikibase;
 pub use ty::Ty;
 pub use uv::Uv;
@@ -167,6 +169,7 @@ pub fn all() -> Apps {
     Box::new(snyk::Snyk {}),
     Box::new(staticcheck::StaticCheck {}),
     Box::new(taplo::Taplo {}),
+    Box::new(text_runner::TextRunner {}),
     Box::new(tikibase::Tikibase {}),
     Box::new(ty::Ty {}),
     Box::new(uv::Uv {}),

@@ -110,6 +110,7 @@ We can also compile apps from source if needed.
 - [snyk](https://github.com/snyk/cli)
 - [staticcheck](https://staticcheck.dev)
 - [taplo](https://github.com/tamasfe/taplo)
+- [text-runner](https://github.com/kevgo/text-runner)
 - [tikibase](https://github.com/kevgo/tikibase)
 - [ty](https://github.com/astral-sh/ty)
 - [uv](https://github.com/astral-sh/uv)
