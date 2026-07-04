@@ -1,5 +1,15 @@
 # run-that-app changelog
 
+## 0.39.0
+
+- Support for applications deployed as a Node.JS package.
+- RTA now correctly handles concurrent installation of the same application: only the first instance keeps going, the other instances wait until the first one is done and then use the results of the first installation
+- RTA now automatically detects and retries previous incomplete installation of applications
+- the Yard folder structure is modernized and optimized:
+  - new top-level folders `locks` for lockfiles and `staging` for installation
+  - flat folder hierarchy in `apps` is now flat: `app@version`
+- apps: deno, Text-Runner, Prettier, Markdown-Lint, gherkin-lint
+
 ## 0.38.0
 
 - the API now exports a `Command` placeholder that allows inspection
