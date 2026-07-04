@@ -45,6 +45,19 @@ impl Yard {
     Ok(folder)
   }
 
+  pub fn create_staging_folder(&self, app_name: &ApplicationName, version: &Version) -> Result<PathBuf> {
+    let folder_path = self.root.join("staging").join(app_version(app_name, version));
+    // at this point have have exclusive access to install this app
+    // if a folder exists it is from a previous failed installation
+    // and safe to delete
+    let _ = fs::remove_dir_all(&folder_path);
+    fs::create_dir_all(&folder_path).map_err(|err| UserError::CannotCreateFolder {
+      folder: folder_path.clone(),
+      reason: err.to_string(),
+    })?;
+    Ok(folder_path)
+  }
+
   pub fn delete_app_version(&self, app_name: &ApplicationName, version: &Version) -> Result<()> {
     let folder_path = self.app_folder(app_name, version);
     let Err(err) = fs::remove_dir_all(&folder_path) else {
@@ -209,6 +222,32 @@ impl Yard {
       Ok(_) => Ok(()),
       Err(err) => Err(UserError::YardAccessDenied { msg: err.to_string(), path }),
     }
+  }
+
+  pub fn move_staging_folder_to_app_folder(&self, staging_folder: PathBuf, app_folder: PathBuf) -> Result<()> {
+    // fast path: try to move the folder directly
+    let outcome = fs::rename(&staging_folder, &app_folder);
+    let Err(err) = outcome else {
+      return Ok(());
+    };
+    // slow path: make sure the target parent folder exists and try moving the folder again
+    if err.kind() != std::io::ErrorKind::NotFound {
+      return Err(UserError::CannotMoveFolder {
+        from: staging_folder,
+        to: app_folder,
+        err: err.to_string(),
+      });
+    }
+    let apps_folder_path = self.apps_folder();
+    fs::create_dir_all(&apps_folder_path).map_err(|err| UserError::CannotCreateFolder {
+      folder: apps_folder_path,
+      reason: err.to_string(),
+    })?;
+    fs::rename(&staging_folder, &app_folder).map_err(|err| UserError::CannotMoveFolder {
+      from: staging_folder,
+      to: app_folder,
+      err: err.to_string(),
+    })
   }
 
   fn not_installable_path(&self, app_name: &ApplicationName, app_version: &Version) -> PathBuf {
