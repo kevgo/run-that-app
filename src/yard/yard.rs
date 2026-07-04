@@ -58,7 +58,7 @@ impl Yard {
     if let Some(version) = version {
       self.delete_app_folder(app_name, version)?;
     } else {
-      for app_folder in self.find_app_folders(app_name) {
+      for app_folder in self.find_app_folders(app_name)? {
         fs::remove_dir_all(&app_folder).map_err(|err| UserError::CannotDeleteFolder {
           folder: app_folder,
           err: err.to_string(),
@@ -119,11 +119,15 @@ impl Yard {
     }
   }
 
-  fn find_app_folders(&self, app_name: &ApplicationName) -> Vec<PathBuf> {
+  fn find_app_folders(&self, app_name: &ApplicationName) -> Result<Vec<PathBuf>> {
     let mut result = Vec::new();
     let prefix = format!("{app_name}@");
     let app_folder = self.root.join("apps");
-    for entry in fs::read_dir(app_folder).unwrap() {
+    let entries = fs::read_dir(&app_folder).map_err(|err| UserError::CannotReadFolder {
+      folder: app_folder,
+      err: err.to_string(),
+    })?;
+    for entry in entries {
       let entry = entry.unwrap();
       let os_filename = entry.file_name();
       let Some(filename) = os_filename.to_str() else {
@@ -133,7 +137,7 @@ impl Yard {
         result.push(entry.path());
       }
     }
-    result
+    Ok(result)
   }
 
   pub fn is_not_installable(&self, app: &ApplicationName, version: &Version) -> bool {
