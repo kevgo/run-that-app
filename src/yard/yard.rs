@@ -46,7 +46,7 @@ impl Yard {
   }
 
   pub fn create_staging_folder(&self, app_name: &ApplicationName, version: &Version) -> Result<PathBuf> {
-    let folder = self.root.join("staging").join(app_name).join(version);
+    let folder = self.root.join("staging").join(app_version(app_name, version));
     fs::create_dir_all(&folder).map_err(|err| UserError::CannotCreateFolder {
       folder: folder.clone(),
       reason: err.to_string(),
