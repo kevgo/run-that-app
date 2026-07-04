@@ -41,6 +41,19 @@ impl Yard {
     Ok(folder)
   }
 
+  pub fn delete_app_folder(&self, app_name: &ApplicationName, version: &Version) -> Result<()> {
+    let folder_path = self.root.join("apps").join(app_version(app_name, version));
+    if let Err(err) = fs::remove_dir_all(&folder_path)
+      && err.kind() != std::io::ErrorKind::NotFound
+    {
+      return Err(UserError::CannotDeleteFolder {
+        folder: folder_path,
+        err: err.to_string(),
+      });
+    }
+    Ok(())
+  }
+
   pub fn delete_app_folders(&self, app_name: &ApplicationName, version: Option<&Version>) -> Result<()> {
     if let Some(version) = version {
       self.delete_app_folder(app_name, version)?;
@@ -51,19 +64,6 @@ impl Yard {
           err: err.to_string(),
         })?;
       }
-    }
-    Ok(())
-  }
-
-  pub fn delete_app_folder(&self, app_name: &ApplicationName, version: &Version) -> Result<()> {
-    let folder_path = self.root.join("apps").join(app_version(app_name, version));
-    if let Err(err) = fs::remove_dir_all(&folder_path)
-      && err.kind() != std::io::ErrorKind::NotFound
-    {
-      return Err(UserError::CannotDeleteFolder {
-        folder: folder_path,
-        err: err.to_string(),
-      });
     }
     Ok(())
   }
