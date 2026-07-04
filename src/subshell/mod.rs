@@ -9,7 +9,6 @@ mod capture_output;
 mod detect_output;
 mod stream_output;
 
-use crate::executables::Executable;
 pub use capture_output::capture_output;
 pub use detect_output::detect_output;
 pub use stream_output::stream_output;
@@ -69,8 +68,8 @@ pub fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
 }
 
 /// provides a printable version of this `ExecutableCall` when called with additional arguments
-pub fn render_call(executable: &Executable, args: &[String]) -> String {
-  let mut result = executable.to_string();
+pub fn render_call(executable: &Path, args: &[String]) -> String {
+  let mut result = executable.display().to_string();
   for arg in args {
     result.push(' ');
     result.push_str(arg);
@@ -80,15 +79,14 @@ pub fn render_call(executable: &Executable, args: &[String]) -> String {
 
 #[cfg(test)]
 mod tests {
-  use crate::executables::Executable;
   use crate::subshell::render_call;
   use big_s::S;
   use std::path::Path;
 
   #[test]
   fn format_with_extra_args() {
-    let executable = Executable::from(Path::new("executable"));
-    let have = render_call(&executable, &[S("arg1"), S("arg2"), S("arg3")]);
+    let executable = Path::new("executable");
+    let have = render_call(executable, &[S("arg1"), S("arg2"), S("arg3")]);
     let want = S("executable arg1 arg2 arg3");
     assert_eq!(have, want);
   }

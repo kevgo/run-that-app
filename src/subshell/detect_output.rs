@@ -1,32 +1,26 @@
-use super::{add_paths, exit_status_to_code, render_call};
+use super::{exit_status_to_code, render_call};
 use crate::cli;
 use crate::error::{Result, UserError};
-use crate::executables::{Executable, ExecutableCall};
+use crate::executables::CommandInfo;
 use std::io::{self, BufRead, BufReader, Read};
 use std::path::Path;
 use std::process::{self, Child, Command, ExitCode, Stdio};
 use std::sync::mpsc;
 use std::thread;
 
-/// Executes the given executable with the given arguments, streaming the output to the terminal while monitoring it.
+/// Executes the given command, streaming the output to the terminal while monitoring it.
 /// Any output results in an Err.
-#[allow(clippy::unwrap_used)]
-pub fn detect_output(executable: &Executable, args: &[String], apps_to_include: &[ExecutableCall], cwd: Option<&Path>) -> Result<ExitCode> {
+pub fn detect_output(cmd_info: CommandInfo, cwd: Option<&Path>) -> Result<ExitCode> {
   let (sender, receiver) = mpsc::channel();
-  let mut cmd = Command::new(executable);
-  cmd.args(args);
+  let call = render_call(&cmd_info.executable, &cmd_info.args);
+  let mut cmd = Command::from(cmd_info);
   if let Some(dir) = cwd {
     cmd.current_dir(dir);
   }
-  let mut paths_to_include = vec![executable.as_path().parent().unwrap()];
-  for app_to_include in apps_to_include {
-    paths_to_include.push(app_to_include.executable.as_path().parent().unwrap());
-  }
-  add_paths(&mut cmd, &paths_to_include);
   cmd.stdout(Stdio::piped());
   cmd.stderr(Stdio::piped());
   let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
-    call: render_call(executable, args),
+    call: call.clone(),
     reason: err.to_string(),
   })?;
   let Some(stdout) = process.stdout.take() else {
@@ -71,9 +65,7 @@ pub fn detect_output(executable: &Executable, args: &[String], apps_to_include: 
     }
   }
   if encountered_output {
-    return Err(UserError::ProcessEmittedOutput {
-      cmd: render_call(executable, args),
-    });
+    return Err(UserError::ProcessEmittedOutput { cmd: call });
   }
   Ok(exit_code)
 }

@@ -128,10 +128,18 @@ mod tests {
   use std::path::Path;
 
   mod stream_output {
-    use crate::executables::Executable;
+    use crate::executables::{CommandInfo, Executable};
     use crate::subshell;
     use big_s::S;
     use std::fs;
+
+    fn cmd_info_for(executable: &Executable) -> CommandInfo {
+      CommandInfo {
+        executable: executable.as_path().to_path_buf(),
+        args: vec![],
+        env_path: subshell::path_expressions(&[executable.parent_path()]),
+      }
+    }
 
     #[test]
     #[cfg(not(windows))]
@@ -147,7 +155,7 @@ mod tests {
       drop(file);
       // NOTE: if the test is flaky, wait 10 ms here.
       let executable = Executable::from(executable_path);
-      let have = subshell::stream_output(&executable, &[], &[], None).unwrap();
+      let have = subshell::stream_output(cmd_info_for(&executable), None).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(0))"));
     }
@@ -161,7 +169,7 @@ mod tests {
       fs::write(&executable_path, b"#!/bin/sh\nexit 3").unwrap();
       filesystem::set_executable_bit(&executable_path);
       let executable = Executable::from(executable_path);
-      let have = subshell::stream_output(&executable, &[], &[], None).unwrap();
+      let have = subshell::stream_output(cmd_info_for(&executable), None).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(unix_exit_status(3))"));
     }
@@ -173,7 +181,7 @@ mod tests {
       let executable_path = tempdir.path().join("executable.cmd");
       fs::write(&executable_path, b"echo hello").unwrap();
       let executable = Executable::from(executable_path);
-      let have = subshell::stream_output(&executable, &[], &[], None).unwrap();
+      let have = subshell::stream_output(cmd_info_for(&executable), None).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(0))"));
     }
@@ -185,7 +193,7 @@ mod tests {
       let executable_path = tempdir.path().join("executable.cmd");
       fs::write(&executable_path, b"EXIT 3").unwrap();
       let executable = Executable::from(executable_path);
-      let have = subshell::stream_output(&executable, &[], &[], None).unwrap();
+      let have = subshell::stream_output(cmd_info_for(&executable), None).unwrap();
       // HACK: is there a better way to compare ExitCode?
       assert_eq!(format!("{have:?}"), S("ExitCode(ExitCode(3))"));
     }

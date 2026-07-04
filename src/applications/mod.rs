@@ -333,7 +333,7 @@ impl Apps {
   }
 
   /// provides the app with the given name
-  pub fn lookup<AS: AsRef<str>>(&self, name: AS) -> Result<&dyn AppDefinition> {
+  pub fn lookup<AS: AsRef<str>>(&self, name: AS) -> Result<&(dyn AppDefinition + 'static)> {
     for app in &self.0 {
       if app.name() == name.as_ref() {
         return Ok(app.as_ref());
