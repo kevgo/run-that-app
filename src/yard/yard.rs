@@ -46,16 +46,16 @@ impl Yard {
       self.delete_app_folder(app_name, version)?;
     } else {
       for app_folder in self.find_app_folders(app_name) {
-		fs::remove_dir_all(&app_folder).map_err(|err| UserError::CannotDeleteFolder {
-			folder: app_folder,
-			err: err.to_string(),
-		})?;
-	  }
+        fs::remove_dir_all(&app_folder).map_err(|err| UserError::CannotDeleteFolder {
+          folder: app_folder,
+          err: err.to_string(),
+        })?;
+      }
     }
     Ok(())
   }
 
-  fn delete_app_folder(&self, app_name: &ApplicationName, version: &Version) -> Result<()> {
+  pub fn delete_app_folder(&self, app_name: &ApplicationName, version: &Version) -> Result<()> {
     let folder_path = self.root.join("apps").join(app_version(app_name, version));
     if let Err(err) = fs::remove_dir_all(&folder_path)
       && err.kind() != std::io::ErrorKind::NotFound
@@ -130,10 +130,11 @@ impl Yard {
       if !path.is_dir() {
         continue;
       }
-	  if path.starts_with(&prefix) {
-      result.push(path);
+      if path.starts_with(&prefix) {
+        result.push(path);
+      }
     }
-    app_folders
+    result
   }
 
   pub fn is_not_installable(&self, app: &ApplicationName, version: &Version) -> bool {
