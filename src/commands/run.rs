@@ -14,11 +14,7 @@ use std::process::ExitCode;
 
 pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
   let app_to_run = apps.lookup(&args.app_name)?;
-  let include_apps: Vec<Box<dyn AppDefinition>> = args
-    .include_apps
-    .iter()
-    .map(|name| apps.lookup(name).map(dyn_clone::clone_box))
-    .collect::<Result<_>>()?;
+  let include_apps: Vec<&dyn AppDefinition> = args.include_apps.iter().map(|name| apps.lookup(name)).collect::<Result<_>>()?;
   let get_cmd_args = GetCmdArgs {
     version: args.version,
     app_args: args.app_args,
