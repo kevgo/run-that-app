@@ -137,7 +137,7 @@ mod tests {
       CommandInfo {
         executable: executable.as_path().to_path_buf(),
         args: vec![],
-        env_path: subshell::path_expressions(&[executable.parent_path()]),
+        env_path: subshell::path_expressions(&[]),
       }
     }
 
