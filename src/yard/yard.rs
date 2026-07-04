@@ -323,7 +323,7 @@ mod tests {
   }
 
   #[test]
-  fn lock_filename() {
+  fn app_version() {
     let shellcheck = ShellCheck {};
     let have = super::app_version(&shellcheck.name(), &Version::from("0.9.0"));
     let want = PathBuf::from("shellcheck@0.9.0");
