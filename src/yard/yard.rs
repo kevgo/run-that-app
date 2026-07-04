@@ -41,7 +41,7 @@ impl Yard {
     Ok(folder)
   }
 
-  pub fn delete_app_folder(&self, app_name: &ApplicationName, version: &Version) -> Result<()> {
+  pub fn delete_app_version(&self, app_name: &ApplicationName, version: &Version) -> Result<()> {
     let folder_path = self.app_folder(app_name, version);
     let Err(err) = fs::remove_dir_all(&folder_path) else {
       return Ok(());
@@ -55,18 +55,22 @@ impl Yard {
     })
   }
 
-  pub fn delete_app_folders(&self, app_name: &ApplicationName, version: Option<&Version>) -> Result<()> {
-    if let Some(version) = version {
-      self.delete_app_folder(app_name, version)?;
-    } else {
-      for app_folder in self.find_app_folders(app_name)? {
-        fs::remove_dir_all(&app_folder).map_err(|err| UserError::CannotDeleteFolder {
-          folder: app_folder,
-          err: err.to_string(),
-        })?;
-      }
+  fn delete_all_app_versions(&self, app_name: &ApplicationName) -> Result<()> {
+    for app_folder in self.find_app_folders(app_name)? {
+      fs::remove_dir_all(&app_folder).map_err(|err| UserError::CannotDeleteFolder {
+        folder: app_folder,
+        err: err.to_string(),
+      })?;
     }
     Ok(())
+  }
+
+  pub fn delete_app_folders(&self, app_name: &ApplicationName, version: Option<&Version>) -> Result<()> {
+    if let Some(version) = version {
+      self.delete_app_version(app_name, version)
+    } else {
+      self.delete_all_app_versions(app_name)
+    }
   }
 
   fn create_lockfile(&self, app_name: &ApplicationName, version: &Version, log: Log) -> Result<(File, PathBuf)> {
