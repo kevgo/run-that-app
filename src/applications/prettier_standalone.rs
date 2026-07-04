@@ -59,7 +59,7 @@ impl AppDefinition for PrettierStandalone {
     if !output.contains("Print the names of files that are different from Prettier's formatting") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    // prettier-standalone has a different version than Prettier
+    // prettier-standalone has a different version than the Prettier that it bundles
     Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 
