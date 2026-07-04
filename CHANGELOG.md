@@ -2,13 +2,16 @@
 
 ## 0.39.0
 
-- Support for applications deployed as a Node.JS package.
-- RTA now correctly handles concurrent installation of the same application: only the first instance keeps going, the other instances wait until the first one is done and then use the results of the first installation
-- RTA now automatically detects and retries previous incomplete installation of applications
-- the Yard folder structure is modernized and optimized:
-  - new top-level folders `locks` for lockfiles and `staging` for installation
-  - flat folder hierarchy in `apps` is now flat: `app@version`
-- apps: deno, Text-Runner, Prettier, Markdown-Lint, gherkin-lint
+- Added support for applications distributed as a Node.JS packages.
+- RTA now handles concurrent installation of the same application correctly:
+  - the first process performs the installation
+  - later processes wait for the first process to finish
+  - waiting processes reuse the completed installation or retry if it failed
+- RTA now detects incomplete previous installations, discards them, and retries automatically.
+- Optimized the Yard folder structure:
+  - added top-level `locks` and `staging` folders for lockfiles and installation work
+  - flattened the `apps` folder hierarchy to use the `app@version` format
+- apps: deno, gherkin-lint, Markdown-Lint, Prettier, Text-Runner
 
 ## 0.38.0
 
