@@ -41,7 +41,21 @@ impl Yard {
     Ok(folder)
   }
 
-  pub fn delete_app_folder(&self, app_name: &ApplicationName, version: Option<&Version>) -> Result<()> {
+  pub fn delete_app_folders(&self, app_name: &ApplicationName, version: Option<&Version>) -> Result<()> {
+    if let Some(version) = version {
+      self.delete_app_folder(app_name, version)?;
+    } else {
+      for app_folder in self.find_app_folders(app_name) {
+		fs::remove_dir_all(&app_folder).map_err(|err| UserError::CannotDeleteFolder {
+			folder: app_folder,
+			err: err.to_string(),
+		})?;
+	  }
+    }
+    Ok(())
+  }
+
+  fn delete_app_folder(&self, app_name: &ApplicationName, version: &Version) -> Result<()> {
     let folder_path = self.root.join("apps").join(app_version(app_name, version));
     if let Err(err) = fs::remove_dir_all(&folder_path)
       && err.kind() != std::io::ErrorKind::NotFound
@@ -65,7 +79,6 @@ impl Yard {
       log(Event::FileCreateSuccess);
       return Ok((file, lock_path));
     }
-
     // slow path: if the lockfile doesn't exist, create the lock folder and try creating the lockfile again
     self.create_lock_folder(log)?;
     log(Event::FileCreateBegin {
@@ -104,6 +117,23 @@ impl Yard {
         })
       }
     }
+  }
+
+  fn find_app_folders(&self, app_name: &ApplicationName) -> Vec<PathBuf> {
+    // list all the folders in the apps folder that match the app name
+    let app_folder = self.root.join("apps").join(app_name);
+    let mut result = Vec::new();
+    let prefix = format!("{app_name}@");
+    for entry in fs::read_dir(app_folder).unwrap() {
+      let entry = entry.unwrap();
+      let path = entry.path();
+      if !path.is_dir() {
+        continue;
+      }
+	  if path.starts_with(&prefix) {
+      result.push(path);
+    }
+    app_folders
   }
 
   pub fn is_not_installable(&self, app: &ApplicationName, version: &Version) -> bool {

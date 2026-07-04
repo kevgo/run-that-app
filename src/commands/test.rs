@@ -75,7 +75,7 @@ pub fn test(args: &mut TestArgs, apps: &Apps) -> Result<ExitCode> {
         }
         return Ok(ExitCode::FAILURE);
       }
-      yard.delete_app_folder(&app.name())?;
+      yard.delete_app_folder(&app.name(), Some(&latest_version))?;
     }
   }
   Ok(ExitCode::SUCCESS)
