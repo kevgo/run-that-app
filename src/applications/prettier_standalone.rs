@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
+use crate::Log;
 use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
-use crate::{Log, strings};
 use const_format::formatcp;
 
 #[derive(Clone)]
@@ -59,10 +59,8 @@ impl AppDefinition for PrettierStandalone {
     if !output.contains("Print the names of files that are different from Prettier's formatting") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match strings::first_version(&executable.run_output(&["--version"], log)?) {
-      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
-      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
-    }
+    // prettier-standalone has a different version than the Prettier that it bundles
+    Ok(AnalyzeResult::IdentifiedButUnknownVersion)
   }
 
   fn tag_format(&self) -> TagFormat {
