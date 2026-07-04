@@ -34,11 +34,11 @@ impl AppDefinition for TextRunner {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output(&["-h"], log)?;
-    if !output.contains("MarkdownLint Command Line Interface") {
+    let output = executable.run_output(&["help"], log)?;
+    if !output.contains("runs only the programmatic tests, skips checking links") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match strings::first_version(&executable.run_output(&["--version"], log)?) {
+    match strings::first_version(&executable.run_output(&["version"], log)?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
