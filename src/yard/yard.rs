@@ -220,6 +220,14 @@ impl Yard {
     }
   }
 
+  pub fn move_staging_folder_to_app_folder(&self, staging_folder: PathBuf, app_folder: PathBuf) -> Result<()> {
+    fs::rename(&staging_folder, &app_folder).map_err(|err| UserError::CannotMoveFolder {
+      from: staging_folder,
+      to: app_folder,
+      err: err.to_string(),
+    })
+  }
+
   fn not_installable_path(&self, app_name: &ApplicationName, app_version: &Version) -> PathBuf {
     self.app_folder(app_name, app_version).join(".run-that-app-not-installable")
   }

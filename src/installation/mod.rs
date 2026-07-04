@@ -10,11 +10,10 @@ use crate::applications::{AppDefinition, ApplicationName, Apps};
 use crate::configuration::Version;
 use crate::context::RuntimeContext;
 use crate::download::Url;
-use crate::error::{Result, UserError};
+use crate::error::Result;
 use crate::executables::ExecutableNamePlatform;
 use crate::installation::compile_rust::RustSource;
 use std::fmt::{Debug, Display};
-use std::fs;
 use std::path::{Path, PathBuf};
 
 /// the different methods to install an application
@@ -212,11 +211,7 @@ pub fn install(
   match outcome {
     Outcome::Installed => {
       let app_folder = ctx.yard.app_folder(&app_definition.name(), version);
-      fs::rename(&staging_folder, &app_folder).map_err(|err| UserError::CannotMoveFolder {
-        from: staging_folder.clone(),
-        to: app_folder.clone(),
-        err: err.to_string(),
-      })?;
+      ctx.yard.move_staging_folder_to_app_folder(staging_folder, app_folder)?;
       Ok(outcome)
     }
     Outcome::NotInstalled => Ok(Outcome::NotInstalled),
