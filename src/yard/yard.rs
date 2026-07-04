@@ -238,9 +238,9 @@ impl Yard {
         err: err.to_string(),
       });
     }
-    let apps_folder = self.apps_folder();
-    fs::create_dir_all(&apps_folder).map_err(|err| UserError::CannotCreateFolder {
-      folder: apps_folder,
+    let apps_folder_path = self.apps_folder();
+    fs::create_dir_all(&apps_folder_path).map_err(|err| UserError::CannotCreateFolder {
+      folder: apps_folder_path,
       reason: err.to_string(),
     })?;
     fs::rename(&staging_folder, &app_folder).map_err(|err| UserError::CannotMoveFolder {
