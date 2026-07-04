@@ -210,9 +210,9 @@ pub fn install(
   }?;
   match outcome {
     Outcome::Installed => {
-      let app_folder = ctx.yard.app_folder(&app_definition.name(), version);
-      ctx.yard.move_staging_folder_to_app_folder(staging_folder, app_folder)?;
-      Ok(outcome)
+      let app_folder_path = ctx.yard.app_folder(&app_definition.name(), version);
+      ctx.yard.move_staging_folder_to_app_folder(staging_folder, app_folder_path)?;
+      Ok(Outcome::Installed)
     }
     Outcome::NotInstalled => Ok(Outcome::NotInstalled),
   }
