@@ -258,7 +258,7 @@ mod tests {
     let yard = Yard { root: "/root".into() };
     let shellcheck = ShellCheck {};
     let have = yard.app_folder(&shellcheck.name(), &Version::from("0.9.0"));
-    let want = PathBuf::from("/root/apps/shellcheck/0.9.0");
+    let want = PathBuf::from("/root/apps/shellcheck@0.9.0");
     assert_eq!(have, want);
   }
 
@@ -326,7 +326,7 @@ mod tests {
     let shellcheck = ShellCheck {};
     let yard = Yard { root: "/root".into() };
     let have = yard.not_installable_path(&shellcheck.name(), &Version::from("0.9.0"));
-    let want = PathBuf::from("/root/apps/shellcheck/0.9.0/.run-that-app-not-installable");
+    let want = PathBuf::from("/root/apps/shellcheck@0.9.0/.run-that-app-not-installable");
     assert_eq!(have, want);
   }
 }
