@@ -1,6 +1,6 @@
 [package]
 name = "run-that-app"
-version = "0.39.0"
+version = "0.39.1"
 description = "runs third-party applications without the need to install them"
 autobins = false
 edition = "2024"
