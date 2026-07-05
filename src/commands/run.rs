@@ -14,8 +14,7 @@ use std::process::ExitCode;
 
 pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
   let app_to_run = apps.lookup(&args.app_name)?;
-  // TODO: define a apps.lookup_many() method that takes a Vec<&dyn AppDefinition> and returns a Result<Vec<&dyn AppDefinition>>
-  let include_apps: Vec<&dyn AppDefinition> = args.include_apps.iter().map(|name| apps.lookup(name)).collect::<Result<_>>()?;
+  let include_apps = apps.lookup_many(&args.include_apps)?;
   let get_cmd_args = GetCmdArgs {
     version: args.version,
     app_args: args.app_args,
