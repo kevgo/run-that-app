@@ -51,7 +51,7 @@ impl AppDefinition for Go {
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
     let versions = self.installable_versions(1, log)?;
     let Some(version) = versions.into_iter().next() else {
-      return Err(UserError::NoVersionsFound { app: self.name().to_string() });
+      return Err(UserError::NoVersionsFound { app: self.name() });
     };
     Ok(version)
   }

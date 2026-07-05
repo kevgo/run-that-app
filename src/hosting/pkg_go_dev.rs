@@ -1,12 +1,13 @@
+use crate::applications::ApplicationName;
 use crate::configuration::{TagFormat, Version};
 use crate::error::{Result, UserError};
 use crate::executables::Executable;
 use crate::subshell;
 
-pub fn latest(pkg_name: &str, tag_format: &TagFormat) -> Result<Version> {
+pub fn latest(pkg_name: &str, app_name: &ApplicationName, tag_format: &TagFormat) -> Result<Version> {
   let versions = versions(pkg_name, 1, tag_format)?;
   let Some(first) = versions.into_iter().next() else {
-    return Err(UserError::NoVersionsFound { app: pkg_name.to_string() });
+    return Err(UserError::NoVersionsFound { app: app_name.clone() });
   };
   Ok(first)
 }

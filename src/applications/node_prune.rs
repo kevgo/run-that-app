@@ -26,7 +26,7 @@ impl AppDefinition for NodePrune {
   fn latest_installable_version(&self, log: Log) -> Result<Version> {
     let tags = github_tags::all(ORG, REPO, 1, &self.tag_format(), log)?;
     let Some(tag) = tags.into_iter().nth(0) else {
-      return Err(UserError::NoVersionsFound { app: self.name().to_string() });
+      return Err(UserError::NoVersionsFound { app: self.name() });
     };
     Ok(tag)
   }
