@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+## 0.39.2
+
+- Rust API debuggability improvements
+
 ## 0.39.1
 
 - Rust API debuggability improvements
