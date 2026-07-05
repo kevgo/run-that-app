@@ -32,7 +32,7 @@ impl AppDefinition for Deadcode {
   }
 
   fn latest_installable_version(&self, _log: Log) -> Result<Version> {
-    pkg_go_dev::latest(PKG_NAME, &self.name(), &self.tag_format())
+    pkg_go_dev::latest(PKG_NAME, self.name(), &self.tag_format())
   }
 
   fn installable_versions(&self, amount: usize, _log: Log) -> Result<Vec<Version>> {

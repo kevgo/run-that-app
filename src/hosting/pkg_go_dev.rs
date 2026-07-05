@@ -4,10 +4,10 @@ use crate::error::{Result, UserError};
 use crate::executables::Executable;
 use crate::subshell;
 
-pub fn latest(pkg_name: &str, app_name: &ApplicationName, tag_format: &TagFormat) -> Result<Version> {
+pub fn latest(pkg_name: &str, app: ApplicationName, tag_format: &TagFormat) -> Result<Version> {
   let versions = versions(pkg_name, 1, tag_format)?;
   let Some(first) = versions.into_iter().next() else {
-    return Err(UserError::NoVersionsFound { app: app_name.clone() });
+    return Err(UserError::NoVersionsFound { app });
   };
   Ok(first)
 }
