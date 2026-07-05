@@ -170,9 +170,8 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
 }
 
 /// data needed to run an executable
-#[derive(Debug, PartialEq)]
 #[allow(clippy::struct_excessive_bools)]
-pub struct GetCmdArgs {
+pub struct GetCmdArgs<'a> {
   /// version of the app to execute
   pub version: Option<Version>,
 
@@ -184,7 +183,7 @@ pub struct GetCmdArgs {
   pub from_source: bool,
 
   /// other applications to include into the PATH
-  pub include_apps: Vec<Box<dyn AppDefinition>>,
+  pub include_apps: Vec<&'a dyn AppDefinition>,
 
   /// whether it's okay to not run the app if it cannot be installed
   pub optional: bool,
