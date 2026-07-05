@@ -4,6 +4,7 @@ use std::path::PathBuf;
 use std::process::Command;
 
 /// a command to execute, in a form that allows getting data
+#[derive(Debug)]
 pub struct CommandInfo {
   /// the executable to run
   pub executable: PathBuf,
