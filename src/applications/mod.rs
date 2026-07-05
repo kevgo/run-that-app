@@ -345,6 +345,11 @@ impl Apps {
     Err(UserError::UnknownApp(name.as_ref().to_string()))
   }
 
+  /// provides the apps with the given names
+  pub fn lookup_many<AS: AsRef<str>>(&self, names: &[AS]) -> Result<Vec<&dyn AppDefinition>> {
+    names.iter().map(|name| self.lookup(name)).collect()
+  }
+
   /// provides the length of the name of the app with the longest name
   #[must_use]
   pub fn longest_name_length(&self) -> usize {
