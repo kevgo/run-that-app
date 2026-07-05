@@ -1,13 +1,12 @@
 use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps, NodeJS, carrier};
-use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersions, Version};
+use crate::configuration::{AppVersions, RequestedVersion, RequestedVersions, Version};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::{ExecutableCall, ExecutableCallDefinition, RunMethod};
 use crate::filesystem::find_global_install;
 use crate::installation::{self, Outcome};
-use crate::logging::{self, Event};
-use crate::yard::Yard;
-use crate::{platform, subshell, yard};
+use crate::logging::Event;
+use crate::{GetCmdArgs, get_cmd, subshell};
 use ahash::AHashSet;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -15,20 +14,17 @@ use std::process::ExitCode;
 
 pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
   let app_to_run = apps.lookup(&args.app_name)?;
-  let log = logging::new(args.verbose);
-  let platform = platform::detect(log)?;
-  let yard = Yard::load_or_create(&yard::production_location()?)?;
-  let config_file = configuration::File::load(apps)?;
-  let ctx = RuntimeContext {
-    platform,
-    yard: &yard,
-    config_file: &config_file,
-    log,
+  // TODO: define a apps.lookup_many() method that takes a Vec<&dyn AppDefinition> and returns a Result<Vec<&dyn AppDefinition>>
+  let include_apps: Vec<&dyn AppDefinition> = args.include_apps.iter().map(|name| apps.lookup(name)).collect::<Result<_>>()?;
+  let get_cmd_args = GetCmdArgs {
+    version: args.version,
+    app_args: args.app_args,
+    from_source: args.from_source,
+    include_apps,
+    optional: args.optional,
+    verbose: args.verbose,
   };
-  let include_app_versions = config_file.lookup_many(args.include_apps);
-  let include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
-  let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
-  let Some(executable_call) = load_or_install_app(app_to_run, &requested_versions, args.optional, args.from_source, &ctx, apps)? else {
+  let Some(cmd_info) = get_cmd(app_to_run, get_cmd_args, apps)? else {
     if args.optional {
       return Ok(ExitCode::SUCCESS);
     }
@@ -36,11 +32,9 @@ pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
   };
   let cwd = args.cwd.as_deref();
   if args.error_on_output {
-    let (executable, args) = executable_call.with_args(args.app_args);
-    subshell::detect_output(&executable, &args, &include_apps, cwd)
+    subshell::detect_output(cmd_info, cwd)
   } else {
-    let (executable, args) = executable_call.with_args(args.app_args);
-    subshell::stream_output(&executable, &args, &include_apps, cwd)
+    subshell::stream_output(cmd_info, cwd)
   }
 }
 
