@@ -61,10 +61,7 @@ pub fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
   let Some(big_code) = exit_status.code() else {
     return ExitCode::FAILURE;
   };
-  match u8::try_from(big_code) {
-    Ok(small_code) => ExitCode::from(small_code),
-    Err(_) => ExitCode::from(255),
-  }
+  ExitCode::from(u8::try_from(big_code).unwrap_or(255))
 }
 
 /// provides a printable version of this `ExecutableCall` when called with additional arguments
