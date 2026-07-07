@@ -234,20 +234,25 @@ dyn_clone::clone_trait_object!(AppDefinition);
 /// provides the app that contains the executable for the given app,
 /// the name of the executable provided by this app to call,
 /// and arguments to call that executable with.
-pub fn carrier<'a>(app: &'a dyn AppDefinition, version: &Version, platform: Platform) -> (Box<dyn AppDefinition + 'a>, ExecutableNameUnix, ExecutableArgs) {
+pub fn carrier<'a>(
+  app: &'a dyn AppDefinition,
+  version: &Version,
+  platform: Platform,
+) -> Option<(Box<dyn AppDefinition + 'a>, ExecutableNameUnix, ExecutableArgs)> {
   match app.run_method(version, platform) {
-    RunMethod::ThisApp { install_methods: _ } => (dyn_clone::clone_box(app), app.executable_filename(), ExecutableArgs::None),
+    RunMethod::ThisApp { install_methods: _ } => None,
     RunMethod::OtherAppOtherExecutable {
       app_definition,
       executable_name,
-    } => (dyn_clone::clone_box(app_definition.as_ref()), executable_name, ExecutableArgs::None),
+    } => Some((app_definition, executable_name, ExecutableArgs::None)),
     RunMethod::OtherAppDefaultExecutable { app_definition, args } => {
-      (dyn_clone::clone_box(app_definition.as_ref()), app_definition.executable_filename(), args)
+      let executable_filename = app_definition.executable_filename();
+      Some((app_definition, executable_filename, args))
     }
     RunMethod::NodeJS { package: _ } => {
       let node = NodeJS {};
       let executable_filename = node.executable_filename();
-      (Box::new(node), executable_filename, ExecutableArgs::None)
+      Some((Box::new(node), executable_filename, ExecutableArgs::None))
     }
   }
 }
