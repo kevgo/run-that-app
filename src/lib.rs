@@ -148,6 +148,12 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
   let include_app_names = args.include_apps.iter().map(|app| app.name()).collect();
   let include_app_versions = config_file.lookup_many(include_app_names);
   let include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
+  // what we need to do here:
+  // 1. determine ALL apps to install and their versions, not just one app
+  //    - the carrier app
+  //    - the actual app
+  //    - other apps to include
+  // 2. load or install all apps
   let requested_versions = RequestedVersions::determine(app, args.version.as_ref(), &config_file, log)?;
   let Some(executable_call) = load_or_install_app(app, &requested_versions, args.optional, args.from_source, &ctx, apps)? else {
     if args.optional {
