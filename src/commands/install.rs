@@ -2,8 +2,9 @@ use crate::applications::{ApplicationName, Apps};
 use crate::configuration::{self, RequestedVersions, Version};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
+use crate::executables::{load_or_install_app, load_or_install_apps};
 use crate::yard::Yard;
-use crate::{commands, logging, platform, yard};
+use crate::{logging, platform, yard};
 use std::process::ExitCode;
 
 pub fn install(args: InstallArgs, apps: &Apps) -> Result<ExitCode> {
@@ -19,9 +20,9 @@ pub fn install(args: InstallArgs, apps: &Apps) -> Result<ExitCode> {
     log,
   };
   let include_app_versions = config_file.lookup_many(args.include_apps);
-  let _include_apps = commands::run::load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
+  let _include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
   let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
-  let Some(_executable_call) = commands::run::load_or_install_app(app_to_install, &requested_versions, args.optional, args.from_source, &ctx, apps)? else {
+  let Some(_executable_call) = load_or_install_app(app_to_install, &requested_versions, args.optional, args.from_source, &ctx, apps)? else {
     if args.optional {
       return Ok(ExitCode::SUCCESS);
     }
