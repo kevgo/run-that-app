@@ -1,6 +1,9 @@
 use super::{File, RequestedVersion, Version};
-use crate::applications::AppDefinition;
+use crate::applications::{AppDefinition, NodeJS};
 use crate::error::{Result, UserError};
+use crate::executables::RunMethod;
+use crate::logging::Log;
+use crate::platform;
 
 /// a collection of Version instances
 #[derive(Clone, Debug, PartialEq)]
@@ -37,12 +40,30 @@ impl Ord for RequestedVersions {
 impl RequestedVersions {
   /// Provides the version to use: if the user provided a version to use via CLI, use it.
   /// Otherwise provide the versions from the config file.
-  pub fn determine(app: &dyn AppDefinition, cli_version: Option<&Version>, config_file: &File) -> Result<RequestedVersions> {
+  pub fn determine(app: &dyn AppDefinition, cli_version: Option<&Version>, config_file: &File, log: Log) -> Result<RequestedVersions> {
     if let Some(version) = cli_version {
       return Ok(RequestedVersions::from(version));
     }
     if let Some(versions) = config_file.lookup(&app.name()) {
       return Ok(RequestedVersions(versions.0.clone()));
+    }
+    match app.run_method(&Version::from("*"), platform::detect(log)?) {
+      RunMethod::ThisApp { install_methods: _ } => {}
+      RunMethod::OtherAppOtherExecutable {
+        app_definition,
+        executable_name: _,
+      }
+      | RunMethod::OtherAppDefaultExecutable { app_definition, args: _ } => {
+        if let Some(versions) = config_file.lookup(&app_definition.name()) {
+          return Ok(RequestedVersions(versions.0.clone()));
+        }
+      }
+      RunMethod::NodeJS { package: _ } => {
+        let nodejs = NodeJS {};
+        if let Some(versions) = config_file.lookup(&nodejs.name()) {
+          return Ok(RequestedVersions(versions.0.clone()));
+        }
+      }
     }
     Err(UserError::RunRequestMissingVersion { app: app.name() })
   }

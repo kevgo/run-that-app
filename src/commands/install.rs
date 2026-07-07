@@ -20,7 +20,7 @@ pub fn install(args: InstallArgs, apps: &Apps) -> Result<ExitCode> {
   };
   let include_app_versions = config_file.lookup_many(args.include_apps);
   let _include_apps = commands::run::load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
-  let requested_versions = RequestedVersions::determine(app_to_install, args.version.as_ref(), &config_file)?;
+  let requested_versions = RequestedVersions::determine(app_to_install, args.version.as_ref(), &config_file, log)?;
   let Some(_executable_call) = commands::run::load_or_install_app(app_to_install, &requested_versions, args.optional, args.from_source, &ctx, apps)? else {
     if args.optional {
       return Ok(ExitCode::SUCCESS);

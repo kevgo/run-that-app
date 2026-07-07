@@ -148,7 +148,7 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
   let include_app_names = args.include_apps.iter().map(|app| app.name()).collect();
   let include_app_versions = config_file.lookup_many(include_app_names);
   let include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
-  let requested_versions = RequestedVersions::determine(app, args.version.as_ref(), &config_file)?;
+  let requested_versions = RequestedVersions::determine(app, args.version.as_ref(), &config_file, log)?;
   let Some(executable_call) = load_or_install_app(app, &requested_versions, args.optional, args.from_source, &ctx, apps)? else {
     if args.optional {
       return Ok(None);
