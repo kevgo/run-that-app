@@ -1,5 +1,5 @@
 use super::{File, RequestedVersion, Version};
-use crate::applications::ApplicationName;
+use crate::applications::AppDefinition;
 use crate::error::{Result, UserError};
 
 /// a collection of Version instances
@@ -37,14 +37,14 @@ impl Ord for RequestedVersions {
 impl RequestedVersions {
   /// Provides the version to use: if the user provided a version to use via CLI, use it.
   /// Otherwise provide the versions from the config file.
-  pub fn determine(app: &ApplicationName, cli_version: Option<&Version>, config_file: &File) -> Result<RequestedVersions> {
+  pub fn determine(app: &dyn AppDefinition, cli_version: Option<&Version>, config_file: &File) -> Result<RequestedVersions> {
     if let Some(version) = cli_version {
       return Ok(RequestedVersions::from(version));
     }
-    match config_file.lookup(app) {
-      Some(versions) => Ok(RequestedVersions(versions.0.clone())),
-      None => Err(UserError::RunRequestMissingVersion { app: app.clone() }),
+    if let Some(versions) = config_file.lookup(&app.name()) {
+      return Ok(RequestedVersions(versions.0.clone()));
     }
+    Err(UserError::RunRequestMissingVersion { app: app.name() })
   }
 
   /// provides the largest yard version contained in this collection
