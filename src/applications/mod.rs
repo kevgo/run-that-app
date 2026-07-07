@@ -181,7 +181,7 @@ pub fn all() -> Apps {
 /// all the information about an application that run-that-app can install
 ///
 /// You get a specific application finding it in the result of [`all`].
-pub trait AppDefinition: dyn_clone::DynClone {
+pub trait AppDefinition {
   /// the name by which the user can select this application at the run-that-app CLI
   fn name(&self) -> ApplicationName;
 
@@ -228,8 +228,6 @@ pub trait AppDefinition: dyn_clone::DynClone {
     Ok(semver::VersionReq::STAR)
   }
 }
-
-dyn_clone::clone_trait_object!(AppDefinition);
 
 /// provides the app that contains the executable for the given app,
 /// the name of the executable provided by this app to call,
