@@ -44,23 +44,27 @@ impl RequestedVersions {
     if let Some(version) = cli_version {
       return Ok(RequestedVersions::from(version));
     }
-    if let Some(versions) = config_file.lookup(&app.name()) {
-      return Ok(RequestedVersions(versions.0.clone()));
-    }
     match app.run_method(&Version::from("*"), platform::detect(log)?) {
-      RunMethod::ThisApp { install_methods: _ } => {}
+      RunMethod::ThisApp { install_methods: _ } => {
+        if let Some(versions) = config_file.lookup(&app.name()) {
+          return Ok(RequestedVersions(versions.0.clone()));
+        }
+      }
       RunMethod::OtherAppOtherExecutable {
-        app_definition,
+        app_definition: carrier,
         executable_name: _,
       }
-      | RunMethod::OtherAppDefaultExecutable { app_definition, args: _ } => {
-        if let Some(versions) = config_file.lookup(&app_definition.name()) {
+      | RunMethod::OtherAppDefaultExecutable {
+        app_definition: carrier,
+        args: _,
+      } => {
+        if let Some(versions) = config_file.lookup(&carrier.name()) {
           return Ok(RequestedVersions(versions.0.clone()));
         }
       }
       RunMethod::NodeJS { package: _ } => {
-        let nodejs = NodeJS {};
-        if let Some(versions) = config_file.lookup(&nodejs.name()) {
+        let carrier = NodeJS {};
+        if let Some(versions) = config_file.lookup(&carrier.name()) {
           return Ok(RequestedVersions(versions.0.clone()));
         }
       }
