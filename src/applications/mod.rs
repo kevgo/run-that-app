@@ -240,9 +240,10 @@ pub fn carrier<'a>(app: &'a dyn AppDefinition, version: &Version, platform: Plat
     RunMethod::OtherAppOtherExecutable {
       app_definition,
       executable_name,
-    } => (dyn_clone::clone_box(app_definition.as_ref()), executable_name, ExecutableArgs::None),
+    } => (app_definition, executable_name, ExecutableArgs::None),
     RunMethod::OtherAppDefaultExecutable { app_definition, args } => {
-      (dyn_clone::clone_box(app_definition.as_ref()), app_definition.executable_filename(), args)
+      let executable_filename = app_definition.executable_filename();
+      (app_definition, executable_filename, args)
     }
     RunMethod::NodeJS { package: _ } => {
       let node = NodeJS {};
