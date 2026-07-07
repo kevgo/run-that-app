@@ -1,10 +1,11 @@
 use super::Outcome;
+use crate::applications;
 use crate::applications::Apps;
 use crate::configuration::RequestedVersions;
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
+use crate::executables::load_or_install_app;
 use crate::logging::Event;
-use crate::{applications, commands};
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -53,7 +54,7 @@ fn load_rta_go(optional: bool, from_source: bool, ctx: &RuntimeContext, apps: &A
     let versions = go.installable_versions(3, ctx.log)?;
     RequestedVersions::from(versions)
   };
-  if let Some(executable_call) = commands::load_or_install_app(&go, &requested_go_versions, optional, from_source, ctx, apps)? {
+  if let Some(executable_call) = load_or_install_app(&go, &requested_go_versions, optional, from_source, ctx, apps)? {
     return Ok(Some(executable_call.executable.into()));
   }
   Ok(None)

@@ -1,8 +1,8 @@
-use super::run::load_or_install_app;
 use crate::applications::{ApplicationName, Apps};
 use crate::configuration::{self, RequestedVersions, Version};
 use crate::context::RuntimeContext;
 use crate::error::Result;
+use crate::executables::load_or_install_app;
 use crate::yard::Yard;
 use crate::{logging, platform, yard};
 use std::process::ExitCode;

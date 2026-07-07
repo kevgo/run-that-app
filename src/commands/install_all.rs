@@ -1,7 +1,7 @@
 use crate::applications::Apps;
-use crate::commands::run::load_or_install_apps;
 use crate::context::RuntimeContext;
 use crate::error::Result;
+use crate::executables::load_or_install_apps;
 use crate::yard::{self, Yard};
 use crate::{configuration, logging, platform};
 use std::process::ExitCode;
