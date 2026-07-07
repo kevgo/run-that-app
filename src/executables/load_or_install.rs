@@ -1,5 +1,3 @@
-use ahash::AHashSet;
-
 use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps, NodeJS, carrier};
 use crate::configuration::{AppVersions, RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
@@ -9,6 +7,7 @@ use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
 use crate::logging::Event;
 use crate::{Version, installation};
+use ahash::AHashSet;
 use std::fs;
 use std::path::Path;
 
