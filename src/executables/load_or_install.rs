@@ -1,5 +1,5 @@
 use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps, NodeJS, carrier};
-use crate::configuration::{AppVersions, RequestedVersion, RequestedVersions};
+use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::{ExecutableCall, ExecutableCallDefinition, RunMethod};
@@ -30,7 +30,8 @@ pub fn load_or_install_apps(
 
 pub fn load_or_install_app(
   app_definition: &dyn AppDefinition,
-  requested_versions: &RequestedVersions,
+  cli_version: Option<&Version>,
+  config_file: configuration::File,
   optional: bool,
   from_source: bool,
   ctx: &RuntimeContext,
@@ -44,6 +45,9 @@ pub fn load_or_install_app(
   Ok(None)
 }
 
+/// Loads or installs the given app at the given version
+/// and returns a callable that executes it.
+/// Installs carrier apps if needed.
 fn load_or_install(
   app_definition: &dyn AppDefinition,
   requested_version: &RequestedVersion,
