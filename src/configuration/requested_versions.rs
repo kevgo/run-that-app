@@ -41,10 +41,10 @@ impl RequestedVersions {
     if let Some(version) = cli_version {
       return Ok(RequestedVersions::from(version));
     }
-    match config_file.lookup(app) {
-      Some(versions) => Ok(RequestedVersions(versions.0.clone())),
-      None => Err(UserError::RunRequestMissingVersion { app: app.clone() }),
-    }
+    let Some(versions) = config_file.lookup(app) else {
+      return Err(UserError::RunRequestMissingVersion { app: app.clone() });
+    };
+    Ok(RequestedVersions(versions.0.clone()))
   }
 
   /// provides the largest yard version contained in this collection
