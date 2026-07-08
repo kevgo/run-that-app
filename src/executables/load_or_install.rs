@@ -43,21 +43,39 @@ pub fn load_or_install_app_and_carrier(
   apps: &Apps,
 ) -> Result<Option<ExecutableCall>> {
   match app_definition.run_method(&Version::from("*"), ctx.platform) {
-    RunMethod::ThisApp { install_methods } => load_or_install_app(app_definition, cli_version, config_file, optional, from_source, ctx, apps),
-    RunMethod::OtherAppOtherExecutable {
-      app_definition,
-      executable_name,
-    } => {
-      // step 1: install the other app as the carrier app
-      // step 2: return a callable that runs the given executable of the carrier
+    RunMethod::ThisApp { install_methods } => {
+      // step 1: determine the version of the app to install
+      // step 2: install (not load) the app if needed
+      // step 3: return a callable that runs the default executable of the app
+
+      // load_or_install_app(app_definition, cli_version, config_file, optional, from_source, ctx, apps),
     }
-    RunMethod::OtherAppDefaultExecutable { app_definition, args } => {
-      // step 1: install the other app as the carrier app
-      // step 2: return a callable that runs the default executable of the carrier with the given arguments
+    RunMethod::OtherAppOtherExecutable {
+      app_definition: carrier_app_definition,
+      executable_name: carrier_executable_name,
+    } => {
+      // step 1: determine the carrier app
+      // step 2: determine the version of the carrier app to install
+      // step 3: install (not load) the carrier app at that version if needed
+      // step 4: load the `carrier_executable_name` from the carrier directory
+      // step 5: return a callable that runs that executable
+    }
+    RunMethod::OtherAppDefaultExecutable {
+      app_definition: carrier_app_definition,
+      args: carrier_args,
+    } => {
+      // step 1: determine the carrier app
+      // step 2: determine the version of the carrier app to install
+      // step 3: install (not load) the carrier app at that version if needed
+      // step 4: load the default executable of the carrier
+      // step 5: return a callable that runs that executable with the given arguments
     }
     RunMethod::NodeJS { package } => {
-      // step 1: install Node as the carrier app
-      // step 2: return a callable that runs the given package
+      // step 1: determine the version of Node to install
+      // step 2: install (not load) Node at that version if needed
+      // step 3: create an ExecutableCall that runs "npm" from the node directory
+      // step 4: install the package by running "npm install <package>" in the package directory
+      // step 5: return a callable that runs the npm package's executable in "node_modules/.bin/<package>"
     }
   }
   for requested_version in requested_versions {
