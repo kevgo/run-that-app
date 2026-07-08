@@ -73,7 +73,7 @@ fn load_or_install(
 
 // finds the app in the PATH and verifies it has the correct version
 fn load_from_path(app_to_run: &dyn AppDefinition, range: &semver::VersionReq, ctx: &RuntimeContext) -> Result<Option<ExecutableCallDefinition>> {
-  let (app_to_install, executable_name, executable_args) = carrier(app_to_run, &Version::from(""), ctx.platform);
+  let (app_to_install, executable_name, executable_args) = carrier(app_to_run, ctx.platform);
   let executable_filename = executable_name.platform_path(ctx.platform.os);
   let Some(executable) = find_global_install(&executable_filename, ctx.log) else {
     (ctx.log)(Event::GlobalInstallNotFound);

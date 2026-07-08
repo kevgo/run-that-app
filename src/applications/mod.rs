@@ -232,12 +232,8 @@ pub trait AppDefinition {
 /// provides the app that contains the executable for the given app,
 /// the name of the executable provided by this app to call,
 /// and arguments to call that executable with.
-pub fn carrier<'a>(
-  app: &'a dyn AppDefinition,
-  version: &Version,
-  platform: Platform,
-) -> Option<(Box<dyn AppDefinition + 'a>, ExecutableNameUnix, ExecutableArgs)> {
-  match app.run_method(version, platform) {
+pub fn carrier<'a>(app: &'a dyn AppDefinition, platform: Platform) -> Option<(Box<dyn AppDefinition + 'a>, ExecutableNameUnix, ExecutableArgs)> {
+  match app.run_method(&Version::from("*"), platform) {
     RunMethod::ThisApp { install_methods: _ } => None,
     RunMethod::OtherAppOtherExecutable {
       app_definition,

@@ -145,7 +145,7 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
     log,
   };
 
-  if let Some(carrier_app) = carrier(app, args.version, ctx.platform) {
+  if let Some(carrier_app) = carrier(app, ctx.platform) {
     // load or install the carrier app and store the executable call for it
   } else {
     // load or install the actual app and store the executable call for it
