@@ -28,6 +28,46 @@ pub fn load_or_install_apps(
   Ok(result)
 }
 
+/// Provides a callable that executes the given app
+/// at the given CLI version if given,
+/// otherwise the version in the given config file.
+///
+/// Installs and uses the carrier app if one is needed.
+pub fn load_or_install_app_and_carrier(
+  app_definition: &dyn AppDefinition,
+  cli_version: Option<&Version>,
+  config_file: configuration::File,
+  optional: bool,
+  from_source: bool,
+  ctx: &RuntimeContext,
+  apps: &Apps,
+) -> Result<Option<ExecutableCall>> {
+  match app_definition.run_method(&Version::from("*"), ctx.platform) {
+    RunMethod::ThisApp { install_methods } => load_or_install_app(app_definition, cli_version, config_file, optional, from_source, ctx, apps),
+    RunMethod::OtherAppOtherExecutable {
+      app_definition,
+      executable_name,
+    } => {
+      // step 1: install the other app as the carrier app
+      // step 2: return a callable that runs the given executable of the carrier
+    }
+    RunMethod::OtherAppDefaultExecutable { app_definition, args } => {
+      // step 1: install the other app as the carrier app
+      // step 2: return a callable that runs the default executable of the carrier with the given arguments
+    }
+    RunMethod::NodeJS { package } => {
+      // step 1: install Node as the carrier app
+      // step 2: return a callable that runs the given package
+    }
+  }
+  for requested_version in requested_versions {
+    if let Some(executable_call) = load_or_install(app_definition, requested_version, optional, from_source, ctx, apps)? {
+      return Ok(Some(executable_call));
+    }
+  }
+  Ok(None)
+}
+
 pub fn load_or_install_app(
   app_definition: &dyn AppDefinition,
   cli_version: Option<&Version>,
@@ -47,7 +87,8 @@ pub fn load_or_install_app(
 
 /// Loads or installs the given app at the given version
 /// and returns a callable that executes it.
-/// Installs carrier apps if needed.
+/// If the app runs via a carrier app,
+/// installs the carrier app as well.
 fn load_or_install(
   app_definition: &dyn AppDefinition,
   requested_version: &RequestedVersion,
