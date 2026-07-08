@@ -58,11 +58,10 @@ mod platform;
 mod strings;
 mod subshell;
 mod yard;
-use crate::applications::{AppDefinition, Apps, carrier};
-use crate::configuration::RequestedVersions;
+use crate::applications::{AppDefinition, Apps};
 use crate::context::RuntimeContext;
 pub use crate::executables::CommandInfo;
-use crate::executables::{load_or_install_app, load_or_install_apps};
+use crate::executables::{load_or_install_app_with_carrier, load_or_install_apps};
 use crate::yard::Yard;
 use cli::Cli;
 pub use configuration::Version;
@@ -175,7 +174,7 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
   let include_app_versions = config_file.lookup_many(include_app_names);
   let include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
 
-  let Some(executable_call) = load_or_install_app_and_carrier(app, args.version.as_ref(), args.optional, args.from_source, &ctx, apps)? else {
+  let Some(executable_call) = load_or_install_app_with_carrier(app, args.version.as_ref(), &config_file, args.optional, args.from_source, &ctx, apps)? else {
     if args.optional {
       return Ok(None);
     }

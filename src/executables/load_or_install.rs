@@ -33,10 +33,10 @@ pub fn load_or_install_apps(
 /// otherwise the version in the given config file.
 ///
 /// Installs and uses the carrier app if one is needed.
-pub fn load_or_install_app_and_carrier(
+pub fn load_or_install_app_with_carrier(
   app_definition: &dyn AppDefinition,
   cli_version: Option<&Version>,
-  config_file: configuration::File,
+  config_file: &configuration::File,
   optional: bool,
   from_source: bool,
   ctx: &RuntimeContext,
