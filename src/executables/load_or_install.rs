@@ -2,7 +2,7 @@ use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps, N
 use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::executables::{ExecutableCall, ExecutableCallDefinition, RunMethod};
+use crate::executables::{ExecutableArgs, ExecutableCall, ExecutableCallDefinition, LoadAppVersionsOutcome, RunMethod, load_app_versions};
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
 use crate::logging::Event;
@@ -21,7 +21,7 @@ pub fn load_or_install_apps(
   let mut result = vec![];
   for app_version in app_versions {
     let app = apps.lookup(&app_version.app_name)?;
-    if let Some(executable_call) = load_or_install_app(app, &app_version.versions, optional, from_source, ctx, apps)? {
+    if let Some(executable_call) = load_or_install_app_with_carrier(app, &app_version.versions, optional, from_source, ctx, apps)? {
       result.push(executable_call);
     }
   }
@@ -44,9 +44,25 @@ pub fn load_or_install_app_with_carrier(
 ) -> Result<Option<ExecutableCall>> {
   match app_definition.run_method(&Version::from("*"), ctx.platform) {
     RunMethod::ThisApp { install_methods } => {
-      // step 1: determine the version of the app to install
-      // step 2: install (not load) the app if needed
-      // step 3: return a callable that runs the default executable of the app
+      // step 1: determine the possible versions of the app
+      let versions = if let Some(version) = cli_version {
+        RequestedVersions::from(version)
+      } else if let Some(versions) = config_file.lookup(&app_definition.name()) {
+        versions.clone()
+      } else {
+        return Err(UserError::NoVersionsFound {
+          app: app_definition.name().clone(),
+        });
+      };
+      // step 2: fast-path: try to load the app
+      let version_to_install = match load_app_versions(app_definition, &versions, ExecutableArgs::None, ctx)? {
+        LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(Some(executable_call)),
+        LoadAppVersionsOutcome::NotInstallable => return Ok(None),
+        LoadAppVersionsOutcome::MustInstall { version } => version,
+      };
+      // step 3: slow-path: install (not load) the app if needed
+      // step 4: load the just installed app
+      // step 5: return a callable that runs the default executable of the app
 
       // load_or_install_app(app_definition, cli_version, config_file, optional, from_source, ctx, apps),
     }
@@ -86,10 +102,9 @@ pub fn load_or_install_app_with_carrier(
   Ok(None)
 }
 
-pub fn load_or_install_app(
+pub fn load_or_install_app_versions(
   app_definition: &dyn AppDefinition,
-  cli_version: Option<&Version>,
-  config_file: configuration::File,
+  requested_versions: &RequestedVersions,
   optional: bool,
   from_source: bool,
   ctx: &RuntimeContext,
@@ -130,50 +145,6 @@ fn load_or_install(
       ctx.yard.with_lock(&app_definition.name(), version, ctx, || {
         load_or_install_from_yard(app_definition, version, optional, from_source, ctx, apps)
       })
-    }
-  }
-}
-
-// finds the app in the PATH and verifies it has the correct version
-fn load_from_path(app_to_run: &dyn AppDefinition, range: &semver::VersionReq, ctx: &RuntimeContext) -> Result<Option<ExecutableCallDefinition>> {
-  let (app_to_install, executable_name, executable_args) = carrier(app_to_run, &Version::from(""), ctx.platform);
-  let executable_filename = executable_name.platform_path(ctx.platform.os);
-  let Some(executable) = find_global_install(&executable_filename, ctx.log) else {
-    (ctx.log)(Event::GlobalInstallNotFound);
-    return Ok(None);
-  };
-  match app_to_install.analyze_executable(&executable, ctx.log)? {
-    AnalyzeResult::NotIdentified { output: _ } => {
-      (ctx.log)(Event::GlobalInstallNotIdentified);
-      Ok(None)
-    }
-    AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
-      (ctx.log)(Event::GlobalInstallMatchingVersion { range, version: None });
-      Ok(Some(ExecutableCallDefinition {
-        executable,
-        args: executable_args,
-      }))
-    }
-    AnalyzeResult::IdentifiedButUnknownVersion => {
-      (ctx.log)(Event::GlobalInstallMismatchingVersion { range, version: None });
-      Ok(None)
-    }
-    AnalyzeResult::IdentifiedWithVersion(version) if range.matches(&version.semver()?) => {
-      (ctx.log)(Event::GlobalInstallMatchingVersion {
-        range,
-        version: Some(&version),
-      });
-      Ok(Some(ExecutableCallDefinition {
-        executable,
-        args: executable_args,
-      }))
-    }
-    AnalyzeResult::IdentifiedWithVersion(version) => {
-      (ctx.log)(Event::GlobalInstallMismatchingVersion {
-        range,
-        version: Some(&version),
-      });
-      Ok(None)
     }
   }
 }
