@@ -15,15 +15,7 @@ pub struct File {
 }
 
 impl File {
-  pub fn add(mut self, app_name: ApplicationName, version: Version) -> Result<()> {
-    self.apps.push(AppVersions {
-      app_name,
-      versions: RequestedVersions::from(vec![RequestedVersion::Yard(version)]),
-    });
-    self.apps.sort();
-    self.save()
-  }
-
+  // CONSTRUCTORS
   pub fn create(app: &ApplicationName, version: &Version) -> Result<()> {
     let mut file = match OpenOptions::new().write(true).create_new(true).open(FILE_NAME) {
       Ok(file) => file,
@@ -52,6 +44,17 @@ impl File {
 
   pub fn load(apps: &Apps) -> Result<File> {
     Ok(Self::read(apps)?.unwrap_or_default())
+  }
+
+  // METHODS
+
+  pub fn add(mut self, app_name: ApplicationName, version: Version) -> Result<()> {
+    self.apps.push(AppVersions {
+      app_name,
+      versions: RequestedVersions::from(vec![RequestedVersion::Yard(version)]),
+    });
+    self.apps.sort();
+    self.save()
   }
 
   pub fn lookup(&self, app_name: &ApplicationName) -> Option<&RequestedVersions> {

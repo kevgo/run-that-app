@@ -17,6 +17,28 @@ pub struct Yard {
 }
 
 impl Yard {
+  // CONSTRUCTORS
+
+  pub fn load(containing_folder: &Path) -> Result<Option<Yard>> {
+    let root_dir = root_path(containing_folder);
+    let Ok(metadata) = root_dir.metadata() else {
+      return Ok(None);
+    };
+    if !metadata.is_dir() {
+      return Err(UserError::YardRootIsNotFolder { root: root_dir });
+    }
+    Ok(Some(Yard { root: root_dir }))
+  }
+
+  pub fn load_or_create(containing_folder: &Path) -> Result<Yard> {
+    match Yard::load(containing_folder)? {
+      Some(existing_yard) => Ok(existing_yard),
+      None => Yard::create(containing_folder),
+    }
+  }
+
+  // METHODS
+
   pub fn app_folder(&self, app_name: &ApplicationName, version: &Version) -> PathBuf {
     self.apps_folder().join(app_version(app_name, version))
   }
@@ -166,24 +188,6 @@ impl Yard {
 
   pub fn is_not_installable(&self, app: &ApplicationName, version: &Version) -> bool {
     self.not_installable_path(app, version).exists()
-  }
-
-  pub fn load(containing_folder: &Path) -> Result<Option<Yard>> {
-    let root_dir = root_path(containing_folder);
-    let Ok(metadata) = root_dir.metadata() else {
-      return Ok(None);
-    };
-    if !metadata.is_dir() {
-      return Err(UserError::YardRootIsNotFolder { root: root_dir });
-    }
-    Ok(Some(Yard { root: root_dir }))
-  }
-
-  pub fn load_or_create(containing_folder: &Path) -> Result<Yard> {
-    match Yard::load(containing_folder)? {
-      Some(existing_yard) => Ok(existing_yard),
-      None => Yard::create(containing_folder),
-    }
   }
 
   pub fn load_executable(

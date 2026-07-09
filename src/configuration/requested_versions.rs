@@ -35,6 +35,8 @@ impl Ord for RequestedVersions {
 }
 
 impl RequestedVersions {
+  // CONSTRUCTORS
+
   /// Provides the version to use: if the user provided a version to use via CLI, use it.
   /// Otherwise provide the versions from the config file.
   pub fn determine(app: &ApplicationName, cli_version: Option<&Version>, config_file: &File) -> Result<RequestedVersions> {
@@ -46,6 +48,13 @@ impl RequestedVersions {
     };
     Ok(RequestedVersions(versions.0.clone()))
   }
+
+  #[cfg(test)]
+  pub fn new() -> RequestedVersions {
+    RequestedVersions(vec![])
+  }
+
+  // METHODS
 
   /// provides the largest yard version contained in this collection
   fn largest_yard(&self) -> Option<&Version> {
@@ -61,11 +70,6 @@ impl RequestedVersions {
       }
     }
     result
-  }
-
-  #[cfg(test)]
-  pub fn new() -> RequestedVersions {
-    RequestedVersions(vec![])
   }
 
   pub fn push(&mut self, value: RequestedVersion) {
