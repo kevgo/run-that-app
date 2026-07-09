@@ -6,6 +6,8 @@ mod executable_call;
 mod executable_name;
 mod install;
 mod load;
+mod load_from_path;
+mod load_from_yard;
 mod load_or_install;
 mod run_method;
 
@@ -14,5 +16,7 @@ pub use executable::Executable;
 pub use executable_call::{ExecutableArgs, ExecutableCall, ExecutableCallDefinition};
 pub use executable_name::{ExecutableNamePlatform, ExecutableNameUnix};
 pub use load::{LoadAppVersionsOutcome, load_app_versions};
-pub use load_or_install::{load_or_install_app, load_or_install_app_and_carrier, load_or_install_apps};
+pub use load_from_path::load_from_path;
+pub use load_from_yard::load_from_yard;
+pub use load_or_install::load_or_install_app_and_carrier;
 pub use run_method::RunMethod;

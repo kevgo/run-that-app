@@ -80,12 +80,26 @@ pub fn load_or_install_app_and_carrier(
       };
     }
     RunMethod::OtherAppOtherExecutable {
-      app_definition: carrier_app_definition,
+      app_definition: carrier_app,
       executable_name: carrier_executable_name,
     } => {
-      // step 1: determine the carrier app
-      // step 2: determine the version of the carrier app to install
-      // step 3: install (not load) the carrier app at that version if needed
+      // step 1: determine the version of the carrier app to install
+      let carrier_versions = if let Some(version) = cli_version {
+        RequestedVersions::from(version)
+      } else if let Some(versions) = ctx.config_file.lookup(&carrier_app.name()) {
+        versions.clone()
+      } else {
+        return Err(UserError::NoVersionsFound {
+          app: carrier_app.name().clone(),
+        });
+      };
+      // step 2: fast-path: try to load the given carrier executable
+      let carrier_version_to_install = match load_app_versions_custom_executable(carrier_app, &carrier_versions, carrier_executable_name, ctx)? {
+        LoadAppVersionsOutcome::Loaded { executable_call } => todo!(),
+        LoadAppVersionsOutcome::NotInstallable => todo!(),
+        LoadAppVersionsOutcome::MustInstall { version } => todo!(),
+      };
+      // step 3: slow-path: install (not load) the carrier app at that version if needed
       // step 4: load the `carrier_executable_name` from the carrier directory
       // step 5: return a callable that runs that executable
     }
