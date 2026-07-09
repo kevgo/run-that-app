@@ -12,7 +12,7 @@ pub fn add(args: AddArgs, apps: &Apps) -> Result<ExitCode> {
   } else {
     configuration::File::create(&app.name(), &version.clone())?;
   }
-  eprintln!("added {}@{} to {}", app.name(), &version, configuration::FILE_NAME);
+  eprintln!("added {}@{} to {}", app.name(), version, configuration::FILE_NAME);
   Ok(ExitCode::SUCCESS)
 }
 
