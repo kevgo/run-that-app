@@ -119,14 +119,41 @@ pub fn load_or_install_app_and_carrier(
       };
     }
     RunMethod::OtherAppDefaultExecutable {
-      app_definition: carrier_app_definition,
+      app_definition: carrier_app,
       args: carrier_args,
     } => {
-      // step 1: determine the carrier app
-      // step 2: determine the version of the carrier app to install
-      // step 3: install (not load) the carrier app at that version if needed
-      // step 4: load the default executable of the carrier
-      // step 5: return a callable that runs that executable with the given arguments
+      // step 1: determine the version of the carrier app to install
+      let carrier_versions = if let Some(version) = cli_version {
+        RequestedVersions::from(version)
+      } else if let Some(versions) = ctx.config_file.lookup(&carrier_app.name()) {
+        versions.clone()
+      } else {
+        return Err(UserError::NoVersionsFound {
+          app: carrier_app.name().clone(),
+        });
+      };
+      // step 2: fast-path: try to load the given carrier executable
+      let carrier_executable = carrier_app.executable_filename().platform_path(ctx.platform.os);
+      match load_app_versions(carrier_app.as_ref(), &carrier_versions, &carrier_executable, carrier_args.clone(), ctx)? {
+        LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
+        LoadAppVersionsOutcome::NotInstallable => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable),
+        LoadAppVersionsOutcome::NotInstalled => {}
+      };
+      // step 3: slow-path: here the app needs to be installed --> install any of the configured versions
+      match installation::versions(app_definition, &carrier_versions, optional, from_source, ctx, apps)? {
+        Outcome::Installed => {}
+        Outcome::NotInstalled => {
+          return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable);
+        }
+      }
+      // step 4: load the `carrier_executable_name` from the carrier directory
+      match load_app_versions(app_definition, &carrier_versions, &carrier_executable, carrier_args, ctx)? {
+        LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
+        LoadAppVersionsOutcome::NotInstallable => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable),
+        LoadAppVersionsOutcome::NotInstalled => {
+          panic!("this shouldn't really happen, we just successfully installed the app and now we can't load it")
+        }
+      };
     }
     RunMethod::NodeJS { package } => {
       // step 1: determine the version of Node to install
