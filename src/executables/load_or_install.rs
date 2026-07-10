@@ -6,7 +6,7 @@ use crate::executables::{ExecutableArgs, ExecutableCall, ExecutableCallDefinitio
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
 use crate::logging::Event;
-use crate::{Version, get_cmd, installation};
+use crate::{GetCmdArgs, Version, get_cmd, installation};
 use ahash::AHashSet;
 use std::fs;
 use std::path::Path;
@@ -159,24 +159,35 @@ pub fn load_or_install_app_and_carrier(
     }
 
     RunMethod::NodeJS { package } => {
-      let node = NodeJS {};
-	  // step 1: fast-path: load the npm package executable
+      // step 1: determine the version of the npm package to run
+      let app_versions = if let Some(version) = cli_version {
+        RequestedVersions::from(version)
+      } else if let Some(versions) = ctx.config_file.lookup(&app_definition.name()) {
+        versions.clone()
+      } else {
+        return Err(UserError::NoVersionsFound {
+          app: app_definition.name().clone(),
+        });
+      };
+
+      // step 2: fast-path: load the npm package executable
 
       // step 2: determine the version of Node to install
+      let node = NodeJS {};
       let Some(node_versions) = ctx.config_file.lookup(&node.name()) else {
         return Err(UserError::NoVersionsFound { app: node.name().clone() });
       };
       // step 2: fast-path: try to load npm (and thereby check that node is installed)
       let npm = Npm {};
-	  let get_npm_args = GetCmdArgs {
-		version: None,
-		app_args: vec!["--version".into()],
-		from_source: false,
-		include_apps: vec![],
-		optional: false,
-		verbose: false,
-	  };
-      let npm_cmd = get_cmd(npm, , apps)
+      let get_npm_args = GetCmdArgs {
+        version: None,
+        app_args: vec!["--version".into()],
+        from_source: false,
+        include_apps: vec![],
+        optional: false,
+        verbose: false,
+      };
+      let npm_cmd = get_cmd(&npm, get_npm_args, apps)?;
       match load_app_versions(carrier_app.as_ref(), &carrier_versions, &carrier_executable, carrier_args.clone(), ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable),
