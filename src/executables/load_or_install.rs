@@ -59,16 +59,15 @@ pub fn load_or_install_app_and_carrier(
         });
       };
       // step 2: fast-path: try to load the app
-      let version_to_install = match load_app_versions(app_definition, &versions, ExecutableArgs::None, ctx)? {
+      match load_app_versions(app_definition, &versions, ExecutableArgs::None, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable),
-        LoadAppVersionsOutcome::MustInstall { version } => version,
+        LoadAppVersionsOutcome::NotInstalled => {}
       };
       // step 3: slow-path: here the app needs to be installed --> install any of the configured versions
-      match installation::any_versions(app_definition, &versions, optional, from_source, ctx, apps)? {
+      match installation::versions(app_definition, &versions, optional, from_source, ctx, apps)? {
         Outcome::Installed => {}
         Outcome::NotInstalled => {
-          ctx.yard.mark_not_installable(&app_definition.name(), version_to_install)?;
           return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable);
         }
       }
@@ -76,7 +75,9 @@ pub fn load_or_install_app_and_carrier(
       match load_app_versions(app_definition, &versions, ExecutableArgs::None, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable),
-        LoadAppVersionsOutcome::MustInstall { version } => version,
+        LoadAppVersionsOutcome::NotInstalled => {
+          panic!("this shouldn't really happen, we just successfully installed the app and now we can't load it")
+        }
       };
     }
     RunMethod::OtherAppOtherExecutable {
@@ -97,7 +98,7 @@ pub fn load_or_install_app_and_carrier(
       let carrier_version_to_install = match load_app_versions_custom_executable(carrier_app, &carrier_versions, carrier_executable_name, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => todo!(),
         LoadAppVersionsOutcome::NotInstallable => todo!(),
-        LoadAppVersionsOutcome::MustInstall { version } => todo!(),
+        LoadAppVersionsOutcome::NotInstalled { version } => todo!(),
       };
       // step 3: slow-path: install (not load) the carrier app at that version if needed
       // step 4: load the `carrier_executable_name` from the carrier directory
@@ -203,7 +204,7 @@ fn load_or_install_from_yard(
     return Ok(None);
   }
   // app not installed and installable --> try to install
-  match installation::any(app_to_install.as_ref(), version, optional, from_source, ctx, apps)? {
+  match installation::version(app_to_install.as_ref(), version, optional, from_source, ctx, apps)? {
     Outcome::Installed => {} // we'll load it below
     Outcome::NotInstalled => {
       ctx.yard.mark_not_installable(&app_name, version)?;
@@ -239,7 +240,7 @@ fn load_or_install_nodejs_package(
     if ctx.yard.is_not_installable(&app_name, version) {
       return Ok(None);
     }
-    match installation::any(app_definition, version, optional, from_source, ctx, apps)? {
+    match installation::version(app_definition, version, optional, from_source, ctx, apps)? {
       Outcome::Installed => {}
       Outcome::NotInstalled => {
         ctx.yard.mark_not_installable(&app_name, version)?;

@@ -175,7 +175,7 @@ impl Display for BinFolder {
   }
 }
 
-pub fn any_versions(
+pub fn versions(
   app_definition: &dyn AppDefinition,
   versions: &RequestedVersions,
   optional: bool,
@@ -189,7 +189,7 @@ pub fn any_versions(
         // we can't install anything into the global path
         continue;
       }
-      RequestedVersion::Yard(version) => match any(app_definition, version, optional, from_source, ctx, apps)? {
+      RequestedVersion::Yard(version) => match version_any_method(app_definition, version, optional, from_source, ctx, apps)? {
         Outcome::Installed => return Ok(Outcome::Installed),
         Outcome::NotInstalled => continue,
       },
@@ -198,22 +198,32 @@ pub fn any_versions(
   Ok(Outcome::NotInstalled)
 }
 
-/// installs the given app using the first of the given installation methods that works
-pub fn any(app_definition: &dyn AppDefinition, version: &Version, optional: bool, from_source: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Outcome> {
+/// installs the given app using any of its installation methods
+pub fn version_any_method(
+  app_definition: &dyn AppDefinition,
+  version: &Version,
+  optional: bool,
+  from_source: bool,
+  ctx: &RuntimeContext,
+  apps: &Apps,
+) -> Result<Outcome> {
   for install_method in app_definition.run_method(version, ctx.platform).install_methods() {
     if from_source && !install_method.is_from_source() {
       continue;
     }
-    let outcome = install(app_definition, &install_method, version, optional, from_source, ctx, apps)?;
-    if outcome.success() {
-      return Ok(outcome);
+    match version_method(app_definition, &install_method, version, optional, from_source, ctx, apps)? {
+      Outcome::Installed => return Ok(Outcome::Installed),
+      Outcome::NotInstalled => {
+        continue;
+      }
     }
   }
+  ctx.yard.mark_not_installable(&app_definition.name(), version)?;
   Ok(Outcome::NotInstalled)
 }
 
 /// installs the given app using the given installation method
-pub fn install(
+pub fn version_method(
   app_definition: &dyn AppDefinition,
   install_method: &Method,
   version: &Version,

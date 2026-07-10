@@ -1,4 +1,3 @@
-use crate::Version;
 use crate::applications::AppDefinition;
 use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
@@ -18,7 +17,7 @@ pub fn load_app_versions<'a>(
   requested_versions: &'a RequestedVersions,
   executable_args: ExecutableArgs,
   ctx: &RuntimeContext,
-) -> Result<LoadAppVersionsOutcome<'a>> {
+) -> Result<LoadAppVersionsOutcome> {
   for requested_version in requested_versions {
     match requested_version {
       RequestedVersion::Path(version) => {
@@ -35,14 +34,14 @@ pub fn load_app_versions<'a>(
       RequestedVersion::Yard(version) => match load_from_yard(app_definition, version, executable_args.clone(), ctx)? {
         LoadFromYardOutcome::Loaded { executable_call } => return Ok(LoadAppVersionsOutcome::Loaded { executable_call }),
         LoadFromYardOutcome::NotInstallable => continue,
-        LoadFromYardOutcome::NotInstalled => return Ok(LoadAppVersionsOutcome::MustInstall { version }),
+        LoadFromYardOutcome::NotInstalled => return Ok(LoadAppVersionsOutcome::NotInstalled),
       },
     }
   }
   Ok(LoadAppVersionsOutcome::NotInstallable)
 }
 
-pub enum LoadAppVersionsOutcome<'a> {
+pub enum LoadAppVersionsOutcome {
   /// the app was loaded successfully, here is the executable to call it
   Loaded { executable_call: ExecutableCall },
   /// all requested versions of the app are not installable
@@ -50,5 +49,5 @@ pub enum LoadAppVersionsOutcome<'a> {
   /// the given version of the app is not installed
   /// and not marked as uninstallable
   /// so it should be installed
-  MustInstall { version: &'a Version },
+  NotInstalled,
 }
