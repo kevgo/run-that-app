@@ -156,7 +156,45 @@ pub fn load_or_install_app_and_carrier(
       };
     }
     RunMethod::NodeJS { package } => {
+      let node = NodeJS {};
       // step 1: determine the version of Node to install
+      let Some(node_versions) = ctx.config_file.lookup(&node.name()) else {
+        return Err(UserError::NoVersionsFound { app: node.name().clone() });
+      };
+      // step 2: fast-path: try to load npm
+
+      // step 3: slow-path: install node
+
+      // step 4: load the npm executable
+
+      // step 5: fast-path: try to load the npm package executable
+
+      // step 6: slow-path: install the npm package
+
+      // step 7: load the npm package executable
+
+      // step 2: fast-path: try to load the given carrier executable
+      let carrier_executable = carrier_executable_name.platform_path(ctx.platform.os);
+      match load_app_versions(carrier_app.as_ref(), &carrier_versions, &carrier_executable, ExecutableArgs::None, ctx)? {
+        LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
+        LoadAppVersionsOutcome::NotInstallable => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable),
+        LoadAppVersionsOutcome::NotInstalled => {}
+      };
+      // step 3: slow-path: here the app needs to be installed --> install any of the configured versions
+      match installation::versions(app_definition, &carrier_versions, optional, from_source, ctx, apps)? {
+        Outcome::Installed => {}
+        Outcome::NotInstalled => {
+          return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable);
+        }
+      }
+      // step 4: load the `carrier_executable_name` from the carrier directory
+      match load_app_versions(app_definition, &carrier_versions, &carrier_executable, ExecutableArgs::None, ctx)? {
+        LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
+        LoadAppVersionsOutcome::NotInstallable => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable),
+        LoadAppVersionsOutcome::NotInstalled => {
+          panic!("this shouldn't really happen, we just successfully installed the app and now we can't load it")
+        }
+      };
       // step 2: install (not load) Node at that version if needed
       // step 3: create an ExecutableCall that runs "npm" from the node directory
       // step 4: install the package by running "npm install <package>" in the package directory
