@@ -81,6 +81,7 @@ pub fn load_or_install_app_and_carrier(
         }
       };
     }
+
     RunMethod::OtherAppOtherExecutable {
       app_definition: carrier_app,
       executable_name: carrier_executable_name,
@@ -118,6 +119,7 @@ pub fn load_or_install_app_and_carrier(
         }
       };
     }
+
     RunMethod::OtherAppDefaultExecutable {
       app_definition: carrier_app,
       args: carrier_args,
@@ -155,6 +157,7 @@ pub fn load_or_install_app_and_carrier(
         }
       };
     }
+
     RunMethod::NodeJS { package } => {
       let node = NodeJS {};
       // step 1: determine the version of Node to install
