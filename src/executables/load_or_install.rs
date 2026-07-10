@@ -2,12 +2,16 @@ use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps, N
 use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
+use crate::executables::load_from_yard::LoadFromYardOutcome;
 use crate::executables::{ExecutableArgs, ExecutableCall, ExecutableCallDefinition, LoadAppVersionsOutcome, RunMethod, load_app_versions};
 use crate::filesystem::find_global_install;
 use crate::installation::Outcome;
 use crate::logging::Event;
-use crate::{GetCmdArgs, Version, get_cmd, installation};
+use crate::yard::Yard;
+use crate::{CommandInfo, GetCmdArgs, Version, get_cmd, installation, subshell};
 use ahash::AHashSet;
+use big_s::S;
+use std::ffi::OsString;
 use std::fs;
 use std::path::Path;
 
@@ -62,23 +66,25 @@ pub fn load_or_install_app_and_carrier(
       let executable = app_definition.executable_filename().platform_path(ctx.platform.os);
       match load_app_versions(app_definition, &versions, &executable, ExecutableArgs::None, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
-        LoadAppVersionsOutcome::NotInstallable => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable),
-        LoadAppVersionsOutcome::NotInstalled => {}
+        LoadAppVersionsOutcome::NotInstallable { app } => {
+          return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app });
+        }
+        LoadAppVersionsOutcome::NotInstalled { app: _ } => {}
       };
       // step 3: slow-path: here the app needs to be installed --> install any of the configured versions
       match installation::versions(app_definition, &versions, optional, from_source, ctx, apps)? {
         Outcome::Installed => {}
-        Outcome::NotInstalled => {
-          return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable);
+        Outcome::NotInstalled { app } => {
+          return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app });
         }
       }
       // step 4: load the now installed app
       match load_app_versions(app_definition, &versions, &executable, ExecutableArgs::None, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
-        LoadAppVersionsOutcome::NotInstallable => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable),
-        LoadAppVersionsOutcome::NotInstalled => {
-          panic!("this shouldn't really happen, we just successfully installed the app and now we can't load it")
+        LoadAppVersionsOutcome::NotInstallable { app } => {
+          return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app });
         }
+        LoadAppVersionsOutcome::NotInstalled { app } => panic!("this shouldn't happen, we just successfully installed {app} and now we can't load it"),
       };
     }
 
@@ -100,23 +106,23 @@ pub fn load_or_install_app_and_carrier(
       let carrier_executable = carrier_executable_name.platform_path(ctx.platform.os);
       match load_app_versions(carrier_app.as_ref(), &carrier_versions, &carrier_executable, ExecutableArgs::None, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
-        LoadAppVersionsOutcome::NotInstallable => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable),
-        LoadAppVersionsOutcome::NotInstalled => {}
+        LoadAppVersionsOutcome::NotInstallable { app } => {
+          return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app });
+        }
+        LoadAppVersionsOutcome::NotInstalled { app: _ } => {}
       };
       // step 3: slow-path: here the app needs to be installed --> install any of the configured versions
       match installation::versions(app_definition, &carrier_versions, optional, from_source, ctx, apps)? {
         Outcome::Installed => {}
-        Outcome::NotInstalled => {
-          return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable);
+        Outcome::NotInstalled { app } => {
+          return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app });
         }
       }
       // step 4: load the `carrier_executable_name` from the carrier directory
       match load_app_versions(app_definition, &carrier_versions, &carrier_executable, ExecutableArgs::None, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
-        LoadAppVersionsOutcome::NotInstallable => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable),
-        LoadAppVersionsOutcome::NotInstalled => {
-          panic!("this shouldn't really happen, we just successfully installed the app and now we can't load it")
-        }
+        LoadAppVersionsOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
+        LoadAppVersionsOutcome::NotInstalled { app } => panic!("this shouldn't happen, we just successfully installed {app} and now we can't load it"),
       };
     }
 
@@ -138,28 +144,33 @@ pub fn load_or_install_app_and_carrier(
       let carrier_executable = carrier_app.executable_filename().platform_path(ctx.platform.os);
       match load_app_versions(carrier_app.as_ref(), &carrier_versions, &carrier_executable, carrier_args.clone(), ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
-        LoadAppVersionsOutcome::NotInstallable => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable),
-        LoadAppVersionsOutcome::NotInstalled => {}
+        LoadAppVersionsOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
+        LoadAppVersionsOutcome::NotInstalled { app: _ } => {}
       };
       // step 3: slow-path: here the app needs to be installed --> install any of the configured versions
       match installation::versions(app_definition, &carrier_versions, optional, from_source, ctx, apps)? {
         Outcome::Installed => {}
-        Outcome::NotInstalled => {
-          return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable);
+        Outcome::NotInstalled { app } => {
+          return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app });
         }
       }
       // step 4: load the `carrier_executable_name` from the carrier directory
       match load_app_versions(app_definition, &carrier_versions, &carrier_executable, carrier_args, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
-        LoadAppVersionsOutcome::NotInstallable => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable),
-        LoadAppVersionsOutcome::NotInstalled => {
-          panic!("this shouldn't really happen, we just successfully installed the app and now we can't load it")
-        }
+        LoadAppVersionsOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
+        LoadAppVersionsOutcome::NotInstalled { app } => panic!("this shouldn't happen, we just successfully installed {app} and now we can't load it"),
       };
     }
 
     RunMethod::NodeJS { package } => {
-      // step 1: determine the version of the npm package to run
+      // step 1: ensure NodeJS is installed, install if needed
+      let npm = Npm {};
+      let npm_call = match load_or_install_app_and_carrier(&npm, None, ctx.config_file, optional, false, ctx, apps)? {
+        LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call } => executable_call,
+        LoadOrInstallAppWithCarrierOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
+      };
+
+      // step 2: determine the version of the npm package to run
       let app_versions = if let Some(version) = cli_version {
         RequestedVersions::from(version)
       } else if let Some(versions) = ctx.config_file.lookup(&app_definition.name()) {
@@ -170,31 +181,24 @@ pub fn load_or_install_app_and_carrier(
         });
       };
 
-      // step 2: fast-path: load the npm package executable
-
-      // step 2: determine the version of Node to install
-      let node = NodeJS {};
-      let Some(node_versions) = ctx.config_file.lookup(&node.name()) else {
-        return Err(UserError::NoVersionsFound { app: node.name().clone() });
-      };
-      // step 2: fast-path: try to load npm (and thereby check that node is installed)
-      let npm = Npm {};
-      let get_npm_args = GetCmdArgs {
-        version: None,
-        app_args: vec!["--version".into()],
-        from_source: false,
-        include_apps: vec![],
-        optional: false,
-        verbose: false,
-      };
-      let npm_cmd = get_cmd(&npm, get_npm_args, apps)?;
-      match load_app_versions(carrier_app.as_ref(), &carrier_versions, &carrier_executable, carrier_args.clone(), ctx)? {
+      // step 3: fast-path: load the app executable
+      match load_entry_point_versions(app_definition, package, &app_versions, ctx.yard)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
-        LoadAppVersionsOutcome::NotInstallable => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable),
-        LoadAppVersionsOutcome::NotInstalled => {}
+        LoadAppVersionsOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
+        LoadAppVersionsOutcome::NotInstalled { app } => {}
       };
 
-      // step 3: slow-path: install node
+      // step 4: install the npm package
+      npm_call.args.push("install".into());
+      npm_call.args.push(package.into());
+      let env_path = ""; // TODO: add the bin folder of the Node installation to use here,
+      // so that the npm executable is in the path
+      let command_info = CommandInfo {
+        executable: npm_call.executable.into(),
+        args: npm_call.args,
+        env_path: OsString::from(env_path),
+      };
+      subshell::stream_output(command_info, app_folder);
 
       // step 4: load the npm executable
 
@@ -237,7 +241,7 @@ pub fn load_or_install_app_and_carrier(
 
 enum LoadOrInstallAppWithCarrierOutcome {
   Loaded { executable_call: ExecutableCall },
-  NotInstallable,
+  NotInstallable { app: ApplicationName },
 }
 
 pub fn load_or_install_app_versions(
@@ -334,6 +338,42 @@ fn load_or_install_from_yard(
 }
 
 /// installs the given `NodeJS` package (if needed) and provides a call that executes it through `NodeJS`
+fn load_nodejs_package_versions(
+  app: &dyn AppDefinition,
+  versions: &Version,
+  npm_package: &str,
+  optional: bool,
+  ctx: &RuntimeContext,
+) -> Result<LoadFromYardOutcome> {
+}
+
+fn load_nodejs_package_version(app: &dyn AppDefinition, version: &Version, npm_package: &str, ctx: &RuntimeContext) -> Result<LoadAppVersionsOutcome> {
+  let app_name = app.name();
+  let app_folder = ctx.yard.app_folder(&app_name, version);
+  if ctx.yard.is_not_installable(&app_name, version) {
+    return Ok(LoadAppVersionsOutcome::NotInstallable { app: app_name });
+  }
+  if !app_folder.exists() {
+    return Ok(LoadAppVersionsOutcome::NotInstalled { app: app_name });
+  }
+  // here the app is installed
+  // NodeJS will execute the package
+  let node = NodeJS {};
+  let node_versions = if let Some(versions) = ctx.config_file.lookup(&node.name()) {
+    (*versions).clone()
+  } else {
+    RequestedVersions::from(node.latest_installable_version(ctx.log)?)
+  };
+  let Some(node_call) = load_or_install_app(&node, &node_versions, optional, false, ctx, apps)? else {
+    return Ok(None);
+  };
+  // determine the main entry point for the npm package from the "bin" entry in the its package.json file
+  let entry_point = load_entry_point(&app_folder, &app_name, npm_package, version)?;
+  let (executable, args) = node_call.with_args(vec![entry_point]);
+  Ok(Some(ExecutableCall { executable, args }))
+}
+
+/// installs the given `NodeJS` package (if needed) and provides a call that executes it through `NodeJS`
 fn load_or_install_nodejs_package(
   app_definition: &dyn AppDefinition,
   version: &Version,
@@ -378,15 +418,18 @@ fn load_or_install_nodejs_package(
   Ok(Some(ExecutableCall { executable, args }))
 }
 
-fn load_entry_point(app_folder: &Path, app_name: &ApplicationName, npm_package: &str, version: &Version) -> Result<String> {
-  let package_src = app_folder.join("node_modules").join(npm_package);
+fn load_entry_point_versions(app: &dyn AppDefinition, npm_package: &str, versions: &RequestedVersions, yard: &Yard) -> Result<LoadAppVersionsOutcome> {}
+
+fn load_entry_point(app: &dyn AppDefinition, npm_package: &str, version: &Version, yard: &Yard) -> Result<LoadFromYardOutcome> {
+  let app_name = app.name();
+  let package_src = yard.app_folder(&app_name, version).join("node_modules").join(npm_package);
   let package_json_path = package_src.join("package.json");
   let content = fs::read_to_string(&package_json_path).map_err(|err| UserError::UnsupportedNpmPackage {
-    app_name: app_name.clone(),
+    app_name: app.name(),
     version: version.clone(),
     err: format!("cannot find file {}: {}", package_json_path.display(), err),
   })?;
-  let entry_point = parse_package_json(&content, app_name, version, &package_json_path)?;
+  let entry_point = parse_package_json(&content, &app_name, version, &package_json_path)?;
   Ok(package_src.join(entry_point).to_string_lossy().to_string())
 }
 

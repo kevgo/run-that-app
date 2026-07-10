@@ -191,11 +191,13 @@ pub fn versions(
       }
       RequestedVersion::Yard(version) => match version_any_method(app_definition, version, optional, from_source, ctx, apps)? {
         Outcome::Installed => return Ok(Outcome::Installed),
-        Outcome::NotInstalled => continue,
+        Outcome::NotInstalled { app: _ } => continue,
       },
     }
   }
-  Ok(Outcome::NotInstalled)
+  Ok(Outcome::NotInstalled {
+    app: app_definition.name().clone(),
+  })
 }
 
 /// installs the given app using any of its installation methods
@@ -213,13 +215,14 @@ pub fn version_any_method(
     }
     match version_method(app_definition, &install_method, version, optional, from_source, ctx, apps)? {
       Outcome::Installed => return Ok(Outcome::Installed),
-      Outcome::NotInstalled => {
+      Outcome::NotInstalled { app: _ } => {
         continue;
       }
     }
   }
-  ctx.yard.mark_not_installable(&app_definition.name(), version)?;
-  Ok(Outcome::NotInstalled)
+  let app_name = app_definition.name();
+  ctx.yard.mark_not_installable(&app_name, version)?;
+  Ok(Outcome::NotInstalled { app: app_name })
 }
 
 /// installs the given app using the given installation method
@@ -247,21 +250,21 @@ pub fn version_method(
       ctx.yard.move_staging_folder_to_app_folder(staging_folder, app_folder_path)?;
       Ok(Outcome::Installed)
     }
-    Outcome::NotInstalled => Ok(Outcome::NotInstalled),
+    Outcome::NotInstalled { app } => Ok(Outcome::NotInstalled { app }),
   }
 }
 
 #[derive(Debug, PartialEq)]
 pub enum Outcome {
   Installed,
-  NotInstalled,
+  NotInstalled { app: ApplicationName },
 }
 
 impl Outcome {
   pub fn success(&self) -> bool {
     match self {
       Outcome::Installed => true,
-      Outcome::NotInstalled => false,
+      Outcome::NotInstalled { app: _ } => false,
     }
   }
 }
