@@ -64,8 +64,8 @@ pub fn load_or_install_app_and_carrier(
         LoadAppVersionsOutcome::NotInstallable => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable),
         LoadAppVersionsOutcome::MustInstall { version } => version,
       };
-      // step 3: slow-path: here the app needs to be installed --> install it
-      match installation::any(app_definition, version_to_install, optional, from_source, ctx, apps)? {
+      // step 3: slow-path: here the app needs to be installed --> install any of the configured versions
+      match installation::any_versions(app_definition, &versions, optional, from_source, ctx, apps)? {
         Outcome::Installed => {}
         Outcome::NotInstalled => {
           ctx.yard.mark_not_installable(&app_definition.name(), version_to_install)?;

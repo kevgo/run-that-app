@@ -7,7 +7,7 @@ mod download_executable;
 mod install_nodejs_package;
 
 use crate::applications::{AppDefinition, ApplicationName, Apps};
-use crate::configuration::Version;
+use crate::configuration::{RequestedVersion, RequestedVersions, Version};
 use crate::context::RuntimeContext;
 use crate::download::Url;
 use crate::error::Result;
@@ -173,6 +173,29 @@ impl Display for BinFolder {
       }
     }
   }
+}
+
+pub fn any_versions(
+  app_definition: &dyn AppDefinition,
+  versions: &RequestedVersions,
+  optional: bool,
+  from_source: bool,
+  ctx: &RuntimeContext,
+  apps: &Apps,
+) -> Result<Outcome> {
+  for version in versions {
+    match version {
+      RequestedVersion::Path(_version_req) => {
+        // we can't install anything into the global path
+        continue;
+      }
+      RequestedVersion::Yard(version) => match any(app_definition, version, optional, from_source, ctx, apps)? {
+        Outcome::Installed => return Ok(Outcome::Installed),
+        Outcome::NotInstalled => continue,
+      },
+    }
+  }
+  Ok(Outcome::NotInstalled)
 }
 
 /// installs the given app using the first of the given installation methods that works

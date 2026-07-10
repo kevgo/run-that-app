@@ -48,7 +48,7 @@ pub enum LoadAppVersionsOutcome<'a> {
   /// all requested versions of the app are not installable
   NotInstallable,
   /// the given version of the app is not installed
-  /// and not marked as installable
+  /// and not marked as uninstallable
   /// so it should be installed
   MustInstall { version: &'a Version },
 }
