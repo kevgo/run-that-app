@@ -4,22 +4,21 @@ use crate::Version;
 use crate::applications::AppDefinition;
 use crate::context::RuntimeContext;
 use crate::error::Result;
-use crate::executables::{ExecutableArgs, ExecutableCall};
+use crate::executables::{ExecutableArgs, ExecutableCall, ExecutableNamePlatform};
 
 /// Loads the given app at the given version
 /// and returns a callable that executes it.
-/// If the app runs via a carrier app,
-/// installs the carrier app as well.
 pub fn load_from_yard<'a>(
   app_definition: &dyn AppDefinition,
   version: &Version,
+  executable: &ExecutableNamePlatform,
   executable_args: ExecutableArgs,
   ctx: &RuntimeContext,
 ) -> Result<LoadFromYardOutcome> {
   // load or install the app
   ctx.yard.with_lock(&app_definition.name(), version, ctx, || {
     // try to load the app
-    if let Some((executable, bin_folder)) = ctx.yard.load_executable(app_definition, &app_definition.executable_filename(), version, ctx) {
+    if let Some((executable, bin_folder)) = ctx.yard.load_executable(app_definition, &executable, version, ctx) {
       let app_folder = ctx.yard.app_folder(&app_definition.name(), version);
       let args = executable_args.locate(&app_definition.name(), version, &app_folder, &bin_folder)?;
       return Ok(LoadFromYardOutcome::Loaded {

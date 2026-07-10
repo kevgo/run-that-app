@@ -2,7 +2,7 @@ use crate::applications::{AppDefinition, ApplicationName};
 use crate::configuration::Version;
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::executables::{Executable, ExecutableNameUnix};
+use crate::executables::{Executable, ExecutableNamePlatform};
 use crate::installation::BinFolder;
 use crate::logging::{Event, Log};
 use crate::yard::root_path;
@@ -193,14 +193,14 @@ impl Yard {
   pub fn load_executable(
     &self,
     app_definition: &dyn AppDefinition,
-    executable: &ExecutableNameUnix,
+    executable: &ExecutableNamePlatform,
     version: &Version,
     ctx: &RuntimeContext,
   ) -> Option<(Executable, BinFolder)> {
     let run_method = app_definition.run_method(version, ctx.platform);
     let app_folder = self.app_folder(&app_definition.name(), version);
     for installation_method in run_method.install_methods() {
-      let executable_paths = installation_method.executable_paths(&app_folder, &executable.clone().platform_path(ctx.platform.os));
+      let executable_paths = installation_method.executable_paths(&app_folder, &executable);
       for executable_path in executable_paths {
         (ctx.log)(Event::YardCheckExistingAppBegin { path: &executable_path });
         if executable_path.exists() {

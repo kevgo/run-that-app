@@ -3,19 +3,19 @@
 use crate::applications::{AnalyzeResult, AppDefinition};
 use crate::context::RuntimeContext;
 use crate::error::Result;
-use crate::executables::{ExecutableArgs, ExecutableCallDefinition};
+use crate::executables::{ExecutableArgs, ExecutableCallDefinition, ExecutableNamePlatform};
 use crate::filesystem::find_global_install;
 use crate::logging::Event;
 
 // finds the given app in the PATH and verifies it has the correct version
 pub fn load_from_path(
   app_to_install: &dyn AppDefinition,
+  executable: &ExecutableNamePlatform,
   range: &semver::VersionReq,
   executable_args: ExecutableArgs,
   ctx: &RuntimeContext,
 ) -> Result<Option<ExecutableCallDefinition>> {
-  let executable_filename = app_to_install.executable_filename().platform_path(ctx.platform.os);
-  let Some(executable) = find_global_install(&executable_filename, ctx.log) else {
+  let Some(executable) = find_global_install(&executable, ctx.log) else {
     (ctx.log)(Event::GlobalInstallNotFound);
     return Ok(None);
   };

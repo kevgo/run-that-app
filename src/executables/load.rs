@@ -3,7 +3,7 @@ use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::Result;
 use crate::executables::load_from_yard::LoadFromYardOutcome;
-use crate::executables::{ExecutableArgs, ExecutableCall, load_from_path, load_from_yard};
+use crate::executables::{ExecutableArgs, ExecutableCall, ExecutableNamePlatform, load_from_path, load_from_yard};
 
 /// Loads the given app at the first given version.
 /// Only attempts to load subsequently versions
@@ -15,13 +15,14 @@ use crate::executables::{ExecutableArgs, ExecutableCall, load_from_path, load_fr
 pub fn load_app_versions<'a>(
   app_definition: &dyn AppDefinition,
   requested_versions: &'a RequestedVersions,
+  executable: &ExecutableNamePlatform,
   executable_args: ExecutableArgs,
   ctx: &RuntimeContext,
 ) -> Result<LoadAppVersionsOutcome> {
   for requested_version in requested_versions {
     match requested_version {
       RequestedVersion::Path(version) => {
-        if let Some(executable_call_def) = load_from_path(app_definition, version, executable_args.clone(), ctx)?
+        if let Some(executable_call_def) = load_from_path(app_definition, executable, version, executable_args.clone(), ctx)?
           && let Some(app_folder) = executable_call_def.executable.clone().as_path().parent()
           && let Some(executable_call) = executable_call_def.into_executable_call(app_folder)
         {
@@ -31,7 +32,7 @@ pub fn load_app_versions<'a>(
           continue;
         }
       }
-      RequestedVersion::Yard(version) => match load_from_yard(app_definition, version, executable_args.clone(), ctx)? {
+      RequestedVersion::Yard(version) => match load_from_yard(app_definition, version, executable, executable_args.clone(), ctx)? {
         LoadFromYardOutcome::Loaded { executable_call } => return Ok(LoadAppVersionsOutcome::Loaded { executable_call }),
         LoadFromYardOutcome::NotInstallable => continue,
         LoadFromYardOutcome::NotInstalled => return Ok(LoadAppVersionsOutcome::NotInstalled),
