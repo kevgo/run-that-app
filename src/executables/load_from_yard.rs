@@ -18,7 +18,7 @@ pub fn load_from_yard<'a>(
   // load or install the app
   ctx.yard.with_lock(&app_definition.name(), version, ctx, || {
     // try to load the app
-    if let Some((executable, bin_folder)) = ctx.yard.load_executable(app_definition, &executable, version, ctx) {
+    if let Some((executable, bin_folder)) = ctx.yard.load_executable(app_definition, executable, version, ctx) {
       let app_folder = ctx.yard.app_folder(&app_definition.name(), version);
       let args = executable_args.locate(&app_definition.name(), version, &app_folder, &bin_folder)?;
       return Ok(LoadFromYardOutcome::Loaded {

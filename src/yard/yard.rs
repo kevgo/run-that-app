@@ -200,7 +200,7 @@ impl Yard {
     let run_method = app_definition.run_method(version, ctx.platform);
     let app_folder = self.app_folder(&app_definition.name(), version);
     for installation_method in run_method.install_methods() {
-      let executable_paths = installation_method.executable_paths(&app_folder, &executable);
+      let executable_paths = installation_method.executable_paths(&app_folder, executable);
       for executable_path in executable_paths {
         (ctx.log)(Event::YardCheckExistingAppBegin { path: &executable_path });
         if executable_path.exists() {

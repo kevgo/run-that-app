@@ -24,7 +24,7 @@ pub fn load_or_install_apps(
     let app = apps.lookup(&app_versions.app_name)?;
     match load_or_install_app_and_carrier(app, None, config_file, optional, false, ctx, apps)? {
       LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call } => result.push(executable_call),
-      LoadOrInstallAppWithCarrierOutcome::NotInstallable { app } => continue,
+      LoadOrInstallAppWithCarrierOutcome::NotInstallable { app: _ } => continue,
     }
   }
   Ok(result)
@@ -68,7 +68,7 @@ pub fn load_or_install_app_and_carrier(
           return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app });
         }
         LoadAppVersionsOutcome::NotInstalled { app: _ } => {}
-      };
+      }
       // step 3: slow-path: here the app needs to be installed --> install any of the configured versions
       match installation::versions(app_definition, &versions, optional, from_source, ctx, apps)? {
         Outcome::Installed => {}
@@ -78,12 +78,10 @@ pub fn load_or_install_app_and_carrier(
       }
       // step 4: load the now installed app
       match load_app_versions(app_definition, &versions, &executable, ExecutableArgs::None, ctx)? {
-        LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
-        LoadAppVersionsOutcome::NotInstallable { app } => {
-          return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app });
-        }
+        LoadAppVersionsOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
+        LoadAppVersionsOutcome::NotInstallable { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
         LoadAppVersionsOutcome::NotInstalled { app } => panic!("this shouldn't happen, we just successfully installed {app} and now we can't load it"),
-      };
+      }
     }
 
     RunMethod::OtherAppOtherExecutable {
@@ -108,7 +106,7 @@ pub fn load_or_install_app_and_carrier(
           return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app });
         }
         LoadAppVersionsOutcome::NotInstalled { app: _ } => {}
-      };
+      }
       // step 3: slow-path: here the app needs to be installed --> install any of the configured versions
       match installation::versions(app_definition, &carrier_versions, optional, from_source, ctx, apps)? {
         Outcome::Installed => {}
@@ -118,10 +116,10 @@ pub fn load_or_install_app_and_carrier(
       }
       // step 4: load the `carrier_executable_name` from the carrier directory
       match load_app_versions(app_definition, &carrier_versions, &carrier_executable, ExecutableArgs::None, ctx)? {
-        LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
-        LoadAppVersionsOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
+        LoadAppVersionsOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
+        LoadAppVersionsOutcome::NotInstallable { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
         LoadAppVersionsOutcome::NotInstalled { app } => panic!("this shouldn't happen, we just successfully installed {app} and now we can't load it"),
-      };
+      }
     }
 
     RunMethod::OtherAppDefaultExecutable {
@@ -144,7 +142,7 @@ pub fn load_or_install_app_and_carrier(
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
         LoadAppVersionsOutcome::NotInstalled { app: _ } => {}
-      };
+      }
       // step 3: slow-path: here the app needs to be installed --> install any of the configured versions
       match installation::versions(app_definition, &carrier_versions, optional, from_source, ctx, apps)? {
         Outcome::Installed => {}
@@ -154,10 +152,10 @@ pub fn load_or_install_app_and_carrier(
       }
       // step 4: load the `carrier_executable_name` from the carrier directory
       match load_app_versions(app_definition, &carrier_versions, &carrier_executable, carrier_args, ctx)? {
-        LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
-        LoadAppVersionsOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
+        LoadAppVersionsOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
+        LoadAppVersionsOutcome::NotInstallable { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
         LoadAppVersionsOutcome::NotInstalled { app } => panic!("this shouldn't happen, we just successfully installed {app} and now we can't load it"),
-      };
+      }
     }
 
     RunMethod::NodeJS { package } => {
@@ -184,7 +182,7 @@ pub fn load_or_install_app_and_carrier(
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
         LoadAppVersionsOutcome::NotInstalled { app: _ } => {}
-      };
+      }
 
       // step 4: install the npm package
       npm_call.args.push("install".into());
@@ -198,14 +196,14 @@ pub fn load_or_install_app_and_carrier(
         args: npm_call.args,
         env_path: OsString::from(env_path),
       };
-      subshell::stream_output(command_info, Some(npm_folder));
+      subshell::stream_output(command_info, Some(npm_folder))?;
 
       // step 5: load the npm executable
       match load_npm_entry_point_versions(app_definition, package, &app_versions, ctx.yard)? {
-        LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
-        LoadAppVersionsOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
+        LoadAppVersionsOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
+        LoadAppVersionsOutcome::NotInstallable { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
         LoadAppVersionsOutcome::NotInstalled { app } => panic!("this shouldn't happen, we just successfully installed {app} and now we can't load it"),
-      };
+      }
     }
   }
 }

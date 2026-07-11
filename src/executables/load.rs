@@ -12,9 +12,9 @@ use crate::executables::{ExecutableArgs, ExecutableCall, ExecutableNamePlatform,
 ///
 /// Returns either the loaded app
 /// or information which app version needs to be installed.
-pub fn load_app_versions<'a>(
+pub fn load_app_versions(
   app_definition: &dyn AppDefinition,
-  requested_versions: &'a RequestedVersions,
+  requested_versions: &RequestedVersions,
   executable: &ExecutableNamePlatform,
   executable_args: ExecutableArgs,
   ctx: &RuntimeContext,
@@ -27,10 +27,9 @@ pub fn load_app_versions<'a>(
           && let Some(executable_call) = executable_call_def.into_executable_call(app_folder)
         {
           return Ok(LoadAppVersionsOutcome::Loaded { executable_call });
-        } else {
-          // the app is not globally installed --> don't install it globally, try the next version
-          continue;
         }
+        // the app is not globally installed --> don't install it globally, try the next version
+        continue;
       }
       RequestedVersion::Yard(version) => match load_from_yard(app_definition, version, executable, executable_args.clone(), ctx)? {
         LoadFromYardOutcome::Loaded { executable_call } => return Ok(LoadAppVersionsOutcome::Loaded { executable_call }),

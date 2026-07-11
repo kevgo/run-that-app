@@ -15,7 +15,7 @@ pub fn load_from_path(
   executable_args: ExecutableArgs,
   ctx: &RuntimeContext,
 ) -> Result<Option<ExecutableCallDefinition>> {
-  let Some(executable) = find_global_install(&executable, ctx.log) else {
+  let Some(executable) = find_global_install(executable, ctx.log) else {
     (ctx.log)(Event::GlobalInstallNotFound);
     return Ok(None);
   };
