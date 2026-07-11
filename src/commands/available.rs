@@ -1,8 +1,8 @@
 use crate::applications::{ApplicationName, Apps};
-use crate::configuration::{self, RequestedVersions, Version};
+use crate::configuration::{self, Version};
 use crate::context::RuntimeContext;
 use crate::error::Result;
-use crate::executables::load_or_install_app_and_carrier;
+use crate::executables::{LoadOrInstallAppWithCarrierOutcome, load_or_install_app_and_carrier};
 use crate::yard::Yard;
 use crate::{logging, platform, yard};
 use std::process::ExitCode;
@@ -19,11 +19,10 @@ pub fn available(args: &AvailableArgs, apps: &Apps) -> Result<ExitCode> {
     config_file: &config_file,
     log,
   };
-  let versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
-  if load_or_install_app_and_carrier(app, &versions, args.optional, false, &ctx, apps)?.is_some() {
-    return Ok(ExitCode::SUCCESS);
+  match load_or_install_app_and_carrier(app, None, ctx.config_file, args.optional, false, &ctx, apps)? {
+    LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call: _ } => Ok(ExitCode::SUCCESS),
+    LoadOrInstallAppWithCarrierOutcome::NotInstallable { app: _ } => Ok(ExitCode::FAILURE),
   }
-  Ok(ExitCode::FAILURE)
 }
 
 /// named arguments for the [`available`] command
