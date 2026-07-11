@@ -1,8 +1,8 @@
 use crate::applications::{ApplicationName, Apps};
-use crate::configuration::{self, RequestedVersions, Version};
+use crate::configuration::{self, Version};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::executables::{load_or_install_app, load_or_install_apps};
+use crate::executables::{LoadOrInstallAppWithCarrierOutcome, load_or_install_app_and_carrier, load_or_install_apps};
 use crate::yard::Yard;
 use crate::{logging, platform, yard};
 use std::process::ExitCode;
@@ -20,15 +20,12 @@ pub fn install(args: InstallArgs, apps: &Apps) -> Result<ExitCode> {
     log,
   };
   let include_app_versions = config_file.lookup_many(args.include_apps);
-  let _include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
-  let requested_versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
-  let Some(_executable_call) = load_or_install_app(app_to_install, &requested_versions, args.optional, args.from_source, &ctx, apps)? else {
-    if args.optional {
-      return Ok(ExitCode::SUCCESS);
-    }
-    return Err(UserError::UnsupportedPlatform);
-  };
-  Ok(ExitCode::SUCCESS)
+  let _include_apps = load_or_install_apps(&include_app_versions, apps, &config_file, args.optional, &ctx)?;
+  match load_or_install_app_and_carrier(app_to_install, args.version.as_ref(), &config_file, args.optional, args.from_source, &ctx, apps)? {
+    LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call: _ } => Ok(ExitCode::SUCCESS),
+    LoadOrInstallAppWithCarrierOutcome::NotInstallable { app: _ } if args.optional => Ok(ExitCode::SUCCESS),
+    LoadOrInstallAppWithCarrierOutcome::NotInstallable { app: _ } => Err(UserError::UnsupportedPlatform),
+  }
 }
 
 /// named arguments for the [`install`], [`install_all`][super::install_all::install_all], and [`reinstall`][super::reinstall::reinstall] commands
