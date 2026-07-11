@@ -24,7 +24,7 @@ pub fn install(args: InstallArgs, apps: &Apps) -> Result<ExitCode> {
   match load_or_install_app_and_carrier(app_to_install, args.version.as_ref(), &config_file, args.optional, args.from_source, &ctx, apps)? {
     LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call: _ } => Ok(ExitCode::SUCCESS),
     LoadOrInstallAppWithCarrierOutcome::NotInstallable { app: _ } if args.optional => Ok(ExitCode::SUCCESS),
-    LoadOrInstallAppWithCarrierOutcome::NotInstallable { app: _ } => Err(UserError::UnsupportedPlatform),
+    LoadOrInstallAppWithCarrierOutcome::NotInstallable { app: _ } => Err(UserError::UnsupportedPlatform { app: app_to_install.name() }),
   }
 }
 

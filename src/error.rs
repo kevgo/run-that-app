@@ -58,7 +58,7 @@ pub enum UserError {
   UnknownApp(String),
   UnknownArchive(String),
   UnknownCliOption(String),
-  UnsupportedPlatform,
+  UnsupportedPlatform { app: ApplicationName },
   UnsupportedCPU(String),
   UnsupportedOS(String),
   UnsupportedNpmPackage { app_name: ApplicationName, version: Version, err: String },
@@ -208,8 +208,8 @@ impl UserError {
         error(&format!("Unsupported npm package version: {app_name}@{version}: {err}"));
         desc("Please report this at https://github.com/kevgo/run-that-app/issues/new and use an older version of the package until this is fixed.");
       }
-      UserError::UnsupportedPlatform => {
-        error("This application does not seem to support your platform.");
+      UserError::UnsupportedPlatform { app } => {
+        error(&format!("Application {app} does not seem to support your platform."));
         desc(
           "It looks like there are no binary versions for this app for your platform.
 
