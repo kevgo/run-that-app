@@ -23,6 +23,7 @@ pub fn load_or_install_apps(
   let mut result = vec![];
   for app_versions in apps_versions {
     let app = apps.lookup(&app_versions.app_name)?;
+    match app_versions.versions {}
     match load_or_install_app_and_carrier(app, Some(app_versions), config_file, optional, from_source, ctx, apps)? {
       LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call } => result.push(executable_call),
       LoadOrInstallAppWithCarrierOutcome::NotInstallable { app } => continue,
