@@ -12,7 +12,7 @@ pub fn load_from_yard<'a>(
   app_definition: &dyn AppDefinition,
   version: &Version,
   executable: &ExecutableNamePlatform,
-  executable_args: ExecutableArgs,
+  executable_args: &ExecutableArgs,
   ctx: &RuntimeContext,
 ) -> Result<LoadFromYardOutcome> {
   // load or install the app

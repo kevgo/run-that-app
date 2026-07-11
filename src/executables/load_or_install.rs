@@ -24,7 +24,7 @@ pub fn load_or_install_apps(
     let app = apps.lookup(&app_versions.app_name)?;
     match load_or_install_app_and_carrier(app, None, config_file, optional, false, ctx, apps)? {
       LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call } => result.push(executable_call),
-      LoadOrInstallAppWithCarrierOutcome::NotInstallable { app: _ } => continue,
+      LoadOrInstallAppWithCarrierOutcome::NotInstallable { app: _ } => {}
     }
   }
   Ok(result)
