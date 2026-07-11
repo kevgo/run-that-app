@@ -202,7 +202,10 @@ pub fn load_or_install_app_and_carrier(
       match load_npm_entry_point_versions(app_definition, package, &app_versions, ctx.yard)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
-        LoadAppVersionsOutcome::NotInstalled { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
+        LoadAppVersionsOutcome::NotInstalled { app } => {
+          println!("ERROR: this shouldn't happen, we just successfully installed {app} and now we can't load it");
+          Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app })
+        }
       }
     }
   }
