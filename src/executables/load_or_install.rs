@@ -6,9 +6,8 @@ use crate::executables::load_from_yard::LoadFromYardOutcome;
 use crate::executables::{Executable, ExecutableArgs, ExecutableCall, LoadAppVersionsOutcome, RunMethod, load_app_versions};
 use crate::installation::Outcome;
 use crate::yard::Yard;
-use crate::{CommandInfo, Version, installation, subshell};
+use crate::{Version, installation};
 use ahash::AHashSet;
-use std::ffi::OsString;
 use std::fs;
 use std::path::Path;
 
@@ -183,7 +182,7 @@ pub fn load_or_install_app_and_carrier(
       println!("LOAD_OR_INSTALL_APP_AND_CARRIER / NodeJS: {package}");
       // step 1: ensure NodeJS is installed, install if needed
       let npm = Npm {};
-      let mut npm_call = match load_or_install_app_and_carrier(&npm, None, ctx.config_file, optional, false, ctx, apps)? {
+      match load_or_install_app_and_carrier(&npm, None, ctx.config_file, optional, false, ctx, apps)? {
         LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call } => executable_call,
         LoadOrInstallAppWithCarrierOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
       };
@@ -209,20 +208,13 @@ pub fn load_or_install_app_and_carrier(
 
       // step 4: install the npm package
       println!("LOAD_OR_INSTALL_APP_AND_CARRIER / NodeJS / step 4: install the npm package {package}");
-      npm_call.args.push("install".into());
-      npm_call.args.push(package.into());
-      let npm_call_executable = npm_call.executable.clone();
-      let npm_folder = npm_call_executable.parent_path();
-      let command_info = CommandInfo {
-        executable: npm_call.executable.into(),
-        args: npm_call.args,
-        env_path: OsString::from(npm_folder),
-      };
-      let _package_folder = "";
-      subshell::stream_output(command_info, Some(npm_folder))?;
+      match installation::versions(app_definition, &app_versions, optional, from_source, ctx, apps)? {
+        Outcome::Installed => {}
+        Outcome::NotInstalled { app } => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
+      }
 
-      // step 5: load the npm executable
-      println!("LOAD_OR_INSTALL_APP_AND_CARRIER / NodeJS / step 5: load the npm executable {package}");
+      // step 5: load the npm package executable
+      println!("LOAD_OR_INSTALL_APP_AND_CARRIER / NodeJS / step 5: load the executable for npm package {package}");
       match load_npm_entry_point_versions(app_definition, package, &app_versions, ctx.yard)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
@@ -262,9 +254,8 @@ fn load_npm_entry_point_version(app: &dyn AppDefinition, npm_package: &str, vers
   let app_name = app.name();
   let package_src = yard.app_folder(&app_name, version).join("node_modules").join(npm_package);
   let package_json_path = package_src.join("package.json");
-  let content = match fs::read_to_string(&package_json_path) {
-    Ok(content) => content,
-    Err(_) => return Ok(LoadFromYardOutcome::NotInstalled),
+  let Ok(content) = fs::read_to_string(&package_json_path) else {
+    return Ok(LoadFromYardOutcome::NotInstalled);
   };
   let entry_point = parse_package_json(&content, &app_name, version, &package_json_path)?;
   let executable = package_src.join(entry_point);
