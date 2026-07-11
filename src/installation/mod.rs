@@ -187,11 +187,10 @@ pub fn versions(
     match version {
       RequestedVersion::Path(_version_req) => {
         // we can't install anything into the global path
-        continue;
       }
       RequestedVersion::Yard(version) => match version_any_method(app_definition, version, optional, from_source, ctx, apps)? {
         Outcome::Installed => return Ok(Outcome::Installed),
-        Outcome::NotInstalled { app: _ } => continue,
+        Outcome::NotInstalled { app: _ } => {}
       },
     }
   }
@@ -215,9 +214,7 @@ pub fn version_any_method(
     }
     match version_method(app_definition, &install_method, version, optional, ctx, apps)? {
       Outcome::Installed => return Ok(Outcome::Installed),
-      Outcome::NotInstalled { app: _ } => {
-        continue;
-      }
+      Outcome::NotInstalled { app: _ } => {}
     }
   }
   let app_name = app_definition.name();

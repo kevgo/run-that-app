@@ -223,7 +223,7 @@ fn load_npm_entry_point_versions(app: &dyn AppDefinition, npm_package: &str, ver
         LoadFromYardOutcome::NotInstalled => {
           return Ok(LoadAppVersionsOutcome::NotInstalled { app: app.name() });
         }
-        LoadFromYardOutcome::NotInstallable => continue,
+        LoadFromYardOutcome::NotInstallable => {}
       },
       RequestedVersion::Path(_version) => panic!("cannot load an npm entry point in the global path"),
     }
