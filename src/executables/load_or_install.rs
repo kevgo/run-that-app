@@ -80,7 +80,10 @@ pub fn load_or_install_app_and_carrier(
       match load_app_versions(app_definition, &versions, &executable, ExecutableArgs::None, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
-        LoadAppVersionsOutcome::NotInstalled { app } => panic!("this shouldn't happen, we just successfully installed {app} and now we can't load it"),
+        LoadAppVersionsOutcome::NotInstalled { app } => {
+          println!("ERROR: this shouldn't happen, we just successfully installed {app} and now we can't load it");
+          Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app })
+        }
       }
     }
 
@@ -118,7 +121,10 @@ pub fn load_or_install_app_and_carrier(
       match load_app_versions(app_definition, &carrier_versions, &carrier_executable, ExecutableArgs::None, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
-        LoadAppVersionsOutcome::NotInstalled { app } => panic!("this shouldn't happen, we just successfully installed {app} and now we can't load it"),
+        LoadAppVersionsOutcome::NotInstalled { app } => {
+          println!("ERROR: this shouldn't happen, we just successfully installed {app} and now we can't load it");
+          Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app })
+        }
       }
     }
 
@@ -154,7 +160,10 @@ pub fn load_or_install_app_and_carrier(
       match load_app_versions(app_definition, &carrier_versions, &carrier_executable, carrier_args, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
-        LoadAppVersionsOutcome::NotInstalled { app } => panic!("this shouldn't happen, we just successfully installed {app} and now we can't load it"),
+        LoadAppVersionsOutcome::NotInstalled { app } => {
+          println!("ERROR: this shouldn't happen, we just successfully installed {app} and now we can't load it");
+          Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app })
+        }
       }
     }
 
@@ -202,7 +211,10 @@ pub fn load_or_install_app_and_carrier(
       match load_npm_entry_point_versions(app_definition, package, &app_versions, ctx.yard)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
-        LoadAppVersionsOutcome::NotInstalled { app } => panic!("this shouldn't happen, we just successfully installed {app} and now we can't load it"),
+        LoadAppVersionsOutcome::NotInstalled { app } => {
+          println!("ERROR: this shouldn't happen, we just successfully installed {app} and now we can't load it");
+          Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app })
+        }
       }
     }
   }
@@ -225,7 +237,7 @@ fn load_npm_entry_point_versions(app: &dyn AppDefinition, npm_package: &str, ver
         }
         LoadFromYardOutcome::NotInstallable => {}
       },
-      RequestedVersion::Path(_version) => panic!("cannot load an npm entry point in the global path"),
+      RequestedVersion::Path(_version) => println!("ERROR: cannot load an npm entry point in the global path"),
     }
   }
   Ok(LoadAppVersionsOutcome::NotInstallable { app: app.name() })
