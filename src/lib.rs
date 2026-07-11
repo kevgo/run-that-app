@@ -153,7 +153,7 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
     if args.optional {
       return Ok(None);
     }
-    return Err(error::UserError::UnsupportedPlatform);
+    return Err(error::UserError::UnsupportedPlatform { app: app.name() });
   };
   let (executable, args) = executable_call.with_args(args.app_args);
   let mut paths_to_include: Vec<&Path> = vec![&executable.parent_path()];

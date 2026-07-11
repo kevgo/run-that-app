@@ -20,7 +20,7 @@ pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
     if args.optional {
       return Ok(ExitCode::SUCCESS);
     }
-    return Err(UserError::UnsupportedPlatform);
+    return Err(UserError::UnsupportedPlatform { app: app_to_run.name() });
   };
   let cwd = args.cwd.as_deref();
   if args.error_on_output {
