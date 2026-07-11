@@ -1,18 +1,13 @@
-use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps, NodeJS, Npm, carrier};
-use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersions};
+use crate::applications::{AppDefinition, ApplicationName, Apps, Npm};
+use crate::configuration::{self, RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::load_from_yard::LoadFromYardOutcome;
-use crate::executables::{
-  Executable, ExecutableArgs, ExecutableCall, ExecutableCallDefinition, LoadAppVersionsOutcome, RunMethod, load_app_versions, load_from_path,
-};
-use crate::filesystem::find_global_install;
+use crate::executables::{Executable, ExecutableArgs, ExecutableCall, LoadAppVersionsOutcome, RunMethod, load_app_versions};
 use crate::installation::Outcome;
-use crate::logging::Event;
 use crate::yard::Yard;
-use crate::{CommandInfo, GetCmdArgs, Version, get_cmd, installation, subshell};
+use crate::{CommandInfo, Version, installation, subshell};
 use ahash::AHashSet;
-use big_s::S;
 use std::ffi::OsString;
 use std::fs;
 use std::path::Path;
