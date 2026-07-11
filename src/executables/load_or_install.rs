@@ -199,7 +199,7 @@ pub fn load_or_install_app_and_carrier(
       let env_path = ""; // TODO: add the bin folder of the Node installation to use here,
       // so that the npm executable is in the path
       let npm_call_executable = npm_call.executable.clone();
-      let npm_folder = npm_call_executable.as_path().parent().unwrap();
+      let npm_folder = npm_call_executable.parent_path();
       let command_info = CommandInfo {
         executable: npm_call.executable.into(),
         args: npm_call.args,
