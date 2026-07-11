@@ -17,14 +17,12 @@ pub fn load_or_install_apps(
   apps: &Apps,
   config_file: &configuration::File,
   optional: bool,
-  from_source: bool,
   ctx: &RuntimeContext,
 ) -> Result<Vec<ExecutableCall>> {
   let mut result = vec![];
   for app_versions in apps_versions {
     let app = apps.lookup(&app_versions.app_name)?;
-    match app_versions.versions {}
-    match load_or_install_app_and_carrier(app, Some(app_versions), config_file, optional, from_source, ctx, apps)? {
+    match load_or_install_app_and_carrier(app, None, config_file, optional, false, ctx, apps)? {
       LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call } => result.push(executable_call),
       LoadOrInstallAppWithCarrierOutcome::NotInstallable { app } => continue,
     }
