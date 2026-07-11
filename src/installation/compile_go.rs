@@ -1,10 +1,9 @@
 use super::Outcome;
 use crate::applications;
 use crate::applications::Apps;
-use crate::configuration::RequestedVersions;
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::executables::load_or_install_app;
+use crate::executables::{LoadOrInstallAppWithCarrierOutcome, load_or_install_app_and_carrier};
 use crate::logging::Event;
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
@@ -12,13 +11,13 @@ use std::process::Command;
 use which::which;
 
 /// installs the given Go-based application by compiling it from source
-pub fn run(app_folder: &Path, import_path: &str, optional: bool, from_source: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Outcome> {
+pub fn run(app_folder: &Path, import_path: &str, optional: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Outcome> {
   let go_args = vec!["install", &import_path];
   let go_path = if let Ok(system_go_path) = which("go") {
     system_go_path
   } else {
-    let Some(rta_path) = load_rta_go(optional, from_source, ctx, apps)? else {
-      return Ok(Outcome::NotInstalled);
+    let Some(rta_path) = load_rta_go(optional, ctx, apps)? else {
+      return Ok(Outcome::NotInstalled { app: "go".into() });
     };
     rta_path
   };
@@ -45,17 +44,10 @@ pub fn run(app_folder: &Path, import_path: &str, optional: bool, from_source: bo
   Ok(Outcome::Installed)
 }
 
-fn load_rta_go(optional: bool, from_source: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Option<PathBuf>> {
-  use crate::applications::AppDefinition;
+fn load_rta_go(optional: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Option<PathBuf>> {
   let go = applications::Go {};
-  let requested_go_versions: RequestedVersions = if let Some(versions) = ctx.config_file.lookup(&go.name()) {
-    (*versions).clone()
-  } else {
-    let versions = go.installable_versions(3, ctx.log)?;
-    RequestedVersions::from(versions)
-  };
-  if let Some(executable_call) = load_or_install_app(&go, &requested_go_versions, optional, from_source, ctx, apps)? {
-    return Ok(Some(executable_call.executable.into()));
+  match load_or_install_app_and_carrier(&go, None, ctx.config_file, optional, false, ctx, apps)? {
+    LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call } => Ok(Some(executable_call.executable.into())),
+    LoadOrInstallAppWithCarrierOutcome::NotInstallable { app: _ } => Ok(None),
   }
-  Ok(None)
 }
