@@ -143,33 +143,6 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
     config_file: &config_file,
     log,
   };
-
-  // Open question:
-  // Should we install the carrier app here at the top level,
-  // or have it install transparently in `load_or_install_app`?
-  //
-  // An argument for installing it here at the top is
-  // that this keeps the implementation of `load_or_install_app` simpler.
-  // If we would install the carrier in `load_or_install_app`,
-  // we would have two layers of `load_or_install` calls:
-  // A high-level that installs the app or the carrier,
-  // and a low-level that installs only the given app.
-  //
-  // One could argue that the scope of `load_or_install_app` should be limited to
-  // loading or installing the given app,
-  // i.e. it should be low-level.
-  // High-level operations like installing the carrier should be done at the top level.
-  //
-  // On the other hand, we need this logic several times at the top level:
-  // - installing the app to run (including its carrier)
-  // - installing other apps to include (including their carrier)
-  //
-  // So we do need separate low-level and high-level `load_or_install` functions.
-  //
-  // Another argument for extracting this logic into a separate function is
-  // that it would create too much complexity here at the top level.
-  // The top level should orchestrate activities, not perform them.
-
   let include_app_names = args.include_apps.iter().map(|app| app.name()).collect();
   let include_app_versions = config_file.lookup_many(include_app_names);
   let include_apps = load_or_install_apps(&include_app_versions, apps, &config_file, args.optional, &ctx)?;
