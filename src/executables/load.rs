@@ -16,7 +16,7 @@ pub fn load_app_versions(
   app_definition: &dyn AppDefinition,
   requested_versions: &RequestedVersions,
   executable: &ExecutableNamePlatform,
-  executable_args: ExecutableArgs,
+  executable_args: &ExecutableArgs,
   ctx: &RuntimeContext,
 ) -> Result<LoadAppVersionsOutcome> {
   for requested_version in requested_versions {
@@ -29,11 +29,10 @@ pub fn load_app_versions(
           return Ok(LoadAppVersionsOutcome::Loaded { executable_call });
         }
         // the app is not globally installed --> don't install it globally, try the next version
-        continue;
       }
-      RequestedVersion::Yard(version) => match load_from_yard(app_definition, version, executable, &executable_args, ctx)? {
+      RequestedVersion::Yard(version) => match load_from_yard(app_definition, version, executable, executable_args, ctx)? {
         LoadFromYardOutcome::Loaded { executable_call } => return Ok(LoadAppVersionsOutcome::Loaded { executable_call }),
-        LoadFromYardOutcome::NotInstallable => continue,
+        LoadFromYardOutcome::NotInstallable => {}
         LoadFromYardOutcome::NotInstalled => {
           return Ok(LoadAppVersionsOutcome::NotInstalled {
             app: app_definition.name().clone(),

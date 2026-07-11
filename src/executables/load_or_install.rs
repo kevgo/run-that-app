@@ -62,7 +62,7 @@ pub fn load_or_install_app_and_carrier(
       };
       // step 2: fast-path: try to load the app
       let executable = app_definition.executable_filename().platform_path(ctx.platform.os);
-      match load_app_versions(app_definition, &versions, &executable, ExecutableArgs::None, ctx)? {
+      match load_app_versions(app_definition, &versions, &executable, &ExecutableArgs::None, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => {
           return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app });
@@ -77,7 +77,7 @@ pub fn load_or_install_app_and_carrier(
         }
       }
       // step 4: load the now installed app
-      match load_app_versions(app_definition, &versions, &executable, ExecutableArgs::None, ctx)? {
+      match load_app_versions(app_definition, &versions, &executable, &ExecutableArgs::None, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
         LoadAppVersionsOutcome::NotInstalled { app } => {
@@ -103,7 +103,7 @@ pub fn load_or_install_app_and_carrier(
       };
       // step 2: fast-path: try to load the given carrier executable
       let carrier_executable = carrier_executable_name.platform_path(ctx.platform.os);
-      match load_app_versions(carrier_app.as_ref(), &carrier_versions, &carrier_executable, ExecutableArgs::None, ctx)? {
+      match load_app_versions(carrier_app.as_ref(), &carrier_versions, &carrier_executable, &ExecutableArgs::None, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => {
           return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app });
@@ -118,7 +118,7 @@ pub fn load_or_install_app_and_carrier(
         }
       }
       // step 4: load the `carrier_executable_name` from the carrier directory
-      match load_app_versions(app_definition, &carrier_versions, &carrier_executable, ExecutableArgs::None, ctx)? {
+      match load_app_versions(app_definition, &carrier_versions, &carrier_executable, &ExecutableArgs::None, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
         LoadAppVersionsOutcome::NotInstalled { app } => {
@@ -144,7 +144,7 @@ pub fn load_or_install_app_and_carrier(
       };
       // step 2: fast-path: try to load the given carrier executable
       let carrier_executable = carrier_app.executable_filename().platform_path(ctx.platform.os);
-      match load_app_versions(carrier_app.as_ref(), &carrier_versions, &carrier_executable, carrier_args.clone(), ctx)? {
+      match load_app_versions(carrier_app.as_ref(), &carrier_versions, &carrier_executable, &carrier_args, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
         LoadAppVersionsOutcome::NotInstalled { app: _ } => {}
@@ -157,7 +157,7 @@ pub fn load_or_install_app_and_carrier(
         }
       }
       // step 4: load the `carrier_executable_name` from the carrier directory
-      match load_app_versions(app_definition, &carrier_versions, &carrier_executable, carrier_args, ctx)? {
+      match load_app_versions(app_definition, &carrier_versions, &carrier_executable, &carrier_args, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
         LoadAppVersionsOutcome::NotInstalled { app } => {
