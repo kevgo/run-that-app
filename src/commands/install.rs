@@ -26,7 +26,7 @@ pub fn install(args: InstallArgs, apps: &Apps) -> Result<ExitCode> {
     if args.optional {
       return Ok(ExitCode::SUCCESS);
     }
-    return Err(UserError::UnsupportedPlatform);
+    return Err(UserError::UnsupportedPlatform { app: app_to_install.name() });
   };
   Ok(ExitCode::SUCCESS)
 }
