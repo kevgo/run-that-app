@@ -2,7 +2,7 @@ use crate::applications::{ApplicationName, Apps};
 use crate::configuration::{self, RequestedVersions, Version};
 use crate::context::RuntimeContext;
 use crate::error::Result;
-use crate::executables::load_or_install_app;
+use crate::executables::load_or_install_app_and_carrier;
 use crate::yard::Yard;
 use crate::{logging, platform, yard};
 use std::process::ExitCode;
@@ -20,7 +20,7 @@ pub fn available(args: &AvailableArgs, apps: &Apps) -> Result<ExitCode> {
     log,
   };
   let versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
-  if load_or_install_app(app, &versions, args.optional, false, &ctx, apps)?.is_some() {
+  if load_or_install_app_and_carrier(app, &versions, args.optional, false, &ctx, apps)?.is_some() {
     return Ok(ExitCode::SUCCESS);
   }
   Ok(ExitCode::FAILURE)

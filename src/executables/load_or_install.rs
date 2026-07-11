@@ -1,5 +1,5 @@
 use crate::applications::{AppDefinition, ApplicationName, Apps, Npm};
-use crate::configuration::{self, RequestedVersion, RequestedVersions};
+use crate::configuration::{self, AppVersions, RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::load_from_yard::LoadFromYardOutcome;
@@ -12,22 +12,24 @@ use std::ffi::OsString;
 use std::fs;
 use std::path::Path;
 
-// pub fn load_or_install_apps(
-//   apps_versions: &Vec<AppVersions>,
-//   apps: &Apps,
-//   optional: bool,
-//   from_source: bool,
-//   ctx: &RuntimeContext,
-// ) -> Result<Vec<ExecutableCall>> {
-//   let mut result = vec![];
-//   for app_versions in apps_versions {
-//     let app = apps.lookup(&app_versions.app_name)?;
-//     if let Some(executable_call) = load_or_install_app_with_carrier(app, &app_versions.versions, optional, from_source, ctx, apps)? {
-//       result.push(executable_call);
-//     }
-//   }
-//   Ok(result)
-// }
+pub fn load_or_install_apps(
+  apps_versions: &Vec<AppVersions>,
+  apps: &Apps,
+  config_file: &configuration::File,
+  optional: bool,
+  from_source: bool,
+  ctx: &RuntimeContext,
+) -> Result<Vec<ExecutableCall>> {
+  let mut result = vec![];
+  for app_versions in apps_versions {
+    let app = apps.lookup(&app_versions.app_name)?;
+    match load_or_install_app_and_carrier(app, None, config_file, &app_versions.versions, optional, from_source, ctx, apps)? {
+      LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call } => result.push(executable_call),
+      LoadOrInstallAppWithCarrierOutcome::NotInstallable { app } => continue,
+    }
+  }
+  Ok(result)
+}
 
 /// Provides a callable that executes the given app
 /// at the given CLI version if given,
@@ -209,7 +211,7 @@ pub fn load_or_install_app_and_carrier(
   }
 }
 
-enum LoadOrInstallAppWithCarrierOutcome {
+pub enum LoadOrInstallAppWithCarrierOutcome {
   Loaded { executable_call: ExecutableCall },
   NotInstallable { app: ApplicationName },
 }
