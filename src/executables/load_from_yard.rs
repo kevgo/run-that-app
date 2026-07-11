@@ -8,7 +8,7 @@ use crate::executables::{ExecutableArgs, ExecutableCall, ExecutableNamePlatform}
 
 /// Loads the given app at the given version
 /// and returns a callable that executes it.
-pub fn load_from_yard<'a>(
+pub fn load_from_yard(
   app_definition: &dyn AppDefinition,
   version: &Version,
   executable: &ExecutableNamePlatform,
