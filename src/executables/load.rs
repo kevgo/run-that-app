@@ -5,9 +5,9 @@ use crate::error::Result;
 use crate::executables::load_from_yard::LoadFromYardOutcome;
 use crate::executables::{ExecutableArgs, ExecutableCall, ExecutableNamePlatform, load_from_path, load_from_yard};
 
-/// Loads the given executable inside the given app
-/// at the earliest of the given versions that is installable
-/// and runs an `ExecutableCall` that runs it with the given arguments.
+/// Loads the given app at the earliest of the given versions that is installable
+/// and returns an `ExecutableCall` that runs the given executable within that app
+/// with the given arguments.
 pub fn load_app_versions(
   app: &dyn AppDefinition,
   versions: &RequestedVersions,
