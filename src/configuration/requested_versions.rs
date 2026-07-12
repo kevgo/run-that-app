@@ -1,6 +1,4 @@
-use super::{File, RequestedVersion, Version};
-use crate::applications::ApplicationName;
-use crate::error::{Result, UserError};
+use super::{RequestedVersion, Version};
 
 /// a collection of Version instances
 #[derive(Clone, Debug, PartialEq)]
@@ -36,18 +34,6 @@ impl Ord for RequestedVersions {
 
 impl RequestedVersions {
   // CONSTRUCTORS
-
-  /// Provides the version to use: if the user provided a version to use via CLI, use it.
-  /// Otherwise provide the versions from the config file.
-  pub fn determine(app: &ApplicationName, cli_version: Option<&Version>, config_file: &File) -> Result<RequestedVersions> {
-    if let Some(version) = cli_version {
-      return Ok(RequestedVersions::from(version));
-    }
-    let Some(versions) = config_file.lookup(app) else {
-      return Err(UserError::RunRequestMissingVersion { app: app.clone() });
-    };
-    Ok(RequestedVersions(versions.0.clone()))
-  }
 
   #[cfg(test)]
   pub fn new() -> RequestedVersions {
