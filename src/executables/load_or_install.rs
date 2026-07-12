@@ -11,7 +11,7 @@ use std::fs;
 use std::path::Path;
 
 pub fn load_or_install_apps(apps_versions: &Vec<AppVersions>, apps: &Apps, optional: bool, ctx: &RuntimeContext) -> Result<Vec<ExecutableCall>> {
-  let mut result = vec![];
+  let mut result = Vec::with_capacity(apps_versions.len());
   for app_versions in apps_versions {
     let app = apps.lookup(&app_versions.app_name)?;
     let outcome = load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
