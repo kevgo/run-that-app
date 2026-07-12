@@ -19,6 +19,7 @@
 
 use ahash::AHashMap;
 use std::fs;
+use std::ops::RangeInclusive;
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
 
@@ -63,9 +64,9 @@ fn main() -> ExitCode {
   let findings = parse_findings(&stdout);
 
   // caches the ranges where cfg(test) and dynamic impls are located in each file
-  let mut cfg_test_ranges_by_file: AHashMap<String, Vec<(usize, usize)>> = AHashMap::new();
+  let mut cfg_test_ranges_by_file: AHashMap<String, Vec<RangeInclusive<usize>>> = AHashMap::new();
   // caches the ranges where dynamic impls are located in each file
-  let mut dynamic_impl_ranges_by_file: AHashMap<String, Vec<(usize, usize)>> = AHashMap::new();
+  let mut dynamic_impl_ranges_by_file: AHashMap<String, Vec<RangeInclusive<usize>>> = AHashMap::new();
 
   let mut found_errors = false;
   for finding in findings {
@@ -110,15 +111,15 @@ fn parse_findings(output: &str) -> Vec<Finding> {
     .collect()
 }
 
-fn in_ranges(line: usize, ranges: &[(usize, usize)]) -> bool {
-  ranges.iter().any(|&(start, end)| line >= start && line <= end)
+fn in_ranges(line: usize, ranges: &[RangeInclusive<usize>]) -> bool {
+  ranges.iter().any(|range| range.contains(&line))
 }
 
 /// line ranges (1-based, inclusive) of all `#[cfg(test)]` items and `#[test]` functions in the
 /// given file. The latter covers `#[test]` functions in integration test files under `tests/`,
 /// which have no `#[cfg(test)]` attribute of their own (the whole file is test-only already)
 /// but are still only ever invoked by the test harness, never by other code.
-fn cfg_test_ranges(path: &Path) -> Vec<(usize, usize)> {
+fn cfg_test_ranges(path: &Path) -> Vec<RangeInclusive<usize>> {
   let Ok(content) = fs::read_to_string(path) else {
     return Vec::new();
   };
@@ -133,7 +134,7 @@ fn cfg_test_ranges(path: &Path) -> Vec<(usize, usize)> {
       item_start += 1;
     }
     if let Some(end) = block_end(&lines, item_start) {
-      ranges.push((i + 1, end + 1));
+      ranges.push((i + 1)..=(end + 1));
     }
   }
   ranges
@@ -141,7 +142,7 @@ fn cfg_test_ranges(path: &Path) -> Vec<(usize, usize)> {
 
 /// line ranges (1-based, inclusive) of all `impl <Trait> for ...` blocks in the given file
 /// whose trait is listed in [`DYNAMIC_TRAITS`]
-fn dynamic_trait_impl_ranges(path: &Path) -> Vec<(usize, usize)> {
+fn dynamic_trait_impl_ranges(path: &Path) -> Vec<RangeInclusive<usize>> {
   let Ok(content) = fs::read_to_string(path) else {
     return Vec::new();
   };
@@ -155,7 +156,7 @@ fn dynamic_trait_impl_ranges(path: &Path) -> Vec<(usize, usize)> {
       continue;
     }
     if let Some(end) = block_end(&lines, i) {
-      ranges.push((i + 1, end + 1));
+      ranges.push((i + 1)..=(end + 1));
     }
   }
   ranges
