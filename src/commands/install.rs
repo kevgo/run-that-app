@@ -32,7 +32,7 @@ pub fn install(args: InstallArgs, apps: &Apps) -> Result<ExitCode> {
   match outcome {
     LoadOrInstallAppOutcome::Loaded { executable_call: _ } => Ok(ExitCode::SUCCESS),
     LoadOrInstallAppOutcome::NotInstallable { app: _ } if args.optional => Ok(ExitCode::SUCCESS),
-    LoadOrInstallAppOutcome::NotInstallable { app: _ } => Err(UserError::UnsupportedPlatform { app: app_to_install.name() }),
+    LoadOrInstallAppOutcome::NotInstallable { app } => Err(UserError::UnsupportedPlatform { app }),
   }
 }
 
