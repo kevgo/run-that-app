@@ -85,15 +85,15 @@ pub fn load_or_install_app_and_carrier(args: &LoadOrInstallAppAndCarrierArgs) ->
     RunMethod::NodeJS { package } => {
       // step 1: ensure NodeJS is installed, install if needed
       let npm = Npm {};
-      let load_or_install_app_and_carrier_args = LoadOrInstallAppAndCarrierArgs {
+      let outcome = load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
         app: &npm,
         cli_version: None,
         optional: args.optional,
         from_source: false,
         ctx: args.ctx,
         apps: args.apps,
-      };
-      match load_or_install_app_and_carrier(load_or_install_app_and_carrier_args)? {
+      })?;
+      match outcome {
         LoadOrInstallAppOutcome::Loaded { executable_call } => executable_call,
         LoadOrInstallAppOutcome::NotInstallable { app } => {
           println!("ERROR: cannot install NodeJS: {app}");

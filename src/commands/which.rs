@@ -2,7 +2,7 @@ use crate::applications::{ApplicationName, Apps};
 use crate::configuration::{self, Version};
 use crate::context::RuntimeContext;
 use crate::error::Result;
-use crate::executables::{LoadOrInstallAppOutcome, LoadOrInstallAppAndCarrierArgs, load_or_install_app_and_carrier};
+use crate::executables::{LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, load_or_install_app_and_carrier};
 use crate::yard::Yard;
 use crate::{logging, platform, yard};
 use std::process::ExitCode;
@@ -19,7 +19,7 @@ pub fn which(args: &WhichArgs, apps: &Apps) -> Result<ExitCode> {
     config_file: &config_file,
     log,
   };
-  let outcome = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+  let outcome = load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: args.version.as_ref(),
     optional: args.optional,

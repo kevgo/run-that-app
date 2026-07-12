@@ -147,16 +147,15 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
   let include_app_names = args.include_apps.iter().map(|app| app.name()).collect();
   let include_app_versions = config_file.lookup_many(include_app_names);
   let include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, &ctx)?;
-
-  let load_or_install_app_and_carrier_args = LoadOrInstallAppAndCarrierArgs {
+  let outcome = load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: args.version.as_ref(),
     optional: args.optional,
     from_source: args.from_source,
     ctx: &ctx,
     apps,
-  };
-  let executable_call = match load_or_install_app_and_carrier(load_or_install_app_and_carrier_args)? {
+  })?;
+  let executable_call = match outcome {
     LoadOrInstallAppOutcome::Loaded { executable_call } => executable_call,
     LoadOrInstallAppOutcome::NotInstallable { app } => {
       if args.optional {
