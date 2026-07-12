@@ -125,12 +125,7 @@ pub fn parse(cli_args: impl Iterator<Item = String>, apps: &Apps) -> Result<Cli>
       return Ok(Cli::Add(AddArgs { app_name, verbose }));
     }
     if indicate_available {
-      return Ok(Cli::Available(AvailableArgs {
-        app_name,
-        optional,
-        version,
-        verbose,
-      }));
+      return Ok(Cli::Available(AvailableArgs { app_name, optional, verbose }));
     }
     if install {
       return Ok(Cli::Install(InstallArgs {
@@ -226,7 +221,6 @@ mod tests {
           let want = Ok(Cli::Available(AvailableArgs {
             app_name: shellcheck.name(),
             optional: false,
-            version: None,
             verbose: false,
           }));
           pretty::assert_eq!(have, want);
@@ -241,7 +235,6 @@ mod tests {
           let want = Ok(Cli::Available(AvailableArgs {
             app_name: shellcheck.name(),
             optional: false,
-            version: None,
             verbose: true,
           }));
           pretty::assert_eq!(have, want);
