@@ -68,7 +68,7 @@ pub fn load_or_install_app_and_carrier(
         }
         LoadAppVersionsOutcome::NotInstalled { app: _ } => {} // we'll install the app in the next step
       }
-      // step 3: slow-path: here the app needs to be installed --> install any of the configured versions
+      // step 3: here the app needs to be installed --> install any of the configured versions
       match installation::versions(app_definition, &versions, optional, from_source, ctx, apps)? {
         Outcome::Installed => {} // we'll load the app in the next step
         Outcome::NotInstalled { app } => {
@@ -109,7 +109,7 @@ pub fn load_or_install_app_and_carrier(
         }
         LoadAppVersionsOutcome::NotInstalled { app: _ } => {}
       }
-      // step 3: slow-path: here the app needs to be installed --> install any of the configured versions
+      // step 3: here the app needs to be installed --> install any of the configured versions
       match installation::versions(carrier_app.as_ref(), &carrier_versions, optional, from_source, ctx, apps)? {
         Outcome::Installed => {}
         Outcome::NotInstalled { app } => {
@@ -143,11 +143,11 @@ pub fn load_or_install_app_and_carrier(
       match load_app_versions(carrier_app.as_ref(), &carrier_versions, &carrier_executable, &carrier_args, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
-        LoadAppVersionsOutcome::NotInstalled { app: _ } => {}
+        LoadAppVersionsOutcome::NotInstalled { app: _ } => {} // we'll install the app in the next step
       }
-      // step 3: slow-path: here the app needs to be installed --> install any of the configured versions
+      // step 3: here the app needs to be installed --> install any of the configured versions
       match installation::versions(carrier_app.as_ref(), &carrier_versions, optional, from_source, ctx, apps)? {
-        Outcome::Installed => {}
+        Outcome::Installed => {} // we'll load the app in the next step
         Outcome::NotInstalled { app } => {
           return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app });
         }
