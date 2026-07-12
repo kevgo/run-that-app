@@ -119,7 +119,7 @@ pub fn load_or_install_app_and_carrier(
       match load_npm_entry_point_versions(app, package, &app_versions, ctx.yard)? {
         LoadAppOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
         LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
-        LoadAppOutcome::NotInstalled { app: _ } => {}
+        LoadAppOutcome::NotInstalled { app: _ } => {} // we'll install the npm package in the next step
       }
 
       // step 4: install the npm package
