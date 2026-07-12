@@ -17,6 +17,9 @@ build:  # compiles this app in debug mode
 contest: build
 	target/debug/rta contest
 
+deadcode:
+	cargo test --test deadcode
+
 doc: build node_modules  # test the documentation
 	$(TEXTRUNNER)
 
@@ -48,9 +51,11 @@ lint: build  # runs all linters
 ps: fix test  # pitstop
 
 setup:  # install development dependencies on this computer
-	rustup component add clippy
+	rustup component add clippy rust-analyzer
 	rustup toolchain add nightly
 	rustup component add rustfmt --toolchain nightly
+	cargo install --locked --git https://github.com/est31/warnalyzer warnalyzer
+
 
 setup-githooks: build  ## installs the Git pre-commit to auto-format
 	@$(LEFTHOOK) install
