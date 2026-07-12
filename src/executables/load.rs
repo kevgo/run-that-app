@@ -40,7 +40,7 @@ pub fn load_app_versions(
 pub enum LoadAppVersionsOutcome {
   /// the app was loaded successfully, here is the executable to call it
   Loaded { executable_call: ExecutableCall },
-  /// all requested versions of the app are not installable
+  /// none of the requested versions of the app are installable
   NotInstallable { app: ApplicationName },
   /// the given version of the app is not installed
   /// and not marked as uninstallable
