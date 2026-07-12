@@ -41,6 +41,7 @@ zip = "0.6.6"
 [dev-dependencies]
 maplit = "1.0.2"
 pretty = { package = "pretty_assertions", version = "1.4.1" }
+warnalyzer = "0.2.0"
 
 # We allow warnings here, the Makefile denies them.
 # This way warnings don't hold up running compiling and running tests,
