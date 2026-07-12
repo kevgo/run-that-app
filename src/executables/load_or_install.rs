@@ -1,5 +1,5 @@
 use crate::applications::{AppDefinition, ApplicationName, Apps, Npm};
-use crate::configuration::{AppVersions, RequestedVersion, RequestedVersions};
+use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableArgs, ExecutableCall, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
@@ -10,12 +10,11 @@ use ahash::AHashSet;
 use std::fs;
 use std::path::Path;
 
-pub fn load_or_install_apps(apps_versions: &Vec<AppVersions>, apps: &Apps, optional: bool, ctx: &RuntimeContext) -> Result<Vec<ExecutableCall>> {
-  let mut result = Vec::with_capacity(apps_versions.len());
-  for app_versions in apps_versions {
-    let app = apps.lookup(&app_versions.app_name)?;
+pub fn load_or_install_apps(apps_to_include: &[&dyn AppDefinition], apps: &Apps, optional: bool, ctx: &RuntimeContext) -> Result<Vec<ExecutableCall>> {
+  let mut result = Vec::with_capacity(apps_to_include.len());
+  for app_to_include in apps_to_include {
     let outcome = load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
-      app,
+      app: app_to_include.to_owned(),
       cli_version: None,
       optional,
       from_source: false,

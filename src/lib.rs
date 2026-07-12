@@ -87,9 +87,9 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
     Cli::AppsShort => Ok(commands::applications::short(&apps)),
     Cli::Available(args) => commands::available(args, &apps),
     Cli::DisplayHelp => Ok(commands::help()),
-    Cli::Install(args) => commands::install(args, &apps),
+    Cli::Install(args) => commands::install(&args, &apps),
     Cli::InstallAll => commands::install_all(&apps),
-    Cli::Reinstall(args) => commands::reinstall(args, &apps),
+    Cli::Reinstall(args) => commands::reinstall(&args, &apps),
     Cli::RunApp(args) => commands::run(args, &apps),
     Cli::Test(mut args) => commands::test(&mut args, &apps),
     Cli::Update(args) => commands::update(&args, &apps),
@@ -144,9 +144,7 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
     config_file: &config_file,
     log,
   };
-  let include_app_names = args.include_apps.iter().map(|app| app.name()).collect();
-  let include_app_versions = config_file.lookup_many(include_app_names);
-  let include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, &ctx)?;
+  let include_apps = load_or_install_apps(&args.include_apps, apps, args.optional, &ctx)?;
   let outcome = load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: args.version.as_ref(),

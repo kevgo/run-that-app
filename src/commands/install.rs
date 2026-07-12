@@ -7,7 +7,7 @@ use crate::yard::Yard;
 use crate::{logging, platform, yard};
 use std::process::ExitCode;
 
-pub fn install(args: InstallArgs, apps: &Apps) -> Result<ExitCode> {
+pub fn install(args: &InstallArgs, apps: &Apps) -> Result<ExitCode> {
   let app_to_install = apps.lookup(&args.app_name)?;
   let log = logging::new(args.verbose);
   let platform = platform::detect(log)?;
@@ -19,8 +19,8 @@ pub fn install(args: InstallArgs, apps: &Apps) -> Result<ExitCode> {
     config_file: &config_file,
     log,
   };
-  let include_app_versions = config_file.lookup_many(args.include_apps);
-  let _include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, &ctx)?;
+  let include_apps = apps.lookup_many(&args.include_apps)?;
+  load_or_install_apps(&include_apps, apps, args.optional, &ctx)?;
   let outcome = load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
     app: app_to_install,
     cli_version: args.version.as_ref(),
