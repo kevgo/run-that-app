@@ -208,7 +208,9 @@ pub fn version_any_method(
   ctx: &RuntimeContext,
   apps: &Apps,
 ) -> Result<Outcome> {
+  println!("version_any_method: {} {version:?}", app_definition.name());
   for install_method in app_definition.run_method(version, ctx.platform).install_methods() {
+    println!("install_method: {install_method:?}");
     if from_source && !install_method.is_from_source() {
       continue;
     }
@@ -231,6 +233,7 @@ pub fn version_method(
   ctx: &RuntimeContext,
   apps: &Apps,
 ) -> Result<Outcome> {
+  println!("version_method: {version:?}");
   ctx.yard.with_lock(&app_definition.name(), version, ctx, || {
     let staging_folder = ctx.yard.create_staging_folder(&app_definition.name(), version)?;
     let outcome = match install_method {

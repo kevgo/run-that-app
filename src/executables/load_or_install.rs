@@ -48,7 +48,7 @@ pub fn load_or_install_app_and_carrier(
       // ignore the install methods here
       // - we loaded them with a fake version so they are not accurate
       // - we just need to know whether this app runs by itself or via a carrier
-      //
+
       // step 1: determine the possible versions of the app
       let versions = if let Some(version) = cli_version {
         RequestedVersions::from(version)
@@ -66,11 +66,11 @@ pub fn load_or_install_app_and_carrier(
         LoadAppVersionsOutcome::NotInstallable { app } => {
           return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app });
         }
-        LoadAppVersionsOutcome::NotInstalled { app: _ } => {}
+        LoadAppVersionsOutcome::NotInstalled { app: _ } => {} // we'll install the app in the next step
       }
       // step 3: slow-path: here the app needs to be installed --> install any of the configured versions
       match installation::versions(app_definition, &versions, optional, from_source, ctx, apps)? {
-        Outcome::Installed => {}
+        Outcome::Installed => {} // we'll load the app in the next step
         Outcome::NotInstalled { app } => {
           return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app });
         }
@@ -90,6 +90,7 @@ pub fn load_or_install_app_and_carrier(
       app_definition: carrier_app,
       executable_name: carrier_executable_name,
     } => {
+      println!("load_or_install_app_and_carrier: OtherAppOtherExecutable");
       // step 1: determine the version of the carrier app to install
       let carrier_versions = if let Some(version) = cli_version {
         RequestedVersions::from(version)
@@ -100,7 +101,8 @@ pub fn load_or_install_app_and_carrier(
           app: carrier_app.name().clone(),
         });
       };
-      // step 2: fast-path: try to load the given carrier executable
+      println!("carrier_versions: {carrier_versions:?}");
+      // step 2: fast-path: try to load the given executable from the carrier directory
       let carrier_executable = carrier_executable_name.platform_path(ctx.platform.os);
       match load_app_versions(carrier_app.as_ref(), &carrier_versions, &carrier_executable, &ExecutableArgs::None, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
@@ -110,14 +112,16 @@ pub fn load_or_install_app_and_carrier(
         LoadAppVersionsOutcome::NotInstalled { app: _ } => {}
       }
       // step 3: slow-path: here the app needs to be installed --> install any of the configured versions
-      match installation::versions(app_definition, &carrier_versions, optional, from_source, ctx, apps)? {
+      println!("installing carrier versions: {carrier_versions:?}");
+      match installation::versions(carrier_app.as_ref(), &carrier_versions, optional, from_source, ctx, apps)? {
         Outcome::Installed => {}
         Outcome::NotInstalled { app } => {
           return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app });
         }
       }
       // step 4: load the `carrier_executable_name` from the carrier directory
-      match load_app_versions(app_definition, &carrier_versions, &carrier_executable, &ExecutableArgs::None, ctx)? {
+      println!("load carrier executable: {carrier_executable:?}");
+      match load_app_versions(carrier_app.as_ref(), &carrier_versions, &carrier_executable, &ExecutableArgs::None, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
         LoadAppVersionsOutcome::NotInstalled { app } => {

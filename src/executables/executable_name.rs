@@ -49,6 +49,7 @@ impl From<String> for ExecutableNameUnix {
 
 /// The platform-specific filename of an executable.
 /// On Windows: "unix-executable-name.exe"
+#[derive(Clone, Debug, PartialEq)]
 pub struct ExecutableNamePlatform(String);
 
 impl From<String> for ExecutableNamePlatform {
