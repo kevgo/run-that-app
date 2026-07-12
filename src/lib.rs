@@ -165,12 +165,8 @@ pub fn get_cmd(
     apps,
   })? {
     LoadOrInstallAppOutcome::Loaded { executable_call } => executable_call,
-    LoadOrInstallAppOutcome::NotInstallable { app } => {
-      if optional {
-        return Ok(None);
-      }
-      return Err(error::UserError::UnsupportedPlatform { app });
-    }
+    LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => return Ok(None),
+    LoadOrInstallAppOutcome::NotInstallable { app } => return Err(error::UserError::UnsupportedPlatform { app }),
   };
   let (executable, args) = executable_call.with_args(app_args);
   let mut paths_to_include: Vec<&Path> = vec![&executable.parent_path()];
