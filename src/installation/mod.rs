@@ -175,8 +175,9 @@ impl Display for BinFolder {
   }
 }
 
+/// installs the first installable of the given versions of the given app
 pub fn versions(
-  app_definition: &dyn AppDefinition,
+  app: &dyn AppDefinition,
   versions: &RequestedVersions,
   optional: bool,
   from_source: bool,
@@ -188,13 +189,13 @@ pub fn versions(
       RequestedVersion::Path(_version_req) => {
         // we can't install anything into the global path
       }
-      RequestedVersion::Yard(version) => match version_any_method(app_definition, version, optional, from_source, ctx, apps)? {
+      RequestedVersion::Yard(version) => match version_any_method(app, version, optional, from_source, ctx, apps)? {
         Outcome::Installed => return Ok(Outcome::Installed),
         Outcome::NotInstalled { app: _ } => {}
       },
     }
   }
-  Ok(Outcome::NotInstalled { app: app_definition.name() })
+  Ok(Outcome::NotInstalled { app: app.name() })
 }
 
 /// installs the given app using any of its installation methods
