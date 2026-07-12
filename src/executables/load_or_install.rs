@@ -10,11 +10,11 @@ use ahash::AHashSet;
 use std::fs;
 use std::path::Path;
 
-pub fn load_or_install_apps(apps_to_include: &[&dyn AppDefinition], apps: &Apps, optional: bool, ctx: &RuntimeContext) -> Result<Vec<ExecutableCall>> {
+pub fn load_or_install_apps(apps_to_include: Vec<&dyn AppDefinition>, apps: &Apps, optional: bool, ctx: &RuntimeContext) -> Result<Vec<ExecutableCall>> {
   let mut result = Vec::with_capacity(apps_to_include.len());
   for app_to_include in apps_to_include {
     match load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
-      app: app_to_include.to_owned(),
+      app: app_to_include,
       cli_version: None,
       optional,
       from_source: false,

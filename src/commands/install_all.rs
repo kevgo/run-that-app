@@ -19,6 +19,6 @@ pub fn install_all(apps: &Apps) -> Result<ExitCode> {
   };
   let app_names_to_install: Vec<&ApplicationName> = config_file.apps.iter().map(|app| &app.app_name).collect();
   let apps_to_install = apps.lookup_many(&app_names_to_install)?;
-  let _ = load_or_install_apps(&apps_to_install, apps, true, &ctx)?;
+  let _ = load_or_install_apps(apps_to_install, apps, true, &ctx)?;
   Ok(ExitCode::SUCCESS)
 }

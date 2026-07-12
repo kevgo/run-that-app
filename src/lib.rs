@@ -144,7 +144,7 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
     config_file: &config_file,
     log,
   };
-  let include_apps = load_or_install_apps(&args.include_apps, apps, args.optional, &ctx)?;
+  let include_apps = load_or_install_apps(args.include_apps, apps, args.optional, &ctx)?;
   let executable_call = match load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: args.version.as_ref(),

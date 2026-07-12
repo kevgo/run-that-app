@@ -21,7 +21,7 @@ pub fn install(args: &InstallArgs, apps: &Apps) -> Result<ExitCode> {
   };
   // install the included apps
   let include_apps = apps.lookup_many(&args.include_apps)?;
-  load_or_install_apps(&include_apps, apps, args.optional, &ctx)?;
+  load_or_install_apps(include_apps, apps, args.optional, &ctx)?;
   // install the main app
   match load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
     app: app_to_install,
