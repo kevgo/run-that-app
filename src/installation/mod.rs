@@ -194,9 +194,7 @@ pub fn versions(
       },
     }
   }
-  Ok(Outcome::NotInstalled {
-    app: app_definition.name().clone(),
-  })
+  Ok(Outcome::NotInstalled { app: app_definition.name() })
 }
 
 /// installs the given app using any of its installation methods
