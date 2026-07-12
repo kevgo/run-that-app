@@ -15,15 +15,15 @@ pub fn load_or_install_apps(apps_versions: &Vec<AppVersions>, apps: &Apps, optio
   let mut result = vec![];
   for app_versions in apps_versions {
     let app = apps.lookup(&app_versions.app_name)?;
-    let load_or_install_app_and_carrier_args = LoadOrInstallAppWithCarrierArgs {
+    let outcome = load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
       app,
       cli_version: None,
       optional,
       from_source: false,
       ctx,
       apps,
-    };
-    match load_or_install_app_and_carrier(load_or_install_app_and_carrier_args)? {
+    })?;
+    match outcome {
       LoadOrInstallAppOutcome::Loaded { executable_call } => result.push(executable_call),
       LoadOrInstallAppOutcome::NotInstallable { app: _ } => {}
     }
@@ -36,7 +36,7 @@ pub fn load_or_install_apps(apps_versions: &Vec<AppVersions>, apps: &Apps, optio
 /// otherwise the version in the given config file.
 ///
 /// Installs and uses the carrier app if one is needed.
-pub fn load_or_install_app_and_carrier(args: LoadOrInstallAppWithCarrierArgs) -> Result<LoadOrInstallAppOutcome> {
+pub fn load_or_install_app_and_carrier(args: &LoadOrInstallAppAndCarrierArgs) -> Result<LoadOrInstallAppOutcome> {
   match args.app.run_method(&Version::from("*"), args.ctx.platform) {
     RunMethod::ThisApp { install_methods: _ } => {
       // ignore the install methods here
@@ -85,7 +85,7 @@ pub fn load_or_install_app_and_carrier(args: LoadOrInstallAppWithCarrierArgs) ->
     RunMethod::NodeJS { package } => {
       // step 1: ensure NodeJS is installed, install if needed
       let npm = Npm {};
-      let load_or_install_app_and_carrier_args = LoadOrInstallAppWithCarrierArgs {
+      let load_or_install_app_and_carrier_args = LoadOrInstallAppAndCarrierArgs {
         app: &npm,
         cli_version: None,
         optional: args.optional,
@@ -136,7 +136,7 @@ pub fn load_or_install_app_and_carrier(args: LoadOrInstallAppWithCarrierArgs) ->
   }
 }
 
-pub struct LoadOrInstallAppWithCarrierArgs<'a> {
+pub struct LoadOrInstallAppAndCarrierArgs<'a> {
   pub app: &'a dyn AppDefinition,
   pub cli_version: Option<&'a Version>,
   pub optional: bool,

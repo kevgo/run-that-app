@@ -2,7 +2,7 @@ use crate::applications::{ApplicationName, Apps};
 use crate::configuration::{self, Version};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::executables::{LoadOrInstallAppOutcome, LoadOrInstallAppWithCarrierArgs, load_or_install_app_and_carrier, load_or_install_apps};
+use crate::executables::{LoadOrInstallAppOutcome, LoadOrInstallAppAndCarrierArgs, load_or_install_app_and_carrier, load_or_install_apps};
 use crate::yard::Yard;
 use crate::{logging, platform, yard};
 use std::process::ExitCode;
@@ -21,7 +21,7 @@ pub fn install(args: InstallArgs, apps: &Apps) -> Result<ExitCode> {
   };
   let include_app_versions = config_file.lookup_many(args.include_apps);
   let _include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, &ctx)?;
-  let outcome = load_or_install_app_and_carrier(LoadOrInstallAppWithCarrierArgs {
+  let outcome = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app: app_to_install,
     cli_version: args.version.as_ref(),
     optional: args.optional,
