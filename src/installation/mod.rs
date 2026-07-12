@@ -237,8 +237,8 @@ pub fn version_method(
       Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &staging_folder, version, url, bin_folder, optional, ctx),
       Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &staging_folder, version, download_url, optional, ctx),
       Method::CompileGoSource { import_path } => compile_go::run(&staging_folder, import_path, optional, ctx, apps),
-      Method::CompileRustCrate { name, bin_folder: _ } => compile_rust::run(app_definition, version, &staging_folder, &RustSource::CratesIo { name }, ctx.log),
-      Method::CompileRustRepo { url } => compile_rust::run(app_definition, version, &staging_folder, &RustSource::Repository { url: url.clone() }, ctx.log),
+      Method::CompileRustCrate { name, bin_folder: _ } => compile_rust::run(app_definition, version, &staging_folder, &RustSource::CratesIo { name }, ctx),
+      Method::CompileRustRepo { url } => compile_rust::run(app_definition, version, &staging_folder, &RustSource::Repository { url: url.clone() }, ctx),
       Method::InstallNodeJSPackage { package } => install_nodejs_package::run(package, &staging_folder, version, optional, apps),
     }? {
       Outcome::Installed => {
