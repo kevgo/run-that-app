@@ -1,6 +1,5 @@
 use super::Outcome;
-use crate::applications;
-use crate::applications::Apps;
+use crate::applications::{self, AppDefinition, Apps, Go};
 use crate::configuration::RequestedVersions;
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
@@ -13,8 +12,9 @@ use which::which;
 
 /// installs the given Go-based application by compiling it from source
 pub fn run(app_folder: &Path, import_path: &str, optional: bool, from_source: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Outcome> {
+  let go = Go {};
   let go_args = vec!["install", &import_path];
-  let go_path = if let Ok(system_go_path) = which("go") {
+  let go_path = if let Ok(system_go_path) = which(go.executable_filename().platform_path(ctx.platform.os).as_ref()) {
     system_go_path
   } else {
     let Some(rta_path) = load_rta_go(optional, from_source, ctx, apps)? else {
