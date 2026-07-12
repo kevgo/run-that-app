@@ -19,4 +19,5 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: make setup
       - run: make ps
+      - run: make deadcode
       - run: git diff HEAD --exit-code --color
