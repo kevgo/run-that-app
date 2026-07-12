@@ -16,12 +16,14 @@ pub fn load_from_yard(
   ctx: &RuntimeContext,
 ) -> Result<LoadAppOutcome> {
   ctx.yard.with_lock(&app.name(), version, ctx, || {
-    // fast path: assume the app is installed, try to load it from the yard
+    // try to load the app from the yard
     if let Some((executable, bin_folder)) = ctx.yard.load_executable(app, executable, version, ctx) {
       let app_folder = ctx.yard.app_folder(&app.name(), version);
-      let args = args.locate(&app.name(), version, &app_folder, &bin_folder)?;
       return Ok(LoadAppOutcome::Loaded {
-        executable_call: ExecutableCall { executable, args },
+        executable_call: ExecutableCall {
+          executable,
+          args: args.locate(&app.name(), version, &app_folder, &bin_folder)?,
+        },
       });
     }
     // here the app is not installed --> check if it is marked as uninstallable
