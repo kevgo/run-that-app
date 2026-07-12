@@ -4,7 +4,6 @@ mod command_info;
 mod executable;
 mod executable_call;
 mod executable_name;
-mod install;
 mod load;
 mod load_from_path;
 mod load_from_yard;
