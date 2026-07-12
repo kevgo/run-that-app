@@ -1,19 +1,5 @@
-//! End-to-end test that runs warnalyzer (<https://github.com/est31/warnalyzer>) with its
-//! scip backend against this codebase, to catch dead code that isn't reachable from any
-//! entry point.
-//!
-//! warnalyzer produces two well-known categories of false positives that this test filters
-//! out before checking for regressions:
-//!
-//! - findings located inside `#[cfg(test)]` items, since those aren't dead, they are only
-//!   used by `cargo test`
-//! - findings for methods that are only ever called through dynamic dispatch (`dyn Trait`)
-//!   or compiler/macro magic (`Display`, `From`, `IntoIterator`, ...), which warnalyzer's
-//!   scip backend cannot trace back to a caller
-//!   (see <https://github.com/est31/warnalyzer#false-positives>)
-//!
-//! Anything that doesn't fall into one of those categories has to be listed explicitly in
-//! `KNOWN_FINDINGS` below, so that this test fails as soon as *new* dead code shows up.
+//! End-to-end test that finds unused public code.
+//! Public code isn't found by the Rust type checker.
 
 #![allow(clippy::expect_used)]
 
@@ -62,9 +48,9 @@ fn main() -> ExitCode {
     .expect("could not run warnalyzer, install it via `make setup` or see https://github.com/est31/warnalyzer");
   let findings = parse_output(&String::from_utf8_lossy(&output.stdout));
 
-  // caches the ranges where cfg(test) and dynamic impls are located in each file
+  // caches findings located inside `#[cfg(test)]` items
   let mut cfg_test_ranges_by_file: AHashMap<String, Vec<RangeInclusive<usize>>> = AHashMap::new();
-  // caches the ranges where dynamic impls are located in each file
+  // caches findings located inside dynamic impls
   let mut dynamic_impl_ranges_by_file: AHashMap<String, Vec<RangeInclusive<usize>>> = AHashMap::new();
 
   let mut found_errors = false;
