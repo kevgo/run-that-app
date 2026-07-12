@@ -111,16 +111,16 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// ```
 /// let actionlint = rta::applications::ActionLint {};
 /// let cmd_info = rta::get_cmd(
-///   &actionlint,
 ///   rta::GetCmdArgs {
+///     app: &actionlint,
 ///     version: Some("1.7.12".into()),
 ///     app_args: vec!["--help".into()],
+///     apps: &rta::applications::all(),
 ///     from_source: false,
 ///     include_apps: vec![],
 ///     optional: false,
 ///     verbose: false,
 ///   },
-///   &rta::applications::all(),
 /// );
 ///
 /// let Ok(cmd_info) = cmd_info else {
@@ -135,16 +135,16 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// assert!(exit_status.success());
 /// ```
 pub fn get_cmd(
-  app: &dyn AppDefinition,
   GetCmdArgs {
+    app,
     version,
     app_args,
+    apps,
     from_source,
     include_apps,
     optional,
     verbose,
   }: GetCmdArgs,
-  apps: &Apps,
 ) -> Result<Option<CommandInfo>, error::UserError> {
   let log = logging::new(verbose);
   let platform = platform::detect(log)?;
@@ -184,12 +184,18 @@ pub fn get_cmd(
 /// data needed to run an executable
 #[allow(clippy::struct_excessive_bools)]
 pub struct GetCmdArgs<'a> {
+  /// app to execute
+  pub app: &'a dyn AppDefinition,
+
   /// version of the app to execute
   pub version: Option<Version>,
 
   /// arguments to call the app with
   #[allow(clippy::struct_field_names)]
   pub app_args: Vec<String>,
+
+  /// all apps
+  pub apps: &'a Apps,
 
   /// if true, install only from source
   pub from_source: bool,
