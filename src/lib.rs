@@ -140,7 +140,7 @@ pub fn get_cmd(
     version,
     app_args,
     from_source,
-    include_apps: include_apps_1,
+    include_apps,
     optional,
     verbose,
   }: GetCmdArgs,
@@ -157,7 +157,7 @@ pub fn get_cmd(
     log,
   };
   // TODO: remove this and make all places that use the app names use app references directly
-  let include_app_names = include_apps_1.iter().map(|app| app.name()).collect();
+  let include_app_names = include_apps.iter().map(|app| app.name()).collect();
   let include_app_versions = config_file.lookup_many(include_app_names);
   let include_apps = load_or_install_apps(&include_app_versions, apps, optional, from_source, &ctx)?;
   let requested_versions = RequestedVersions::determine(&app.name(), version.as_ref(), &config_file)?;
