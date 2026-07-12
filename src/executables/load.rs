@@ -5,24 +5,20 @@ use crate::error::Result;
 use crate::executables::load_from_yard::LoadFromYardOutcome;
 use crate::executables::{ExecutableArgs, ExecutableCall, ExecutableNamePlatform, load_from_path, load_from_yard};
 
-/// Loads the given app at the first given version.
-/// Only attempts to load subsequently versions
-/// if the first version is marked as not installable
-/// or optional.
-///
-/// Returns either the loaded app
-/// or information which app version needs to be installed.
+/// Loads the given app at the earliest given version.
+/// Only attempts to load later versions
+/// if the first version is not installable.
 pub fn load_app_versions(
-  app_definition: &dyn AppDefinition,
-  requested_versions: &RequestedVersions,
+  app: &dyn AppDefinition,
+  versions: &RequestedVersions,
   executable: &ExecutableNamePlatform,
   executable_args: &ExecutableArgs,
   ctx: &RuntimeContext,
 ) -> Result<LoadAppVersionsOutcome> {
-  for requested_version in requested_versions {
-    match requested_version {
+  for version in versions {
+    match version {
       RequestedVersion::Path(version) => {
-        if let Some(executable_call_def) = load_from_path(app_definition, executable, version, executable_args.clone(), ctx)?
+        if let Some(executable_call_def) = load_from_path(app, executable, version, executable_args.clone(), ctx)?
           && let Some(app_folder) = executable_call_def.executable.clone().as_path().parent()
           && let Some(executable_call) = executable_call_def.into_executable_call(app_folder)
         {
@@ -30,20 +26,16 @@ pub fn load_app_versions(
         }
         // the app is not globally installed --> don't install it globally, try the next version
       }
-      RequestedVersion::Yard(version) => match load_from_yard(app_definition, version, executable, executable_args, ctx)? {
+      RequestedVersion::Yard(version) => match load_from_yard(app, version, executable, executable_args, ctx)? {
         LoadFromYardOutcome::Loaded { executable_call } => return Ok(LoadAppVersionsOutcome::Loaded { executable_call }),
         LoadFromYardOutcome::NotInstallable => {}
         LoadFromYardOutcome::NotInstalled => {
-          return Ok(LoadAppVersionsOutcome::NotInstalled {
-            app: app_definition.name().clone(),
-          });
+          return Ok(LoadAppVersionsOutcome::NotInstalled { app: app.name().clone() });
         }
       },
     }
   }
-  Ok(LoadAppVersionsOutcome::NotInstallable {
-    app: app_definition.name().clone(),
-  })
+  Ok(LoadAppVersionsOutcome::NotInstallable { app: app.name().clone() })
 }
 
 pub enum LoadAppVersionsOutcome {
