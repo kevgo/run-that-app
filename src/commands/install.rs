@@ -2,7 +2,7 @@ use crate::applications::{ApplicationName, Apps};
 use crate::configuration::{self, Version};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::executables::{LoadOrInstallAppWithCarrierArgs, LoadOrInstallAppWithCarrierOutcome, load_or_install_app_and_carrier, load_or_install_apps};
+use crate::executables::{LoadOrInstallAppOutcome, LoadOrInstallAppWithCarrierArgs, load_or_install_app_and_carrier, load_or_install_apps};
 use crate::yard::Yard;
 use crate::{logging, platform, yard};
 use std::process::ExitCode;
@@ -22,7 +22,7 @@ pub fn install(args: InstallArgs, apps: &Apps) -> Result<ExitCode> {
   let include_app_versions = config_file.lookup_many(args.include_apps);
   let _include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, &ctx)?;
   let outcome = load_or_install_app_and_carrier(LoadOrInstallAppWithCarrierArgs {
-    app_definition: app_to_install,
+    app: app_to_install,
     cli_version: args.version.as_ref(),
     optional: args.optional,
     from_source: args.from_source,
@@ -30,9 +30,9 @@ pub fn install(args: InstallArgs, apps: &Apps) -> Result<ExitCode> {
     apps,
   })?;
   match outcome {
-    LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call: _ } => Ok(ExitCode::SUCCESS),
-    LoadOrInstallAppWithCarrierOutcome::NotInstallable { app: _ } if args.optional => Ok(ExitCode::SUCCESS),
-    LoadOrInstallAppWithCarrierOutcome::NotInstallable { app: _ } => Err(UserError::UnsupportedPlatform { app: app_to_install.name() }),
+    LoadOrInstallAppOutcome::Loaded { executable_call: _ } => Ok(ExitCode::SUCCESS),
+    LoadOrInstallAppOutcome::NotInstallable { app: _ } if args.optional => Ok(ExitCode::SUCCESS),
+    LoadOrInstallAppOutcome::NotInstallable { app: _ } => Err(UserError::UnsupportedPlatform { app: app_to_install.name() }),
   }
 }
 

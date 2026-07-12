@@ -18,5 +18,5 @@ pub use executable_name::{ExecutableNamePlatform, ExecutableNameUnix};
 pub use load::{LoadAppVersionsOutcome, load_app_versions};
 pub use load_from_path::load_from_path;
 pub use load_from_yard::load_from_yard;
-pub use load_or_install::{LoadOrInstallAppWithCarrierArgs, LoadOrInstallAppWithCarrierOutcome, load_or_install_app_and_carrier, load_or_install_apps};
+pub use load_or_install::{LoadOrInstallAppOutcome, LoadOrInstallAppWithCarrierArgs, load_or_install_app_and_carrier, load_or_install_apps};
 pub use run_method::RunMethod;
