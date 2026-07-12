@@ -134,8 +134,19 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// let exit_status = cmd.status().unwrap();
 /// assert!(exit_status.success());
 /// ```
-pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result<Option<CommandInfo>, error::UserError> {
-  let log = logging::new(args.verbose);
+pub fn get_cmd(
+  app: &dyn AppDefinition,
+  GetCmdArgs {
+    version,
+    app_args,
+    from_source,
+    include_apps: include_apps_1,
+    optional,
+    verbose,
+  }: GetCmdArgs,
+  apps: &Apps,
+) -> Result<Option<CommandInfo>, error::UserError> {
+  let log = logging::new(verbose);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
   let config_file = configuration::File::load(apps)?;
@@ -146,17 +157,17 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
     log,
   };
   // TODO: remove this and make all places that use the app names use app references directly
-  let include_app_names = args.include_apps.iter().map(|app| app.name()).collect();
+  let include_app_names = include_apps_1.iter().map(|app| app.name()).collect();
   let include_app_versions = config_file.lookup_many(include_app_names);
-  let include_apps = load_or_install_apps(&include_app_versions, apps, args.optional, args.from_source, &ctx)?;
-  let requested_versions = RequestedVersions::determine(&app.name(), args.version.as_ref(), &config_file)?;
-  let Some(executable_call) = load_or_install_app(app, &requested_versions, args.optional, args.from_source, &ctx, apps)? else {
-    if args.optional {
+  let include_apps = load_or_install_apps(&include_app_versions, apps, optional, from_source, &ctx)?;
+  let requested_versions = RequestedVersions::determine(&app.name(), version.as_ref(), &config_file)?;
+  let Some(executable_call) = load_or_install_app(app, &requested_versions, optional, from_source, &ctx, apps)? else {
+    if optional {
       return Ok(None);
     }
     return Err(error::UserError::UnsupportedPlatform { app: app.name() });
   };
-  let (executable, args) = executable_call.with_args(args.app_args);
+  let (executable, args) = executable_call.with_args(app_args);
   let mut paths_to_include: Vec<&Path> = vec![&executable.parent_path()];
   for app_to_include in &include_apps {
     paths_to_include.push(app_to_include.executable.parent_path());
