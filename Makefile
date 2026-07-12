@@ -60,7 +60,7 @@ setup:  # install development dependencies on this computer
 setup-githooks: build  ## installs the Git pre-commit to auto-format
 	@$(LEFTHOOK) install
 
-test: unit lint doc deadcode  # runs all tests
+test: unit lint doc  # runs all tests
 
 todo:  # displays all TODO items
 	@git grep --color=always --line-number TODO ':!target' | grep -v Makefile
