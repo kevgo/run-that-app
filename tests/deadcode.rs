@@ -60,8 +60,7 @@ fn main() -> ExitCode {
     .arg(&repo_root)
     .output()
     .expect("could not run warnalyzer, install it via `make setup` or see https://github.com/est31/warnalyzer");
-  let stdout = String::from_utf8_lossy(&output.stdout);
-  let findings = parse_findings(&stdout);
+  let findings = parse_output(&String::from_utf8_lossy(&output.stdout));
 
   // caches the ranges where cfg(test) and dynamic impls are located in each file
   let mut cfg_test_ranges_by_file: AHashMap<String, Vec<RangeInclusive<usize>>> = AHashMap::new();
@@ -92,7 +91,7 @@ fn main() -> ExitCode {
 }
 
 /// parses lines like `src/applications/go.rs:87:6: unused Method 'allowed_versions'`
-fn parse_findings(output: &str) -> Vec<Finding> {
+fn parse_output(output: &str) -> Vec<Finding> {
   output
     .lines()
     .filter_map(|line| {
