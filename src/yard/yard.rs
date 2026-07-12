@@ -230,8 +230,7 @@ impl Yard {
 
   pub fn move_staging_folder_to_app_folder(&self, staging_folder: PathBuf, app_folder: PathBuf) -> Result<()> {
     // fast path: try to move the folder directly
-    let outcome = fs::rename(&staging_folder, &app_folder);
-    let Err(err) = outcome else {
+    let Err(err) = fs::rename(&staging_folder, &app_folder) else {
       return Ok(());
     };
     // slow path: make sure the target parent folder exists and try moving the folder again
