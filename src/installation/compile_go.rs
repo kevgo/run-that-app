@@ -1,6 +1,5 @@
 use super::Outcome;
-use crate::applications;
-use crate::applications::Apps;
+use crate::applications::{self, AppDefinition, Apps, Go};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::{LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, load_or_install_app_and_carrier};
@@ -17,7 +16,7 @@ pub fn run(app_folder: &Path, import_path: &str, optional: bool, ctx: &RuntimeCo
     system_go_path
   } else {
     let Some(rta_path) = load_rta_go(optional, ctx, apps)? else {
-      return Ok(Outcome::NotInstalled { app: "go".into() });
+      return Ok(Outcome::NotInstalled { app: Go {}.name() });
     };
     rta_path
   };
