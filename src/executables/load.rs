@@ -2,7 +2,6 @@ use crate::applications::{AppDefinition, ApplicationName};
 use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::Result;
-use crate::executables::load_from_yard::LoadFromYardOutcome;
 use crate::executables::{ExecutableArgs, ExecutableCall, ExecutableNamePlatform, load_from_path, load_from_yard};
 
 /// Loads the given app at the earliest of the given versions that is installable
@@ -14,7 +13,7 @@ pub fn load_app_versions(
   executable: &ExecutableNamePlatform,
   args: &ExecutableArgs,
   ctx: &RuntimeContext,
-) -> Result<LoadAppVersionsOutcome> {
+) -> Result<LoadAppOutcome> {
   for version in versions {
     match version {
       RequestedVersion::Path(version) => {
@@ -22,22 +21,22 @@ pub fn load_app_versions(
           && let Some(app_folder) = executable_call_def.executable.clone().as_path().parent()
           && let Some(executable_call) = executable_call_def.into_executable_call(app_folder)
         {
-          return Ok(LoadAppVersionsOutcome::Loaded { executable_call });
+          return Ok(LoadAppOutcome::Loaded { executable_call });
         }
       }
       RequestedVersion::Yard(version) => match load_from_yard(app, version, executable, args, ctx)? {
-        LoadFromYardOutcome::Loaded { executable_call } => return Ok(LoadAppVersionsOutcome::Loaded { executable_call }),
-        LoadFromYardOutcome::NotInstallable => {}
-        LoadFromYardOutcome::NotInstalled => {
-          return Ok(LoadAppVersionsOutcome::NotInstalled { app: app.name() });
+        LoadAppOutcome::Loaded { executable_call } => return Ok(LoadAppOutcome::Loaded { executable_call }),
+        LoadAppOutcome::NotInstallable { app: _ } => {}
+        LoadAppOutcome::NotInstalled { app } => {
+          return Ok(LoadAppOutcome::NotInstalled { app });
         }
       },
     }
   }
-  Ok(LoadAppVersionsOutcome::NotInstallable { app: app.name().clone() })
+  Ok(LoadAppOutcome::NotInstallable { app: app.name().clone() })
 }
 
-pub enum LoadAppVersionsOutcome {
+pub enum LoadAppOutcome {
   /// the app was loaded successfully, here is the executable to call it
   Loaded { executable_call: ExecutableCall },
   /// none of the requested versions of the app are installable

@@ -4,41 +4,31 @@ use crate::Version;
 use crate::applications::AppDefinition;
 use crate::context::RuntimeContext;
 use crate::error::Result;
-use crate::executables::{ExecutableArgs, ExecutableCall, ExecutableNamePlatform};
+use crate::executables::{ExecutableArgs, ExecutableCall, ExecutableNamePlatform, LoadAppOutcome};
 
 /// Loads the given app at the given version
 /// and returns a callable that executes it.
 pub fn load_from_yard(
-  app_definition: &dyn AppDefinition,
+  app: &dyn AppDefinition,
   version: &Version,
   executable: &ExecutableNamePlatform,
-  executable_args: &ExecutableArgs,
+  args: &ExecutableArgs,
   ctx: &RuntimeContext,
-) -> Result<LoadFromYardOutcome> {
-  // load or install the app
-  ctx.yard.with_lock(&app_definition.name(), version, ctx, || {
-    // try to load the app
-    if let Some((executable, bin_folder)) = ctx.yard.load_executable(app_definition, executable, version, ctx) {
-      let app_folder = ctx.yard.app_folder(&app_definition.name(), version);
-      let args = executable_args.locate(&app_definition.name(), version, &app_folder, &bin_folder)?;
-      return Ok(LoadFromYardOutcome::Loaded {
+) -> Result<LoadAppOutcome> {
+  ctx.yard.with_lock(&app.name(), version, ctx, || {
+    // fast path: assume the app is installed, try to load it from the yard
+    if let Some((executable, bin_folder)) = ctx.yard.load_executable(app, executable, version, ctx) {
+      let app_folder = ctx.yard.app_folder(&app.name(), version);
+      let args = args.locate(&app.name(), version, &app_folder, &bin_folder)?;
+      return Ok(LoadAppOutcome::Loaded {
         executable_call: ExecutableCall { executable, args },
       });
     }
-    // app not installed --> check if uninstallable
-    if ctx.yard.is_not_installable(&app_definition.name(), version) {
-      return Ok(LoadFromYardOutcome::NotInstallable);
+    // here the app is not installed --> check if it is marked as uninstallable
+    if ctx.yard.is_not_installable(&app.name(), version) {
+      return Ok(LoadAppOutcome::NotInstallable { app: app.name() });
     }
     // app not installed and installable
-    Ok(LoadFromYardOutcome::NotInstalled)
+    Ok(LoadAppOutcome::NotInstalled { app: app.name() })
   })
-}
-
-pub enum LoadFromYardOutcome {
-  /// the app was loaded successfully, here is the executable to call it
-  Loaded { executable_call: ExecutableCall },
-  /// the app is marked as not installable
-  NotInstallable,
-  /// the app is not installed
-  NotInstalled,
 }
