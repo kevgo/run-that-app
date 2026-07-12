@@ -95,7 +95,7 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
     Cli::Update(args) => commands::update(&args, &apps),
     Cli::Version => Ok(commands::version()),
     Cli::Versions(args) => commands::versions(&args, &apps),
-    Cli::Which(args) => commands::which(&args, &apps),
+    Cli::Which(args) => commands::which(args, &apps),
   }
 }
 

@@ -7,9 +7,17 @@ use crate::yard::Yard;
 use crate::{logging, platform, yard};
 use std::process::ExitCode;
 
-pub fn which(args: &WhichArgs, apps: &Apps) -> Result<ExitCode> {
-  let app = apps.lookup(&args.app_name)?;
-  let log = logging::new(args.verbose);
+pub fn which(
+  WhichArgs {
+    app_name,
+    optional,
+    version,
+    verbose,
+  }: WhichArgs,
+  apps: &Apps,
+) -> Result<ExitCode> {
+  let app = apps.lookup(&app_name)?;
+  let log = logging::new(verbose);
   let yard = Yard::load_or_create(&yard::production_location()?)?;
   let platform = platform::detect(log)?;
   let config_file = configuration::File::load(apps)?;
@@ -21,8 +29,8 @@ pub fn which(args: &WhichArgs, apps: &Apps) -> Result<ExitCode> {
   };
   match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
-    cli_version: args.version.as_ref(),
-    optional: args.optional,
+    cli_version: version.as_ref(),
+    optional,
     from_source: false,
     ctx: &ctx,
     apps,
