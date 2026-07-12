@@ -40,7 +40,7 @@ pub fn load_or_install_app_and_carrier(
     RunMethod::ThisApp { install_methods: _ } => {
       // ignore the install methods here
       // - we loaded them with a fake version so they are not accurate
-      // - we just need to know whether this app runs by itself or via a carrier
+      // - we just need to know whether this app runs by itself or via a carrier here
       load_or_install_app(LoadOrInstallAppArgs {
         app: app_definition,
         cli_version,
@@ -55,11 +55,11 @@ pub fn load_or_install_app_and_carrier(
 
     RunMethod::OtherAppOtherExecutable {
       app_definition: carrier_app,
-      executable_name: carrier_executable_name,
+      executable_name: carrier_executable,
     } => load_or_install_app(LoadOrInstallAppArgs {
       app: carrier_app.as_ref(),
       cli_version,
-      executable: carrier_executable_name,
+      executable: carrier_executable,
       args: &ExecutableArgs::None,
       optional,
       from_source,
