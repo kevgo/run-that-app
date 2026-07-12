@@ -1,9 +1,11 @@
 use super::Outcome;
 use crate::applications::AppDefinition;
 use crate::configuration::Version;
+use crate::context::RuntimeContext;
 use crate::download::Url;
 use crate::error::{Result, UserError};
-use crate::logging::{Event, Log};
+use crate::executables::ExecutableNameUnix;
+use crate::logging::Event;
 use big_s::S;
 use std::io::ErrorKind;
 use std::path::Path;
@@ -19,8 +21,9 @@ pub enum RustSource {
 }
 
 /// installs the given Rust-based application by compiling it from source
-pub fn run(app_definition: &dyn AppDefinition, version: &Version, app_folder: &Path, source: &RustSource, log: Log) -> Result<Outcome> {
-  let Ok(cargo_path) = which("cargo") else {
+pub fn run(app_definition: &dyn AppDefinition, version: &Version, app_folder: &Path, source: &RustSource, ctx: &RuntimeContext) -> Result<Outcome> {
+  let cargo = ExecutableNameUnix::from("cargo");
+  let Ok(cargo_path) = which(cargo.platform_path(ctx.platform.os).as_ref()) else {
     return Err(UserError::RustNotInstalled);
   };
   let mut cmd = Command::new(&cargo_path);
@@ -35,7 +38,7 @@ pub fn run(app_definition: &dyn AppDefinition, version: &Version, app_folder: &P
       args.push(app_definition.tag_format().format_version(version));
     }
   }
-  log(Event::CompileRustStart {
+  (ctx.log)(Event::CompileRustStart {
     cargo_path: &cargo_path,
     args: &args,
   });
@@ -50,9 +53,9 @@ pub fn run(app_definition: &dyn AppDefinition, version: &Version, app_folder: &P
     },
   };
   if !status.success() {
-    log(Event::CompileRustFailed);
+    (ctx.log)(Event::CompileRustFailed);
     return Err(UserError::RustCompilationFailed);
   }
-  log(Event::CompileRustSuccess);
+  (ctx.log)(Event::CompileRustSuccess);
   Ok(Outcome::Installed)
 }
