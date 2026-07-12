@@ -133,8 +133,19 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 /// let exit_status = cmd.status().unwrap();
 /// assert!(exit_status.success());
 /// ```
-pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result<Option<CommandInfo>, error::UserError> {
-  let log = logging::new(args.verbose);
+pub fn get_cmd(
+  app: &dyn AppDefinition,
+  GetCmdArgs {
+    version,
+    app_args,
+    from_source,
+    include_apps: include_apps_1,
+    optional,
+    verbose,
+  }: GetCmdArgs,
+  apps: &Apps,
+) -> Result<Option<CommandInfo>, error::UserError> {
+  let log = logging::new(verbose);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
   let config_file = configuration::File::load(apps)?;
@@ -144,24 +155,24 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
     config_file: &config_file,
     log,
   };
-  let include_apps = load_or_install_apps(args.include_apps, apps, args.optional, &ctx)?;
+  let include_apps = load_or_install_apps(include_apps_1, apps, optional, &ctx)?;
   let executable_call = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
-    cli_version: args.version.as_ref(),
-    optional: args.optional,
-    from_source: args.from_source,
+    cli_version: version.as_ref(),
+    optional,
+    from_source,
     ctx: &ctx,
     apps,
   })? {
     LoadOrInstallAppOutcome::Loaded { executable_call } => executable_call,
     LoadOrInstallAppOutcome::NotInstallable { app } => {
-      if args.optional {
+      if optional {
         return Ok(None);
       }
       return Err(error::UserError::UnsupportedPlatform { app });
     }
   };
-  let (executable, args) = executable_call.with_args(args.app_args);
+  let (executable, args) = executable_call.with_args(app_args);
   let mut paths_to_include: Vec<&Path> = vec![&executable.parent_path()];
 
   for app_to_include in &include_apps {
