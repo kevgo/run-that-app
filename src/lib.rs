@@ -145,15 +145,14 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
     log,
   };
   let include_apps = load_or_install_apps(&args.include_apps, apps, args.optional, &ctx)?;
-  let outcome = load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
+  let executable_call = match load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: args.version.as_ref(),
     optional: args.optional,
     from_source: args.from_source,
     ctx: &ctx,
     apps,
-  })?;
-  let executable_call = match outcome {
+  })? {
     LoadOrInstallAppOutcome::Loaded { executable_call } => executable_call,
     LoadOrInstallAppOutcome::NotInstallable { app } => {
       if args.optional {

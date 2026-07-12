@@ -23,15 +23,14 @@ pub fn install(args: &InstallArgs, apps: &Apps) -> Result<ExitCode> {
   let include_apps = apps.lookup_many(&args.include_apps)?;
   load_or_install_apps(&include_apps, apps, args.optional, &ctx)?;
   // install the main app
-  let outcome = load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
+  match load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
     app: app_to_install,
     cli_version: args.version.as_ref(),
     optional: args.optional,
     from_source: args.from_source,
     ctx: &ctx,
     apps,
-  })?;
-  match outcome {
+  })? {
     LoadOrInstallAppOutcome::Loaded { executable_call: _ } => Ok(ExitCode::SUCCESS),
     LoadOrInstallAppOutcome::NotInstallable { app: _ } if args.optional => Ok(ExitCode::SUCCESS),
     LoadOrInstallAppOutcome::NotInstallable { app } => Err(UserError::UnsupportedPlatform { app }),

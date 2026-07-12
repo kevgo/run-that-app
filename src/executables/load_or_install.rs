@@ -13,15 +13,14 @@ use std::path::Path;
 pub fn load_or_install_apps(apps_to_include: &[&dyn AppDefinition], apps: &Apps, optional: bool, ctx: &RuntimeContext) -> Result<Vec<ExecutableCall>> {
   let mut result = Vec::with_capacity(apps_to_include.len());
   for app_to_include in apps_to_include {
-    let outcome = load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
+    match load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
       app: app_to_include.to_owned(),
       cli_version: None,
       optional,
       from_source: false,
       ctx,
       apps,
-    })?;
-    match outcome {
+    })? {
       LoadOrInstallAppOutcome::Loaded { executable_call } => result.push(executable_call),
       LoadOrInstallAppOutcome::NotInstallable { app: _ } => {}
     }
@@ -83,15 +82,14 @@ pub fn load_or_install_app_and_carrier(args: &LoadOrInstallAppAndCarrierArgs) ->
     RunMethod::NodeJS { package } => {
       // step 1: ensure NodeJS is installed, install if needed
       let npm = Npm {};
-      let outcome = load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
+      match load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
         app: &npm,
         cli_version: None,
         optional: args.optional,
         from_source: false,
         ctx: args.ctx,
         apps: args.apps,
-      })?;
-      match outcome {
+      })? {
         LoadOrInstallAppOutcome::Loaded { executable_call } => executable_call,
         LoadOrInstallAppOutcome::NotInstallable { app } => {
           println!("ERROR: cannot install NodeJS: {app}");
