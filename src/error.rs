@@ -209,7 +209,7 @@ impl UserError {
         desc("Please report this at https://github.com/kevgo/run-that-app/issues/new and use an older version of the package until this is fixed.");
       }
       UserError::UnsupportedPlatform { app } => {
-        error(&format!("Application {app} does not seem to support your platform."));
+        error(&format!("Application \"{app}\" does not seem to support your platform."));
         desc(
           "It looks like there are no binary versions for this app for your platform.
 
