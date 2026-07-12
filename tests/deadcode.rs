@@ -17,6 +17,7 @@
 
 #![allow(clippy::expect_used)]
 
+use ahash::AHashMap;
 use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -63,35 +64,32 @@ fn no_dead_code() {
   let stdout = String::from_utf8_lossy(&output.stdout);
   let findings = parse_findings(&stdout);
 
-  let mut cfg_test_ranges_by_file: HashMap<String, Vec<(usize, usize)>> = HashMap::new();
-  let mut dynamic_impl_ranges_by_file: HashMap<String, Vec<(usize, usize)>> = HashMap::new();
+  // caches the ranges where cfg(test) and dynamic impls are located in each file
+  let mut cfg_test_ranges_by_file: AHashMap<String, Vec<(usize, usize)>> = AHashMap::new();
+  // caches the ranges where dynamic impls are located in each file
+  let mut dynamic_impl_ranges_by_file: AHashMap<String, Vec<(usize, usize)>> = AHashMap::new();
 
-  let unexpected: Vec<&str> = findings
-    .iter()
-    .filter(|finding| {
-      let cfg_test_ranges = cfg_test_ranges_by_file
-        .entry(finding.file.clone())
-        .or_insert_with(|| cfg_test_ranges(&repo_root.join(&finding.file)));
-      if in_ranges(finding.line, cfg_test_ranges) {
-        return false;
-      }
-      let dynamic_impl_ranges = dynamic_impl_ranges_by_file
-        .entry(finding.file.clone())
-        .or_insert_with(|| dynamic_trait_impl_ranges(&repo_root.join(&finding.file)));
-      if in_ranges(finding.line, dynamic_impl_ranges) {
-        return false;
-      }
-      !WHITELIST.contains(&(finding.file.as_str(), finding.name.as_str()))
-    })
-    .map(|finding| finding.raw.as_str())
-    .collect();
-
-  assert!(
-    unexpected.is_empty(),
-    "warnalyzer found dead code that isn't accounted for.\n\
-     Either remove the dead code, or (if it's a false positive) add it to KNOWN_FINDINGS in tests/deadcode.rs:\n\n{}",
-    unexpected.join("\n")
-  );
+  let mut found_errors = false;
+  for finding in findings {
+    let cfg_test_ranges = cfg_test_ranges_by_file
+      .entry(finding.file.clone())
+      .or_insert_with(|| cfg_test_ranges(&repo_root.join(&finding.file)));
+    if in_ranges(finding.line, cfg_test_ranges) {
+      continue;
+    }
+    let dynamic_impl_ranges = dynamic_impl_ranges_by_file
+      .entry(finding.file.clone())
+      .or_insert_with(|| dynamic_trait_impl_ranges(&repo_root.join(&finding.file)));
+    if in_ranges(finding.line, dynamic_impl_ranges) {
+      continue;
+    }
+    if WHITELIST.contains(&(finding.file.as_str(), finding.name.as_str())) {
+      continue;
+    }
+    println!("{}", finding.raw);
+    found_errors = true;
+  }
+  assert!(!found_errors);
 }
 
 /// parses lines like `src/applications/go.rs:87:6: unused Method 'allowed_versions'`

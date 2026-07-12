@@ -67,5 +67,5 @@ strip = "symbols"
 
 [[test]]
 name = "deadcode" # the filename of the test
-harness = false   # allows Cucumber to print output instead of libtest
-test = false      # don't run this as part of "cargo test"
+# harness = false   # allows Cucumber to print output instead of libtest
+# test = false      # don't run this as part of "cargo test"
