@@ -149,11 +149,11 @@ pub fn get_cmd(app: &dyn AppDefinition, args: GetCmdArgs, apps: &Apps) -> Result
 
   let executable_call = match load_or_install_app_and_carrier(app, args.version.as_ref(), &config_file, args.optional, args.from_source, &ctx, apps)? {
     LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call } => executable_call,
-    LoadOrInstallAppWithCarrierOutcome::NotInstallable { app: _ } => {
+    LoadOrInstallAppWithCarrierOutcome::NotInstallable { app } => {
       if args.optional {
         return Ok(None);
       }
-      return Err(error::UserError::UnsupportedPlatform { app: app.name() });
+      return Err(error::UserError::UnsupportedPlatform { app });
     }
   };
   let (executable, args) = executable_call.with_args(args.app_args);

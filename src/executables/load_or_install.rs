@@ -168,7 +168,10 @@ pub fn load_or_install_app_and_carrier(
       let npm = Npm {};
       match load_or_install_app_and_carrier(&npm, None, ctx.config_file, optional, false, ctx, apps)? {
         LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call } => executable_call,
-        LoadOrInstallAppWithCarrierOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
+        LoadOrInstallAppWithCarrierOutcome::NotInstallable { app } => {
+          println!("ERROR: cannot install NodeJS: {app}");
+          return Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app });
+        }
       };
 
       // step 2: determine the version of the npm package to run
