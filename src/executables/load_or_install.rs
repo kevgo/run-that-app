@@ -155,31 +155,43 @@ pub enum LoadOrInstallAppOutcome {
   NotInstallable { app: ApplicationName },
 }
 
-fn load_or_install_app(args: LoadOrInstallAppArgs) -> Result<LoadOrInstallAppOutcome> {
-  // step 1: determine the version of the carrier app to install
-  let carrier_versions = if let Some(version) = args.cli_version {
+/// Loads or installs only the given app (not its carrier) and returns the executable call.
+fn load_or_install_app(
+  LoadOrInstallAppArgs {
+    app,
+    cli_version,
+    executable,
+    args,
+    optional,
+    from_source,
+    ctx,
+    apps,
+  }: LoadOrInstallAppArgs,
+) -> Result<LoadOrInstallAppOutcome> {
+  // step 1: determine the version of the app to install
+  let versions = if let Some(version) = cli_version {
     RequestedVersions::from(version)
-  } else if let Some(versions) = args.ctx.config_file.lookup(&args.app.name()) {
+  } else if let Some(versions) = ctx.config_file.lookup(&app.name()) {
     versions.clone()
   } else {
-    return Err(UserError::NoVersionsFound { app: args.app.name().clone() });
+    return Err(UserError::NoVersionsFound { app: app.name() });
   };
-  // step 2: fast-path: try to load the given carrier executable
-  let executable = args.executable.platform_path(args.ctx.platform.os);
-  match load_app_versions(args.app, &carrier_versions, &executable, args.args, args.ctx)? {
+  // step 2: fast-path: try to load the given executable for the given app
+  let executable = executable.platform_path(ctx.platform.os);
+  match load_app_versions(app, &versions, &executable, args, ctx)? {
     LoadAppOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
     LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app: _ } => {} // we'll install the app in the next step
   }
-  // step 3: here the app needs to be installed --> install any of the configured versions
-  match installation::versions(args.app, &carrier_versions, args.optional, args.from_source, args.ctx, args.apps)? {
+  // step 3: here the app needs to be installed --> install any of its given versions
+  match installation::versions(app, &versions, optional, from_source, ctx, apps)? {
     Outcome::Installed => {} // we'll load the app in the next step
     Outcome::NotInstalled { app } => {
       return Ok(LoadOrInstallAppOutcome::NotInstallable { app });
     }
   }
-  // step 4: load the `carrier_executable_name` from the carrier directory
-  match load_app_versions(args.app, &carrier_versions, &executable, args.args, args.ctx)? {
+  // step 4: load the executable for the given app
+  match load_app_versions(app, &versions, &executable, args, ctx)? {
     LoadAppOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
     LoadAppOutcome::NotInstallable { app } => Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app } => {
