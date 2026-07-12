@@ -17,6 +17,6 @@ pub fn install_all(apps: &Apps) -> Result<ExitCode> {
     config_file: &config_file,
     log,
   };
-  let _ = load_or_install_apps(&config_file.apps, apps, &config_file, true, &ctx)?;
+  let _ = load_or_install_apps(&config_file.apps, apps, true, &ctx)?;
   Ok(ExitCode::SUCCESS)
 }

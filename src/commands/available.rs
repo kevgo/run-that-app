@@ -19,7 +19,7 @@ pub fn available(args: &AvailableArgs, apps: &Apps) -> Result<ExitCode> {
     config_file: &config_file,
     log,
   };
-  match load_or_install_app_and_carrier(app, None, ctx.config_file, args.optional, false, &ctx, apps)? {
+  match load_or_install_app_and_carrier(app, None, args.optional, false, &ctx, apps)? {
     LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call: _ } => Ok(ExitCode::SUCCESS),
     LoadOrInstallAppWithCarrierOutcome::NotInstallable { app: _ } => Ok(ExitCode::FAILURE),
   }
