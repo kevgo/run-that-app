@@ -174,7 +174,6 @@ pub fn get_cmd(
   };
   let (executable, args) = executable_call.with_args(app_args);
   let mut paths_to_include: Vec<&Path> = vec![&executable.parent_path()];
-
   for app_to_include in &include_apps {
     paths_to_include.push(app_to_include.executable.parent_path());
   }
