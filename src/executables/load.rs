@@ -24,13 +24,12 @@ pub fn load_app_versions(
         {
           return Ok(LoadAppVersionsOutcome::Loaded { executable_call });
         }
-        // the app is not globally installed --> don't install it globally, try the next version
       }
       RequestedVersion::Yard(version) => match load_from_yard(app, version, executable, args, ctx)? {
         LoadFromYardOutcome::Loaded { executable_call } => return Ok(LoadAppVersionsOutcome::Loaded { executable_call }),
         LoadFromYardOutcome::NotInstallable => {}
         LoadFromYardOutcome::NotInstalled => {
-          return Ok(LoadAppVersionsOutcome::NotInstalled { app: app.name().clone() });
+          return Ok(LoadAppVersionsOutcome::NotInstalled { app: app.name() });
         }
       },
     }
