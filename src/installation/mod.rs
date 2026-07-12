@@ -189,7 +189,7 @@ pub fn versions(
       RequestedVersion::Path(_version_req) => {
         // we can't install anything into the global path
       }
-      RequestedVersion::Yard(version) => match version_any_method(app, version, optional, from_source, ctx, apps)? {
+      RequestedVersion::Yard(version) => match version(app, version, optional, from_source, ctx, apps)? {
         Outcome::Installed => return Ok(Outcome::Installed),
         Outcome::NotInstalled { app: _ } => {}
       },
@@ -198,30 +198,23 @@ pub fn versions(
   Ok(Outcome::NotInstalled { app: app.name() })
 }
 
-/// installs the given app using any of its installation methods
-pub fn version_any_method(
-  app_definition: &dyn AppDefinition,
-  version: &Version,
-  optional: bool,
-  from_source: bool,
-  ctx: &RuntimeContext,
-  apps: &Apps,
-) -> Result<Outcome> {
-  for install_method in app_definition.run_method(version, ctx.platform).install_methods() {
+/// installs the given app at the given version using any of its installation methods
+pub fn version(app: &dyn AppDefinition, version: &Version, optional: bool, from_source: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Outcome> {
+  for install_method in app.run_method(version, ctx.platform).install_methods() {
     if from_source && !install_method.is_from_source() {
       continue;
     }
-    match version_method(app_definition, &install_method, version, optional, ctx, apps)? {
+    match version_method(app, &install_method, version, optional, ctx, apps)? {
       Outcome::Installed => return Ok(Outcome::Installed),
       Outcome::NotInstalled { app: _ } => {}
     }
   }
-  let app_name = app_definition.name();
+  let app_name = app.name();
   ctx.yard.mark_not_installable(&app_name, version)?;
   Ok(Outcome::NotInstalled { app: app_name })
 }
 
-/// installs the given app using the given installation method
+/// installs the given app at the given version using the given installation method
 pub fn version_method(
   app_definition: &dyn AppDefinition,
   install_method: &Method,
