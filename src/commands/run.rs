@@ -9,14 +9,16 @@ pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
   let app_to_run = apps.lookup(&args.app_name)?;
   let include_apps = apps.lookup_many(&args.include_apps)?;
   let get_cmd_args = GetCmdArgs {
+    app: app_to_run,
     version: args.version,
     app_args: args.app_args,
+    apps,
     from_source: args.from_source,
     include_apps,
     optional: args.optional,
     verbose: args.verbose,
   };
-  let Some(cmd_info) = get_cmd(app_to_run, get_cmd_args, apps)? else {
+  let Some(cmd_info) = get_cmd(get_cmd_args)? else {
     if args.optional {
       return Ok(ExitCode::SUCCESS);
     }
