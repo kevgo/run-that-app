@@ -189,7 +189,7 @@ pub fn versions(
       RequestedVersion::Path(_version_req) => {
         // we can't install anything into the global path
       }
-      RequestedVersion::Yard(version) => match version(app, version, optional, from_source, ctx, apps)? {
+      RequestedVersion::Yard(version) => match app_version(app, version, optional, from_source, ctx, apps)? {
         Outcome::Installed => return Ok(Outcome::Installed),
         Outcome::NotInstalled { app: _ } => {}
       },
@@ -199,7 +199,7 @@ pub fn versions(
 }
 
 /// installs the given app at the given version using any of its installation methods
-pub fn version(app: &dyn AppDefinition, version: &Version, optional: bool, from_source: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Outcome> {
+pub fn app_version(app: &dyn AppDefinition, version: &Version, optional: bool, from_source: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Outcome> {
   for install_method in app.run_method(version, ctx.platform).install_methods() {
     if from_source && !install_method.is_from_source() {
       continue;
@@ -225,14 +225,15 @@ pub fn version_method(
 ) -> Result<Outcome> {
   ctx.yard.with_lock(&app_definition.name(), version, ctx, || {
     let staging_folder = ctx.yard.create_staging_folder(&app_definition.name(), version)?;
-    match match install_method {
+    let outcome = match install_method {
       Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &staging_folder, version, url, bin_folder, optional, ctx),
       Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &staging_folder, version, download_url, optional, ctx),
       Method::CompileGoSource { import_path } => compile_go::run(&staging_folder, import_path, optional, ctx, apps),
       Method::CompileRustCrate { name, bin_folder: _ } => compile_rust::run(app_definition, version, &staging_folder, &RustSource::CratesIo { name }, ctx),
       Method::CompileRustRepo { url } => compile_rust::run(app_definition, version, &staging_folder, &RustSource::Repository { url: url.clone() }, ctx),
       Method::InstallNodeJSPackage { package } => install_nodejs_package::run(package, &staging_folder, version, optional, apps),
-    }? {
+    }?;
+    match outcome {
       Outcome::Installed => {
         let app_folder_path = ctx.yard.app_folder(&app_definition.name(), version);
         ctx.yard.move_staging_folder_to_app_folder(staging_folder, app_folder_path)?;
