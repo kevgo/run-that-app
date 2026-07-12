@@ -5,20 +5,20 @@ use crate::error::Result;
 use crate::executables::load_from_yard::LoadFromYardOutcome;
 use crate::executables::{ExecutableArgs, ExecutableCall, ExecutableNamePlatform, load_from_path, load_from_yard};
 
-/// Loads the given app at the earliest given version.
-/// Only attempts to load later versions
-/// if the first version is not installable.
+/// Loads the given executable inside the given app
+/// at the earliest of the given versions that is installable
+/// and runs an `ExecutableCall` that runs it with the given arguments.
 pub fn load_app_versions(
   app: &dyn AppDefinition,
   versions: &RequestedVersions,
   executable: &ExecutableNamePlatform,
-  executable_args: &ExecutableArgs,
+  args: &ExecutableArgs,
   ctx: &RuntimeContext,
 ) -> Result<LoadAppVersionsOutcome> {
   for version in versions {
     match version {
       RequestedVersion::Path(version) => {
-        if let Some(executable_call_def) = load_from_path(app, executable, version, executable_args.clone(), ctx)?
+        if let Some(executable_call_def) = load_from_path(app, executable, version, args.clone(), ctx)?
           && let Some(app_folder) = executable_call_def.executable.clone().as_path().parent()
           && let Some(executable_call) = executable_call_def.into_executable_call(app_folder)
         {
@@ -26,7 +26,7 @@ pub fn load_app_versions(
         }
         // the app is not globally installed --> don't install it globally, try the next version
       }
-      RequestedVersion::Yard(version) => match load_from_yard(app, version, executable, executable_args, ctx)? {
+      RequestedVersion::Yard(version) => match load_from_yard(app, version, executable, args, ctx)? {
         LoadFromYardOutcome::Loaded { executable_call } => return Ok(LoadAppVersionsOutcome::Loaded { executable_call }),
         LoadFromYardOutcome::NotInstallable => {}
         LoadFromYardOutcome::NotInstalled => {
