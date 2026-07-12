@@ -32,7 +32,7 @@ pub fn load_or_install_apps(apps_to_include: Vec<&dyn AppDefinition>, apps: &App
 /// at the given CLI version if given,
 /// otherwise the version in the given config file.
 ///
-/// Installs and uses the carrier app if one is needed.
+/// Also installs and uses the carrier app if one is needed.
 pub fn load_or_install_app_and_carrier(args: &LoadOrInstallAppAndCarrierArgs) -> Result<LoadOrInstallAppOutcome> {
   match args.app.run_method(&Version::from("*"), args.ctx.platform) {
     RunMethod::ThisApp { install_methods: _ } => {
