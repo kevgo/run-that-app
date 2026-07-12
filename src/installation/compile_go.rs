@@ -3,7 +3,7 @@ use crate::applications;
 use crate::applications::Apps;
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::executables::{LoadOrInstallAppWithCarrierOutcome, load_or_install_app_and_carrier};
+use crate::executables::{LoadOrInstallAppWithCarrierArgs, LoadOrInstallAppWithCarrierOutcome, load_or_install_app_and_carrier};
 use crate::logging::Event;
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
@@ -46,7 +46,15 @@ pub fn run(app_folder: &Path, import_path: &str, optional: bool, ctx: &RuntimeCo
 
 fn load_rta_go(optional: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Option<PathBuf>> {
   let go = applications::Go {};
-  match load_or_install_app_and_carrier(&go, None, optional, false, ctx, apps)? {
+  let outcome = load_or_install_app_and_carrier(LoadOrInstallAppWithCarrierArgs {
+    app_definition: &go,
+    cli_version: None,
+    optional,
+    from_source: false,
+    ctx,
+    apps,
+  })?;
+  match outcome {
     LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call } => Ok(Some(executable_call.executable.into())),
     LoadOrInstallAppWithCarrierOutcome::NotInstallable { app: _ } => Ok(None),
   }
