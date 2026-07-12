@@ -31,8 +31,6 @@ pub fn install(args: InstallArgs, apps: &Apps) -> Result<ExitCode> {
   Ok(ExitCode::SUCCESS)
 }
 
-pub fn foo() {}
-
 /// named arguments for the [`install`], [`install_all`][super::install_all::install_all], and [`reinstall`][super::reinstall::reinstall] commands
 #[derive(Debug, PartialEq)]
 #[allow(clippy::struct_excessive_bools)]

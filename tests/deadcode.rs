@@ -18,10 +18,9 @@
 #![allow(clippy::expect_used)]
 
 use ahash::AHashMap;
-use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::process::Command;
+use std::process::{Command, ExitCode};
 
 /// traits whose methods are invoked through mechanisms that warnalyzer cannot see:
 /// dynamic dispatch (`AppDefinition`, `Archive`) or language/macro magic (the rest)
@@ -54,8 +53,7 @@ struct Finding {
   raw: String,
 }
 
-#[test]
-fn no_dead_code() {
+fn main() -> ExitCode {
   let repo_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
   let output = Command::new("warnalyzer")
     .arg(&repo_root)
@@ -89,7 +87,7 @@ fn no_dead_code() {
     println!("{}", finding.raw);
     found_errors = true;
   }
-  assert!(!found_errors);
+  if found_errors { ExitCode::FAILURE } else { ExitCode::SUCCESS }
 }
 
 /// parses lines like `src/applications/go.rs:87:6: unused Method 'allowed_versions'`

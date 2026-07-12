@@ -18,7 +18,7 @@ contest: build
 	target/debug/rta contest
 
 deadcode:
-	warnalyzer .
+	cargo test --test deadcode
 
 doc: build node_modules  # test the documentation
 	$(TEXTRUNNER)
