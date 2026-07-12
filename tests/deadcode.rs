@@ -39,7 +39,7 @@ const DYNAMIC_TRAITS: &[&str] = &[
 
 /// findings that are real but not false positives, listed here as `(file, item name)` so that
 /// this test still fails on any *other, new* dead code
-const KNOWN_FINDINGS: &[(&str, &str)] = &[
+const WHITELIST: &[(&str, &str)] = &[
   // entry points are always reported as unused by warnalyzer, see the link in the module docs above
   ("src/main.rs", "main"),
   // unused public API, kept around for now
@@ -54,7 +54,7 @@ struct Finding {
 }
 
 #[test]
-fn no_unexpected_dead_code() {
+fn no_dead_code() {
   let repo_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
   let output = Command::new("warnalyzer")
     .arg(&repo_root)
@@ -81,7 +81,7 @@ fn no_unexpected_dead_code() {
       if in_ranges(finding.line, dynamic_impl_ranges) {
         return false;
       }
-      !KNOWN_FINDINGS.contains(&(finding.file.as_str(), finding.name.as_str()))
+      !WHITELIST.contains(&(finding.file.as_str(), finding.name.as_str()))
     })
     .map(|finding| finding.raw.as_str())
     .collect();
