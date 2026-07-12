@@ -90,7 +90,6 @@ pub fn load_or_install_app_and_carrier(
       app_definition: carrier_app,
       executable_name: carrier_executable_name,
     } => {
-      println!("load_or_install_app_and_carrier: OtherAppOtherExecutable");
       // step 1: determine the version of the carrier app to install
       let carrier_versions = if let Some(version) = cli_version {
         RequestedVersions::from(version)
@@ -101,7 +100,6 @@ pub fn load_or_install_app_and_carrier(
           app: carrier_app.name().clone(),
         });
       };
-      println!("carrier_versions: {carrier_versions:?}");
       // step 2: fast-path: try to load the given executable from the carrier directory
       let carrier_executable = carrier_executable_name.platform_path(ctx.platform.os);
       match load_app_versions(carrier_app.as_ref(), &carrier_versions, &carrier_executable, &ExecutableArgs::None, ctx)? {
@@ -112,7 +110,6 @@ pub fn load_or_install_app_and_carrier(
         LoadAppVersionsOutcome::NotInstalled { app: _ } => {}
       }
       // step 3: slow-path: here the app needs to be installed --> install any of the configured versions
-      println!("installing carrier versions: {carrier_versions:?}");
       match installation::versions(carrier_app.as_ref(), &carrier_versions, optional, from_source, ctx, apps)? {
         Outcome::Installed => {}
         Outcome::NotInstalled { app } => {
@@ -120,14 +117,10 @@ pub fn load_or_install_app_and_carrier(
         }
       }
       // step 4: load the `carrier_executable_name` from the carrier directory
-      println!("load carrier executable: {carrier_executable:?}");
       match load_app_versions(carrier_app.as_ref(), &carrier_versions, &carrier_executable, &ExecutableArgs::None, ctx)? {
         LoadAppVersionsOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppWithCarrierOutcome::Loaded { executable_call }),
         LoadAppVersionsOutcome::NotInstallable { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
-        LoadAppVersionsOutcome::NotInstalled { app } => {
-          println!("ERROR: this shouldn't happen, we just successfully installed {app} and now we can't load it");
-          Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app })
-        }
+        LoadAppVersionsOutcome::NotInstalled { app } => Ok(LoadOrInstallAppWithCarrierOutcome::NotInstallable { app }),
       }
     }
 
