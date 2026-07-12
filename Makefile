@@ -17,6 +17,9 @@ build:  # compiles this app in debug mode
 contest: build
 	target/debug/rta contest
 
+deadcode:
+	warnalyzer /home/kevlar/run-that-app
+
 doc: build node_modules  # test the documentation
 	$(TEXTRUNNER)
 
@@ -51,6 +54,8 @@ setup:  # install development dependencies on this computer
 	rustup component add clippy
 	rustup toolchain add nightly
 	rustup component add rustfmt --toolchain nightly
+	cargo install --locked --git https://github.com/est31/warnalyzer
+
 
 setup-githooks: build  ## installs the Git pre-commit to auto-format
 	@$(LEFTHOOK) install
