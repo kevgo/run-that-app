@@ -19,7 +19,7 @@ pub fn which(args: &WhichArgs, apps: &Apps) -> Result<ExitCode> {
     config_file: &config_file,
     log,
   };
-  match load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
+  match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: args.version.as_ref(),
     optional: args.optional,

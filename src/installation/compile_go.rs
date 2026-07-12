@@ -46,7 +46,7 @@ pub fn run(app_folder: &Path, import_path: &str, optional: bool, ctx: &RuntimeCo
 
 fn load_rta_go(optional: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Option<PathBuf>> {
   let go = applications::Go {};
-  match load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
+  match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app: &go,
     cli_version: None,
     optional,

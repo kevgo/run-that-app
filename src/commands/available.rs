@@ -18,7 +18,7 @@ pub fn available(AvailableArgs { app_name, optional, verbose }: AvailableArgs, a
     config_file: &config_file,
     log,
   };
-  match load_or_install_app_and_carrier(&LoadOrInstallAppAndCarrierArgs {
+  match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: None,
     optional,
