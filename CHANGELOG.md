@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+## 0.40.0
+
+- bundled apps no longer need separate entries in the run-that-app file,
+  just list their carrier app
+- uses correct carrier executable names on Windows
+
 ## 0.39.2
 
 - Rust API debuggability improvements
