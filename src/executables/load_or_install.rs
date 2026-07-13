@@ -1,4 +1,4 @@
-use crate::applications::{AppDefinition, ApplicationName, Apps, Npm};
+use crate::applications::{AppDefinition, ApplicationName, Apps, NodeJS};
 use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
