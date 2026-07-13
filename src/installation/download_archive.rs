@@ -21,7 +21,7 @@ pub fn run(
   let app_name = app_to_install.name();
   // download the archive file
   let Some(artifact) = download::artifact(url, &app_name, version, optional, ctx.log)? else {
-    return Ok(Outcome::NotInstalled);
+    return Ok(Outcome::NotInstalled { app: app_name });
   };
   // determine the archive type
   let Some(archive) = archives::lookup(&artifact.filename, artifact.data) else {

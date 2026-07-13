@@ -48,7 +48,7 @@ pub fn run(app_definition: &dyn AppDefinition, version: &Version, app_folder: &P
     Err(err) => match err.kind() {
       ErrorKind::NotFound => return Err(UserError::RustNotInstalled),
       ErrorKind::PermissionDenied => return Err(UserError::RustNoPermission),
-      ErrorKind::Interrupted => return Ok(Outcome::NotInstalled),
+      ErrorKind::Interrupted => return Ok(Outcome::NotInstalled { app: app_definition.name() }),
       _ => return Err(UserError::CannotCompileRustSource { err: err.to_string() }),
     },
   };

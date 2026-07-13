@@ -317,22 +317,24 @@ You can override this behavior using the following environment variables:
 
 ## bundled applications
 
-Some tools are distributed as part of another toolchain.
-In these cases, specify the version of the _bundling_ application.
+Some tools are distributed as part of another toolchain
+(called their "carrier" app).
+These tools automatically use the version of their carrier,
+you don't need to declare their version in the `run-that-app` file.
 
 ### npm and npx
 
 `npm` and `npx` are provided by Node.js.
-To use them, specify a Node version:
+To use them, specify the Node version:
 
 ```asdf
-npm 20.10.0
+node 20.10.0
 ```
 
-To run an `npm` that was installed externally, provide its own version:
+To run an externally installed `npm`:
 
 ```asdf
-npm system@10.2
+node system
 ```
 
 You can combine both declarations:
@@ -346,11 +348,11 @@ otherwise installs Node 20.10.0 and uses the npm version that comes with it.
 
 ### gofmt
 
-_Gofmt_ is bundled with Go.
-Specify the Go version:
+_Gofmt_ is bundled with Go,
+so you need to specify the Go version in order to use gofmt:
 
 ```asdf
-gofmt 1.21.6
+go 1.21.6
 ```
 
 This installs Go 1.21.6 and uses its bundled `gofmt`.

@@ -7,7 +7,7 @@ mod download_executable;
 mod install_nodejs_package;
 
 use crate::applications::{AppDefinition, ApplicationName, Apps};
-use crate::configuration::Version;
+use crate::configuration::{RequestedVersion, RequestedVersions, Version};
 use crate::context::RuntimeContext;
 use crate::download::Url;
 use crate::error::Result;
@@ -175,60 +175,86 @@ impl Display for BinFolder {
   }
 }
 
-/// installs the given app using the first of the given installation methods that works
-pub fn any(app_definition: &dyn AppDefinition, version: &Version, optional: bool, from_source: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Outcome> {
-  for install_method in app_definition.run_method(version, ctx.platform).install_methods() {
-    if from_source && !install_method.is_from_source() {
-      continue;
-    }
-    let outcome = install(app_definition, &install_method, version, optional, from_source, ctx, apps)?;
-    if outcome.success() {
-      return Ok(outcome);
-    }
-  }
-  Ok(Outcome::NotInstalled)
-}
-
-/// installs the given app using the given installation method
-pub fn install(
-  app_definition: &dyn AppDefinition,
-  install_method: &Method,
-  version: &Version,
+/// installs the first installable of the given versions of the given app
+pub fn versions(
+  app: &dyn AppDefinition,
+  versions: &RequestedVersions,
   optional: bool,
   from_source: bool,
   ctx: &RuntimeContext,
   apps: &Apps,
 ) -> Result<Outcome> {
-  let staging_folder = ctx.yard.create_staging_folder(&app_definition.name(), version)?;
-  let outcome = match install_method {
-    Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &staging_folder, version, url, bin_folder, optional, ctx),
-    Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &staging_folder, version, download_url, optional, ctx),
-    Method::CompileGoSource { import_path } => compile_go::run(&staging_folder, import_path, optional, from_source, ctx, apps),
-    Method::CompileRustCrate { name, bin_folder: _ } => compile_rust::run(app_definition, version, &staging_folder, &RustSource::CratesIo { name }, ctx),
-    Method::CompileRustRepo { url } => compile_rust::run(app_definition, version, &staging_folder, &RustSource::Repository { url: url.clone() }, ctx),
-    Method::InstallNodeJSPackage { package } => install_nodejs_package::run(package, &staging_folder, version, optional, apps),
-  }?;
-  match outcome {
-    Outcome::Installed => {
-      let app_folder_path = ctx.yard.app_folder(&app_definition.name(), version);
-      ctx.yard.move_staging_folder_to_app_folder(staging_folder, app_folder_path)?;
-      Ok(Outcome::Installed)
+  for version in versions {
+    match version {
+      RequestedVersion::Path(_version_req) => {
+        // we can't install anything into the global path
+      }
+      RequestedVersion::Yard(version) => match app_version(app, version, optional, from_source, ctx, apps)? {
+        Outcome::Installed => return Ok(Outcome::Installed),
+        Outcome::NotInstalled { app: _ } => {}
+      },
     }
-    Outcome::NotInstalled => Ok(Outcome::NotInstalled),
   }
+  Ok(Outcome::NotInstalled { app: app.name() })
+}
+
+/// installs the given app at the given version using any of its installation methods
+pub fn app_version(app: &dyn AppDefinition, version: &Version, optional: bool, from_source: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Outcome> {
+  for install_method in app.run_method(version, ctx.platform).install_methods() {
+    if from_source && !install_method.is_from_source() {
+      continue;
+    }
+    match version_method(app, &install_method, version, optional, ctx, apps)? {
+      Outcome::Installed => return Ok(Outcome::Installed),
+      Outcome::NotInstalled { app: _ } => {}
+    }
+  }
+  let app_name = app.name();
+  ctx.yard.mark_not_installable(&app_name, version)?;
+  Ok(Outcome::NotInstalled { app: app_name })
+}
+
+/// installs the given app at the given version using the given installation method
+pub fn version_method(
+  app_definition: &dyn AppDefinition,
+  install_method: &Method,
+  version: &Version,
+  optional: bool,
+  ctx: &RuntimeContext,
+  apps: &Apps,
+) -> Result<Outcome> {
+  ctx.yard.with_lock(&app_definition.name(), version, ctx, || {
+    let staging_folder = ctx.yard.create_staging_folder(&app_definition.name(), version)?;
+    let outcome = match install_method {
+      Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &staging_folder, version, url, bin_folder, optional, ctx),
+      Method::DownloadExecutable { url: download_url } => download_executable::run(app_definition, &staging_folder, version, download_url, optional, ctx),
+      Method::CompileGoSource { import_path } => compile_go::run(&staging_folder, import_path, optional, ctx, apps),
+      Method::CompileRustCrate { name, bin_folder: _ } => compile_rust::run(app_definition, version, &staging_folder, &RustSource::CratesIo { name }, ctx),
+      Method::CompileRustRepo { url } => compile_rust::run(app_definition, version, &staging_folder, &RustSource::Repository { url: url.clone() }, ctx),
+      Method::InstallNodeJSPackage { package } => install_nodejs_package::run(package, &staging_folder, version, optional, apps),
+    }?;
+    match outcome {
+      Outcome::Installed => {
+        let app_folder_path = ctx.yard.app_folder(&app_definition.name(), version);
+        ctx.yard.move_staging_folder_to_app_folder(staging_folder, app_folder_path)?;
+        Ok(Outcome::Installed)
+      }
+      Outcome::NotInstalled { app } => Ok(Outcome::NotInstalled { app }),
+    }
+  })
 }
 
 #[derive(Debug, PartialEq)]
 pub enum Outcome {
   Installed,
-  NotInstalled,
+  NotInstalled { app: ApplicationName },
 }
 
 impl Outcome {
   pub fn success(&self) -> bool {
     match self {
       Outcome::Installed => true,
-      Outcome::NotInstalled => false,
+      Outcome::NotInstalled { app: _ } => false,
     }
   }
 }

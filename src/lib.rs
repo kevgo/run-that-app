@@ -60,10 +60,9 @@ mod subshell;
 mod yard;
 
 use crate::applications::{AppDefinition, Apps};
-use crate::configuration::RequestedVersions;
 use crate::context::RuntimeContext;
 pub use crate::executables::CommandInfo;
-use crate::executables::{load_or_install_app, load_or_install_apps};
+use crate::executables::{LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, load_or_install_app_and_carrier, load_or_install_apps};
 use crate::yard::Yard;
 use cli::Cli;
 pub use configuration::Version;
@@ -86,7 +85,7 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
     Cli::Add(args) => commands::add(args, &apps),
     Cli::AppsLong => Ok(commands::applications::long(&apps)),
     Cli::AppsShort => Ok(commands::applications::short(&apps)),
-    Cli::Available(args) => commands::available(&args, &apps),
+    Cli::Available(args) => commands::available(args, &apps),
     Cli::DisplayHelp => Ok(commands::help()),
     Cli::Install(args) => commands::install(args, &apps),
     Cli::InstallAll => commands::install_all(&apps),
@@ -96,7 +95,7 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
     Cli::Update(args) => commands::update(&args, &apps),
     Cli::Version => Ok(commands::version()),
     Cli::Versions(args) => commands::versions(&args, &apps),
-    Cli::Which(args) => commands::which(&args, &apps),
+    Cli::Which(args) => commands::which(args, &apps),
   }
 }
 
@@ -156,16 +155,18 @@ pub fn get_cmd(
     config_file: &config_file,
     log,
   };
-  // TODO: remove this and make all places that use the app names use app references directly
-  let include_app_names = include_apps.iter().map(|app| app.name()).collect();
-  let include_app_versions = config_file.lookup_many(include_app_names);
-  let include_apps = load_or_install_apps(&include_app_versions, apps, optional, from_source, &ctx)?;
-  let requested_versions = RequestedVersions::determine(&app.name(), version.as_ref(), &config_file)?;
-  let Some(executable_call) = load_or_install_app(app, &requested_versions, optional, from_source, &ctx, apps)? else {
-    if optional {
-      return Ok(None);
-    }
-    return Err(error::UserError::UnsupportedPlatform { app: app.name() });
+  let include_apps = load_or_install_apps(include_apps, apps, optional, &ctx)?;
+  let executable_call = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+    app,
+    cli_version: version.as_ref(),
+    optional,
+    from_source,
+    ctx: &ctx,
+    apps,
+  })? {
+    LoadOrInstallAppOutcome::Loaded { executable_call } => executable_call,
+    LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => return Ok(None),
+    LoadOrInstallAppOutcome::NotInstallable { app } => return Err(error::UserError::UnsupportedPlatform { app }),
   };
   let (executable, args) = executable_call.with_args(app_args);
   let mut paths_to_include: Vec<&Path> = vec![&executable.parent_path()];

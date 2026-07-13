@@ -27,6 +27,7 @@ impl AppDefinition for Npm {
         options: vec![
           formatcp!("node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npm-cli.js"),
           formatcp!("lib{MAIN_SEPARATOR}node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npm-cli.js"),
+          formatcp!("..{MAIN_SEPARATOR}lib{MAIN_SEPARATOR}node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npm-cli.js"),
         ],
       },
     }
@@ -82,7 +83,11 @@ mod tests {
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+          options: vec![
+            "node_modules/npm/bin/npm-cli.js",
+            "lib/node_modules/npm/bin/npm-cli.js",
+            "../lib/node_modules/npm/bin/npm-cli.js",
+          ],
         },
       };
       assert_eq!(have, want);
@@ -101,7 +106,11 @@ mod tests {
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+          options: vec![
+            "node_modules/npm/bin/npm-cli.js",
+            "lib/node_modules/npm/bin/npm-cli.js",
+            "../lib/node_modules/npm/bin/npm-cli.js",
+          ],
         },
       };
       assert_eq!(have, want);
@@ -120,7 +129,11 @@ mod tests {
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+          options: vec![
+            "node_modules/npm/bin/npm-cli.js",
+            "lib/node_modules/npm/bin/npm-cli.js",
+            "../lib/node_modules/npm/bin/npm-cli.js",
+          ],
         },
       };
       assert_eq!(have, want);
@@ -139,7 +152,11 @@ mod tests {
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["node_modules/npm/bin/npm-cli.js", "lib/node_modules/npm/bin/npm-cli.js"],
+          options: vec![
+            "node_modules/npm/bin/npm-cli.js",
+            "lib/node_modules/npm/bin/npm-cli.js",
+            "../lib/node_modules/npm/bin/npm-cli.js",
+          ],
         },
       };
       assert_eq!(have, want);
@@ -158,7 +175,11 @@ mod tests {
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec![r"node_modules\npm\bin\npm-cli.js", r"lib\node_modules\npm\bin\npm-cli.js"],
+          options: vec![
+            r"node_modules\npm\bin\npm-cli.js",
+            r"lib\node_modules\npm\bin\npm-cli.js",
+            r"..\lib\node_modules\npm\bin\npm-cli.js",
+          ],
         },
       };
       assert_eq!(have, want);
@@ -177,7 +198,11 @@ mod tests {
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
         args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec![r"node_modules\npm\bin\npm-cli.js", r"lib\node_modules\npm\bin\npm-cli.js"],
+          options: vec![
+            r"node_modules\npm\bin\npm-cli.js",
+            r"lib\node_modules\npm\bin\npm-cli.js",
+            r"..\lib\node_modules\npm\bin\npm-cli.js",
+          ],
         },
       };
       assert_eq!(have, want);

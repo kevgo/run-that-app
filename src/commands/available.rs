@@ -1,15 +1,14 @@
 use crate::applications::{ApplicationName, Apps};
-use crate::configuration::{self, RequestedVersions, Version};
 use crate::context::RuntimeContext;
 use crate::error::Result;
-use crate::executables::load_or_install_app;
+use crate::executables::{LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, load_or_install_app_and_carrier};
 use crate::yard::Yard;
-use crate::{logging, platform, yard};
+use crate::{configuration, logging, platform, yard};
 use std::process::ExitCode;
 
-pub fn available(args: &AvailableArgs, apps: &Apps) -> Result<ExitCode> {
-  let app = apps.lookup(&args.app_name)?;
-  let log = logging::new(args.verbose);
+pub fn available(AvailableArgs { app_name, optional, verbose }: AvailableArgs, apps: &Apps) -> Result<ExitCode> {
+  let app = apps.lookup(app_name)?;
+  let log = logging::new(verbose);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
   let config_file = configuration::File::load(apps)?;
@@ -19,11 +18,17 @@ pub fn available(args: &AvailableArgs, apps: &Apps) -> Result<ExitCode> {
     config_file: &config_file,
     log,
   };
-  let versions = RequestedVersions::determine(&args.app_name, args.version.as_ref(), &config_file)?;
-  if load_or_install_app(app, &versions, args.optional, false, &ctx, apps)?.is_some() {
-    return Ok(ExitCode::SUCCESS);
+  match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+    app,
+    cli_version: None,
+    optional,
+    from_source: false,
+    ctx: &ctx,
+    apps,
+  })? {
+    LoadOrInstallAppOutcome::Loaded { executable_call: _ } => Ok(ExitCode::SUCCESS),
+    LoadOrInstallAppOutcome::NotInstallable { app: _ } => Ok(ExitCode::FAILURE),
   }
-  Ok(ExitCode::FAILURE)
 }
 
 /// named arguments for the [`available`] command
@@ -31,6 +36,5 @@ pub fn available(args: &AvailableArgs, apps: &Apps) -> Result<ExitCode> {
 pub struct AvailableArgs {
   pub app_name: ApplicationName,
   pub optional: bool,
-  pub version: Option<Version>,
   pub verbose: bool,
 }
