@@ -27,6 +27,7 @@ impl AppDefinition for Npm {
         options: vec![
           formatcp!("node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npm-cli.js"),
           formatcp!("lib{MAIN_SEPARATOR}node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npm-cli.js"),
+          formatcp!("..{MAIN_SEPARATOR}lib{MAIN_SEPARATOR}node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npm-cli.js"),
         ],
       },
     }
