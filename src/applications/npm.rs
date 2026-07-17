@@ -5,8 +5,6 @@ use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, ExecutableArgs, RunMethod};
 use crate::platform::Platform;
-use const_format::formatcp;
-use std::path::MAIN_SEPARATOR;
 
 #[derive(Clone)]
 pub struct Npm {}
@@ -21,15 +19,9 @@ impl AppDefinition for Npm {
   }
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {
-    RunMethod::OtherAppDefaultExecutable {
+    RunMethod::OtherAppOtherShellScript {
       app_definition: Box::new(NodeJS {}),
-      args: ExecutableArgs::OneOfTheseInAppFolder {
-        options: vec![
-          formatcp!("node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npm-cli.js"),
-          formatcp!("lib{MAIN_SEPARATOR}node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npm-cli.js"),
-          formatcp!("..{MAIN_SEPARATOR}lib{MAIN_SEPARATOR}node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npm-cli.js"),
-        ],
-      },
+      shell_script_name: "npm".into(),
     }
   }
 
