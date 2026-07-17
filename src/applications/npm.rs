@@ -83,7 +83,9 @@ mod tests {
       );
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder { options: vec!["bin/npm"] },
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["bin/npm.cmd", "bin/npm"],
+        },
       };
       assert_eq!(have, want);
     }
@@ -100,7 +102,9 @@ mod tests {
       );
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder { options: vec!["bin/npm"] },
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["bin/npm.cmd", "bin/npm"],
+        },
       };
       assert_eq!(have, want);
     }
@@ -117,7 +121,9 @@ mod tests {
       );
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder { options: vec!["bin/npm"] },
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["bin/npm.cmd", "bin/npm"],
+        },
       };
       assert_eq!(have, want);
     }
@@ -134,7 +140,9 @@ mod tests {
       );
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder { options: vec!["bin/npm"] },
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["bin/npm.cmd", "bin/npm"],
+        },
       };
       assert_eq!(have, want);
     }
@@ -151,7 +159,9 @@ mod tests {
       );
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder { options: vec!["bin\\npm"] },
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["bin/npm.cmd", "bin/npm"],
+        },
       };
       assert_eq!(have, want);
     }
@@ -168,7 +178,9 @@ mod tests {
       );
       let want = RunMethod::OtherAppDefaultExecutable {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder { options: vec!["bin\\npm"] },
+        args: ExecutableArgs::OneOfTheseInAppFolder {
+          options: vec!["bin/npm.cmd", "bin/npm"],
+        },
       };
       assert_eq!(have, want);
     }
