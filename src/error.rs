@@ -12,58 +12,139 @@ pub type Result<T> = core::result::Result<T, UserError>;
 #[derive(Debug, PartialEq)]
 #[allow(clippy::module_name_repetitions)]
 pub enum UserError {
-  ArchiveCannotExtract { reason: String },
+  ArchiveCannotExtract {
+    reason: String,
+  },
   CannotAccessConfigFile(String),
-  CannotCompileRustSource { err: String },
-  CannotCreateFile { filename: PathBuf, err: String },
-  CannotCreateFolder { folder: PathBuf, reason: String },
-  CannotCreateTempDir { err: String },
-  CannotDeleteFolder { folder: PathBuf, err: String },
+  CannotCompileRustSource {
+    err: String,
+  },
+  CannotCreateFile {
+    filename: PathBuf,
+    err: String,
+  },
+  CannotCreateFolder {
+    folder: PathBuf,
+    reason: String,
+  },
+  CannotCreateTempDir {
+    err: String,
+  },
+  CannotDeleteFolder {
+    folder: PathBuf,
+    err: String,
+  },
   CannotDetermineCurrentDirectory(String),
   CannotDetermineHomeDirectory,
-  CannotDownload { url: Url, reason: String },
-  CannotExecuteBinary { call: String, reason: String },
-  CannotFindExecutable { app: ApplicationName, version: Version },
-  CannotMoveFolder { from: PathBuf, to: PathBuf, err: String },
+  CannotDownload {
+    url: Url,
+    reason: String,
+  },
+  CannotExecuteBinary {
+    call: String,
+    reason: String,
+  },
+  CannotFindExecutable {
+    app: ApplicationName,
+    version: Version,
+    paths: Vec<PathBuf>,
+  },
+  CannotMoveFolder {
+    from: PathBuf,
+    to: PathBuf,
+    err: String,
+  },
   CannotOpenSubshellStream,
-  CannotParseSemverVersion { expression: String, reason: String },
-  CannotParseSemverRange { expression: String, reason: String },
-  CannotReadFolder { folder: PathBuf, err: String },
-  CannotReadZipFile { err: String },
-  CompilationError { reason: String },
+  CannotParseSemverVersion {
+    expression: String,
+    reason: String,
+  },
+  CannotParseSemverRange {
+    expression: String,
+    reason: String,
+  },
+  CannotReadFolder {
+    folder: PathBuf,
+    err: String,
+  },
+  CannotReadZipFile {
+    err: String,
+  },
+  CompilationError {
+    reason: String,
+  },
   CompilationInterupted,
   ConfigFileAlreadyExists,
-  DuplicateAppName { name: String },
-  ExecutableCannotExecute { executable: PathBuf, err: String },
-  GitHubReleasesApiProblem { problem: String, payload: String },
-  GitHubTagsApiProblem { problem: String, payload: String },
+  DuplicateAppName {
+    name: String,
+  },
+  ExecutableCannotExecute {
+    executable: PathBuf,
+    err: String,
+  },
+  GitHubReleasesApiProblem {
+    problem: String,
+    payload: String,
+  },
+  GitHubTagsApiProblem {
+    problem: String,
+    payload: String,
+  },
   GoCompilationFailed,
   GoNoPermission,
-  InvalidConfigFileFormat { line_no: usize, text: String },
+  InvalidConfigFileFormat {
+    line_no: usize,
+    text: String,
+  },
   InvalidNumber,
-  InvalidGitHubAPIResponse { err: String },
-  InvalidRegex { regex: String, err: String },
-  LockCannotAcquire { filename: PathBuf, err: String },
+  InvalidGitHubAPIResponse {
+    err: String,
+  },
+  InvalidRegex {
+    regex: String,
+    err: String,
+  },
+  LockCannotAcquire {
+    filename: PathBuf,
+    err: String,
+  },
   MissingApplication,
   MultipleCommandsGiven,
   NotOnline,
-  NoVersionsFound { app: ApplicationName },
-  ProcessEmittedOutput { cmd: String },
+  NoVersionsFound {
+    app: ApplicationName,
+  },
+  ProcessEmittedOutput {
+    cmd: String,
+  },
   RegexDoesntMatch,
   RegexHasNoCaptures,
-  RunRequestMissingVersion { app: ApplicationName },
+  RunRequestMissingVersion {
+    app: ApplicationName,
+  },
   RustCompilationFailed,
   RustNotInstalled,
   RustNoPermission,
   UnknownApp(String),
   UnknownArchive(String),
   UnknownCliOption(String),
-  UnsupportedPlatform { app: ApplicationName },
+  UnsupportedPlatform {
+    app: ApplicationName,
+  },
   UnsupportedCPU(String),
   UnsupportedOS(String),
-  UnsupportedNpmPackage { app_name: ApplicationName, version: Version, err: String },
-  YardRootIsNotFolder { root: PathBuf },
-  YardAccessDenied { msg: String, path: PathBuf },
+  UnsupportedNpmPackage {
+    app_name: ApplicationName,
+    version: Version,
+    err: String,
+  },
+  YardRootIsNotFolder {
+    root: PathBuf,
+  },
+  YardAccessDenied {
+    msg: String,
+    path: PathBuf,
+  },
 }
 
 impl UserError {
@@ -94,9 +175,13 @@ impl UserError {
       UserError::CannotExecuteBinary { call, reason } => {
         error(&format!("cannot execute \"{call}\":\n{reason}"));
       }
-      UserError::CannotFindExecutable { app, version } => {
+      UserError::CannotFindExecutable { app, version, paths } => {
         error(&format!("cannot locate executable for app {app}@{version}."));
-        desc("Please report this at https://github.com/kevgo/run-that-app/issues/new and try using an older version until this is fixed.");
+        desc("I tried these paths:");
+        for tested_path in paths {
+          desc(&format!("  - {}", tested_path.display()));
+        }
+        desc("\nPlease report this at https://github.com/kevgo/run-that-app/issues/new and try using an older version until this is fixed.");
       }
       UserError::CannotMoveFolder { from, to, err } => {
         error(&format!("cannot move folder {} to {}: {err}", from.display(), to.display()));
