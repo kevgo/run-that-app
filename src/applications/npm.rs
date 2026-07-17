@@ -3,7 +3,7 @@ use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
 use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
-use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
+use crate::executables::{Executable, ExecutableArgs, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
 
 #[derive(Clone)]
@@ -19,9 +19,9 @@ impl AppDefinition for Npm {
   }
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {
-    RunMethod::OtherAppOtherExecutable {
+    RunMethod::OtherAppDefaultExecutable {
       app_definition: Box::new(NodeJS {}),
-      executable_name: ExecutableNameUnix::from("npm"),
+      args: ExecutableArgs::OneOfTheseInAppFolder { options: vec![format] },
     }
   }
 
