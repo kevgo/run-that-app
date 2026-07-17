@@ -60,20 +60,6 @@ pub fn load_or_install_app_and_carrier(
       })
     }
 
-    RunMethod::OtherAppOtherExecutable {
-      app_definition: carrier_app,
-      executable_name: carrier_executable,
-    } => load_or_install_app(LoadOrInstallAppArgs {
-      app: carrier_app.as_ref(),
-      cli_version,
-      executable: carrier_executable,
-      args: &ExecutableArgs::None,
-      optional,
-      from_source,
-      ctx,
-      apps,
-    }),
-
     RunMethod::OtherAppDefaultExecutable {
       app_definition: carrier_app,
       args: carrier_args,
@@ -82,6 +68,20 @@ pub fn load_or_install_app_and_carrier(
       cli_version,
       executable: carrier_app.executable_filename(),
       args: &carrier_args,
+      optional,
+      from_source,
+      ctx,
+      apps,
+    }),
+
+    RunMethod::OtherAppOtherExecutable {
+      app_definition: carrier_app,
+      executable_name: carrier_executable,
+    } => load_or_install_app(LoadOrInstallAppArgs {
+      app: carrier_app.as_ref(),
+      cli_version,
+      executable: carrier_executable,
+      args: &ExecutableArgs::None,
       optional,
       from_source,
       ctx,
