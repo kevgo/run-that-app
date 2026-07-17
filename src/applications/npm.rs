@@ -3,8 +3,10 @@ use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
 use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
-use crate::executables::{Executable, ExecutableArgs, ExecutableNameUnix, RunMethod};
+use crate::executables::{Executable, ExecutableArgs, RunMethod};
 use crate::platform::Platform;
+use const_format::formatcp;
+use std::path::MAIN_SEPARATOR;
 
 #[derive(Clone)]
 pub struct Npm {}
