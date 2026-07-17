@@ -24,8 +24,8 @@ pub enum RunMethod {
   OtherAppOtherShellScript {
     /// the other application that contains the shell script
     app_definition: Box<dyn AppDefinition>,
-    /// name of the shell script to run
-    shell_script_name: ExecutableNameUnix,
+    /// the shell script to run
+    shell_script: ExecutableNameUnix,
   },
 
   /// executes the default executable of another app with additional arguments
@@ -54,7 +54,7 @@ impl RunMethod {
       }
       | RunMethod::OtherAppOtherShellScript {
         app_definition: _,
-        shell_script_name: _,
+        shell_script: _,
       } => vec![],
       RunMethod::OtherAppDefaultExecutable { app_definition: _, args: _ } => vec![],
     }

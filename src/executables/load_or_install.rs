@@ -88,6 +88,20 @@ pub fn load_or_install_app_and_carrier(
       apps,
     }),
 
+    RunMethod::OtherAppOtherShellScript {
+      app_definition: carrier_app,
+      shell_script: carrier_shell_script,
+    } => load_or_install_app(LoadOrInstallAppArgs {
+      app: carrier_app.as_ref(),
+      cli_version,
+      executable: carrier_shell_script,
+      args: &ExecutableArgs::None,
+      optional,
+      from_source,
+      ctx,
+      apps,
+    }),
+
     RunMethod::NodeJS { package } => {
       // step 1: ensure NodeJS is installed, install if needed
       let node = NodeJS {};

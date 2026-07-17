@@ -21,7 +21,7 @@ impl AppDefinition for Npm {
   fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {
     RunMethod::OtherAppOtherShellScript {
       app_definition: Box::new(NodeJS {}),
-      shell_script_name: "npm".into(),
+      shell_script: "npm".into(),
     }
   }
 
