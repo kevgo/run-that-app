@@ -60,9 +60,11 @@ impl ExecutableArgs {
     match self {
       ExecutableArgs::None => Ok(vec![]),
       ExecutableArgs::OneOfTheseInAppFolder { options } => {
+        let mut paths = vec![];
         for bin_folder_path in &bin_folder.possible_paths(app_folder) {
           for option in options {
             let absolute_path = bin_folder_path.join(option);
+            paths.push(absolute_path.clone());
             if absolute_path.exists() {
               return Ok(vec![absolute_path.to_string_lossy().to_string()]);
             }
@@ -71,6 +73,7 @@ impl ExecutableArgs {
         Err(UserError::CannotFindExecutable {
           app: app_name.clone(),
           version: version.clone(),
+          paths,
         })
       }
     }
