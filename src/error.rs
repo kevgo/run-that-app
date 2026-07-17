@@ -181,7 +181,7 @@ impl UserError {
         for tested_path in paths {
           desc(&format!("  - {}", tested_path.display()));
         }
-        desc("Please report this at https://github.com/kevgo/run-that-app/issues/new and try using an older version until this is fixed.");
+        desc("\nPlease report this at https://github.com/kevgo/run-that-app/issues/new and try using an older version until this is fixed.");
       }
       UserError::CannotMoveFolder { from, to, err } => {
         error(&format!("cannot move folder {} to {}: {err}", from.display(), to.display()));
