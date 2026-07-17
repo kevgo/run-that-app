@@ -24,7 +24,12 @@ impl AppDefinition for Npm {
     RunMethod::OtherAppDefaultExecutable {
       app_definition: Box::new(NodeJS {}),
       args: ExecutableArgs::OneOfTheseInAppFolder {
-        options: vec![formatcp!("bin{MAIN_SEPARATOR}npm")],
+        options: vec![
+          // on Windows, npm is a batch file
+          formatcp!("bin{MAIN_SEPARATOR}npm.cmd"),
+          // on Unix, npm is a script
+          formatcp!("bin{MAIN_SEPARATOR}npm"),
+        ],
       },
     }
   }
