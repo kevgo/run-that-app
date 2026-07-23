@@ -26,6 +26,7 @@ impl AppDefinition for Npm {
       args: ExecutableArgs::OneOfTheseInAppFolder {
         options: vec![
           // on Windows, npm is a batch file
+          formatcp!("npm.cmd"),
           formatcp!("bin{MAIN_SEPARATOR}npm.cmd"),
           // on Unix, npm is a script
           formatcp!("bin{MAIN_SEPARATOR}npm"),
