@@ -88,6 +88,28 @@ pub fn load_or_install_app_and_carrier(
       apps,
     }),
 
+    RunMethod::OtherAppShellScript {
+      app_definition: carrier_app,
+      unix_scripts,
+      windows_scripts,
+    } => {
+      // step 1: ensure NodeJS is installed, install if needed
+      let node = NodeJS {};
+      match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+        app: &node,
+        cli_version: None,
+        optional,
+        from_source: false,
+        ctx,
+        apps,
+      })? {
+        LoadOrInstallAppOutcome::Loaded { executable_call } => todo!(),
+        LoadOrInstallAppOutcome::NotInstallable { app } => todo!(),
+      }
+
+      // step 2
+    }
+
     RunMethod::NodeJS { package } => {
       // step 1: ensure NodeJS is installed, install if needed
       let node = NodeJS {};
