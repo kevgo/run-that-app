@@ -12,7 +12,7 @@ pub fn run(app_definition: &dyn AppDefinition, app_folder: &Path, version: &Vers
   let Some(artifact) = download::artifact(url, &app_definition.name(), version, optional, ctx.log)? else {
     return Ok(Outcome::NotInstalled { app: app_definition.name() });
   };
-  let filepath_on_disk = app_folder.join(app_definition.executable_filename().platform_path(ctx.platform.os));
+  let filepath_on_disk = app_folder.join(app_definition.executable_filename().platform_path(ctx.platform.os).as_ref());
   filesystem::save_executable(artifact.data, &filepath_on_disk, ctx.log);
   Ok(Outcome::Installed)
 }

@@ -1,11 +1,10 @@
 use crate::executables::{Executable, ExecutableNamePlatform};
 use crate::logging::{Event, Log};
-use std::path::Path;
 use which::which_global;
 
 pub fn find_global_install(binary_name: &ExecutableNamePlatform, log: Log) -> Option<Executable> {
   log(Event::GlobalInstallSearch { binary: binary_name.as_ref() });
-  if let Ok(path) = which_global::<&Path>(binary_name.as_ref()) {
+  if let Ok(path) = which_global(binary_name.as_ref()) {
     log(Event::GlobalInstallFound { path: &path });
     Some(Executable::from(path))
   } else {

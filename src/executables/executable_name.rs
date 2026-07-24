@@ -1,7 +1,6 @@
 use crate::applications::ApplicationName;
 use crate::platform::Os;
 use std::fmt::Display;
-use std::path::Path;
 
 /// the unix name of an executable
 #[derive(Clone, Debug, PartialEq)]
@@ -55,12 +54,6 @@ pub struct ExecutableNamePlatform(String);
 impl From<String> for ExecutableNamePlatform {
   fn from(value: String) -> Self {
     ExecutableNamePlatform(value)
-  }
-}
-
-impl AsRef<Path> for ExecutableNamePlatform {
-  fn as_ref(&self) -> &Path {
-    Path::new(&self.0)
   }
 }
 

@@ -13,7 +13,7 @@ use which::which;
 pub fn run(app_folder: &Path, import_path: &str, optional: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Outcome> {
   let go = Go {};
   let go_args = vec!["install", &import_path];
-  let go_path = if let Ok(system_go_path) = which::<&Path>(go.executable_filename().platform_path(ctx.platform.os).as_ref()) {
+  let go_path = if let Ok(system_go_path) = which(go.executable_filename().platform_path(ctx.platform.os).as_ref()) {
     system_go_path
   } else {
     let Some(rta_path) = load_rta_go(optional, ctx, apps)? else {
