@@ -1,13 +1,15 @@
 use crate::error::Result;
 use crate::executables::ExecutableCall;
 #[cfg(not(windows))]
+use big_s::S;
+#[cfg(not(windows))]
 use std::path::Path;
 
 #[cfg(not(windows))]
 pub fn executable_call_for_shell_script(shell_script: &Path) -> Result<ExecutableCall> {
   Ok(ExecutableCall {
     executable: "sh".into(),
-    args: vec![shell_script.to_string_lossy().to_string()],
+    args: vec![S("-c"), shell_script.to_string_lossy().to_string()],
   })
 }
 

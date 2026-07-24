@@ -4,6 +4,7 @@ use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableArgs, ExecutableCall, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
 use crate::installation::Outcome;
+use crate::logging::Event;
 use crate::platform::Os;
 use crate::yard::Yard;
 use crate::{Version, installation, subshell};
@@ -267,9 +268,12 @@ fn locate_shell_script(
           let app_bin_folder = app_folder.join(&bin_folder);
           for candidate in candidates {
             let path = app_bin_folder.join(candidate);
+            (ctx.log)(Event::YardCheckExistingAppBegin { path: &path });
             if path.exists() {
+              (ctx.log)(Event::YardCheckExistingAppFound);
               return Ok(path);
             }
+            (ctx.log)(Event::YardCheckExistingAppNotFound);
             paths.push(path.to_string_lossy().to_string());
           }
         }
