@@ -21,7 +21,7 @@ impl AppDefinition for Npm {
   }
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {
-    RunMethod::OtherAppDefaultExecutable {
+    RunMethod::OtherAppShellScript {
       app_definition: Box::new(NodeJS {}),
       args: ExecutableArgs::OneOfTheseInAppFolder {
         options: vec![
