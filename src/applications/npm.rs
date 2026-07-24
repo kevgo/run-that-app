@@ -19,13 +19,12 @@ impl AppDefinition for Npm {
   }
 
   fn run_method(&self, _version: &Version, platform: Platform) -> RunMethod {
-    let paths = match platform.os {
-      Os::Windows => vec!["npm.cmd", "bin\\npm.cmd"],
-      Os::Linux | Os::MacOS => vec!["bin/npm"],
-    };
     RunMethod::OtherAppShellScript {
       app_definition: Box::new(NodeJS {}),
-      paths,
+      paths: match platform.os {
+        Os::Windows => vec!["npm.cmd", "bin\\npm.cmd"],
+        Os::Linux | Os::MacOS => vec!["bin/npm"],
+      },
     }
   }
 
