@@ -98,18 +98,15 @@ pub fn load_or_install_app_and_carrier(
       // step 1: ensure the carrier app is installed, install if needed
       // TODO: Call load_or_install_app instead of load_or_install_app_and_carrier here.
       //       Check for the given script_name directly instead of the default executable.
-      match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+      if let Err(_err) = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: carrier_app.as_ref(),
         cli_version: None,
         optional,
         from_source: false,
         ctx,
         apps,
-      })? {
-        LoadOrInstallAppOutcome::Loaded { executable_call: _ } => {}
-        LoadOrInstallAppOutcome::NotInstallable { app } => {
-          return Ok(LoadOrInstallAppOutcome::NotInstallable { app });
-        }
+      }) {
+        return Ok(LoadOrInstallAppOutcome::NotInstallable { app: carrier_app.name() });
       }
       // step 2: locate the shell script inside the carrier app
       let shell_script = locate_shell_script(carrier_app.as_ref(), cli_version, script_name, ctx)?;
