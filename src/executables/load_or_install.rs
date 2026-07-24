@@ -113,7 +113,7 @@ pub fn load_or_install_app_and_carrier(
       // step 2: locate the shell script candidate that exists in the carrier app
       let shell_script = locate_shell_script(carrier_app.as_ref(), cli_version, ctx.platform.os, &unix, &windows, &app.name(), ctx)?;
       // step 3: create the executable call that runs the shell script
-      let executable_call = subshell::executable_call_for_shell_script(&shell_script)?;
+      let executable_call = subshell::executable_call_for_shell_script(&shell_script);
       Ok(LoadOrInstallAppOutcome::Loaded { executable_call })
     }
 
