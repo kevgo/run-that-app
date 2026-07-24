@@ -99,6 +99,7 @@ pub fn load_or_install_app_and_carrier(
         ctx,
         apps,
       }) {
+        println!("ERROR: cannot install {}", nodejs.name());
         err.print();
         return Ok(LoadOrInstallAppOutcome::NotInstallable { app: nodejs.name() });
       }
