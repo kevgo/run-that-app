@@ -91,7 +91,7 @@ pub fn load_or_install_app_and_carrier(
     RunMethod::NodeJS { package } => {
       // step 1: ensure NodeJS is installed, install if needed
       let nodejs = &NodeJS {};
-      if let Err(_err) = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+      if let Err(err) = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: nodejs,
         cli_version: None,
         optional,
@@ -99,6 +99,7 @@ pub fn load_or_install_app_and_carrier(
         ctx,
         apps,
       }) {
+        err.print();
         return Ok(LoadOrInstallAppOutcome::NotInstallable { app: nodejs.name() });
       }
 
