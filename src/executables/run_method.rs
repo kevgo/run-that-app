@@ -30,7 +30,7 @@ pub enum RunMethod {
   },
 
   /// executes a shell script bundled with another app
-  OtherAppOtherShellScript {
+  OtherAppShellScript {
     /// the other application that contains the shell script
     app_definition: Box<dyn AppDefinition>,
     /// the shell script to run
