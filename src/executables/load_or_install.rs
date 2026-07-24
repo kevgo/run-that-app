@@ -243,8 +243,9 @@ fn locate_shell_script(
         let mut bin_folders = Vec::new();
         for install_method in install_methods {
           match install_method {
-            installation::Method::DownloadArchive { url: _, bin_folder } => bin_folders.push(bin_folder),
-            installation::Method::CompileRustCrate { name: _, bin_folder } => bin_folders.push(bin_folder),
+            installation::Method::DownloadArchive { url: _, bin_folder } | installation::Method::CompileRustCrate { name: _, bin_folder } => {
+              bin_folders.push(bin_folder);
+            }
             installation::Method::DownloadExecutable { url: _ }
             | installation::Method::CompileGoSource { import_path: _ }
             | installation::Method::CompileRustRepo { url: _ }
