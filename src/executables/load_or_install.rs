@@ -95,6 +95,8 @@ pub fn load_or_install_app_and_carrier(
       script_name,
     } => {
       // step 1: ensure the carrier app is installed, install if needed
+      // TODO: Call load_or_install_app instead of load_or_install_app_and_carrier here.
+      //       Check for the given script_name directly instead of the default executable.
       match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: carrier_app.as_ref(),
         cli_version: None,
