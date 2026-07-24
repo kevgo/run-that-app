@@ -98,6 +98,7 @@ pub fn load_or_install_app_and_carrier(
       // TODO: Ideally we would run load_or_install_app instead of load_or_install_app_and_carrier here.
       //       But doing so would require to inject a way to run the "npm" executable via an external shell binary.
       //       Maybe this is a signal that we need an "ExecutableType" enum with variants "binary" and "shell_script"?
+      //       Maybe AppDefinition.name should return the ExecutableType that has the name as a property?
       if let Err(_err) = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: carrier_app.as_ref(),
         cli_version: None,
