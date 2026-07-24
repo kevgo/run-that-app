@@ -12,6 +12,14 @@ pub enum RunMethod {
     install_methods: Vec<installation::Method>,
   },
 
+  /// executes the default executable of another app with additional arguments
+  OtherAppDefaultExecutable {
+    /// the other applications whose default executable to run
+    app_definition: Box<dyn AppDefinition>,
+    /// additional arguments when running the default executable of the given app
+    args: ExecutableArgs,
+  },
+
   /// executes another executable (not the default executable) of another app
   OtherAppOtherExecutable {
     /// the other application that contains the executable
@@ -26,14 +34,6 @@ pub enum RunMethod {
     app_definition: Box<dyn AppDefinition>,
     /// the shell script to run
     shell_script: ExecutableNameUnix,
-  },
-
-  /// executes the default executable of another app with additional arguments
-  OtherAppDefaultExecutable {
-    /// the other applications whose default executable to run
-    app_definition: Box<dyn AppDefinition>,
-    /// additional arguments when running the default executable of the given app
-    args: ExecutableArgs,
   },
 
   /// the app to run is a `NodeJS` package
