@@ -1,6 +1,7 @@
 use super::ExecutableNameUnix;
 use super::executable_call::ExecutableArgs;
 use crate::applications::AppDefinition;
+use crate::executables::ExecutableNamePlatform;
 use crate::installation;
 
 /// the different ways to execute an application
@@ -33,7 +34,7 @@ pub enum RunMethod {
     /// the other application that contains the shell script
     app_definition: Box<dyn AppDefinition>,
     /// the shell script to run
-    shell_script: ExecutableNameUnix,
+    shell_scripts: Vec<ExecutableNamePlatform>,
   },
 
   /// the app to run is a `NodeJS` package
@@ -54,7 +55,7 @@ impl RunMethod {
       }
       | RunMethod::OtherAppOtherShellScript {
         app_definition: _,
-        shell_script: _,
+        shell_scripts: _,
       } => vec![],
       RunMethod::OtherAppDefaultExecutable { app_definition: _, args: _ } => vec![],
     }

@@ -54,7 +54,13 @@ pub struct ExecutableNamePlatform(String);
 
 impl From<String> for ExecutableNamePlatform {
   fn from(value: String) -> Self {
-    ExecutableNamePlatform(value.clone())
+    ExecutableNamePlatform(value)
+  }
+}
+
+impl From<&str> for ExecutableNamePlatform {
+  fn from(value: &str) -> Self {
+    ExecutableNamePlatform(value.to_string())
   }
 }
 
