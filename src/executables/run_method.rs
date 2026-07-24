@@ -58,8 +58,8 @@ impl RunMethod {
         app_definition: _,
         unix: _,
         windows: _,
-      } => vec![],
-      RunMethod::OtherAppDefaultExecutable { app_definition: _, args: _ } => vec![],
+      }
+      | RunMethod::OtherAppDefaultExecutable { app_definition: _, args: _ } => vec![],
     }
   }
 }
