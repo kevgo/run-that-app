@@ -121,12 +121,12 @@ pub fn load_or_install_app_and_carrier(
         ctx,
         apps,
       })? {
-        LoadOrInstallAppOutcome::Loaded { executable_call } => executable_call,
+        LoadOrInstallAppOutcome::Loaded { executable_call: _ } => {}
         LoadOrInstallAppOutcome::NotInstallable { app } => {
           println!("ERROR: cannot install NodeJS: {app}");
           return Ok(LoadOrInstallAppOutcome::NotInstallable { app });
         }
-      };
+      }
 
       // step 2: determine the version of the npm package to run
       let app_versions = if let Some(version) = cli_version {
