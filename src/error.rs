@@ -1,6 +1,6 @@
 use crate::Version;
 use crate::applications::ApplicationName;
-use crate::configuration::{self, FILE_NAME};
+use crate::configuration::{self, FILE_NAME, RequestedVersions};
 use crate::download::Url;
 use colored::Colorize;
 use std::path::PathBuf;
@@ -47,6 +47,11 @@ pub enum UserError {
   CannotFindExecutable {
     app: ApplicationName,
     version: Version,
+    paths: Vec<PathBuf>,
+  },
+  CannotFindScript {
+    name: String,
+    versions: RequestedVersions,
     paths: Vec<PathBuf>,
   },
   CannotFindSh {

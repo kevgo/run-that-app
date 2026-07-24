@@ -105,18 +105,17 @@ pub fn load_or_install_app_and_carrier(
         ctx,
         apps,
       })? {
-        LoadOrInstallAppOutcome::Loaded { executable_call } => {}
+        LoadOrInstallAppOutcome::Loaded { executable_call: _ } => {}
         LoadOrInstallAppOutcome::NotInstallable { app } => {
-          println!("ERROR: cannot install NodeJS: {app}");
           return Ok(LoadOrInstallAppOutcome::NotInstallable { app });
         }
       };
 
-      // step 2: locate the shell script variant that exists in the carrier app
-      let shell_script = determine_shell_script(cli_version, &unix, &windows, ctx)?;
+      // step 2: locate the shell script candidate that exists in the carrier app
+      let shell_script = locate_shell_script(carrier_app.as_ref(), cli_version, ctx.platform.os, &unix, &windows, &app.name(), ctx)?;
 
       // step 3: create the executable call that runs the shell script
-      let executable_call = subshell::executable_call_for_shell_script(shell_script)?;
+      let executable_call = subshell::executable_call_for_shell_script(&shell_script)?;
       Ok(LoadOrInstallAppOutcome::Loaded { executable_call })
     }
 
@@ -186,14 +185,15 @@ pub enum LoadOrInstallAppOutcome {
   NotInstallable { app: ApplicationName },
 }
 
-fn determine_shell_script(
+fn locate_shell_script(
   carrier_app: &dyn AppDefinition,
   cli_version: Option<&Version>,
   os: Os,
   unix: &[&str],
   windows: &[&str],
+  script_name: &ApplicationName,
   ctx: &RuntimeContext,
-) -> Result<Option<PathBuf>> {
+) -> Result<PathBuf> {
   // step 1: determine the version of the app to install
   let versions = if let Some(version) = cli_version {
     RequestedVersions::from(version)
@@ -210,28 +210,39 @@ fn determine_shell_script(
   };
 
   // step 3: find the first matching candidate
-  for version in versions {
+  let mut paths = Vec::new();
+  for version in &versions {
     match version {
-      RequestedVersion::Path(version) => {
+      RequestedVersion::Path(_version) => {
         for candidate in candidates {
           match which::which(candidate) {
-            Ok(path) => return Ok(Some(path)),
-            Err(_) => {}
+            Ok(path) => {
+              // TODO: check if the version matches
+              return Ok(path);
+            }
+            Err(_) => {
+              // not found --> try next candidate and/or version
+            }
           }
         }
       }
       RequestedVersion::Yard(version) => {
-        let app_folder = ctx.yard.app_folder(&carrier_app.name(), &version);
+        let app_folder = ctx.yard.app_folder(&carrier_app.name(), version);
         for candidate in candidates {
           let path = app_folder.join(candidate);
           if path.exists() {
-            return Ok(Some(path));
+            return Ok(path);
           }
+          paths.push(path);
         }
       }
     }
   }
-  Ok(None)
+  Err(UserError::CannotFindScript {
+    name: script_name.to_string(),
+    versions,
+    paths,
+  })
 }
 
 /// Loads or installs only the given app (not its carrier) and returns the executable call.
