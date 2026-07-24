@@ -214,17 +214,13 @@ fn locate_shell_script(
       RequestedVersion::Path(_version) => {
         for candidate in candidates {
           (ctx.log)(Event::GlobalInstallSearch { binary: candidate });
-          match which::which(candidate) {
-            Ok(path) => {
-              (ctx.log)(Event::GlobalInstallFound { path: &path });
-              // TODO: check if the version matches
-              return Ok(path);
-            }
-            Err(_) => {
-              (ctx.log)(Event::GlobalInstallNotFound);
-              paths.push(S("(system path)"));
-            }
+          if let Ok(path) = which::which(candidate) {
+            (ctx.log)(Event::GlobalInstallFound { path: &path });
+            // TODO: check if the version matches
+            return Ok(path);
           }
+          (ctx.log)(Event::GlobalInstallNotFound);
+          paths.push(S("(system path)"));
         }
       }
       RequestedVersion::Yard(version) => {
