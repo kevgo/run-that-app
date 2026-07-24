@@ -64,6 +64,12 @@ impl AsRef<Path> for ExecutableNamePlatform {
   }
 }
 
+impl AsRef<str> for ExecutableNamePlatform {
+  fn as_ref(&self) -> &str {
+    &self.0
+  }
+}
+
 impl Display for ExecutableNamePlatform {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.write_str(&self.0)

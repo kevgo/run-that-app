@@ -23,7 +23,7 @@ pub enum RustSource {
 /// installs the given Rust-based application by compiling it from source
 pub fn run(app_definition: &dyn AppDefinition, version: &Version, app_folder: &Path, source: &RustSource, ctx: &RuntimeContext) -> Result<Outcome> {
   let cargo = ExecutableNameUnix::from("cargo");
-  let Ok(cargo_path) = which(cargo.platform_path(ctx.platform.os).as_ref()) else {
+  let Ok(cargo_path) = which::<&Path>(cargo.platform_path(ctx.platform.os).as_ref()) else {
     return Err(UserError::RustNotInstalled);
   };
   let mut cmd = Command::new(&cargo_path);
