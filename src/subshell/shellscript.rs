@@ -1,8 +1,7 @@
-#[cfg(not(windows))]
-use std::path::Path;
-
 use crate::error::Result;
 use crate::executables::ExecutableCall;
+#[cfg(not(windows))]
+use std::path::Path;
 
 #[cfg(not(windows))]
 pub fn executable_call_for_shell_script(shell_script: &Path) -> Result<ExecutableCall> {

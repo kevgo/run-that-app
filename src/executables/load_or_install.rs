@@ -4,15 +4,13 @@ use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableArgs, ExecutableCall, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
 use crate::installation::Outcome;
-use crate::platform::{Os, Platform};
+use crate::platform::Os;
 use crate::yard::Yard;
 use crate::{Version, installation, subshell};
 use ahash::AHashSet;
 use big_s::S;
-use std::env::consts::OS;
 use std::fs;
 use std::path::{Path, PathBuf};
-use which::which;
 
 pub fn load_or_install_apps(apps_to_include: Vec<&dyn AppDefinition>, apps: &Apps, optional: bool, ctx: &RuntimeContext) -> Result<Vec<ExecutableCall>> {
   let mut result = Vec::with_capacity(apps_to_include.len());
@@ -110,7 +108,7 @@ pub fn load_or_install_app_and_carrier(
         LoadOrInstallAppOutcome::NotInstallable { app } => {
           return Ok(LoadOrInstallAppOutcome::NotInstallable { app });
         }
-      };
+      }
 
       // step 2: locate the shell script candidate that exists in the carrier app
       let shell_script = locate_shell_script(carrier_app.as_ref(), cli_version, ctx.platform.os, &unix, &windows, &app.name(), ctx)?;

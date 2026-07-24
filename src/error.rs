@@ -194,7 +194,7 @@ impl UserError {
         error(&format!("cannot locate shell script for {name}."));
         desc("I tried these paths:");
         for tested_path in paths {
-          desc(&format!("  - {}", tested_path));
+          desc(&format!("  - {tested_path}"));
         }
         desc("\nPlease report this at https://github.com/kevgo/run-that-app/issues/new and try using an older version until this is fixed.");
       }
