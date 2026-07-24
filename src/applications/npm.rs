@@ -22,8 +22,8 @@ impl AppDefinition for Npm {
     RunMethod::OtherAppShellScript {
       app_definition: Box::new(NodeJS {}),
       paths: match platform.os {
-        Os::Windows => vec!["npm.cmd", "bin\\npm.cmd"],
-        Os::Linux | Os::MacOS => vec!["bin/npm"],
+        Os::Linux | Os::MacOS => vec!["npm"],
+        Os::Windows => vec!["npm.cmd"],
       },
     }
   }
