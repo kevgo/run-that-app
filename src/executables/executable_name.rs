@@ -1,5 +1,5 @@
 use crate::applications::ApplicationName;
-use crate::platform::Os;
+use crate::platform::{Os, OsFamily};
 use std::fmt::Display;
 use std::path::Path;
 
@@ -10,10 +10,16 @@ pub struct ExecutableNameUnix(String);
 impl ExecutableNameUnix {
   /// provides the platform-specific version of this `UnixExecutableName`
   pub fn platform_path(self, os: Os) -> ExecutableNamePlatform {
-    ExecutableNamePlatform::from(match os {
-      Os::Linux | Os::MacOS => self.0,
-      Os::Windows => format!("{self}.exe"),
-    })
+    match os {
+      Os::Linux | Os::MacOS => ExecutableNamePlatform {
+        name: self.0,
+        os: OsFamily::Unix,
+      },
+      Os::Windows => ExecutableNamePlatform {
+        name: format!("{self}.exe"),
+        os: OsFamily::Windows,
+      },
+    }
   }
 }
 
@@ -48,14 +54,12 @@ impl From<String> for ExecutableNameUnix {
 }
 
 /// The platform-specific filename of an executable.
-/// On Windows: "unix-executable-name.exe"
 #[derive(Clone, Debug, PartialEq)]
-pub struct ExecutableNamePlatform(String);
-
-impl From<String> for ExecutableNamePlatform {
-  fn from(value: String) -> Self {
-    ExecutableNamePlatform(value)
-  }
+pub struct ExecutableNamePlatform {
+  /// the platform-specific name
+  pub name: String,
+  /// the operating system for which this name is valid
+  pub os: OsFamily,
 }
 
 impl From<&str> for ExecutableNamePlatform {
@@ -66,12 +70,12 @@ impl From<&str> for ExecutableNamePlatform {
 
 impl AsRef<Path> for ExecutableNamePlatform {
   fn as_ref(&self) -> &Path {
-    Path::new(&self.0)
+    Path::new(&self.name)
   }
 }
 
 impl Display for ExecutableNamePlatform {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(&self.0)
+    f.write_str(&self.name)
   }
 }

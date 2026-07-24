@@ -30,3 +30,9 @@ impl Display for Os {
     f.write_str(text)
   }
 }
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum OsFamily {
+  Unix,
+  Windows,
+}

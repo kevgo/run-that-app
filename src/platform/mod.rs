@@ -8,5 +8,5 @@ mod platform;
 
 pub use cpu::Cpu;
 pub use detect::detect;
-pub use os::Os;
+pub use os::{Os, OsFamily};
 pub use platform::Platform;
