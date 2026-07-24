@@ -115,9 +115,8 @@ pub fn load_or_install_app_and_carrier(
 
     RunMethod::NodeJS { package } => {
       // step 1: ensure NodeJS is installed, install if needed
-      let node = NodeJS {};
       match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
-        app: &node,
+        app: &NodeJS {},
         cli_version: None,
         optional,
         from_source: false,
