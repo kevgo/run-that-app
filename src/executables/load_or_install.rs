@@ -109,10 +109,8 @@ pub fn load_or_install_app_and_carrier(
           return Ok(LoadOrInstallAppOutcome::NotInstallable { app });
         }
       }
-
       // step 2: locate the shell script candidate that exists in the carrier app
       let shell_script = locate_shell_script(carrier_app.as_ref(), cli_version, ctx.platform.os, &unix, &windows, &app.name(), ctx)?;
-
       // step 3: create the executable call that runs the shell script
       let executable_call = subshell::executable_call_for_shell_script(&shell_script)?;
       Ok(LoadOrInstallAppOutcome::Loaded { executable_call })
@@ -227,12 +225,53 @@ fn locate_shell_script(
       }
       RequestedVersion::Yard(version) => {
         let app_folder = ctx.yard.app_folder(&carrier_app.name(), version);
-        for candidate in candidates {
-          let path = app_folder.join(candidate);
-          if path.exists() {
-            return Ok(path);
+        // find the bin folders
+        let install_methods = match carrier_app.run_method(version, ctx.platform) {
+          RunMethod::ThisApp { install_methods } => install_methods,
+          RunMethod::OtherAppDefaultExecutable { app_definition: _, args: _ } => vec![],
+          RunMethod::OtherAppOtherExecutable {
+            app_definition: _,
+            executable_name: _,
+          } => vec![],
+          RunMethod::OtherAppShellScript {
+            app_definition: _,
+            unix: _,
+            windows: _,
+          } => vec![],
+          RunMethod::NodeJS { package: _ } => vec![],
+        };
+        let mut bin_folders = Vec::new();
+        for install_method in install_methods {
+          match install_method {
+            installation::Method::DownloadArchive { url: _, bin_folder } => bin_folders.push(bin_folder),
+            installation::Method::DownloadExecutable { url: _ } => {}
+            installation::Method::CompileGoSource { import_path: _ } => {}
+            installation::Method::CompileRustCrate { name: _, bin_folder } => bin_folders.push(bin_folder),
+            installation::Method::CompileRustRepo { url: _ } => {}
+            installation::Method::InstallNodeJSPackage { package: _ } => {}
           }
-          paths.push(path.to_string_lossy().to_string());
+        }
+        let mut bin_folder_paths = Vec::new();
+        for bin_folder in bin_folders {
+          match bin_folder {
+            installation::BinFolder::Root => bin_folder_paths.push(app_folder.clone()),
+            installation::BinFolder::Subfolder { path } => bin_folder_paths.push(app_folder.join(path)),
+            installation::BinFolder::Subfolders { options } => bin_folder_paths.extend(options.iter().map(|option| app_folder.join(option))),
+            installation::BinFolder::RootOrSubfolders { options } => {
+              bin_folder_paths.push(app_folder.clone());
+              bin_folder_paths.extend(options.iter().map(|option| app_folder.join(option)));
+            }
+          }
+        }
+        for bin_folder in bin_folder_paths {
+          let app_bin_folder = app_folder.join(&bin_folder);
+          for candidate in candidates {
+            let path = app_bin_folder.join(candidate);
+            if path.exists() {
+              return Ok(path);
+            }
+            paths.push(path.to_string_lossy().to_string());
+          }
         }
       }
     }
