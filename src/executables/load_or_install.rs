@@ -7,8 +7,9 @@ use crate::installation::Outcome;
 use crate::yard::Yard;
 use crate::{Version, installation};
 use ahash::AHashSet;
+use path_slash::PathBufExt;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub fn load_or_install_apps(apps_to_include: Vec<&dyn AppDefinition>, apps: &Apps, optional: bool, ctx: &RuntimeContext) -> Result<Vec<ExecutableCall>> {
   let mut result = Vec::with_capacity(apps_to_include.len());
@@ -236,7 +237,8 @@ fn load_npm_entry_point_version(app: &dyn AppDefinition, npm_package: &str, vers
     return Ok(LoadAppOutcome::NotInstalled { app: app_name });
   };
   let entry_point = parse_package_json(&content, &app_name, version, &package_json_path)?;
-  let executable = package_src.join(entry_point);
+  let platform_entry_point = PathBuf::from_slash(entry_point);
+  let executable = package_src.join(platform_entry_point);
   Ok(LoadAppOutcome::Loaded {
     executable_call: ExecutableCall {
       executable: Executable::from(executable),

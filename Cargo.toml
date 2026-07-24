@@ -28,6 +28,7 @@ fd-lock = "4.0.4"
 flate2 = "1.1.9"
 human-sort = "0.2.2"
 minreq = { version = "2.14.1", features = ["https"] }
+path-slash = "0.2.1"
 regex = "1.12.4"
 semver = "1.0.28"
 serde_json = "1.0.150"
