@@ -202,16 +202,14 @@ fn locate_shell_script(
   for version in &versions {
     match version {
       RequestedVersion::Path(_version) => {
-        for candidate in paths {
-          (ctx.log)(Event::GlobalInstallSearch { binary: candidate });
-          if let Ok(path) = which::which(candidate) {
-            (ctx.log)(Event::GlobalInstallFound { path: &path });
-            // TODO: check if the version matches
-            return Ok(path);
-          }
-          (ctx.log)(Event::GlobalInstallNotFound);
-          tried_paths.push(S("(system path)"));
+        (ctx.log)(Event::GlobalInstallSearch { binary: script_name.as_str() });
+        if let Ok(path) = which::which(script_name.as_str()) {
+          (ctx.log)(Event::GlobalInstallFound { path: &path });
+          // TODO: check if the version matches
+          return Ok(path);
         }
+        (ctx.log)(Event::GlobalInstallNotFound);
+        tried_paths.push(S("(system path)"));
       }
       RequestedVersion::Yard(version) => {
         let app_folder = ctx.yard.app_folder(&carrier_app.name(), version);
