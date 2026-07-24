@@ -9,7 +9,7 @@ RIPGREP      = $(RTA) ripgrep
 RUMDL        = $(RTA) rumdl
 SHELLCHECK   = $(RTA) --optional shellcheck
 TAPLO        = $(RTA) taplo
-TEXTRUNNER   = $(RTA) text-runner
+TEXTRUNNER   = $(NPM) exec text-runner
 
 build:  # compiles this app in debug mode
 	cargo build --locked
