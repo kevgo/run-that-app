@@ -103,11 +103,14 @@ pub fn load_or_install_app_and_carrier(
         ctx,
         apps,
       })? {
-        LoadOrInstallAppOutcome::Loaded { executable_call } => todo!(),
-        LoadOrInstallAppOutcome::NotInstallable { app } => todo!(),
+        LoadOrInstallAppOutcome::Loaded { executable_call } => {}
+        LoadOrInstallAppOutcome::NotInstallable { app } => {
+          println!("ERROR: cannot install NodeJS: {app}");
+          return Ok(LoadOrInstallAppOutcome::NotInstallable { app });
+        }
       }
 
-      // step 2
+      // step 2:
     }
 
     RunMethod::NodeJS { package } => {
