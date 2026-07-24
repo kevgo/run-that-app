@@ -77,7 +77,7 @@ mod tests {
       );
       let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        paths: vec!["bin/npm"],
+        paths: vec!["npm"],
       };
       assert_eq!(have, want);
     }
@@ -94,7 +94,7 @@ mod tests {
       );
       let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        paths: vec!["bin/npm"],
+        paths: vec!["npm"],
       };
       assert_eq!(have, want);
     }
@@ -111,7 +111,7 @@ mod tests {
       );
       let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        paths: vec!["bin/npm"],
+        paths: vec!["npm"],
       };
       assert_eq!(have, want);
     }
@@ -128,7 +128,7 @@ mod tests {
       );
       let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        paths: vec!["bin/npm"],
+        paths: vec!["npm"],
       };
       assert_eq!(have, want);
     }
@@ -145,7 +145,7 @@ mod tests {
       );
       let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        paths: vec!["npm.cmd", "bin\\npm.cmd"],
+        paths: vec!["npm.cmd"],
       };
       assert_eq!(have, want);
     }
@@ -162,7 +162,7 @@ mod tests {
       );
       let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        paths: vec!["npm.cmd", "bin\\npm.cmd"],
+        paths: vec!["npm.cmd"],
       };
       assert_eq!(have, want);
     }
