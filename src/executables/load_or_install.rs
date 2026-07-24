@@ -5,7 +5,6 @@ use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableArgs, ExecutableCall, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
 use crate::installation::Outcome;
 use crate::logging::Event;
-use crate::platform::Os;
 use crate::yard::Yard;
 use crate::{Version, installation, subshell};
 use ahash::AHashSet;
@@ -93,8 +92,7 @@ pub fn load_or_install_app_and_carrier(
 
     RunMethod::OtherAppShellScript {
       app_definition: carrier_app,
-      unix,
-      windows,
+      paths,
     } => {
       // step 1: ensure the carrier app is installed, install if needed
       match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
@@ -111,7 +109,7 @@ pub fn load_or_install_app_and_carrier(
         }
       }
       // step 2: locate the shell script candidate that exists in the carrier app
-      let shell_script = locate_shell_script(carrier_app.as_ref(), cli_version, ctx.platform.os, &unix, &windows, &app.name(), ctx)?;
+      let shell_script = locate_shell_script(carrier_app.as_ref(), cli_version, &paths, &app.name(), ctx)?;
       // step 3: create the executable call that runs the shell script
       let executable_call = subshell::executable_call_for_shell_script(&shell_script);
       Ok(LoadOrInstallAppOutcome::Loaded { executable_call })
@@ -186,9 +184,7 @@ pub enum LoadOrInstallAppOutcome {
 fn locate_shell_script(
   carrier_app: &dyn AppDefinition,
   cli_version: Option<&Version>,
-  os: Os,
-  unix: &[&str],
-  windows: &[&str],
+  paths: &[&str],
   script_name: &ApplicationName,
   ctx: &RuntimeContext,
 ) -> Result<PathBuf> {
@@ -201,18 +197,12 @@ fn locate_shell_script(
     return Err(UserError::NoVersionsFound { app: carrier_app.name() });
   };
 
-  // step 2: determine the candidates for the shell script
-  let candidates = match os {
-    Os::Linux | Os::MacOS => unix,
-    Os::Windows => windows,
-  };
-
   // step 3: find the first matching candidate
-  let mut paths = Vec::new();
+  let mut tried_paths = Vec::new();
   for version in &versions {
     match version {
       RequestedVersion::Path(_version) => {
-        for candidate in candidates {
+        for candidate in paths {
           (ctx.log)(Event::GlobalInstallSearch { binary: candidate });
           if let Ok(path) = which::which(candidate) {
             (ctx.log)(Event::GlobalInstallFound { path: &path });
@@ -220,7 +210,7 @@ fn locate_shell_script(
             return Ok(path);
           }
           (ctx.log)(Event::GlobalInstallNotFound);
-          paths.push(S("(system path)"));
+          tried_paths.push(S("(system path)"));
         }
       }
       RequestedVersion::Yard(version) => {
@@ -233,11 +223,7 @@ fn locate_shell_script(
             app_definition: _,
             executable_name: _,
           }
-          | RunMethod::OtherAppShellScript {
-            app_definition: _,
-            unix: _,
-            windows: _,
-          }
+          | RunMethod::OtherAppShellScript { app_definition: _, paths: _ }
           | RunMethod::NodeJS { package: _ } => vec![],
         };
         let mut bin_folders = Vec::new();
@@ -266,7 +252,7 @@ fn locate_shell_script(
         }
         for bin_folder in bin_folder_paths {
           let app_bin_folder = app_folder.join(&bin_folder);
-          for candidate in candidates {
+          for candidate in paths {
             let path = app_bin_folder.join(candidate);
             (ctx.log)(Event::YardCheckExistingAppBegin { path: &path });
             if path.exists() {
@@ -274,7 +260,7 @@ fn locate_shell_script(
               return Ok(path);
             }
             (ctx.log)(Event::YardCheckExistingAppNotFound);
-            paths.push(path.to_string_lossy().to_string());
+            tried_paths.push(path.to_string_lossy().to_string());
           }
         }
       }
@@ -282,7 +268,7 @@ fn locate_shell_script(
   }
   Err(UserError::CannotFindScript {
     name: script_name.to_string(),
-    paths,
+    paths: tried_paths,
   })
 }
 
