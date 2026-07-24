@@ -4,9 +4,11 @@ use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableArgs, ExecutableCall, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
 use crate::installation::Outcome;
+use crate::platform::{Os, Platform};
 use crate::yard::Yard;
-use crate::{Version, installation};
+use crate::{Version, installation, subshell};
 use ahash::AHashSet;
+use std::env::consts::OS;
 use std::fs;
 use std::path::Path;
 
@@ -94,9 +96,8 @@ pub fn load_or_install_app_and_carrier(
       windows_scripts,
     } => {
       // step 1: ensure NodeJS is installed, install if needed
-      let node = NodeJS {};
       match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
-        app: &node,
+        app: carrier_app.as_ref(),
         cli_version: None,
         optional,
         from_source: false,
@@ -109,8 +110,11 @@ pub fn load_or_install_app_and_carrier(
           return Ok(LoadOrInstallAppOutcome::NotInstallable { app });
         }
       }
+      // step 2: locate the shell script variant that exists in the carrier app
 
-      // step 2:
+      // step 3: create the executable call that runs the shell script
+      let executable_call = subshell::executable_call_for_shell_script(shell_script)?;
+      Ok(LoadOrInstallAppOutcome::Loaded { executable_call })
     }
 
     RunMethod::NodeJS { package } => {

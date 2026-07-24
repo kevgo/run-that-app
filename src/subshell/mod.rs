@@ -7,10 +7,12 @@ use std::process::{Command, ExitCode, ExitStatus};
 
 mod capture_output;
 mod detect_output;
+mod shellscript;
 mod stream_output;
 
 pub use capture_output::capture_output;
 pub use detect_output::detect_output;
+pub use shellscript::executable_call_for_shell_script;
 pub use stream_output::stream_output;
 
 /// adds the given dirs to the PATH env variable of the given cmd
