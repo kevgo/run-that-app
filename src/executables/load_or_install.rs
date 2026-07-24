@@ -92,7 +92,7 @@ pub fn load_or_install_app_and_carrier(
 
     RunMethod::OtherAppShellScript {
       app_definition: carrier_app,
-      paths,
+      script_name,
     } => {
       // step 1: ensure the carrier app is installed, install if needed
       match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
@@ -109,7 +109,7 @@ pub fn load_or_install_app_and_carrier(
         }
       }
       // step 2: locate the shell script candidate that exists in the carrier app
-      let shell_script = locate_shell_script(carrier_app.as_ref(), cli_version, &paths, &app.name(), ctx)?;
+      let shell_script = locate_shell_script(carrier_app.as_ref(), cli_version, script_name, ctx)?;
       // step 3: create the executable call that runs the shell script
       let executable_call = subshell::executable_call_for_shell_script(&shell_script);
       Ok(LoadOrInstallAppOutcome::Loaded { executable_call })
@@ -181,13 +181,7 @@ pub enum LoadOrInstallAppOutcome {
   NotInstallable { app: ApplicationName },
 }
 
-fn locate_shell_script(
-  carrier_app: &dyn AppDefinition,
-  cli_version: Option<&Version>,
-  paths: &[&str],
-  script_name: &ApplicationName,
-  ctx: &RuntimeContext,
-) -> Result<PathBuf> {
+fn locate_shell_script(carrier_app: &dyn AppDefinition, cli_version: Option<&Version>, script_name: &str, ctx: &RuntimeContext) -> Result<PathBuf> {
   // step 1: determine the version of the app to install
   let versions = if let Some(version) = cli_version {
     RequestedVersions::from(version)
@@ -202,8 +196,8 @@ fn locate_shell_script(
   for version in &versions {
     match version {
       RequestedVersion::Path(_version) => {
-        (ctx.log)(Event::GlobalInstallSearch { binary: script_name.as_str() });
-        if let Ok(path) = which::which(script_name.as_str()) {
+        (ctx.log)(Event::GlobalInstallSearch { binary: script_name });
+        if let Ok(path) = which::which(script_name) {
           (ctx.log)(Event::GlobalInstallFound { path: &path });
           // TODO: check if the version matches
           return Ok(path);
@@ -221,7 +215,10 @@ fn locate_shell_script(
             app_definition: _,
             executable_name: _,
           }
-          | RunMethod::OtherAppShellScript { app_definition: _, paths: _ }
+          | RunMethod::OtherAppShellScript {
+            app_definition: _,
+            script_name: _,
+          }
           | RunMethod::NodeJS { package: _ } => vec![],
         };
         let mut bin_folders = Vec::new();
@@ -250,16 +247,14 @@ fn locate_shell_script(
         }
         for bin_folder in bin_folder_paths {
           let app_bin_folder = app_folder.join(&bin_folder);
-          for candidate in paths {
-            let path = app_bin_folder.join(candidate);
-            (ctx.log)(Event::YardCheckExistingAppBegin { path: &path });
-            if path.exists() {
-              (ctx.log)(Event::YardCheckExistingAppFound);
-              return Ok(path);
-            }
-            (ctx.log)(Event::YardCheckExistingAppNotFound);
-            tried_paths.push(path.to_string_lossy().to_string());
+          let path = app_bin_folder.join(script_name);
+          (ctx.log)(Event::YardCheckExistingAppBegin { path: &path });
+          if path.exists() {
+            (ctx.log)(Event::YardCheckExistingAppFound);
+            return Ok(path);
           }
+          (ctx.log)(Event::YardCheckExistingAppNotFound);
+          tried_paths.push(path.to_string_lossy().to_string());
         }
       }
     }

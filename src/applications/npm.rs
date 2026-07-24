@@ -21,9 +21,9 @@ impl AppDefinition for Npm {
   fn run_method(&self, _version: &Version, platform: Platform) -> RunMethod {
     RunMethod::OtherAppShellScript {
       app_definition: Box::new(NodeJS {}),
-      paths: match platform.os {
-        Os::Linux | Os::MacOS => vec!["npm"],
-        Os::Windows => vec!["npm.cmd"],
+      script_name: match platform.os {
+        Os::Linux | Os::MacOS => "npm",
+        Os::Windows => "npm.cmd",
       },
     }
   }
@@ -77,7 +77,7 @@ mod tests {
       );
       let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        paths: vec!["npm"],
+        script_name: "npm",
       };
       assert_eq!(have, want);
     }
@@ -94,7 +94,7 @@ mod tests {
       );
       let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        paths: vec!["npm"],
+        script_name: "npm",
       };
       assert_eq!(have, want);
     }
@@ -111,7 +111,7 @@ mod tests {
       );
       let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        paths: vec!["npm"],
+        script_name: "npm",
       };
       assert_eq!(have, want);
     }
@@ -128,7 +128,7 @@ mod tests {
       );
       let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        paths: vec!["npm"],
+        script_name: "npm",
       };
       assert_eq!(have, want);
     }
@@ -145,7 +145,7 @@ mod tests {
       );
       let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        paths: vec!["npm.cmd"],
+        script_name: "npm.cmd",
       };
       assert_eq!(have, want);
     }
@@ -162,7 +162,7 @@ mod tests {
       );
       let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        paths: vec!["npm.cmd"],
+        script_name: "npm.cmd",
       };
       assert_eq!(have, want);
     }
