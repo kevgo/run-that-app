@@ -8,6 +8,7 @@ use crate::platform::{Os, Platform};
 use crate::yard::Yard;
 use crate::{Version, installation, subshell};
 use ahash::AHashSet;
+use big_s::S;
 use std::env::consts::OS;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -221,7 +222,7 @@ fn locate_shell_script(
               return Ok(path);
             }
             Err(_) => {
-              // not found --> try next candidate and/or version
+              paths.push(S("(system path)"));
             }
           }
         }
@@ -233,14 +234,13 @@ fn locate_shell_script(
           if path.exists() {
             return Ok(path);
           }
-          paths.push(path);
+          paths.push(path.to_string_lossy().to_string());
         }
       }
     }
   }
   Err(UserError::CannotFindScript {
     name: script_name.to_string(),
-    versions,
     paths,
   })
 }

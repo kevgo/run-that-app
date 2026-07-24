@@ -1,6 +1,6 @@
 use crate::Version;
 use crate::applications::ApplicationName;
-use crate::configuration::{self, FILE_NAME, RequestedVersions};
+use crate::configuration::{self, FILE_NAME};
 use crate::download::Url;
 use colored::Colorize;
 use std::path::PathBuf;
@@ -51,8 +51,7 @@ pub enum UserError {
   },
   CannotFindScript {
     name: String,
-    versions: RequestedVersions,
-    paths: Vec<PathBuf>,
+    paths: Vec<String>,
   },
   CannotFindSh {
     err: String,
@@ -188,6 +187,14 @@ impl UserError {
         desc("I tried these paths:");
         for tested_path in paths {
           desc(&format!("  - {}", tested_path.display()));
+        }
+        desc("\nPlease report this at https://github.com/kevgo/run-that-app/issues/new and try using an older version until this is fixed.");
+      }
+      UserError::CannotFindScript { name, paths } => {
+        error(&format!("cannot locate shell script for {name}."));
+        desc("I tried these paths:");
+        for tested_path in paths {
+          desc(&format!("  - {}", tested_path));
         }
         desc("\nPlease report this at https://github.com/kevgo/run-that-app/issues/new and try using an older version until this is fixed.");
       }
