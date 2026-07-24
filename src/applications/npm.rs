@@ -3,10 +3,8 @@ use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
 use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
-use crate::executables::{Executable, ExecutableArgs, RunMethod};
-use crate::platform::Platform;
-use const_format::formatcp;
-use std::path::MAIN_SEPARATOR;
+use crate::executables::{Executable, RunMethod};
+use crate::platform::{Os, Platform};
 
 #[derive(Clone)]
 pub struct Npm {}
@@ -20,15 +18,12 @@ impl AppDefinition for Npm {
     "https://www.npmjs.com"
   }
 
-  fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {
-    RunMethod::OtherAppDefaultExecutable {
+  fn run_method(&self, _version: &Version, platform: Platform) -> RunMethod {
+    RunMethod::OtherAppShellScript {
       app_definition: Box::new(NodeJS {}),
-      args: ExecutableArgs::OneOfTheseInAppFolder {
-        options: vec![
-          formatcp!("node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npm-cli.js"),
-          formatcp!("lib{MAIN_SEPARATOR}node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npm-cli.js"),
-          formatcp!("..{MAIN_SEPARATOR}lib{MAIN_SEPARATOR}node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npm-cli.js"),
-        ],
+      script_name: match platform.os {
+        Os::Linux | Os::MacOS => "npm",
+        Os::Windows => "npm.cmd",
       },
     }
   }
@@ -67,7 +62,7 @@ mod tests {
     use crate::applications::nodejs::NodeJS;
     use crate::applications::npm::Npm;
     use crate::configuration::Version;
-    use crate::executables::{ExecutableArgs, RunMethod};
+    use crate::executables::RunMethod;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
@@ -80,15 +75,9 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = RunMethod::OtherAppDefaultExecutable {
+      let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec![
-            "node_modules/npm/bin/npm-cli.js",
-            "lib/node_modules/npm/bin/npm-cli.js",
-            "../lib/node_modules/npm/bin/npm-cli.js",
-          ],
-        },
+        script_name: "npm",
       };
       assert_eq!(have, want);
     }
@@ -103,15 +92,9 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = RunMethod::OtherAppDefaultExecutable {
+      let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec![
-            "node_modules/npm/bin/npm-cli.js",
-            "lib/node_modules/npm/bin/npm-cli.js",
-            "../lib/node_modules/npm/bin/npm-cli.js",
-          ],
-        },
+        script_name: "npm",
       };
       assert_eq!(have, want);
     }
@@ -126,15 +109,9 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = RunMethod::OtherAppDefaultExecutable {
+      let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec![
-            "node_modules/npm/bin/npm-cli.js",
-            "lib/node_modules/npm/bin/npm-cli.js",
-            "../lib/node_modules/npm/bin/npm-cli.js",
-          ],
-        },
+        script_name: "npm",
       };
       assert_eq!(have, want);
     }
@@ -149,15 +126,9 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = RunMethod::OtherAppDefaultExecutable {
+      let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec![
-            "node_modules/npm/bin/npm-cli.js",
-            "lib/node_modules/npm/bin/npm-cli.js",
-            "../lib/node_modules/npm/bin/npm-cli.js",
-          ],
-        },
+        script_name: "npm",
       };
       assert_eq!(have, want);
     }
@@ -172,15 +143,9 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = RunMethod::OtherAppDefaultExecutable {
+      let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec![
-            r"node_modules\npm\bin\npm-cli.js",
-            r"lib\node_modules\npm\bin\npm-cli.js",
-            r"..\lib\node_modules\npm\bin\npm-cli.js",
-          ],
-        },
+        script_name: "npm.cmd",
       };
       assert_eq!(have, want);
     }
@@ -195,15 +160,9 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = RunMethod::OtherAppDefaultExecutable {
+      let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec![
-            r"node_modules\npm\bin\npm-cli.js",
-            r"lib\node_modules\npm\bin\npm-cli.js",
-            r"..\lib\node_modules\npm\bin\npm-cli.js",
-          ],
-        },
+        script_name: "npm.cmd",
       };
       assert_eq!(have, want);
     }

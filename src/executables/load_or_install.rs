@@ -4,11 +4,13 @@ use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableArgs, ExecutableCall, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
 use crate::installation::Outcome;
+use crate::logging::Event;
 use crate::yard::Yard;
-use crate::{Version, installation};
+use crate::{Version, installation, subshell};
 use ahash::AHashSet;
+use big_s::S;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub fn load_or_install_apps(apps_to_include: Vec<&dyn AppDefinition>, apps: &Apps, optional: bool, ctx: &RuntimeContext) -> Result<Vec<ExecutableCall>> {
   let mut result = Vec::with_capacity(apps_to_include.len());
@@ -88,6 +90,32 @@ pub fn load_or_install_app_and_carrier(
       apps,
     }),
 
+    RunMethod::OtherAppShellScript {
+      app_definition: carrier_app,
+      script_name,
+    } => {
+      // step 1: ensure the carrier app is installed, install if needed
+      // TODO: Ideally we would run load_or_install_app instead of load_or_install_app_and_carrier here.
+      //       But doing so would require to inject a way to run the "npm" executable via an external shell binary.
+      //       Maybe this is a signal that we need an "ExecutableType" enum with variants "binary" and "shell_script"?
+      //       Maybe AppDefinition.name should return the ExecutableType that has the name as a property?
+      if let Err(_err) = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+        app: carrier_app.as_ref(),
+        cli_version: None,
+        optional,
+        from_source: false,
+        ctx,
+        apps,
+      }) {
+        return Ok(LoadOrInstallAppOutcome::NotInstallable { app: carrier_app.name() });
+      }
+      // step 2: locate the shell script inside the carrier app
+      let shell_script = locate_shell_script(carrier_app.as_ref(), cli_version, script_name, ctx)?;
+      // step 3: create the executable call that runs the shell script
+      let executable_call = subshell::executable_call_for_shell_script(&shell_script);
+      Ok(LoadOrInstallAppOutcome::Loaded { executable_call })
+    }
+
     RunMethod::NodeJS { package } => {
       // step 1: ensure NodeJS is installed, install if needed
       let nodejs = &NodeJS {};
@@ -103,7 +131,6 @@ pub fn load_or_install_app_and_carrier(
         err.print();
         return Ok(LoadOrInstallAppOutcome::NotInstallable { app: nodejs.name() });
       }
-
       // step 2: determine the version of the npm package to run
       let app_versions = if let Some(version) = cli_version {
         RequestedVersions::from(version)
@@ -112,20 +139,17 @@ pub fn load_or_install_app_and_carrier(
       } else {
         return Err(UserError::NoVersionsFound { app: app.name().clone() });
       };
-
       // step 3: fast-path: load the app executable
       match load_npm_entry_point_versions(app, package, &app_versions, ctx.yard)? {
         LoadAppOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
         LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
         LoadAppOutcome::NotInstalled { app: _ } => {} // we'll install the npm package in the next step
       }
-
       // step 4: install the npm package
       match installation::versions(app, &app_versions, optional, from_source, ctx, apps)? {
         Outcome::Installed => {}
         Outcome::NotInstalled { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
       }
-
       // step 5: load the npm package executable
       match load_npm_entry_point_versions(app, package, &app_versions, ctx.yard)? {
         LoadAppOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
@@ -151,6 +175,90 @@ pub struct LoadOrInstallAppAndCarrierArgs<'a> {
 pub enum LoadOrInstallAppOutcome {
   Loaded { executable_call: ExecutableCall },
   NotInstallable { app: ApplicationName },
+}
+
+fn locate_shell_script(carrier_app: &dyn AppDefinition, cli_version: Option<&Version>, script_name: &str, ctx: &RuntimeContext) -> Result<PathBuf> {
+  // step 1: determine the version of the app to install
+  let versions = if let Some(version) = cli_version {
+    RequestedVersions::from(version)
+  } else if let Some(versions) = ctx.config_file.lookup(&carrier_app.name()) {
+    versions.clone()
+  } else {
+    return Err(UserError::NoVersionsFound { app: carrier_app.name() });
+  };
+
+  // step 3: find the first matching candidate
+  let mut tried_paths = Vec::new();
+  for version in &versions {
+    match version {
+      RequestedVersion::Path(_version) => {
+        (ctx.log)(Event::GlobalInstallSearch { binary: script_name });
+        if let Ok(path) = which::which(script_name) {
+          (ctx.log)(Event::GlobalInstallFound { path: &path });
+          // TODO: check if the version matches
+          return Ok(path);
+        }
+        (ctx.log)(Event::GlobalInstallNotFound);
+        tried_paths.push(S("(system path)"));
+      }
+      RequestedVersion::Yard(version) => {
+        let app_folder = ctx.yard.app_folder(&carrier_app.name(), version);
+        // find the bin folders
+        let install_methods = match carrier_app.run_method(version, ctx.platform) {
+          RunMethod::ThisApp { install_methods } => install_methods,
+          RunMethod::OtherAppDefaultExecutable { app_definition: _, args: _ }
+          | RunMethod::OtherAppOtherExecutable {
+            app_definition: _,
+            executable_name: _,
+          }
+          | RunMethod::OtherAppShellScript {
+            app_definition: _,
+            script_name: _,
+          }
+          | RunMethod::NodeJS { package: _ } => vec![],
+        };
+        let mut bin_folders = Vec::new();
+        for install_method in install_methods {
+          match install_method {
+            installation::Method::DownloadArchive { url: _, bin_folder } | installation::Method::CompileRustCrate { name: _, bin_folder } => {
+              bin_folders.push(bin_folder);
+            }
+            installation::Method::DownloadExecutable { url: _ }
+            | installation::Method::CompileGoSource { import_path: _ }
+            | installation::Method::CompileRustRepo { url: _ }
+            | installation::Method::InstallNodeJSPackage { package: _ } => {}
+          }
+        }
+        let mut bin_folder_paths = Vec::new();
+        for bin_folder in bin_folders {
+          match bin_folder {
+            installation::BinFolder::Root => bin_folder_paths.push(app_folder.clone()),
+            installation::BinFolder::Subfolder { path } => bin_folder_paths.push(app_folder.join(path)),
+            installation::BinFolder::Subfolders { options } => bin_folder_paths.extend(options.iter().map(|option| app_folder.join(option))),
+            installation::BinFolder::RootOrSubfolders { options } => {
+              bin_folder_paths.push(app_folder.clone());
+              bin_folder_paths.extend(options.iter().map(|option| app_folder.join(option)));
+            }
+          }
+        }
+        for bin_folder in bin_folder_paths {
+          let app_bin_folder = app_folder.join(&bin_folder);
+          let path = app_bin_folder.join(script_name);
+          (ctx.log)(Event::YardCheckExistingAppBegin { path: &path });
+          if path.exists() {
+            (ctx.log)(Event::YardCheckExistingAppFound);
+            return Ok(path);
+          }
+          (ctx.log)(Event::YardCheckExistingAppNotFound);
+          tried_paths.push(path.to_string_lossy().to_string());
+        }
+      }
+    }
+  }
+  Err(UserError::CannotFindScript {
+    name: script_name.to_string(),
+    paths: tried_paths,
+  })
 }
 
 /// Loads or installs only the given app (not its carrier) and returns the executable call.

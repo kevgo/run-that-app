@@ -28,6 +28,14 @@ pub enum RunMethod {
     executable_name: ExecutableNameUnix,
   },
 
+  /// executes a shell script bundled with another app
+  OtherAppShellScript {
+    /// the other application that contains the shell script
+    app_definition: Box<dyn AppDefinition>,
+    /// the shell script to run on Unix systems
+    script_name: &'static str,
+  },
+
   /// the app to run is a `NodeJS` package
   NodeJS {
     /// name of the `NodeJS` package to install
@@ -43,6 +51,10 @@ impl RunMethod {
       RunMethod::OtherAppOtherExecutable {
         app_definition: _,
         executable_name: _,
+      }
+      | RunMethod::OtherAppShellScript {
+        app_definition: _,
+        script_name: _,
       }
       | RunMethod::OtherAppDefaultExecutable { app_definition: _, args: _ } => vec![],
     }

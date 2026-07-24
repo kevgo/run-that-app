@@ -245,6 +245,10 @@ pub fn carrier<'a>(app: &'a dyn AppDefinition, version: &Version, platform: Plat
       let executable_filename = app_definition.executable_filename();
       (app_definition, executable_filename, args)
     }
+    RunMethod::OtherAppShellScript {
+      app_definition,
+      script_name: _,
+    } => (app_definition, app.executable_filename(), ExecutableArgs::None),
     RunMethod::NodeJS { package: _ } => {
       let node = NodeJS {};
       let executable_filename = node.executable_filename();
