@@ -35,6 +35,7 @@ pub fn load_or_install_apps(apps_to_include: Vec<&dyn AppDefinition>, apps: &App
 /// otherwise the version in the given config file.
 ///
 /// Also installs and uses the carrier app if one is needed.
+#[allow(clippy::too_many_lines)]
 pub fn load_or_install_app_and_carrier(
   LoadOrInstallAppAndCarrierArgs {
     app,
