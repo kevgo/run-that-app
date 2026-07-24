@@ -54,7 +54,7 @@ pub struct ExecutableNamePlatform(String);
 
 impl From<String> for ExecutableNamePlatform {
   fn from(value: String) -> Self {
-    ExecutableNamePlatform(value.clone())
+    ExecutableNamePlatform(value)
   }
 }
 
