@@ -108,7 +108,7 @@ pub fn load_or_install_app_and_carrier(
           return Ok(LoadOrInstallAppOutcome::NotInstallable { app });
         }
       }
-      // step 2: locate the shell script candidate that exists in the carrier app
+      // step 2: locate the shell script inside the carrier app
       let shell_script = locate_shell_script(carrier_app.as_ref(), cli_version, script_name, ctx)?;
       // step 3: create the executable call that runs the shell script
       let executable_call = subshell::executable_call_for_shell_script(&shell_script);
@@ -131,7 +131,6 @@ pub fn load_or_install_app_and_carrier(
           return Ok(LoadOrInstallAppOutcome::NotInstallable { app });
         }
       }
-
       // step 2: determine the version of the npm package to run
       let app_versions = if let Some(version) = cli_version {
         RequestedVersions::from(version)
@@ -140,20 +139,17 @@ pub fn load_or_install_app_and_carrier(
       } else {
         return Err(UserError::NoVersionsFound { app: app.name().clone() });
       };
-
       // step 3: fast-path: load the app executable
       match load_npm_entry_point_versions(app, package, &app_versions, ctx.yard)? {
         LoadAppOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
         LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
         LoadAppOutcome::NotInstalled { app: _ } => {} // we'll install the npm package in the next step
       }
-
       // step 4: install the npm package
       match installation::versions(app, &app_versions, optional, from_source, ctx, apps)? {
         Outcome::Installed => {}
         Outcome::NotInstalled { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
       }
-
       // step 5: load the npm package executable
       match load_npm_entry_point_versions(app, package, &app_versions, ctx.yard)? {
         LoadAppOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
