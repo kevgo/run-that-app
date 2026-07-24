@@ -21,8 +21,8 @@ impl AppDefinition for Npm {
   fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {
     RunMethod::OtherAppShellScript {
       app_definition: Box::new(NodeJS {}),
-      unix_scripts: vec!["bin/npm"],
-      windows_scripts: vec!["npm.cmd", "bin\\npm.cmd"],
+      unix: vec!["bin/npm"],
+      windows: vec!["npm.cmd", "bin\\npm.cmd"],
     }
   }
 

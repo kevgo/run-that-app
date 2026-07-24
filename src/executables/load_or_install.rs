@@ -10,7 +10,8 @@ use crate::{Version, installation, subshell};
 use ahash::AHashSet;
 use std::env::consts::OS;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use which::which;
 
 pub fn load_or_install_apps(apps_to_include: Vec<&dyn AppDefinition>, apps: &Apps, optional: bool, ctx: &RuntimeContext) -> Result<Vec<ExecutableCall>> {
   let mut result = Vec::with_capacity(apps_to_include.len());
@@ -92,10 +93,10 @@ pub fn load_or_install_app_and_carrier(
 
     RunMethod::OtherAppShellScript {
       app_definition: carrier_app,
-      unix_scripts,
-      windows_scripts,
+      unix,
+      windows,
     } => {
-      // step 1: ensure NodeJS is installed, install if needed
+      // step 1: ensure the carrier app is installed, install if needed
       match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: carrier_app.as_ref(),
         cli_version: None,
@@ -109,8 +110,10 @@ pub fn load_or_install_app_and_carrier(
           println!("ERROR: cannot install NodeJS: {app}");
           return Ok(LoadOrInstallAppOutcome::NotInstallable { app });
         }
-      }
+      };
+
       // step 2: locate the shell script variant that exists in the carrier app
+      let shell_script = determine_shell_script(cli_version, &unix, &windows, ctx)?;
 
       // step 3: create the executable call that runs the shell script
       let executable_call = subshell::executable_call_for_shell_script(shell_script)?;
@@ -181,6 +184,54 @@ pub struct LoadOrInstallAppAndCarrierArgs<'a> {
 pub enum LoadOrInstallAppOutcome {
   Loaded { executable_call: ExecutableCall },
   NotInstallable { app: ApplicationName },
+}
+
+fn determine_shell_script(
+  carrier_app: &dyn AppDefinition,
+  cli_version: Option<&Version>,
+  os: Os,
+  unix: &[&str],
+  windows: &[&str],
+  ctx: &RuntimeContext,
+) -> Result<Option<PathBuf>> {
+  // step 1: determine the version of the app to install
+  let versions = if let Some(version) = cli_version {
+    RequestedVersions::from(version)
+  } else if let Some(versions) = ctx.config_file.lookup(&carrier_app.name()) {
+    versions.clone()
+  } else {
+    return Err(UserError::NoVersionsFound { app: carrier_app.name() });
+  };
+
+  // step 2: determine the candidates for the shell script
+  let candidates = match os {
+    Os::Linux | Os::MacOS => unix,
+    Os::Windows => windows,
+  };
+
+  // step 3: find the first matching candidate
+  for version in versions {
+    match version {
+      RequestedVersion::Path(version) => {
+        for candidate in candidates {
+          match which::which(candidate) {
+            Ok(path) => return Ok(Some(path)),
+            Err(_) => {}
+          }
+        }
+      }
+      RequestedVersion::Yard(version) => {
+        let app_folder = ctx.yard.app_folder(&carrier_app.name(), &version);
+        for candidate in candidates {
+          let path = app_folder.join(candidate);
+          if path.exists() {
+            return Ok(Some(path));
+          }
+        }
+      }
+    }
+  }
+  Ok(None)
 }
 
 /// Loads or installs only the given app (not its carrier) and returns the executable call.

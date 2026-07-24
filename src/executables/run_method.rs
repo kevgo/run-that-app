@@ -33,9 +33,9 @@ pub enum RunMethod {
     /// the other application that contains the shell script
     app_definition: Box<dyn AppDefinition>,
     /// the shell script to run on Unix systems
-    unix_scripts: Vec<&'static str>,
+    unix: Vec<&'static str>,
     /// the shell script to run on Windows systems
-    windows_scripts: Vec<&'static str>,
+    windows: Vec<&'static str>,
   },
 
   /// the app to run is a `NodeJS` package
@@ -56,8 +56,8 @@ impl RunMethod {
       }
       | RunMethod::OtherAppShellScript {
         app_definition: _,
-        unix_scripts: _,
-        windows_scripts: _,
+        unix: _,
+        windows: _,
       } => vec![],
       RunMethod::OtherAppDefaultExecutable { app_definition: _, args: _ } => vec![],
     }
