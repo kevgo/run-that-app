@@ -228,17 +228,17 @@ fn locate_shell_script(
         // find the bin folders
         let install_methods = match carrier_app.run_method(version, ctx.platform) {
           RunMethod::ThisApp { install_methods } => install_methods,
-          RunMethod::OtherAppDefaultExecutable { app_definition: _, args: _ } => vec![],
-          RunMethod::OtherAppOtherExecutable {
+          RunMethod::OtherAppDefaultExecutable { app_definition: _, args: _ }
+          | RunMethod::OtherAppOtherExecutable {
             app_definition: _,
             executable_name: _,
-          } => vec![],
-          RunMethod::OtherAppShellScript {
+          }
+          | RunMethod::OtherAppShellScript {
             app_definition: _,
             unix: _,
             windows: _,
-          } => vec![],
-          RunMethod::NodeJS { package: _ } => vec![],
+          }
+          | RunMethod::NodeJS { package: _ } => vec![],
         };
         let mut bin_folders = Vec::new();
         for install_method in install_methods {
