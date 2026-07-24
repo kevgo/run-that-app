@@ -244,11 +244,11 @@ fn locate_shell_script(
         for install_method in install_methods {
           match install_method {
             installation::Method::DownloadArchive { url: _, bin_folder } => bin_folders.push(bin_folder),
-            installation::Method::DownloadExecutable { url: _ } => {}
-            installation::Method::CompileGoSource { import_path: _ } => {}
             installation::Method::CompileRustCrate { name: _, bin_folder } => bin_folders.push(bin_folder),
-            installation::Method::CompileRustRepo { url: _ } => {}
-            installation::Method::InstallNodeJSPackage { package: _ } => {}
+            installation::Method::DownloadExecutable { url: _ }
+            | installation::Method::CompileGoSource { import_path: _ }
+            | installation::Method::CompileRustRepo { url: _ }
+            | installation::Method::InstallNodeJSPackage { package: _ } => {}
           }
         }
         let mut bin_folder_paths = Vec::new();
