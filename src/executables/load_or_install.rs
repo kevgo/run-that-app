@@ -108,7 +108,6 @@ pub fn load_or_install_app_and_carrier(
     }
 
     RunMethod::NodeJS { package } => {
-      println!("NODEJS");
       // step 1: ensure NodeJS is installed, install if needed
       let nodejs = &NodeJS {};
       if let Err(err) = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
@@ -282,7 +281,6 @@ fn load_or_install_app(
     LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app: _ } => {} // we'll install the app in the next step
   }
-  println!("3333333333333333333333333333333333333333333333 {app_args:?}");
   // step 3: here the app needs to be installed --> install any of its given versions
   match installation::versions(app, &versions, optional, from_source, ctx, apps)? {
     Outcome::Installed => {} // we'll load the app in the next step
@@ -319,7 +317,6 @@ fn load_npm_entry_point_versions(
   app_args: &[String],
   yard: &Yard,
 ) -> Result<LoadAppOutcome> {
-  println!("LOAD_NPM_ENTRY_POINT_VERSIONS {}", app.name());
   for version in versions {
     match version {
       RequestedVersion::Yard(version) => match load_npm_entry_point_version(app, npm_package, version, app_args, yard)? {
@@ -338,7 +335,6 @@ fn load_npm_entry_point_versions(
 }
 
 fn load_npm_entry_point_version(app: &dyn AppDefinition, npm_package: &str, version: &Version, app_args: &[String], yard: &Yard) -> Result<LoadAppOutcome> {
-  println!("LOAD_NPM_ENTRY_POINT_VERSION {npm_package}");
   let app_name = app.name();
   let package_src = yard.app_folder(&app_name, version).join("node_modules").join(npm_package);
   let package_json_path = package_src.join("package.json");

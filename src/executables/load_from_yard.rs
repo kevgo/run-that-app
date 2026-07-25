@@ -15,7 +15,6 @@ pub fn load_from_yard(
   app_args: &[String],
   ctx: &RuntimeContext,
 ) -> Result<LoadAppOutcome> {
-  println!("1111111111111111111111111111111111111111111111 {app_args:?}");
   ctx.yard.with_lock(&app.name(), version, ctx, || {
     // try to load the app from the yard
     if let Some(executable) = ctx.yard.load_executable(app, executable, version, ctx) {
