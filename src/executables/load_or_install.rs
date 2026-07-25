@@ -183,7 +183,7 @@ fn locate_shell_script(carrier_app: &dyn AppDefinition, cli_version: Option<&Ver
     return Err(UserError::NoVersionsFound { app: carrier_app.name() });
   };
 
-  // step 3: find the first matching candidate
+  // step 2: find the first matching candidate
   let mut tried_paths = Vec::new();
   for version in &versions {
     match version {
