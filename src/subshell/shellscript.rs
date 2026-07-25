@@ -13,11 +13,11 @@ pub fn executable_call_for_shell_script(shell_script: &Path) -> ExecutableCall {
 }
 
 #[cfg(windows)]
-pub fn executable_call_for_shell_script(shell_script: &str) -> ExecutableCall {
+pub fn executable_call_for_shell_script(shell_script: &Path) -> ExecutableCall {
   use crate::executables::Executable;
 
   ExecutableCall {
     executable: Executable::new("cmd"),
-    args: vec!["/C", shell_script.to_string()],
+    args: vec![S("/C"), shell_script.to_string_lossy().to_string()],
   }
 }
