@@ -334,7 +334,10 @@ fn load_npm_entry_point_version(app: &dyn AppDefinition, npm_package: &str, vers
   let Ok(content) = fs::read_to_string(&package_json_path) else {
     return Ok(LoadAppOutcome::NotInstalled { app: app_name });
   };
-  let entry_point = parse_package_json(&content, &app_name, version, &package_json_path)?;
+  let mut entry_point = parse_package_json(&content, &app_name, version, &package_json_path)?;
+  if entry_point.starts_with("./") {
+    entry_point = entry_point[2..].to_string();
+  }
   let executable = package_src.join(PathBuf::from_slash(entry_point));
   Ok(LoadAppOutcome::Loaded {
     executable_call: ExecutableCall {
