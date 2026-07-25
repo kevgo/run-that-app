@@ -5,10 +5,13 @@ use big_s::S;
 use std::path::Path;
 
 #[cfg(not(windows))]
-pub fn executable_call_for_shell_script(shell_script: &Path) -> ExecutableCall {
+pub fn executable_call_for_shell_script(shell_script: &Path, app_args: &[String]) -> ExecutableCall {
+  let mut args = vec![shell_script.to_string_lossy().to_string()];
+  args.extend(app_args.iter().cloned());
+  let arg = args.join(" ");
   ExecutableCall {
     executable: "sh".into(),
-    args: vec![S("-c"), shell_script.to_string_lossy().to_string()],
+    args: vec![S("-c"), arg],
   }
 }
 
