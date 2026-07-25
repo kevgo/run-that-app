@@ -113,7 +113,7 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 ///   rta::GetCmdArgs {
 ///     app: &actionlint,
 ///     version: Some("1.7.12".into()),
-///     app_args: vec!["--help".into()],
+///     app_args: &vec!["--help".into()],
 ///     apps: &rta::applications::all(),
 ///     from_source: false,
 ///     include_apps: vec![],
