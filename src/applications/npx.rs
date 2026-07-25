@@ -145,7 +145,7 @@ mod tests {
       );
       let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        script_name: "npm.cmd",
+        script_name: "npx.cmd",
       };
       assert_eq!(have, want);
     }
@@ -162,7 +162,7 @@ mod tests {
       );
       let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        script_name: "npm.cmd",
+        script_name: "npx.cmd",
       };
       assert_eq!(have, want);
     }
