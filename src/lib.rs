@@ -145,6 +145,7 @@ pub fn get_cmd(
     verbose,
   }: GetCmdArgs,
 ) -> Result<Option<CommandInfo>, error::UserError> {
+  println!("2222222222222222222 GET_CMD {} {:?}", app.name(), app_args);
   let log = logging::new(verbose);
   let platform = platform::detect(log)?;
   let yard = Yard::load_or_create(&yard::production_location()?)?;
@@ -170,6 +171,7 @@ pub fn get_cmd(
     LoadOrInstallAppOutcome::NotInstallable { app } => return Err(error::UserError::UnsupportedPlatform { app }),
   };
   let ExecutableCall { executable, args } = executable_call;
+  println!("2222222222222222222222222222222222222222222222 {args:?}");
   let mut paths_to_include: Vec<&Path> = vec![&executable.parent_path()];
   for app_to_include in &include_apps {
     paths_to_include.push(app_to_include.executable.parent_path());
