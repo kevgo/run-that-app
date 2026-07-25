@@ -9,6 +9,7 @@ use crate::yard::Yard;
 use crate::{Version, installation, subshell};
 use ahash::AHashSet;
 use big_s::S;
+use path_slash::PathBufExt;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -334,7 +335,7 @@ fn load_npm_entry_point_version(app: &dyn AppDefinition, npm_package: &str, vers
     return Ok(LoadAppOutcome::NotInstalled { app: app_name });
   };
   let entry_point = parse_package_json(&content, &app_name, version, &package_json_path)?;
-  let executable = package_src.join(entry_point);
+  let executable = package_src.join(PathBuf::from_slash(entry_point));
   Ok(LoadAppOutcome::Loaded {
     executable_call: ExecutableCall {
       executable: Executable::from(executable),
