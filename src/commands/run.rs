@@ -24,7 +24,6 @@ pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
     }
     return Err(UserError::UnsupportedPlatform { app: app_to_run.name() });
   };
-  println!("cmd_info: {cmd_info:?}");
   let cwd = args.cwd.as_deref();
   if args.error_on_output {
     subshell::detect_output(cmd_info, cwd)
