@@ -194,7 +194,7 @@ fn locate_shell_script(carrier_app: &dyn AppDefinition, cli_version: Option<&Ver
           return Ok(path);
         }
         (ctx.log)(Event::GlobalInstallNotFound);
-        tried_paths.push(S("(system path)"));
+        tried_paths.push(S("(global install)"));
       }
       RequestedVersion::Yard(version) => {
         let app_folder = ctx.yard.app_folder(&carrier_app.name(), version);
