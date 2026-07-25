@@ -28,6 +28,15 @@ pub enum RunMethod {
     executable_name: ExecutableNameUnix,
   },
 
+  /// executes a shell script bundled with another app
+  OtherAppShellScript {
+    /// the other application that contains the shell script
+    // TODO rename this field to "carier_app" in all variants
+    app_definition: Box<dyn AppDefinition>,
+    /// name of the shell script to run
+    script_name: &'static str,
+  },
+
   /// the app to run is a `NodeJS` package
   NodeJS {
     /// name of the `NodeJS` package to install
@@ -43,6 +52,10 @@ impl RunMethod {
       RunMethod::OtherAppOtherExecutable {
         app_definition: _,
         executable_name: _,
+      }
+      | RunMethod::OtherAppShellScript {
+        app_definition: _,
+        script_name: _,
       }
       | RunMethod::OtherAppDefaultExecutable { app_definition: _, args: _ } => vec![],
     }

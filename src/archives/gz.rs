@@ -20,7 +20,7 @@ impl Archive for Gz {
     log(Event::ArchiveExtractBegin { archive_type: "gz" });
     let executable_name_unix = ExecutableNameUnix::from(app.as_str());
     let executable_name_platform = executable_name_unix.platform_path(platform.os);
-    let output_path = &target_dir.join(executable_name_platform);
+    let output_path = &target_dir.join(executable_name_platform.as_ref());
     let mut gz_decoder = GzDecoder::new(io::Cursor::new(&self.data));
     match File::create(output_path) {
       Ok(mut file) => {

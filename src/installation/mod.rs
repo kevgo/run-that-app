@@ -74,16 +74,17 @@ impl Method {
   pub fn executable_paths(&self, app_folder: &Path, executable_filename: &ExecutableNamePlatform) -> Vec<PathBuf> {
     match self {
       Method::DownloadArchive { url: _, bin_folder } => bin_folder.executable_paths(app_folder, executable_filename),
-      Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => vec![app_folder.join(executable_filename)],
+      Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } => vec![app_folder.join(executable_filename.as_ref())],
       Method::CompileRustCrate { name: _, bin_folder } => match bin_folder {
-        BinFolder::Root => vec![app_folder.join(executable_filename)],
-        BinFolder::Subfolder { path } => vec![app_folder.join(path).join(executable_filename)],
-        BinFolder::Subfolders { options } | BinFolder::RootOrSubfolders { options } => {
-          options.iter().map(|option| app_folder.join(option).join(executable_filename)).collect()
-        }
+        BinFolder::Root => vec![app_folder.join(executable_filename.as_ref())],
+        BinFolder::Subfolder { path } => vec![app_folder.join(path).join(executable_filename.as_ref())],
+        BinFolder::Subfolders { options } | BinFolder::RootOrSubfolders { options } => options
+          .iter()
+          .map(|option| app_folder.join(option).join(executable_filename.as_ref()))
+          .collect(),
       },
-      Method::CompileRustRepo { url: _ } => vec![app_folder.join("bin").join(executable_filename)],
-      Method::InstallNodeJSPackage { package: _ } => vec![app_folder.join("node_modules").join(".bin").join(executable_filename)],
+      Method::CompileRustRepo { url: _ } => vec![app_folder.join("bin").join(executable_filename.as_ref())],
+      Method::InstallNodeJSPackage { package: _ } => vec![app_folder.join("node_modules").join(".bin").join(executable_filename.as_ref())],
     }
   }
 
@@ -138,18 +139,18 @@ impl BinFolder {
   pub fn executable_paths(&self, app_folder: &Path, executable_name: &ExecutableNamePlatform) -> Vec<PathBuf> {
     match self {
       BinFolder::RootOrSubfolders { options } => {
-        let mut result = vec![app_folder.join(executable_name)];
+        let mut result = vec![app_folder.join(executable_name.as_ref())];
         for option in options {
-          result.push(app_folder.join(option).join(executable_name));
+          result.push(app_folder.join(option).join(executable_name.as_ref()));
         }
         result
       }
-      BinFolder::Root => vec![app_folder.join(executable_name)],
-      BinFolder::Subfolder { path } => vec![app_folder.join(path).join(executable_name)],
+      BinFolder::Root => vec![app_folder.join(executable_name.as_ref())],
+      BinFolder::Subfolder { path } => vec![app_folder.join(path).join(executable_name.as_ref())],
       BinFolder::Subfolders { options } => {
         let mut result = vec![];
         for option in options {
-          result.push(app_folder.join(option).join(executable_name));
+          result.push(app_folder.join(option).join(executable_name.as_ref()));
         }
         result
       }
