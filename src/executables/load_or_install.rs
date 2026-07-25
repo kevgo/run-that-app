@@ -223,15 +223,7 @@ fn locate_shell_script(carrier_app: &dyn AppDefinition, cli_version: Option<&Ver
         }
         let mut bin_folder_paths = Vec::new();
         for bin_folder in bin_folders {
-          match bin_folder {
-            installation::BinFolder::Root => bin_folder_paths.push(app_folder.clone()),
-            installation::BinFolder::Subfolder { path } => bin_folder_paths.push(app_folder.join(path)),
-            installation::BinFolder::Subfolders { options } => bin_folder_paths.extend(options.iter().map(|option| app_folder.join(option))),
-            installation::BinFolder::RootOrSubfolders { options } => {
-              bin_folder_paths.push(app_folder.clone());
-              bin_folder_paths.extend(options.iter().map(|option| app_folder.join(option)));
-            }
-          }
+          bin_folder_paths.extend(bin_folder.possible_paths(&app_folder));
         }
         for bin_folder in bin_folder_paths {
           let app_bin_folder = app_folder.join(&bin_folder);
