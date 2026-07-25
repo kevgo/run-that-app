@@ -53,9 +53,6 @@ pub enum UserError {
     name: String,
     paths: Vec<String>,
   },
-  CannotFindSh {
-    err: String,
-  },
   CannotMoveFolder {
     from: PathBuf,
     to: PathBuf,
@@ -197,10 +194,6 @@ impl UserError {
           desc(&format!("  - {tested_path}"));
         }
         desc("\nPlease report this at https://github.com/kevgo/run-that-app/issues/new and try using an older version until this is fixed.");
-      }
-      UserError::CannotFindSh { err } => {
-        error(&format!("cannot find the \"sh\" shell: {err}"));
-        desc("Please install the shell and try again.");
       }
       UserError::CannotMoveFolder { from, to, err } => {
         error(&format!("cannot move folder {} to {}: {err}", from.display(), to.display()));

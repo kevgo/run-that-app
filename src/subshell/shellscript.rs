@@ -1,7 +1,5 @@
 use crate::executables::ExecutableCall;
-#[cfg(not(windows))]
 use big_s::S;
-#[cfg(not(windows))]
 use std::path::Path;
 
 #[cfg(not(windows))]
@@ -17,10 +15,8 @@ pub fn executable_call_for_shell_script(shell_script: &Path, app_args: &[String]
 
 #[cfg(windows)]
 pub fn executable_call_for_shell_script(shell_script: &Path) -> ExecutableCall {
-  use crate::executables::Executable;
-
   ExecutableCall {
-    executable: Executable::new("cmd"),
+    executable: "cmd".into(),
     args: vec![S("/C"), shell_script.to_string_lossy().to_string()],
   }
 }

@@ -22,8 +22,9 @@ pub enum RunMethod {
   /// executes a shell script bundled with another app
   OtherAppShellScript {
     /// the other application that contains the shell script
+    // TODO rename this field to "carier_app" in all variants
     app_definition: Box<dyn AppDefinition>,
-    /// the shell script to run on Unix systems
+    /// name of the shell script to run
     script_name: &'static str,
   },
 
