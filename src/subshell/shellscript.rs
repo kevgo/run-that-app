@@ -1,7 +1,5 @@
 use crate::executables::ExecutableCall;
-#[cfg(not(windows))]
 use big_s::S;
-#[cfg(not(windows))]
 use std::path::Path;
 
 #[cfg(not(windows))]
