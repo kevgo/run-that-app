@@ -11,20 +11,21 @@ pub fn load_app_versions(
   app: &dyn AppDefinition,
   versions: &RequestedVersions,
   executable: &ExecutableNamePlatform,
-  args: &ExecutableArgs,
+  executable_args: &ExecutableArgs,
+  app_args: Vec<String>,
   ctx: &RuntimeContext,
 ) -> Result<LoadAppOutcome> {
   for version in versions {
     match version {
       RequestedVersion::Path(version) => {
-        if let Some(executable_call_def) = load_from_path(app, executable, version, args.clone(), ctx)?
+        if let Some(executable_call_def) = load_from_path(app, executable, version, app_args, ctx)?
           && let Some(app_folder) = executable_call_def.executable.clone().as_path().parent()
           && let Some(executable_call) = executable_call_def.into_executable_call(app_folder)
         {
           return Ok(LoadAppOutcome::Loaded { executable_call });
         }
       }
-      RequestedVersion::Yard(version) => match load_from_yard(app, version, executable, args, ctx)? {
+      RequestedVersion::Yard(version) => match load_from_yard(app, version, executable, executable_args, app_args, ctx)? {
         LoadAppOutcome::Loaded { executable_call } => return Ok(LoadAppOutcome::Loaded { executable_call }),
         LoadAppOutcome::NotInstallable { app: _ } => {}
         LoadAppOutcome::NotInstalled { app } => {

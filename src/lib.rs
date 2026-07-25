@@ -62,7 +62,7 @@ mod yard;
 use crate::applications::{AppDefinition, Apps};
 use crate::context::RuntimeContext;
 pub use crate::executables::CommandInfo;
-use crate::executables::{LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, load_or_install_app_and_carrier, load_or_install_apps};
+use crate::executables::{ExecutableCall, LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, load_or_install_app_and_carrier, load_or_install_apps};
 use crate::yard::Yard;
 use cli::Cli;
 pub use configuration::Version;
@@ -155,10 +155,11 @@ pub fn get_cmd(
     config_file: &config_file,
     log,
   };
-  let include_apps = load_or_install_apps(include_apps, apps, optional, &ctx)?;
+  let include_apps = load_or_install_apps(include_apps, apps, &app_args, optional, &ctx)?;
   let executable_call = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: version.as_ref(),
+    app_args: &app_args,
     optional,
     from_source,
     ctx: &ctx,
@@ -168,7 +169,7 @@ pub fn get_cmd(
     LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => return Ok(None),
     LoadOrInstallAppOutcome::NotInstallable { app } => return Err(error::UserError::UnsupportedPlatform { app }),
   };
-  let (executable, args) = executable_call.with_args(app_args);
+  let ExecutableCall { executable, args } = executable_call;
   let mut paths_to_include: Vec<&Path> = vec![&executable.parent_path()];
   for app_to_include in &include_apps {
     paths_to_include.push(app_to_include.executable.parent_path());

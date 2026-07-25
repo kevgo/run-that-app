@@ -12,12 +12,19 @@ use big_s::S;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-pub fn load_or_install_apps(apps_to_include: Vec<&dyn AppDefinition>, apps: &Apps, optional: bool, ctx: &RuntimeContext) -> Result<Vec<ExecutableCall>> {
+pub fn load_or_install_apps(
+  apps_to_include: Vec<&dyn AppDefinition>,
+  apps: &Apps,
+  app_args: &[String],
+  optional: bool,
+  ctx: &RuntimeContext,
+) -> Result<Vec<ExecutableCall>> {
   let mut result = Vec::with_capacity(apps_to_include.len());
   for app_to_include in apps_to_include {
     match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
       app: app_to_include,
       cli_version: None,
+      app_args,
       optional,
       from_source: false,
       ctx,
@@ -39,6 +46,7 @@ pub fn load_or_install_app_and_carrier(
   LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version,
+    app_args,
     optional,
     from_source,
     ctx,
@@ -54,7 +62,8 @@ pub fn load_or_install_app_and_carrier(
         app,
         cli_version,
         executable: app.executable_filename(),
-        args: &ExecutableArgs::None,
+        executable_args: &ExecutableArgs::None,
+        app_args,
         optional,
         from_source,
         ctx,
@@ -69,7 +78,8 @@ pub fn load_or_install_app_and_carrier(
       app: carrier_app.as_ref(),
       cli_version,
       executable: carrier_app.executable_filename(),
-      args: &carrier_args,
+      executable_args: &carrier_args,
+      app_args,
       optional,
       from_source,
       ctx,
@@ -83,7 +93,8 @@ pub fn load_or_install_app_and_carrier(
       app: carrier_app.as_ref(),
       cli_version,
       executable: carrier_executable,
-      args: &ExecutableArgs::None,
+      executable_args: &ExecutableArgs::None,
+      app_args,
       optional,
       from_source,
       ctx,
@@ -98,6 +109,7 @@ pub fn load_or_install_app_and_carrier(
       if let Err(_err) = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: carrier_app.as_ref(),
         cli_version: None,
+        app_args,
         optional,
         from_source: false,
         ctx,
@@ -118,6 +130,7 @@ pub fn load_or_install_app_and_carrier(
       if let Err(err) = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: nodejs,
         cli_version: None,
+        app_args,
         optional,
         from_source: false,
         ctx,
@@ -162,6 +175,7 @@ pub fn load_or_install_app_and_carrier(
 pub struct LoadOrInstallAppAndCarrierArgs<'a> {
   pub app: &'a dyn AppDefinition,
   pub cli_version: Option<&'a Version>,
+  pub app_args: &'a [String],
   pub optional: bool,
   pub from_source: bool,
   pub ctx: &'a RuntimeContext<'a>,
@@ -263,7 +277,8 @@ fn load_or_install_app(
     app,
     cli_version,
     executable,
-    args,
+    executable_args,
+    app_args,
     optional,
     from_source,
     ctx,
@@ -280,7 +295,7 @@ fn load_or_install_app(
   };
   // step 2: fast-path: try to load the given executable for the given app
   let executable = executable.platform_path(ctx.platform.os);
-  match load_app_versions(app, &versions, &executable, args, ctx)? {
+  match load_app_versions(app, &versions, &executable, executable_args, app_args, ctx)? {
     LoadAppOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
     LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app: _ } => {} // we'll install the app in the next step
@@ -293,7 +308,7 @@ fn load_or_install_app(
     }
   }
   // step 4: load the executable for the given app
-  match load_app_versions(app, &versions, &executable, args, ctx)? {
+  match load_app_versions(app, &versions, &executable, executable_args, app_args, ctx)? {
     LoadAppOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
     LoadAppOutcome::NotInstallable { app } => Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app } => {
@@ -307,7 +322,8 @@ struct LoadOrInstallAppArgs<'a> {
   app: &'a dyn AppDefinition,
   cli_version: Option<&'a Version>,
   executable: ExecutableNameUnix,
-  args: &'a ExecutableArgs,
+  executable_args: &'a ExecutableArgs,
+  app_args: &'a [String],
   optional: bool,
   from_source: bool,
   ctx: &'a RuntimeContext<'a>,

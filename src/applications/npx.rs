@@ -3,10 +3,8 @@ use super::{AnalyzeResult, AppDefinition, ApplicationName};
 use crate::Log;
 use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
-use crate::executables::{Executable, ExecutableArgs, RunMethod};
-use crate::platform::Platform;
-use const_format::formatcp;
-use std::path::MAIN_SEPARATOR;
+use crate::executables::{Executable, RunMethod};
+use crate::platform::{Os, Platform};
 
 #[derive(Clone)]
 pub struct Npx {}
@@ -20,14 +18,12 @@ impl AppDefinition for Npx {
     "https://www.npmjs.com"
   }
 
-  fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {
-    RunMethod::OtherAppDefaultExecutable {
-      app_definition: Box::new(app_to_install()),
-      args: ExecutableArgs::OneOfTheseInAppFolder {
-        options: vec![
-          formatcp!("node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npx-cli.js"),
-          formatcp!("lib{MAIN_SEPARATOR}node_modules{MAIN_SEPARATOR}npm{MAIN_SEPARATOR}bin{MAIN_SEPARATOR}npx-cli.js"),
-        ],
+  fn run_method(&self, _version: &Version, platform: Platform) -> RunMethod {
+    RunMethod::OtherAppShellScript {
+      app_definition: Box::new(NodeJS {}),
+      script_name: match platform.os {
+        Os::Linux | Os::MacOS => "npx",
+        Os::Windows => "npx.cmd",
       },
     }
   }
@@ -79,11 +75,9 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = RunMethod::OtherAppDefaultExecutable {
+      let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["node_modules/npm/bin/npx-cli.js", "lib/node_modules/npm/bin/npx-cli.js"],
-        },
+        script_name: "npx",
       };
       assert_eq!(have, want);
     }
@@ -98,11 +92,9 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = RunMethod::OtherAppDefaultExecutable {
+      let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["node_modules/npm/bin/npx-cli.js", "lib/node_modules/npm/bin/npx-cli.js"],
-        },
+        script_name: "npx",
       };
       assert_eq!(have, want);
     }
@@ -117,11 +109,9 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = RunMethod::OtherAppDefaultExecutable {
+      let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["node_modules/npm/bin/npx-cli.js", "lib/node_modules/npm/bin/npx-cli.js"],
-        },
+        script_name: "npx",
       };
       assert_eq!(have, want);
     }
@@ -136,11 +126,9 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = RunMethod::OtherAppDefaultExecutable {
+      let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec!["node_modules/npm/bin/npx-cli.js", "lib/node_modules/npm/bin/npx-cli.js"],
-        },
+        script_name: "npx",
       };
       assert_eq!(have, want);
     }
@@ -155,11 +143,9 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = RunMethod::OtherAppDefaultExecutable {
+      let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec![r"node_modules\npm\bin\npx-cli.js", r"lib\node_modules\npm\bin\npx-cli.js"],
-        },
+        script_name: "npm.cmd",
       };
       assert_eq!(have, want);
     }
@@ -174,11 +160,9 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = RunMethod::OtherAppDefaultExecutable {
+      let want = RunMethod::OtherAppShellScript {
         app_definition: Box::new(NodeJS {}),
-        args: ExecutableArgs::OneOfTheseInAppFolder {
-          options: vec![r"node_modules\npm\bin\npx-cli.js", r"lib\node_modules\npm\bin\npx-cli.js"],
-        },
+        script_name: "npm.cmd",
       };
       assert_eq!(have, want);
     }
