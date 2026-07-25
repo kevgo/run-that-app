@@ -190,7 +190,8 @@ fn locate_shell_script(carrier_app: &dyn AppDefinition, cli_version: Option<&Ver
         (ctx.log)(Event::GlobalInstallSearch { binary: script_name });
         if let Ok(path) = which::which(script_name) {
           (ctx.log)(Event::GlobalInstallFound { path: &path });
-          // TODO: check if the version matches
+          // TODO: ensure this is the correct script by running `analyze_executable` on the path
+          // TODO: ensure the version matches
           return Ok(path);
         }
         (ctx.log)(Event::GlobalInstallNotFound);
