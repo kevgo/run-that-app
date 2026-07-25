@@ -12,7 +12,7 @@ mod run_method;
 
 pub use command_info::CommandInfo;
 pub use executable::Executable;
-pub use executable_call::{ExecutableArgs, ExecutableCall, ExecutableCallDefinition};
+pub use executable_call::ExecutableCall;
 pub use executable_name::{ExecutableNamePlatform, ExecutableNameUnix};
 pub use load::{LoadAppOutcome, load_app_versions};
 pub use load_from_path::load_from_path;

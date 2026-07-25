@@ -30,7 +30,7 @@ pub fn which(
   match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: version.as_ref(),
-    app_args: &[],
+    app_args: vec![],
     optional,
     from_source: false,
     ctx: &ctx,

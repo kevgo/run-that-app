@@ -58,7 +58,7 @@ mod yamlfmt;
 use crate::Log;
 use crate::configuration::{TagFormat, Version};
 use crate::error::{Result, UserError};
-use crate::executables::{Executable, ExecutableArgs, ExecutableNameUnix, RunMethod};
+use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
 pub use actionlint::ActionLint;
 pub use alphavet::Alphavet;
@@ -234,25 +234,21 @@ dyn_clone::clone_trait_object!(AppDefinition);
 /// provides the app that contains the executable for the given app,
 /// the name of the executable provided by this app to call,
 /// and arguments to call that executable with.
-pub fn carrier<'a>(app: &'a dyn AppDefinition, version: &Version, platform: Platform) -> (Box<dyn AppDefinition + 'a>, ExecutableNameUnix, ExecutableArgs) {
+pub fn carrier<'a>(app: &'a dyn AppDefinition, version: &Version, platform: Platform) -> (Box<dyn AppDefinition + 'a>, ExecutableNameUnix) {
   match app.run_method(version, platform) {
-    RunMethod::ThisApp { install_methods: _ } => (dyn_clone::clone_box(app), app.executable_filename(), ExecutableArgs::None),
+    RunMethod::ThisApp { install_methods: _ } => (dyn_clone::clone_box(app), app.executable_filename()),
     RunMethod::OtherAppOtherExecutable {
       app_definition,
       executable_name,
-    } => (app_definition, executable_name, ExecutableArgs::None),
-    RunMethod::OtherAppDefaultExecutable { app_definition, args } => {
-      let executable_filename = app_definition.executable_filename();
-      (app_definition, executable_filename, args)
-    }
+    } => (app_definition, executable_name),
     RunMethod::OtherAppShellScript {
       app_definition,
       script_name: _,
-    } => (app_definition, app.executable_filename(), ExecutableArgs::None),
+    } => (app_definition, app.executable_filename()),
     RunMethod::NodeJS { package: _ } => {
       let node = NodeJS {};
       let executable_filename = node.executable_filename();
-      (Box::new(node), executable_filename, ExecutableArgs::None)
+      (Box::new(node), executable_filename)
     }
   }
 }

@@ -31,12 +31,12 @@ pub fn install(
   };
   // install the included apps
   let include_apps = apps.lookup_many(&include_apps)?;
-  load_or_install_apps(include_apps, apps, &[], optional, &ctx)?;
+  load_or_install_apps(include_apps, apps, vec![], optional, &ctx)?;
   // install the main app
   match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app: app_to_install,
     cli_version: version.as_ref(),
-    app_args: &[],
+    app_args: vec![],
     optional,
     from_source,
     ctx: &ctx,

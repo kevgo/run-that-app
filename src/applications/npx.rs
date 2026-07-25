@@ -62,7 +62,7 @@ mod tests {
     use crate::applications::nodejs::NodeJS;
     use crate::applications::npx::Npx;
     use crate::configuration::Version;
-    use crate::executables::{ExecutableArgs, RunMethod};
+    use crate::executables::RunMethod;
     use crate::platform::{Cpu, Os, Platform};
 
     #[test]
