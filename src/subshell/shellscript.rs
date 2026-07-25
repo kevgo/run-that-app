@@ -14,9 +14,12 @@ pub fn shell_script_call(shell_script: &Path, app_args: &[String]) -> Executable
 }
 
 #[cfg(windows)]
-pub fn shell_script_call(shell_script: &Path) -> ExecutableCall {
+pub fn shell_script_call(shell_script: &Path, app_args: &[String]) -> ExecutableCall {
+  let mut args = Vec::with_capacity(app_args.len() + 1);
+  args.push(shell_script.to_string_lossy().to_string());
+  args.extend(app_args.iter().cloned());
   ExecutableCall {
     executable: "cmd".into(),
-    args: vec![S("/C"), shell_script.to_string_lossy().to_string()],
+    args: vec![S("/C"), args.join(" ")],
   }
 }
