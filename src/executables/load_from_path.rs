@@ -12,7 +12,7 @@ pub fn load_from_path(
   app_to_install: &dyn AppDefinition,
   executable: &ExecutableNamePlatform,
   range: &semver::VersionReq,
-  app_args: Vec<String>,
+  app_args: &[String],
   ctx: &RuntimeContext,
 ) -> Result<Option<ExecutableCall>> {
   let Some(executable) = find_global_install(executable, ctx.log) else {
@@ -26,7 +26,10 @@ pub fn load_from_path(
     }
     AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
       (ctx.log)(Event::GlobalInstallMatchingVersion { range, version: None });
-      Ok(Some(ExecutableCall { executable, args: app_args }))
+      Ok(Some(ExecutableCall {
+        executable,
+        args: app_args.to_vec(),
+      }))
     }
     AnalyzeResult::IdentifiedButUnknownVersion => {
       (ctx.log)(Event::GlobalInstallMismatchingVersion { range, version: None });
@@ -37,7 +40,10 @@ pub fn load_from_path(
         range,
         version: Some(&version),
       });
-      Ok(Some(ExecutableCall { executable, args: app_args }))
+      Ok(Some(ExecutableCall {
+        executable,
+        args: app_args.to_vec(),
+      }))
     }
     AnalyzeResult::IdentifiedWithVersion(version) => {
       (ctx.log)(Event::GlobalInstallMismatchingVersion {

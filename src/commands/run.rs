@@ -11,7 +11,7 @@ pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
   let get_cmd_args = GetCmdArgs {
     app: app_to_run,
     version: args.version,
-    app_args: args.app_args,
+    app_args: &args.app_args,
     apps,
     from_source: args.from_source,
     include_apps,

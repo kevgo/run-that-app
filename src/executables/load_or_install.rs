@@ -15,7 +15,7 @@ use std::path::{Path, PathBuf};
 pub fn load_or_install_apps(
   apps_to_include: Vec<&dyn AppDefinition>,
   apps: &Apps,
-  app_args: Vec<String>,
+  app_args: &[String],
   optional: bool,
   ctx: &RuntimeContext,
 ) -> Result<Vec<ExecutableCall>> {
@@ -24,7 +24,7 @@ pub fn load_or_install_apps(
     match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
       app: app_to_include,
       cli_version: None,
-      app_args: app_args.clone(),
+      app_args,
       optional,
       from_source: false,
       ctx,
@@ -158,7 +158,7 @@ pub fn load_or_install_app_and_carrier(
 pub struct LoadOrInstallAppAndCarrierArgs<'a> {
   pub app: &'a dyn AppDefinition,
   pub cli_version: Option<&'a Version>,
-  pub app_args: Vec<String>,
+  pub app_args: &'a [String],
   pub optional: bool,
   pub from_source: bool,
   pub ctx: &'a RuntimeContext<'a>,
@@ -276,7 +276,7 @@ fn load_or_install_app(
   };
   // step 2: fast-path: try to load the given executable for the given app
   let executable = executable.platform_path(ctx.platform.os);
-  match load_app_versions(app, &versions, &executable, app_args.clone(), ctx)? {
+  match load_app_versions(app, &versions, &executable, app_args, ctx)? {
     LoadAppOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
     LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app: _ } => {} // we'll install the app in the next step
@@ -303,7 +303,7 @@ struct LoadOrInstallAppArgs<'a> {
   app: &'a dyn AppDefinition,
   cli_version: Option<&'a Version>,
   executable: ExecutableNameUnix,
-  app_args: Vec<String>,
+  app_args: &'a [String],
   optional: bool,
   from_source: bool,
   ctx: &'a RuntimeContext<'a>,

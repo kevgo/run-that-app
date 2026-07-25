@@ -155,7 +155,7 @@ pub fn get_cmd(
     config_file: &config_file,
     log,
   };
-  let include_apps = load_or_install_apps(include_apps, apps, app_args.clone(), optional, &ctx)?;
+  let include_apps = load_or_install_apps(include_apps, apps, app_args, optional, &ctx)?;
   let executable_call = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: version.as_ref(),
@@ -194,7 +194,7 @@ pub struct GetCmdArgs<'a> {
 
   /// arguments to call the app with
   #[allow(clippy::struct_field_names)]
-  pub app_args: Vec<String>,
+  pub app_args: &'a [String],
 
   /// all apps
   pub apps: &'a Apps,

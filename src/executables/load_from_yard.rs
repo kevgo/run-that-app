@@ -12,14 +12,17 @@ pub fn load_from_yard(
   app: &dyn AppDefinition,
   version: &Version,
   executable: &ExecutableNamePlatform,
-  app_args: Vec<String>,
+  app_args: &[String],
   ctx: &RuntimeContext,
 ) -> Result<LoadAppOutcome> {
   ctx.yard.with_lock(&app.name(), version, ctx, || {
     // try to load the app from the yard
     if let Some(executable) = ctx.yard.load_executable(app, executable, version, ctx) {
       return Ok(LoadAppOutcome::Loaded {
-        executable_call: ExecutableCall { executable, args: app_args },
+        executable_call: ExecutableCall {
+          executable,
+          args: app_args.to_vec(),
+        },
       });
     }
     // here the app is not installed --> check if it is marked as uninstallable
