@@ -3,7 +3,7 @@
 use crate::applications::{AnalyzeResult, AppDefinition};
 use crate::context::RuntimeContext;
 use crate::error::Result;
-use crate::executables::{ExecutableArgs, ExecutableCallDefinition, ExecutableNamePlatform};
+use crate::executables::{ExecutableCall, ExecutableNamePlatform};
 use crate::filesystem::find_global_install;
 use crate::logging::Event;
 
@@ -12,9 +12,9 @@ pub fn load_from_path(
   app_to_install: &dyn AppDefinition,
   executable: &ExecutableNamePlatform,
   range: &semver::VersionReq,
-  executable_args: ExecutableArgs,
+  app_args: &[String],
   ctx: &RuntimeContext,
-) -> Result<Option<ExecutableCallDefinition>> {
+) -> Result<Option<ExecutableCall>> {
   let Some(executable) = find_global_install(executable, ctx.log) else {
     (ctx.log)(Event::GlobalInstallNotFound);
     return Ok(None);
@@ -26,9 +26,9 @@ pub fn load_from_path(
     }
     AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
       (ctx.log)(Event::GlobalInstallMatchingVersion { range, version: None });
-      Ok(Some(ExecutableCallDefinition {
+      Ok(Some(ExecutableCall {
         executable,
-        args: executable_args,
+        args: app_args.to_vec(),
       }))
     }
     AnalyzeResult::IdentifiedButUnknownVersion => {
@@ -40,9 +40,9 @@ pub fn load_from_path(
         range,
         version: Some(&version),
       });
-      Ok(Some(ExecutableCallDefinition {
+      Ok(Some(ExecutableCall {
         executable,
-        args: executable_args,
+        args: app_args.to_vec(),
       }))
     }
     AnalyzeResult::IdentifiedWithVersion(version) => {

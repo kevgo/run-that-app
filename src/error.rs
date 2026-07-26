@@ -49,6 +49,10 @@ pub enum UserError {
     version: Version,
     paths: Vec<PathBuf>,
   },
+  CannotFindScript {
+    name: String,
+    paths: Vec<String>,
+  },
   CannotMoveFolder {
     from: PathBuf,
     to: PathBuf,
@@ -180,6 +184,14 @@ impl UserError {
         desc("I tried these paths:");
         for tested_path in paths {
           desc(&format!("  - {}", tested_path.display()));
+        }
+        desc("\nPlease report this at https://github.com/kevgo/run-that-app/issues/new and try using an older version until this is fixed.");
+      }
+      UserError::CannotFindScript { name, paths } => {
+        error(&format!("cannot locate shell script for {name}."));
+        desc("I tried these paths:");
+        for tested_path in paths {
+          desc(&format!("  - {tested_path}"));
         }
         desc("\nPlease report this at https://github.com/kevgo/run-that-app/issues/new and try using an older version until this is fixed.");
       }

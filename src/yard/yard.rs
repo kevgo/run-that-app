@@ -3,7 +3,6 @@ use crate::configuration::Version;
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableNamePlatform};
-use crate::installation::BinFolder;
 use crate::logging::{Event, Log};
 use crate::yard::root_path;
 use fd_lock::RwLock;
@@ -196,7 +195,7 @@ impl Yard {
     executable: &ExecutableNamePlatform,
     version: &Version,
     ctx: &RuntimeContext,
-  ) -> Option<(Executable, BinFolder)> {
+  ) -> Option<Executable> {
     let run_method = app_definition.run_method(version, ctx.platform);
     let app_folder = self.app_folder(&app_definition.name(), version);
     for installation_method in run_method.install_methods() {
@@ -205,8 +204,7 @@ impl Yard {
         (ctx.log)(Event::YardCheckExistingAppBegin { path: &executable_path });
         if executable_path.exists() {
           (ctx.log)(Event::YardCheckExistingAppFound);
-          let bin_folder = installation_method.bin_folder();
-          return Some((Executable::from(executable_path), bin_folder));
+          return Some(Executable::from(executable_path));
         }
         (ctx.log)(Event::YardCheckExistingAppNotFound);
       }

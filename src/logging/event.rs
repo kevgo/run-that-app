@@ -1,7 +1,6 @@
 use crate::applications::ApplicationName;
 use crate::configuration::Version;
 use crate::download::Url;
-use crate::executables::ExecutableNamePlatform;
 use crate::installation::Method;
 use std::borrow::Cow;
 use std::fmt::Display;
@@ -22,7 +21,7 @@ pub enum Event<'a> {
   },
   CompileGoBegin {
     go_path: Cow<'a, str>,
-    args: &'a [&'a str],
+    args: &'a [String],
   },
   CompileGoSuccess,
   CompileGoFailed,
@@ -71,7 +70,7 @@ pub enum Event<'a> {
   },
   GitHubApiRequestSuccess,
   GlobalInstallSearch {
-    binary: &'a ExecutableNamePlatform,
+    binary: &'a str,
   },
   GlobalInstallFound {
     path: &'a Path,

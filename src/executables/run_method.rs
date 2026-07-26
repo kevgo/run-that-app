@@ -1,5 +1,4 @@
 use super::ExecutableNameUnix;
-use super::executable_call::ExecutableArgs;
 use crate::applications::AppDefinition;
 use crate::installation;
 
@@ -12,20 +11,21 @@ pub enum RunMethod {
     install_methods: Vec<installation::Method>,
   },
 
-  /// executes the default executable of another app with additional arguments
-  OtherAppDefaultExecutable {
-    /// the other applications whose default executable to run
-    app_definition: Box<dyn AppDefinition>,
-    /// additional arguments when running the default executable of the given app
-    args: ExecutableArgs,
-  },
-
   /// executes another executable (not the default executable) of another app
   OtherAppOtherExecutable {
     /// the other application that contains the executable
     app_definition: Box<dyn AppDefinition>,
     /// name of the executable to run
     executable_name: ExecutableNameUnix,
+  },
+
+  /// executes a shell script bundled with another app
+  OtherAppShellScript {
+    /// the other application that contains the shell script
+    // TODO rename this field to "carier_app" in all variants
+    app_definition: Box<dyn AppDefinition>,
+    /// name of the shell script to run
+    script_name: &'static str,
   },
 
   /// the app to run is a `NodeJS` package
@@ -44,7 +44,10 @@ impl RunMethod {
         app_definition: _,
         executable_name: _,
       }
-      | RunMethod::OtherAppDefaultExecutable { app_definition: _, args: _ } => vec![],
+      | RunMethod::OtherAppShellScript {
+        app_definition: _,
+        script_name: _,
+      } => vec![],
     }
   }
 }
