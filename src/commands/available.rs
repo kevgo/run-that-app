@@ -21,6 +21,7 @@ pub fn available(AvailableArgs { app_name, optional, verbose }: AvailableArgs, a
   match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: None,
+    app_args: &[],
     optional,
     from_source: false,
     ctx: &ctx,

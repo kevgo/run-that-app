@@ -62,14 +62,6 @@ pub enum Method {
 }
 
 impl Method {
-  pub fn bin_folder(self) -> BinFolder {
-    match self {
-      Method::DownloadExecutable { url: _ } | Method::CompileGoSource { import_path: _ } | Method::InstallNodeJSPackage { package: _ } => BinFolder::Root,
-      Method::DownloadArchive { url: _, bin_folder } | Method::CompileRustCrate { name: _, bin_folder } => bin_folder,
-      Method::CompileRustRepo { url: _ } => BinFolder::Subfolder { path: "bin".into() },
-    }
-  }
-
   /// provides possible locations of the given executable within the given app folder in the given yard
   pub fn executable_paths(&self, app_folder: &Path, executable_filename: &ExecutableNamePlatform) -> Vec<PathBuf> {
     match self {

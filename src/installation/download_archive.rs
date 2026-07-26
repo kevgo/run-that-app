@@ -17,7 +17,7 @@ pub fn run(
   optional: bool,
   ctx: &RuntimeContext,
 ) -> Result<Outcome> {
-  let (app_to_install, executable_name, _args) = carrier(app_definition, version, ctx.platform);
+  let (app_to_install, executable_name) = carrier(app_definition, version, ctx.platform);
   let app_name = app_to_install.name();
   // download the archive file
   let Some(artifact) = download::artifact(url, &app_name, version, optional, ctx.log)? else {

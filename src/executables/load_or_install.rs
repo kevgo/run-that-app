@@ -2,22 +2,30 @@ use crate::applications::{AppDefinition, ApplicationName, Apps, NodeJS};
 use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::executables::{Executable, ExecutableArgs, ExecutableCall, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
+use crate::executables::{ExecutableCall, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
 use crate::installation::Outcome;
 use crate::logging::Event;
 use crate::yard::Yard;
 use crate::{Version, installation, subshell};
 use ahash::AHashSet;
 use big_s::S;
+use path_slash::PathBufExt;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-pub fn load_or_install_apps(apps_to_include: Vec<&dyn AppDefinition>, apps: &Apps, optional: bool, ctx: &RuntimeContext) -> Result<Vec<ExecutableCall>> {
+pub fn load_or_install_apps(
+  apps_to_include: Vec<&dyn AppDefinition>,
+  apps: &Apps,
+  app_args: &[String],
+  optional: bool,
+  ctx: &RuntimeContext,
+) -> Result<Vec<ExecutableCall>> {
   let mut result = Vec::with_capacity(apps_to_include.len());
   for app_to_include in apps_to_include {
     match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
       app: app_to_include,
       cli_version: None,
+      app_args,
       optional,
       from_source: false,
       ctx,
@@ -39,6 +47,7 @@ pub fn load_or_install_app_and_carrier(
   LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version,
+    app_args,
     optional,
     from_source,
     ctx,
@@ -54,27 +63,13 @@ pub fn load_or_install_app_and_carrier(
         app,
         cli_version,
         executable: app.executable_filename(),
-        args: &ExecutableArgs::None,
+        app_args,
         optional,
         from_source,
         ctx,
         apps,
       })
     }
-
-    RunMethod::OtherAppDefaultExecutable {
-      app_definition: carrier_app,
-      args: carrier_args,
-    } => load_or_install_app(LoadOrInstallAppArgs {
-      app: carrier_app.as_ref(),
-      cli_version,
-      executable: carrier_app.executable_filename(),
-      args: &carrier_args,
-      optional,
-      from_source,
-      ctx,
-      apps,
-    }),
 
     RunMethod::OtherAppOtherExecutable {
       app_definition: carrier_app,
@@ -83,7 +78,7 @@ pub fn load_or_install_app_and_carrier(
       app: carrier_app.as_ref(),
       cli_version,
       executable: carrier_executable,
-      args: &ExecutableArgs::None,
+      app_args,
       optional,
       from_source,
       ctx,
@@ -98,6 +93,7 @@ pub fn load_or_install_app_and_carrier(
       if let Err(_err) = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: carrier_app.as_ref(),
         cli_version: None,
+        app_args: &[],
         optional,
         from_source: false,
         ctx,
@@ -108,25 +104,25 @@ pub fn load_or_install_app_and_carrier(
       // step 2: locate the shell script inside the carrier app
       let shell_script = locate_shell_script(carrier_app.as_ref(), cli_version, script_name, ctx)?;
       // step 3: create the executable call that runs the shell script
-      let executable_call = subshell::executable_call_for_shell_script(&shell_script);
+      let executable_call = subshell::shell_script_call(&shell_script, app_args);
       Ok(LoadOrInstallAppOutcome::Loaded { executable_call })
     }
 
     RunMethod::NodeJS { package } => {
       // step 1: ensure NodeJS is installed, install if needed
       let nodejs = &NodeJS {};
-      if let Err(err) = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+      let node_call = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: nodejs,
         cli_version: None,
+        app_args: &[],
         optional,
         from_source: false,
         ctx,
         apps,
-      }) {
-        println!("ERROR: cannot install {}", nodejs.name());
-        err.print();
-        return Ok(LoadOrInstallAppOutcome::NotInstallable { app: nodejs.name() });
-      }
+      })? {
+        LoadOrInstallAppOutcome::Loaded { executable_call } => executable_call,
+        LoadOrInstallAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
+      };
       // step 2: determine the version of the npm package to run
       let app_versions = if let Some(version) = cli_version {
         RequestedVersions::from(version)
@@ -136,7 +132,7 @@ pub fn load_or_install_app_and_carrier(
         return Err(UserError::NoVersionsFound { app: app.name().clone() });
       };
       // step 3: fast-path: load the app executable
-      match load_npm_entry_point_versions(app, package, &app_versions, ctx.yard)? {
+      match load_npm_entry_point_versions(app, package, &app_versions, app_args, &node_call, ctx.yard)? {
         LoadAppOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
         LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
         LoadAppOutcome::NotInstalled { app: _ } => {} // we'll install the npm package in the next step
@@ -147,7 +143,7 @@ pub fn load_or_install_app_and_carrier(
         Outcome::NotInstalled { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
       }
       // step 5: load the npm package executable
-      match load_npm_entry_point_versions(app, package, &app_versions, ctx.yard)? {
+      match load_npm_entry_point_versions(app, package, &app_versions, app_args, &node_call, ctx.yard)? {
         LoadAppOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
         LoadAppOutcome::NotInstallable { app } => Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
         LoadAppOutcome::NotInstalled { app } => {
@@ -162,6 +158,7 @@ pub fn load_or_install_app_and_carrier(
 pub struct LoadOrInstallAppAndCarrierArgs<'a> {
   pub app: &'a dyn AppDefinition,
   pub cli_version: Option<&'a Version>,
+  pub app_args: &'a [String],
   pub optional: bool,
   pub from_source: bool,
   pub ctx: &'a RuntimeContext<'a>,
@@ -202,8 +199,7 @@ fn locate_shell_script(carrier_app: &dyn AppDefinition, cli_version: Option<&Ver
         // find the bin folders
         let install_methods = match carrier_app.run_method(version, ctx.platform) {
           RunMethod::ThisApp { install_methods } => install_methods,
-          RunMethod::OtherAppDefaultExecutable { app_definition: _, args: _ }
-          | RunMethod::OtherAppOtherExecutable {
+          RunMethod::OtherAppOtherExecutable {
             app_definition: _,
             executable_name: _,
           }
@@ -227,15 +223,7 @@ fn locate_shell_script(carrier_app: &dyn AppDefinition, cli_version: Option<&Ver
         }
         let mut bin_folder_paths = Vec::new();
         for bin_folder in bin_folders {
-          match bin_folder {
-            installation::BinFolder::Root => bin_folder_paths.push(app_folder.clone()),
-            installation::BinFolder::Subfolder { path } => bin_folder_paths.push(app_folder.join(path)),
-            installation::BinFolder::Subfolders { options } => bin_folder_paths.extend(options.iter().map(|option| app_folder.join(option))),
-            installation::BinFolder::RootOrSubfolders { options } => {
-              bin_folder_paths.push(app_folder.clone());
-              bin_folder_paths.extend(options.iter().map(|option| app_folder.join(option)));
-            }
-          }
+          bin_folder_paths.extend(bin_folder.possible_paths(&app_folder));
         }
         for bin_folder in bin_folder_paths {
           let app_bin_folder = app_folder.join(&bin_folder);
@@ -263,7 +251,7 @@ fn load_or_install_app(
     app,
     cli_version,
     executable,
-    args,
+    app_args,
     optional,
     from_source,
     ctx,
@@ -280,7 +268,7 @@ fn load_or_install_app(
   };
   // step 2: fast-path: try to load the given executable for the given app
   let executable = executable.platform_path(ctx.platform.os);
-  match load_app_versions(app, &versions, &executable, args, ctx)? {
+  match load_app_versions(app, &versions, &executable, app_args, ctx)? {
     LoadAppOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
     LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app: _ } => {} // we'll install the app in the next step
@@ -293,7 +281,7 @@ fn load_or_install_app(
     }
   }
   // step 4: load the executable for the given app
-  match load_app_versions(app, &versions, &executable, args, ctx)? {
+  match load_app_versions(app, &versions, &executable, app_args, ctx)? {
     LoadAppOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
     LoadAppOutcome::NotInstallable { app } => Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app } => {
@@ -307,17 +295,24 @@ struct LoadOrInstallAppArgs<'a> {
   app: &'a dyn AppDefinition,
   cli_version: Option<&'a Version>,
   executable: ExecutableNameUnix,
-  args: &'a ExecutableArgs,
+  app_args: &'a [String],
   optional: bool,
   from_source: bool,
   ctx: &'a RuntimeContext<'a>,
   apps: &'a Apps,
 }
 
-fn load_npm_entry_point_versions(app: &dyn AppDefinition, npm_package: &str, versions: &RequestedVersions, yard: &Yard) -> Result<LoadAppOutcome> {
+fn load_npm_entry_point_versions(
+  app: &dyn AppDefinition,
+  npm_package: &str,
+  versions: &RequestedVersions,
+  app_args: &[String],
+  node_call: &ExecutableCall,
+  yard: &Yard,
+) -> Result<LoadAppOutcome> {
   for version in versions {
     match version {
-      RequestedVersion::Yard(version) => match load_npm_entry_point_version(app, npm_package, version, yard)? {
+      RequestedVersion::Yard(version) => match load_npm_entry_point_version(app, npm_package, version, app_args, node_call, yard)? {
         LoadAppOutcome::Loaded { executable_call } => {
           return Ok(LoadAppOutcome::Loaded { executable_call });
         }
@@ -332,7 +327,14 @@ fn load_npm_entry_point_versions(app: &dyn AppDefinition, npm_package: &str, ver
   Ok(LoadAppOutcome::NotInstallable { app: app.name() })
 }
 
-fn load_npm_entry_point_version(app: &dyn AppDefinition, npm_package: &str, version: &Version, yard: &Yard) -> Result<LoadAppOutcome> {
+fn load_npm_entry_point_version(
+  app: &dyn AppDefinition,
+  npm_package: &str,
+  version: &Version,
+  app_args: &[String],
+  node_call: &ExecutableCall,
+  yard: &Yard,
+) -> Result<LoadAppOutcome> {
   let app_name = app.name();
   let package_src = yard.app_folder(&app_name, version).join("node_modules").join(npm_package);
   let package_json_path = package_src.join("package.json");
@@ -340,11 +342,14 @@ fn load_npm_entry_point_version(app: &dyn AppDefinition, npm_package: &str, vers
     return Ok(LoadAppOutcome::NotInstalled { app: app_name });
   };
   let entry_point = parse_package_json(&content, &app_name, version, &package_json_path)?;
-  let executable = package_src.join(entry_point);
+  let executable_path = package_src.join(PathBuf::from_slash(entry_point));
+  let mut node_args = Vec::with_capacity(app_args.len() + 1);
+  node_args.push(executable_path.to_string_lossy().to_string());
+  node_args.extend(app_args.iter().cloned());
   Ok(LoadAppOutcome::Loaded {
     executable_call: ExecutableCall {
-      executable: Executable::from(executable),
-      args: vec![],
+      executable: node_call.executable.clone(),
+      args: node_args,
     },
   })
 }

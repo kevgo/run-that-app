@@ -1,5 +1,4 @@
 use super::ExecutableNameUnix;
-use super::executable_call::ExecutableArgs;
 use crate::applications::AppDefinition;
 use crate::installation;
 
@@ -10,14 +9,6 @@ pub enum RunMethod {
   ThisApp {
     /// defines the ways in which this app can be installed
     install_methods: Vec<installation::Method>,
-  },
-
-  /// executes the default executable of another app with additional arguments
-  OtherAppDefaultExecutable {
-    /// the other applications whose default executable to run
-    app_definition: Box<dyn AppDefinition>,
-    /// additional arguments when running the default executable of the given app
-    args: ExecutableArgs,
   },
 
   /// executes another executable (not the default executable) of another app
@@ -56,8 +47,7 @@ impl RunMethod {
       | RunMethod::OtherAppShellScript {
         app_definition: _,
         script_name: _,
-      }
-      | RunMethod::OtherAppDefaultExecutable { app_definition: _, args: _ } => vec![],
+      } => vec![],
     }
   }
 }

@@ -21,7 +21,7 @@ pub enum Event<'a> {
   },
   CompileGoBegin {
     go_path: Cow<'a, str>,
-    args: &'a [&'a str],
+    args: &'a [String],
   },
   CompileGoSuccess,
   CompileGoFailed,

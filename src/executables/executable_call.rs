@@ -1,115 +1,11 @@
 use super::Executable;
-use crate::Version;
-use crate::applications::ApplicationName;
-use crate::error::{Result, UserError};
-use crate::installation::BinFolder;
 use std::fmt::{Display, Write};
-use std::path::Path;
-
-/// information to call an `App`s executable, as it is defined by the user
-#[derive(Clone)]
-pub struct ExecutableCallDefinition {
-  pub executable: Executable,
-  pub args: ExecutableArgs,
-}
-
-impl ExecutableCallDefinition {
-  pub fn into_executable_call(self, app_folder: &Path) -> Option<ExecutableCall> {
-    match self.args {
-      ExecutableArgs::None => Some(ExecutableCall {
-        executable: self.executable,
-        args: vec![],
-      }),
-      ExecutableArgs::OneOfTheseInAppFolder { options } => {
-        for option in options {
-          let full_path = app_folder.join(option);
-          if full_path.exists() {
-            return Some(ExecutableCall {
-              executable: self.executable,
-              args: vec![full_path.to_string_lossy().to_string()],
-            });
-          }
-        }
-        None
-      }
-    }
-  }
-}
-
-impl Display for ExecutableCallDefinition {
-  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.write_str(&self.executable.as_str())?;
-    self.args.fmt(f)?;
-    Ok(())
-  }
-}
-
-/// Arguments that are required to execute an application itself - these are not arguments provided by the user.
-/// Example: running npm happens as "node npm.js", "npm.js" is the executable arg.
-#[derive(Clone, Debug, PartialEq)]
-pub enum ExecutableArgs {
-  /// the executable is called without any additional arguments
-  None,
-  /// uses the first of the given options that exists inside the folder that application is installed in
-  OneOfTheseInAppFolder { options: Vec<&'static str> },
-}
-
-impl ExecutableArgs {
-  /// provides the argument to use, adjusted to a callable format
-  pub fn locate(&self, app_name: &ApplicationName, version: &Version, app_folder: &Path, bin_folder: &BinFolder) -> Result<Vec<String>> {
-    match self {
-      ExecutableArgs::None => Ok(vec![]),
-      ExecutableArgs::OneOfTheseInAppFolder { options } => {
-        let mut paths = vec![];
-        for bin_folder_path in &bin_folder.possible_paths(app_folder) {
-          for option in options {
-            let absolute_path = bin_folder_path.join(option);
-            paths.push(absolute_path.clone());
-            if absolute_path.exists() {
-              return Ok(vec![absolute_path.to_string_lossy().to_string()]);
-            }
-          }
-        }
-        Err(UserError::CannotFindExecutable {
-          app: app_name.clone(),
-          version: version.clone(),
-          paths,
-        })
-      }
-    }
-  }
-}
-
-impl Display for ExecutableArgs {
-  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    match self {
-      ExecutableArgs::None => f.write_str("no args"),
-      ExecutableArgs::OneOfTheseInAppFolder { options } => {
-        f.write_str("one of these filesystem entries:")?;
-        for option in options {
-          f.write_char(' ')?;
-          f.write_str(option)?;
-        }
-        Ok(())
-      }
-    }
-  }
-}
 
 /// information to call an app with file paths adjusted
 #[derive(Debug, PartialEq)]
 pub struct ExecutableCall {
   pub executable: Executable,
   pub args: Vec<String>,
-}
-
-impl ExecutableCall {
-  /// provides the data to call this `ExecutableCall` with the given arguments
-  pub fn with_args(self, mut args: Vec<String>) -> (Executable, Vec<String>) {
-    let mut result_args = self.args;
-    result_args.append(&mut args);
-    (self.executable, result_args)
-  }
 }
 
 impl Display for ExecutableCall {
