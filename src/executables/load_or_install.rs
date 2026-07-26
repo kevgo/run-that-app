@@ -2,7 +2,7 @@ use crate::applications::{AppDefinition, ApplicationName, Apps, NodeJS};
 use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::executables::{Executable, ExecutableCall, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
+use crate::executables::{ExecutableCall, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
 use crate::installation::Outcome;
 use crate::logging::Event;
 use crate::yard::Yard;
@@ -111,7 +111,7 @@ pub fn load_or_install_app_and_carrier(
     RunMethod::NodeJS { package } => {
       // step 1: ensure NodeJS is installed, install if needed
       let nodejs = &NodeJS {};
-      if let Err(err) = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+      let node_call = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: nodejs,
         cli_version: None,
         app_args: &[],
@@ -119,11 +119,10 @@ pub fn load_or_install_app_and_carrier(
         from_source: false,
         ctx,
         apps,
-      }) {
-        println!("ERROR: cannot install {}", nodejs.name());
-        err.print();
-        return Ok(LoadOrInstallAppOutcome::NotInstallable { app: nodejs.name() });
-      }
+      })? {
+        LoadOrInstallAppOutcome::Loaded { executable_call } => executable_call,
+        LoadOrInstallAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
+      };
       // step 2: determine the version of the npm package to run
       let app_versions = if let Some(version) = cli_version {
         RequestedVersions::from(version)
@@ -133,7 +132,7 @@ pub fn load_or_install_app_and_carrier(
         return Err(UserError::NoVersionsFound { app: app.name().clone() });
       };
       // step 3: fast-path: load the app executable
-      match load_npm_entry_point_versions(app, package, &app_versions, app_args, ctx.yard)? {
+      match load_npm_entry_point_versions(app, package, &app_versions, app_args, &node_call, ctx.yard)? {
         LoadAppOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
         LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
         LoadAppOutcome::NotInstalled { app: _ } => {} // we'll install the npm package in the next step
@@ -144,7 +143,7 @@ pub fn load_or_install_app_and_carrier(
         Outcome::NotInstalled { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
       }
       // step 5: load the npm package executable
-      match load_npm_entry_point_versions(app, package, &app_versions, app_args, ctx.yard)? {
+      match load_npm_entry_point_versions(app, package, &app_versions, app_args, &node_call, ctx.yard)? {
         LoadAppOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
         LoadAppOutcome::NotInstallable { app } => Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
         LoadAppOutcome::NotInstalled { app } => {
@@ -308,11 +307,12 @@ fn load_npm_entry_point_versions(
   npm_package: &str,
   versions: &RequestedVersions,
   app_args: &[String],
+  node_call: &ExecutableCall,
   yard: &Yard,
 ) -> Result<LoadAppOutcome> {
   for version in versions {
     match version {
-      RequestedVersion::Yard(version) => match load_npm_entry_point_version(app, npm_package, version, app_args, yard)? {
+      RequestedVersion::Yard(version) => match load_npm_entry_point_version(app, npm_package, version, app_args, node_call, yard)? {
         LoadAppOutcome::Loaded { executable_call } => {
           return Ok(LoadAppOutcome::Loaded { executable_call });
         }
@@ -327,7 +327,14 @@ fn load_npm_entry_point_versions(
   Ok(LoadAppOutcome::NotInstallable { app: app.name() })
 }
 
-fn load_npm_entry_point_version(app: &dyn AppDefinition, npm_package: &str, version: &Version, app_args: &[String], yard: &Yard) -> Result<LoadAppOutcome> {
+fn load_npm_entry_point_version(
+  app: &dyn AppDefinition,
+  npm_package: &str,
+  version: &Version,
+  app_args: &[String],
+  node_call: &ExecutableCall,
+  yard: &Yard,
+) -> Result<LoadAppOutcome> {
   let app_name = app.name();
   let package_src = yard.app_folder(&app_name, version).join("node_modules").join(npm_package);
   let package_json_path = package_src.join("package.json");
@@ -338,11 +345,14 @@ fn load_npm_entry_point_version(app: &dyn AppDefinition, npm_package: &str, vers
   if entry_point.starts_with("./") {
     entry_point = entry_point[2..].to_string();
   }
-  let executable = package_src.join(PathBuf::from_slash(entry_point));
+  let executable_path = package_src.join(PathBuf::from_slash(entry_point));
+  let mut node_args = Vec::with_capacity(app_args.len() + 1);
+  node_args.push(executable_path.to_string_lossy().to_string());
+  node_args.extend(app_args.iter().cloned());
   Ok(LoadAppOutcome::Loaded {
     executable_call: ExecutableCall {
-      executable: Executable::from(executable),
-      args: app_args.to_vec(),
+      executable: node_call.executable.clone(),
+      args: node_args,
     },
   })
 }
