@@ -33,11 +33,15 @@ impl AppDefinition for KeepSorted {
       Os::MacOS => "darwin",
       Os::Windows => "windows",
     };
+    let ext = match platform.os {
+      Os::Windows => ".exe",
+      Os::Linux | Os::MacOS => "",
+    };
     let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
       install_methods: vec![
         Method::DownloadExecutable {
-          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/keep-sorted_{os}_{cpu}").into(),
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/keep-sorted_{os}_{cpu}{ext}").into(),
         },
         Method::CompileGoSource {
           import_path: format!("github.com/{ORG}/{REPO}@{tag}"),
@@ -85,16 +89,21 @@ mod tests {
     #[test]
     fn linux_arm() {
       let have = (KeepSorted {}).run_method(
-        &Version::from("0.7.1"),
+        &Version::from("0.9.1"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Arm64,
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
-          import_path: S("github.com/google/keep-sorted@v0.7.1"),
-        }],
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: format!("https://github.com/google/keep-sorted/releases/download/v0.9.1/keep-sorted_linux_arm64").into(),
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/google/keep-sorted@v0.9.1"),
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -102,16 +111,21 @@ mod tests {
     #[test]
     fn linux_intel() {
       let have = (KeepSorted {}).run_method(
-        &Version::from("0.7.1"),
+        &Version::from("0.9.1"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Intel64,
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
-          import_path: S("github.com/google/keep-sorted@v0.7.1"),
-        }],
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: format!("https://github.com/google/keep-sorted/releases/download/v0.9.1/keep-sorted_linux_amd64").into(),
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/google/keep-sorted@v0.9.1"),
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -119,16 +133,21 @@ mod tests {
     #[test]
     fn macos_arm() {
       let have = (KeepSorted {}).run_method(
-        &Version::from("0.7.1"),
+        &Version::from("0.9.1"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
-          import_path: S("github.com/google/keep-sorted@v0.7.1"),
-        }],
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: format!("https://github.com/google/keep-sorted/releases/download/v0.9.1/keep-sorted_darwin_arm64").into(),
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/google/keep-sorted@v0.9.1"),
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -136,33 +155,21 @@ mod tests {
     #[test]
     fn macos_intel() {
       let have = (KeepSorted {}).run_method(
-        &Version::from("0.7.1"),
+        &Version::from("0.9.1"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Intel64,
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
-          import_path: S("github.com/google/keep-sorted@v0.7.1"),
-        }],
-      };
-      assert_eq!(have, want);
-    }
-
-    #[test]
-    fn windows_arm() {
-      let have = (KeepSorted {}).run_method(
-        &Version::from("0.7.1"),
-        Platform {
-          os: Os::Windows,
-          cpu: Cpu::Arm64,
-        },
-      );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
-          import_path: S("github.com/google/keep-sorted@v0.7.1"),
-        }],
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: format!("https://github.com/google/keep-sorted/releases/download/v0.9.1/keep-sorted_darwin_amd64").into(),
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/google/keep-sorted@v0.9.1"),
+          },
+        ],
       };
       assert_eq!(have, want);
     }
@@ -170,16 +177,21 @@ mod tests {
     #[test]
     fn windows_intel() {
       let have = (KeepSorted {}).run_method(
-        &Version::from("0.7.1"),
+        &Version::from("0.9.1"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
         },
       );
       let want = RunMethod::ThisApp {
-        install_methods: vec![Method::CompileGoSource {
-          import_path: S("github.com/google/keep-sorted@v0.7.1"),
-        }],
+        install_methods: vec![
+          Method::DownloadExecutable {
+            url: format!("https://github.com/google/keep-sorted/releases/download/v0.9.1/keep-sorted_windows_amd64.exe").into(),
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/google/keep-sorted@v0.9.1"),
+          },
+        ],
       };
       assert_eq!(have, want);
     }
