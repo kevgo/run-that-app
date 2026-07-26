@@ -341,10 +341,7 @@ fn load_npm_entry_point_version(
   let Ok(content) = fs::read_to_string(&package_json_path) else {
     return Ok(LoadAppOutcome::NotInstalled { app: app_name });
   };
-  let mut entry_point = parse_package_json(&content, &app_name, version, &package_json_path)?;
-  if entry_point.starts_with("./") {
-    entry_point = entry_point[2..].to_string();
-  }
+  let entry_point = parse_package_json(&content, &app_name, version, &package_json_path)?;
   let executable_path = package_src.join(PathBuf::from_slash(entry_point));
   let mut node_args = Vec::with_capacity(app_args.len() + 1);
   node_args.push(executable_path.to_string_lossy().to_string());
