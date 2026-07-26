@@ -2,7 +2,7 @@
 
 ## 0.41.0
 
-- execute npm by calling it's shell script via the OS shell
+- executes npm by calling it's official shell script via the OS shell rather than guessing the JS file
 - downloads binaries for keep-sorted
 
 ## 0.40.0
