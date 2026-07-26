@@ -1,5 +1,10 @@
 # run-that-app changelog
 
+## 0.41.0
+
+- execute npm by calling it's shell script via the OS shell
+- downloads binaries for keep-sorted
+
 ## 0.40.0
 
 - bundled apps no longer need separate entries in the run-that-app file,
