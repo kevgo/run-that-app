@@ -4,7 +4,7 @@ use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::Method;
-use crate::platform::Platform;
+use crate::platform::{Cpu, Os, Platform};
 use crate::{Log, strings};
 use const_format::formatcp;
 
@@ -23,12 +23,26 @@ impl AppDefinition for KeepSorted {
     formatcp!("https://github.com/{ORG}/{REPO}")
   }
 
-  fn run_method(&self, version: &Version, _platform: Platform) -> RunMethod {
+  fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "arm64",
+      Cpu::Intel64 => "amd64",
+    };
+    let os = match platform.os {
+      Os::Linux => "linux",
+      Os::MacOS => "darwin",
+      Os::Windows => "windows",
+    };
     let tag = self.tag_format().format_version(version);
     RunMethod::ThisApp {
-      install_methods: vec![Method::CompileGoSource {
-        import_path: format!("github.com/{ORG}/{REPO}@{tag}"),
-      }],
+      install_methods: vec![
+        Method::DownloadExecutable {
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/keep-sorted_{os}_{cpu}").into(),
+        },
+        Method::CompileGoSource {
+          import_path: format!("github.com/{ORG}/{REPO}@{tag}"),
+        },
+      ],
     }
   }
 
