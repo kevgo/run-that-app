@@ -98,7 +98,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
-            url: format!("https://github.com/google/keep-sorted/releases/download/v0.9.1/keep-sorted_linux_arm64").into(),
+            url: "https://github.com/google/keep-sorted/releases/download/v0.9.1/keep-sorted_linux_arm64".into(),
           },
           Method::CompileGoSource {
             import_path: S("github.com/google/keep-sorted@v0.9.1"),
@@ -120,7 +120,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
-            url: format!("https://github.com/google/keep-sorted/releases/download/v0.9.1/keep-sorted_linux_amd64").into(),
+            url: "https://github.com/google/keep-sorted/releases/download/v0.9.1/keep-sorted_linux_amd64".into(),
           },
           Method::CompileGoSource {
             import_path: S("github.com/google/keep-sorted@v0.9.1"),
@@ -142,7 +142,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
-            url: format!("https://github.com/google/keep-sorted/releases/download/v0.9.1/keep-sorted_darwin_arm64").into(),
+            url: "https://github.com/google/keep-sorted/releases/download/v0.9.1/keep-sorted_darwin_arm64".into(),
           },
           Method::CompileGoSource {
             import_path: S("github.com/google/keep-sorted@v0.9.1"),
@@ -164,7 +164,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
-            url: format!("https://github.com/google/keep-sorted/releases/download/v0.9.1/keep-sorted_darwin_amd64").into(),
+            url: "https://github.com/google/keep-sorted/releases/download/v0.9.1/keep-sorted_darwin_amd64".into(),
           },
           Method::CompileGoSource {
             import_path: S("github.com/google/keep-sorted@v0.9.1"),
@@ -186,7 +186,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadExecutable {
-            url: format!("https://github.com/google/keep-sorted/releases/download/v0.9.1/keep-sorted_windows_amd64.exe").into(),
+            url: "https://github.com/google/keep-sorted/releases/download/v0.9.1/keep-sorted_windows_amd64.exe".into(),
           },
           Method::CompileGoSource {
             import_path: S("github.com/google/keep-sorted@v0.9.1"),
