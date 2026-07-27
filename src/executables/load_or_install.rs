@@ -190,6 +190,11 @@ fn locate_shell_script(
         (ctx.log)(Event::GlobalInstallSearch { binary: script_name });
         if let Ok(path) = which::which(script_name) {
           let executable_call = subshell::shell_script_call(&path, &[]);
+          // TODO: ensure we are running the actual NPM app here by calling npm.analyze_executable()
+          // Since npm is a shell script, we might need to make Executable an enum with these variants:
+          // - Binary: call the binary directly
+          // - ShellScript: call the shell script via the system shell app
+          // This enum then has a method "create_call" that receives app_args and returns an ExecutableCall
           match app.analyze_executable(&executable_call.executable, ctx.log)? {
             AnalyzeResult::NotIdentified { output: _ } => {
               ((ctx.log)(Event::GlobalInstallNotIdentified {}));
