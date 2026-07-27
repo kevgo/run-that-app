@@ -72,10 +72,10 @@ pub fn load_or_install_app_and_carrier(
     }
 
     RunMethod::OtherAppOtherExecutable {
-      app_definition: carrier_app,
+      carrier,
       executable_name: carrier_executable,
     } => load_or_install_app(LoadOrInstallAppArgs {
-      app: carrier_app.as_ref(),
+      app: carrier.as_ref(),
       cli_version,
       executable: carrier_executable,
       app_args,
@@ -85,13 +85,10 @@ pub fn load_or_install_app_and_carrier(
       apps,
     }),
 
-    RunMethod::OtherAppShellScript {
-      app_definition: carrier_app,
-      script_name,
-    } => {
+    RunMethod::OtherAppShellScript { carrier, script_name } => {
       // step 1: ensure the carrier app is installed, install if needed
       if let Err(_err) = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
-        app: carrier_app.as_ref(),
+        app: carrier.as_ref(),
         cli_version: None,
         app_args: &[],
         optional,
@@ -99,10 +96,10 @@ pub fn load_or_install_app_and_carrier(
         ctx,
         apps,
       }) {
-        return Ok(LoadOrInstallAppOutcome::NotInstallable { app: carrier_app.name() });
+        return Ok(LoadOrInstallAppOutcome::NotInstallable { app: carrier.name() });
       }
       // step 2: locate the shell script inside the carrier app
-      let shell_script = locate_shell_script(carrier_app.as_ref(), cli_version, script_name, ctx)?;
+      let shell_script = locate_shell_script(carrier.as_ref(), cli_version, script_name, ctx)?;
       // step 3: create the executable call that runs the shell script
       let executable_call = subshell::shell_script_call(&shell_script, app_args);
       Ok(LoadOrInstallAppOutcome::Loaded { executable_call })
@@ -170,14 +167,14 @@ pub enum LoadOrInstallAppOutcome {
   NotInstallable { app: ApplicationName },
 }
 
-fn locate_shell_script(carrier_app: &dyn AppDefinition, cli_version: Option<&Version>, script_name: &str, ctx: &RuntimeContext) -> Result<PathBuf> {
+fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version>, script_name: &str, ctx: &RuntimeContext) -> Result<PathBuf> {
   // step 1: determine the version of the app to install
   let versions = if let Some(version) = cli_version {
     RequestedVersions::from(version)
-  } else if let Some(versions) = ctx.config_file.lookup(&carrier_app.name()) {
+  } else if let Some(versions) = ctx.config_file.lookup(&carrier.name()) {
     versions.clone()
   } else {
-    return Err(UserError::NoVersionsFound { app: carrier_app.name() });
+    return Err(UserError::NoVersionsFound { app: carrier.name() });
   };
   // step 2: find the first matching candidate
   let mut tried_paths = Vec::new();
@@ -194,18 +191,15 @@ fn locate_shell_script(carrier_app: &dyn AppDefinition, cli_version: Option<&Ver
         tried_paths.push(S("(global install)"));
       }
       RequestedVersion::Yard(version) => {
-        let app_folder = ctx.yard.app_folder(&carrier_app.name(), version);
+        let app_folder = ctx.yard.app_folder(&carrier.name(), version);
         // find the bin folders
-        let install_methods = match carrier_app.run_method(version, ctx.platform) {
+        let install_methods = match carrier.run_method(version, ctx.platform) {
           RunMethod::ThisApp { install_methods } => install_methods,
           RunMethod::OtherAppOtherExecutable {
-            app_definition: _,
+            carrier: _,
             executable_name: _,
           }
-          | RunMethod::OtherAppShellScript {
-            app_definition: _,
-            script_name: _,
-          }
+          | RunMethod::OtherAppShellScript { carrier: _, script_name: _ }
           | RunMethod::NodeJS { package: _ } => vec![],
         };
         let mut bin_folders = Vec::new();
