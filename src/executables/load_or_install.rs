@@ -72,10 +72,10 @@ pub fn load_or_install_app_and_carrier(
     }
 
     RunMethod::OtherAppOtherExecutable {
-      carrier: carrier_app,
+      carrier,
       executable_name: carrier_executable,
     } => load_or_install_app(LoadOrInstallAppArgs {
-      app: carrier_app.as_ref(),
+      app: carrier.as_ref(),
       cli_version,
       executable: carrier_executable,
       app_args,
@@ -167,14 +167,14 @@ pub enum LoadOrInstallAppOutcome {
   NotInstallable { app: ApplicationName },
 }
 
-fn locate_shell_script(carrier_app: &dyn AppDefinition, cli_version: Option<&Version>, script_name: &str, ctx: &RuntimeContext) -> Result<PathBuf> {
+fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version>, script_name: &str, ctx: &RuntimeContext) -> Result<PathBuf> {
   // step 1: determine the version of the app to install
   let versions = if let Some(version) = cli_version {
     RequestedVersions::from(version)
-  } else if let Some(versions) = ctx.config_file.lookup(&carrier_app.name()) {
+  } else if let Some(versions) = ctx.config_file.lookup(&carrier.name()) {
     versions.clone()
   } else {
-    return Err(UserError::NoVersionsFound { app: carrier_app.name() });
+    return Err(UserError::NoVersionsFound { app: carrier.name() });
   };
   // step 2: find the first matching candidate
   let mut tried_paths = Vec::new();
@@ -192,9 +192,9 @@ fn locate_shell_script(carrier_app: &dyn AppDefinition, cli_version: Option<&Ver
         tried_paths.push(S("(global install)"));
       }
       RequestedVersion::Yard(version) => {
-        let app_folder = ctx.yard.app_folder(&carrier_app.name(), version);
+        let app_folder = ctx.yard.app_folder(&carrier.name(), version);
         // find the bin folders
-        let install_methods = match carrier_app.run_method(version, ctx.platform) {
+        let install_methods = match carrier.run_method(version, ctx.platform) {
           RunMethod::ThisApp { install_methods } => install_methods,
           RunMethod::OtherAppOtherExecutable {
             carrier: _,
