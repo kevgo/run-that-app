@@ -20,7 +20,7 @@ impl AppDefinition for Npx {
 
   fn run_method(&self, _version: &Version, platform: Platform) -> RunMethod {
     RunMethod::OtherAppShellScript {
-      app_definition: Box::new(NodeJS {}),
+      carrier_app: Box::new(NodeJS {}),
       script_name: match platform.os {
         Os::Linux | Os::MacOS => "npx",
         Os::Windows => "npx.cmd",
@@ -76,7 +76,7 @@ mod tests {
         },
       );
       let want = RunMethod::OtherAppShellScript {
-        app_definition: Box::new(NodeJS {}),
+        carrier_app: Box::new(NodeJS {}),
         script_name: "npx",
       };
       assert_eq!(have, want);
@@ -93,7 +93,7 @@ mod tests {
         },
       );
       let want = RunMethod::OtherAppShellScript {
-        app_definition: Box::new(NodeJS {}),
+        carrier_app: Box::new(NodeJS {}),
         script_name: "npx",
       };
       assert_eq!(have, want);
@@ -110,7 +110,7 @@ mod tests {
         },
       );
       let want = RunMethod::OtherAppShellScript {
-        app_definition: Box::new(NodeJS {}),
+        carrier_app: Box::new(NodeJS {}),
         script_name: "npx",
       };
       assert_eq!(have, want);
@@ -127,7 +127,7 @@ mod tests {
         },
       );
       let want = RunMethod::OtherAppShellScript {
-        app_definition: Box::new(NodeJS {}),
+        carrier_app: Box::new(NodeJS {}),
         script_name: "npx",
       };
       assert_eq!(have, want);

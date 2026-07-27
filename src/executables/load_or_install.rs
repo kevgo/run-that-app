@@ -72,7 +72,7 @@ pub fn load_or_install_app_and_carrier(
     }
 
     RunMethod::OtherAppOtherExecutable {
-      app_definition: carrier_app,
+      carrier_app,
       executable_name: carrier_executable,
     } => load_or_install_app(LoadOrInstallAppArgs {
       app: carrier_app.as_ref(),
@@ -85,10 +85,7 @@ pub fn load_or_install_app_and_carrier(
       apps,
     }),
 
-    RunMethod::OtherAppShellScript {
-      app_definition: carrier_app,
-      script_name,
-    } => {
+    RunMethod::OtherAppShellScript { carrier_app, script_name } => {
       // step 1: ensure the carrier app is installed, install if needed
       if let Err(_err) = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: carrier_app.as_ref(),
@@ -200,11 +197,11 @@ fn locate_shell_script(carrier_app: &dyn AppDefinition, cli_version: Option<&Ver
         let install_methods = match carrier_app.run_method(version, ctx.platform) {
           RunMethod::ThisApp { install_methods } => install_methods,
           RunMethod::OtherAppOtherExecutable {
-            app_definition: _,
+            carrier_app: _,
             executable_name: _,
           }
           | RunMethod::OtherAppShellScript {
-            app_definition: _,
+            carrier_app: _,
             script_name: _,
           }
           | RunMethod::NodeJS { package: _ } => vec![],

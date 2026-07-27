@@ -237,14 +237,8 @@ dyn_clone::clone_trait_object!(AppDefinition);
 pub fn carrier<'a>(app: &'a dyn AppDefinition, version: &Version, platform: Platform) -> (Box<dyn AppDefinition + 'a>, ExecutableNameUnix) {
   match app.run_method(version, platform) {
     RunMethod::ThisApp { install_methods: _ } => (dyn_clone::clone_box(app), app.executable_filename()),
-    RunMethod::OtherAppOtherExecutable {
-      app_definition,
-      executable_name,
-    } => (app_definition, executable_name),
-    RunMethod::OtherAppShellScript {
-      app_definition,
-      script_name: _,
-    } => (app_definition, app.executable_filename()),
+    RunMethod::OtherAppOtherExecutable { carrier_app, executable_name } => (carrier_app, executable_name),
+    RunMethod::OtherAppShellScript { carrier_app, script_name: _ } => (carrier_app, app.executable_filename()),
     RunMethod::NodeJS { package: _ } => {
       let node = NodeJS {};
       let executable_filename = node.executable_filename();

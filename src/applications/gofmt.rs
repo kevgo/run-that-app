@@ -20,7 +20,7 @@ impl AppDefinition for Gofmt {
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {
     RunMethod::OtherAppOtherExecutable {
-      app_definition: Box::new(app_to_install()),
+      carrier_app: Box::new(app_to_install()),
       executable_name: ExecutableNameUnix::from("gofmt"),
     }
   }
@@ -74,7 +74,7 @@ mod tests {
         },
       );
       let want = RunMethod::OtherAppOtherExecutable {
-        app_definition: Box::new(Go {}),
+        carrier_app: Box::new(Go {}),
         executable_name: ExecutableNameUnix::from("gofmt"),
       };
       assert_eq!(have, want);
@@ -90,7 +90,7 @@ mod tests {
         },
       );
       let want = RunMethod::OtherAppOtherExecutable {
-        app_definition: Box::new(Go {}),
+        carrier_app: Box::new(Go {}),
         executable_name: ExecutableNameUnix::from("gofmt"),
       };
       assert_eq!(have, want);
@@ -106,7 +106,7 @@ mod tests {
         },
       );
       let want = RunMethod::OtherAppOtherExecutable {
-        app_definition: Box::new(Go {}),
+        carrier_app: Box::new(Go {}),
         executable_name: ExecutableNameUnix::from("gofmt"),
       };
       assert_eq!(have, want);
@@ -122,7 +122,7 @@ mod tests {
         },
       );
       let want = RunMethod::OtherAppOtherExecutable {
-        app_definition: Box::new(Go {}),
+        carrier_app: Box::new(Go {}),
         executable_name: ExecutableNameUnix::from("gofmt"),
       };
       assert_eq!(have, want);
@@ -138,7 +138,7 @@ mod tests {
         },
       );
       let want = RunMethod::OtherAppOtherExecutable {
-        app_definition: Box::new(Go {}),
+        carrier_app: Box::new(Go {}),
         executable_name: ExecutableNameUnix::from("gofmt"),
       };
       assert_eq!(have, want);
@@ -154,7 +154,7 @@ mod tests {
         },
       );
       let want = RunMethod::OtherAppOtherExecutable {
-        app_definition: Box::new(Go {}),
+        carrier_app: Box::new(Go {}),
         executable_name: ExecutableNameUnix::from("gofmt"),
       };
       assert_eq!(have, want);
