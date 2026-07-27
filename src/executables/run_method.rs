@@ -14,7 +14,7 @@ pub enum RunMethod {
   /// executes another executable (not the default executable) of another app
   OtherAppOtherExecutable {
     /// the other application that contains the executable
-    carrier_app: Box<dyn AppDefinition>,
+    carrier: Box<dyn AppDefinition>,
     /// name of the executable to run
     executable_name: ExecutableNameUnix,
   },
@@ -22,7 +22,7 @@ pub enum RunMethod {
   /// executes a shell script bundled with another app
   OtherAppShellScript {
     /// the other application that contains the shell script
-    carrier_app: Box<dyn AppDefinition>,
+    carrier: Box<dyn AppDefinition>,
     /// name of the shell script to run
     script_name: &'static str,
   },
@@ -40,13 +40,10 @@ impl RunMethod {
       RunMethod::ThisApp { install_methods } => install_methods,
       RunMethod::NodeJS { package } => vec![installation::Method::InstallNodeJSPackage { package }],
       RunMethod::OtherAppOtherExecutable {
-        carrier_app: _,
+        carrier: _,
         executable_name: _,
       }
-      | RunMethod::OtherAppShellScript {
-        carrier_app: _,
-        script_name: _,
-      } => vec![],
+      | RunMethod::OtherAppShellScript { carrier: _, script_name: _ } => vec![],
     }
   }
 }

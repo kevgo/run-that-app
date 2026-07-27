@@ -72,7 +72,7 @@ pub fn load_or_install_app_and_carrier(
     }
 
     RunMethod::OtherAppOtherExecutable {
-      carrier_app,
+      carrier: carrier_app,
       executable_name: carrier_executable,
     } => load_or_install_app(LoadOrInstallAppArgs {
       app: carrier_app.as_ref(),
@@ -85,10 +85,10 @@ pub fn load_or_install_app_and_carrier(
       apps,
     }),
 
-    RunMethod::OtherAppShellScript { carrier_app, script_name } => {
+    RunMethod::OtherAppShellScript { carrier, script_name } => {
       // step 1: ensure the carrier app is installed, install if needed
       if let Err(_err) = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
-        app: carrier_app.as_ref(),
+        app: carrier.as_ref(),
         cli_version: None,
         app_args: &[],
         optional,
@@ -96,10 +96,10 @@ pub fn load_or_install_app_and_carrier(
         ctx,
         apps,
       }) {
-        return Ok(LoadOrInstallAppOutcome::NotInstallable { app: carrier_app.name() });
+        return Ok(LoadOrInstallAppOutcome::NotInstallable { app: carrier.name() });
       }
       // step 2: locate the shell script inside the carrier app
-      let shell_script = locate_shell_script(carrier_app.as_ref(), cli_version, script_name, ctx)?;
+      let shell_script = locate_shell_script(carrier.as_ref(), cli_version, script_name, ctx)?;
       // step 3: create the executable call that runs the shell script
       let executable_call = subshell::shell_script_call(&shell_script, app_args);
       Ok(LoadOrInstallAppOutcome::Loaded { executable_call })
@@ -197,13 +197,10 @@ fn locate_shell_script(carrier_app: &dyn AppDefinition, cli_version: Option<&Ver
         let install_methods = match carrier_app.run_method(version, ctx.platform) {
           RunMethod::ThisApp { install_methods } => install_methods,
           RunMethod::OtherAppOtherExecutable {
-            carrier_app: _,
+            carrier: _,
             executable_name: _,
           }
-          | RunMethod::OtherAppShellScript {
-            carrier_app: _,
-            script_name: _,
-          }
+          | RunMethod::OtherAppShellScript { carrier: _, script_name: _ }
           | RunMethod::NodeJS { package: _ } => vec![],
         };
         let mut bin_folders = Vec::new();
