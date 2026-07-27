@@ -1,4 +1,4 @@
-use crate::applications::{AppDefinition, ApplicationName, Apps, NodeJS};
+use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps, NodeJS};
 use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
@@ -99,7 +99,7 @@ pub fn load_or_install_app_and_carrier(
         return Ok(LoadOrInstallAppOutcome::NotInstallable { app: carrier.name() });
       }
       // step 2: locate the shell script inside the carrier app
-      let shell_script = locate_shell_script(carrier.as_ref(), cli_version, script_name, ctx)?;
+      let shell_script = locate_shell_script(app, carrier.as_ref(), cli_version, script_name, ctx)?;
       // step 3: create the executable call that runs the shell script
       let executable_call = subshell::shell_script_call(&shell_script, app_args);
       Ok(LoadOrInstallAppOutcome::Loaded { executable_call })
@@ -167,7 +167,13 @@ pub enum LoadOrInstallAppOutcome {
   NotInstallable { app: ApplicationName },
 }
 
-fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version>, script_name: &str, ctx: &RuntimeContext) -> Result<PathBuf> {
+fn locate_shell_script(
+  app: &dyn AppDefinition,
+  carrier: &dyn AppDefinition,
+  cli_version: Option<&Version>,
+  script_name: &str,
+  ctx: &RuntimeContext,
+) -> Result<PathBuf> {
   // step 1: determine the version of the app to install
   let versions = if let Some(version) = cli_version {
     RequestedVersions::from(version)
@@ -183,9 +189,17 @@ fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version
       RequestedVersion::Path(_version) => {
         (ctx.log)(Event::GlobalInstallSearch { binary: script_name });
         if let Ok(path) = which::which(script_name) {
-          (ctx.log)(Event::GlobalInstallFound { path: &path });
-          // Note: we cannot verify the version here because shell scripts usually get versioned together with their carrier app
-          return Ok(path);
+          let executable_call = subshell::shell_script_call(&path, &[]);
+          match app.analyze_executable(&executable_call.executable, ctx.log)? {
+            AnalyzeResult::NotIdentified { output: _ } => {
+              ((ctx.log)(Event::GlobalInstallNotIdentified {}));
+            }
+            AnalyzeResult::IdentifiedButUnknownVersion | AnalyzeResult::IdentifiedWithVersion(_) => {
+              // Note: we cannot verify the version of the shell script because shell scripts usually get versioned together with their carrier app
+              (ctx.log)(Event::GlobalInstallFound { path: &path });
+              return Ok(path);
+            }
+          }
         }
         (ctx.log)(Event::GlobalInstallNotFound);
         tried_paths.push(S("(global install)"));
