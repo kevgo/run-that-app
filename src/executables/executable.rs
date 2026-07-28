@@ -35,7 +35,10 @@ impl Executable {
   /// runs this executable with the given args and returns the output it produced
   pub fn run_output(&self, args: &[&str], log: Log) -> Result<String> {
     log(Event::AnalyzeExecutableBegin { cmd: &self.as_str(), args });
-    subshell::capture_output(self, args)
+    match self {
+      Executable::Binary(path) => subshell::capture_output(self, args),
+      Executable::ShellScript(path) => todo!(),
+    }
   }
 
   pub fn as_path(&self) -> &Path {
