@@ -27,7 +27,7 @@ pub enum RunMethod {
     script_name: &'static str,
   },
 
-  /// the app to run is a `NodeJS` package
+  /// the app is a `NodeJS` package
   NodeJS {
     /// name of the `NodeJS` package to install
     package: &'static str,
