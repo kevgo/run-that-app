@@ -19,7 +19,7 @@ pub fn detect_output(cmd_info: &CommandInfo, cwd: Option<&Path>) -> Result<ExitC
   cmd.stdout(Stdio::piped());
   cmd.stderr(Stdio::piped());
   let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
-    call: cmd_info.clone(),
+    call: cmd_info.to_owned(),
     reason: err.to_string(),
   })?;
   let Some(stdout) = process.stdout.take() else {
