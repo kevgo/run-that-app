@@ -1,4 +1,4 @@
-use super::{exit_status_to_code, render_call};
+use super::exit_status_to_code;
 use crate::cli;
 use crate::error::{Result, UserError};
 use crate::executables::CommandInfo;
@@ -12,15 +12,14 @@ use std::thread;
 /// Any output results in an Err.
 pub fn detect_output(cmd_info: CommandInfo, cwd: Option<&Path>) -> Result<ExitCode> {
   let (sender, receiver) = mpsc::channel();
-  let call = render_call(&cmd_info.executable, &cmd_info.args);
-  let mut cmd = Command::from(cmd_info);
+  let mut cmd = Command::from(cmd_info.clone());
   if let Some(dir) = cwd {
     cmd.current_dir(dir);
   }
   cmd.stdout(Stdio::piped());
   cmd.stderr(Stdio::piped());
   let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
-    call: call.clone(),
+    call: cmd_info.clone(),
     reason: err.to_string(),
   })?;
   let Some(stdout) = process.stdout.take() else {
@@ -65,7 +64,7 @@ pub fn detect_output(cmd_info: CommandInfo, cwd: Option<&Path>) -> Result<ExitCo
     }
   }
   if encountered_output {
-    return Err(UserError::ProcessEmittedOutput { cmd: call });
+    return Err(UserError::ProcessEmittedOutput { cmd: cmd_info });
   }
   Ok(exit_code)
 }

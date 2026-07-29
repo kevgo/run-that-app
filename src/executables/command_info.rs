@@ -1,10 +1,11 @@
 use std::env;
 use std::ffi::OsString;
+use std::fmt::{Display, Write};
 use std::path::PathBuf;
 use std::process::Command;
 
 /// a command to execute, in a form that allows getting data
-#[derive(Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct CommandInfo {
   /// the executable to run
   pub executable: PathBuf,
@@ -24,5 +25,16 @@ impl From<CommandInfo> for Command {
     cmd.envs(env::vars_os());
     cmd.env("PATH", env_path);
     cmd
+  }
+}
+
+impl Display for CommandInfo {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.write_str(self.executable.to_string_lossy().as_ref())?;
+    for arg in &self.args {
+      f.write_char(' ')?;
+      f.write_str(arg)?;
+    }
+    Ok(())
   }
 }
