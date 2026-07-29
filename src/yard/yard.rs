@@ -198,13 +198,13 @@ impl Yard {
   ) -> Option<Executable> {
     let run_method = app_definition.run_method(version, ctx.platform);
     let app_folder = self.app_folder(&app_definition.name(), version);
-    for installation_method in run_method.install_methods() {
+    for installation_method in run_method.clone().install_methods() {
       let executable_paths = installation_method.executable_paths(&app_folder, executable);
       for executable_path in executable_paths {
         (ctx.log)(Event::YardCheckExistingAppBegin { path: &executable_path });
         if executable_path.exists() {
           (ctx.log)(Event::YardCheckExistingAppFound);
-          return Some(Executable::from(executable_path));
+          return Some(run_method.executable(executable_path));
         }
         (ctx.log)(Event::YardCheckExistingAppNotFound);
       }

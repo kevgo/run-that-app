@@ -10,7 +10,6 @@ use crate::executables::{ExecutableCall, ExecutableNamePlatform, load_from_path,
 pub fn load_app_versions(
   app: &dyn AppDefinition,
   versions: &RequestedVersions,
-  platform: Platform,
   executable: &ExecutableNamePlatform,
   app_args: &[String],
   ctx: &RuntimeContext,
@@ -18,7 +17,7 @@ pub fn load_app_versions(
   for version in versions {
     match version {
       RequestedVersion::Path(version) => {
-        if let Some(executable_call) = load_from_path(app, executable, version, platform, app_args, ctx)? {
+        if let Some(executable_call) = load_from_path(app, executable, version, app_args, ctx)? {
           return Ok(LoadAppOutcome::Loaded { executable_call });
         }
       }

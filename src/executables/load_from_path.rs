@@ -4,16 +4,13 @@ use crate::Version;
 use crate::applications::{AnalyzeResult, AppDefinition};
 use crate::context::RuntimeContext;
 use crate::error::Result;
-use crate::executables::{Executable, ExecutableCall, ExecutableNamePlatform};
+use crate::executables::{ExecutableCall, ExecutableNamePlatform};
 use crate::logging::Event;
-use crate::platform::Platform;
 
 // finds the given app in the PATH and verifies it has the correct version
 pub fn load_from_path(
   app_to_install: &dyn AppDefinition,
   executable_name: &ExecutableNamePlatform,
-  version: &Version,
-  platform: Platform,
   range: &semver::VersionReq,
   app_args: &[String],
   ctx: &RuntimeContext,
@@ -28,15 +25,7 @@ pub fn load_from_path(
   };
 
   // step 2: wrap the found path into an Executable
-  let executable = match app_to_install.run_method(version, platform) {
-    super::RunMethod::ThisApp { install_methods: _ } => Executable::Binary(path),
-    super::RunMethod::OtherAppOtherExecutable {
-      carrier: _,
-      executable_name: _,
-    } => Executable::Binary(path),
-    super::RunMethod::OtherAppShellScript { carrier: _, script_name: _ } => Executable::ShellScript(path),
-    super::RunMethod::NodeJS { package: _ } => Executable::ShellScript(path),
-  };
+  let executable = app_to_install.run_method(&Version::from("1"), ctx.platform).executable(path);
 
   // step 3: analyze the executable
   match app_to_install.analyze_executable(&executable, ctx.log)? {

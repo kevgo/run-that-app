@@ -1,25 +1,25 @@
-use crate::executables::ExecutableCall;
-use big_s::S;
 use std::path::Path;
+#[cfg(not(windows))]
+use std::process::Command;
 
 #[cfg(not(windows))]
-pub fn shell_script_call(shell_script: &Path, app_args: &[String]) -> ExecutableCall {
+pub fn shell_script_call(shell_script: &Path, app_args: &[String]) -> Command {
   let mut args = Vec::with_capacity(app_args.len() + 1);
   args.push(shell_script.to_string_lossy().to_string());
   args.extend(app_args.iter().cloned());
-  ExecutableCall {
-    executable: "sh".into(),
-    args: vec![S("-c"), args.join(" ")],
-  }
+  let mut command = Command::new("sh");
+  command.arg("-c");
+  command.args(args);
+  command
 }
 
 #[cfg(windows)]
-pub fn shell_script_call(shell_script: &Path, app_args: &[String]) -> ExecutableCall {
+pub fn shell_script_call(shell_script: &Path, app_args: &[String]) -> Command {
   let mut args = Vec::with_capacity(app_args.len() + 1);
   args.push(shell_script.to_string_lossy().to_string());
   args.extend(app_args.iter().cloned());
-  ExecutableCall {
-    executable: "cmd".into(),
-    args: vec![S("/C"), args.join(" ")],
-  }
+  let mut command = Command::new("cmd");
+  command.arg("/C");
+  command.args(args);
+  command
 }

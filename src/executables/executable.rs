@@ -1,10 +1,12 @@
 use crate::error::Result;
 use crate::logging::{Event, Log};
 use crate::subshell;
+use crate::subshell::shell_script_call;
 use std::borrow::Cow;
 use std::ffi::OsStr;
 use std::fmt::Display;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 /// the full path to an executable that RTA knows exists and that it can execute
 #[derive(Clone, Debug, PartialEq)]
@@ -60,6 +62,15 @@ impl From<Executable> for PathBuf {
   fn from(val: Executable) -> Self {
     match val {
       Executable::Binary(path) | Executable::ShellScript(path) => path,
+    }
+  }
+}
+
+impl From<Executable> for Command {
+  fn from(value: Executable) -> Self {
+    match value {
+      Executable::Binary(path) => Command::new(path),
+      Executable::ShellScript(path) => shell_script_call(&path, &[]),
     }
   }
 }
