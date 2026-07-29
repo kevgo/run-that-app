@@ -12,7 +12,7 @@ use std::thread;
 /// Any output results in an Err.
 pub fn detect_output(cmd_info: &CommandInfo, cwd: Option<&Path>) -> Result<ExitCode> {
   let (sender, receiver) = mpsc::channel();
-  let mut cmd = Command::from(cmd_info.clone());
+  let mut cmd = Command::from(cmd_info);
   if let Some(dir) = cwd {
     cmd.current_dir(dir);
   }
@@ -64,7 +64,7 @@ pub fn detect_output(cmd_info: &CommandInfo, cwd: Option<&Path>) -> Result<ExitC
     }
   }
   if encountered_output {
-    return Err(UserError::ProcessEmittedOutput { cmd: cmd_info });
+    return Err(UserError::ProcessEmittedOutput { cmd: cmd_info.to_owned() });
   }
   Ok(exit_code)
 }
