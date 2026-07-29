@@ -23,7 +23,10 @@ impl AppDefinition for GherkinLint {
   }
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {
-    RunMethod::NodeJS { package: "gherkin-lint" }
+    RunMethod::NodeJS {
+      package: "gherkin-lint",
+      script: "gherkin-lint",
+    }
   }
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
     github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
@@ -65,7 +68,10 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = RunMethod::NodeJS { package: "gherkin-lint" };
+      let want = RunMethod::NodeJS {
+        package: "gherkin-lint",
+        script: "gherkin-lint",
+      };
       assert_eq!(have, want);
     }
 
@@ -78,7 +84,10 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = RunMethod::NodeJS { package: "gherkin-lint" };
+      let want = RunMethod::NodeJS {
+        package: "gherkin-lint",
+        script: "gherkin-lint",
+      };
       assert_eq!(have, want);
     }
 
@@ -91,7 +100,10 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = RunMethod::NodeJS { package: "gherkin-lint" };
+      let want = RunMethod::NodeJS {
+        package: "gherkin-lint",
+        script: "gherkin-lint",
+      };
       assert_eq!(have, want);
     }
 
@@ -104,7 +116,10 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = RunMethod::NodeJS { package: "gherkin-lint" };
+      let want = RunMethod::NodeJS {
+        package: "gherkin-lint",
+        script: "gherkin-lint",
+      };
       assert_eq!(have, want);
     }
 
@@ -117,7 +132,10 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = RunMethod::NodeJS { package: "gherkin-lint" };
+      let want = RunMethod::NodeJS {
+        package: "gherkin-lint",
+        script: "gherkin-lint",
+      };
       assert_eq!(have, want);
     }
 
@@ -130,7 +148,10 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = RunMethod::NodeJS { package: "gherkin-lint" };
+      let want = RunMethod::NodeJS {
+        package: "gherkin-lint",
+        script: "gherkin-lint",
+      };
       assert_eq!(have, want);
     }
   }
