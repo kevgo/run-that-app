@@ -10,7 +10,7 @@ use std::thread;
 
 /// Executes the given command, streaming the output to the terminal while monitoring it.
 /// Any output results in an Err.
-pub fn detect_output(cmd_info: CommandInfo, cwd: Option<&Path>) -> Result<ExitCode> {
+pub fn detect_output(cmd_info: &CommandInfo, cwd: Option<&Path>) -> Result<ExitCode> {
   let (sender, receiver) = mpsc::channel();
   let mut cmd = Command::from(cmd_info.clone());
   if let Some(dir) = cwd {
