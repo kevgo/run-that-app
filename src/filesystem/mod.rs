@@ -1,12 +1,10 @@
 //! This module implements accessing the local filesystem.
 
-mod find_global_install;
 mod has_extension;
 mod read_file;
 mod save_buffer;
 mod set_executable_bit;
 
-pub use find_global_install::find_global_install;
 pub use has_extension::has_extension;
 pub use read_file::read_file;
 pub use save_buffer::save_executable;
