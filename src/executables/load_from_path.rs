@@ -15,8 +15,7 @@ pub fn load_from_path(
   app_args: &[String],
   ctx: &RuntimeContext,
 ) -> Result<Option<ExecutableCall>> {
-  let Some(executable) = find_global_install(executable_name, ctx.log) else {
-    (ctx.log)(Event::GlobalInstallNotFound);
+  let Some(executable) = find_global_install(app_to_install, executable_name, ctx.log) else {
     return Ok(None);
   };
   match app_to_install.analyze_executable(&executable, ctx.log)? {
