@@ -176,8 +176,8 @@ pub fn get_cmd(
   let env_path = subshell::path_expressions(&paths_to_include);
   let cmd_info = CommandInfo {
     executable: executable.into(),
-    args,
-    env_path,
+    args: Some(args),
+    env_path: Some(env_path),
   };
   Ok(Some(cmd_info))
 }
