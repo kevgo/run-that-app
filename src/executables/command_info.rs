@@ -38,3 +38,22 @@ impl Display for CommandInfo {
     Ok(())
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::CommandInfo;
+  use big_s::S;
+  use std::ffi::OsString;
+
+  #[test]
+  fn display() {
+    let cmd_info = CommandInfo {
+      executable: "executable".into(),
+      args: vec![S("arg1"), S("arg2")],
+      env_path: OsString::new(),
+    };
+    let have = cmd_info.to_string();
+    let want = S("executable arg1 arg2");
+    assert_eq!(have, want);
+  }
+}

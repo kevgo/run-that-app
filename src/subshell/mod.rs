@@ -68,21 +68,6 @@ pub fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
 
 #[cfg(test)]
 mod tests {
-  use crate::CommandInfo;
-  use big_s::S;
-  use std::ffi::OsString;
-
-  #[test]
-  fn format_with_extra_args() {
-    let cmd_info = CommandInfo {
-      executable: "executable".into(),
-      args: vec![S("arg1"), S("arg2"), S("arg3")],
-      env_path: OsString::new(),
-    };
-    let have = cmd_info.to_string();
-    let want = S("executable arg1 arg2 arg3");
-    assert_eq!(have, want);
-  }
 
   mod join_paths {
     use std::ffi::OsString;
