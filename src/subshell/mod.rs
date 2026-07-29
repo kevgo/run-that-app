@@ -68,35 +68,8 @@ pub fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
   ExitCode::from(u8::try_from(big_code).unwrap_or(255))
 }
 
-/// provides a printable version of this `ExecutableCall` when called with additional arguments
-pub fn render_call(command: &CommandInfo) -> String {
-  let mut result = command.executable.display().to_string();
-  if let Some(args) = &command.args {
-    for arg in args {
-      result.push(' ');
-      result.push_str(arg);
-    }
-  }
-  result
-}
-
 #[cfg(test)]
 mod tests {
-  use crate::CommandInfo;
-  use crate::subshell::render_call;
-  use big_s::S;
-
-  #[test]
-  fn format_with_extra_args() {
-    let command = CommandInfo {
-      executable: "executable".into(),
-      args: Some(vec![S("arg1"), S("arg2"), S("arg3")]),
-      env_path: None,
-    };
-    let have = render_call(&command);
-    let want = S("executable arg1 arg2 arg3");
-    assert_eq!(have, want);
-  }
 
   mod join_paths {
     use std::ffi::OsString;
