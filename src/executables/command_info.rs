@@ -1,10 +1,11 @@
 use std::env;
 use std::ffi::OsString;
+use std::fmt::{Display, Write};
 use std::path::PathBuf;
 use std::process::Command;
 
 /// a command to execute, in a form that allows getting data
-#[derive(Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct CommandInfo {
   /// the executable to run
   pub executable: PathBuf,
@@ -24,5 +25,49 @@ impl From<&CommandInfo> for Command {
     cmd.envs(env::vars_os());
     cmd.env("PATH", env_path);
     cmd
+  }
+}
+
+impl Display for CommandInfo {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.write_str(self.executable.to_string_lossy().as_ref())?;
+    for arg in &self.args {
+      f.write_char(' ')?;
+      f.write_str(arg)?;
+    }
+    Ok(())
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  mod display {
+    use crate::CommandInfo;
+    use big_s::S;
+    use std::ffi::OsString;
+
+    #[test]
+    fn no_args() {
+      let cmd_info = CommandInfo {
+        executable: "executable".into(),
+        args: vec![],
+        env_path: OsString::new(),
+      };
+      let have = cmd_info.to_string();
+      let want = S("executable");
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn with_args() {
+      let cmd_info = CommandInfo {
+        executable: "executable".into(),
+        args: vec![S("arg1"), S("arg2")],
+        env_path: OsString::new(),
+      };
+      let have = cmd_info.to_string();
+      let want = S("executable arg1 arg2");
+      assert_eq!(have, want);
+    }
   }
 }
