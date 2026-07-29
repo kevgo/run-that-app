@@ -3,8 +3,7 @@
 use crate::applications::{AnalyzeResult, AppDefinition};
 use crate::context::RuntimeContext;
 use crate::error::Result;
-use crate::executables::{ExecutableCall, ExecutableNamePlatform};
-use crate::filesystem::find_global_install;
+use crate::executables::{Executable, ExecutableCall, ExecutableNamePlatform};
 use crate::logging::Event;
 
 // finds the given app in the PATH and verifies it has the correct version
@@ -15,9 +14,17 @@ pub fn load_from_path(
   app_args: &[String],
   ctx: &RuntimeContext,
 ) -> Result<Option<ExecutableCall>> {
-  let Some(executable) = find_global_install(executable_name, ctx.log) else {
+  // step 1: find the executable in the PATH
+  (ctx.log)(Event::GlobalInstallSearch {
+    binary: executable_name.as_ref(),
+  });
+  let Ok(path) = which::which_global(executable_name.as_ref()) else {
+    (ctx.log)(Event::GlobalInstallNotFound);
     return Ok(None);
   };
+  // step 2: wrap the found path into an Executable
+  let executable = Executable::from(path);
+  // step 3: analyze the executable
   match app_to_install.analyze_executable(&executable, ctx.log)? {
     AnalyzeResult::NotIdentified { output: _ } => {
       (ctx.log)(Event::GlobalInstallNotIdentified);
