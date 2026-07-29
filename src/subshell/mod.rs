@@ -15,8 +15,6 @@ pub use detect_output::detect_output;
 pub use shellscript::shell_script_call;
 pub use stream_output::stream_output;
 
-use crate::CommandInfo;
-
 /// adds the given dirs to the PATH env variable of the given cmd
 pub fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
   cmd.envs(env::vars_os());
