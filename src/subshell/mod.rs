@@ -15,6 +15,8 @@ pub use detect_output::detect_output;
 pub use shellscript::shell_script_call;
 pub use stream_output::stream_output;
 
+use crate::CommandInfo;
+
 /// adds the given dirs to the PATH env variable of the given cmd
 pub fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
   cmd.envs(env::vars_os());
@@ -67,25 +69,31 @@ pub fn exit_status_to_code(exit_status: ExitStatus) -> ExitCode {
 }
 
 /// provides a printable version of this `ExecutableCall` when called with additional arguments
-pub fn render_call(executable: &Path, args: &[String]) -> String {
-  let mut result = executable.display().to_string();
-  for arg in args {
-    result.push(' ');
-    result.push_str(arg);
+pub fn render_call(command: &CommandInfo) -> String {
+  let mut result = command.executable.display().to_string();
+  if let Some(args) = &command.args {
+    for arg in args {
+      result.push(' ');
+      result.push_str(arg);
+    }
   }
   result
 }
 
 #[cfg(test)]
 mod tests {
+  use crate::CommandInfo;
   use crate::subshell::render_call;
   use big_s::S;
-  use std::path::Path;
 
   #[test]
   fn format_with_extra_args() {
-    let executable = Path::new("executable");
-    let have = render_call(executable, &[S("arg1"), S("arg2"), S("arg3")]);
+    let command = CommandInfo {
+      executable: "executable".into(),
+      args: Some(vec![S("arg1"), S("arg2"), S("arg3")]),
+      env_path: None,
+    };
+    let have = render_call(&command);
     let want = S("executable arg1 arg2 arg3");
     assert_eq!(have, want);
   }

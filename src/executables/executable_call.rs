@@ -30,14 +30,13 @@ mod tests {
     use crate::executables::{CommandInfo, Executable};
     use crate::subshell;
     use big_s::S;
-    use std::ffi::OsString;
     use std::fs;
 
     fn cmd_info_for(executable: &Executable) -> CommandInfo {
       CommandInfo {
         executable: executable.as_path().to_path_buf(),
-        args: vec![],
-        env_path: OsString::new(),
+        args: None,
+        env_path: None,
       }
     }
 

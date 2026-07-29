@@ -12,7 +12,7 @@ use std::thread;
 /// Any output results in an Err.
 pub fn detect_output(cmd_info: CommandInfo, cwd: Option<&Path>) -> Result<ExitCode> {
   let (sender, receiver) = mpsc::channel();
-  let call = render_call(&cmd_info.executable, &cmd_info.args);
+  let call = render_call(&cmd_info);
   let mut cmd = Command::from(cmd_info);
   if let Some(dir) = cwd {
     cmd.current_dir(dir);

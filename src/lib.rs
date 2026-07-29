@@ -177,7 +177,7 @@ pub fn get_cmd(
   let cmd_info = CommandInfo {
     executable: executable.into(),
     args,
-    env_path,
+    env_path: Some(env_path),
   };
   Ok(Some(cmd_info))
 }
