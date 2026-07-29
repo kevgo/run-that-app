@@ -6,7 +6,7 @@ use std::process::{Command, ExitCode};
 
 /// Runs the given command.
 /// Streams output to the user's terminal.
-pub fn stream_output(cmd_info: CommandInfo, cwd: Option<&Path>) -> Result<ExitCode> {
+pub fn stream_output(cmd_info: &CommandInfo, cwd: Option<&Path>) -> Result<ExitCode> {
   let call = render_call(&cmd_info.executable, &cmd_info.args);
   let mut cmd = Command::from(cmd_info);
   if let Some(dir) = cwd {

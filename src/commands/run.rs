@@ -26,9 +26,9 @@ pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
   };
   let cwd = args.cwd.as_deref();
   if args.error_on_output {
-    subshell::detect_output(cmd_info, cwd)
+    subshell::detect_output(&cmd_info, cwd)
   } else {
-    subshell::stream_output(cmd_info, cwd)
+    subshell::stream_output(&cmd_info, cwd)
   }
 }
 
