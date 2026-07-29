@@ -10,12 +10,12 @@ use crate::logging::Event;
 // finds the given app in the PATH and verifies it has the correct version
 pub fn load_from_path(
   app_to_install: &dyn AppDefinition,
-  executable: &ExecutableNamePlatform,
+  executable_name: &ExecutableNamePlatform,
   range: &semver::VersionReq,
   app_args: &[String],
   ctx: &RuntimeContext,
 ) -> Result<Option<ExecutableCall>> {
-  let Some(executable) = find_global_install(executable, ctx.log) else {
+  let Some(executable) = find_global_install(executable_name, ctx.log) else {
     (ctx.log)(Event::GlobalInstallNotFound);
     return Ok(None);
   };
