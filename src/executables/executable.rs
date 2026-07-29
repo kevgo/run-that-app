@@ -1,9 +1,7 @@
-use crate::error::Result;
-use crate::logging::{Event, Log};
-use crate::subshell;
+use crate::CommandInfo;
 use crate::subshell::shell_script_call;
 use std::borrow::Cow;
-use std::ffi::OsStr;
+use std::ffi::{OsStr, OsString};
 use std::fmt::Display;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -32,14 +30,25 @@ impl Executable {
     }
   }
 
-  /// runs this executable with the given args and returns the output it produced
-  pub fn run_output(&self, args: &[&str], log: Log) -> Result<String> {
-    log(Event::AnalyzeExecutableBegin { cmd: &self.as_str(), args });
+  pub fn call(self, args: Vec<String>) -> Command {
     match self {
-      Executable::Binary(path) => subshell::capture_output(self, args),
-      Executable::ShellScript(path) => todo!(),
+      Executable::Binary(path) => Command {
+        executable: path,
+        args,
+        env_path: OsString::new(),
+      },
+      Executable::ShellScript(path) => CommandInfo {},
     }
   }
+
+  /// runs this executable with the given args and returns the output it produced
+  //   pub fn run_output(&self, args: &[&str], log: Log) -> Result<String> {
+  //     log(Event::AnalyzeExecutableBegin { cmd: &self.as_str(), args });
+  //     match self {
+  //       Executable::Binary(path) => subshell::capture_output(self, args),
+  //       Executable::ShellScript(path) => todo!(),
+  //     }
+  //   }
 
   pub fn as_path(&self) -> &Path {
     match self {
