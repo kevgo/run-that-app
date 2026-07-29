@@ -2,7 +2,7 @@ use crate::applications::{AppDefinition, ApplicationName, Apps, NodeJS};
 use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::executables::{ExecutableCall, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
+use crate::executables::{Executable, ExecutableCall, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
 use crate::installation::Outcome;
 use crate::logging::Event;
 use crate::yard::Yard;
@@ -101,8 +101,8 @@ pub fn load_or_install_app_and_carrier(
       // step 2: locate the shell script inside the carrier app
       let shell_script = locate_shell_script(carrier.as_ref(), cli_version, script_name, ctx)?;
       // step 3: create the executable call that runs the shell script
-      let executable_call = subshell::shell_script_call(&shell_script, app_args);
-      Ok(LoadOrInstallAppOutcome::Loaded { executable_call })
+      let executable = Executable::ShellScript(shell_script);
+      Ok(LoadOrInstallAppOutcome::Loaded { executable })
     }
 
     RunMethod::NodeJS { package } => {
@@ -117,7 +117,7 @@ pub fn load_or_install_app_and_carrier(
         ctx,
         apps,
       })? {
-        LoadOrInstallAppOutcome::Loaded { executable_call } => executable_call,
+        LoadOrInstallAppOutcome::Loaded { executable } => executable,
         LoadOrInstallAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
       };
       // step 2: determine the version of the npm package to run
@@ -130,7 +130,7 @@ pub fn load_or_install_app_and_carrier(
       };
       // step 3: fast-path: load the app executable
       match load_npm_entry_point_versions(app, package, &app_versions, app_args, &node_call, ctx.yard)? {
-        LoadAppOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
+        LoadAppOutcome::Loaded { executable } => return Ok(LoadOrInstallAppOutcome::Loaded { executable }),
         LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
         LoadAppOutcome::NotInstalled { app: _ } => {} // we'll install the npm package in the next step
       }
@@ -141,7 +141,7 @@ pub fn load_or_install_app_and_carrier(
       }
       // step 5: load the npm package executable
       match load_npm_entry_point_versions(app, package, &app_versions, app_args, &node_call, ctx.yard)? {
-        LoadAppOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
+        LoadAppOutcome::Loaded { executable } => Ok(LoadOrInstallAppOutcome::Loaded { executable }),
         LoadAppOutcome::NotInstallable { app } => Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
         LoadAppOutcome::NotInstalled { app } => {
           println!("ERROR: this shouldn't happen, we just successfully installed {app} and now we can't load it");
@@ -163,7 +163,7 @@ pub struct LoadOrInstallAppAndCarrierArgs<'a> {
 }
 
 pub enum LoadOrInstallAppOutcome {
-  Loaded { executable_call: ExecutableCall },
+  Loaded { executable: Executable },
   NotInstallable { app: ApplicationName },
 }
 
@@ -262,7 +262,7 @@ fn load_or_install_app(
   // step 2: fast-path: try to load the given executable for the given app
   let executable = executable.platform_path(ctx.platform.os);
   match load_app_versions(app, &versions, &executable, app_args, ctx)? {
-    LoadAppOutcome::Loaded { executable_call } => return Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
+    LoadAppOutcome::Loaded { executable } => return Ok(LoadOrInstallAppOutcome::Loaded { executable }),
     LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app: _ } => {} // we'll install the app in the next step
   }
@@ -275,7 +275,7 @@ fn load_or_install_app(
   }
   // step 4: load the executable for the given app
   match load_app_versions(app, &versions, &executable, app_args, ctx)? {
-    LoadAppOutcome::Loaded { executable_call } => Ok(LoadOrInstallAppOutcome::Loaded { executable_call }),
+    LoadAppOutcome::Loaded { executable } => Ok(LoadOrInstallAppOutcome::Loaded { executable }),
     LoadAppOutcome::NotInstallable { app } => Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app } => {
       println!("ERROR: this shouldn't happen, we just successfully installed {app} and now we can't load it");
@@ -300,12 +300,12 @@ fn load_npm_entry_point_versions(
   npm_package: &str,
   versions: &RequestedVersions,
   app_args: &[String],
-  node_call: &ExecutableCall,
+  node_executable: &Executable,
   yard: &Yard,
 ) -> Result<LoadAppOutcome> {
   for version in versions {
     match version {
-      RequestedVersion::Yard(version) => match load_npm_entry_point_version(app, npm_package, version, app_args, node_call, yard)? {
+      RequestedVersion::Yard(version) => match load_npm_entry_point_version(app, npm_package, version, app_args, node_executable, yard)? {
         LoadAppOutcome::Loaded { executable_call } => {
           return Ok(LoadAppOutcome::Loaded { executable_call });
         }

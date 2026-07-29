@@ -1,7 +1,7 @@
-use crate::CommandInfo;
+use crate::executables::ExecutableCall;
 use crate::subshell::shell_script_call;
 use std::borrow::Cow;
-use std::ffi::{OsStr, OsString};
+use std::ffi::OsStr;
 use std::fmt::Display;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -30,15 +30,9 @@ impl Executable {
     }
   }
 
-  pub fn call(self, args: Vec<String>) -> Command {
-    match self {
-      Executable::Binary(path) => Command {
-        executable: path,
-        args,
-        env_path: OsString::new(),
-      },
-      Executable::ShellScript(path) => CommandInfo {},
-    }
+  /// returns a `CommandInfo` that calls this `Executable` with the given args
+  pub fn call(self, args: Vec<String>) -> ExecutableCall {
+    ExecutableCall { executable: self, args }
   }
 
   /// runs this executable with the given args and returns the output it produced

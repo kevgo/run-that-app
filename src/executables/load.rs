@@ -2,7 +2,7 @@ use crate::applications::{AppDefinition, ApplicationName};
 use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::Result;
-use crate::executables::{ExecutableCall, ExecutableNamePlatform, load_from_path, load_from_yard};
+use crate::executables::{Executable, ExecutableNamePlatform, load_from_path, load_from_yard};
 
 /// Loads the given app at the earliest of the given versions that is installable
 /// and returns an `ExecutableCall` that runs the given executable within that app
@@ -17,12 +17,12 @@ pub fn load_app_versions(
   for version in versions {
     match version {
       RequestedVersion::Path(version) => {
-        if let Some(executable_call) = load_from_path(app, executable, version, app_args, ctx)? {
-          return Ok(LoadAppOutcome::Loaded { executable_call });
+        if let Some(executable) = load_from_path(app, executable, version, ctx)? {
+          return Ok(LoadAppOutcome::Loaded { executable });
         }
       }
       RequestedVersion::Yard(version) => match load_from_yard(app, version, executable, app_args, ctx)? {
-        LoadAppOutcome::Loaded { executable_call } => return Ok(LoadAppOutcome::Loaded { executable_call }),
+        LoadAppOutcome::Loaded { executable } => return Ok(LoadAppOutcome::Loaded { executable }),
         LoadAppOutcome::NotInstallable { app: _ } => {}
         LoadAppOutcome::NotInstalled { app } => {
           return Ok(LoadAppOutcome::NotInstalled { app });
@@ -35,7 +35,7 @@ pub fn load_app_versions(
 
 pub enum LoadAppOutcome {
   /// the app was loaded successfully, here is the executable to call it
-  Loaded { executable_call: ExecutableCall },
+  Loaded { executable: Executable },
   /// none of the requested versions of the app are installable
   NotInstallable { app: ApplicationName },
   /// the given version of the app is not installed
