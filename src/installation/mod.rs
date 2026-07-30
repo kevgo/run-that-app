@@ -59,7 +59,7 @@ pub enum Method {
     /// the name of the `NodeJS` package to install
     package: &'static str,
 
-    /// the shell script in `node_modules/.bin` that executes this package
+    /// unix name of the shell script for the package in `node_modules/.bin`
     script: &'static str,
   },
 }
