@@ -137,7 +137,7 @@ pub fn load_or_install_app_and_carrier(
           executable_call: subshell::shell_script_call(&shell_script, app_args),
         });
       }
-      println!("ERROR: this shouldn't happen, we just successfully installed {package} and now we can't load it");
+      println!("ERROR: this shouldn't happen, we just successfully installed npm package {package} and now we can't load it");
       Ok(LoadOrInstallAppOutcome::NotInstallable { app: package.into() })
     }
   }
