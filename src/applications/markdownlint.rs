@@ -23,7 +23,10 @@ impl AppDefinition for MarkdownLint {
   }
 
   fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {
-    RunMethod::NodeJS { package: "markdownlint-cli" }
+    RunMethod::NodeJS {
+      package: "markdownlint-cli",
+      script: "markdownlint",
+    }
   }
   fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
     github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
@@ -67,7 +70,10 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = RunMethod::NodeJS { package: "markdownlint-cli" };
+      let want = RunMethod::NodeJS {
+        package: "markdownlint-cli",
+        script: "markdownlint",
+      };
       assert_eq!(have, want);
     }
 
@@ -80,7 +86,10 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = RunMethod::NodeJS { package: "markdownlint-cli" };
+      let want = RunMethod::NodeJS {
+        package: "markdownlint-cli",
+        script: "markdownlint",
+      };
       assert_eq!(have, want);
     }
 
@@ -93,7 +102,10 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = RunMethod::NodeJS { package: "markdownlint-cli" };
+      let want = RunMethod::NodeJS {
+        package: "markdownlint-cli",
+        script: "markdownlint",
+      };
       assert_eq!(have, want);
     }
 
@@ -106,7 +118,10 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = RunMethod::NodeJS { package: "markdownlint-cli" };
+      let want = RunMethod::NodeJS {
+        package: "markdownlint-cli",
+        script: "markdownlint",
+      };
       assert_eq!(have, want);
     }
 
@@ -119,7 +134,10 @@ mod tests {
           cpu: Cpu::Arm64,
         },
       );
-      let want = RunMethod::NodeJS { package: "markdownlint-cli" };
+      let want = RunMethod::NodeJS {
+        package: "markdownlint-cli",
+        script: "markdownlint",
+      };
       assert_eq!(have, want);
     }
 
@@ -132,7 +150,10 @@ mod tests {
           cpu: Cpu::Intel64,
         },
       );
-      let want = RunMethod::NodeJS { package: "markdownlint-cli" };
+      let want = RunMethod::NodeJS {
+        package: "markdownlint-cli",
+        script: "markdownlint",
+      };
       assert_eq!(have, want);
     }
   }
