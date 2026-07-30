@@ -242,8 +242,10 @@ fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version
             }
             installation::Method::DownloadExecutable { url: _ }
             | installation::Method::CompileGoSource { import_path: _ }
-            | installation::Method::CompileRustRepo { url: _ }
-            | installation::Method::InstallNodeJSPackage { package: _, script: _ } => {}
+            | installation::Method::CompileRustRepo { url: _ } => {}
+            installation::Method::InstallNodeJSPackage { package: _, script: _ } => {
+              panic!("We handle NodeJS packages separately, so should never hit this case")
+            }
           }
         }
         let mut bin_folder_paths = Vec::new();
