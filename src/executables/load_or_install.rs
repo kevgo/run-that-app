@@ -243,8 +243,10 @@ fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version
             installation::Method::DownloadExecutable { url: _ }
             | installation::Method::CompileGoSource { import_path: _ }
             | installation::Method::CompileRustRepo { url: _ } => {}
-            installation::Method::InstallNodeJSPackage { package: _, script: _ } => {
-              panic!("We handle NodeJS packages separately, so should never hit this case")
+            installation::Method::InstallNodeJSPackage { package, script: _ } => {
+              panic!(
+                "App {package} is an npm package, we should have handled this separately.\nPlease report this as a bug at https://github.com/kevgo/run-that-app"
+              )
             }
           }
         }
