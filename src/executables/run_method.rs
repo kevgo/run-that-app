@@ -31,6 +31,9 @@ pub enum RunMethod {
   NodeJS {
     /// name of the `NodeJS` package to install
     package: &'static str,
+
+    /// unix name of the shell script for the package in `node_modules/.bin`
+    script: &'static str,
   },
 }
 
@@ -38,7 +41,7 @@ impl RunMethod {
   pub fn install_methods(self) -> Vec<installation::Method> {
     match self {
       RunMethod::ThisApp { install_methods } => install_methods,
-      RunMethod::NodeJS { package } => vec![installation::Method::InstallNodeJSPackage { package }],
+      RunMethod::NodeJS { package, script } => vec![installation::Method::InstallNodeJSPackage { package, script }],
       RunMethod::OtherAppOtherExecutable {
         carrier: _,
         executable_name: _,

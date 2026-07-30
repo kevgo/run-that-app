@@ -239,7 +239,7 @@ pub fn carrier<'a>(app: &'a dyn AppDefinition, version: &Version, platform: Plat
     RunMethod::ThisApp { install_methods: _ } => (dyn_clone::clone_box(app), app.executable_filename()),
     RunMethod::OtherAppOtherExecutable { carrier, executable_name } => (carrier, executable_name),
     RunMethod::OtherAppShellScript { carrier, script_name: _ } => (carrier, app.executable_filename()),
-    RunMethod::NodeJS { package: _ } => {
+    RunMethod::NodeJS { package: _, script: _ } => {
       let node = NodeJS {};
       let executable_filename = node.executable_filename();
       (Box::new(node), executable_filename)
