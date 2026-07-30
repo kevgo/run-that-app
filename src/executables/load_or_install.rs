@@ -159,7 +159,6 @@ pub enum LoadOrInstallAppOutcome {
 }
 
 fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVersions, script: &str, ctx: &RuntimeContext) -> Result<PathBuf> {
-  // determine the version of the npm package to run
   let mut tried_paths = Vec::new();
   for version in versions {
     match version {
