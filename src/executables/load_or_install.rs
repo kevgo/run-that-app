@@ -199,6 +199,7 @@ fn script_name(unix_script_name: &str) -> String {
   format!("{unix_script_name}.cmd")
 }
 
+#[allow(clippy::panic)]
 fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version>, script_name: &str, ctx: &RuntimeContext) -> Result<PathBuf> {
   // step 1: determine the version of the app to install
   let versions = if let Some(version) = cli_version {
