@@ -120,7 +120,7 @@ pub fn load_or_install_app_and_carrier(
       } else {
         return Err(UserError::NoVersionsFound { app: app.name() });
       };
-      // step 3: fast-path: load the app executable
+      // step 3: fast-path: try to load the app executable
       if let Ok(shell_script) = locate_npm_package_executable(app, &app_versions, script, ctx) {
         return Ok(LoadOrInstallAppOutcome::Loaded {
           executable_call: subshell::shell_script_call(&shell_script, app_args),
