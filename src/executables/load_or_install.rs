@@ -118,10 +118,10 @@ pub fn load_or_install_app_and_carrier(
       } else if let Some(versions) = ctx.config_file.lookup(&app.name()) {
         versions.clone()
       } else {
-        return Err(UserError::NoVersionsFound { app: app.name().clone() });
+        return Err(UserError::NoVersionsFound { app: app.name() });
       };
       // step 3: fast-path: load the app executable
-      if let Ok(shell_script) = locate_shell_script(app, cli_version, script, ctx) {
+      if let Ok(shell_script) = locate_npm_package_executable(app, &app_versions, script, ctx) {
         return Ok(LoadOrInstallAppOutcome::Loaded {
           executable_call: subshell::shell_script_call(&shell_script, app_args),
         });
@@ -132,7 +132,7 @@ pub fn load_or_install_app_and_carrier(
         Outcome::NotInstalled { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
       }
       // step 5: load the npm package executable
-      if let Ok(shell_script) = locate_shell_script(app, cli_version, script, ctx) {
+      if let Ok(shell_script) = locate_npm_package_executable(app, &app_versions, script, ctx) {
         return Ok(LoadOrInstallAppOutcome::Loaded {
           executable_call: subshell::shell_script_call(&shell_script, app_args),
         });
@@ -156,6 +156,48 @@ pub struct LoadOrInstallAppAndCarrierArgs<'a> {
 pub enum LoadOrInstallAppOutcome {
   Loaded { executable_call: ExecutableCall },
   NotInstallable { app: ApplicationName },
+}
+
+fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVersions, script: &str, ctx: &RuntimeContext) -> Result<PathBuf> {
+  // determine the version of the npm package to run
+  let mut tried_paths = Vec::new();
+  for version in versions {
+    match version {
+      RequestedVersion::Path(_version) => {
+        (ctx.log)(Event::GlobalInstallSearch { binary: script });
+        if let Ok(path) = which::which(script) {
+          (ctx.log)(Event::GlobalInstallFound { path: &path });
+          // TODO: verify the version here
+          return Ok(path);
+        }
+        (ctx.log)(Event::GlobalInstallNotFound);
+        tried_paths.push(S("(global install)"));
+      }
+      RequestedVersion::Yard(version) => {
+        let app_folder = ctx.yard.app_folder(&app.name(), version);
+        let platform_script_name = script_name(script);
+        let script_path = app_folder.join("node_modules").join(".bin").join(platform_script_name);
+        if script_path.exists() {
+          return Ok(script_path);
+        }
+        tried_paths.push(script_path.to_string_lossy().to_string());
+      }
+    }
+  }
+  Err(UserError::CannotFindScript {
+    name: script.to_string(),
+    paths: tried_paths,
+  })
+}
+
+#[cfg(not(windows))]
+fn script_name(unix_script_name: &str) -> String {
+  unix_script_name.to_string()
+}
+
+#[cfg(windows)]
+fn script_name(unix_script_name: &str) -> String {
+  format!("{unix_script_name}.cmd")
 }
 
 fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version>, script_name: &str, ctx: &RuntimeContext) -> Result<PathBuf> {
