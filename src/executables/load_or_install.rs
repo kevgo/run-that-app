@@ -3,7 +3,7 @@ use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::{ExecutableCall, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
-use crate::installation::{BinFolder, Outcome};
+use crate::installation::Outcome;
 use crate::logging::Event;
 use crate::{Version, installation, subshell};
 use big_s::S;
@@ -243,9 +243,7 @@ fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version
             installation::Method::DownloadExecutable { url: _ }
             | installation::Method::CompileGoSource { import_path: _ }
             | installation::Method::CompileRustRepo { url: _ }
-            | installation::Method::InstallNodeJSPackage { package: _, script: _ } => bin_folders.push(BinFolder::Subfolder {
-              path: PathBuf::from("node_modules").join(".bin"),
-            }),
+            | installation::Method::InstallNodeJSPackage { package: _, script: _ } => {}
           }
         }
         let mut bin_folder_paths = Vec::new();
