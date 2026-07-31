@@ -1,10 +1,10 @@
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::Log;
 use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::platform::{Os, Platform};
+use crate::{Log, subshell};
 
 #[derive(Clone)]
 pub struct Npm {}
@@ -36,8 +36,8 @@ impl AppDefinition for Npm {
     app_to_install().installable_versions(amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.analyze(&["help", "npm"], log)?;
+  fn analyze_executable(&self, executable: &Executable) -> Result<AnalyzeResult> {
+    let output = subshell::capture_output(executable, &["help", "npm"])?;
     if !output.contains("javascript package manager") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

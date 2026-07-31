@@ -1,11 +1,11 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::Log;
 use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
+use crate::{Log, subshell};
 use const_format::formatcp;
 
 #[derive(Clone)]
@@ -54,8 +54,8 @@ impl AppDefinition for Ghokin {
     github_releases::latest(ORG, REPO, &self.tag_format(), log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.analyze(&["-h"], log)?;
+  fn analyze_executable(&self, executable: &Executable) -> Result<AnalyzeResult> {
+    let output = subshell::capture_output(executable, &["-h"])?;
     if !output.contains("Clean and/or apply transformation on gherkin files") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

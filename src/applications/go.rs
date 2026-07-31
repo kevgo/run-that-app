@@ -5,7 +5,7 @@ use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_tags;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
-use crate::{Log, filesystem, strings};
+use crate::{Log, filesystem, strings, subshell};
 use std::path::MAIN_SEPARATOR;
 
 #[derive(Clone)]
@@ -72,11 +72,11 @@ impl AppDefinition for Go {
     Ok(go_tags.into_iter().collect())
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    if let Ok(version) = strings::first_version(&executable.analyze(&["version"], log)?) {
+  fn analyze_executable(&self, executable: &Executable) -> Result<AnalyzeResult> {
+    if let Ok(version) = strings::first_version(&subshell::capture_output(executable, &["version"])?) {
       return Ok(AnalyzeResult::IdentifiedWithVersion(version.into()));
     }
-    let output = executable.analyze(&["-h"], log)?;
+    let output = subshell::capture_output(executable, &["-h"])?;
     if output.contains("Go is a tool for managing Go source code") {
       Ok(AnalyzeResult::IdentifiedButUnknownVersion)
     } else {

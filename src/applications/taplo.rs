@@ -5,7 +5,7 @@ use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
-use crate::{Log, strings};
+use crate::{Log, strings, subshell};
 use const_format::formatcp;
 
 #[derive(Clone)]
@@ -60,12 +60,12 @@ impl AppDefinition for Taplo {
     github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.analyze(&["-h"], log)?;
+  fn analyze_executable(&self, executable: &Executable) -> Result<AnalyzeResult> {
+    let output = subshell::capture_output(executable, &["-h"])?;
     if !output.contains("Lint TOML documents") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match strings::first_version(&executable.analyze(&["-V"], log)?) {
+    match strings::first_version(&subshell::capture_output(executable, &["-V"])?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }

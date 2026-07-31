@@ -5,7 +5,7 @@ use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
-use crate::{Log, executables, strings};
+use crate::{Log, executables, strings, subshell};
 use const_format::formatcp;
 
 #[derive(Clone)]
@@ -59,12 +59,12 @@ impl AppDefinition for Lefthook {
     github_releases::latest(ORG, REPO, &self.tag_format(), log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.analyze(&["-h"], log)?;
+  fn analyze_executable(&self, executable: &Executable) -> Result<AnalyzeResult> {
+    let output = subshell::capture_output(executable, &["-h"])?;
     if !output.contains("Git hooks manager") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match strings::first_version(&executable.analyze(&["--version"], log)?) {
+    match strings::first_version(&subshell::capture_output(executable, &["--version"])?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }

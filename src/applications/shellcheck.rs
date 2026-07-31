@@ -5,7 +5,7 @@ use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::{BinFolder, Method};
 use crate::platform::{Cpu, Os, Platform};
-use crate::{Log, strings};
+use crate::{Log, strings, subshell};
 
 #[derive(Clone)]
 pub struct ShellCheck {}
@@ -55,8 +55,8 @@ impl AppDefinition for ShellCheck {
     github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.analyze(&["--version"], log)?;
+  fn analyze_executable(&self, executable: &Executable) -> Result<AnalyzeResult> {
+    let output = subshell::capture_output(executable, &["--version"])?;
     if !output.contains("ShellCheck - shell script analysis tool") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

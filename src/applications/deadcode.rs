@@ -1,5 +1,4 @@
 use super::{AnalyzeResult, AppDefinition};
-use crate::Log;
 use crate::applications::ApplicationName;
 use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
@@ -7,6 +6,7 @@ use crate::executables::{Executable, RunMethod};
 use crate::hosting::pkg_go_dev;
 use crate::installation::Method;
 use crate::platform::Platform;
+use crate::{Log, subshell};
 
 #[derive(Clone)]
 pub struct Deadcode {}
@@ -39,8 +39,8 @@ impl AppDefinition for Deadcode {
     pkg_go_dev::versions(PKG_NAME, amount, &self.tag_format())
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.analyze(&["-h"], log)?;
+  fn analyze_executable(&self, executable: &Executable) -> Result<AnalyzeResult> {
+    let output = subshell::capture_output(executable, &["-h"])?;
     if !output.contains("The deadcode command reports unreachable functions in Go programs") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

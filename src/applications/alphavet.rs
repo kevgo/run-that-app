@@ -1,5 +1,4 @@
 use super::{AnalyzeResult, AppDefinition};
-use crate::Log;
 use crate::applications::ApplicationName;
 use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
@@ -7,6 +6,7 @@ use crate::executables::{Executable, RunMethod};
 use crate::hosting::github_releases;
 use crate::installation::Method;
 use crate::platform::Platform;
+use crate::{Log, subshell};
 use const_format::formatcp;
 
 #[derive(Clone)]
@@ -41,8 +41,8 @@ impl AppDefinition for Alphavet {
     github_releases::latest(ORG, REPO, &self.tag_format(), log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.analyze(&["-h"], log)?;
+  fn analyze_executable(&self, executable: &Executable) -> Result<AnalyzeResult> {
+    let output = subshell::capture_output(executable, &["-h"])?;
     if !output.contains("Checks that functions are ordered alphabetically within packages") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
