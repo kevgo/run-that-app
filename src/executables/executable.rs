@@ -8,9 +8,9 @@ use std::process::Command;
 /// the full path to an executable that RTA knows exists and that it can execute
 #[derive(Clone, Debug, PartialEq)]
 pub enum Executable {
-  /// the executable is a binary file and can be run directly
+  /// the executable is a binary file and can run directly
   Binary(PathBuf),
-  /// the executable is a shell script and needs to be run through the default system shell
+  /// the executable is a shell script and needs to run through the default system shell
   ShellScript(PathBuf),
 }
 
