@@ -1,6 +1,7 @@
 use crate::applications::ApplicationName;
 use crate::configuration::Version;
 use crate::download::Url;
+use crate::executables::Executable;
 use crate::installation::Method;
 use std::borrow::Cow;
 use std::fmt::Display;
@@ -9,8 +10,7 @@ use std::path::Path;
 /// the different events that can result in CLI output
 pub enum Event<'a> {
   AnalyzeExecutableBegin {
-    cmd: &'a str,
-    args: &'a [&'a str],
+    executable: &'a Executable,
   },
   ArchiveExtractBegin {
     archive_type: &'a str,

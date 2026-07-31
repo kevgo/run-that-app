@@ -27,7 +27,8 @@ pub fn load_from_path(
   let executable = app_to_install.run_method(&Version::from("1"), ctx.platform).executable(path);
 
   // step 3: analyze the executable
-  match app_to_install.analyze_executable(&executable, ctx.log)? {
+  (ctx.log)(Event::AnalyzeExecutableBegin { executable: &executable });
+  match app_to_install.analyze_executable(&executable)? {
     AnalyzeResult::NotIdentified { output: _ } => {
       (ctx.log)(Event::GlobalInstallNotIdentified);
       Ok(None)

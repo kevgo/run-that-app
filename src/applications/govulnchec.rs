@@ -1,10 +1,10 @@
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::Log;
 use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::installation::Method;
 use crate::platform::Platform;
+use crate::{Log, subshell};
 
 #[derive(Clone)]
 pub struct Govulncheck {}
@@ -36,8 +36,8 @@ impl AppDefinition for Govulncheck {
     Ok(vec![Version::from("1.1.4"), Version::from("1.1.3")])
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output(&["-h"], log)?;
+  fn analyze_executable(&self, executable: &Executable) -> Result<AnalyzeResult> {
+    let output = subshell::capture_output(executable, &["-h"])?;
     if !output.contains("Govulncheck reports known vulnerabilities in dependencies") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

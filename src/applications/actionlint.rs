@@ -60,12 +60,12 @@ impl AppDefinition for ActionLint {
     github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = subshell::capture_output(executable, &["-h"], log)?;
+  fn analyze_executable(&self, executable: &Executable) -> Result<AnalyzeResult> {
+    let output = subshell::capture_output(executable, &["-h"])?;
     if !output.contains("actionlint is a linter for GitHub Actions workflow files") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    let output = executable.run_output(&["--version"], log)?;
+    let output = subshell::capture_output(executable, &["--version"])?;
     match strings::first_version(&output) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::NotIdentified { output }),

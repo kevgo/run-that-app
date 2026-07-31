@@ -101,7 +101,7 @@ mod tests {
       fn latest_installable_version(&self, _log: Log) -> Result<Version> {
         unimplemented!()
       }
-      fn analyze_executable(&self, _path: &Executable, _log: Log) -> Result<AnalyzeResult> {
+      fn analyze_executable(&self, _executable: &Executable) -> Result<AnalyzeResult> {
         unimplemented!()
       }
       fn run_method(&self, _version: &Version, _platform: Platform) -> RunMethod {

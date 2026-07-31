@@ -1,7 +1,6 @@
 use crate::applications::{AnalyzeResult, ApplicationName, Apps};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::executables::Executable;
 use crate::logging::Event;
 use crate::yard::Yard;
 use crate::{configuration, installation, logging, platform};
@@ -50,7 +49,7 @@ pub fn test(args: &mut TestArgs, apps: &Apps) -> Result<ExitCode> {
         }
         executable_found = true;
         let executable = app.run_method(&latest_version, platform).executable(executable_path);
-        match app.analyze_executable(&executable, log)? {
+        match app.analyze_executable(&executable)? {
           AnalyzeResult::NotIdentified { output } => {
             println!("executable {executable} not identified based on this output:\n\"{output}\"\nOUTPUT END");
             return Ok(ExitCode::FAILURE);
