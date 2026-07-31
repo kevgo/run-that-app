@@ -120,9 +120,9 @@ pub fn load_or_install_app_and_carrier(
         Outcome::NotInstalled { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
       }
       // step 5: load the npm package executable
-      if let Ok(shell_script) = locate_npm_package_executable(app, &app_versions, script, ctx) {
+      if let Ok(shell_script_path) = locate_npm_package_executable(app, &app_versions, script, ctx) {
         return Ok(LoadOrInstallAppOutcome::Loaded {
-          executable: Executable::ShellScript(shell_script),
+          executable: Executable::ShellScript(shell_script_path),
         });
       }
       println!("ERROR: this shouldn't happen, we just successfully installed npm package {package} and now we can't load it");
