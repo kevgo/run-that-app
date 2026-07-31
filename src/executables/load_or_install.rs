@@ -84,9 +84,9 @@ pub fn load_or_install_app_and_carrier(
         return Ok(LoadOrInstallAppOutcome::NotInstallable { app: carrier.name() });
       }
       // step 2: locate the shell script inside the carrier app
-      let shell_script = locate_shell_script(carrier.as_ref(), cli_version, script_name, ctx)?;
+      let shell_script_path = locate_shell_script(carrier.as_ref(), cli_version, script_name, ctx)?;
       // step 3: create the executable call that runs the shell script
-      let executable = Executable::ShellScript(shell_script);
+      let executable = Executable::ShellScript(shell_script_path);
       Ok(LoadOrInstallAppOutcome::Loaded { executable })
     }
 
