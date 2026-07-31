@@ -21,7 +21,7 @@ impl Executable {
     self.0.to_string_lossy()
   }
 
-  /// runs this executable with the given args and returns the output it produced
+  /// analyzes this executable by running it with the given args
   pub fn analyze(&self, args: &[&str], log: Log) -> Result<String> {
     log(Event::AnalyzeExecutableBegin { cmd: &self.as_str(), args });
     subshell::capture_output(self, args)
