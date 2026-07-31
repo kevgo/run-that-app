@@ -17,7 +17,7 @@ use std::fmt::{Debug, Display};
 use std::path::{Path, PathBuf};
 
 /// the different methods to install an application
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Method {
   /// installs the application by downloading and extracting an archive containing the application executable from the internet
   DownloadArchive {

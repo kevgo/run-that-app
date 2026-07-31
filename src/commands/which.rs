@@ -30,14 +30,13 @@ pub fn which(
   match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: version.as_ref(),
-    app_args: &[],
     optional,
     from_source: false,
     ctx: &ctx,
     apps,
   })? {
-    LoadOrInstallAppOutcome::Loaded { executable_call } => {
-      println!("{executable_call}");
+    LoadOrInstallAppOutcome::Loaded { executable } => {
+      println!("{executable}");
       Ok(ExitCode::SUCCESS)
     }
     LoadOrInstallAppOutcome::NotInstallable { app: _ } => Ok(ExitCode::FAILURE),

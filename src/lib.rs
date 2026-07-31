@@ -62,7 +62,7 @@ mod yard;
 use crate::applications::{AppDefinition, Apps};
 use crate::context::RuntimeContext;
 pub use crate::executables::CommandInfo;
-use crate::executables::{ExecutableCall, LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, load_or_install_app_and_carrier, load_or_install_apps};
+use crate::executables::{LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, load_or_install_app_and_carrier, load_or_install_apps};
 use crate::yard::Yard;
 use cli::Cli;
 pub use configuration::Version;
@@ -113,7 +113,7 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 ///   rta::GetCmdArgs {
 ///     app: &actionlint,
 ///     version: Some("1.7.12".into()),
-///     app_args: &vec!["--help".into()],
+///     app_args: vec!["--help".into()],
 ///     apps: &rta::applications::all(),
 ///     from_source: false,
 ///     include_apps: vec![],
@@ -155,28 +155,27 @@ pub fn get_cmd(
     config_file: &config_file,
     log,
   };
-  let include_apps = load_or_install_apps(include_apps, apps, app_args, optional, &ctx)?;
-  let ExecutableCall { executable, args } = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+  let include_apps = load_or_install_apps(include_apps, apps, optional, &ctx)?;
+  let executable = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: version.as_ref(),
-    app_args,
     optional,
     from_source,
     ctx: &ctx,
     apps,
   })? {
-    LoadOrInstallAppOutcome::Loaded { executable_call } => executable_call,
+    LoadOrInstallAppOutcome::Loaded { executable } => executable,
     LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => return Ok(None),
     LoadOrInstallAppOutcome::NotInstallable { app } => return Err(error::UserError::UnsupportedPlatform { app }),
   };
   let mut paths_to_include: Vec<&Path> = vec![&executable.parent_path()];
   for app_to_include in &include_apps {
-    paths_to_include.push(app_to_include.executable.parent_path());
+    paths_to_include.push(app_to_include.parent_path());
   }
   let env_path = subshell::path_expressions(&paths_to_include);
   let cmd_info = CommandInfo {
     executable: executable.into(),
-    args: Some(args),
+    args: Some(app_args),
     env_path: Some(env_path),
   };
   Ok(Some(cmd_info))
@@ -193,7 +192,7 @@ pub struct GetCmdArgs<'a> {
 
   /// arguments to call the app with
   #[allow(clippy::struct_field_names)]
-  pub app_args: &'a [String],
+  pub app_args: Vec<String>,
 
   /// all apps
   pub apps: &'a Apps,

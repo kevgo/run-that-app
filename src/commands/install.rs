@@ -31,18 +31,17 @@ pub fn install(
   };
   // install the included apps
   let include_apps = apps.lookup_many(&include_apps)?;
-  load_or_install_apps(include_apps, apps, &[], optional, &ctx)?;
+  load_or_install_apps(include_apps, apps, optional, &ctx)?;
   // install the main app
   match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app: app_to_install,
     cli_version: version.as_ref(),
-    app_args: &[],
     optional,
     from_source,
     ctx: &ctx,
     apps,
   })? {
-    LoadOrInstallAppOutcome::Loaded { executable_call: _ } => Ok(ExitCode::SUCCESS),
+    LoadOrInstallAppOutcome::Loaded { executable: _ } => Ok(ExitCode::SUCCESS),
     LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => Ok(ExitCode::SUCCESS),
     LoadOrInstallAppOutcome::NotInstallable { app } => Err(UserError::UnsupportedPlatform { app }),
   }

@@ -17,7 +17,7 @@ pub fn run(app_folder: &Path, import_path: &str, optional: bool, ctx: &RuntimeCo
   let go_path = if let Ok(system_go_path) = which(go.executable_filename().platform_path(ctx.platform.os).as_ref()) {
     system_go_path
   } else {
-    let Some(rta_path) = load_rta_go(&go_args, optional, ctx, apps)? else {
+    let Some(rta_path) = load_rta_go(optional, ctx, apps)? else {
       return Ok(Outcome::NotInstalled { app: go.name() });
     };
     rta_path
@@ -45,18 +45,17 @@ pub fn run(app_folder: &Path, import_path: &str, optional: bool, ctx: &RuntimeCo
   Ok(Outcome::Installed)
 }
 
-fn load_rta_go(go_args: &[String], optional: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Option<PathBuf>> {
+fn load_rta_go(optional: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Option<PathBuf>> {
   let go = applications::Go {};
   match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app: &go,
     cli_version: None,
-    app_args: go_args,
     optional,
     from_source: false,
     ctx,
     apps,
   })? {
-    LoadOrInstallAppOutcome::Loaded { executable_call } => Ok(Some(executable_call.executable.into())),
+    LoadOrInstallAppOutcome::Loaded { executable } => Ok(Some(executable.into())),
     LoadOrInstallAppOutcome::NotInstallable { app: _ } => Ok(None),
   }
 }
