@@ -1,5 +1,4 @@
 use std::path::Path;
-#[cfg(not(windows))]
 use std::process::Command;
 
 #[cfg(not(windows))]
