@@ -2,7 +2,7 @@ use crate::applications::{AppDefinition, ApplicationName, Apps, NodeJS};
 use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::executables::{Executable, ExecutableCall, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
+use crate::executables::{Executable, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
 use crate::installation::Outcome;
 use crate::logging::Event;
 use crate::{Version, installation, subshell};
@@ -15,7 +15,7 @@ pub fn load_or_install_apps(
   app_args: &[String],
   optional: bool,
   ctx: &RuntimeContext,
-) -> Result<Vec<ExecutableCall>> {
+) -> Result<Vec<Executable>> {
   let mut result = Vec::with_capacity(apps_to_include.len());
   for app_to_include in apps_to_include {
     match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
@@ -27,7 +27,7 @@ pub fn load_or_install_apps(
       ctx,
       apps,
     })? {
-      LoadOrInstallAppOutcome::Loaded { executable_call } => result.push(executable_call),
+      LoadOrInstallAppOutcome::Loaded { executable } => result.push(executable),
       LoadOrInstallAppOutcome::NotInstallable { app: _ } => {}
     }
   }
@@ -58,7 +58,7 @@ pub fn load_or_install_app_and_carrier(
       load_or_install_app(LoadOrInstallAppArgs {
         app,
         cli_version,
-        executable: app.executable_filename(),
+        executable_name: app.executable_filename(),
         app_args,
         optional,
         from_source,
@@ -73,7 +73,7 @@ pub fn load_or_install_app_and_carrier(
     } => load_or_install_app(LoadOrInstallAppArgs {
       app: carrier.as_ref(),
       cli_version,
-      executable: carrier_executable,
+      executable_name: carrier_executable,
       app_args,
       optional,
       from_source,
@@ -123,7 +123,7 @@ pub fn load_or_install_app_and_carrier(
       // step 3: fast-path: try to load the app executable
       if let Ok(shell_script) = locate_npm_package_executable(app, &app_versions, script, ctx) {
         return Ok(LoadOrInstallAppOutcome::Loaded {
-          executable_call: subshell::shell_script_call(&shell_script, app_args),
+          executable: Executable::ShellScript(shell_script),
         });
       }
       // step 4: install the npm package
@@ -134,7 +134,7 @@ pub fn load_or_install_app_and_carrier(
       // step 5: load the npm package executable
       if let Ok(shell_script) = locate_npm_package_executable(app, &app_versions, script, ctx) {
         return Ok(LoadOrInstallAppOutcome::Loaded {
-          executable_call: subshell::shell_script_call(&shell_script, app_args),
+          executable: Executable::ShellScript(shell_script),
         });
       }
       println!("ERROR: this shouldn't happen, we just successfully installed npm package {package} and now we can't load it");
@@ -280,7 +280,7 @@ fn load_or_install_app(
   LoadOrInstallAppArgs {
     app,
     cli_version,
-    executable,
+    executable_name,
     app_args,
     optional,
     from_source,
@@ -297,7 +297,7 @@ fn load_or_install_app(
     return Err(UserError::NoVersionsFound { app: app.name() });
   };
   // step 2: fast-path: try to load the given executable for the given app
-  let executable = executable.platform_path(ctx.platform.os);
+  let executable = executable_name.platform_path(ctx.platform.os);
   match load_app_versions(app, &versions, &executable, app_args, ctx)? {
     LoadAppOutcome::Loaded { executable } => return Ok(LoadOrInstallAppOutcome::Loaded { executable }),
     LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
@@ -324,7 +324,7 @@ fn load_or_install_app(
 struct LoadOrInstallAppArgs<'a> {
   app: &'a dyn AppDefinition,
   cli_version: Option<&'a Version>,
-  executable: ExecutableNameUnix,
+  executable_name: ExecutableNameUnix,
   app_args: &'a [String],
   optional: bool,
   from_source: bool,
