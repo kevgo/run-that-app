@@ -62,7 +62,7 @@ mod yard;
 use crate::applications::{AppDefinition, Apps};
 use crate::context::RuntimeContext;
 pub use crate::executables::CommandInfo;
-use crate::executables::{ExecutableCall, LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, load_or_install_app_and_carrier, load_or_install_apps};
+use crate::executables::{LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, load_or_install_app_and_carrier, load_or_install_apps};
 use crate::yard::Yard;
 use cli::Cli;
 pub use configuration::Version;
@@ -192,7 +192,7 @@ pub struct GetCmdArgs<'a> {
 
   /// arguments to call the app with
   #[allow(clippy::struct_field_names)]
-  pub app_args: &'a [String],
+  pub app_args: Vec<String>,
 
   /// all apps
   pub apps: &'a Apps,
