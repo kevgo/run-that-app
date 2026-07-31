@@ -251,14 +251,14 @@ fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version
         }
         for bin_folder in bin_folder_paths {
           let app_bin_folder = app_folder.join(&bin_folder);
-          let path = app_bin_folder.join(script_name);
-          (ctx.log)(Event::YardCheckExistingAppBegin { path: &path });
-          if path.exists() {
+          let script_path = app_bin_folder.join(script_name);
+          (ctx.log)(Event::YardCheckExistingAppBegin { path: &script_path });
+          if script_path.exists() {
             (ctx.log)(Event::YardCheckExistingAppFound);
-            return Ok(Executable::ShellScript(path));
+            return Ok(Executable::ShellScript(script_path));
           }
           (ctx.log)(Event::YardCheckExistingAppNotFound);
-          tried_paths.push(path.to_string_lossy().to_string());
+          tried_paths.push(script_path.to_string_lossy().to_string());
         }
       }
     }
