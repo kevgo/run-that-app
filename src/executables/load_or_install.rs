@@ -84,10 +84,8 @@ pub fn load_or_install_app_and_carrier(
         return Ok(LoadOrInstallAppOutcome::NotInstallable { app: carrier.name() });
       }
       // step 2: locate the shell script inside the carrier app
-      let shell_script_path = locate_shell_script(carrier.as_ref(), cli_version, script_name, ctx)?;
-      // step 3: create the executable call that runs the shell script
-      let executable = Executable::ShellScript(shell_script_path);
-      Ok(LoadOrInstallAppOutcome::Loaded { executable })
+      let shell_script = locate_shell_script(carrier.as_ref(), cli_version, script_name, ctx)?;
+      Ok(LoadOrInstallAppOutcome::Loaded { executable: shell_script })
     }
 
     RunMethod::NodeJS { package, script } => {
@@ -187,7 +185,7 @@ fn script_name(unix_script_name: &str) -> String {
 }
 
 #[allow(clippy::panic)]
-fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version>, script_name: &str, ctx: &RuntimeContext) -> Result<PathBuf> {
+fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version>, script_name: &str, ctx: &RuntimeContext) -> Result<Executable> {
   // step 1: determine the version of the app to install
   let versions = if let Some(version) = cli_version {
     RequestedVersions::from(version)
@@ -202,10 +200,10 @@ fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version
     match version {
       RequestedVersion::Path(_version) => {
         (ctx.log)(Event::GlobalInstallSearch { binary: script_name });
-        if let Ok(path) = which::which(script_name) {
-          (ctx.log)(Event::GlobalInstallFound { path: &path });
+        if let Ok(script_path) = which::which(script_name) {
+          (ctx.log)(Event::GlobalInstallFound { path: &script_path });
           // Note: we cannot verify the version here because shell scripts usually get versioned together with their carrier app
-          return Ok(path);
+          return Ok(Executable::ShellScript(script_path));
         }
         (ctx.log)(Event::GlobalInstallNotFound);
         tried_paths.push(S("(global install)"));
@@ -248,7 +246,7 @@ fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version
           (ctx.log)(Event::YardCheckExistingAppBegin { path: &path });
           if path.exists() {
             (ctx.log)(Event::YardCheckExistingAppFound);
-            return Ok(path);
+            return Ok(Executable::ShellScript(path));
           }
           (ctx.log)(Event::YardCheckExistingAppNotFound);
           tried_paths.push(path.to_string_lossy().to_string());
