@@ -1,10 +1,8 @@
-use std::path::PathBuf;
-
 use super::ExecutableNameUnix;
 use crate::applications::AppDefinition;
 use crate::executables::Executable;
-use crate::platform::Platform;
-use crate::{Version, installation};
+use crate::installation;
+use std::path::PathBuf;
 
 /// the different ways to execute an application
 #[derive(Clone, Debug, PartialEq)]
