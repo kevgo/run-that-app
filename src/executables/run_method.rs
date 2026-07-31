@@ -1,9 +1,11 @@
 use super::ExecutableNameUnix;
 use crate::applications::AppDefinition;
+use crate::executables::Executable;
 use crate::installation;
+use std::path::PathBuf;
 
 /// the different ways to execute an application
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum RunMethod {
   /// execute this app's default executable
   ThisApp {
@@ -47,6 +49,13 @@ impl RunMethod {
         executable_name: _,
       }
       | RunMethod::OtherAppShellScript { carrier: _, script_name: _ } => vec![],
+    }
+  }
+
+  pub fn executable(&self, path: PathBuf) -> Executable {
+    match self {
+      RunMethod::ThisApp { .. } | RunMethod::OtherAppOtherExecutable { .. } => Executable::Binary(path),
+      RunMethod::NodeJS { .. } | RunMethod::OtherAppShellScript { .. } => Executable::ShellScript(path),
     }
   }
 }

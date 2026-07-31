@@ -13,7 +13,7 @@ pub fn latest(pkg_name: &str, app: ApplicationName, tag_format: &TagFormat) -> R
 }
 
 pub fn versions(pkg_name: &str, amount: usize, tag_format: &TagFormat) -> Result<Vec<Version>> {
-  let output = subshell::capture_output(&Executable::from("go"), &["list", "-m", "-versions", pkg_name])?;
+  let output = subshell::capture_output(&Executable::Binary("go".into()), &["list", "-m", "-versions", pkg_name])?;
   let mut versions = parse_output(&output, tag_format);
   if versions.len() > amount {
     versions.resize(amount, Version::from(""));

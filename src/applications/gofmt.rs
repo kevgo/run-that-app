@@ -41,7 +41,7 @@ impl AppDefinition for Gofmt {
     let go = Go {};
     #[allow(clippy::unwrap_used)]
     let go_path = executable.as_path().parent().unwrap().join(go.executable_filename().as_ref());
-    go.analyze_executable(&Executable::from(go_path))
+    go.analyze_executable(&Executable::Binary(go_path))
   }
 
   fn tag_format(&self) -> TagFormat {
