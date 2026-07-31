@@ -1,5 +1,4 @@
 use crate::subshell::shell_script_call;
-use std::borrow::Cow;
 use std::ffi::OsStr;
 use std::fmt::Display;
 use std::path::{Path, PathBuf};
@@ -23,12 +22,6 @@ impl AsRef<OsStr> for Executable {
 }
 
 impl Executable {
-  pub fn as_str(&self) -> Cow<'_, str> {
-    match self {
-      Executable::Binary(path) | Executable::ShellScript(path) => path.to_string_lossy(),
-    }
-  }
-
   pub fn as_path(&self) -> &Path {
     match self {
       Executable::Binary(path) | Executable::ShellScript(path) => path,
