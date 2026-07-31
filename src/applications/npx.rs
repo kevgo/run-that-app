@@ -1,10 +1,10 @@
 use super::nodejs::NodeJS;
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::Log;
 use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::platform::{Os, Platform};
+use crate::{Log, subshell};
 
 #[derive(Clone)]
 pub struct Npx {}
@@ -36,8 +36,8 @@ impl AppDefinition for Npx {
     app_to_install().installable_versions(amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output(&["-h"], log)?;
+  fn analyze_executable(&self, executable: &Executable) -> Result<AnalyzeResult> {
+    let output = subshell::capture_output(executable, &["-h"])?;
     if !output.contains("Run a command from a local or remote npm package") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

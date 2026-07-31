@@ -1,10 +1,10 @@
 use super::go::Go;
 use super::{AnalyzeResult, AppDefinition, ApplicationName};
-use crate::Log;
 use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
+use crate::{Log, subshell};
 
 #[derive(Clone)]
 pub struct Gofmt {}
@@ -33,15 +33,15 @@ impl AppDefinition for Gofmt {
     app_to_install().installable_versions(amount, log)
   }
 
-  fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output(&["-h"], log)?;
+  fn analyze_executable(&self, executable: &Executable) -> Result<AnalyzeResult> {
+    let output = subshell::capture_output(executable, &["-h"])?;
     if !output.contains("report all errors (not just the first 10 on different lines)") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     let go = Go {};
     #[allow(clippy::unwrap_used)]
     let go_path = executable.as_path().parent().unwrap().join(go.executable_filename().as_ref());
-    go.analyze_executable(&Executable::from(go_path), log)
+    go.analyze_executable(&Executable::from(go_path))
   }
 
   fn tag_format(&self) -> TagFormat {
