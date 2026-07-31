@@ -1,4 +1,3 @@
-use crate::executables::ExecutableCall;
 use crate::subshell::shell_script_call;
 use std::borrow::Cow;
 use std::ffi::OsStr;
@@ -28,11 +27,6 @@ impl Executable {
     match self {
       Executable::Binary(path) | Executable::ShellScript(path) => path.to_string_lossy(),
     }
-  }
-
-  /// returns a `CommandInfo` that calls this `Executable` with the given args
-  pub fn call(self, args: Vec<String>) -> ExecutableCall {
-    ExecutableCall { executable: self, args }
   }
 
   /// runs this executable with the given args and returns the output it produced
