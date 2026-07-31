@@ -73,10 +73,10 @@ impl AppDefinition for Go {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    if let Ok(version) = strings::first_version(&executable.run_output(&["version"], log)?) {
+    if let Ok(version) = strings::first_version(&executable.analyze(&["version"], log)?) {
       return Ok(AnalyzeResult::IdentifiedWithVersion(version.into()));
     }
-    let output = executable.run_output(&["-h"], log)?;
+    let output = executable.analyze(&["-h"], log)?;
     if output.contains("Go is a tool for managing Go source code") {
       Ok(AnalyzeResult::IdentifiedButUnknownVersion)
     } else {

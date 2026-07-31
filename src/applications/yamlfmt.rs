@@ -51,11 +51,11 @@ impl AppDefinition for Yamlfmt {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output(&["-h"], log)?;
+    let output = executable.analyze(&["-h"], log)?;
     if !output.contains("yamlfmt is a simple command line tool for formatting yaml files.") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    let output = executable.run_output(&["-version"], log)?;
+    let output = executable.analyze(&["-version"], log)?;
     match strings::first_version(&output) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),

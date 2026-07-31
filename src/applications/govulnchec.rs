@@ -37,7 +37,7 @@ impl AppDefinition for Govulncheck {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output(&["-h"], log)?;
+    let output = executable.analyze(&["-h"], log)?;
     if !output.contains("Govulncheck reports known vulnerabilities in dependencies") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

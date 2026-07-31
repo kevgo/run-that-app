@@ -55,7 +55,7 @@ impl AppDefinition for PrettierStandalone {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output(&["--help"], log)?;
+    let output = executable.analyze(&["--help"], log)?;
     if !output.contains("Print the names of files that are different from Prettier's formatting") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

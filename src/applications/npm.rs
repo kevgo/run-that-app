@@ -37,7 +37,7 @@ impl AppDefinition for Npm {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output(&["help", "npm"], log)?;
+    let output = executable.analyze(&["help", "npm"], log)?;
     if !output.contains("javascript package manager") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

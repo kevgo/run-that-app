@@ -62,7 +62,7 @@ impl AppDefinition for RipGrep {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output(&["-h"], log)?;
+    let output = executable.analyze(&["-h"], log)?;
     if !output.contains("ripgrep") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

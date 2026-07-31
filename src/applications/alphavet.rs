@@ -42,7 +42,7 @@ impl AppDefinition for Alphavet {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output(&["-h"], log)?;
+    let output = executable.analyze(&["-h"], log)?;
     if !output.contains("Checks that functions are ordered alphabetically within packages") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

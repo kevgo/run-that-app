@@ -41,7 +41,7 @@ impl AppDefinition for FuncOrder {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output(&["-h"], log)?;
+    let output = executable.analyze(&["-h"], log)?;
     if !output.contains("checks the order of functions, methods, and constructors") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

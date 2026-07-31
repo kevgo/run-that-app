@@ -37,7 +37,7 @@ impl AppDefinition for GherkinLint {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output(&["-h"], log)?;
+    let output = executable.analyze(&["-h"], log)?;
     if !output.contains(".gherkin-lintrc") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

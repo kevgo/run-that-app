@@ -59,7 +59,7 @@ impl AppDefinition for NodePrune {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output(&["-h"], log)?;
+    let output = executable.analyze(&["-h"], log)?;
     if !output.contains("Glob of files that should not be pruned") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

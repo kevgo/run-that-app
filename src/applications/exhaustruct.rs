@@ -45,7 +45,7 @@ impl AppDefinition for Exhaustruct {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output(&["-h"], log)?;
+    let output = executable.analyze(&["-h"], log)?;
     if !output.contains("exhaustruct: Checks if all structure fields are initialized") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }

@@ -40,7 +40,7 @@ impl AppDefinition for Deadcode {
   }
 
   fn analyze_executable(&self, executable: &Executable, log: Log) -> Result<AnalyzeResult> {
-    let output = executable.run_output(&["-h"], log)?;
+    let output = executable.analyze(&["-h"], log)?;
     if !output.contains("The deadcode command reports unreachable functions in Go programs") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
