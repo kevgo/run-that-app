@@ -58,7 +58,7 @@ pub fn load_or_install_app_and_carrier(
       load_or_install_app(LoadOrInstallAppArgs {
         app,
         cli_version,
-        executable: app.executable_filename(),
+        executable_name: app.executable_filename(),
         app_args,
         optional,
         from_source,
@@ -73,7 +73,7 @@ pub fn load_or_install_app_and_carrier(
     } => load_or_install_app(LoadOrInstallAppArgs {
       app: carrier.as_ref(),
       cli_version,
-      executable: carrier_executable,
+      executable_name: carrier_executable,
       app_args,
       optional,
       from_source,
@@ -280,7 +280,7 @@ fn load_or_install_app(
   LoadOrInstallAppArgs {
     app,
     cli_version,
-    executable,
+    executable_name: executable,
     app_args,
     optional,
     from_source,
@@ -324,7 +324,7 @@ fn load_or_install_app(
 struct LoadOrInstallAppArgs<'a> {
   app: &'a dyn AppDefinition,
   cli_version: Option<&'a Version>,
-  executable: ExecutableNameUnix,
+  executable_name: ExecutableNameUnix,
   app_args: &'a [String],
   optional: bool,
   from_source: bool,
