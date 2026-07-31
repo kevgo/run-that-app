@@ -5,23 +5,16 @@ use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
 use crate::installation::Outcome;
 use crate::logging::Event;
-use crate::{Version, installation, subshell};
+use crate::{Version, installation};
 use big_s::S;
 use std::path::PathBuf;
 
-pub fn load_or_install_apps(
-  apps_to_include: Vec<&dyn AppDefinition>,
-  apps: &Apps,
-  app_args: &[String],
-  optional: bool,
-  ctx: &RuntimeContext,
-) -> Result<Vec<Executable>> {
+pub fn load_or_install_apps(apps_to_include: Vec<&dyn AppDefinition>, apps: &Apps, optional: bool, ctx: &RuntimeContext) -> Result<Vec<Executable>> {
   let mut result = Vec::with_capacity(apps_to_include.len());
   for app_to_include in apps_to_include {
     match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
       app: app_to_include,
       cli_version: None,
-      app_args,
       optional,
       from_source: false,
       ctx,
@@ -43,7 +36,6 @@ pub fn load_or_install_app_and_carrier(
   LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version,
-    app_args,
     optional,
     from_source,
     ctx,
@@ -59,7 +51,6 @@ pub fn load_or_install_app_and_carrier(
         app,
         cli_version,
         executable_name: app.executable_filename(),
-        app_args,
         optional,
         from_source,
         ctx,
@@ -74,7 +65,6 @@ pub fn load_or_install_app_and_carrier(
       app: carrier.as_ref(),
       cli_version,
       executable_name: carrier_executable,
-      app_args,
       optional,
       from_source,
       ctx,
@@ -86,7 +76,6 @@ pub fn load_or_install_app_and_carrier(
       if let Err(_err) = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: carrier.as_ref(),
         cli_version: None,
-        app_args: &[],
         optional,
         from_source: false,
         ctx,
@@ -106,7 +95,6 @@ pub fn load_or_install_app_and_carrier(
       load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: &NodeJS {},
         cli_version: None,
-        app_args: &[],
         optional,
         from_source: false,
         ctx,
@@ -146,7 +134,6 @@ pub fn load_or_install_app_and_carrier(
 pub struct LoadOrInstallAppAndCarrierArgs<'a> {
   pub app: &'a dyn AppDefinition,
   pub cli_version: Option<&'a Version>,
-  pub app_args: &'a [String],
   pub optional: bool,
   pub from_source: bool,
   pub ctx: &'a RuntimeContext<'a>,
@@ -281,7 +268,6 @@ fn load_or_install_app(
     app,
     cli_version,
     executable_name,
-    app_args,
     optional,
     from_source,
     ctx,
@@ -298,7 +284,7 @@ fn load_or_install_app(
   };
   // step 2: fast-path: try to load the given executable for the given app
   let executable = executable_name.platform_path(ctx.platform.os);
-  match load_app_versions(app, &versions, &executable, app_args, ctx)? {
+  match load_app_versions(app, &versions, &executable, ctx)? {
     LoadAppOutcome::Loaded { executable } => return Ok(LoadOrInstallAppOutcome::Loaded { executable }),
     LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app: _ } => {} // we'll install the app in the next step
@@ -311,7 +297,7 @@ fn load_or_install_app(
     }
   }
   // step 4: load the executable for the given app
-  match load_app_versions(app, &versions, &executable, app_args, ctx)? {
+  match load_app_versions(app, &versions, &executable, ctx)? {
     LoadAppOutcome::Loaded { executable } => Ok(LoadOrInstallAppOutcome::Loaded { executable }),
     LoadAppOutcome::NotInstallable { app } => Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app } => {
@@ -325,7 +311,6 @@ struct LoadOrInstallAppArgs<'a> {
   app: &'a dyn AppDefinition,
   cli_version: Option<&'a Version>,
   executable_name: ExecutableNameUnix,
-  app_args: &'a [String],
   optional: bool,
   from_source: bool,
   ctx: &'a RuntimeContext<'a>,

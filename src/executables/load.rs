@@ -11,7 +11,6 @@ pub fn load_app_versions(
   app: &dyn AppDefinition,
   versions: &RequestedVersions,
   executable: &ExecutableNamePlatform,
-  app_args: &[String],
   ctx: &RuntimeContext,
 ) -> Result<LoadAppOutcome> {
   for version in versions {
@@ -21,7 +20,7 @@ pub fn load_app_versions(
           return Ok(LoadAppOutcome::Loaded { executable });
         }
       }
-      RequestedVersion::Yard(version) => match load_from_yard(app, version, executable, app_args, ctx)? {
+      RequestedVersion::Yard(version) => match load_from_yard(app, version, executable, ctx)? {
         LoadAppOutcome::Loaded { executable } => return Ok(LoadAppOutcome::Loaded { executable }),
         LoadAppOutcome::NotInstallable { app: _ } => {}
         LoadAppOutcome::NotInstalled { app } => {
