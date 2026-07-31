@@ -1,6 +1,3 @@
-use crate::error::Result;
-use crate::logging::{Event, Log};
-use crate::subshell;
 use std::borrow::Cow;
 use std::ffi::OsStr;
 use std::fmt::Display;
@@ -19,12 +16,6 @@ impl AsRef<OsStr> for Executable {
 impl Executable {
   pub fn as_str(&self) -> Cow<'_, str> {
     self.0.to_string_lossy()
-  }
-
-  /// analyzes this executable by running it with the given args
-  pub fn analyze(&self, args: &[&str], log: Log) -> Result<String> {
-    log(Event::AnalyzeExecutableBegin { cmd: &self.as_str(), args });
-    subshell::capture_output(self, args)
   }
 
   pub fn as_path(&self) -> &Path {
