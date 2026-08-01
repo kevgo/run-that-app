@@ -142,12 +142,32 @@ fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVe
   let mut tried_paths = Vec::new();
   for version in versions {
     match version {
-      RequestedVersion::Path(_version) => {
+      RequestedVersion::Path(range) => {
         (ctx.log)(Event::GlobalInstallSearch { binary: script });
         if let Ok(path) = which::which(script) {
           (ctx.log)(Event::GlobalInstallFound { path: &path });
           // TODO: verify the version here
-          return Ok(Executable::ShellScript(path));
+          let executable = Executable::ShellScript(path);
+          match app.analyze_executable(&executable)? {
+            AnalyzeResult::NotIdentified { output: _ } => {
+              (ctx.log)(Event::GlobalInstallNotIdentified);
+              continue;
+            }
+            AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
+              (ctx.log)(Event::GlobalInstallMatchingVersion { range, version: None });
+              return Ok(executable);
+            }
+            AnalyzeResult::IdentifiedButUnknownVersion => {
+              (ctx.log)(Event::GlobalInstallMismatchingVersion { range, version: None });
+              continue;
+            }
+            AnalyzeResult::IdentifiedWithVersion(version) => {
+              (ctx.log)(Event::GlobalInstallMatchingVersion {
+                range,
+                version: Some(&version),
+              });
+            }
+          }
         }
         (ctx.log)(Event::GlobalInstallNotFound);
         tried_paths.push(S("(global install)"));
