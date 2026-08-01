@@ -1,6 +1,6 @@
 # run-that-app changelog
 
-## 0.41.1
+## 0.42.0
 
 - runs npm packages by calling their shell script
 - verifies the version of globally loaded npm packages

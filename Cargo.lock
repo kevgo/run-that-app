@@ -654,7 +654,7 @@ dependencies = [
 
 [[package]]
 name = "run-that-app"
-version = "0.41.1"
+version = "0.42.0"
 dependencies = [
  "ahash",
  "big_s",
