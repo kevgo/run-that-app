@@ -1,4 +1,4 @@
-use crate::applications::{AppDefinition, ApplicationName, Apps, NodeJS};
+use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps, NodeJS};
 use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
@@ -152,6 +152,11 @@ fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVe
         if let Ok(path) = which::which(script) {
           (ctx.log)(Event::GlobalInstallFound { path: &path });
           // TODO: verify the version here
+          match app.analyze_executable(path)? {
+            AnalyzeResult::NotIdentified { output } => todo!(),
+            AnalyzeResult::IdentifiedButUnknownVersion => todo!(),
+            AnalyzeResult::IdentifiedWithVersion(version) => todo!(),
+          }
           return Ok(path);
         }
         (ctx.log)(Event::GlobalInstallNotFound);
