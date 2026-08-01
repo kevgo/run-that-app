@@ -153,9 +153,13 @@ fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVe
               (ctx.log)(Event::GlobalInstallNotIdentified);
               continue;
             }
-            AnalyzeResult::IdentifiedButUnknownVersion => {
+            AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
               (ctx.log)(Event::GlobalInstallMatchingVersion { range, version: None });
               return Ok(executable);
+            }
+            AnalyzeResult::IdentifiedButUnknownVersion => {
+              (ctx.log)(Event::GlobalInstallMismatchingVersion { range, version: None });
+              continue;
             }
             AnalyzeResult::IdentifiedWithVersion(version) => {
               (ctx.log)(Event::GlobalInstallMatchingVersion {
