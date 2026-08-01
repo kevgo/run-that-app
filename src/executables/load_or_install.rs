@@ -7,7 +7,6 @@ use crate::installation::Outcome;
 use crate::logging::Event;
 use crate::{Version, installation};
 use big_s::S;
-use std::path::PathBuf;
 
 pub fn load_or_install_apps(apps_to_include: Vec<&dyn AppDefinition>, apps: &Apps, optional: bool, ctx: &RuntimeContext) -> Result<Vec<Executable>> {
   let mut result = Vec::with_capacity(apps_to_include.len());
@@ -107,10 +106,8 @@ pub fn load_or_install_app_and_carrier(
         return Err(UserError::NoVersionsFound { app: app.name() });
       };
       // step 3: fast-path: try to load the app executable
-      if let Ok(shell_script_path) = locate_npm_package_executable(app, &app_versions, script, ctx) {
-        return Ok(LoadOrInstallAppOutcome::Loaded {
-          executable: Executable::ShellScript(shell_script_path),
-        });
+      if let Ok(executable) = locate_npm_package_executable(app, &app_versions, script, ctx) {
+        return Ok(LoadOrInstallAppOutcome::Loaded { executable });
       }
       // step 4: install the npm package
       match installation::versions(app, &app_versions, optional, from_source, ctx, apps)? {
@@ -118,10 +115,8 @@ pub fn load_or_install_app_and_carrier(
         Outcome::NotInstalled { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
       }
       // step 5: load the npm package executable
-      if let Ok(shell_script_path) = locate_npm_package_executable(app, &app_versions, script, ctx) {
-        return Ok(LoadOrInstallAppOutcome::Loaded {
-          executable: Executable::ShellScript(shell_script_path),
-        });
+      if let Ok(executable) = locate_npm_package_executable(app, &app_versions, script, ctx) {
+        return Ok(LoadOrInstallAppOutcome::Loaded { executable });
       }
       println!("ERROR: this shouldn't happen, we just successfully installed npm package {package} and now we can't load it");
       Ok(LoadOrInstallAppOutcome::NotInstallable { app: package.into() })
@@ -143,21 +138,33 @@ pub enum LoadOrInstallAppOutcome {
   NotInstallable { app: ApplicationName },
 }
 
-fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVersions, script: &str, ctx: &RuntimeContext) -> Result<PathBuf> {
+fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVersions, script: &str, ctx: &RuntimeContext) -> Result<Executable> {
   let mut tried_paths = Vec::new();
   for version in versions {
     match version {
-      RequestedVersion::Path(_version) => {
+      RequestedVersion::Path(range) => {
         (ctx.log)(Event::GlobalInstallSearch { binary: script });
         if let Ok(path) = which::which(script) {
           (ctx.log)(Event::GlobalInstallFound { path: &path });
           // TODO: verify the version here
-          match app.analyze_executable(path)? {
-            AnalyzeResult::NotIdentified { output } => todo!(),
-            AnalyzeResult::IdentifiedButUnknownVersion => todo!(),
-            AnalyzeResult::IdentifiedWithVersion(version) => todo!(),
+          let executable = Executable::ShellScript(path);
+          match app.analyze_executable(&executable)? {
+            AnalyzeResult::NotIdentified { output: _ } => {
+              (ctx.log)(Event::GlobalInstallNotIdentified);
+              continue;
+            }
+            AnalyzeResult::IdentifiedButUnknownVersion => {
+              (ctx.log)(Event::GlobalInstallMatchingVersion { range, version: None });
+              return Ok(executable);
+            }
+            AnalyzeResult::IdentifiedWithVersion(version) => {
+              (ctx.log)(Event::GlobalInstallMatchingVersion {
+                range,
+                version: Some(&version),
+              });
+            }
           }
-          return Ok(path);
+          return Ok(executable);
         }
         (ctx.log)(Event::GlobalInstallNotFound);
         tried_paths.push(S("(global install)"));
@@ -167,7 +174,7 @@ fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVe
         let platform_script_name = script_name(script);
         let script_path = app_folder.join("node_modules").join(".bin").join(platform_script_name);
         if script_path.exists() {
-          return Ok(script_path);
+          return Ok(Executable::ShellScript(script_path));
         }
         tried_paths.push(script_path.to_string_lossy().to_string());
       }
