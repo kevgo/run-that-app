@@ -168,7 +168,6 @@ fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVe
               });
             }
           }
-          return Ok(executable);
         }
         (ctx.log)(Event::GlobalInstallNotFound);
         tried_paths.push(S("(global install)"));
