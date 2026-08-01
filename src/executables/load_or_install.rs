@@ -5,7 +5,7 @@ use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
 use crate::installation::Outcome;
 use crate::logging::Event;
-use crate::{Version, installation, subshell};
+use crate::{Version, installation};
 use big_s::S;
 
 pub fn load_or_install_apps(apps_to_include: Vec<&dyn AppDefinition>, apps: &Apps, optional: bool, ctx: &RuntimeContext) -> Result<Vec<Executable>> {
@@ -83,7 +83,7 @@ pub fn load_or_install_app_and_carrier(
         return Ok(LoadOrInstallAppOutcome::NotInstallable { app: carrier.name() });
       }
       // step 2: locate the shell script inside the carrier app
-      let shell_script = locate_shell_script(carrier.as_ref(), cli_version, script_name, ctx)?;
+      let shell_script = locate_shell_script(app, carrier.as_ref(), cli_version, script_name, ctx)?;
       Ok(LoadOrInstallAppOutcome::Loaded { executable: shell_script })
     }
 
@@ -200,7 +200,13 @@ fn script_name(unix_script_name: &str) -> String {
 }
 
 #[allow(clippy::panic)]
-fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version>, script_name: &str, ctx: &RuntimeContext) -> Result<Executable> {
+fn locate_shell_script(
+  app: &dyn AppDefinition,
+  carrier: &dyn AppDefinition,
+  cli_version: Option<&Version>,
+  script_name: &str,
+  ctx: &RuntimeContext,
+) -> Result<Executable> {
   // step 1: determine the version of the app to install
   let versions = if let Some(version) = cli_version {
     RequestedVersions::from(version)
@@ -213,19 +219,36 @@ fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version
   let mut tried_paths = Vec::new();
   for version in &versions {
     match version {
-      RequestedVersion::Path(_version) => {
+      RequestedVersion::Path(range) => {
         (ctx.log)(Event::GlobalInstallSearch { binary: script_name });
         if let Ok(script_path) = which::which(script_name) {
-          let executable_call = subshell::shell_script_call(&path, &[]);
-          // TODO: ensure we are running the actual NPM app here by calling npm.analyze_executable()
-          match app.analyze_executable(&executable_call.executable, ctx.log)? {
+          let executable = Executable::ShellScript(script_path);
+          match app.analyze_executable(&executable)? {
             AnalyzeResult::NotIdentified { output: _ } => {
               ((ctx.log)(Event::GlobalInstallNotIdentified {}));
+              continue;
             }
-            AnalyzeResult::IdentifiedButUnknownVersion | AnalyzeResult::IdentifiedWithVersion(_) => {
-              // Note: we cannot verify the version of the shell script because shell scripts usually get versioned together with their carrier app
-              (ctx.log)(Event::GlobalInstallFound { path: &path });
-              return Ok(Executable::ShellScript(script_path));
+            AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
+              (ctx.log)(Event::GlobalInstallMatchingVersion { range, version: None });
+              return Ok(executable);
+            }
+            AnalyzeResult::IdentifiedButUnknownVersion => {
+              (ctx.log)(Event::GlobalInstallMismatchingVersion { range, version: None });
+              continue;
+            }
+            AnalyzeResult::IdentifiedWithVersion(version) if range.matches(&version.semver()?) => {
+              (ctx.log)(Event::GlobalInstallMatchingVersion {
+                range,
+                version: Some(&version),
+              });
+              return Ok(executable);
+            }
+            AnalyzeResult::IdentifiedWithVersion(version) => {
+              (ctx.log)(Event::GlobalInstallMismatchingVersion {
+                range,
+                version: Some(&version),
+              });
+              continue;
             }
           }
         }
