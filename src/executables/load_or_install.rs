@@ -146,7 +146,6 @@ fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVe
         (ctx.log)(Event::GlobalInstallSearch { binary: script });
         if let Ok(path) = which::which(script) {
           (ctx.log)(Event::GlobalInstallFound { path: &path });
-          // TODO: verify the version here
           let executable = Executable::ShellScript(path);
           match app.analyze_executable(&executable)? {
             AnalyzeResult::NotIdentified { output: _ } => {
@@ -161,11 +160,19 @@ fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVe
               (ctx.log)(Event::GlobalInstallMismatchingVersion { range, version: None });
               continue;
             }
+            AnalyzeResult::IdentifiedWithVersion(version) if range.matches(&version.semver()?) => {
+              (ctx.log)(Event::GlobalInstallMatchingVersion {
+                range,
+                version: Some(&version),
+              });
+              return Ok(executable);
+            }
             AnalyzeResult::IdentifiedWithVersion(version) => {
               (ctx.log)(Event::GlobalInstallMatchingVersion {
                 range,
                 version: Some(&version),
               });
+              continue;
             }
           }
         }
@@ -213,7 +220,7 @@ fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version
   let mut tried_paths = Vec::new();
   for version in &versions {
     match version {
-      RequestedVersion::Path(_version) => {
+      RequestedVersion::Path(_range) => {
         (ctx.log)(Event::GlobalInstallSearch { binary: script_name });
         if let Ok(script_path) = which::which(script_name) {
           (ctx.log)(Event::GlobalInstallFound { path: &script_path });
