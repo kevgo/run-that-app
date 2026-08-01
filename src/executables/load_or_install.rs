@@ -225,8 +225,7 @@ fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version
         if let Ok(script_path) = which::which(script_name) {
           (ctx.log)(Event::GlobalInstallFound { path: &script_path });
           // Note: we cannot verify the version here because shell scripts usually get versioned together with their carrier app
-          let executable = Executable::ShellScript(script_path);
-          return Ok(executable);
+          return Ok(Executable::ShellScript(script_path));
         }
         (ctx.log)(Event::GlobalInstallNotFound);
         tried_paths.push(S("(global install)"));
