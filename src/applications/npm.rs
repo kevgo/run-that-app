@@ -4,7 +4,7 @@ use crate::configuration::{TagFormat, Version};
 use crate::error::Result;
 use crate::executables::{Executable, RunMethod};
 use crate::platform::{Os, Platform};
-use crate::{Log, subshell};
+use crate::{Log, strings, subshell};
 
 #[derive(Clone)]
 pub struct Npm {}
@@ -42,7 +42,10 @@ impl AppDefinition for Npm {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     // Npm is versioned together with NodeJS. The actual version of npm is therefore not relevant here.
-    Ok(AnalyzeResult::IdentifiedButUnknownVersion)
+    match strings::first_version(&subshell::capture_output(executable, &["--version"])?) {
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
+    }
   }
 
   fn tag_format(&self) -> TagFormat {
