@@ -1,5 +1,11 @@
 # run-that-app changelog
 
+## 0.41.1
+
+- runs npm packages by calling their shell script
+- verifies the version of globally loaded npm packages
+- displays the version of other apps scripts loaded from the global path in verbose mode
+
 ## 0.41.0
 
 - executes npm by calling it's official shell script via the OS shell rather than guessing the JS file
