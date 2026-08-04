@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+## 0.42.1
+
+- improved error messages
+
 ## 0.42.0
 
 - runs npm packages by calling their shell script
