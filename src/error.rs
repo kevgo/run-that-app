@@ -261,7 +261,7 @@ impl UserError {
       UserError::NotOnline => error("not online"),
       UserError::NoVersionsFound { app } => {
         error(&format!(r#"application "{app}" is not listed in the "run-that-app" file."#));
-        desc(&format!(r#"You can add it by running "run-that-app --add {app}"."#));
+        desc(&format!("To add it: run-that-app --add {app}"));
       }
       UserError::ProcessEmittedOutput { cmd } => {
         error(&format!("process \"{cmd}\" emitted unexpected output"));
