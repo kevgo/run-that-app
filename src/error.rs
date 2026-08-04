@@ -259,7 +259,10 @@ impl UserError {
         desc("Please provide either --which or --available or nothing to run the app, but not both");
       }
       UserError::NotOnline => error("not online"),
-      UserError::NoVersionsFound { app } => error(&format!(r#"cannot determine versions for application "{app}""#)),
+      UserError::NoVersionsFound { app } => {
+        error(&format!(r#"application "{app}" is not listed in the "run-that-app" file"#));
+        desc(&format!(r#"You can add it by running "run-that-app --add {app}"."#));
+      }
       UserError::ProcessEmittedOutput { cmd } => {
         error(&format!("process \"{cmd}\" emitted unexpected output"));
       }
