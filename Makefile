@@ -1,3 +1,5 @@
+TRICORDER_VERSION = 0.0.15     # tricorder version to use
+
 RTA          = target/debug/rta
 ACTIONLINT   = $(RTA) actionlint
 DPRINT       = $(RTA) dprint
@@ -10,6 +12,7 @@ RUMDL        = $(RTA) rumdl
 SHELLCHECK   = $(RTA) --optional shellcheck
 TAPLO        = $(RTA) taplo
 TEXTRUNNER   = $(RTA) text-runner
+TRICORDER    = tools/tricorder@$(TRICORDER_VERSION)
 
 build:  # compiles this app in debug mode
 	cargo build --locked
@@ -84,3 +87,8 @@ update:  # updates the dependencies
 node_modules: package.json package-lock.json
 	$(NPM) ci
 	@touch node_modules  # update timestamp so that Make doesn't re-install it on every command
+
+${TRICORDER}:
+	rm -f tools/tricorder*
+	(cd tools && curl https://raw.githubusercontent.com/kevgo/tricorder/main/download.sh | sh -s -- --version ${TRICORDER_VERSION} --name tricorder@${TRICORDER_VERSION})
+	ln -s tricorder@$(TRICORDER_VERSION) tools/tricorder
