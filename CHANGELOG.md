@@ -1,5 +1,7 @@
 # run-that-app changelog
 
+- app: hadolint
+
 ## 0.42.2
 
 - check for existing installation after waiting for lock

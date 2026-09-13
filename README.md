@@ -87,6 +87,7 @@ We can also compile apps from source if needed.
 - [goreleaser](https://goreleaser.com)
 - [govulncheck](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck)
 - [gum](https://github.com/charmbracelet/gum)
+- [hadolint](https://github.com/hadolint/hadolint)
 - [ireturn](https://github.com/butuzov/ireturn)
 - [keep-sorted](https://github.com/google/keep-sorted)
 - [lefthook](https://lefthook.dev)
