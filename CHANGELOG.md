@@ -1,5 +1,7 @@
 # run-that-app changelog
 
+## 0.42.3
+
 - app: hadolint
 
 ## 0.42.2
