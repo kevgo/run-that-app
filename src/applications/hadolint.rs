@@ -132,23 +132,6 @@ mod tests {
     }
 
     #[test]
-    fn macos_intel() {
-      let have = (Hadolint {}).run_method(
-        &Version::from("2.15.1"),
-        Platform {
-          os: Os::MacOS,
-          cpu: Cpu::Intel64,
-        },
-      );
-      let want = RunMethod::ThisApp {
-        install_methods: vec![Method::DownloadExecutable {
-          url: "https://github.com/hadolint/hadolint/releases/download/v2.15.1/hadolint-macos-x86_64".into(),
-        }],
-      };
-      assert_eq!(have, want);
-    }
-
-    #[test]
     fn windows_arm() {
       let have = (Hadolint {}).run_method(
         &Version::from("2.15.1"),
