@@ -108,11 +108,20 @@ pub enum UserError {
     regex: String,
     err: String,
   },
+  InternalError {
+    message: String,
+  },
   LockCannotAcquire {
     filename: PathBuf,
     err: String,
   },
   MissingApplication,
+  MissingRuntime {
+    runtime: ApplicationName,
+    needed_by: ApplicationName,
+    script: Option<PathBuf>,
+    searched_dirs: Vec<PathBuf>,
+  },
   MultipleCommandsGiven,
   NotOnline,
   NoVersionsFound {
@@ -247,12 +256,42 @@ impl UserError {
         error("Invalid number given");
       }
       UserError::InvalidRegex { regex, err } => error(&format!("invalid regex '{regex}': {err}")),
+      UserError::InternalError { message } => {
+        error(&message);
+        desc("Please report this at https://github.com/kevgo/run-that-app/issues/new");
+      }
       UserError::LockCannotAcquire { filename, err } => {
         error(&format!("cannot acquire lock for {}: {err}", filename.display()));
       }
       UserError::MissingApplication => {
         error("missing application");
         desc("Please provide the application to execute");
+      }
+      UserError::MissingRuntime {
+        runtime,
+        needed_by,
+        script,
+        searched_dirs,
+      } => {
+        error(&format!("cannot run {needed_by} because {runtime} was not found"));
+        if let Some(script) = script {
+          desc(&format!(
+            "{needed_by} is started via this script:\n  {}\n\nThat script requires the \"{runtime}\" executable.",
+            script.display()
+          ));
+        } else {
+          desc(&format!("{needed_by} requires the \"{runtime}\" executable."));
+        }
+        if !searched_dirs.is_empty() {
+          desc("I looked for it in these PATH directories:");
+          for dir in searched_dirs {
+            desc(&format!("  - {}", dir.display()));
+          }
+        }
+        desc(&format!("Please add {runtime} to your run-that-app file: run-that-app --add {runtime}"));
+        if runtime.as_str() == "node" {
+          desc("You can also install Node.js from https://nodejs.org");
+        }
       }
       UserError::MultipleCommandsGiven => {
         error("multiple commands given");
