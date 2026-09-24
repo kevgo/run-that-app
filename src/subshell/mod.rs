@@ -10,6 +10,7 @@ mod detect_output;
 mod shellscript;
 mod stream_output;
 
+use crate::executables::ExecutableNamePlatform;
 pub use capture_output::capture_output;
 pub use detect_output::detect_output;
 pub use shellscript::shell_script_call;
@@ -19,6 +20,10 @@ pub use stream_output::stream_output;
 pub fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
   cmd.envs(env::vars_os());
   set_path_env(cmd, join_path_expressions(&join_paths(dirs), &path_env_value()));
+}
+
+pub fn path_contains_executable(path_var: &std::ffi::OsStr, filename: &ExecutableNamePlatform) -> bool {
+  env::split_paths(path_var).any(|dir| dir.join(filename.as_ref()).is_file())
 }
 
 pub fn path_expressions(dirs: &[&Path]) -> OsString {
