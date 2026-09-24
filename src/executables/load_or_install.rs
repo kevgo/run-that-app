@@ -8,7 +8,7 @@ use crate::logging::Event;
 use crate::{Version, installation};
 use big_s::S;
 
-pub fn load_or_install_apps(apps_to_include: Vec<&dyn AppDefinition>, apps: &Apps, optional: bool, ctx: &RuntimeContext) -> Result<Vec<Executable>> {
+pub fn load_or_install_apps(apps: &Apps, optional: bool, apps_to_include: Vec<&dyn AppDefinition>, ctx: &RuntimeContext) -> Result<Vec<Executable>> {
   let mut result = Vec::with_capacity(apps_to_include.len());
   for app_to_include in apps_to_include {
     match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
