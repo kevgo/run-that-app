@@ -258,7 +258,7 @@ impl UserError {
       UserError::InvalidRegex { regex, err } => error(&format!("invalid regex '{regex}': {err}")),
       UserError::InternalError { message } => {
         error(&message);
-        desc("Please report this at https://github.com/kevgo/run-that-app/issues/new");
+        desc("This is a bug in run-that-app. Please report this at https://github.com/kevgo/run-that-app/issues");
       }
       UserError::LockCannotAcquire { filename, err } => {
         error(&format!("cannot acquire lock for {}: {err}", filename.display()));
