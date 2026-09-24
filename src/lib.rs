@@ -169,15 +169,14 @@ pub fn get_cmd(
     LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => return Ok(None),
     LoadOrInstallAppOutcome::NotInstallable { app } => return Err(error::UserError::UnsupportedPlatform { app }),
   };
-  let mut paths_to_include: Vec<PathBuf> = Vec::with_capacity(1 + extra_path.len() + include_apps.len() + include_apps_carrier_paths.len());
-  paths_to_include.push(executable.parent_path().to_path_buf());
-  paths_to_include.extend(extra_path);
-  paths_to_include.extend(include_apps_carrier_paths);
+  let mut paths_to_include: Vec<&Path> = Vec::with_capacity(1 + extra_path.len() + include_apps.len() + include_apps_carrier_paths.len());
+  paths_to_include.push(executable.parent_path());
+  paths_to_include.extend(extra_path.iter().map(PathBuf::as_path));
+  paths_to_include.extend(include_apps_carrier_paths.iter().map(PathBuf::as_path));
   for app_to_include in &include_apps {
-    paths_to_include.push(app_to_include.parent_path().to_path_buf());
+    paths_to_include.push(app_to_include.parent_path());
   }
-  let path_refs: Vec<&Path> = paths_to_include.iter().map(PathBuf::as_path).collect();
-  let env_path = subshell::path_expressions(&path_refs);
+  let env_path = subshell::path_expressions(&paths_to_include);
   if needs_node(app, platform) {
     let node = applications::NodeJS {};
     let node_filename = node.executable_filename().platform_path(platform.os);
