@@ -140,7 +140,14 @@ pub fn load_or_install_app_and_carrier(
           return Ok(LoadOrInstallAppOutcome::NotInstallable { app: app.name() });
         }
         Ok(LoadOrInstallAppOutcome::NotInstallable { app: runtime }) | Err(UserError::NoVersionsFound { app: runtime }) => {
-          return Err(missing_node_runtime(runtime, app.name()));
+          return Err({
+            UserError::MissingRuntime {
+              runtime,
+              needed_by: app.name(),
+              script: None,
+              searched_dirs: vec![],
+            }
+          });
         }
         Err(err) => return Err(err),
       };
@@ -197,15 +204,6 @@ pub enum LoadOrInstallAppOutcome {
   NotInstallable {
     app: ApplicationName,
   },
-}
-
-fn missing_node_runtime(runtime: ApplicationName, needed_by: ApplicationName) -> UserError {
-  UserError::MissingRuntime {
-    runtime,
-    needed_by,
-    script: None,
-    searched_dirs: vec![],
-  }
 }
 
 fn loaded(executable: Executable) -> LoadOrInstallAppOutcome {
