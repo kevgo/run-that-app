@@ -41,7 +41,7 @@ pub fn install(
     ctx: &ctx,
     apps,
   })? {
-    LoadOrInstallAppOutcome::Loaded { executable: _ } => Ok(ExitCode::SUCCESS),
+    LoadOrInstallAppOutcome::Loaded { executable: _, extra_path: _ } => Ok(ExitCode::SUCCESS),
     LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => Ok(ExitCode::SUCCESS),
     LoadOrInstallAppOutcome::NotInstallable { app } => Err(UserError::UnsupportedPlatform { app }),
   }

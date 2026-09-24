@@ -1,7 +1,7 @@
 //! This module implements various ways to execute work in subshells.
 
 use std::env;
-use std::ffi::OsString;
+use std::ffi::{OsStr, OsString};
 use std::path::Path;
 use std::process::{Command, ExitCode, ExitStatus};
 
@@ -10,6 +10,7 @@ mod detect_output;
 mod shellscript;
 mod stream_output;
 
+use crate::executables::ExecutableNamePlatform;
 pub use capture_output::capture_output;
 pub use detect_output::detect_output;
 pub use shellscript::shell_script_call;
@@ -18,11 +19,38 @@ pub use stream_output::stream_output;
 /// adds the given dirs to the PATH env variable of the given cmd
 pub fn add_paths(cmd: &mut Command, dirs: &[&Path]) {
   cmd.envs(env::vars_os());
-  cmd.env("PATH", join_path_expressions(&join_paths(dirs), &env::var_os("PATH").unwrap_or_default()));
+  set_path_env(cmd, join_path_expressions(&join_paths(dirs), &path_env_value()));
+}
+
+pub fn path_contains_executable(path_var: &std::ffi::OsStr, filename: &ExecutableNamePlatform) -> bool {
+  env::split_paths(path_var).any(|dir| dir.join(filename.as_ref()).is_file())
 }
 
 pub fn path_expressions(dirs: &[&Path]) -> OsString {
-  join_path_expressions(&join_paths(dirs), &env::var_os("PATH").unwrap_or_default())
+  join_path_expressions(&join_paths(dirs), &path_env_value())
+}
+
+/// Sets PATH on the command using the same environment-variable casing as this process.
+///
+/// `std::process::Command` treats env var names as case-sensitive even on Windows,
+/// where the existing variable is typically `Path`. Setting `PATH` would leave the
+/// original `Path` in place and the child process would not see our directories.
+pub fn set_path_env(cmd: &mut Command, path: impl AsRef<OsStr>) {
+  cmd.env(path_env_key(), path);
+}
+
+fn path_env_key() -> OsString {
+  env::vars_os()
+    .map(|(key, _)| key)
+    .find(|key| key.eq_ignore_ascii_case("PATH"))
+    .unwrap_or_else(|| OsString::from("PATH"))
+}
+
+fn path_env_value() -> OsString {
+  env::vars_os()
+    .find(|(key, _)| key.eq_ignore_ascii_case("PATH"))
+    .map(|(_, value)| value)
+    .unwrap_or_default()
 }
 
 /// joins the given PATH expressions (containing multiple paths) into a single PATH expression
@@ -182,6 +210,16 @@ mod tests {
       let have = super::super::join_path_expressions(&first, &second);
       let want = OsString::from("");
       assert_eq!(have, want);
+    }
+  }
+
+  mod path_env_key {
+    #[test]
+    fn matches_existing_path_variable_casing() {
+      let key = super::super::path_env_key();
+      assert!(key.eq_ignore_ascii_case("PATH"));
+      let found = std::env::vars_os().any(|(existing, _)| existing == key);
+      assert!(found || key == "PATH");
     }
   }
 }

@@ -55,7 +55,7 @@ fn load_rta_go(optional: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Opti
     ctx,
     apps,
   })? {
-    LoadOrInstallAppOutcome::Loaded { executable } => Ok(Some(executable.into())),
+    LoadOrInstallAppOutcome::Loaded { executable, extra_path: _ } => Ok(Some(executable.into())),
     LoadOrInstallAppOutcome::NotInstallable { app: _ } => Ok(None),
   }
 }

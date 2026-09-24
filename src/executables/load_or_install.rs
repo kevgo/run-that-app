@@ -7,9 +7,16 @@ use crate::installation::Outcome;
 use crate::logging::Event;
 use crate::{Version, installation};
 use big_s::S;
+use std::path::PathBuf;
 
-pub fn load_or_install_apps(apps: &Apps, optional: bool, apps_to_include: Vec<&dyn AppDefinition>, ctx: &RuntimeContext) -> Result<Vec<Executable>> {
-  let mut result = Vec::with_capacity(apps_to_include.len());
+pub fn load_or_install_apps(
+  apps: &Apps,
+  optional: bool,
+  apps_to_include: Vec<&dyn AppDefinition>,
+  ctx: &RuntimeContext,
+) -> Result<(Vec<Executable>, Vec<PathBuf>)> {
+  let mut executables = Vec::with_capacity(apps_to_include.len());
+  let mut extra_paths = Vec::new();
   for app_to_include in apps_to_include {
     match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
       app: app_to_include,
@@ -19,11 +26,15 @@ pub fn load_or_install_apps(apps: &Apps, optional: bool, apps_to_include: Vec<&d
       ctx,
       apps,
     })? {
-      LoadOrInstallAppOutcome::Loaded { executable } => result.push(executable),
-      LoadOrInstallAppOutcome::NotInstallable { app: _ } => {}
+      LoadOrInstallAppOutcome::Loaded { executable, extra_path } => {
+        executables.push(executable);
+        extra_paths.extend(extra_path);
+      }
+      LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => {}
+      LoadOrInstallAppOutcome::NotInstallable { app } => return Err(UserError::UnsupportedPlatform { app }),
     }
   }
-  Ok(result)
+  Ok((executables, extra_paths))
 }
 
 /// Provides a callable that executes the given app
@@ -71,32 +82,76 @@ pub fn load_or_install_app_and_carrier(
     }),
 
     RunMethod::OtherAppShellScript { carrier, script_name } => {
-      // step 1: ensure the carrier app is installed, install if needed
-      if let Err(_err) = load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+      // step 1: load the carrier app, install if needed
+      let carrier_paths = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: carrier.as_ref(),
         cli_version: None,
         optional,
         from_source: false,
         ctx,
         apps,
-      }) {
-        return Ok(LoadOrInstallAppOutcome::NotInstallable { app: carrier.name() });
-      }
+      })? {
+        LoadOrInstallAppOutcome::Loaded {
+          executable: carrier_exe,
+          // The path of the carrier's carrier.
+          // Probably a bit excessive to go that deep, but we have it so let's do the right thing.
+          extra_path: carrier_carrier_path,
+        } => {
+          let mut carrier_paths = Vec::with_capacity(carrier_carrier_path.len() + 1);
+          carrier_paths.extend(carrier_carrier_path);
+          let carrier_path = carrier_exe.parent_path().to_path_buf();
+          carrier_paths.push(carrier_path);
+          carrier_paths
+        }
+        LoadOrInstallAppOutcome::NotInstallable { app } => {
+          return Ok(LoadOrInstallAppOutcome::NotInstallable { app });
+        }
+      };
       // step 2: locate the shell script inside the carrier app
       let shell_script = locate_shell_script(carrier.as_ref(), cli_version, script_name, ctx)?;
-      Ok(LoadOrInstallAppOutcome::Loaded { executable: shell_script })
+      Ok(LoadOrInstallAppOutcome::Loaded {
+        executable: shell_script,
+        extra_path: carrier_paths,
+      })
     }
 
     RunMethod::NodeJS { package, script } => {
-      // step 1: ensure NodeJS is installed, install if needed
-      load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+      // step 1: load NodeJS, install if needed, and put it on PATH
+      let node_paths = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: &NodeJS {},
         cli_version: None,
         optional,
         from_source: false,
         ctx,
         apps,
-      })?;
+      }) {
+        Ok(LoadOrInstallAppOutcome::Loaded {
+          executable: node,
+          // the path of Node's carrier app
+          extra_path: node_carrier_path,
+        }) => {
+          let mut carrier_paths = Vec::with_capacity(node_carrier_path.len() + 1);
+          carrier_paths.extend(node_carrier_path);
+          let node_path = node.parent_path().to_path_buf();
+          carrier_paths.push(node_path);
+          carrier_paths
+        }
+        Ok(LoadOrInstallAppOutcome::NotInstallable { app: _ }) if optional => {
+          return Ok(LoadOrInstallAppOutcome::NotInstallable { app: app.name() });
+        }
+        Ok(LoadOrInstallAppOutcome::NotInstallable { app: node }) => return Err(UserError::UnsupportedPlatform { app: node }),
+        Err(UserError::NoVersionsFound { app: runtime }) => {
+          return Err({
+            UserError::MissingRuntime {
+              runtime,
+              needed_by: app.name(),
+              script: None,
+              searched_dirs: vec![],
+            }
+          });
+        }
+        Err(err) => return Err(err),
+      };
       // step 2: determine the version of the npm package to run
       let app_versions = if let Some(version) = cli_version {
         RequestedVersions::from(version)
@@ -107,7 +162,10 @@ pub fn load_or_install_app_and_carrier(
       };
       // step 3: fast-path: try to load the app executable
       if let Ok(executable) = locate_npm_package_executable(app, &app_versions, script, ctx) {
-        return Ok(LoadOrInstallAppOutcome::Loaded { executable });
+        return Ok(LoadOrInstallAppOutcome::Loaded {
+          executable,
+          extra_path: node_paths,
+        });
       }
       // step 4: install the npm package
       match installation::versions(app, &app_versions, optional, from_source, ctx, apps)? {
@@ -116,10 +174,14 @@ pub fn load_or_install_app_and_carrier(
       }
       // step 5: load the npm package executable
       if let Ok(executable) = locate_npm_package_executable(app, &app_versions, script, ctx) {
-        return Ok(LoadOrInstallAppOutcome::Loaded { executable });
+        return Ok(LoadOrInstallAppOutcome::Loaded {
+          executable,
+          extra_path: node_paths,
+        });
       }
-      println!("ERROR: this shouldn't happen, we just successfully installed npm package {package} and now we can't load it");
-      Ok(LoadOrInstallAppOutcome::NotInstallable { app: package.into() })
+      Err(UserError::InternalError {
+        message: format!("successfully installed npm package {package} but cannot load it now"),
+      })
     }
   }
 }
@@ -134,8 +196,15 @@ pub struct LoadOrInstallAppAndCarrierArgs<'a> {
 }
 
 pub enum LoadOrInstallAppOutcome {
-  Loaded { executable: Executable },
-  NotInstallable { app: ApplicationName },
+  Loaded {
+    executable: Executable,
+    /// directories to prepend to PATH when running this executable,
+    /// usually the carrier, e.g. Node.js for npm packages
+    extra_path: Vec<PathBuf>,
+  },
+  NotInstallable {
+    app: ApplicationName,
+  },
 }
 
 fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVersions, script: &str, ctx: &RuntimeContext) -> Result<Executable> {
@@ -206,7 +275,6 @@ fn script_name(unix_script_name: &str) -> String {
   format!("{unix_script_name}.cmd")
 }
 
-#[allow(clippy::panic)]
 fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version>, script_name: &str, ctx: &RuntimeContext) -> Result<Executable> {
   // step 1: determine the version of the app to install
   let versions = if let Some(version) = cli_version {
@@ -252,9 +320,11 @@ fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version
             | installation::Method::CompileGoSource { import_path: _ }
             | installation::Method::CompileRustRepo { url: _ } => {}
             installation::Method::InstallNodeJSPackage { package, script: _ } => {
-              panic!(
-                "App {package} is an npm package, we should have handled this separately.\nPlease report this as a bug at https://github.com/kevgo/run-that-app"
-              )
+              return Err(UserError::InternalError {
+                message: format!(
+                  "App {package} is an npm package, we should have handled this separately.\nPlease report this as a bug at https://github.com/kevgo/run-that-app"
+                ),
+              });
             }
           }
         }
@@ -305,7 +375,12 @@ fn load_or_install_app(
   // step 2: fast-path: try to load the given executable for the given app
   let executable = executable_name.platform_path(ctx.platform.os);
   match load_app_versions(app, &versions, &executable, ctx)? {
-    LoadAppOutcome::Loaded { executable } => return Ok(LoadOrInstallAppOutcome::Loaded { executable }),
+    LoadAppOutcome::Loaded { executable } => {
+      return Ok(LoadOrInstallAppOutcome::Loaded {
+        executable,
+        extra_path: vec![],
+      });
+    }
     LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app: _ } => {} // we'll install the app in the next step
   }
@@ -318,12 +393,14 @@ fn load_or_install_app(
   }
   // step 4: load the executable for the given app
   match load_app_versions(app, &versions, &executable, ctx)? {
-    LoadAppOutcome::Loaded { executable } => Ok(LoadOrInstallAppOutcome::Loaded { executable }),
+    LoadAppOutcome::Loaded { executable } => Ok(LoadOrInstallAppOutcome::Loaded {
+      executable,
+      extra_path: vec![],
+    }),
     LoadAppOutcome::NotInstallable { app } => Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
-    LoadAppOutcome::NotInstalled { app } => {
-      println!("ERROR: this shouldn't happen, we just successfully installed {app} and now we can't load it");
-      Ok(LoadOrInstallAppOutcome::NotInstallable { app })
-    }
+    LoadAppOutcome::NotInstalled { app } => Err(UserError::InternalError {
+      message: format!("successfully installed {app} but cannot load it now"),
+    }),
   }
 }
 
