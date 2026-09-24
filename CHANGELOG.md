@@ -1,5 +1,8 @@
 # run-that-app changelog
 
+- handles carrier applications properly
+- improved Windows compatibility
+
 ## 0.42.3
 
 - app: hadolint
