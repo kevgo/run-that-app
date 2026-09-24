@@ -206,13 +206,6 @@ pub enum LoadOrInstallAppOutcome {
   },
 }
 
-fn loaded(executable: Executable) -> LoadOrInstallAppOutcome {
-  LoadOrInstallAppOutcome::Loaded {
-    executable,
-    extra_path: vec![],
-  }
-}
-
 fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVersions, script: &str, ctx: &RuntimeContext) -> Result<Executable> {
   let mut tried_paths = Vec::new();
   for version in versions {
@@ -381,7 +374,12 @@ fn load_or_install_app(
   // step 2: fast-path: try to load the given executable for the given app
   let executable = executable_name.platform_path(ctx.platform.os);
   match load_app_versions(app, &versions, &executable, ctx)? {
-    LoadAppOutcome::Loaded { executable } => return Ok(loaded(executable)),
+    LoadAppOutcome::Loaded { executable } => {
+      return Ok(LoadOrInstallAppOutcome::Loaded {
+        executable,
+        extra_path: vec![],
+      });
+    }
     LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app: _ } => {} // we'll install the app in the next step
   }
@@ -394,7 +392,10 @@ fn load_or_install_app(
   }
   // step 4: load the executable for the given app
   match load_app_versions(app, &versions, &executable, ctx)? {
-    LoadAppOutcome::Loaded { executable } => Ok(loaded(executable)),
+    LoadAppOutcome::Loaded { executable } => Ok(LoadOrInstallAppOutcome::Loaded {
+      executable,
+      extra_path: vec![],
+    }),
     LoadAppOutcome::NotInstallable { app } => Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app } => Err(UserError::InternalError {
       message: format!("successfully installed {app} but cannot load it now"),
