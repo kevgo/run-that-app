@@ -156,7 +156,7 @@ pub fn get_cmd(
     config_file: &config_file,
     log,
   };
-  let include_apps = load_or_install_apps(include_apps, apps, optional, &ctx)?;
+  let include_apps = load_or_install_apps(apps, optional, include_apps, &ctx)?;
   let (executable, extra_path) = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: version.as_ref(),
