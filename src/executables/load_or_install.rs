@@ -94,7 +94,7 @@ pub fn load_or_install_app_and_carrier(
         LoadOrInstallAppOutcome::Loaded {
           executable: carrier_exe,
           // The path of the carrier's carrier.
-          // Probably a bit excessive to process it, but we have it so let's do the right thing.
+          // Probably a bit excessive to go that deep, but we have it so let's do the right thing.
           extra_path: carrier_carrier_path,
         } => {
           let mut carrier_paths = Vec::with_capacity(carrier_carrier_path.len() + 1);
