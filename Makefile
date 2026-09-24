@@ -36,7 +36,7 @@ fix: build  # auto-corrects issues
 	$(DPRINT) fmt
 	$(RUMDL) fmt
 	$(TAPLO) fmt
-	CLICOLOR_FORCE=1 target/debug/rta$(EXE) shfmt -f . | xargs target/debug/rta$(EXE) shfmt -w
+	CLICOLOR_FORCE=1 target/debug/rta$(EXE) shfmt -w .
 	$(KEEP_SORTED) $(shell $(RIPGREP) -l 'keep-sorted end' ./ --glob '!Makefile')
 
 install:  # installs this tool locally for testing
