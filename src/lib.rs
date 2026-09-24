@@ -63,7 +63,6 @@ use crate::applications::{AppDefinition, Apps};
 use crate::context::RuntimeContext;
 pub use crate::executables::CommandInfo;
 use crate::executables::{LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, RunMethod, load_or_install_app_and_carrier, load_or_install_apps};
-use crate::subshell::path_contains_executable;
 use crate::yard::Yard;
 use cli::Cli;
 pub use configuration::Version;
@@ -181,7 +180,7 @@ pub fn get_cmd(
   if needs_node(app, platform) {
     let node = applications::NodeJS {};
     let node_filename = node.executable_filename().platform_path(platform.os);
-    if !path_contains_executable(&env_path, &node_filename) {
+    if !subshell::path_contains_executable(&env_path, &node_filename) {
       return Err(error::UserError::MissingRuntime {
         runtime: node.name(),
         needed_by: app.name(),
