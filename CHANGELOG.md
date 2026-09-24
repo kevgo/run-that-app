@@ -1,6 +1,6 @@
 # run-that-app changelog
 
-# 0.42.3
+# 0.42.4
 
 - handles carrier applications properly
 - improved Windows compatibility
