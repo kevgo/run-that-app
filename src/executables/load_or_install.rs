@@ -190,7 +190,8 @@ pub struct LoadOrInstallAppAndCarrierArgs<'a> {
 pub enum LoadOrInstallAppOutcome {
   Loaded {
     executable: Executable,
-    /// directories to prepend to PATH when running this executable, e.g. Node.js for npm packages
+    /// directories to prepend to PATH when running this executable,
+    /// usually the carrier, e.g. Node.js for npm packages
     extra_path: Vec<PathBuf>,
   },
   NotInstallable {
