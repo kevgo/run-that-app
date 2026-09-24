@@ -184,7 +184,7 @@ pub fn get_cmd(
       return Err(error::UserError::MissingRuntime {
         runtime: node.name(),
         needed_by: app.name(),
-        script: Some(executable.as_path().to_path_buf()),
+        script: Some(executable.into()),
         searched_dirs: env::split_paths(&env_path).collect(),
       });
     }
