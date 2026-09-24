@@ -127,6 +127,7 @@ pub enum UserError {
   NoVersionsFound {
     app: ApplicationName,
   },
+  NpmInstallFailed,
   ProcessEmittedOutput {
     cmd: CommandInfo,
   },
@@ -298,6 +299,10 @@ impl UserError {
       UserError::NoVersionsFound { app } => {
         error(&format!(r#"application "{app}" is not listed in the "run-that-app" file"#));
         desc(&format!("To add it: run-that-app --add {app}"));
+      }
+      UserError::NpmInstallFailed => {
+        error("Command \"npm install\" failed.");
+        desc("Please see the error output above and try again.");
       }
       UserError::ProcessEmittedOutput { cmd } => {
         error(&format!("process \"{cmd}\" emitted unexpected output"));

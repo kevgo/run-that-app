@@ -5,6 +5,7 @@ use crate::installation::Outcome;
 use crate::{Version, commands};
 use std::fs;
 use std::path::Path;
+use std::process::ExitCode;
 
 pub fn run(package_name: &str, app_folder: &Path, version: &Version, optional: bool, apps: &Apps) -> Result<Outcome> {
   // create the package.json file
@@ -25,7 +26,7 @@ pub fn run(package_name: &str, app_folder: &Path, version: &Version, optional: b
   // run "npm install"
   let npm = Npm {};
   let nodejs = NodeJS {};
-  commands::run(
+  let exit_code = commands::run(
     RunArgs {
       app_name: npm.name(),
       app_args: vec!["install".to_string(), "--omit=dev".to_string()],
@@ -39,6 +40,10 @@ pub fn run(package_name: &str, app_folder: &Path, version: &Version, optional: b
     },
     apps,
   )?;
+
+  if exit_code != ExitCode::SUCCESS {
+    return Err(UserError::NpmInstallFailed);
+  }
 
   Ok(Outcome::Installed)
 }
