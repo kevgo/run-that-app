@@ -225,6 +225,23 @@ pub fn version_method(
   apps: &Apps,
 ) -> Result<Outcome> {
   ctx.yard.with_lock(&app_definition.name(), version, ctx, || {
+    // check if the app was installed while we were waiting for the lock
+    let app_folder_path = ctx.yard.app_folder(&app_definition.name(), version);
+    if app_folder_path.exists() {
+      if ctx.yard.is_not_installable(&app_definition.name(), version) {
+        return Ok(Outcome::NotInstalled { app: app_definition.name() });
+      }
+      if let Some(_executable) = ctx.yard.load_executable(
+        app_definition,
+        &app_definition.executable_filename().platform_path(ctx.platform.os),
+        version,
+        ctx,
+      ) {
+        return Ok(Outcome::Installed);
+      }
+      return Ok(Outcome::NotInstalled { app: app_definition.name() });
+    }
+
     let staging_folder = ctx.yard.create_staging_folder(&app_definition.name(), version)?;
     let outcome = match install_method {
       Method::DownloadArchive { url, bin_folder } => download_archive::run(app_definition, &staging_folder, version, url, bin_folder, optional, ctx),
@@ -236,7 +253,6 @@ pub fn version_method(
     }?;
     match outcome {
       Outcome::Installed => {
-        let app_folder_path = ctx.yard.app_folder(&app_definition.name(), version);
         ctx.yard.move_staging_folder_to_app_folder(staging_folder, app_folder_path)?;
         Ok(Outcome::Installed)
       }

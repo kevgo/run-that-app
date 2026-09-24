@@ -1,6 +1,11 @@
-TRICORDER_VERSION = 0.0.15     # tricorder version to use
+ifeq ($(OS),Windows_NT)
+  EXE = .exe
+else
+  EXE =
+endif
 
-RTA          = target/debug/rta
+RTA          = target/debug/rta$(EXE)
+TRICORDER_VERSION = 0.0.15     # tricorder version to use
 ACTIONLINT   = $(RTA) actionlint
 DPRINT       = $(RTA) dprint
 KEEP_SORTED  = $(RTA) keep-sorted
@@ -18,7 +23,7 @@ build:  # compiles this app in debug mode
 	cargo build --locked
 
 contest: build
-	target/debug/rta contest
+	target/debug/rta$(EXE) contest
 
 deadcode:
 	cargo test --test deadcode
@@ -33,7 +38,7 @@ fix: build  # auto-corrects issues
 	$(DPRINT) fmt
 	$(RUMDL) fmt
 	$(TAPLO) fmt
-	CLICOLOR_FORCE=1 target/debug/rta shfmt -f . | xargs target/debug/rta shfmt -w
+	CLICOLOR_FORCE=1 target/debug/rta$(EXE) shfmt -f . | xargs target/debug/rta$(EXE) shfmt -w
 	$(KEEP_SORTED) $(shell $(RIPGREP) -l 'keep-sorted end' ./ --glob '!Makefile')
 
 install:  # installs this tool locally for testing

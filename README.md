@@ -87,6 +87,7 @@ We can also compile apps from source if needed.
 - [goreleaser](https://goreleaser.com)
 - [govulncheck](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck)
 - [gum](https://github.com/charmbracelet/gum)
+- [hadolint](https://github.com/hadolint/hadolint)
 - [ireturn](https://github.com/butuzov/ireturn)
 - [keep-sorted](https://github.com/google/keep-sorted)
 - [lefthook](https://lefthook.dev)
@@ -362,7 +363,7 @@ This installs Go 1.21.6 and uses its bundled `gofmt`.
 Example Makefile integration:
 
 ```make
-RTA_VERSION = 0.42.1  # version of run-that-app to use
+RTA_VERSION = 0.42.3  # version of run-that-app to use
 
 RTA = tools/rta@${RTA_VERSION}
 ACTIONLINT = $(RTA} actionlint

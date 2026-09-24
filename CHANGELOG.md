@@ -1,5 +1,13 @@
 # run-that-app changelog
 
+## 0.42.3
+
+- app: hadolint
+
+## 0.42.2
+
+- check for existing installation after waiting for lock
+
 ## 0.42.1
 
 - improved error messages

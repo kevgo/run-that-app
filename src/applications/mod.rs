@@ -26,6 +26,7 @@ mod golangci_lint;
 mod goreleaser;
 mod govulnchec;
 mod gum;
+mod hadolint;
 mod ireturn;
 mod keep_sorted;
 mod lefthook;
@@ -86,6 +87,7 @@ pub use golangci_lint::GolangCiLint;
 pub use goreleaser::Goreleaser;
 pub use govulnchec::Govulncheck;
 pub use gum::Gum;
+pub use hadolint::Hadolint;
 pub use ireturn::Ireturn;
 pub use keep_sorted::KeepSorted;
 pub use lefthook::Lefthook;
@@ -146,6 +148,7 @@ pub fn all() -> Apps {
     Box::new(goreleaser::Goreleaser {}),
     Box::new(govulnchec::Govulncheck {}),
     Box::new(gum::Gum {}),
+    Box::new(hadolint::Hadolint {}),
     Box::new(ireturn::Ireturn {}),
     Box::new(keep_sorted::KeepSorted {}),
     Box::new(lefthook::Lefthook {}),
