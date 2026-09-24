@@ -139,7 +139,8 @@ pub fn load_or_install_app_and_carrier(
         Ok(LoadOrInstallAppOutcome::NotInstallable { app: _ }) if optional => {
           return Ok(LoadOrInstallAppOutcome::NotInstallable { app: app.name() });
         }
-        Ok(LoadOrInstallAppOutcome::NotInstallable { app: runtime }) | Err(UserError::NoVersionsFound { app: runtime }) => {
+        Ok(LoadOrInstallAppOutcome::NotInstallable { app: node }) => return Err(UserError::UnsupportedPlatform { app: node }),
+        Err(UserError::NoVersionsFound { app: runtime }) => {
           return Err({
             UserError::MissingRuntime {
               runtime,
