@@ -31,7 +31,7 @@ pub fn install(
   };
   // install the included apps
   let include_apps = apps.lookup_many(&include_apps)?;
-  load_or_install_apps(include_apps, apps, optional, &ctx)?;
+  load_or_install_apps(apps, optional, include_apps, &ctx)?;
   // install the main app
   match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app: app_to_install,
