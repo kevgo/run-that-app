@@ -327,7 +327,9 @@ fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version
             | installation::Method::CompileRustRepo { url: _ } => {}
             installation::Method::InstallNodeJSPackage { package, script: _ } => {
               return Err(UserError::InternalError {
-                message: format!("App {package} is an npm package, we should have handled this separately."),
+                message: format!(
+                  "App {package} is an npm package, we should have handled this separately.\nPlease report this as a bug at https://github.com/kevgo/run-that-app"
+                ),
               });
             }
           }
