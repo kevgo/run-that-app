@@ -156,7 +156,7 @@ pub fn get_cmd(
     config_file: &config_file,
     log,
   };
-  let include_apps = load_or_install_apps(apps, optional, include_apps, &ctx)?;
+  let (include_apps, include_apps_carrier_paths) = load_or_install_apps(apps, optional, include_apps, &ctx)?;
   let (executable, extra_path) = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: version.as_ref(),
@@ -169,9 +169,10 @@ pub fn get_cmd(
     LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => return Ok(None),
     LoadOrInstallAppOutcome::NotInstallable { app } => return Err(error::UserError::UnsupportedPlatform { app }),
   };
-  let mut paths_to_include: Vec<PathBuf> = Vec::with_capacity(1 + extra_path.len() + include_apps.len());
+  let mut paths_to_include: Vec<PathBuf> = Vec::with_capacity(1 + extra_path.len() + include_apps.len() + include_apps_carrier_paths.len());
   paths_to_include.push(executable.parent_path().to_path_buf());
   paths_to_include.extend(extra_path);
+  paths_to_include.extend(include_apps_carrier_paths);
   for app_to_include in &include_apps {
     paths_to_include.push(app_to_include.parent_path().to_path_buf());
   }

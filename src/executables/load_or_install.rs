@@ -9,8 +9,14 @@ use crate::{Version, installation};
 use big_s::S;
 use std::path::PathBuf;
 
-pub fn load_or_install_apps(apps: &Apps, optional: bool, apps_to_include: Vec<&dyn AppDefinition>, ctx: &RuntimeContext) -> Result<Vec<Executable>> {
-  let mut result = Vec::with_capacity(apps_to_include.len());
+pub fn load_or_install_apps(
+  apps: &Apps,
+  optional: bool,
+  apps_to_include: Vec<&dyn AppDefinition>,
+  ctx: &RuntimeContext,
+) -> Result<(Vec<Executable>, Vec<PathBuf>)> {
+  let mut executables = Vec::with_capacity(apps_to_include.len());
+  let mut extra_paths = Vec::new();
   for app_to_include in apps_to_include {
     match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
       app: app_to_include,
@@ -20,11 +26,15 @@ pub fn load_or_install_apps(apps: &Apps, optional: bool, apps_to_include: Vec<&d
       ctx,
       apps,
     })? {
-      LoadOrInstallAppOutcome::Loaded { executable, extra_path: _ } => result.push(executable),
-      LoadOrInstallAppOutcome::NotInstallable { app: _ } => {}
+      LoadOrInstallAppOutcome::Loaded { executable, extra_path } => {
+        executables.push(executable);
+        extra_paths.extend(extra_path);
+      }
+      LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => {}
+      LoadOrInstallAppOutcome::NotInstallable { app } => return Err(UserError::UnsupportedPlatform { app }),
     }
   }
-  Ok(result)
+  Ok((executables, extra_paths))
 }
 
 /// Provides a callable that executes the given app
