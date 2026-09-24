@@ -62,14 +62,15 @@ mod yard;
 use crate::applications::{AppDefinition, Apps};
 use crate::context::RuntimeContext;
 pub use crate::executables::CommandInfo;
-use crate::executables::{LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, load_or_install_app_and_carrier, load_or_install_apps};
+use crate::executables::{LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, RunMethod, load_or_install_app_and_carrier, load_or_install_apps};
 use crate::yard::Yard;
 use cli::Cli;
 pub use configuration::Version;
 #[cfg(test)]
 pub use error::UserError;
 use logging::Log;
-use std::path::Path;
+use std::env;
+use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 /// Runs run-that-app with the given CLI arguments.
@@ -155,8 +156,8 @@ pub fn get_cmd(
     config_file: &config_file,
     log,
   };
-  let include_apps = load_or_install_apps(apps, optional, include_apps, &ctx)?;
-  let executable = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+  let (include_apps, include_apps_carrier_paths) = load_or_install_apps(apps, optional, include_apps, &ctx)?;
+  let (executable, extra_path) = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: version.as_ref(),
     optional,
@@ -164,21 +165,44 @@ pub fn get_cmd(
     ctx: &ctx,
     apps,
   })? {
-    LoadOrInstallAppOutcome::Loaded { executable } => executable,
+    LoadOrInstallAppOutcome::Loaded { executable, extra_path } => (executable, extra_path),
     LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => return Ok(None),
     LoadOrInstallAppOutcome::NotInstallable { app } => return Err(error::UserError::UnsupportedPlatform { app }),
   };
-  let mut paths_to_include: Vec<&Path> = vec![&executable.parent_path()];
+  let mut paths_to_include: Vec<&Path> = Vec::with_capacity(1 + extra_path.len() + include_apps.len() + include_apps_carrier_paths.len());
+  paths_to_include.push(executable.parent_path());
+  paths_to_include.extend(extra_path.iter().map(PathBuf::as_path));
+  paths_to_include.extend(include_apps_carrier_paths.iter().map(PathBuf::as_path));
   for app_to_include in &include_apps {
     paths_to_include.push(app_to_include.parent_path());
   }
   let env_path = subshell::path_expressions(&paths_to_include);
+  if needs_node(app, platform) {
+    let node = applications::NodeJS {};
+    let node_filename = node.executable_filename().platform_path(platform.os);
+    if !subshell::path_contains_executable(&env_path, &node_filename) {
+      return Err(error::UserError::MissingRuntime {
+        runtime: node.name(),
+        needed_by: app.name(),
+        script: Some(executable.into()),
+        searched_dirs: env::split_paths(&env_path).collect(),
+      });
+    }
+  }
   let cmd_info = CommandInfo {
     executable: executable.into(),
     args: Some(app_args),
     env_path: Some(env_path),
   };
   Ok(Some(cmd_info))
+}
+
+fn needs_node(app: &dyn AppDefinition, platform: crate::platform::Platform) -> bool {
+  match app.run_method(&Version::from("*"), platform) {
+    RunMethod::NodeJS { .. } => true,
+    RunMethod::OtherAppShellScript { carrier, .. } => carrier.name().as_str() == "node",
+    RunMethod::ThisApp { .. } | RunMethod::OtherAppOtherExecutable { .. } => false,
+  }
 }
 
 /// data needed to run an executable

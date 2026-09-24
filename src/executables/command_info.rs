@@ -26,7 +26,7 @@ impl From<&CommandInfo> for Command {
     }
     if let Some(env_path) = env_path {
       cmd.envs(env::vars_os());
-      cmd.env("PATH", env_path);
+      crate::subshell::set_path_env(&mut cmd, env_path);
     }
     cmd
   }
