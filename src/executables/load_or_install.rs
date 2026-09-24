@@ -72,8 +72,8 @@ pub fn load_or_install_app_and_carrier(
     }),
 
     RunMethod::OtherAppShellScript { carrier, script_name } => {
-      // step 1: ensure the carrier app is installed, install if needed
-      let extra_path = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+      // step 1: load the carrier app, install if needed
+      let carrier_paths = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: carrier.as_ref(),
         cli_version: None,
         optional,
@@ -83,10 +83,15 @@ pub fn load_or_install_app_and_carrier(
       })? {
         LoadOrInstallAppOutcome::Loaded {
           executable: carrier_exe,
-          extra_path: mut dirs,
+          // The path the the carrier of the carrier.
+          // Probably a bit crazy to process it, but we have it so let's do the right thing here.
+          extra_path: carrier_carrier_path,
         } => {
-          dirs.push(carrier_exe.parent_path().to_path_buf());
-          dirs
+          let mut carrier_paths = Vec::with_capacity(carrier_carrier_path.len() + 1);
+          carrier_paths.extend(carrier_carrier_path);
+          let carrier_path = carrier_exe.parent_path().to_path_buf();
+          carrier_paths.push(carrier_path);
+          carrier_paths
         }
         LoadOrInstallAppOutcome::NotInstallable { app } => {
           return Ok(LoadOrInstallAppOutcome::NotInstallable { app });
@@ -96,13 +101,13 @@ pub fn load_or_install_app_and_carrier(
       let shell_script = locate_shell_script(carrier.as_ref(), cli_version, script_name, ctx)?;
       Ok(LoadOrInstallAppOutcome::Loaded {
         executable: shell_script,
-        extra_path,
+        extra_path: carrier_paths,
       })
     }
 
     RunMethod::NodeJS { package, script } => {
-      // step 1: ensure NodeJS is installed, install if needed, and put it on PATH
-      let extra_path = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+      // step 1: load NodeJS, install if needed, and put it on PATH
+      let node_paths = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
         app: &NodeJS {},
         cli_version: None,
         optional,
@@ -112,10 +117,14 @@ pub fn load_or_install_app_and_carrier(
       }) {
         Ok(LoadOrInstallAppOutcome::Loaded {
           executable: node,
-          extra_path: mut dirs,
+          // the path of Node's carrier app
+          extra_path: node_carrier_path,
         }) => {
-          dirs.push(node.parent_path().to_path_buf());
-          dirs
+          let mut carrier_paths = Vec::with_capacity(node_carrier_path.len() + 1);
+          carrier_paths.extend(node_carrier_path);
+          let node_path = node.parent_path().to_path_buf();
+          carrier_paths.push(node_path);
+          carrier_paths
         }
         Ok(LoadOrInstallAppOutcome::NotInstallable { app: _ }) if optional => {
           return Ok(LoadOrInstallAppOutcome::NotInstallable { app: app.name() });
@@ -135,7 +144,10 @@ pub fn load_or_install_app_and_carrier(
       };
       // step 3: fast-path: try to load the app executable
       if let Ok(executable) = locate_npm_package_executable(app, &app_versions, script, ctx) {
-        return Ok(LoadOrInstallAppOutcome::Loaded { executable, extra_path });
+        return Ok(LoadOrInstallAppOutcome::Loaded {
+          executable,
+          extra_path: node_paths,
+        });
       }
       // step 4: install the npm package
       match installation::versions(app, &app_versions, optional, from_source, ctx, apps)? {
@@ -144,7 +156,10 @@ pub fn load_or_install_app_and_carrier(
       }
       // step 5: load the npm package executable
       if let Ok(executable) = locate_npm_package_executable(app, &app_versions, script, ctx) {
-        return Ok(LoadOrInstallAppOutcome::Loaded { executable, extra_path });
+        return Ok(LoadOrInstallAppOutcome::Loaded {
+          executable,
+          extra_path: node_paths,
+        });
       }
       Err(UserError::InternalError {
         message: format!("successfully installed npm package {package} but cannot load it now"),
