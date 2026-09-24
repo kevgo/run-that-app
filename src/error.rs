@@ -289,9 +289,6 @@ impl UserError {
           }
         }
         desc(&format!("Please add {runtime} to your run-that-app file: run-that-app --add {runtime}"));
-        if runtime.as_str() == "node" {
-          desc("You can also install Node.js from https://nodejs.org");
-        }
       }
       UserError::MultipleCommandsGiven => {
         error("multiple commands given");
