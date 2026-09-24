@@ -301,7 +301,7 @@ impl UserError {
         desc(&format!("To add it: run-that-app --add {app}"));
       }
       UserError::NpmInstallFailed => {
-        error("npm install failed.");
+        error("Command \"npm install\" failed.");
         desc("Please see the error output above and try again.");
       }
       UserError::ProcessEmittedOutput { cmd } => {
