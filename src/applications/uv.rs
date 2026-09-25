@@ -97,8 +97,8 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/uv/releases/download/0.9.21/uv-aarch64-unknown-linux-gnu.tar.gz".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "uv-aarch64-unknown-linux-gnu".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["uv-aarch64-unknown-linux-gnu".into()],
           },
         }],
       };
@@ -117,8 +117,8 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/uv/releases/download/0.9.21/uv-x86_64-unknown-linux-gnu.tar.gz".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "uv-x86_64-unknown-linux-gnu".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["uv-x86_64-unknown-linux-gnu".into()],
           },
         }],
       };
@@ -137,8 +137,8 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/uv/releases/download/0.9.21/uv-aarch64-apple-darwin.tar.gz".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "uv-aarch64-apple-darwin".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["uv-aarch64-apple-darwin".into()],
           },
         }],
       };
@@ -157,8 +157,8 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/uv/releases/download/0.9.21/uv-x86_64-apple-darwin.tar.gz".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "uv-x86_64-apple-darwin".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["uv-x86_64-apple-darwin".into()],
           },
         }],
       };
@@ -177,8 +177,8 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/uv/releases/download/0.9.21/uv-aarch64-pc-windows-msvc.zip".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "uv-aarch64-pc-windows-msvc".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["uv-aarch64-pc-windows-msvc".into()],
           },
         }],
       };
@@ -197,8 +197,8 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/uv/releases/download/0.9.21/uv-x86_64-pc-windows-msvc.zip".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "uv-x86_64-pc-windows-msvc".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["uv-x86_64-pc-windows-msvc".into()],
           },
         }],
       };
