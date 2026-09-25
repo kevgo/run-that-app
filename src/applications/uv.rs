@@ -41,8 +41,10 @@ impl AppDefinition for Uv {
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/uv-{cpu}-{os}.{ext}").into(),
-        bin_folder: BinFolder::Subfolder {
-          path: format!("uv-{cpu}-{os}").into(),
+        bin_folder: BinFolder::RootOrSubfolders {
+          // on Windows the executable is in the root folder
+          // on other platforms in a subfolder
+          options: vec![format!("uv-{cpu}-{os}").into()],
         },
       }],
     }
