@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+# 0.42.6
+
+- make ruff run on Windows
+
 # 0.42.5
 
 - make uv run correctly on Windows
