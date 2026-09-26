@@ -96,7 +96,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-aarch64-unknown-linux-gnu.tar.gz".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec![format!("ruff-aarch64-unknown-linux-gnu").into()],
+            options: vec!["ruff-aarch64-unknown-linux-gnu".into()],
           },
         }],
       };
@@ -116,7 +116,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-x86_64-unknown-linux-gnu.tar.gz".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec![format!("ruff-x86_64-unknown-linux-gnu").into()],
+            options: vec!["ruff-x86_64-unknown-linux-gnu".into()],
           },
         }],
       };
@@ -136,7 +136,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-aarch64-apple-darwin.tar.gz".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec![format!("ruff-aarch64-apple-darwin").into()],
+            options: vec!["ruff-aarch64-apple-darwin".into()],
           },
         }],
       };
@@ -156,7 +156,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-x86_64-apple-darwin.tar.gz".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec![format!("ruff-x86_64-apple-darwin").into()],
+            options: vec!["ruff-x86_64-apple-darwin".into()],
           },
         }],
       };
@@ -176,7 +176,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-aarch64-pc-windows-msvc.zip".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec![format!("ruff-aarch64-pc-windows-msvc").into()],
+            options: vec!["ruff-aarch64-pc-windows-msvc".into()],
           },
         }],
       };
@@ -196,7 +196,7 @@ mod tests {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-x86_64-pc-windows-msvc.zip".into(),
           bin_folder: BinFolder::RootOrSubfolders {
-            options: vec![format!("ruff-x86_64-pc-windows-msvc").into()],
+            options: vec!["ruff-x86_64-pc-windows-msvc".into()],
           },
         }],
       };
