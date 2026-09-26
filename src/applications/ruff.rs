@@ -41,8 +41,8 @@ impl AppDefinition for Ruff {
     RunMethod::ThisApp {
       install_methods: vec![Method::DownloadArchive {
         url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/ruff-{cpu}-{os}.{ext}").into(),
-        bin_folder: BinFolder::Subfolder {
-          path: format!("ruff-{cpu}-{os}").into(),
+        bin_folder: BinFolder::RootOrSubfolders {
+          options: vec![format!("ruff-{cpu}-{os}").into()],
         },
       }],
     }
@@ -95,8 +95,8 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-aarch64-unknown-linux-gnu.tar.gz".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "ruff-aarch64-unknown-linux-gnu".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["ruff-aarch64-unknown-linux-gnu".into()],
           },
         }],
       };
@@ -115,8 +115,8 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-x86_64-unknown-linux-gnu.tar.gz".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "ruff-x86_64-unknown-linux-gnu".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["ruff-x86_64-unknown-linux-gnu".into()],
           },
         }],
       };
@@ -135,8 +135,8 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-aarch64-apple-darwin.tar.gz".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "ruff-aarch64-apple-darwin".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["ruff-aarch64-apple-darwin".into()],
           },
         }],
       };
@@ -155,8 +155,8 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-x86_64-apple-darwin.tar.gz".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "ruff-x86_64-apple-darwin".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["ruff-x86_64-apple-darwin".into()],
           },
         }],
       };
@@ -175,8 +175,8 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-aarch64-pc-windows-msvc.zip".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "ruff-aarch64-pc-windows-msvc".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["ruff-aarch64-pc-windows-msvc".into()],
           },
         }],
       };
@@ -195,8 +195,8 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![Method::DownloadArchive {
           url: "https://github.com/astral-sh/ruff/releases/download/0.15.5/ruff-x86_64-pc-windows-msvc.zip".into(),
-          bin_folder: BinFolder::Subfolder {
-            path: "ruff-x86_64-pc-windows-msvc".into(),
+          bin_folder: BinFolder::RootOrSubfolders {
+            options: vec!["ruff-x86_64-pc-windows-msvc".into()],
           },
         }],
       };
