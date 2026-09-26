@@ -14,7 +14,5 @@
 - publish to crates.io:
 
   ```sh
-  rm -rf node_modules
-
-  cargo publish
+  rm -rf node_modules && cargo publish
   ```
