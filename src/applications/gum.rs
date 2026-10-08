@@ -132,7 +132,7 @@ mod tests {
             },
           },
           Method::CompileGoSource {
-            import_path: "github.com/charmbracelet/gum@v0.17.0".into(),
+            import_path: "charm.land/gum/v2@v0.17.0".into(),
           },
         ],
       };
@@ -157,7 +157,7 @@ mod tests {
             },
           },
           Method::CompileGoSource {
-            import_path: "github.com/charmbracelet/gum@v0.17.0".into(),
+            import_path: "charm.land/gum/v2@v0.17.0".into(),
           },
         ],
       };
@@ -182,7 +182,7 @@ mod tests {
             },
           },
           Method::CompileGoSource {
-            import_path: "github.com/charmbracelet/gum@latest".into(),
+            import_path: "charm.land/gum/v2@v0.17.0".into(),
           },
         ],
       };
@@ -207,7 +207,7 @@ mod tests {
             },
           },
           Method::CompileGoSource {
-            import_path: "github.com/charmbracelet/gum@v0.17.0".into(),
+            import_path: "charm.land/gum/v2@v0.17.0".into(),
           },
         ],
       };
@@ -232,7 +232,7 @@ mod tests {
             },
           },
           Method::CompileGoSource {
-            import_path: "github.com/charmbracelet/gum@v0.17.0".into(),
+            import_path: "charm.land/gum/v2@v0.17.0".into(),
           },
         ],
       };
