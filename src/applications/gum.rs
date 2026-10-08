@@ -47,7 +47,7 @@ impl AppDefinition for Gum {
           },
         },
         Method::CompileGoSource {
-          import_path: "charm.land/gum/v2@latest".to_string(),
+          import_path: format!("charm.land/gum/v2@{tag}"),
         },
       ],
     }
