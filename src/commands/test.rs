@@ -62,6 +62,9 @@ pub fn test(args: &mut TestArgs, apps: &Apps) -> Result<ExitCode> {
           }
           AnalyzeResult::IdentifiedWithVersion(executable_version) => {
             println!("executable has version {executable_version} but we installed version {latest_version}");
+            println!("press ENTER after inspecting the yard");
+            println!("yard: {}", yard.app_folder(&app.name(), &latest_version).display());
+            wait_for_enter();
             return Ok(ExitCode::FAILURE);
           }
         }

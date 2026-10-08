@@ -41,7 +41,7 @@ impl AppDefinition for TextRunner {
     if !output.contains("runs only the programmatic tests, skips checking links") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
-    match strings::first_version(&subshell::capture_output(executable, &["version"])?) {
+    match strings::first_version(&output) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
       Err(_) => Ok(AnalyzeResult::IdentifiedButUnknownVersion),
     }
