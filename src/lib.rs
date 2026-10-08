@@ -62,7 +62,7 @@ mod yard;
 use crate::applications::{AppDefinition, Apps};
 use crate::context::RuntimeContext;
 pub use crate::executables::CommandInfo;
-use crate::executables::{LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, RunMethod, load_or_install_app_and_carrier, load_or_install_apps};
+use crate::executables::{LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, RunMethod, UvTool, load_or_install_app_and_carrier, load_or_install_apps};
 use crate::yard::Yard;
 use cli::Cli;
 pub use configuration::Version;
@@ -157,7 +157,7 @@ pub fn get_cmd(
     log,
   };
   let (include_apps, include_apps_carrier_paths) = load_or_install_apps(apps, optional, include_apps, &ctx)?;
-  let (executable, extra_path, mut args) = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+  let (executable, extra_path, uv_tool) = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: version.as_ref(),
     optional,
@@ -165,7 +165,11 @@ pub fn get_cmd(
     ctx: &ctx,
     apps,
   })? {
-    LoadOrInstallAppOutcome::Loaded { executable, extra_path, args } => (executable, extra_path, args),
+    LoadOrInstallAppOutcome::Loaded {
+      executable,
+      extra_path,
+      uv_tool,
+    } => (executable, extra_path, uv_tool),
     LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => return Ok(None),
     LoadOrInstallAppOutcome::NotInstallable { app } => return Err(error::UserError::UnsupportedPlatform { app }),
   };
@@ -189,6 +193,7 @@ pub fn get_cmd(
       });
     }
   }
+  let mut args = uv_tool.as_ref().map_or_else(Vec::new, UvTool::run_args);
   args.extend(app_args);
   let cmd_info = CommandInfo {
     executable: executable.into(),

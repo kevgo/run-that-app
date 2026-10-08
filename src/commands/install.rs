@@ -44,7 +44,7 @@ pub fn install(
     LoadOrInstallAppOutcome::Loaded {
       executable: _,
       extra_path: _,
-      args: _,
+      uv_tool: _,
     } => Ok(ExitCode::SUCCESS),
     LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => Ok(ExitCode::SUCCESS),
     LoadOrInstallAppOutcome::NotInstallable { app } => Err(UserError::UnsupportedPlatform { app }),

@@ -2,7 +2,7 @@ use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps, N
 use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::executables::{Executable, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
+use crate::executables::{Executable, ExecutableNameUnix, LoadAppOutcome, RunMethod, UvTool, load_app_versions};
 use crate::installation::Outcome;
 use crate::logging::Event;
 use crate::platform::Os;
@@ -28,12 +28,16 @@ pub fn load_or_install_apps(
       ctx,
       apps,
     })? {
-      LoadOrInstallAppOutcome::Loaded { executable, extra_path, args } => {
-        if !args.is_empty() {
-          // the app runs through a command of its carrier (e.g. "uv tool run"), so there is no executable of this app to put on the PATH
-          return Err(UserError::CannotIncludeApp { app: app_to_include.name() });
+      LoadOrInstallAppOutcome::Loaded {
+        executable,
+        extra_path,
+        uv_tool,
+      } => {
+        match uv_tool {
+          // include the folder containing the tool's executable, not uv's folder
+          Some(uv_tool) => executables.push(Executable::Binary(uv_tool.executable_path(&executable)?)),
+          None => executables.push(executable),
         }
-        executables.push(executable);
         extra_paths.extend(extra_path);
       }
       LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => {}
@@ -102,7 +106,7 @@ pub fn load_or_install_app_and_carrier(
           // The path of the carrier's carrier.
           // Probably a bit excessive to go that deep, but we have it so let's do the right thing.
           extra_path: carrier_carrier_path,
-          args: _,
+          uv_tool: _,
         } => {
           let mut carrier_paths = Vec::with_capacity(carrier_carrier_path.len() + 1);
           carrier_paths.extend(carrier_carrier_path);
@@ -119,7 +123,7 @@ pub fn load_or_install_app_and_carrier(
       Ok(LoadOrInstallAppOutcome::Loaded {
         executable: shell_script,
         extra_path: carrier_paths,
-        args: vec![],
+        uv_tool: None,
       })
     }
 
@@ -144,7 +148,7 @@ pub fn load_or_install_app_and_carrier(
         return Ok(LoadOrInstallAppOutcome::Loaded {
           executable,
           extra_path: node_paths,
-          args: vec![],
+          uv_tool: None,
         });
       }
       // step 4: install the npm package
@@ -157,7 +161,7 @@ pub fn load_or_install_app_and_carrier(
         return Ok(LoadOrInstallAppOutcome::Loaded {
           executable,
           extra_path: node_paths,
-          args: vec![],
+          uv_tool: None,
         });
       }
       Err(UserError::InternalError {
@@ -171,7 +175,7 @@ pub fn load_or_install_app_and_carrier(
         return Ok(LoadOrInstallAppOutcome::Loaded {
           executable,
           extra_path: vec![],
-          args: vec![],
+          uv_tool: None,
         });
       }
       // step 2: determine the version of the Python package to run
@@ -190,7 +194,7 @@ pub fn load_or_install_app_and_carrier(
               return Ok(LoadOrInstallAppOutcome::Loaded {
                 executable,
                 extra_path: vec![],
-                args: vec![],
+                uv_tool: None,
               });
             }
           }
@@ -202,7 +206,11 @@ pub fn load_or_install_app_and_carrier(
             return Ok(LoadOrInstallAppOutcome::Loaded {
               executable: uv,
               extra_path: uv_carrier_paths,
-              args: uv_tool_run_args(package, script, version),
+              uv_tool: Some(UvTool {
+                package,
+                script,
+                version: version.clone(),
+              }),
             });
           }
         }
@@ -227,9 +235,8 @@ pub enum LoadOrInstallAppOutcome {
     /// directories to prepend to PATH when running this executable,
     /// usually the carrier, e.g. Node.js for npm packages
     extra_path: Vec<PathBuf>,
-    /// arguments to call the executable with before the arguments for the app,
-    /// e.g. "tool run -- <package>@<version>" when running Python packages via uv
-    args: Vec<String>,
+    /// If set, the executable is uv and the app is a Python package that runs via "uv tool run".
+    uv_tool: Option<UvTool>,
   },
   NotInstallable {
     app: ApplicationName,
@@ -329,7 +336,7 @@ fn load_runtime(
     Ok(LoadOrInstallAppOutcome::Loaded {
       executable,
       extra_path,
-      args: _,
+      uv_tool: _,
     }) => Ok(Some((executable, extra_path))),
     Ok(LoadOrInstallAppOutcome::NotInstallable { app: _ }) if optional => Ok(None),
     Ok(LoadOrInstallAppOutcome::NotInstallable { app }) => Err(UserError::UnsupportedPlatform { app }),
@@ -362,15 +369,6 @@ fn venv_executable_path(folder: &Path, script: &str, os: Os) -> PathBuf {
   match os {
     Os::Linux | Os::MacOS => venv.join("bin").join(script),
     Os::Windows => venv.join("Scripts").join(format!("{script}.exe")),
-  }
-}
-
-/// provides the arguments for uv to run the given script of the given Python package at the given version
-fn uv_tool_run_args(package: &str, script: &str, version: &Version) -> Vec<String> {
-  if package == script {
-    vec![S("tool"), S("run"), S("--"), format!("{script}@{version}")]
-  } else {
-    vec![S("tool"), S("run"), S("--from"), format!("{package}@{version}"), S("--"), script.to_string()]
   }
 }
 
@@ -489,7 +487,7 @@ fn load_or_install_app(
       return Ok(LoadOrInstallAppOutcome::Loaded {
         executable,
         extra_path: vec![],
-        args: vec![],
+        uv_tool: None,
       });
     }
     LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
@@ -507,7 +505,7 @@ fn load_or_install_app(
     LoadAppOutcome::Loaded { executable } => Ok(LoadOrInstallAppOutcome::Loaded {
       executable,
       extra_path: vec![],
-      args: vec![],
+      uv_tool: None,
     }),
     LoadAppOutcome::NotInstallable { app } => Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app } => Err(UserError::InternalError {
@@ -528,26 +526,6 @@ struct LoadOrInstallAppArgs<'a> {
 
 #[cfg(test)]
 mod tests {
-
-  mod uv_tool_run_args {
-    use super::super::uv_tool_run_args;
-    use crate::configuration::Version;
-    use big_s::S;
-
-    #[test]
-    fn package_provides_same_script() {
-      let have = uv_tool_run_args("pyright", "pyright", &Version::from("1.1.414"));
-      let want = vec![S("tool"), S("run"), S("--"), S("pyright@1.1.414")];
-      assert_eq!(have, want);
-    }
-
-    #[test]
-    fn package_provides_different_script() {
-      let have = uv_tool_run_args("python-lsp-server", "pylsp", &Version::from("1.13.0"));
-      let want = vec![S("tool"), S("run"), S("--from"), S("python-lsp-server@1.13.0"), S("--"), S("pylsp")];
-      assert_eq!(have, want);
-    }
-  }
 
   mod venv_executable_path {
     use super::super::venv_executable_path;

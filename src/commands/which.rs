@@ -38,12 +38,11 @@ pub fn which(
     LoadOrInstallAppOutcome::Loaded {
       executable,
       extra_path: _,
-      args,
+      uv_tool,
     } => {
-      if args.is_empty() {
-        println!("{executable}");
-      } else {
-        println!("{executable} {}", args.join(" "));
+      match uv_tool {
+        Some(uv_tool) => println!("{}", uv_tool.executable_path(&executable)?.display()),
+        None => println!("{executable}"),
       }
       Ok(ExitCode::SUCCESS)
     }

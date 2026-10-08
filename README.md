@@ -201,8 +201,6 @@ The `--available` command reports availability via its exit code.
 ### get the path to the installed executable
 
 The `--which` command prints the path to the resolved executable.
-For Python apps that aren't installed in the `.venv` folder of the current
-directory, it prints the `uv tool run` command that runs them.
 
 Example: run `go vet` with `alphavet` as a custom vet tool,
 but only if `alphavet` is available:
