@@ -80,7 +80,7 @@ impl Method {
       },
       Method::CompileRustRepo { url: _ } => vec![app_folder.join("bin").join(executable_filename.as_ref())],
       Method::InstallNodeJSPackage { package: _, script } => {
-        let bin_folder = PathBuf::from("node_modules").join(".bin");
+        let bin_folder = app_folder.join("node_modules").join(".bin");
         vec![bin_folder.join(format!("{script}.cmd")), bin_folder.join(script)]
       }
     }
