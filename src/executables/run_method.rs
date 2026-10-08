@@ -37,6 +37,15 @@ pub enum RunMethod {
     /// unix name of the shell script for the package in `node_modules/.bin`
     script: &'static str,
   },
+
+  /// the app is a Python package
+  Uv {
+    /// name of the Python package to install
+    package: &'static str,
+
+    /// unix name of the shell script for the package in `.venv/bin`
+    script: &'static str,
+  },
 }
 
 impl RunMethod {
