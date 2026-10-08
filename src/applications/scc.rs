@@ -99,7 +99,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileGoSource {
-            import_path: S("github.com/boyter/scc/v3@v3.2.0"),
+            import_path: S("github.com/boyter/scc/v4@v3.2.0"),
           },
         ],
       };
@@ -122,7 +122,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileGoSource {
-            import_path: S("github.com/boyter/scc/v3@v3.2.0"),
+            import_path: S("github.com/boyter/scc/v4@v3.2.0"),
           },
         ],
       };
@@ -145,7 +145,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileGoSource {
-            import_path: S("github.com/boyter/scc/v3@v3.2.0"),
+            import_path: S("github.com/boyter/scc/v4@v3.2.0"),
           },
         ],
       };
@@ -168,7 +168,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileGoSource {
-            import_path: S("github.com/boyter/scc/v3@v3.2.0"),
+            import_path: S("github.com/boyter/scc/v4@v3.2.0"),
           },
         ],
       };
@@ -191,7 +191,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileGoSource {
-            import_path: S("github.com/boyter/scc/v3@v3.2.0"),
+            import_path: S("github.com/boyter/scc/v4@v3.2.0"),
           },
         ],
       };
@@ -214,7 +214,7 @@ mod tests {
             bin_folder: BinFolder::Root,
           },
           Method::CompileGoSource {
-            import_path: S("github.com/boyter/scc/v3@v3.2.0"),
+            import_path: S("github.com/boyter/scc/v4@v3.2.0"),
           },
         ],
       };
