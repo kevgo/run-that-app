@@ -1,13 +1,15 @@
-use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps, NodeJS};
+use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps, NodeJS, Uv};
 use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableNameUnix, LoadAppOutcome, RunMethod, load_app_versions};
 use crate::installation::Outcome;
 use crate::logging::Event;
+use crate::platform::Os;
 use crate::{Version, installation};
 use big_s::S;
-use std::path::PathBuf;
+use std::env;
+use std::path::{Path, PathBuf};
 
 pub fn load_or_install_apps(
   apps: &Apps,
@@ -26,7 +28,11 @@ pub fn load_or_install_apps(
       ctx,
       apps,
     })? {
-      LoadOrInstallAppOutcome::Loaded { executable, extra_path } => {
+      LoadOrInstallAppOutcome::Loaded { executable, extra_path, args } => {
+        if !args.is_empty() {
+          // the app runs through a command of its carrier (e.g. "uv tool run"), so there is no executable of this app to put on the PATH
+          return Err(UserError::CannotIncludeApp { app: app_to_include.name() });
+        }
         executables.push(executable);
         extra_paths.extend(extra_path);
       }
@@ -96,6 +102,7 @@ pub fn load_or_install_app_and_carrier(
           // The path of the carrier's carrier.
           // Probably a bit excessive to go that deep, but we have it so let's do the right thing.
           extra_path: carrier_carrier_path,
+          args: _,
         } => {
           let mut carrier_paths = Vec::with_capacity(carrier_carrier_path.len() + 1);
           carrier_paths.extend(carrier_carrier_path);
@@ -112,46 +119,18 @@ pub fn load_or_install_app_and_carrier(
       Ok(LoadOrInstallAppOutcome::Loaded {
         executable: shell_script,
         extra_path: carrier_paths,
+        args: vec![],
       })
     }
 
     RunMethod::NodeJS { package, script } => {
       // step 1: load NodeJS, install if needed, and put it on PATH
-      let node_paths = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
-        app: &NodeJS {},
-        cli_version: None,
-        optional,
-        from_source: false,
-        ctx,
-        apps,
-      }) {
-        Ok(LoadOrInstallAppOutcome::Loaded {
-          executable: node,
-          // the path of Node's carrier app
-          extra_path: node_carrier_path,
-        }) => {
-          let mut carrier_paths = Vec::with_capacity(node_carrier_path.len() + 1);
-          carrier_paths.extend(node_carrier_path);
-          let node_path = node.parent_path().to_path_buf();
-          carrier_paths.push(node_path);
-          carrier_paths
-        }
-        Ok(LoadOrInstallAppOutcome::NotInstallable { app: _ }) if optional => {
-          return Ok(LoadOrInstallAppOutcome::NotInstallable { app: app.name() });
-        }
-        Ok(LoadOrInstallAppOutcome::NotInstallable { app: node }) => return Err(UserError::UnsupportedPlatform { app: node }),
-        Err(UserError::NoVersionsFound { app: runtime }) => {
-          return Err({
-            UserError::MissingRuntime {
-              runtime,
-              needed_by: app.name(),
-              script: None,
-              searched_dirs: vec![],
-            }
-          });
-        }
-        Err(err) => return Err(err),
+      let Some((node, node_carrier_paths)) = load_runtime(&NodeJS {}, app, optional, ctx, apps)? else {
+        return Ok(LoadOrInstallAppOutcome::NotInstallable { app: app.name() });
       };
+      let mut node_paths = Vec::with_capacity(node_carrier_paths.len() + 1);
+      node_paths.extend(node_carrier_paths);
+      node_paths.push(node.parent_path().to_path_buf());
       // step 2: determine the version of the npm package to run
       let app_versions = if let Some(version) = cli_version {
         RequestedVersions::from(version)
@@ -165,6 +144,7 @@ pub fn load_or_install_app_and_carrier(
         return Ok(LoadOrInstallAppOutcome::Loaded {
           executable,
           extra_path: node_paths,
+          args: vec![],
         });
       }
       // step 4: install the npm package
@@ -177,11 +157,57 @@ pub fn load_or_install_app_and_carrier(
         return Ok(LoadOrInstallAppOutcome::Loaded {
           executable,
           extra_path: node_paths,
+          args: vec![],
         });
       }
       Err(UserError::InternalError {
         message: format!("successfully installed npm package {package} but cannot load it now"),
       })
+    }
+
+    RunMethod::Uv { package, script } => {
+      // step 1: fast path: use the executable installed in the local Python virtual environment
+      if let Some(executable) = locate_venv_executable(script, ctx)? {
+        return Ok(LoadOrInstallAppOutcome::Loaded {
+          executable,
+          extra_path: vec![],
+          args: vec![],
+        });
+      }
+      // step 2: determine the version of the Python package to run
+      let app_versions = if let Some(version) = cli_version {
+        RequestedVersions::from(version)
+      } else if let Some(versions) = ctx.config_file.lookup(&app.name()) {
+        versions.clone()
+      } else {
+        return Err(UserError::NoVersionsFound { app: app.name() });
+      };
+      // step 3: run the first available version
+      for version in &app_versions {
+        match version {
+          RequestedVersion::Path(range) => {
+            if let Some(executable) = locate_global_install(app, range, script, Executable::Binary, ctx)? {
+              return Ok(LoadOrInstallAppOutcome::Loaded {
+                executable,
+                extra_path: vec![],
+                args: vec![],
+              });
+            }
+          }
+          RequestedVersion::Yard(version) => {
+            // run the Python package via "uv tool run", using the uv executable provided by run-that-app
+            let Some((uv, uv_carrier_paths)) = load_runtime(&Uv {}, app, optional, ctx, apps)? else {
+              return Ok(LoadOrInstallAppOutcome::NotInstallable { app: app.name() });
+            };
+            return Ok(LoadOrInstallAppOutcome::Loaded {
+              executable: uv,
+              extra_path: uv_carrier_paths,
+              args: uv_tool_run_args(package, script, version),
+            });
+          }
+        }
+      }
+      Ok(LoadOrInstallAppOutcome::NotInstallable { app: app.name() })
     }
   }
 }
@@ -201,6 +227,9 @@ pub enum LoadOrInstallAppOutcome {
     /// directories to prepend to PATH when running this executable,
     /// usually the carrier, e.g. Node.js for npm packages
     extra_path: Vec<PathBuf>,
+    /// arguments to call the executable with before the arguments for the app,
+    /// e.g. "tool run -- <package>@<version>" when running Python packages via uv
+    args: Vec<String>,
   },
   NotInstallable {
     app: ApplicationName,
@@ -212,40 +241,9 @@ fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVe
   for version in versions {
     match version {
       RequestedVersion::Path(range) => {
-        (ctx.log)(Event::GlobalInstallSearch { binary: script });
-        if let Ok(path) = which::which(script) {
-          (ctx.log)(Event::GlobalInstallFound { path: &path });
-          let executable = Executable::ShellScript(path);
-          match app.analyze_executable(&executable)? {
-            AnalyzeResult::NotIdentified { output: _ } => {
-              (ctx.log)(Event::GlobalInstallNotIdentified);
-              continue;
-            }
-            AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
-              (ctx.log)(Event::GlobalInstallMatchingVersion { range, version: None });
-              return Ok(executable);
-            }
-            AnalyzeResult::IdentifiedButUnknownVersion => {
-              (ctx.log)(Event::GlobalInstallMismatchingVersion { range, version: None });
-              continue;
-            }
-            AnalyzeResult::IdentifiedWithVersion(version) if range.matches(&version.semver()?) => {
-              (ctx.log)(Event::GlobalInstallMatchingVersion {
-                range,
-                version: Some(&version),
-              });
-              return Ok(executable);
-            }
-            AnalyzeResult::IdentifiedWithVersion(version) => {
-              (ctx.log)(Event::GlobalInstallMatchingVersion {
-                range,
-                version: Some(&version),
-              });
-              continue;
-            }
-          }
+        if let Some(executable) = locate_global_install(app, range, script, Executable::ShellScript, ctx)? {
+          return Ok(executable);
         }
-        (ctx.log)(Event::GlobalInstallNotFound);
         tried_paths.push(S("(global install)"));
       }
       RequestedVersion::Yard(version) => {
@@ -263,6 +261,117 @@ fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVe
     name: script.to_string(),
     paths: tried_paths,
   })
+}
+
+/// provides the executable for the given app if it is installed globally in a version matching the given range
+fn locate_global_install(
+  app: &dyn AppDefinition,
+  range: &semver::VersionReq,
+  script: &str,
+  to_executable: fn(PathBuf) -> Executable,
+  ctx: &RuntimeContext,
+) -> Result<Option<Executable>> {
+  (ctx.log)(Event::GlobalInstallSearch { binary: script });
+  let Ok(path) = which::which(script) else {
+    (ctx.log)(Event::GlobalInstallNotFound);
+    return Ok(None);
+  };
+  (ctx.log)(Event::GlobalInstallFound { path: &path });
+  let executable = to_executable(path);
+  match app.analyze_executable(&executable)? {
+    AnalyzeResult::NotIdentified { output: _ } => {
+      (ctx.log)(Event::GlobalInstallNotIdentified);
+      Ok(None)
+    }
+    AnalyzeResult::IdentifiedButUnknownVersion if range.to_string() == "*" => {
+      (ctx.log)(Event::GlobalInstallMatchingVersion { range, version: None });
+      Ok(Some(executable))
+    }
+    AnalyzeResult::IdentifiedButUnknownVersion => {
+      (ctx.log)(Event::GlobalInstallMismatchingVersion { range, version: None });
+      Ok(None)
+    }
+    AnalyzeResult::IdentifiedWithVersion(version) if range.matches(&version.semver()?) => {
+      (ctx.log)(Event::GlobalInstallMatchingVersion {
+        range,
+        version: Some(&version),
+      });
+      Ok(Some(executable))
+    }
+    AnalyzeResult::IdentifiedWithVersion(version) => {
+      (ctx.log)(Event::GlobalInstallMismatchingVersion {
+        range,
+        version: Some(&version),
+      });
+      Ok(None)
+    }
+  }
+}
+
+/// Loads the given runtime app (e.g. `NodeJS` or uv) that the given app needs to run, installs it if needed.
+/// Provides the runtime executable and the paths of its own carrier apps,
+/// or None if the runtime is not installable and the app is optional.
+fn load_runtime(
+  runtime: &dyn AppDefinition,
+  needed_by: &dyn AppDefinition,
+  optional: bool,
+  ctx: &RuntimeContext,
+  apps: &Apps,
+) -> Result<Option<(Executable, Vec<PathBuf>)>> {
+  match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+    app: runtime,
+    cli_version: None,
+    optional,
+    from_source: false,
+    ctx,
+    apps,
+  }) {
+    Ok(LoadOrInstallAppOutcome::Loaded {
+      executable,
+      extra_path,
+      args: _,
+    }) => Ok(Some((executable, extra_path))),
+    Ok(LoadOrInstallAppOutcome::NotInstallable { app: _ }) if optional => Ok(None),
+    Ok(LoadOrInstallAppOutcome::NotInstallable { app }) => Err(UserError::UnsupportedPlatform { app }),
+    Err(UserError::NoVersionsFound { app: runtime }) => Err(UserError::MissingRuntime {
+      runtime,
+      needed_by: needed_by.name(),
+      script: None,
+      searched_dirs: vec![],
+    }),
+    Err(err) => Err(err),
+  }
+}
+
+/// provides the executable for the given script in the Python virtual environment in the current directory, if it exists
+fn locate_venv_executable(script: &str, ctx: &RuntimeContext) -> Result<Option<Executable>> {
+  let cwd = env::current_dir().map_err(|err| UserError::CannotDetermineCurrentDirectory(err.to_string()))?;
+  let path = venv_executable_path(&cwd, script, ctx.platform.os);
+  (ctx.log)(Event::YardCheckExistingAppBegin { path: &path });
+  if path.is_file() {
+    (ctx.log)(Event::YardCheckExistingAppFound);
+    return Ok(Some(Executable::Binary(path)));
+  }
+  (ctx.log)(Event::YardCheckExistingAppNotFound);
+  Ok(None)
+}
+
+/// provides the path of the given script inside the Python virtual environment in the given folder
+fn venv_executable_path(folder: &Path, script: &str, os: Os) -> PathBuf {
+  let venv = folder.join(".venv");
+  match os {
+    Os::Linux | Os::MacOS => venv.join("bin").join(script),
+    Os::Windows => venv.join("Scripts").join(format!("{script}.exe")),
+  }
+}
+
+/// provides the arguments for uv to run the given script of the given Python package at the given version
+fn uv_tool_run_args(package: &str, script: &str, version: &Version) -> Vec<String> {
+  if package == script {
+    vec![S("tool"), S("run"), S("--"), format!("{script}@{version}")]
+  } else {
+    vec![S("tool"), S("run"), S("--from"), format!("{package}@{version}"), S("--"), script.to_string()]
+  }
 }
 
 #[cfg(not(windows))]
@@ -308,7 +417,8 @@ fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version
             executable_name: _,
           }
           | RunMethod::OtherAppShellScript { carrier: _, script_name: _ }
-          | RunMethod::NodeJS { package: _, script: _ } => vec![],
+          | RunMethod::NodeJS { package: _, script: _ }
+          | RunMethod::Uv { package: _, script: _ } => vec![],
         };
         let mut bin_folders = Vec::new();
         for install_method in install_methods {
@@ -379,6 +489,7 @@ fn load_or_install_app(
       return Ok(LoadOrInstallAppOutcome::Loaded {
         executable,
         extra_path: vec![],
+        args: vec![],
       });
     }
     LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
@@ -396,6 +507,7 @@ fn load_or_install_app(
     LoadAppOutcome::Loaded { executable } => Ok(LoadOrInstallAppOutcome::Loaded {
       executable,
       extra_path: vec![],
+      args: vec![],
     }),
     LoadAppOutcome::NotInstallable { app } => Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app } => Err(UserError::InternalError {
@@ -412,4 +524,55 @@ struct LoadOrInstallAppArgs<'a> {
   from_source: bool,
   ctx: &'a RuntimeContext<'a>,
   apps: &'a Apps,
+}
+
+#[cfg(test)]
+mod tests {
+
+  mod uv_tool_run_args {
+    use super::super::uv_tool_run_args;
+    use crate::configuration::Version;
+    use big_s::S;
+
+    #[test]
+    fn package_provides_same_script() {
+      let have = uv_tool_run_args("pyright", "pyright", &Version::from("1.1.414"));
+      let want = vec![S("tool"), S("run"), S("--"), S("pyright@1.1.414")];
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn package_provides_different_script() {
+      let have = uv_tool_run_args("python-lsp-server", "pylsp", &Version::from("1.13.0"));
+      let want = vec![S("tool"), S("run"), S("--from"), S("python-lsp-server@1.13.0"), S("--"), S("pylsp")];
+      assert_eq!(have, want);
+    }
+  }
+
+  mod venv_executable_path {
+    use super::super::venv_executable_path;
+    use crate::platform::Os;
+    use std::path::{Path, PathBuf};
+
+    #[test]
+    fn linux() {
+      let have = venv_executable_path(Path::new("project"), "pyright", Os::Linux);
+      let want = PathBuf::from("project").join(".venv").join("bin").join("pyright");
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos() {
+      let have = venv_executable_path(Path::new("project"), "pyright", Os::MacOS);
+      let want = PathBuf::from("project").join(".venv").join("bin").join("pyright");
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows() {
+      let have = venv_executable_path(Path::new("project"), "pyright", Os::Windows);
+      let want = PathBuf::from("project").join(".venv").join("Scripts").join("pyright.exe");
+      assert_eq!(have, want);
+    }
+  }
 }

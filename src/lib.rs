@@ -157,7 +157,7 @@ pub fn get_cmd(
     log,
   };
   let (include_apps, include_apps_carrier_paths) = load_or_install_apps(apps, optional, include_apps, &ctx)?;
-  let (executable, extra_path) = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+  let (executable, extra_path, mut args) = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: version.as_ref(),
     optional,
@@ -165,7 +165,7 @@ pub fn get_cmd(
     ctx: &ctx,
     apps,
   })? {
-    LoadOrInstallAppOutcome::Loaded { executable, extra_path } => (executable, extra_path),
+    LoadOrInstallAppOutcome::Loaded { executable, extra_path, args } => (executable, extra_path, args),
     LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => return Ok(None),
     LoadOrInstallAppOutcome::NotInstallable { app } => return Err(error::UserError::UnsupportedPlatform { app }),
   };
@@ -189,9 +189,10 @@ pub fn get_cmd(
       });
     }
   }
+  args.extend(app_args);
   let cmd_info = CommandInfo {
     executable: executable.into(),
-    args: Some(app_args),
+    args: Some(args),
     env_path: Some(env_path),
   };
   Ok(Some(cmd_info))
@@ -201,7 +202,7 @@ fn needs_node(app: &dyn AppDefinition, platform: crate::platform::Platform) -> b
   match app.run_method(&Version::from("*"), platform) {
     RunMethod::NodeJS { .. } => true,
     RunMethod::OtherAppShellScript { carrier, .. } => carrier.name().as_str() == "node",
-    RunMethod::ThisApp { .. } | RunMethod::OtherAppOtherExecutable { .. } => false,
+    RunMethod::ThisApp { .. } | RunMethod::OtherAppOtherExecutable { .. } | RunMethod::Uv { .. } => false,
   }
 }
 

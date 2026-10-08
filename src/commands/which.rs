@@ -35,8 +35,16 @@ pub fn which(
     ctx: &ctx,
     apps,
   })? {
-    LoadOrInstallAppOutcome::Loaded { executable, extra_path: _ } => {
-      println!("{executable}");
+    LoadOrInstallAppOutcome::Loaded {
+      executable,
+      extra_path: _,
+      args,
+    } => {
+      if args.is_empty() {
+        println!("{executable}");
+      } else {
+        println!("{executable} {}", args.join(" "));
+      }
       Ok(ExitCode::SUCCESS)
     }
     LoadOrInstallAppOutcome::NotInstallable { app: _ } => Ok(ExitCode::FAILURE),

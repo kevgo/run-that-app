@@ -53,6 +53,9 @@ pub enum UserError {
     name: String,
     paths: Vec<String>,
   },
+  CannotIncludeApp {
+    app: ApplicationName,
+  },
   CannotMoveFolder {
     from: PathBuf,
     to: PathBuf,
@@ -204,6 +207,12 @@ impl UserError {
           desc(&format!("  - {tested_path}"));
         }
         desc("\nPlease report this at https://github.com/kevgo/run-that-app/issues/new and try using an older version until this is fixed.");
+      }
+      UserError::CannotIncludeApp { app } => {
+        error(&format!("cannot include {app} in the PATH"));
+        desc(&format!(
+          "{app} is a Python app that runs via \"uv tool run\" and therefore has no executable that could be added to the PATH.\nTo include it, install {app} into the Python virtual environment in the .venv folder of the current directory."
+        ));
       }
       UserError::CannotMoveFolder { from, to, err } => {
         error(&format!("cannot move folder {} to {}: {err}", from.display(), to.display()));
