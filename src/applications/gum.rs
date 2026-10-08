@@ -92,7 +92,7 @@ mod tests {
     #[test]
     fn linux_arm() {
       let have = (Gum {}).run_method(
-        &Version::from("0.17.0"),
+        &Version::from("2.0.2"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Arm64,
@@ -101,7 +101,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_arm64.tar.gz".into(),
+            url: "https://github.com/charmbracelet/gum/releases/download/v2.0.2/gum_2.0.2_Linux_arm64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder {
               path: "gum_0.17.0_Linux_arm64".into(),
             },
@@ -117,7 +117,7 @@ mod tests {
     #[test]
     fn linux_intel() {
       let have = (Gum {}).run_method(
-        &Version::from("0.17.0"),
+        &Version::from("2.0.2"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Intel64,
@@ -126,7 +126,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_x86_64.tar.gz".into(),
+            url: "https://github.com/charmbracelet/gum/releases/download/v2.0.2/gum_2.0.2_Linux_x86_64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder {
               path: "gum_0.17.0_Linux_x86_64".into(),
             },
