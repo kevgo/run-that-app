@@ -151,7 +151,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Darwin_arm64.tar.gz".into(),
+            url: "https://github.com/charmbracelet/gum/releases/download/v2.0.2/gum_2.0.2_Darwin_arm64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder {
               path: "gum_0.17.0_Darwin_arm64".into(),
             },
@@ -176,7 +176,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Darwin_x86_64.tar.gz".into(),
+            url: "https://github.com/charmbracelet/gum/releases/download/v2.0.2/gum_2.0.2_Darwin_x86_64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder {
               path: "gum_0.17.0_Darwin_x86_64".into(),
             },
@@ -201,7 +201,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Windows_arm64.zip".into(),
+            url: "https://github.com/charmbracelet/gum/releases/download/v2.0.2/gum_2.0.2_Windows_arm64.zip".into(),
             bin_folder: BinFolder::Subfolder {
               path: "gum_0.17.0_Windows_arm64".into(),
             },
@@ -226,7 +226,7 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Windows_x86_64.zip".into(),
+            url: "https://github.com/charmbracelet/gum/releases/download/v2.0.2/gum_2.0.2_Windows_x86_64.zip".into(),
             bin_folder: BinFolder::Subfolder {
               path: "gum_0.17.0_Windows_x86_64".into(),
             },
