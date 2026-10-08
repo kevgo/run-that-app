@@ -56,7 +56,7 @@ impl AppDefinition for Biome {
 
   fn analyze_executable(&self, executable: &Executable) -> Result<AnalyzeResult> {
     let output = subshell::capture_output(executable, &["-h"])?;
-    if !output.contains("Biome official CLI.") {
+    if !output.contains("Biome's command-line interface for checking, formatting, and linting files") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match strings::first_version(&subshell::capture_output(executable, &["--version"])?) {

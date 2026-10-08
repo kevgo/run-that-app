@@ -47,7 +47,7 @@ impl AppDefinition for Gum {
           },
         },
         Method::CompileGoSource {
-          import_path: format!("github.com/{ORG}/{REPO}@latest"),
+          import_path: format!("charm.land/gum/v2@{tag}"),
         },
       ],
     }
@@ -62,8 +62,10 @@ impl AppDefinition for Gum {
 
   fn analyze_executable(&self, executable: &Executable) -> Result<AnalyzeResult> {
     let output = subshell::capture_output(executable, &["-h"])?;
+    let stripped = strip_ansi_escapes::strip(&output);
+    let output = String::from_utf8_lossy(&stripped);
     if !output.contains("A tool for glamorous shell scripts") {
-      return Ok(AnalyzeResult::NotIdentified { output });
+      return Ok(AnalyzeResult::NotIdentified { output: output.to_string() });
     }
     match strings::first_version(&subshell::capture_output(executable, &["--version"])?) {
       Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
@@ -90,7 +92,7 @@ mod tests {
     #[test]
     fn linux_arm() {
       let have = (Gum {}).run_method(
-        &Version::from("0.17.0"),
+        &Version::from("2.0.2"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Arm64,
@@ -99,13 +101,13 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_arm64.tar.gz".into(),
+            url: "https://github.com/charmbracelet/gum/releases/download/v2.0.2/gum_2.0.2_Linux_arm64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder {
-              path: "gum_0.17.0_Linux_arm64".into(),
+              path: "gum_2.0.2_Linux_arm64".into(),
             },
           },
           Method::CompileGoSource {
-            import_path: "github.com/charmbracelet/gum@latest".into(),
+            import_path: "charm.land/gum/v2@v2.0.2".into(),
           },
         ],
       };
@@ -115,7 +117,7 @@ mod tests {
     #[test]
     fn linux_intel() {
       let have = (Gum {}).run_method(
-        &Version::from("0.17.0"),
+        &Version::from("2.0.2"),
         Platform {
           os: Os::Linux,
           cpu: Cpu::Intel64,
@@ -124,13 +126,13 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_x86_64.tar.gz".into(),
+            url: "https://github.com/charmbracelet/gum/releases/download/v2.0.2/gum_2.0.2_Linux_x86_64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder {
-              path: "gum_0.17.0_Linux_x86_64".into(),
+              path: "gum_2.0.2_Linux_x86_64".into(),
             },
           },
           Method::CompileGoSource {
-            import_path: "github.com/charmbracelet/gum@latest".into(),
+            import_path: "charm.land/gum/v2@v2.0.2".into(),
           },
         ],
       };
@@ -140,7 +142,7 @@ mod tests {
     #[test]
     fn macos_arm() {
       let have = (Gum {}).run_method(
-        &Version::from("0.17.0"),
+        &Version::from("2.0.2"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
@@ -149,13 +151,13 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Darwin_arm64.tar.gz".into(),
+            url: "https://github.com/charmbracelet/gum/releases/download/v2.0.2/gum_2.0.2_Darwin_arm64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder {
-              path: "gum_0.17.0_Darwin_arm64".into(),
+              path: "gum_2.0.2_Darwin_arm64".into(),
             },
           },
           Method::CompileGoSource {
-            import_path: "github.com/charmbracelet/gum@latest".into(),
+            import_path: "charm.land/gum/v2@v2.0.2".into(),
           },
         ],
       };
@@ -165,7 +167,7 @@ mod tests {
     #[test]
     fn macos_intel() {
       let have = (Gum {}).run_method(
-        &Version::from("0.17.0"),
+        &Version::from("2.0.2"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Intel64,
@@ -174,13 +176,13 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Darwin_x86_64.tar.gz".into(),
+            url: "https://github.com/charmbracelet/gum/releases/download/v2.0.2/gum_2.0.2_Darwin_x86_64.tar.gz".into(),
             bin_folder: BinFolder::Subfolder {
-              path: "gum_0.17.0_Darwin_x86_64".into(),
+              path: "gum_2.0.2_Darwin_x86_64".into(),
             },
           },
           Method::CompileGoSource {
-            import_path: "github.com/charmbracelet/gum@latest".into(),
+            import_path: "charm.land/gum/v2@v2.0.2".into(),
           },
         ],
       };
@@ -190,7 +192,7 @@ mod tests {
     #[test]
     fn windows_arm() {
       let have = (Gum {}).run_method(
-        &Version::from("0.17.0"),
+        &Version::from("2.0.2"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Arm64,
@@ -199,13 +201,13 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Windows_arm64.zip".into(),
+            url: "https://github.com/charmbracelet/gum/releases/download/v2.0.2/gum_2.0.2_Windows_arm64.zip".into(),
             bin_folder: BinFolder::Subfolder {
-              path: "gum_0.17.0_Windows_arm64".into(),
+              path: "gum_2.0.2_Windows_arm64".into(),
             },
           },
           Method::CompileGoSource {
-            import_path: "github.com/charmbracelet/gum@latest".into(),
+            import_path: "charm.land/gum/v2@v2.0.2".into(),
           },
         ],
       };
@@ -215,7 +217,7 @@ mod tests {
     #[test]
     fn windows_intel() {
       let have = (Gum {}).run_method(
-        &Version::from("0.17.0"),
+        &Version::from("2.0.2"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
@@ -224,13 +226,13 @@ mod tests {
       let want = RunMethod::ThisApp {
         install_methods: vec![
           Method::DownloadArchive {
-            url: "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Windows_x86_64.zip".into(),
+            url: "https://github.com/charmbracelet/gum/releases/download/v2.0.2/gum_2.0.2_Windows_x86_64.zip".into(),
             bin_folder: BinFolder::Subfolder {
-              path: "gum_0.17.0_Windows_x86_64".into(),
+              path: "gum_2.0.2_Windows_x86_64".into(),
             },
           },
           Method::CompileGoSource {
-            import_path: "github.com/charmbracelet/gum@latest".into(),
+            import_path: "charm.land/gum/v2@v2.0.2".into(),
           },
         ],
       };

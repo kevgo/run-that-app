@@ -56,7 +56,7 @@ impl AppDefinition for Rumdl {
 
   fn analyze_executable(&self, executable: &Executable) -> Result<AnalyzeResult> {
     let output = subshell::capture_output(executable, &["-h"])?;
-    if !output.contains("A fast Markdown linter written in Rust") {
+    if !output.contains("A fast Markdown linter and formatter written in Rust") {
       return Ok(AnalyzeResult::NotIdentified { output });
     }
     match strings::first_version(&subshell::capture_output(executable, &["--version"])?) {
