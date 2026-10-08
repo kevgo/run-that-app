@@ -193,7 +193,7 @@ pub fn get_cmd(
       });
     }
   }
-  let mut args = uv_tool.as_ref().map_or_else(Vec::new, UvTool::run_args);
+  let mut args = uv_tool.as_ref().map_or_default(UvTool::run_args);
   args.extend(app_args);
   let cmd_info = CommandInfo {
     executable: executable.into(),
