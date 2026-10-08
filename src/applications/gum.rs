@@ -64,7 +64,7 @@ impl AppDefinition for Gum {
     let output = subshell::capture_output(executable, &["-h"])?;
     let stripped = strip_ansi_escapes::strip(&output);
     let output = String::from_utf8_lossy(&stripped);
-    if !output.contains("tool for glamorous shell scripts") {
+    if !output.contains("A tool for glamorous shell scripts") {
       return Ok(AnalyzeResult::NotIdentified { output: output.to_string() });
     }
     match strings::first_version(&subshell::capture_output(executable, &["--version"])?) {
