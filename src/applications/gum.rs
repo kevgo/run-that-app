@@ -142,7 +142,7 @@ mod tests {
     #[test]
     fn macos_arm() {
       let have = (Gum {}).run_method(
-        &Version::from("0.17.0"),
+        &Version::from("2.0.2"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Arm64,
@@ -167,7 +167,7 @@ mod tests {
     #[test]
     fn macos_intel() {
       let have = (Gum {}).run_method(
-        &Version::from("0.17.0"),
+        &Version::from("2.0.2"),
         Platform {
           os: Os::MacOS,
           cpu: Cpu::Intel64,
@@ -192,7 +192,7 @@ mod tests {
     #[test]
     fn windows_arm() {
       let have = (Gum {}).run_method(
-        &Version::from("0.17.0"),
+        &Version::from("2.0.2"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Arm64,
@@ -217,7 +217,7 @@ mod tests {
     #[test]
     fn windows_intel() {
       let have = (Gum {}).run_method(
-        &Version::from("0.17.0"),
+        &Version::from("2.0.2"),
         Platform {
           os: Os::Windows,
           cpu: Cpu::Intel64,
