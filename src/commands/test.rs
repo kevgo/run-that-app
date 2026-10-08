@@ -68,10 +68,7 @@ pub fn test(args: &mut TestArgs, apps: &Apps) -> Result<ExitCode> {
       }
       if !executable_found {
         println!("executable for {} not found, press ENTER after inspecting the yard", app.name());
-        let mut buffer = String::new();
-        if let Err(err) = io::stdin().read_line(&mut buffer) {
-          eprintln!("Error: {err}");
-        }
+        wait_for_enter();
         return Ok(ExitCode::FAILURE);
       }
       yard.delete_app_version(&app.name(), &latest_version)?;
@@ -97,4 +94,11 @@ fn find_duplicate_app_names(apps: &Apps) -> Result<()> {
     names.push(app_name);
   }
   Ok(())
+}
+
+fn wait_for_enter() {
+  let mut buffer = String::new();
+  if let Err(err) = io::stdin().read_line(&mut buffer) {
+    eprintln!("Error: {err}");
+  }
 }
