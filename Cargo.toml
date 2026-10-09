@@ -8,7 +8,7 @@ include = ["src/", "tests/", "docs/", "LICENSE.md", "README.md"]
 license = "ISC"
 readme = "README.md"
 repository = "https://github.com/kevgo/conc"
-rust-version = "1.91"
+rust-version = "1.99"
 
 [lib]
 name = "rta"
@@ -30,6 +30,7 @@ minreq = { version = "2.14.1", features = ["https"] }
 regex = "1.12.4"
 semver = "1.0.28"
 serde_json = "1.0.150"
+strip-ansi-escapes = "0.2.1"
 tar = "0.4.46"
 tempfile = "3.27.0"
 urlencoding = "2.1.3"
