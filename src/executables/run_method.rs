@@ -57,13 +57,15 @@ impl RunMethod {
         carrier: _,
         executable_name: _,
       }
-      | RunMethod::OtherAppShellScript { carrier: _, script_name: _ } => vec![],
+      | RunMethod::OtherAppShellScript { carrier: _, script_name: _ }
+      // Python apps don't get installed into the yard, they run from the local .venv or via "uv tool run"
+      | RunMethod::Uv { package: _, script: _ } => vec![],
     }
   }
 
   pub fn executable(&self, path: PathBuf) -> Executable {
     match self {
-      RunMethod::ThisApp { .. } | RunMethod::OtherAppOtherExecutable { .. } => Executable::Binary(path),
+      RunMethod::ThisApp { .. } | RunMethod::OtherAppOtherExecutable { .. } | RunMethod::Uv { .. } => Executable::Binary(path),
       RunMethod::NodeJS { .. } | RunMethod::OtherAppShellScript { .. } => Executable::ShellScript(path),
     }
   }

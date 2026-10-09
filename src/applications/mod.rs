@@ -40,6 +40,7 @@ mod npx;
 mod prettier;
 mod prettier_standalone;
 mod pyrefly;
+mod pyright;
 mod rclone;
 mod ripgrep;
 mod ruff;
@@ -101,6 +102,7 @@ pub use npx::Npx;
 pub use prettier::Prettier;
 pub use prettier_standalone::PrettierStandalone;
 pub use pyrefly::Pyrefly;
+pub use pyright::Pyright;
 pub use rclone::Rclone;
 pub use ripgrep::RipGrep;
 pub use ruff::Ruff;
@@ -162,6 +164,7 @@ pub fn all() -> Apps {
     Box::new(prettier::Prettier {}),
     Box::new(prettier_standalone::PrettierStandalone {}),
     Box::new(pyrefly::Pyrefly {}),
+    Box::new(pyright::Pyright {}),
     Box::new(rclone::Rclone {}),
     Box::new(ripgrep::RipGrep {}),
     Box::new(ruff::Ruff {}),
@@ -246,6 +249,11 @@ pub fn carrier<'a>(app: &'a dyn AppDefinition, version: &Version, platform: Plat
       let node = NodeJS {};
       let executable_filename = node.executable_filename();
       (Box::new(node), executable_filename)
+    }
+    RunMethod::Uv { package: _, script: _ } => {
+      let uv = Uv {};
+      let executable_filename = uv.executable_filename();
+      (Box::new(uv), executable_filename)
     }
   }
 }
