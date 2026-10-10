@@ -88,12 +88,6 @@ exit /b 0\r\n";
     path
   }
 
-  fn assert_script_output(output: &std::process::Output, want: &str) {
-    assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
-    let have = String::from_utf8_lossy(&output.stdout).replace("\r\n", "\n");
-    assert_eq!(have, want);
-  }
-
   /// `cmd_to_string` renders the `cmd /C` invocation with POSIX quoting.
   #[cfg(windows)]
   fn windows_command(script: &Path, rendered_args: &str) -> String {
@@ -143,6 +137,11 @@ exit /b 0\r\n";
   fn passes_no_arguments() {
     let dir = tempfile::tempdir().unwrap();
     let script = write_script(dir.path(), SCRIPT_NAME, PRINT_ARG_COUNT);
-    assert_script_output(&shell_script_call(&script, &[]).output().unwrap(), "0");
+    let mut cmd = shell_script_call(&script, &[]);
+    let output = cmd.output().unwrap();
+    assert!(output.status.success());
+    let have_stdout = String::from_utf8_lossy(&output.stdout).replace("\r\n", "\n");
+    let want_stdout = "0";
+    assert_eq!(have_stdout, want_stdout);
   }
 }
