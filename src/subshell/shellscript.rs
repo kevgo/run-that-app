@@ -54,7 +54,7 @@ mod tests {
     let script = write_script(dir.path(), "args.sh", "#!/bin/sh\nprintf '%s\\n' \"$#\" \"$1\" \"$2\"\n");
     let mut cmd = shell_script_call(&script, &["--version".to_string(), "hello world".to_string()]);
     let have = cmd_to_string(&cmd);
-    let want = format!("sh -c \"{} --version 'hello world'\"", script.to_string_lossy());
+    let want = format!(r#"sh -c "{} --version 'hello world'""#, script.to_string_lossy());
     assert_eq!(have, want);
 
     let output = cmd.output().unwrap();
@@ -68,7 +68,7 @@ mod tests {
     let script = write_script(dir.path(), "args.sh", "#!/bin/sh\nprintf '%s\\n' \"$#\" \"$1\" \"$2\"\n");
     let mut cmd = shell_script_call(&script, &["--version".to_string(), "hello $HOME".to_string()]);
     let have = cmd_to_string(&cmd);
-    let want = format!("sh -c \"{} --version 'hello $HOME'\"", script.to_string_lossy());
+    let want = format!(r#"sh -c "{} --version 'hello "'$HOME'"'""#, script.to_string_lossy());
     assert_eq!(have, want);
 
     let output = cmd.output().unwrap();
