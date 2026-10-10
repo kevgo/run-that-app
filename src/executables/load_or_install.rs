@@ -241,37 +241,6 @@ pub enum LoadOrInstallAppOutcome {
   },
 }
 
-/// Loads the given runtime app (e.g. `NodeJS` or uv) that the given app needs to run, installs it if needed.
-/// Provides the runtime executable and the paths of its own carrier apps,
-/// or None if the runtime is not installable and the app is optional.
-fn load_runtime(
-  runtime: &dyn AppDefinition,
-  needed_by: &dyn AppDefinition,
-  optional: bool,
-  ctx: &RuntimeContext,
-  apps: &Apps,
-) -> Result<Option<(Executable, Vec<PathBuf>)>> {
-  match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
-    app: runtime,
-    cli_version: None,
-    optional,
-    from_source: false,
-    ctx,
-    apps,
-  }) {
-    Ok(LoadOrInstallAppOutcome::Loaded { executable, extra_path }) => Ok(Some((executable, extra_path))),
-    Ok(LoadOrInstallAppOutcome::NotInstallable { app: _ }) if optional => Ok(None),
-    Ok(LoadOrInstallAppOutcome::NotInstallable { app }) => Err(UserError::UnsupportedPlatform { app }),
-    Err(UserError::NoVersionsFound { app: runtime }) => Err(UserError::MissingRuntime {
-      runtime,
-      needed_by: needed_by.name(),
-      script: None,
-      searched_dirs: vec![],
-    }),
-    Err(err) => Err(err),
-  }
-}
-
 fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVersions, script: &str, ctx: &RuntimeContext) -> Result<Executable> {
   let mut tried_paths = Vec::new();
   for version in versions {
