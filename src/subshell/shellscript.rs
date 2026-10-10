@@ -114,7 +114,6 @@ exit /b 0\r\n";
     #[cfg(not(windows))]
     let want = format!(r#"sh -c "{} --version 'hello world'""#, script.display());
     assert_eq!(have, want);
-
     assert_script_output(&cmd.output().unwrap(), "2\n--version\nhello world\n");
   }
 
@@ -129,7 +128,6 @@ exit /b 0\r\n";
     #[cfg(not(windows))]
     let want = format!(r#"sh -c "{} --version 'hello "'$HOME'"'""#, script.display());
     assert_eq!(have, want);
-
     assert_script_output(&cmd.output().unwrap(), "2\n--version\nhello $HOME\n");
   }
 
