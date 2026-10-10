@@ -1,7 +1,7 @@
 use crate::error::Result;
 use crate::executables::{Executable, UvTool};
 
-/// the different ways to call a loaded app
+/// the different ways to call an app
 #[derive(Clone, Debug, PartialEq)]
 pub enum Callable {
   /// the app has its own executable that can run directly
