@@ -32,7 +32,7 @@ pub fn shell_script_call(shell_script: &Path, app_args: &[String]) -> Command {
   command
 }
 
-#[cfg(all(test, unix))]
+#[cfg(test)]
 mod tests {
   use super::shell_script_call;
   use crate::executables::cmd_to_string;
@@ -42,12 +42,9 @@ mod tests {
 
   fn write_script(dir: &Path, name: &str, body: &str) -> PathBuf {
     let path = dir.join(name);
-    #[allow(clippy::unwrap_used)]
     fs::write(&path, body).unwrap();
-    #[allow(clippy::unwrap_used)]
     let mut permissions = fs::metadata(&path).unwrap().permissions();
     permissions.set_mode(0o755);
-    #[allow(clippy::unwrap_used)]
     fs::set_permissions(&path, permissions).unwrap();
     path
   }
@@ -58,7 +55,7 @@ mod tests {
     let script = write_script(dir.path(), "args.sh", "#!/bin/sh\nprintf '%s\\n' \"$#\" \"$1\" \"$2\"\n");
     let mut cmd = shell_script_call(&script, &["--version".to_string(), "hello world".to_string()]);
     let have = cmd_to_string(&cmd);
-    let want = format!(r#"sh -c "{} --version 'hello world'""#, script.to_string_lossy());
+    let want = format!(r#"sh -c "{} --version 'hello world'""#, script.display());
     assert_eq!(have, want);
 
     let output = cmd.output().unwrap();
@@ -72,7 +69,7 @@ mod tests {
     let script = write_script(dir.path(), "args.sh", "#!/bin/sh\nprintf '%s\\n' \"$#\" \"$1\" \"$2\"\n");
     let mut cmd = shell_script_call(&script, &["--version".to_string(), "hello $HOME".to_string()]);
     let have = cmd_to_string(&cmd);
-    let want = format!(r#"sh -c "{} --version 'hello "'$HOME'"'""#, script.to_string_lossy());
+    let want = format!(r#"sh -c "{} --version 'hello "'$HOME'"'""#, script.display());
     assert_eq!(have, want);
 
     let output = cmd.output().unwrap();
