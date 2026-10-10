@@ -93,7 +93,7 @@ exit /b 0\r\n";
     path
   }
 
-  fn assert_script_output(output: std::process::Output, want: &str) {
+  fn assert_script_output(output: &std::process::Output, want: &str) {
     assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
     // `cmd` prints CRLF. The script's logical output uses LF on every platform.
     let have = String::from_utf8_lossy(&output.stdout).replace("\r\n", "\n");
@@ -121,7 +121,7 @@ exit /b 0\r\n";
     let want = format!(r#"sh -c "{} --version 'hello world'""#, script.display());
     assert_eq!(have, want);
 
-    assert_script_output(cmd.output().unwrap(), "2\n--version\nhello world\n");
+    assert_script_output(&cmd.output().unwrap(), "2\n--version\nhello world\n");
   }
 
   #[test]
@@ -136,13 +136,13 @@ exit /b 0\r\n";
     let want = format!(r#"sh -c "{} --version 'hello "'$HOME'"'""#, script.display());
     assert_eq!(have, want);
 
-    assert_script_output(cmd.output().unwrap(), "2\n--version\nhello $HOME\n");
+    assert_script_output(&cmd.output().unwrap(), "2\n--version\nhello $HOME\n");
   }
 
   #[test]
   fn passes_no_arguments() {
     let dir = tempfile::tempdir().unwrap();
     let script = write_script(dir.path(), SCRIPT_NAME, PRINT_ARG_COUNT);
-    assert_script_output(shell_script_call(&script, &[]).output().unwrap(), "0");
+    assert_script_output(&shell_script_call(&script, &[]).output().unwrap(), "0");
   }
 }
