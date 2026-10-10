@@ -32,6 +32,20 @@ impl Executable {
     #[allow(clippy::unwrap_used)] // there is always a parent here since this is a location inside the yard
     self.as_path().parent().unwrap()
   }
+
+  /// Builds a command that runs this executable with `app_args`.
+  ///
+  /// For a shell script, `app_args` are arguments of that script.
+  pub fn into_command(self, app_args: &[String]) -> Command {
+    match self {
+      Executable::Binary(path) => {
+        let mut cmd = Command::new(path);
+        cmd.args(app_args);
+        cmd
+      }
+      Executable::ShellScript(path) => shell_script_call(&path, app_args),
+    }
+  }
 }
 
 impl Display for Executable {
@@ -46,15 +60,6 @@ impl From<Executable> for PathBuf {
   fn from(val: Executable) -> Self {
     match val {
       Executable::Binary(path) | Executable::ShellScript(path) => path,
-    }
-  }
-}
-
-impl From<Executable> for Command {
-  fn from(value: Executable) -> Self {
-    match value {
-      Executable::Binary(path) => Command::new(path),
-      Executable::ShellScript(path) => shell_script_call(&path, &[]),
     }
   }
 }
