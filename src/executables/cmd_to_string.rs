@@ -1,5 +1,6 @@
 use std::process::Command;
 
+/// provides a human-readable string representation of the given command
 pub fn cmd_to_string(cmd: &Command) -> String {
   let mut result = String::new();
   result.push_str(&cmd.get_program().to_string_lossy());
