@@ -2,7 +2,7 @@ use super::Outcome;
 use crate::applications::{self, AppDefinition, Apps, Go};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::executables::{LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, load_or_install_app_and_carrier};
+use crate::executables::{Callable, LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, load_or_install_app_and_carrier};
 use crate::logging::Event;
 use big_s::S;
 use std::io::ErrorKind;
@@ -56,10 +56,15 @@ fn load_rta_go(optional: bool, ctx: &RuntimeContext, apps: &Apps) -> Result<Opti
     apps,
   })? {
     LoadOrInstallAppOutcome::Loaded {
-      executable,
+      callable: Callable::Direct(executable),
       extra_path: _,
-      uv_tool: _,
     } => Ok(Some(executable.into())),
+    LoadOrInstallAppOutcome::Loaded {
+      callable: Callable::UvTool { uv: _, tool: _ },
+      extra_path: _,
+    } => Err(UserError::InternalError {
+      message: format!("{} runs via uv and therefore cannot compile Go sources", go.name()),
+    }),
     LoadOrInstallAppOutcome::NotInstallable { app: _ } => Ok(None),
   }
 }

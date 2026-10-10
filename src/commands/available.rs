@@ -26,11 +26,7 @@ pub fn available(AvailableArgs { app_name, optional, verbose }: AvailableArgs, a
     ctx: &ctx,
     apps,
   })? {
-    LoadOrInstallAppOutcome::Loaded {
-      executable: _,
-      extra_path: _,
-      uv_tool: _,
-    } => Ok(ExitCode::SUCCESS),
+    LoadOrInstallAppOutcome::Loaded { callable: _, extra_path: _ } => Ok(ExitCode::SUCCESS),
     LoadOrInstallAppOutcome::NotInstallable { app: _ } => Ok(ExitCode::FAILURE),
   }
 }

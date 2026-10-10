@@ -62,7 +62,7 @@ mod yard;
 use crate::applications::{AppDefinition, Apps};
 use crate::context::RuntimeContext;
 pub use crate::executables::CommandInfo;
-use crate::executables::{LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, RunMethod, UvTool, load_or_install_app_and_carrier, load_or_install_apps};
+use crate::executables::{LoadOrInstallAppAndCarrierArgs, LoadOrInstallAppOutcome, RunMethod, load_or_install_app_and_carrier, load_or_install_apps};
 use crate::yard::Yard;
 use cli::Cli;
 pub use configuration::Version;
@@ -157,7 +157,7 @@ pub fn get_cmd(
     log,
   };
   let (include_apps, include_apps_carrier_paths) = load_or_install_apps(apps, optional, include_apps, &ctx)?;
-  let (executable, extra_path, uv_tool) = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+  let (callable, extra_path) = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: version.as_ref(),
     optional,
@@ -165,16 +165,12 @@ pub fn get_cmd(
     ctx: &ctx,
     apps,
   })? {
-    LoadOrInstallAppOutcome::Loaded {
-      executable,
-      extra_path,
-      uv_tool,
-    } => (executable, extra_path, uv_tool),
+    LoadOrInstallAppOutcome::Loaded { callable, extra_path } => (callable, extra_path),
     LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => return Ok(None),
     LoadOrInstallAppOutcome::NotInstallable { app } => return Err(error::UserError::UnsupportedPlatform { app }),
   };
   let mut paths_to_include: Vec<&Path> = Vec::with_capacity(1 + extra_path.len() + include_apps.len() + include_apps_carrier_paths.len());
-  paths_to_include.push(executable.parent_path());
+  paths_to_include.push(callable.executable().parent_path());
   paths_to_include.extend(extra_path.iter().map(PathBuf::as_path));
   paths_to_include.extend(include_apps_carrier_paths.iter().map(PathBuf::as_path));
   for app_to_include in &include_apps {
@@ -188,15 +184,15 @@ pub fn get_cmd(
       return Err(error::UserError::MissingRuntime {
         runtime: node.name(),
         needed_by: app.name(),
-        script: Some(executable.into()),
+        script: Some(callable.executable().as_path().to_path_buf()),
         searched_dirs: env::split_paths(&env_path).collect(),
       });
     }
   }
-  let mut args = uv_tool.as_ref().map_or_default(UvTool::run_args);
+  let mut args = callable.args();
   args.extend(app_args);
   let cmd_info = CommandInfo {
-    executable: executable.into(),
+    executable: callable.executable().as_path().to_path_buf(),
     args: Some(args),
     env_path: Some(env_path),
   };

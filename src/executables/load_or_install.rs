@@ -2,7 +2,7 @@ use crate::applications::{AnalyzeResult, AppDefinition, ApplicationName, Apps, N
 use crate::configuration::{RequestedVersion, RequestedVersions};
 use crate::context::RuntimeContext;
 use crate::error::{Result, UserError};
-use crate::executables::{Executable, ExecutableNameUnix, LoadAppOutcome, RunMethod, UvTool, load_app_versions};
+use crate::executables::{Callable, Executable, ExecutableNameUnix, LoadAppOutcome, RunMethod, UvTool, load_app_versions};
 use crate::installation::Outcome;
 use crate::logging::Event;
 use crate::platform::Os;
@@ -28,16 +28,9 @@ pub fn load_or_install_apps(
       ctx,
       apps,
     })? {
-      LoadOrInstallAppOutcome::Loaded {
-        executable,
-        extra_path,
-        uv_tool,
-      } => {
-        match uv_tool {
-          // include the folder containing the tool's executable, not uv's folder
-          Some(uv_tool) => executables.push(Executable::Binary(uv_tool.executable_path(&executable)?)),
-          None => executables.push(executable),
-        }
+      LoadOrInstallAppOutcome::Loaded { callable, extra_path } => {
+        // include the folder containing the app's own executable, not the folder of its launcher
+        executables.push(callable.app_executable()?);
         extra_paths.extend(extra_path);
       }
       LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => {}
@@ -102,17 +95,24 @@ pub fn load_or_install_app_and_carrier(
         apps,
       })? {
         LoadOrInstallAppOutcome::Loaded {
-          executable: carrier_exe,
+          callable: Callable::Direct(carrier_exe),
           // The path of the carrier's carrier.
           // Probably a bit excessive to go that deep, but we have it so let's do the right thing.
           extra_path: carrier_carrier_path,
-          uv_tool: _,
         } => {
           let mut carrier_paths = Vec::with_capacity(carrier_carrier_path.len() + 1);
           carrier_paths.extend(carrier_carrier_path);
           let carrier_path = carrier_exe.parent_path().to_path_buf();
           carrier_paths.push(carrier_path);
           carrier_paths
+        }
+        LoadOrInstallAppOutcome::Loaded {
+          callable: Callable::UvTool { uv: _, tool: _ },
+          extra_path: _,
+        } => {
+          return Err(UserError::InternalError {
+            message: format!("{} runs via uv and therefore cannot carry shell scripts for other apps", carrier.name()),
+          });
         }
         LoadOrInstallAppOutcome::NotInstallable { app } => {
           return Ok(LoadOrInstallAppOutcome::NotInstallable { app });
@@ -121,9 +121,8 @@ pub fn load_or_install_app_and_carrier(
       // step 2: locate the shell script inside the carrier app
       let shell_script = locate_shell_script(carrier.as_ref(), cli_version, script_name, ctx)?;
       Ok(LoadOrInstallAppOutcome::Loaded {
-        executable: shell_script,
+        callable: Callable::Direct(shell_script),
         extra_path: carrier_paths,
-        uv_tool: None,
       })
     }
 
@@ -144,9 +143,8 @@ pub fn load_or_install_app_and_carrier(
       // step 3: fast-path: try to load the app executable
       if let Ok(executable) = locate_npm_package_executable(app, &app_versions, script, ctx) {
         return Ok(LoadOrInstallAppOutcome::Loaded {
-          executable,
+          callable: Callable::Direct(executable),
           extra_path: node_paths,
-          uv_tool: None,
         });
       }
       // step 4: install the npm package
@@ -157,9 +155,8 @@ pub fn load_or_install_app_and_carrier(
       // step 5: load the npm package executable
       if let Ok(executable) = locate_npm_package_executable(app, &app_versions, script, ctx) {
         return Ok(LoadOrInstallAppOutcome::Loaded {
-          executable,
+          callable: Callable::Direct(executable),
           extra_path: node_paths,
-          uv_tool: None,
         });
       }
       Err(UserError::InternalError {
@@ -171,9 +168,8 @@ pub fn load_or_install_app_and_carrier(
       // step 1: fast path: use the executable installed in the local Python virtual environment
       if let Some(executable) = locate_venv_executable(script, ctx)? {
         return Ok(LoadOrInstallAppOutcome::Loaded {
-          executable,
+          callable: Callable::Direct(executable),
           extra_path: vec![],
-          uv_tool: None,
         });
       }
       // step 2: determine the version of the Python package to run
@@ -190,9 +186,8 @@ pub fn load_or_install_app_and_carrier(
           RequestedVersion::Path(range) => {
             if let Some(executable) = locate_global_install(app, range, script, Executable::Binary, ctx)? {
               return Ok(LoadOrInstallAppOutcome::Loaded {
-                executable,
+                callable: Callable::Direct(executable),
                 extra_path: vec![],
-                uv_tool: None,
               });
             }
           }
@@ -202,13 +197,15 @@ pub fn load_or_install_app_and_carrier(
               return Ok(LoadOrInstallAppOutcome::NotInstallable { app: app.name() });
             };
             return Ok(LoadOrInstallAppOutcome::Loaded {
-              executable: uv,
+              callable: Callable::UvTool {
+                uv,
+                tool: UvTool {
+                  package,
+                  script,
+                  version: version.clone(),
+                },
+              },
               extra_path: uv_carrier_paths,
-              uv_tool: Some(UvTool {
-                package,
-                script,
-                version: version.clone(),
-              }),
             });
           }
         }
@@ -229,12 +226,11 @@ pub struct LoadOrInstallAppAndCarrierArgs<'a> {
 
 pub enum LoadOrInstallAppOutcome {
   Loaded {
-    executable: Executable,
-    /// directories to prepend to PATH when running this executable,
+    /// how to call the loaded app
+    callable: Callable,
+    /// directories to prepend to PATH when calling the app,
     /// usually the carrier, e.g. Node.js for npm packages
     extra_path: Vec<PathBuf>,
-    /// If set, the executable is uv and the app is a Python package that runs via "uv tool run".
-    uv_tool: Option<UvTool>,
   },
   NotInstallable {
     app: ApplicationName,
@@ -332,10 +328,15 @@ fn load_runtime(
     apps,
   }) {
     Ok(LoadOrInstallAppOutcome::Loaded {
-      executable,
+      callable: Callable::Direct(executable),
       extra_path,
-      uv_tool: _,
     }) => Ok(Some((executable, extra_path))),
+    Ok(LoadOrInstallAppOutcome::Loaded {
+      callable: Callable::UvTool { uv: _, tool: _ },
+      extra_path: _,
+    }) => Err(UserError::InternalError {
+      message: format!("{} runs via uv and therefore cannot be a runtime for {}", runtime.name(), needed_by.name()),
+    }),
     Ok(LoadOrInstallAppOutcome::NotInstallable { app: _ }) if optional => Ok(None),
     Ok(LoadOrInstallAppOutcome::NotInstallable { app }) => Err(UserError::UnsupportedPlatform { app }),
     Err(UserError::NoVersionsFound { app: runtime }) => Err(UserError::MissingRuntime {
@@ -483,9 +484,8 @@ fn load_or_install_app(
   match load_app_versions(app, &versions, &executable, ctx)? {
     LoadAppOutcome::Loaded { executable } => {
       return Ok(LoadOrInstallAppOutcome::Loaded {
-        executable,
+        callable: Callable::Direct(executable),
         extra_path: vec![],
-        uv_tool: None,
       });
     }
     LoadAppOutcome::NotInstallable { app } => return Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
@@ -501,9 +501,8 @@ fn load_or_install_app(
   // step 4: load the executable for the given app
   match load_app_versions(app, &versions, &executable, ctx)? {
     LoadAppOutcome::Loaded { executable } => Ok(LoadOrInstallAppOutcome::Loaded {
-      executable,
+      callable: Callable::Direct(executable),
       extra_path: vec![],
-      uv_tool: None,
     }),
     LoadAppOutcome::NotInstallable { app } => Ok(LoadOrInstallAppOutcome::NotInstallable { app }),
     LoadAppOutcome::NotInstalled { app } => Err(UserError::InternalError {
