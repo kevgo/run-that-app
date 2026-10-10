@@ -1,9 +1,9 @@
 use std::path::Path;
 use std::process::Command;
 
-/// Runs `shell_script` through `sh`, with `app_args` as the script's own arguments.
+/// provides a `Command` instance that runs the given shell script with the given arguments
 #[cfg(not(windows))]
-pub fn shell_script_call(shell_script: &Path, app_args: &[String]) -> Command {
+pub fn shell_script_call(shell_script: &Path, args: &[String]) -> Command {
   // `sh -c <script> <args>` parses only <script> as the command string.
   // The following argv entries become the shell's $0, $1, ... and are not
   // passed to the script. `exec "$0" "$@"` runs the script path in $0
@@ -11,9 +11,9 @@ pub fn shell_script_call(shell_script: &Path, app_args: &[String]) -> Command {
   // contain spaces or shell metacharacters.
   let mut command = Command::new("sh");
   command.arg("-c");
-  let mut shell_args = Vec::with_capacity(app_args.len() + 1);
+  let mut shell_args = Vec::with_capacity(args.len() + 1);
   shell_args.push(shell_script.to_string_lossy().to_string());
-  shell_args.extend(app_args.iter().cloned());
+  shell_args.extend(args.iter().cloned());
   #[allow(clippy::unwrap_used)]
   let script_args = shlex::try_join(shell_args.iter().map(std::string::String::as_str)).unwrap();
   command.arg(script_args);
@@ -37,6 +37,7 @@ mod tests {
   use super::shell_script_call;
   use crate::executables::cmd_to_string;
   use std::fs;
+  #[cfg(not(windows))]
   use std::os::unix::fs::PermissionsExt;
   use std::path::{Path, PathBuf};
 
