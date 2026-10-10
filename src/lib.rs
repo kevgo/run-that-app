@@ -99,17 +99,15 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
   }
 }
 
-/// Provides a placeholder for a fully configured [`std::process::Command`] instance
+/// Provides a fully configured [`std::process::Command`] instance
 /// that executes the given app with the given arguments.
 /// You can run it any way you like.
-/// The placeholder differs that it is able to provide information about the command to execute.
-/// You can convert [`CommandInfo`] instances into actual [`std::process::Command`] instances via the `From` trait.
 ///
 /// # Examples
 ///
 /// ```
 /// let actionlint = rta::applications::ActionLint {};
-/// let cmd_info = rta::get_cmd(
+/// let cmd = rta::get_cmd(
 ///   rta::GetCmdArgs {
 ///     app: &actionlint,
 ///     version: Some("1.7.12".into()),
@@ -122,14 +120,13 @@ pub fn run(args: impl Iterator<Item = String>) -> error::Result<ExitCode> {
 ///   },
 /// );
 ///
-/// let Ok(cmd_info) = cmd_info else {
-///   panic!("ran into an error: {:?}", cmd_info.err());
+/// let Ok(cmd) = cmd else {
+///   panic!("ran into an error: {:?}", cmd.err());
 /// };
-/// let Some(mut cmd_info) = cmd_info else {
+/// let Some(mut cmd) = cmd else {
 ///   panic!("actionlint is not supported on this platform");
 /// };
 ///
-/// let mut cmd = std::process::Command::from(&cmd_info);
 /// let exit_status = cmd.status().unwrap();
 /// assert!(exit_status.success());
 /// ```
