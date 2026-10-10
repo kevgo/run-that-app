@@ -185,8 +185,7 @@ pub fn get_cmd(
       });
     }
   }
-  let mut cmd = Command::from(executable);
-  cmd.args(app_args);
+  let mut cmd = executable.into_command(&app_args);
   cmd.envs(env::vars_os());
   crate::subshell::set_path_env(&mut cmd, env_path);
   Ok(Some(cmd))
