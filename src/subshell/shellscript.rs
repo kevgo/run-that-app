@@ -114,7 +114,11 @@ exit /b 0\r\n";
     #[cfg(not(windows))]
     let want = format!(r#"sh -c "{} --version 'hello world'""#, script.display());
     assert_eq!(have, want);
-    assert_script_output(&cmd.output().unwrap(), "2\n--version\nhello world\n");
+    let output = cmd.output().unwrap();
+    assert!(output.status.success());
+    let have_stdout = String::from_utf8_lossy(&output.stdout).replace("\r\n", "\n");
+    let want_stdout = "2\n--version\nhello world\n";
+    assert_eq!(have_stdout, want_stdout);
   }
 
   #[test]
@@ -128,7 +132,11 @@ exit /b 0\r\n";
     #[cfg(not(windows))]
     let want = format!(r#"sh -c "{} --version 'hello "'$HOME'"'""#, script.display());
     assert_eq!(have, want);
-    assert_script_output(&cmd.output().unwrap(), "2\n--version\nhello $HOME\n");
+    let output = cmd.output().unwrap();
+    assert!(output.status.success());
+    let have_stdout = String::from_utf8_lossy(&output.stdout).replace("\r\n", "\n");
+    let want_stdout = "2\n--version\nhello $HOME\n";
+    assert_eq!(have_stdout, want_stdout);
   }
 
   #[test]
