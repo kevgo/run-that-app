@@ -44,23 +44,10 @@ impl Callable {
 
 #[cfg(test)]
 mod tests {
-  use crate::configuration::Version;
-  use crate::executables::{Callable, Executable, UvTool};
-
-  fn uv_tool() -> Callable {
-    Callable::UvTool {
-      uv: Executable::Binary("yard/uv/uv".into()),
-      tool: UvTool {
-        package: "python-lsp-server",
-        script: "pylsp",
-        version: Version::from("1.13.0"),
-      },
-    }
-  }
 
   mod executable {
-    use super::uv_tool;
-    use crate::executables::{Callable, Executable};
+    use crate::Version;
+    use crate::executables::{Callable, Executable, UvTool};
 
     #[test]
     fn direct() {
@@ -72,7 +59,14 @@ mod tests {
 
     #[test]
     fn via_uv() {
-      let callable = uv_tool();
+      let callable = Callable::UvTool {
+        uv: Executable::Binary("yard/uv/uv".into()),
+        tool: UvTool {
+          package: "python-lsp-server",
+          script: "pylsp",
+          version: Version::from("1.13.0"),
+        },
+      };
       let have = callable.executable();
       let want = Executable::Binary("yard/uv/uv".into());
       assert_eq!(have, &want);
@@ -80,8 +74,8 @@ mod tests {
   }
 
   mod args {
-    use super::uv_tool;
-    use crate::executables::{Callable, Executable};
+    use crate::Version;
+    use crate::executables::{Callable, Executable, UvTool};
     use big_s::S;
 
     #[test]
@@ -94,7 +88,15 @@ mod tests {
 
     #[test]
     fn via_uv() {
-      let have = uv_tool().carrier_args();
+      let have = Callable::UvTool {
+        uv: Executable::Binary("yard/uv/uv".into()),
+        tool: UvTool {
+          package: "python-lsp-server",
+          script: "pylsp",
+          version: Version::from("1.13.0"),
+        },
+      }
+      .carrier_args();
       let want = vec![S("tool"), S("run"), S("--from"), S("python-lsp-server@1.13.0"), S("--"), S("pylsp")];
       assert_eq!(have, want);
     }
