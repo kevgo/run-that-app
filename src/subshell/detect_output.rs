@@ -1,7 +1,7 @@
 use super::exit_status_to_code;
 use crate::cli;
 use crate::error::{Result, UserError};
-use crate::executables::CommandInfo;
+use crate::executables::cmd_to_string;
 use std::io::{self, BufRead, BufReader, Read};
 use std::path::Path;
 use std::process::{self, Child, Command, ExitCode, Stdio};
@@ -10,16 +10,15 @@ use std::thread;
 
 /// Executes the given command, streaming the output to the terminal while monitoring it.
 /// Any output results in an Err.
-pub fn detect_output(cmd_info: &CommandInfo, cwd: Option<&Path>) -> Result<ExitCode> {
+pub fn detect_output(cmd: &mut Command, cwd: Option<&Path>) -> Result<ExitCode> {
   let (sender, receiver) = mpsc::channel();
-  let mut cmd = Command::from(cmd_info);
+  cmd.stdout(Stdio::piped());
+  cmd.stderr(Stdio::piped());
   if let Some(dir) = cwd {
     cmd.current_dir(dir);
   }
-  cmd.stdout(Stdio::piped());
-  cmd.stderr(Stdio::piped());
   let mut process = cmd.spawn().map_err(|err| UserError::CannotExecuteBinary {
-    call: cmd_info.to_owned(),
+    call: cmd_to_string(cmd),
     reason: err.to_string(),
   })?;
   let Some(stdout) = process.stdout.take() else {
@@ -64,7 +63,7 @@ pub fn detect_output(cmd_info: &CommandInfo, cwd: Option<&Path>) -> Result<ExitC
     }
   }
   if encountered_output {
-    return Err(UserError::ProcessEmittedOutput { cmd: cmd_info.to_owned() });
+    return Err(UserError::ProcessEmittedOutput { cmd: cmd_to_string(cmd) });
   }
   Ok(exit_code)
 }
