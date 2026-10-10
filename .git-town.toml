@@ -8,3 +8,6 @@ delete-tracking-branch = true
 upstream = true
 feature-strategy = "merge"
 perennial-strategy = "rebase"
+
+[propose]
+breadcrumb = "stacks"
