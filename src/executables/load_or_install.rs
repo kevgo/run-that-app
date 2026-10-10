@@ -129,11 +129,9 @@ pub fn load_or_install_app_and_carrier(
 
     RunMethod::NodeJS { package, script } => {
       // step 1: load NodeJS, install if needed, and put it on PATH
-      let Some((node, node_carrier_paths)) = load_runtime(&NodeJS {}, app, optional, ctx, apps)? else {
+      let Some((node, mut node_paths)) = load_runtime(&NodeJS {}, app, optional, ctx, apps)? else {
         return Ok(LoadOrInstallAppOutcome::NotInstallable { app: app.name() });
       };
-      let mut node_paths = Vec::with_capacity(node_carrier_paths.len() + 1);
-      node_paths.extend(node_carrier_paths);
       node_paths.push(node.parent_path().to_path_buf());
       // step 2: determine the version of the npm package to run
       let app_versions = if let Some(version) = cli_version {
