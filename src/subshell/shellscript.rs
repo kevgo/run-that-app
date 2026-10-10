@@ -80,11 +80,11 @@ exit /b 0\r\n";
     let path = dir.join(name);
     fs::write(&path, body).unwrap();
     #[cfg(not(windows))]
-    let mut permissions = fs::metadata(&path).unwrap().permissions();
-    #[cfg(not(windows))]
-    permissions.set_mode(0o755);
-    #[cfg(not(windows))]
-    fs::set_permissions(&path, permissions).unwrap();
+    {
+      let mut permissions = fs::metadata(&path).unwrap().permissions();
+      permissions.set_mode(0o755);
+      fs::set_permissions(&path, permissions).unwrap();
+    }
     path
   }
 
