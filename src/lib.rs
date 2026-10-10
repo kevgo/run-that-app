@@ -153,7 +153,7 @@ pub fn get_cmd(
     log,
   };
   let (include_apps, include_apps_carrier_paths) = load_or_install_apps(apps, optional, include_apps, &ctx)?;
-  let (callable, extra_path) = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+  let (executable, extra_path) = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
     app,
     cli_version: version.as_ref(),
     optional,
@@ -161,12 +161,12 @@ pub fn get_cmd(
     ctx: &ctx,
     apps,
   })? {
-    LoadOrInstallAppOutcome::Loaded { callable, extra_path } => (callable, extra_path),
+    LoadOrInstallAppOutcome::Loaded { executable, extra_path } => (executable, extra_path),
     LoadOrInstallAppOutcome::NotInstallable { app: _ } if optional => return Ok(None),
     LoadOrInstallAppOutcome::NotInstallable { app } => return Err(error::UserError::UnsupportedPlatform { app }),
   };
   let mut paths_to_include: Vec<&Path> = Vec::with_capacity(1 + extra_path.len() + include_apps.len() + include_apps_carrier_paths.len());
-  paths_to_include.push(callable.executable().parent_path());
+  paths_to_include.push(executable.parent_path());
   paths_to_include.extend(extra_path.iter().map(PathBuf::as_path));
   paths_to_include.extend(include_apps_carrier_paths.iter().map(PathBuf::as_path));
   for app_to_include in &include_apps {
@@ -180,7 +180,7 @@ pub fn get_cmd(
       return Err(error::UserError::MissingRuntime {
         runtime: node.name(),
         needed_by: app.name(),
-        script: Some(callable.executable().as_path().to_path_buf()),
+        script: Some(executable.into()),
         searched_dirs: env::split_paths(&env_path).collect(),
       });
     }

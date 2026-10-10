@@ -3,32 +3,27 @@ use std::process::Command;
 
 /// provides a `Command` instance that runs the given shell script with the given arguments
 #[cfg(not(windows))]
-pub fn shell_script_call(shell_script: &Path, args: &[String]) -> Command {
-  // `sh -c <script> <args>` parses only <script> as the command string.
-  // The following argv entries become the shell's $0, $1, ... and are not
-  // passed to the script. `exec "$0" "$@"` runs the script path in $0
-  // and forwards every remaining argument to it, including values that
-  // contain spaces or shell metacharacters.
+pub fn shell_script_call(shell_script: &Path, shell_args: &[String]) -> Command {
   let mut command = Command::new("sh");
   command.arg("-c");
-  let mut shell_args = Vec::with_capacity(args.len() + 1);
-  shell_args.push(shell_script.to_string_lossy().to_string());
-  shell_args.extend(args.iter().cloned());
+  let mut cmd_args = Vec::with_capacity(shell_args.len() + 1);
+  cmd_args.push(shell_script.to_string_lossy().to_string());
+  cmd_args.extend(shell_args.iter().cloned());
   #[allow(clippy::unwrap_used)]
-  let script_args = shlex::try_join(shell_args.iter().map(std::string::String::as_str)).unwrap();
-  command.arg(script_args);
+  let cmd_arg_str = shlex::try_join(cmd_args.iter().map(std::string::String::as_str)).unwrap();
+  command.arg(cmd_arg_str);
   command
 }
 
-/// Runs `shell_script` through `cmd`, with `app_args` as the script's own arguments.
+/// provides a `Command` instance that runs the given shell script with the given arguments
 #[cfg(windows)]
-pub fn shell_script_call(shell_script: &Path, app_args: &[String]) -> Command {
-  let mut args = Vec::with_capacity(app_args.len() + 1);
-  args.push(shell_script.to_string_lossy().to_string());
-  args.extend(app_args.iter().cloned());
+pub fn shell_script_call(shell_script: &Path, shell_args: &[String]) -> Command {
+  let mut app_args = Vec::with_capacity(shell_args.len() + 1);
+  app_args.push(shell_script.to_string_lossy().to_string());
+  app_args.extend(shell_args.iter().cloned());
   let mut command = Command::new("cmd");
   command.arg("/C");
-  command.args(args);
+  command.args(app_args);
   command
 }
 
@@ -85,19 +80,12 @@ exit /b 0\r\n";
     let path = dir.join(name);
     fs::write(&path, body).unwrap();
     #[cfg(not(windows))]
-    let mut permissions = fs::metadata(&path).unwrap().permissions();
-    #[cfg(not(windows))]
-    permissions.set_mode(0o755);
-    #[cfg(not(windows))]
-    fs::set_permissions(&path, permissions).unwrap();
+    {
+      let mut permissions = fs::metadata(&path).unwrap().permissions();
+      permissions.set_mode(0o755);
+      fs::set_permissions(&path, permissions).unwrap();
+    }
     path
-  }
-
-  fn assert_script_output(output: &std::process::Output, want: &str) {
-    assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
-    // `cmd` prints CRLF. The script's logical output uses LF on every platform.
-    let have = String::from_utf8_lossy(&output.stdout).replace("\r\n", "\n");
-    assert_eq!(have, want);
   }
 
   /// `cmd_to_string` renders the `cmd /C` invocation with POSIX quoting.
@@ -120,8 +108,11 @@ exit /b 0\r\n";
     #[cfg(not(windows))]
     let want = format!(r#"sh -c "{} --version 'hello world'""#, script.display());
     assert_eq!(have, want);
-
-    assert_script_output(&cmd.output().unwrap(), "2\n--version\nhello world\n");
+    let output = cmd.output().unwrap();
+    assert!(output.status.success());
+    let have_stdout = String::from_utf8_lossy(&output.stdout).replace("\r\n", "\n");
+    let want_stdout = "2\n--version\nhello world\n";
+    assert_eq!(have_stdout, want_stdout);
   }
 
   #[test]
@@ -135,14 +126,22 @@ exit /b 0\r\n";
     #[cfg(not(windows))]
     let want = format!(r#"sh -c "{} --version 'hello "'$HOME'"'""#, script.display());
     assert_eq!(have, want);
-
-    assert_script_output(&cmd.output().unwrap(), "2\n--version\nhello $HOME\n");
+    let output = cmd.output().unwrap();
+    assert!(output.status.success());
+    let have_stdout = String::from_utf8_lossy(&output.stdout).replace("\r\n", "\n");
+    let want_stdout = "2\n--version\nhello $HOME\n";
+    assert_eq!(have_stdout, want_stdout);
   }
 
   #[test]
   fn passes_no_arguments() {
     let dir = tempfile::tempdir().unwrap();
     let script = write_script(dir.path(), SCRIPT_NAME, PRINT_ARG_COUNT);
-    assert_script_output(&shell_script_call(&script, &[]).output().unwrap(), "0");
+    let mut cmd = shell_script_call(&script, &[]);
+    let output = cmd.output().unwrap();
+    assert!(output.status.success());
+    let have_stdout = String::from_utf8_lossy(&output.stdout).replace("\r\n", "\n");
+    let want_stdout = "0";
+    assert_eq!(have_stdout, want_stdout);
   }
 }

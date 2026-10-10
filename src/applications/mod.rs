@@ -250,11 +250,7 @@ pub fn carrier<'a>(app: &'a dyn AppDefinition, version: &Version, platform: Plat
       let executable_filename = node.executable_filename();
       (Box::new(node), executable_filename)
     }
-    RunMethod::Uv { package: _, script: _ } => {
-      let uv = Uv {};
-      let executable_filename = uv.executable_filename();
-      (Box::new(uv), executable_filename)
-    }
+    RunMethod::Uv { package: _, script } => (dyn_clone::clone_box(app), ExecutableNameUnix::from(script)),
   }
 }
 

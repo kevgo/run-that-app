@@ -35,8 +35,8 @@ pub fn which(
     ctx: &ctx,
     apps,
   })? {
-    LoadOrInstallAppOutcome::Loaded { callable, extra_path: _ } => {
-      println!("{}", callable.app_executable()?);
+    LoadOrInstallAppOutcome::Loaded { executable, extra_path: _ } => {
+      println!("{executable}");
       Ok(ExitCode::SUCCESS)
     }
     LoadOrInstallAppOutcome::NotInstallable { app: _ } => Ok(ExitCode::FAILURE),

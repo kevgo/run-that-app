@@ -38,12 +38,12 @@ pub enum RunMethod {
     script: &'static str,
   },
 
-  /// the app is a Python package
+  /// the app is a Python package that gets installed via uv
   Uv {
     /// name of the Python package to install
     package: &'static str,
 
-    /// unix name of the shell script for the package in `.venv/bin`
+    /// unix name of the executable for the package in `.venv/bin`
     script: &'static str,
   },
 }
@@ -53,13 +53,12 @@ impl RunMethod {
     match self {
       RunMethod::ThisApp { install_methods } => install_methods,
       RunMethod::NodeJS { package, script } => vec![installation::Method::InstallNodeJSPackage { package, script }],
+      RunMethod::Uv { package, script } => vec![installation::Method::InstallPythonPackage { package, script }],
       RunMethod::OtherAppOtherExecutable {
         carrier: _,
         executable_name: _,
       }
-      | RunMethod::OtherAppShellScript { carrier: _, script_name: _ }
-      // Python apps don't get installed into the yard, they run from the local .venv or via "uv tool run"
-      | RunMethod::Uv { package: _, script: _ } => vec![],
+      | RunMethod::OtherAppShellScript { carrier: _, script_name: _ } => vec![],
     }
   }
 
