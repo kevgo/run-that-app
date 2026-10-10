@@ -11,9 +11,11 @@ pub fn shell_script_call(shell_script: &Path, app_args: &[String]) -> Command {
   // contain spaces or shell metacharacters.
   let mut command = Command::new("sh");
   command.arg("-c");
-  command.arg(r#"exec "$0" "$@""#);
-  command.arg(shell_script);
-  command.args(app_args);
+  let mut shell_args = Vec::with_capacity(app_args.len() + 1);
+  shell_args.push(shell_script.to_string_lossy().to_string());
+  shell_args.extend(app_args.iter().cloned());
+  let script_args = shlex::try_join(shell_args.iter().map(std::string::String::as_str)).unwrap();
+  command.arg(script_args);
   command
 }
 
@@ -32,37 +34,41 @@ pub fn shell_script_call(shell_script: &Path, app_args: &[String]) -> Command {
 #[cfg(all(test, unix))]
 mod tests {
   use super::shell_script_call;
+  use crate::executables::cmd_to_string;
+  use std::fs;
   use std::os::unix::fs::PermissionsExt;
   use std::path::{Path, PathBuf};
-  use std::{fs, io};
 
-  fn write_script(dir: &Path, name: &str, body: &str) -> io::Result<PathBuf> {
+  fn write_script(dir: &Path, name: &str, body: &str) -> PathBuf {
     let path = dir.join(name);
-    fs::write(&path, body)?;
-    let mut permissions = fs::metadata(&path)?.permissions();
+    fs::write(&path, body).unwrap();
+    let mut permissions = fs::metadata(&path).unwrap().permissions();
     permissions.set_mode(0o755);
-    fs::set_permissions(&path, permissions)?;
-    Ok(path)
+    fs::set_permissions(&path, permissions).unwrap();
+    path
   }
 
   /// `sh -c <script> <args>` would report zero script arguments here.
   #[test]
-  fn passes_arguments_to_the_script() -> io::Result<()> {
-    let dir = tempfile::tempdir()?;
-    let script = write_script(dir.path(), "args.sh", "#!/bin/sh\nprintf '%s\\n' \"$#\" \"$1\" \"$2\"\n")?;
-    let output = shell_script_call(&script, &["--version".to_string(), "hello $HOME".to_string()]).output()?;
+  fn passes_arguments_to_the_script() {
+    let dir = tempfile::tempdir().unwrap();
+    let script = write_script(dir.path(), "args.sh", "#!/bin/sh\nprintf '%s\\n' \"$#\" \"$1\" \"$2\"\n");
+    let mut cmd = shell_script_call(&script, &["--version".to_string(), "hello $HOME".to_string()]);
+    let have = cmd_to_string(&cmd);
+    let want = "sh -c \"args.sh --version 'hello $HOME'\"";
+    assert_eq!(have, want);
+
+    let output = cmd.output().unwrap();
     assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
-    assert_eq!(output.stdout, b"2\n--version\nhello $HOME\n");
-    Ok(())
+    assert_eq!(str::from_utf8(&output.stdout).unwrap(), "2\n--version\nhello $HOME\n");
   }
 
   #[test]
-  fn passes_no_arguments() -> io::Result<()> {
-    let dir = tempfile::tempdir()?;
-    let script = write_script(dir.path(), "args.sh", "#!/bin/sh\nprintf '%s\\n' \"$#\"\n")?;
-    let output = shell_script_call(&script, &[]).output()?;
+  fn passes_no_arguments() {
+    let dir = tempfile::tempdir().unwrap();
+    let script = write_script(dir.path(), "args.sh", "#!/bin/sh\nprintf '%s' \"$#\"\n");
+    let output = shell_script_call(&script, &[]).output().unwrap();
     assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
-    assert_eq!(output.stdout, b"0\n");
-    Ok(())
+    assert_eq!(str::from_utf8(&output.stdout).unwrap(), "0");
   }
 }
