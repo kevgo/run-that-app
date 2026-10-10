@@ -48,14 +48,27 @@ mod tests {
     path
   }
 
-  /// `sh -c <script> <args>` would report zero script arguments here.
   #[test]
   fn passes_arguments_to_the_script() {
     let dir = tempfile::tempdir().unwrap();
     let script = write_script(dir.path(), "args.sh", "#!/bin/sh\nprintf '%s\\n' \"$#\" \"$1\" \"$2\"\n");
+    let mut cmd = shell_script_call(&script, &["--version".to_string(), "hello world".to_string()]);
+    let have = cmd_to_string(&cmd);
+    let want = format!("sh -c \"{} --version 'hello world'\"", script.to_string_lossy());
+    assert_eq!(have, want);
+
+    let output = cmd.output().unwrap();
+    assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
+    assert_eq!(str::from_utf8(&output.stdout).unwrap(), "2\n--version\nhello world\n");
+  }
+
+  #[test]
+  fn encodes_special_characters() {
+    let dir = tempfile::tempdir().unwrap();
+    let script = write_script(dir.path(), "args.sh", "#!/bin/sh\nprintf '%s\\n' \"$#\" \"$1\" \"$2\"\n");
     let mut cmd = shell_script_call(&script, &["--version".to_string(), "hello $HOME".to_string()]);
     let have = cmd_to_string(&cmd);
-    let want = "sh -c \"args.sh --version 'hello $HOME'\"";
+    let want = format!("sh -c \"{} --version 'hello $HOME'\"", script.to_string_lossy());
     assert_eq!(have, want);
 
     let output = cmd.output().unwrap();
