@@ -6,6 +6,7 @@ pub fn cmd_to_string(cmd: &Command) -> String {
   let mut pieces = Vec::with_capacity(args.len() + 1);
   pieces.push(cmd.get_program().to_string_lossy().to_string());
   pieces.extend(args.into_iter().map(|arg| arg.to_string_lossy().to_string()));
+  #[allow(clippy::unwrap_used)]
   shlex::try_join(pieces.iter().map(std::string::String::as_str)).unwrap()
 }
 

@@ -14,6 +14,7 @@ pub fn shell_script_call(shell_script: &Path, app_args: &[String]) -> Command {
   let mut shell_args = Vec::with_capacity(app_args.len() + 1);
   shell_args.push(shell_script.to_string_lossy().to_string());
   shell_args.extend(app_args.iter().cloned());
+  #[allow(clippy::unwrap_used)]
   let script_args = shlex::try_join(shell_args.iter().map(std::string::String::as_str)).unwrap();
   command.arg(script_args);
   command
@@ -41,9 +42,12 @@ mod tests {
 
   fn write_script(dir: &Path, name: &str, body: &str) -> PathBuf {
     let path = dir.join(name);
+    #[allow(clippy::unwrap_used)]
     fs::write(&path, body).unwrap();
+    #[allow(clippy::unwrap_used)]
     let mut permissions = fs::metadata(&path).unwrap().permissions();
     permissions.set_mode(0o755);
+    #[allow(clippy::unwrap_used)]
     fs::set_permissions(&path, permissions).unwrap();
     path
   }
