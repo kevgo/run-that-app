@@ -18,7 +18,8 @@ mod tests {
   #[test]
   fn test_cmd_to_string() {
     let mut cmd = Command::new("echo");
-    cmd.arg("Hello, world!");
-    assert_eq!(cmd_to_string(&cmd), "echo Hello, world!");
+    cmd.arg("Hello, world");
+    cmd.arg("!");
+    assert_eq!(cmd_to_string(&cmd), "echo Hello, world !");
   }
 }
