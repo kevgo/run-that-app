@@ -3,20 +3,15 @@ use std::process::Command;
 
 /// provides a `Command` instance that runs the given shell script with the given arguments
 #[cfg(not(windows))]
-pub fn shell_script_call(shell_script: &Path, args: &[String]) -> Command {
-  // `sh -c <script> <args>` parses only <script> as the command string.
-  // The following argv entries become the shell's $0, $1, ... and are not
-  // passed to the script. `exec "$0" "$@"` runs the script path in $0
-  // and forwards every remaining argument to it, including values that
-  // contain spaces or shell metacharacters.
+pub fn shell_script_call(shell_script: &Path, shell_args: &[String]) -> Command {
   let mut command = Command::new("sh");
   command.arg("-c");
-  let mut shell_args = Vec::with_capacity(args.len() + 1);
-  shell_args.push(shell_script.to_string_lossy().to_string());
-  shell_args.extend(args.iter().cloned());
+  let mut cmd_args = Vec::with_capacity(shell_args.len() + 1);
+  cmd_args.push(shell_script.to_string_lossy().to_string());
+  cmd_args.extend(shell_args.iter().cloned());
   #[allow(clippy::unwrap_used)]
-  let script_args = shlex::try_join(shell_args.iter().map(std::string::String::as_str)).unwrap();
-  command.arg(script_args);
+  let cmd_arg_str = shlex::try_join(cmd_args.iter().map(std::string::String::as_str)).unwrap();
+  command.arg(cmd_arg_str);
   command
 }
 
