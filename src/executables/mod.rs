@@ -1,6 +1,5 @@
 //! This module implements logic to run the various forms of executables that applications can have.
 
-mod command_info;
 mod executable;
 mod executable_name;
 mod load;
@@ -9,7 +8,6 @@ mod load_from_yard;
 mod load_or_install;
 mod run_method;
 
-pub use command_info::CommandInfo;
 pub use executable::Executable;
 pub use executable_name::{ExecutableNamePlatform, ExecutableNameUnix};
 pub use load::{LoadAppOutcome, load_app_versions};
