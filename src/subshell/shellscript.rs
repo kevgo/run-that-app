@@ -15,15 +15,15 @@ pub fn shell_script_call(shell_script: &Path, shell_args: &[String]) -> Command 
   command
 }
 
-/// Runs `shell_script` through `cmd`, with `app_args` as the script's own arguments.
+/// provides a `Command` instance that runs the given shell script with the given arguments
 #[cfg(windows)]
-pub fn shell_script_call(shell_script: &Path, app_args: &[String]) -> Command {
-  let mut args = Vec::with_capacity(app_args.len() + 1);
-  args.push(shell_script.to_string_lossy().to_string());
-  args.extend(app_args.iter().cloned());
+pub fn shell_script_call(shell_script: &Path, shell_args: &[String]) -> Command {
+  let mut app_args = Vec::with_capacity(shell_args.len() + 1);
+  app_args.push(shell_script.to_string_lossy().to_string());
+  app_args.extend(shell_args.iter().cloned());
   let mut command = Command::new("cmd");
   command.arg("/C");
-  command.args(args);
+  command.args(app_args);
   command
 }
 
