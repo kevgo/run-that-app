@@ -90,7 +90,6 @@ exit /b 0\r\n";
 
   fn assert_script_output(output: &std::process::Output, want: &str) {
     assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
-    // `cmd` prints CRLF. The script's logical output uses LF on every platform.
     let have = String::from_utf8_lossy(&output.stdout).replace("\r\n", "\n");
     assert_eq!(have, want);
   }
