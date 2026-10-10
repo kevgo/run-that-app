@@ -25,7 +25,7 @@ impl Callable {
   }
 
   /// provides the arguments that the executable needs before the arguments for the app
-  pub fn args(&self) -> Vec<String> {
+  pub fn carrier_args(&self) -> Vec<String> {
     match self {
       Callable::Direct(_) => vec![],
       Callable::UvTool { uv: _, tool } => tool.run_args(),
@@ -87,14 +87,14 @@ mod tests {
     #[test]
     fn direct() {
       let callable = Callable::Direct(Executable::Binary("yard/gh/gh".into()));
-      let have = callable.args();
+      let have = callable.carrier_args();
       let want: Vec<String> = vec![];
       assert_eq!(have, want);
     }
 
     #[test]
     fn via_uv() {
-      let have = uv_tool().args();
+      let have = uv_tool().carrier_args();
       let want = vec![S("tool"), S("run"), S("--from"), S("python-lsp-server@1.13.0"), S("--"), S("pylsp")];
       assert_eq!(have, want);
     }

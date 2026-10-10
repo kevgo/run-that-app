@@ -189,7 +189,7 @@ pub fn get_cmd(
       });
     }
   }
-  let mut args = callable.args();
+  let mut args = callable.carrier_args();
   args.extend(app_args);
   let cmd_info = CommandInfo {
     executable: callable.executable().as_path().to_path_buf(),
