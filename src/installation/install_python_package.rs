@@ -23,7 +23,7 @@ pub fn run(app: &dyn AppDefinition, package_name: &str, app_folder: &Path, versi
 /// provides the possible locations of the given script inside the Python virtual environment in the given folder
 pub fn executable_paths(folder: &Path, script: &str) -> Vec<PathBuf> {
   let venv = folder.join(VENV);
-  vec![venv.join("Scripts").join(format!("{script}.exe")), venv.join("bin").join(script)]
+  vec![venv.join("bin").join(script), venv.join("Scripts").join(format!("{script}.exe"))]
 }
 
 /// runs uv with the given arguments in the given folder
@@ -64,8 +64,8 @@ mod tests {
   fn executable_paths() {
     let have = super::executable_paths(Path::new("folder"), "pyright");
     let want = vec![
-      PathBuf::from("folder").join(".venv").join("Scripts").join("pyright.exe"),
       PathBuf::from("folder").join(".venv").join("bin").join("pyright"),
+      PathBuf::from("folder").join(".venv").join("Scripts").join("pyright.exe"),
     ];
     assert_eq!(have, want);
   }
