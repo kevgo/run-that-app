@@ -1,7 +1,7 @@
+use crate::Version;
 use crate::applications::ApplicationName;
 use crate::configuration::{self, FILE_NAME};
 use crate::download::Url;
-use crate::{CommandInfo, Version};
 use colored::Colorize;
 use std::path::PathBuf;
 
@@ -41,7 +41,7 @@ pub enum UserError {
     reason: String,
   },
   CannotExecuteBinary {
-    call: CommandInfo,
+    call: String,
     reason: String,
   },
   CannotFindExecutable {
@@ -129,7 +129,7 @@ pub enum UserError {
   },
   NpmInstallFailed,
   ProcessEmittedOutput {
-    cmd: CommandInfo,
+    cmd: String,
   },
   RegexDoesntMatch,
   RegexHasNoCaptures,
