@@ -195,7 +195,7 @@ fn needs_node(app: &dyn AppDefinition, platform: crate::platform::Platform) -> b
   match app.run_method(&Version::from("*"), platform) {
     RunMethod::NodeJS { .. } => true,
     RunMethod::OtherAppShellScript { carrier, .. } => carrier.name().as_str() == "node",
-    RunMethod::ThisApp { .. } | RunMethod::OtherAppOtherExecutable { .. } => false,
+    RunMethod::ThisApp { .. } | RunMethod::OtherAppOtherExecutable { .. } | RunMethod::Uv { .. } => false,
   }
 }
 
