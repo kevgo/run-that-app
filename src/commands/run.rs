@@ -18,7 +18,7 @@ pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
     optional: args.optional,
     verbose: args.verbose,
   };
-  let Some(cmd_info) = get_cmd(get_cmd_args)? else {
+  let Some(mut cmd_info) = get_cmd(get_cmd_args)? else {
     if args.optional {
       return Ok(ExitCode::SUCCESS);
     }
@@ -26,9 +26,9 @@ pub fn run(args: RunArgs, apps: &Apps) -> Result<ExitCode> {
   };
   let cwd = args.cwd.as_deref();
   if args.error_on_output {
-    subshell::detect_output(&cmd_info, cwd)
+    subshell::detect_output(&mut cmd_info, cwd)
   } else {
-    subshell::stream_output(&cmd_info, cwd)
+    subshell::stream_output(&mut cmd_info, cwd)
   }
 }
 
