@@ -117,41 +117,11 @@ pub fn load_or_install_app_and_carrier(
 
     RunMethod::NodeJS { package, script } => {
       // step 1: load NodeJS, install if needed, and put it on PATH
-      let node_paths = match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
-        app: &NodeJS {},
-        cli_version: None,
-        optional,
-        from_source: false,
-        ctx,
-        apps,
-      }) {
-        Ok(LoadOrInstallAppOutcome::Loaded {
-          executable: node,
-          // the path of Node's carrier app
-          extra_path: node_carrier_path,
-        }) => {
-          let mut carrier_paths = Vec::with_capacity(node_carrier_path.len() + 1);
-          carrier_paths.extend(node_carrier_path);
-          let node_path = node.parent_path().to_path_buf();
-          carrier_paths.push(node_path);
-          carrier_paths
-        }
-        Ok(LoadOrInstallAppOutcome::NotInstallable { app: _ }) if optional => {
-          return Ok(LoadOrInstallAppOutcome::NotInstallable { app: app.name() });
-        }
-        Ok(LoadOrInstallAppOutcome::NotInstallable { app: node }) => return Err(UserError::UnsupportedPlatform { app: node }),
-        Err(UserError::NoVersionsFound { app: runtime }) => {
-          return Err({
-            UserError::MissingRuntime {
-              runtime,
-              needed_by: app.name(),
-              script: None,
-              searched_dirs: vec![],
-            }
-          });
-        }
-        Err(err) => return Err(err),
+      let Some((node, mut node_paths)) = load_runtime(&NodeJS {}, app, optional, ctx, apps)? else {
+        return Ok(LoadOrInstallAppOutcome::NotInstallable { app: app.name() });
       };
+      node_paths.push(node.parent_path().to_path_buf());
+
       // step 2: determine the version of the npm package to run
       let app_versions = if let Some(version) = cli_version {
         RequestedVersions::from(version)
@@ -205,6 +175,37 @@ pub enum LoadOrInstallAppOutcome {
   NotInstallable {
     app: ApplicationName,
   },
+}
+
+/// Loads the given runtime app (e.g. `NodeJS` or uv) that the given app needs to run, installs it if needed.
+/// Provides the runtime executable and the paths of its own carrier apps,
+/// or None if the runtime is not installable and the app is optional.
+fn load_runtime(
+  runtime: &dyn AppDefinition,
+  needed_by: &dyn AppDefinition,
+  optional: bool,
+  ctx: &RuntimeContext,
+  apps: &Apps,
+) -> Result<Option<(Executable, Vec<PathBuf>)>> {
+  match load_or_install_app_and_carrier(LoadOrInstallAppAndCarrierArgs {
+    app: runtime,
+    cli_version: None,
+    optional,
+    from_source: false,
+    ctx,
+    apps,
+  }) {
+    Ok(LoadOrInstallAppOutcome::Loaded { executable, extra_path }) => Ok(Some((executable, extra_path))),
+    Ok(LoadOrInstallAppOutcome::NotInstallable { app: _ }) if optional => Ok(None),
+    Ok(LoadOrInstallAppOutcome::NotInstallable { app }) => Err(UserError::UnsupportedPlatform { app }),
+    Err(UserError::NoVersionsFound { app: runtime }) => Err(UserError::MissingRuntime {
+      runtime,
+      needed_by: needed_by.name(),
+      script: None,
+      searched_dirs: vec![],
+    }),
+    Err(err) => Err(err),
+  }
 }
 
 fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVersions, script: &str, ctx: &RuntimeContext) -> Result<Executable> {
