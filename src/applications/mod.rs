@@ -49,6 +49,7 @@ mod scc;
 mod shellcheck;
 mod shfmt;
 mod snyk;
+mod sqlfmt;
 mod staticcheck;
 mod taplo;
 mod text_runner;
@@ -111,6 +112,7 @@ pub use scc::Scc;
 pub use shellcheck::ShellCheck;
 pub use shfmt::Shfmt;
 pub use snyk::Snyk;
+pub use sqlfmt::Sqlfmt;
 pub use staticcheck::StaticCheck;
 pub use taplo::Taplo;
 pub use text_runner::TextRunner;
@@ -173,6 +175,7 @@ pub fn all() -> Apps {
     Box::new(shellcheck::ShellCheck {}),
     Box::new(shfmt::Shfmt {}),
     Box::new(snyk::Snyk {}),
+    Box::new(sqlfmt::Sqlfmt {}),
     Box::new(staticcheck::StaticCheck {}),
     Box::new(taplo::Taplo {}),
     Box::new(text_runner::TextRunner {}),
