@@ -37,6 +37,15 @@ pub enum RunMethod {
     /// unix name of the shell script for the package in `node_modules/.bin`
     script: &'static str,
   },
+
+  /// the app is a Python package that gets installed via uv
+  Uv {
+    /// name of the Python package to install
+    package: &'static str,
+
+    /// unix name of the executable for the package in `.venv/bin`
+    script: &'static str,
+  },
 }
 
 impl RunMethod {
@@ -44,6 +53,7 @@ impl RunMethod {
     match self {
       RunMethod::ThisApp { install_methods } => install_methods,
       RunMethod::NodeJS { package, script } => vec![installation::Method::InstallNodeJSPackage { package, script }],
+      RunMethod::Uv { package, script } => vec![installation::Method::InstallPythonPackage { package, script }],
       RunMethod::OtherAppOtherExecutable {
         carrier: _,
         executable_name: _,
@@ -54,7 +64,7 @@ impl RunMethod {
 
   pub fn executable(&self, path: PathBuf) -> Executable {
     match self {
-      RunMethod::ThisApp { .. } | RunMethod::OtherAppOtherExecutable { .. } => Executable::Binary(path),
+      RunMethod::ThisApp { .. } | RunMethod::OtherAppOtherExecutable { .. } | RunMethod::Uv { .. } => Executable::Binary(path),
       RunMethod::NodeJS { .. } | RunMethod::OtherAppShellScript { .. } => Executable::ShellScript(path),
     }
   }

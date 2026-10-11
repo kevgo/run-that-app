@@ -101,6 +101,7 @@ We can also compile apps from source if needed.
 - [prettier](https://github.com/prettier/prettier)
 - [prettier-standalone](https://github.com/markelliot/prettier-standalone)
 - [pyrefly](https://pyrefly.org)
+- [pyright](https://github.com/microsoft/pyright)
 - [rclone](https://rclone.org)
 - [ripgrep](https://github.com/BurntSushi/ripgrep)
 - [ruff](https://github.com/astral-sh/ruff)

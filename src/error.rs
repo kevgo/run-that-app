@@ -152,6 +152,7 @@ pub enum UserError {
     version: Version,
     err: String,
   },
+  UvInstallFailed,
   YardRootIsNotFolder {
     root: PathBuf,
   },
@@ -357,6 +358,10 @@ impl UserError {
 As a workaround, you could install this app in other ways and then add a \"system\" version to run-that-app.
 If you are okay moving forward without this app, you can provide the \"--optional\" switch and run-that-app will ignore this failure.",
         );
+      }
+      UserError::UvInstallFailed => {
+        error("Installing the Python package via uv failed.");
+        desc("Please see the error output above and try again.");
       }
       UserError::YardAccessDenied { msg, path } => {
         error(&format!("Access to the Yard denied: {msg}"));

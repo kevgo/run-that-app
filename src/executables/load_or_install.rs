@@ -7,6 +7,7 @@ use crate::installation::Outcome;
 use crate::logging::Event;
 use crate::{Version, installation};
 use big_s::S;
+use std::env;
 use std::path::PathBuf;
 
 pub fn load_or_install_apps(
@@ -153,6 +154,26 @@ pub fn load_or_install_app_and_carrier(
         message: format!("successfully installed npm package {package} but cannot load it now"),
       })
     }
+
+    RunMethod::Uv { package: _, script } => {
+      // step 1: fast path: use the executable installed in the local Python virtual environment
+      if let Some(executable) = locate_venv_executable(script, ctx)? {
+        return Ok(LoadOrInstallAppOutcome::Loaded {
+          executable,
+          extra_path: vec![],
+        });
+      }
+      // step 2: load the Python package from the yard, install if needed
+      load_or_install_app(LoadOrInstallAppArgs {
+        app,
+        cli_version,
+        executable_name: ExecutableNameUnix::from(script),
+        optional,
+        from_source,
+        ctx,
+        apps,
+      })
+    }
   }
 }
 
@@ -266,6 +287,20 @@ fn locate_npm_package_executable(app: &dyn AppDefinition, versions: &RequestedVe
   })
 }
 
+/// provides the executable for the given script in the Python virtual environment in the current directory, if it exists
+fn locate_venv_executable(script: &str, ctx: &RuntimeContext) -> Result<Option<Executable>> {
+  let cwd = env::current_dir().map_err(|err| UserError::CannotDetermineCurrentDirectory(err.to_string()))?;
+  for path in installation::python_executable_paths(&cwd, script) {
+    (ctx.log)(Event::YardCheckExistingAppBegin { path: &path });
+    if path.is_file() {
+      (ctx.log)(Event::YardCheckExistingAppFound);
+      return Ok(Some(Executable::Binary(path)));
+    }
+    (ctx.log)(Event::YardCheckExistingAppNotFound);
+  }
+  Ok(None)
+}
+
 #[cfg(not(windows))]
 fn script_name(unix_script_name: &str) -> String {
   unix_script_name.to_string()
@@ -309,7 +344,8 @@ fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version
             executable_name: _,
           }
           | RunMethod::OtherAppShellScript { carrier: _, script_name: _ }
-          | RunMethod::NodeJS { package: _, script: _ } => vec![],
+          | RunMethod::NodeJS { package: _, script: _ }
+          | RunMethod::Uv { package: _, script: _ } => vec![],
         };
         let mut bin_folders = Vec::new();
         for install_method in install_methods {
@@ -324,6 +360,13 @@ fn locate_shell_script(carrier: &dyn AppDefinition, cli_version: Option<&Version
               return Err(UserError::InternalError {
                 message: format!(
                   "App {package} is an npm package, we should have handled this separately.\nPlease report this as a bug at https://github.com/kevgo/run-that-app"
+                ),
+              });
+            }
+            installation::Method::InstallPythonPackage { package, script: _ } => {
+              return Err(UserError::InternalError {
+                message: format!(
+                  "App {package} is a Python package, we should have handled this separately.\nPlease report this as a bug at https://github.com/kevgo/run-that-app"
                 ),
               });
             }

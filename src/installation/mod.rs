@@ -5,6 +5,7 @@ mod compile_rust;
 mod download_archive;
 mod download_executable;
 mod install_nodejs_package;
+mod install_python_package;
 
 use crate::applications::{AppDefinition, ApplicationName, Apps};
 use crate::configuration::{RequestedVersion, RequestedVersions, Version};
@@ -13,6 +14,7 @@ use crate::download::Url;
 use crate::error::Result;
 use crate::executables::ExecutableNamePlatform;
 use crate::installation::compile_rust::RustSource;
+pub use crate::installation::install_python_package::executable_paths as python_executable_paths;
 use std::fmt::{Debug, Display};
 use std::path::{Path, PathBuf};
 
@@ -62,6 +64,14 @@ pub enum Method {
     /// unix name of the shell script for the package in `node_modules/.bin`
     script: &'static str,
   },
+
+  InstallPythonPackage {
+    /// the name of the Python package to install
+    package: &'static str,
+
+    /// unix name of the executable for the package in `.venv/bin`
+    script: &'static str,
+  },
 }
 
 impl Method {
@@ -83,14 +93,16 @@ impl Method {
         let bin_folder = app_folder.join("node_modules").join(".bin");
         vec![bin_folder.join(format!("{script}.cmd")), bin_folder.join(script)]
       }
+      Method::InstallPythonPackage { package: _, script } => install_python_package::executable_paths(app_folder, script),
     }
   }
 
   pub fn is_from_source(&self) -> bool {
     match self {
-      Method::DownloadArchive { url: _, bin_folder: _ } | Method::DownloadExecutable { url: _ } | Method::InstallNodeJSPackage { package: _, script: _ } => {
-        false
-      }
+      Method::DownloadArchive { url: _, bin_folder: _ }
+      | Method::DownloadExecutable { url: _ }
+      | Method::InstallNodeJSPackage { package: _, script: _ }
+      | Method::InstallPythonPackage { package: _, script: _ } => false,
       Method::CompileGoSource { import_path: _ } | Method::CompileRustCrate { name: _, bin_folder: _ } | Method::CompileRustRepo { url: _ } => true,
     }
   }
@@ -103,6 +115,7 @@ impl Method {
         format!("compile {app}@{version} from source")
       }
       Method::InstallNodeJSPackage { package, script: _ } => format!("install NodeJS package {package}@{version}"),
+      Method::InstallPythonPackage { package, script: _ } => format!("install Python package {package}@{version}"),
     }
   }
 }
@@ -250,6 +263,7 @@ pub fn version_method(
       Method::CompileRustCrate { name, bin_folder: _ } => compile_rust::run(app_definition, version, &staging_folder, &RustSource::CratesIo { name }, ctx),
       Method::CompileRustRepo { url } => compile_rust::run(app_definition, version, &staging_folder, &RustSource::Repository { url: url.clone() }, ctx),
       Method::InstallNodeJSPackage { package, script: _ } => install_nodejs_package::run(package, &staging_folder, version, optional, apps),
+      Method::InstallPythonPackage { package, script: _ } => install_python_package::run(app_definition, package, &staging_folder, version, optional, apps),
     }?;
     match outcome {
       Outcome::Installed => {
