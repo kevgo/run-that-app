@@ -110,6 +110,7 @@ We can also compile apps from source if needed.
 - [shellcheck](https://www.shellcheck.net)
 - [shfmt](https://github.com/mvdan/sh)
 - [snyk](https://github.com/snyk/cli)
+- [sqlfmt](https://github.com/tconbeer/sqlfmt)
 - [staticcheck](https://staticcheck.dev)
 - [taplo](https://github.com/tamasfe/taplo)
 - [text-runner](https://github.com/kevgo/text-runner)
