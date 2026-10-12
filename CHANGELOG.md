@@ -1,5 +1,10 @@
 # run-that-app changelog
 
+# 0.43.0
+
+- support for Python applications
+- app: pyright, sqlfmt
+
 # 0.42.6
 
 - make ruff run on Windows
