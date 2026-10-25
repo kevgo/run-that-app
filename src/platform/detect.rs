@@ -6,6 +6,6 @@ use crate::error::Result;
 pub fn detect(log: Log) -> Result<Platform> {
   Ok(Platform {
     os: os::detect(log)?,
-    cpu: cpu::determine(log)?,
+    cpu: cpu::detect(log)?,
   })
 }
