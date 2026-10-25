@@ -3,7 +3,7 @@ use crate::logging::{Event, Log};
 use std::env;
 use std::fmt::Display;
 
-pub fn determine(log: Log) -> Result<Cpu> {
+pub fn detect(log: Log) -> Result<Cpu> {
   log(Event::IdentifiedCpu {
     architecture: env::consts::ARCH,
   });
