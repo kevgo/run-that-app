@@ -2,7 +2,7 @@
 
 # 0.43.1
 
-- export the API to detect platforms
+- export the platform API
 
 # 0.43.0
 
