@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+# 0.43.1
+
+- export the platform API
+
 # 0.43.0
 
 - support for Python applications
