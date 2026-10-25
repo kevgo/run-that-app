@@ -54,7 +54,7 @@ mod filesystem;
 mod hosting;
 mod installation;
 pub mod logging;
-mod platform;
+pub mod platform;
 mod strings;
 mod subshell;
 mod yard;
