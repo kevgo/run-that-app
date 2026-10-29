@@ -365,7 +365,7 @@ This installs Go 1.21.6 and uses its bundled `gofmt`.
 Example Makefile integration:
 
 ```make
-RTA_VERSION = 0.43.1  # version of run-that-app to use
+RTA_VERSION = 0.43.2  # version of run-that-app to use
 
 RTA = tools/rta@${RTA_VERSION}
 ACTIONLINT = $(RTA} actionlint
@@ -397,12 +397,12 @@ In practice, package managers introduce issues:
 - Different OSes use different package managers.
   You would need to support Homebrew, Nix, Scoop, Chocolatey, winget, DNF,
   pacman, apt, pkg, snap, zypper, xbps, portage, etc.
-- Some environments like Windows or bare-bones Docker images don't have a
-  package manager.
+- Some environments like Windows
+  or bare-bones Docker images don't have a package manager.
 - Not all tools are packaged everywhere.
 - Packaged application versions are often out of your control.
-- Different projects often require different tool versions that would need to be
-  installed in parallel.
+- Different projects often require different tool versions
+  that would need to be installed in parallel.
 
 ### Why not use Docker?
 
@@ -414,8 +414,7 @@ For development tooling, it often adds unnecessary complexity and bloat:
 - Docker-in-Docker issues on CI
 - no help with CPU architecture mismatches
 - often no way to install a specific version of a tool
-- no good way to install binaries only available via GitHub releases in
-  Docker
+- no good way to install binaries only available via GitHub releases in Docker
 
 Use run-that-app inside Docker to install tools not supported by the Linux
 package manager, or other tools at a specific version.
