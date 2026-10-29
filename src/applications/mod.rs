@@ -277,7 +277,7 @@ pub struct ApplicationName(&'static str);
 
 impl ApplicationName {
   #[must_use]
-  pub fn as_str(&self) -> &str {
+  pub fn as_str(&self) -> &'static str {
     self.0
   }
 
@@ -307,7 +307,7 @@ impl AsRef<std::path::Path> for ApplicationName {
 }
 
 impl AsRef<str> for ApplicationName {
-  fn as_ref(&self) -> &str {
+  fn as_ref(&self) -> &'static str {
     self.0
   }
 }
