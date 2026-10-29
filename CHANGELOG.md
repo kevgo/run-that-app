@@ -1,5 +1,9 @@
 # run-that-app changelog
 
+# 0.43.2
+
+- more precise exported type signatures
+
 # 0.43.1
 
 - export the platform API
