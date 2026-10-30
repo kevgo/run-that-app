@@ -7,7 +7,7 @@ edition = "2024"
 include = ["src/", "tests/", "docs/", "LICENSE.md", "README.md"]
 license = "ISC"
 readme = "README.md"
-repository = "https://github.com/kevgo/conc"
+repository = "https://github.com/kevgo/run-that-app"
 rust-version = "1.99"
 
 [lib]
