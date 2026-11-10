@@ -1,6 +1,7 @@
 //! all applications that run-this-app can run
 
 mod actionlint;
+mod alphasort;
 mod alphavet;
 mod biome;
 mod bun;
@@ -64,6 +65,7 @@ use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
 pub use actionlint::ActionLint;
+pub use alphasort::Alphasort;
 pub use alphavet::Alphavet;
 pub use biome::Biome;
 pub use bun::Bun;
