@@ -1,0 +1,229 @@
+use super::{AnalyzeResult, AppDefinition};
+use crate::applications::ApplicationName;
+use crate::configuration::{TagFormat, Version};
+use crate::error::Result;
+use crate::executables::{Executable, RunMethod};
+use crate::hosting::github_releases;
+use crate::installation::{BinFolder, Method};
+use crate::platform::{Cpu, Os, Platform};
+use crate::{Log, strings, subshell};
+use const_format::formatcp;
+
+#[derive(Clone)]
+pub struct Alphasort {}
+
+const ORG: &str = "kevgo";
+const REPO: &str = "go-alphasort";
+
+impl AppDefinition for Alphasort {
+  fn name(&self) -> ApplicationName {
+    "alphasort".into()
+  }
+
+  fn homepage(&self) -> &'static str {
+    formatcp!("https://github.com/{ORG}/{REPO}")
+  }
+
+  fn latest_installable_version(&self, log: Log) -> Result<Version> {
+    github_releases::latest(ORG, REPO, &self.tag_format(), log)
+  }
+
+  fn run_method(&self, version: &Version, platform: Platform) -> RunMethod {
+    let cpu = match platform.cpu {
+      Cpu::Arm64 => "arm",
+      Cpu::Intel64 => "intel",
+    };
+    let os = match platform.os {
+      Os::Linux => "linux",
+      Os::MacOS => "macos",
+      Os::Windows => "windows",
+    };
+    let ext = match platform.os {
+      Os::Linux | Os::MacOS => "tar.xz",
+      Os::Windows => "zip",
+    };
+    let tag = self.tag_format().format_version(version);
+    RunMethod::ThisApp {
+      install_methods: vec![
+        Method::DownloadArchive {
+          url: format!("https://github.com/{ORG}/{REPO}/releases/download/{tag}/alphasort_{os}_{cpu}.{ext}").into(),
+          bin_folder: BinFolder::Root,
+        },
+        Method::CompileGoSource {
+          import_path: format!("github.com/{ORG}/{REPO}/cmd/alphasort@{tag}"),
+        },
+      ],
+    }
+  }
+
+  fn installable_versions(&self, amount: usize, log: Log) -> Result<Vec<Version>> {
+    github_releases::versions(ORG, REPO, amount, &self.tag_format(), log)
+  }
+
+  fn analyze_executable(&self, executable: &Executable) -> Result<AnalyzeResult> {
+    let output = subshell::capture_output(executable, &["-h"])?;
+    if !output.contains("Sorts Go code alphabetically.") {
+      return Ok(AnalyzeResult::NotIdentified { output });
+    }
+    let output = subshell::capture_output(executable, &["version"])?;
+    match strings::first_version(&output) {
+      Ok(version) => Ok(AnalyzeResult::IdentifiedWithVersion(version.into())),
+      Err(_) => Ok(AnalyzeResult::NotIdentified { output }),
+    }
+  }
+
+  fn tag_format(&self) -> TagFormat {
+    TagFormat::PrefixV
+  }
+}
+
+#[cfg(test)]
+mod tests {
+
+  mod run_method {
+    use crate::applications::{Alphasort, AppDefinition};
+    use crate::configuration::Version;
+    use crate::executables::RunMethod;
+    use crate::installation::{BinFolder, Method};
+    use crate::platform::{Cpu, Os, Platform};
+    use big_s::S;
+
+    #[test]
+    fn linux_arm() {
+      let have = (Alphasort {}).run_method(
+        &Version::from("0.0.1"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/kevgo/go-alphasort/releases/download/v0.0.1/alphasort_linux_arm.tar.xz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/kevgo/go-alphasort/cmd/alphasort@v0.0.1"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn linux_intel() {
+      let have = (Alphasort {}).run_method(
+        &Version::from("0.0.1"),
+        Platform {
+          os: Os::Linux,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/kevgo/go-alphasort/releases/download/v0.0.1/alphasort_linux_intel.tar.xz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/kevgo/go-alphasort/cmd/alphasort@v0.0.1"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_arm() {
+      let have = (Alphasort {}).run_method(
+        &Version::from("0.0.1"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/kevgo/go-alphasort/releases/download/v0.0.1/alphasort_macos_arm.tar.xz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/kevgo/go-alphasort/cmd/alphasort@v0.0.1"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn macos_intel() {
+      let have = (Alphasort {}).run_method(
+        &Version::from("0.0.1"),
+        Platform {
+          os: Os::MacOS,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/kevgo/go-alphasort/releases/download/v0.0.1/alphasort_macos_intel.tar.xz".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/kevgo/go-alphasort/cmd/alphasort@v0.0.1"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_arm() {
+      let have = (Alphasort {}).run_method(
+        &Version::from("0.0.1"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Arm64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/kevgo/go-alphasort/releases/download/v0.0.1/alphasort_windows_arm.zip".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/kevgo/go-alphasort/cmd/alphasort@v0.0.1"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+
+    #[test]
+    fn windows_intel() {
+      let have = (Alphasort {}).run_method(
+        &Version::from("0.0.1"),
+        Platform {
+          os: Os::Windows,
+          cpu: Cpu::Intel64,
+        },
+      );
+      let want = RunMethod::ThisApp {
+        install_methods: vec![
+          Method::DownloadArchive {
+            url: "https://github.com/kevgo/go-alphasort/releases/download/v0.0.1/alphasort_windows_intel.zip".into(),
+            bin_folder: BinFolder::Root,
+          },
+          Method::CompileGoSource {
+            import_path: S("github.com/kevgo/go-alphasort/cmd/alphasort@v0.0.1"),
+          },
+        ],
+      };
+      assert_eq!(have, want);
+    }
+  }
+}

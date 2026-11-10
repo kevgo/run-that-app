@@ -1,6 +1,7 @@
 //! all applications that run-this-app can run
 
 mod actionlint;
+mod alphasort;
 mod alphavet;
 mod biome;
 mod bun;
@@ -64,6 +65,7 @@ use crate::error::{Result, UserError};
 use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
 pub use actionlint::ActionLint;
+pub use alphasort::Alphasort;
 pub use alphavet::Alphavet;
 pub use biome::Biome;
 pub use bun::Bun;
@@ -127,6 +129,7 @@ pub fn all() -> Apps {
   Apps(vec![
     // keep-sorted start
     Box::new(actionlint::ActionLint {}),
+    Box::new(alphasort::Alphasort {}),
     Box::new(alphavet::Alphavet {}),
     Box::new(biome::Biome {}),
     Box::new(bun::Bun {}),
@@ -277,7 +280,7 @@ pub struct ApplicationName(&'static str);
 
 impl ApplicationName {
   #[must_use]
-  pub fn as_str(&self) -> &str {
+  pub fn as_str(&self) -> &'static str {
     self.0
   }
 
@@ -307,7 +310,7 @@ impl AsRef<std::path::Path> for ApplicationName {
 }
 
 impl AsRef<str> for ApplicationName {
-  fn as_ref(&self) -> &str {
+  fn as_ref(&self) -> &'static str {
     self.0
   }
 }
