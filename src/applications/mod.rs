@@ -2,7 +2,6 @@
 
 mod actionlint;
 mod alphasort;
-mod alphavet;
 mod biome;
 mod bun;
 mod conc;
@@ -66,7 +65,6 @@ use crate::executables::{Executable, ExecutableNameUnix, RunMethod};
 use crate::platform::Platform;
 pub use actionlint::ActionLint;
 pub use alphasort::Alphasort;
-pub use alphavet::Alphavet;
 pub use biome::Biome;
 pub use bun::Bun;
 pub use conc::Conc;
@@ -130,7 +128,6 @@ pub fn all() -> Apps {
     // keep-sorted start
     Box::new(actionlint::ActionLint {}),
     Box::new(alphasort::Alphasort {}),
-    Box::new(alphavet::Alphavet {}),
     Box::new(biome::Biome {}),
     Box::new(bun::Bun {}),
     Box::new(conc::Conc {}),
