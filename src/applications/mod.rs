@@ -129,6 +129,7 @@ pub fn all() -> Apps {
   Apps(vec![
     // keep-sorted start
     Box::new(actionlint::ActionLint {}),
+    Box::new(alphasort::Alphasort {}),
     Box::new(alphavet::Alphavet {}),
     Box::new(biome::Biome {}),
     Box::new(bun::Bun {}),
