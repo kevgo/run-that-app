@@ -7,7 +7,7 @@
 - create a new tag:
 
   ```bash
-  git checkout main && git tag v0.43.3 && git push --tags
+  git sync --all && git checkout main && git tag v0.43.3 && git push --tags
   ```
 
 - the CI server creates the release fully automatically
