@@ -62,7 +62,7 @@ We can also compile apps from source if needed.
 <a type="apps">
 
 - [actionlint](https://rhysd.github.io/actionlint)
-- [alphasort](https://github.com/kevgo/alphasort)
+- [alphasort](https://github.com/kevgo/go-alphasort)
 - [alphavet](https://github.com/skx/alphavet)
 - [biome](https://github.com/biomejs/biome)
 - [bun](https://github.com/oven-sh/bun)
