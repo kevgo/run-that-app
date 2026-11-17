@@ -49,8 +49,7 @@ fn path_env_key() -> OsString {
 fn path_env_value() -> OsString {
   env::vars_os()
     .find(|(key, _)| key.eq_ignore_ascii_case("PATH"))
-    .map(|(_, value)| value)
-    .unwrap_or_default()
+    .map_or_default(|(_, value)| value)
 }
 
 /// joins the given PATH expressions (containing multiple paths) into a single PATH expression

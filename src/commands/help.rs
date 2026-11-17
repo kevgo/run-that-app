@@ -1,6 +1,5 @@
 use std::process::ExitCode;
 
-#[must_use]
 pub(crate) fn help() -> ExitCode {
   print_usage();
   print_options();
